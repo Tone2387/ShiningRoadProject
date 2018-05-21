@@ -1,0 +1,49 @@
+﻿2018/05/21 14:38:01 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\men\Desktop\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Build ターゲット)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ISourceCodo\Effekseer\include /Zi /nologo /W3 /WX- /sdl /Od /Oy /D _MBCS /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt SourceCodo\SceneClass.cpp
+         SceneClass.cpp
+         C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\men\Desktop\ShiningRoadProject\Release\ShiningRoadProject.exe" /NOLOGO /LIBPATH:SourceCodo\Effekseer\lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\men\Desktop\ShiningRoadProject\Release\ShiningRoadProject.pdb" /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\men\Desktop\ShiningRoadProject\Release\ShiningRoadProject.lib" /MACHINE:X86 /SAFESEH Release\Camera.obj
+         Release\CameraAssemble.obj
+         Release\CameraEnding.obj
+         Release\CameraMission.obj
+         Release\CameraTitle.obj
+         Release\CD3DXSKINMESH.obj
+         Release\Charactor.obj
+         Release\CharaStatic.obj
+         Release\Common.obj
+         Release\DebugText.obj
+         Release\DX9Mesh.obj
+         Release\DxInput.obj
+         Release\Effects.obj
+         Release\FactoryCamera.obj
+         Release\FactoryScene.obj
+         Release\File.obj
+         Release\Game.obj
+         Release\GameObject.obj
+         Release\Main.obj
+         Release\Object.obj
+         Release\PtrGroup.obj
+         Release\Ray.obj
+         Release\Resource.obj
+         Release\Robo.obj
+         Release\SceneAssemble.obj
+         Release\SceneClass.obj
+         Release\SceneEnding.obj
+         Release\SceneMission.obj
+         Release\SceneTitle.obj
+         Release\SkinMesh.obj
+         Release\Sound.obj
+         Release\SoundManager.obj
+         Release\Sprite.obj
+         Release\Sprite2D.obj
+         Release\Sprite2DCenter.obj
+         Release\TestObj.obj
+         ShiningRoadProject.vcxproj -> C:\Users\men\Desktop\ShiningRoadProject\Release\ShiningRoadProject.exe
+     1>プロジェクト "C:\Users\men\Desktop\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Build ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:01.07

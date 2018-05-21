@@ -1,0 +1,49 @@
+﻿2018/05/21 14:34:21 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\men\Desktop\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Build ターゲット)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ISourceCodo\Effekseer\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt SourceCodo\SceneClass.cpp
+         SceneClass.cpp
+         c:\program files (x86)\microsoft directx sdk (june 2010)\include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\men\Desktop\ShiningRoadProject\Debug\ShiningRoadProject.exe" /INCREMENTAL /NOLOGO /LIBPATH:SourceCodo\Effekseer\lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\men\Desktop\ShiningRoadProject\Debug\ShiningRoadProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\men\Desktop\ShiningRoadProject\Debug\ShiningRoadProject.lib" /MACHINE:X86 Debug\Camera.obj
+         Debug\CameraAssemble.obj
+         Debug\CameraEnding.obj
+         Debug\CameraMission.obj
+         Debug\CameraTitle.obj
+         Debug\CD3DXSKINMESH.obj
+         Debug\Charactor.obj
+         Debug\CharaStatic.obj
+         Debug\Common.obj
+         Debug\DebugText.obj
+         Debug\DX9Mesh.obj
+         Debug\DxInput.obj
+         Debug\Effects.obj
+         Debug\FactoryCamera.obj
+         Debug\FactoryScene.obj
+         Debug\File.obj
+         Debug\Game.obj
+         Debug\GameObject.obj
+         Debug\Main.obj
+         Debug\Object.obj
+         Debug\PtrGroup.obj
+         Debug\Ray.obj
+         Debug\Resource.obj
+         Debug\Robo.obj
+         Debug\SceneAssemble.obj
+         Debug\SceneClass.obj
+         Debug\SceneEnding.obj
+         Debug\SceneMission.obj
+         Debug\SceneTitle.obj
+         Debug\SkinMesh.obj
+         Debug\Sound.obj
+         Debug\SoundManager.obj
+         Debug\Sprite.obj
+         Debug\Sprite2D.obj
+         Debug\Sprite2DCenter.obj
+         Debug\TestObj.obj
+         ShiningRoadProject.vcxproj -> C:\Users\men\Desktop\ShiningRoadProject\Debug\ShiningRoadProject.exe
+     1>プロジェクト "C:\Users\men\Desktop\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Build ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:00.91
