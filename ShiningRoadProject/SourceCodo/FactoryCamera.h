@@ -6,6 +6,7 @@
 #include "CameraAssemble.h"
 #include "CameraMission.h"
 #include "CameraEnding.h"
+#include "CameraGameOver.h"
 
 //フラグに応じてシーンごとにカメラを吐き出すクラス.
 class clsFACTORY_CAMERA

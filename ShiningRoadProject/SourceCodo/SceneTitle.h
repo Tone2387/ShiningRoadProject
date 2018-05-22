@@ -8,11 +8,11 @@
 //================================//
 //========== タイトルクラス ==========//
 //================================//
-class clsTITLE : public clsSCENE_BASE
+class clsSCENE_TITLE : public clsSCENE_BASE
 {
 public:
-	clsTITLE( clsPOINTER_GROUP* const ptrGroup );
-	~clsTITLE();
+	clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup );
+	~clsSCENE_TITLE();
 
 
 
@@ -22,7 +22,7 @@ private:
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &nextScene ) final;
-	void RenderProduct() final;
+	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 
 	//テスト用モデル( これは消しても良いです、いらないです ).
