@@ -1,9 +1,11 @@
-#pragma once
+//#pragma once
+#ifndef ROBOCOMMAND
+#define ROBOCOMMAND
 
 #include"Robo.h"
 #include"CharactorCommand.h"
 
-class clsRoboCommand : public clsCharactorCommand
+class clsRoboCommand
 {
 public:
 	clsRoboCommand() {};
@@ -43,8 +45,34 @@ public:
 class clsCommandQuickBoost : public clsRoboCommand
 {
 public:
+	virtual void Trigger(clsRobo* pRobo, const float fS, const float fAngle)
+	{
+		pRobo->SetDirQuickBoost(fAngle);
+	}
+
 	virtual void PushBotton(clsRobo* pRobo)
 	{
 		pRobo->QuickBoost();
 	}
 };
+
+class clsCommandRoboRotate : public clsRoboCommand
+{
+public:
+	virtual void Trigger(clsRobo* pRobo, const float fS, const float fAngle)
+	{
+		pRobo->Rotate(fAngle, fS);
+	}
+
+};
+
+class clsCommandRoboMove : public clsRoboCommand
+{
+public:
+	virtual void Trigger(clsRobo* pRobo, const float fS, const float fAngle)
+	{
+		pRobo->Move(fAngle, fS);
+	}
+};
+
+#endif//#ifndef ROBOCOMMAND

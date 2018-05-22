@@ -4,7 +4,7 @@ void clsRobo::RoboInit(
 	HWND hWnd,
 	ID3D11Device* pDevice11,
 	ID3D11DeviceContext* pContext11,
-	clsPOINTER_GROUP* const pPtrGroup )
+	clsPOINTER_GROUP* const pPtrGroup)
 {
 #ifdef Tahara
 	m_wpResource = pPtrGroup->GetResource();
@@ -12,17 +12,17 @@ void clsRobo::RoboInit(
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
-	m_pMesh = new clsSkinMesh;//aaaaa
+	m_pMesh = new clsSkinMesh;
 
 	m_pMesh->AttachModel(m_wpResource->GetSkinModels(clsResource::enSkinModel_Player));
-	m_pMesh->SetAnimSpeed( 0.1 );
+	m_pMesh->SetAnimSpeed(0.1);
 
 	SetScale(0.005f);
 
 	m_Trans.vPos.y = 10.0f;
 
 	m_fWalktMoveSpeedMax = 0.25f;
-	m_fWalkTopSpeedFrame = 1;
+	m_fWalkTopSpeedFrame = 5;
 
 	m_fBoostMoveSpeedMax = 0.5;
 	m_iBoostTopSpeedFrame = 60;
@@ -35,8 +35,6 @@ void clsRobo::RoboInit(
 
 	SetRotationSpeed(0.1f);
 	SetJumpPower(0.5f);
-
-
 }
 
 void clsRobo::Walk()
@@ -53,26 +51,29 @@ void clsRobo::Boost()
 
 void clsRobo::MoveSwitch()
 {
-	if (m_bBoost)
+	if (IsMoveControl())
 	{
-		Walk();
-	}
+		if (m_bBoost)
+		{
+			Walk();
+		}
 
-	else
-	{
-		Boost();
+		else
+		{
+			Boost();
+		}
 	}
 }
 
 void clsRobo::BoostRising()
 {
-	if (!m_bGround)
+	if (!m_bGround || IsMoveing())
 	{
 		if (m_fFollPower < m_fBoostMoveSpeedMax)
 		{
 			m_fFollPower += m_fBoostRisingAccele;
 		}
-		
+
 		else
 		{
 			m_fFollPower = m_fBoostMoveSpeedMax;
@@ -90,30 +91,46 @@ void clsRobo::BoostRising()
 	}
 }
 
+void clsRobo::SetDirQuickBoost(const float fAngle)
+{
+	if (IsMoveControl())
+	{
+		D3DXVECTOR3 vForward;
+
+		//¡Œü‚¢‚Ä‚¢‚é•ûŒü.
+		vForward = GetVec3Dir(m_Trans.fYaw, vDirForward);
+
+		//s‚«‚½‚¢•ûŒü.
+		m_vMoveDir = GetVec3Dir(fAngle, vForward);
+	}
+}
+
 void clsRobo::QuickBoost()
 {
 	if (IsMoveControl())
 	{
-		m_fMoveSpeed = m_fBoostMoveSpeedMax * 2.0f;
+		m_fMoveSpeed = m_fBoostMoveSpeedMax * 5.0f;
+		SetMoveDecelerationSpeed(m_iBoostTopSpeedFrame * 2);
 	}
 }
 
-clsRobo::clsRobo() :
-	m_pMesh( NULL ),
-	m_bBoost( false ),
-	m_fWalktMoveSpeedMax( 0.0f ),
-	m_fWalkTopSpeedFrame( 0.0f ),
-	m_fBoostMoveSpeedMax( 0.0f ),
-	m_iBoostTopSpeedFrame( 0 ),
-	m_fBoostRisingSpeedMax( 0.0f ),
-	m_iBoostRisingTopSpeedFrame( 0 ),
-	m_fBoostRisingAccele( 0.0f ),
 
-	m_wpResource( nullptr ),
-	m_wpEffects( nullptr ),
-	m_wpSound( nullptr )
+clsRobo::clsRobo() :
+m_pMesh(NULL),
+m_bBoost(false),
+m_fWalktMoveSpeedMax(0.0f),
+m_fWalkTopSpeedFrame(0.0f),
+m_fBoostMoveSpeedMax(0.0f),
+m_iBoostTopSpeedFrame(0),
+m_fBoostRisingSpeedMax(0.0f),
+m_iBoostRisingTopSpeedFrame(0),
+m_fBoostRisingAccele(0.0f),
+
+m_wpResource(nullptr),
+m_wpEffects(nullptr),
+m_wpSound(nullptr)
 {
-//	ZeroMemory(this, sizeof(clsRobo));
+	//	ZeroMemory(this, sizeof(clsRobo));
 }
 
 clsRobo::~clsRobo()

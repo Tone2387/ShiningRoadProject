@@ -84,6 +84,7 @@ public:
 	void MoveSwitch();
 	void BoostRising();
 	void QuickBoost();
+	void SetDirQuickBoost(const float fAngle);
 
 	clsRobo();
 	~clsRobo();
