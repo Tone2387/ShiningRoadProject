@@ -26,8 +26,7 @@ clsSCENE_BASE* clsFACTORY::Create(
 
 //シーンのファクトリ.
 
-clsSCENE_FACTORY::clsSCENE_FACTORY( 
-	clsPOINTER_GROUP* const ptrGroup ) : clsFACTORY( ptrGroup ) ,
+clsSCENE_FACTORY::clsSCENE_FACTORY( clsPOINTER_GROUP* const ptrGroup ) : clsFACTORY( ptrGroup ) ,
 	m_wpPtrGroup( ptrGroup )
 {
 

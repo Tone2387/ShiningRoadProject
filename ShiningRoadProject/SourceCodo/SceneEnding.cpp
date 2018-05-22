@@ -11,23 +11,20 @@ clsENDING::~clsENDING()
 {
 }
 
-void clsENDING::Create()
+void clsENDING::CreateProduct()
 {
 
 }
 
 
-void clsENDING::Update( enSCENE &nextScene )
+void clsENDING::UpdateProduct( enSCENE &nextScene )
 {
 
 
 	DebugChangeScene( nextScene );
 }
 
-void clsENDING::Render(
-	const D3DXMATRIX &mView, 
-	const D3DXMATRIX &mProj,
-	const D3DXVECTOR3 &vLight ) const
+void clsENDING::RenderProduct()
 
 {
 	//RenderŠÖ”‚Ìˆø”‚ğ‘‚«‚â‚·‚­‚·‚é‚½‚ß‚Ì•Ï”.

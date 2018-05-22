@@ -95,51 +95,51 @@ VS_OUT VS_Main( float4 Pos	: POSITION,
 float4 PS_Main( VS_OUT In )	:	SV_Target
 {
 	float4 color
-		= g_texColor.Sample( g_samLinear, In.Tex ) /2
+		= g_texColor.Sample( g_samLinear, In.Tex ) / 2
 		+ In.Color / 2.0f;
 	color *= g_vColor;
 
 
 
-	//----- フォグ処理 -----//.
-	float fFogColor = 0.0f;
-	//--- 奥フォグ ---.
-	float d = In.Pos.z * In.Pos.w;	//距離.
-	float density = 0.03f;		//密度//0.025f.
-	float e = 2.71828;		//自然対数の底(ネイピア数).
-
-	float f = pow( e, -d * density );	//フォグファクター.
-	f *= 0.5f + 0.5f + 0.5f;
-	f = saturate( f );
-	float4 Fog = f * color + ( 1 - f ) * fFogColor;
-
-	//--- 床フォグ ---.
-	float4 vFogColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-	In.PosWorld /= In.PosWorld.w;
-	float fFloorHeight = 3.0f;
-	float y = In.PosWorld.y + fFloorHeight;//絶対座標での高さ.
-	float h = -1.0f;	//ここからFogを出す.
-
-	//ごり押し.
-	{
-		float High = 0.0f;
-		float Low = -6.0f;
-		float Mid = ( High + Low ) / 2;
-		y =  Mid - y;
-		float ffa = ( y / 1.0f ) * ( y / 1.0f ) * ( y / 1.0f ) * ( y / 1.0f ) * ( y / 1.0f ) * ( y / 1.0f );
-		vFogColor = float4( 0.0f, 0.0f, 0.0f, ffa ); 
-	}
-
-	f = y / h;	//フォグファクター.
-	f = saturate( f );
-
-	f *= 1.0f;	//フォグの量.
-	f = saturate( f );
-	float4 FogFloor = f * color + ( 1.0f - f ) * vFogColor;
-
-	//----- フォグ処理 終了 -----//.
-
-	color = ( FogFloor * Fog ) / color;
+//	//----- フォグ処理 -----//.
+//	float fFogColor = 0.0f;
+//	//--- 奥フォグ ---.
+//	float d = In.Pos.z * In.Pos.w;	//距離.
+//	float density = 0.03f;		//密度//0.025f.
+//	float e = 2.71828;		//自然対数の底(ネイピア数).
+//
+//	float f = pow( e, -d * density );	//フォグファクター.
+//	f *= 0.5f + 0.5f + 0.5f;
+//	f = saturate( f );
+//	float4 Fog = f * color + ( 1 - f ) * fFogColor;
+//
+//	//--- 床フォグ ---.
+//	float4 vFogColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+//	In.PosWorld /= In.PosWorld.w;
+//	float fFloorHeight = 3.0f;
+//	float y = In.PosWorld.y + fFloorHeight;//絶対座標での高さ.
+//	float h = -1.0f;	//ここからFogを出す.
+//
+//	//ごり押し.
+//	{
+//		float High = 0.0f;
+//		float Low = -6.0f;
+//		float Mid = ( High + Low ) / 2;
+//		y =  Mid - y;
+//		float ffa = ( y / 1.0f ) * ( y / 1.0f ) * ( y / 1.0f ) * ( y / 1.0f ) * ( y / 1.0f ) * ( y / 1.0f );
+//		vFogColor = float4( 0.0f, 0.0f, 0.0f, ffa ); 
+//	}
+//
+//	f = y / h;	//フォグファクター.
+//	f = saturate( f );
+//
+//	f *= 1.0f;	//フォグの量.
+//	f = saturate( f );
+//	float4 FogFloor = f * color + ( 1.0f - f ) * vFogColor;
+//
+//
+//	color = ( FogFloor * Fog ) / color;
+//	//----- フォグ処理 終了 -----//.
 
 	return color;
 }

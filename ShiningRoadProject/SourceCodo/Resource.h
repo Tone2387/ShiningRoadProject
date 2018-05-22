@@ -50,6 +50,8 @@ public:
 #endif//#ifdef RESOURCE_CLASS_SINGLETON
 	~clsResource();
 
+	//new直後に使う.
+	void Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext );
 
 
 	//スタティックモデル.

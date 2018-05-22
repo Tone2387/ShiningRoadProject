@@ -36,6 +36,25 @@ clsResource::~clsResource()
 }
 
 
+//newíºå„Ç…égÇ§.
+void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext )
+{
+	InitStaticModel( hWnd, pDevice, pContext );
+	InitSkinModel( hWnd, pDevice, pContext );
+
+	CreateStaticModel( 
+		"Data\\Stage\\yuka.x", 
+		clsResource::enSTATIC_MODEL::enStaticModel_Ground );
+	CreateStaticModel(
+		"Data\\Trap\\Spia.x", 
+		clsResource::enSTATIC_MODEL::enStaticModel_Enemy );
+
+	CreateSkinModel(
+		"Data\\hime\\hime_run.x", 
+		clsResource::enSKIN_MODEL::enSkinModel_Player );
+}
+
+
 //==================================================.
 //	èâä˙âª.
 //==================================================.

@@ -18,28 +18,6 @@ clsMain* g_pClsMain = nullptr;
 
 
 
-
-
-
-//ライト方向.
-const D3DXVECTOR3 vLIGHT_DIR = { 0.0f, 0.01f, 0.02f };
-
-//カメラのより具合.
-const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );
-
-//描画限界距離.
-const float fRENDER_LIMIT = 150.0f;
-
-
-
-
-
-
-
-
-
-
-
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //	定数終了.
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -112,11 +90,10 @@ clsMain::clsMain() :
 	m_pBackBuffer_DSTex( nullptr ),
 	m_pBackBuffer_DSTexDSV( nullptr ),
 	m_pDepthStencilState( nullptr ),
-	m_pGame( nullptr )
+	m_pGame( nullptr ),
+	m_spViewPort( nullptr )
 {
 
-	//ライト方向.
-	m_vLight = vLIGHT_DIR;
 
 }
 
@@ -326,14 +303,10 @@ void clsMain::Render()
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f, 0 );
 
-	//カメラ関数.
-	Camera();
-	//プロジェクション関数.
-	Proj();
 
 	//このRender関数の前のAppMain関数でチェックしているのでアサートは省く.
 //	ASSERT_IF_NULL( m_pGame );
-	m_pGame->Render( m_mView, m_mProj, m_vLight );
+	m_pGame->Render();
 	
 	//2D?.
 //	SetDepth( false );	//Zテスト:OFF.
@@ -578,6 +551,7 @@ void clsMain::DestroyD3D()
 
 #endif //#ifdef Tahara
 
+	SAFE_DELETE( m_spViewPort );
 	SAFE_RELEASE( m_pBackBuffer_DSTexDSV );
 	SAFE_RELEASE( m_pBackBuffer_DSTex );
 	SAFE_RELEASE( m_pBackBuffer_TexRTV );
@@ -679,7 +653,7 @@ HRESULT clsMain::InitBBox( clsDX9Mesh* pMesh )
 ////============================================================
 HRESULT clsMain::ReadMesh()
 {
-	m_pGame = new clsGAME( m_hWnd, m_pDevice, m_pDeviceContext );
+	m_pGame = new clsGAME( m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort );
 	m_pGame->Create();
 
 
@@ -807,54 +781,6 @@ void clsMain::GetPosFromBone( clsD3DXSKINMESH* skinMesh, char BoneName[], D3DXVE
 }
 
 
-//============================================================
-//	カメラ関数.
-//============================================================
-void clsMain::Camera()
-{
-
-////----------------------------.
-////	カメラ追従処理ここから.
-////----------------------------.
-////カメラ位置(自機の背中から)の位置.
-//m_Camera.vEye = m_Camera.vLook = m_pOldPlayer->m_vPos;
-//m_Camera.fYaw = m_pOldPlayer->m_fYaw;
-////Y軸回転行列の作成.
-//D3DXMatrixRotationY( &m_Camera.mRot, m_Camera.fYaw );
-////軸ベクトル.
-//D3DXVECTOR3 vecAxisZ( 0.0f, 0.0f, 1.0f );
-////Z軸ベクトルそのものを回転.
-//D3DXVec3TransformCoord( &vecAxisZ, &vecAxisZ, &m_Camera.mRot );
-//m_Camera.vEye	-= vecAxisZ * 4.0f;//自機の背中側.
-//m_Camera.vLook	+= vecAxisZ * 2.0f;//自機の前側.
-//m_Camera.vEye.y		+= 2.0f;
-//m_Camera.vLook.y	+= 0.2f;
-////----------------------------.
-////	カメラ追従処理ここまで.
-////----------------------------.
-
-
-	//ビュー(カメラ)変換.
-	D3DXVECTOR3 vUpVec	( 0.0f, 1.0f, 0.0f );	//上方位置.
-	D3DXMatrixLookAtLH(
-		&m_mView,	//(out)ビュー計算結果.
-		&m_pGame->GetCameraPos(), &m_pGame->GetCameraLookPos(), &vUpVec );
-
-}
-//============================================================
-//	プロジェクション関数.
-//============================================================
-void clsMain::Proj()
-{
-	//プロジェクション(射影行列)変換.
-	D3DXMatrixPerspectiveFovLH(
-		&m_mProj,			//(out)プロジェクション計算結果.
-		fZOOM,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が狭くなる.
-		(FLOAT)WND_W / (FLOAT)WND_H,//アスペクト比(幅/高さ).
-		0.1f,				//近いビュー平面のz値.
-		fRENDER_LIMIT );	//遠いビュー平面のz値.100.f
-
-}
 
 
 
@@ -923,22 +849,28 @@ void clsMain::RenderDebugText()
 
 #ifdef Tahara
 //ConvDimPosの事前準備.
-void clsMain::SetViewPort10( D3D11_VIEWPORT* Vp )
+void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
 {
-	m_ViewPort.TopLeftX = static_cast<INT>(Vp->TopLeftX);
-	m_ViewPort.TopLeftY = static_cast<INT>(Vp->TopLeftY);
-	m_ViewPort.MaxDepth = Vp->MaxDepth;
-	m_ViewPort.MinDepth = Vp->MinDepth;
-	m_ViewPort.Width	= static_cast<UINT>(Vp->Width);
-	m_ViewPort.Height	= static_cast<UINT>(Vp->Height);
+	if( m_spViewPort == nullptr ){
+		m_spViewPort = new D3D10_VIEWPORT;
+	}
+
+	m_spViewPort->TopLeftX = static_cast<INT>( Vp->TopLeftX );
+	m_spViewPort->TopLeftY = static_cast<INT>( Vp->TopLeftY );
+	m_spViewPort->MaxDepth = Vp->MaxDepth;
+	m_spViewPort->MinDepth = Vp->MinDepth;
+	m_spViewPort->Width	= static_cast<UINT>( Vp->Width );
+	m_spViewPort->Height	= static_cast<UINT>( Vp->Height );
 };
 
-//3D座標のスクリーン( 2D )座標変換.dimensions(次元) conversion(変換)
-D3DXVECTOR3 clsMain::ConvDimPos( D3DXVECTOR3 v2DPos, D3DXVECTOR3 v3DPos )
-{
-	D3DXMATRIX mWorld;
-	D3DXMatrixIdentity( &mWorld );
-	D3DXVec3Project( &v2DPos, &v3DPos, &m_ViewPort, &m_mProj, &m_mView, &mWorld );
-	return v2DPos;
-}
+////3D座標のスクリーン( 2D )座標変換.dimensions(次元) conversion(変換)
+//D3DXVECTOR3 clsMain::ConvDimPos( D3DXVECTOR3 &v2DPos, const D3DXVECTOR3 &v3DPos )
+//{
+//	D3DXMATRIX mWorld;
+//	D3DXMatrixIdentity( &mWorld );
+//	D3DXVec3Project( &v2DPos, &v3DPos, m_spViewPort, &m_mProj, &m_mView, &mWorld );
+//	return v2DPos;
+//}
+
+
 #endif//#ifdef Tahara

@@ -17,7 +17,7 @@ clsMISSION::~clsMISSION()
 }
 
 //生成時に一度だけ通る処理.
-void clsMISSION::Create()
+void clsMISSION::CreateProduct()
 {
 	m_pTestRobo = new clsRobo;
 	m_pTestRobo->RoboInit( nullptr, nullptr, nullptr, m_wpPtrGroup );//4つ目の引数は効果音やエフェクトを出すために追加しました.
@@ -38,7 +38,7 @@ void clsMISSION::Create()
 }
 
 //毎フレーム通る処理.
-void clsMISSION::Update( enSCENE &nextScene )
+void clsMISSION::UpdateProduct( enSCENE &nextScene )
 {
 	//nullならassert.
 	ASSERT_IF_NULL( m_pTestRobo );
@@ -56,15 +56,12 @@ void clsMISSION::Update( enSCENE &nextScene )
 }
 
 //描画.
-void clsMISSION::Render(
-	const D3DXMATRIX &mView, 
-	const D3DXMATRIX &mProj,
-	const D3DXVECTOR3 &vLight ) const
+void clsMISSION::RenderProduct()
 {
 	//Render関数の引数を書きやすくするための変数.
 	D3DXVECTOR3 vCamPos = m_wpCamera->GetPos();
 
-	m_pTestChara->Render( mView, mProj, vLight, vCamPos );
-	m_pTestRobo->Render( mView, mProj, vLight, vCamPos );
+	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos );
+	m_pTestRobo->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }
 

@@ -7,10 +7,12 @@
 clsGAME::clsGAME( 
 	const HWND hWnd, 
 	ID3D11Device* const pDevice, 
-	ID3D11DeviceContext* const pContext ) :
+	ID3D11DeviceContext* const pContext,
+		D3D10_VIEWPORT* const pViewPort ) :
 	m_hWnd( hWnd ),
 	m_wpDevice( pDevice ),
 	m_wpContext( pContext ),
+	m_wpViewPort( pViewPort ),
 	m_pPtrGroup( nullptr ),
 	m_spDxInput( nullptr ),
 	m_pResource( nullptr ),
@@ -21,31 +23,6 @@ clsGAME::clsGAME(
 	m_spCamera( nullptr ),
 	m_pCameraFactory( nullptr )
 {
-	m_pResource = new clsResource;
-	m_pResource->InitStaticModel( m_hWnd, m_wpDevice, m_wpContext );
-	m_pResource->InitSkinModel( m_hWnd, m_wpDevice, m_wpContext );
-
-	m_pResource->CreateStaticModel( 
-		"Data\\Stage\\yuka.x", 
-		clsResource::enSTATIC_MODEL::enStaticModel_Ground );
-	m_pResource->CreateStaticModel(
-		"Data\\Trap\\Spia.x", 
-		clsResource::enSTATIC_MODEL::enStaticModel_Enemy );
-
-	m_pResource->CreateSkinModel(
-		"Data\\hime\\hime_run.x", 
-		clsResource::enSKIN_MODEL::enSkinModel_Player );
-
-	m_pEffect = new clsEffects;
-	m_pEffect->Create( pDevice, pContext );
-
-	m_pSound = new clsSOUND_MANAGER( m_hWnd );
-
-	//引数のポインタの集合体.
-	m_pPtrGroup = new clsPOINTER_GROUP( 
-		m_wpDevice, m_wpContext, 
-		m_spDxInput, m_pResource, 
-		m_pEffect, m_pSound );
 
 }
 
@@ -59,12 +36,9 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_pSound );
 	SAFE_DELETE( m_pEffect );
 	SAFE_DELETE( m_pResource );
-
-//	//コントローラ.
 	SAFE_DELETE( m_spDxInput );
 
-
-
+	m_wpViewPort = nullptr;
 	m_wpContext = nullptr;
 	m_wpDevice = nullptr;
 	m_hWnd = nullptr;
@@ -75,6 +49,22 @@ void clsGAME::Create()
 { 
 	ASSERT_IF_NOT_NULL( m_spDxInput );
 	m_spDxInput = new clsDxInput;
+
+	m_pResource = new clsResource;
+	m_pResource->Create( m_hWnd, m_wpDevice, m_wpContext );
+
+	m_pEffect = new clsEffects;
+	m_pEffect->Create( m_wpDevice, m_wpContext );
+
+	m_pSound = new clsSOUND_MANAGER( m_hWnd );
+
+	//引数のポインタの集合体.
+	m_pPtrGroup = new clsPOINTER_GROUP( 
+		m_wpDevice, m_wpContext, 
+		m_wpViewPort,
+		m_spDxInput, m_pResource, 
+		m_pEffect, m_pSound );
+
 
 	//ファクトリの作成.
 	ASSERT_IF_NOT_NULL( m_pSceneFactory );
@@ -118,12 +108,11 @@ void clsGAME::Update()
 }
 
 //毎フレーム使う.
-void clsGAME::Render(
-	const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
-	const D3DXVECTOR3 &vLight )
+void clsGAME::Render()
 { 
+
 	ASSERT_IF_NULL( m_pScene );
-	m_pScene->Render( mView, mProj, vLight ); 
+	m_pScene->Render(); 
 }
 
 
@@ -162,3 +151,6 @@ D3DXVECTOR3 clsGAME::GetCameraLookPos() const
 {
 	return m_pScene->GetCameraLookPos();
 }
+
+
+

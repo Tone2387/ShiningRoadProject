@@ -24,19 +24,6 @@
 #endif//#if _DEBUG
 
 
-//#include "Sound.h"		//サウンドクラス.
-//
-//
-//
-//#include "Effects.h"//Effekseerを管理するクラス.
-//
-//
-//#include "CXInput.h"
-//
-//#include "Resource.h"
-//
-//#include "File.h"
-
 
 #include "Game.h"
 
@@ -57,7 +44,7 @@
 //============================================================
 //	定数.
 //============================================================
-#define WND_TITLE	"絶望元年"
+#define WND_TITLE	"ShiningRoadProject"
 #define APR_NAME	"ShiningRoadProject"
 
 
@@ -146,10 +133,6 @@ private:
 	//ボーンの座標をとる(ラップ関数).
 	void GetPosFromBone( clsD3DXSKINMESH* skinMesh, char BoneName[], D3DXVECTOR3& Pos );
 
-	//カメラ関数.
-	void Camera();
-	//プロジェクション関数.
-	void Proj();
 
 
 
@@ -174,10 +157,6 @@ private:
 	ID3D11Texture2D*		m_pBackBuffer_DSTex;//バックバッファ.
 	ID3D11DepthStencilView*	m_pBackBuffer_DSTexDSV;//デプスステンシルビュー.
 
-	D3DXVECTOR3		m_vLight;	//ライトの方向.
-
-	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
-	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 
 	//深度(Z)テスト設定.
 	ID3D11DepthStencilState* m_pDepthStencilState;
@@ -194,11 +173,11 @@ private:
 
 #ifdef Tahara
 	//ConvDimPosの事前準備.
-	void SetViewPort10( D3D11_VIEWPORT* Vp );
-	//3D座標のスクリーン( 2D )座標変換.dimensions(次元) conversion(変換)
-	D3DXVECTOR3 ConvDimPos( D3DXVECTOR3 v2DPos, D3DXVECTOR3 v3DPos );
+	void SetViewPort10( D3D11_VIEWPORT* const Vp );
+//	//3D座標をスクリーン( 2D )座標へと変換する.dimensions(次元) conversion(変換)
+//	D3DXVECTOR3 ConvDimPos( D3DXVECTOR3 &v2DPos, const D3DXVECTOR3 &v3DPos );
 	//2DSp用.
-	D3D10_VIEWPORT m_ViewPort;
+	D3D10_VIEWPORT* m_spViewPort;
 
 #endif//#ifdef Tahara
 

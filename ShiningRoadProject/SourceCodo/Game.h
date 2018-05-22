@@ -11,7 +11,11 @@ class clsGAME
 {
 public:
 	//引数はシーンの初期化に必要なもの.
-	clsGAME( const HWND hWnd, ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext );
+	clsGAME( 
+		const HWND hWnd, 
+		ID3D11Device* const pDevice, 
+		ID3D11DeviceContext* const pContext,
+		D3D10_VIEWPORT* const pViewPort );
 	~clsGAME();
 
 	//new直後に使う.
@@ -19,9 +23,7 @@ public:
 	//毎フレーム使う.
 	void Update();
 	//毎フレーム使う.
-	void Render(
-		const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
-		const D3DXVECTOR3 &vLight );
+	void Render();
 
 
 	//引数のシーンに切り替え.
@@ -34,9 +36,15 @@ public:
 
 private:
 
+
+
+
+
 	HWND m_hWnd;
 	ID3D11Device*			m_wpDevice;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_wpContext;	//デバイスコンテキスト.
+	//2DSp用.
+	D3D10_VIEWPORT* m_wpViewPort;
 
 	//ジョイスティック.
 	clsDxInput*		m_spDxInput;

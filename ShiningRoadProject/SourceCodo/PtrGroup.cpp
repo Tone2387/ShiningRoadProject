@@ -3,12 +3,14 @@
 clsPOINTER_GROUP::clsPOINTER_GROUP(		
 	ID3D11Device* const pDevice,
 	ID3D11DeviceContext* const pContext,
+	D3D10_VIEWPORT* const pViewPort,
 	clsDxInput* const pInput,
 	clsResource* const pResource,
 	clsEffects* const pEffects,
 	clsSOUND_MANAGER* const pSound ) :
 		m_wpDevice( pDevice ),
 		m_wpContext( pContext ),
+		m_wpViewPort( pViewPort ),
 		m_wpDxInput( pInput ),
 		m_wpResource( pResource ),
 		m_wpEffects( pEffects ),
@@ -24,6 +26,7 @@ clsPOINTER_GROUP::~clsPOINTER_GROUP()
 	m_wpEffects = nullptr;
 	m_wpResource = nullptr;
 	m_wpDxInput = nullptr;
+	m_wpViewPort = nullptr;
 	m_wpContext = nullptr;
 	m_wpDevice = nullptr;
 }
@@ -43,6 +46,11 @@ ID3D11Device* clsPOINTER_GROUP::GetDevice() const
 ID3D11DeviceContext* clsPOINTER_GROUP::GetContext() const
 {
 	return m_wpContext;
+}
+
+D3D10_VIEWPORT* clsPOINTER_GROUP::GetViewPort() const
+{
+	return m_wpViewPort;
 }
 
 //ジョイスティック.

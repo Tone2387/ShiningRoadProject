@@ -20,7 +20,7 @@ clsASSEMBLE::~clsASSEMBLE()
 	SAFE_DELETE( m_pTestChara );
 }
 
-void clsASSEMBLE::Create()
+void clsASSEMBLE::CreateProduct()
 {
 	m_pTestChara = new clsCharaStatic;
 	m_pTestChara->AttachModel( 
@@ -45,26 +45,25 @@ void clsASSEMBLE::Create()
 	m_pSprite->SetPos( { WND_W*0.5f, WND_H*0.5f, 0.0f } );
 }
 
-void clsASSEMBLE::Update( enSCENE &nextScene )
+void clsASSEMBLE::UpdateProduct( enSCENE &nextScene )
 {
 	m_pParts->AddRotationY( 0.01f);
 
 	m_pSprite->AddRot( { 0.0f, 0.0f, 0.025f } );
 
-
-	DebugChangeScene( nextScene );
 }
 
-void clsASSEMBLE::Render(
-	const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
-	const D3DXVECTOR3 &vLight ) const
+void clsASSEMBLE::RenderProduct()
 
 {
 	//RenderŠÖ”‚Ìˆø”‚ğ‘‚«‚â‚·‚­‚·‚é‚½‚ß‚Ì•Ï”.
 	D3DXVECTOR3 vCamPos = m_wpCamera->GetPos();
 
-	m_pParts->Render( mView, mProj, vLight, vCamPos );
-	m_pTestChara->Render( mView, mProj, vLight, vCamPos, D3DXVECTOR4(0.5f,2.0f,0.5f,0.75f), true );
+	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
+//	ConvDimPos( m_pSprite->GetPos(), m_pParts->GetPosition() );
+
+	m_pParts->Render( m_mView, m_mProj, m_vLight, vCamPos );
+	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos, D3DXVECTOR4(0.5f,2.0f,0.5f,0.75f), true );
 
 	m_pSprite->Render();
 }

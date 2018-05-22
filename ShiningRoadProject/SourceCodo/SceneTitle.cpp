@@ -16,7 +16,7 @@ clsTITLE::~clsTITLE()
 }
 
 
-void clsTITLE::Create()
+void clsTITLE::CreateProduct()
 {
 	//テストモデルの初期化.
 	m_pTestChara = new clsCharaStatic;
@@ -28,7 +28,7 @@ void clsTITLE::Create()
 
 }
 
-void clsTITLE::Update( enSCENE &nextScene )
+void clsTITLE::UpdateProduct( enSCENE &nextScene )
 {
 	//Update関数が機能しているかのテスト用回転.
 	m_pTestChara->AddRotation( D3DXVECTOR3( 0.0f, 0.00f, 0.025f ) );
@@ -37,14 +37,11 @@ void clsTITLE::Update( enSCENE &nextScene )
 	DebugChangeScene( nextScene );
 }
 
-void clsTITLE::Render(
-	const D3DXMATRIX &mView, 
-	const D3DXMATRIX &mProj,
-	const D3DXVECTOR3 &vLight ) const
+void clsTITLE::RenderProduct()
 {
 	//Render関数の引数を書きやすくするための変数.
 	D3DXVECTOR3 vCamPos = m_wpCamera->GetPos();
 
-	m_pTestChara->Render( mView, mProj, vLight, vCamPos );
+	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 }

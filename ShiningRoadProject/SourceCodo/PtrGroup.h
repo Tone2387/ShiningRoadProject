@@ -7,18 +7,6 @@
 #include "Camera.h"
 
 
-//========== 元の姿 ===========//.
-////シーンの初期化に必要なもののまとめ.
-//struct clsPOINTER_GROUP
-//{
-//	//リソース.
-//	clsResource* pResource;
-//	//エフェクトクラス.
-//	clsEffects*	pEffects;
-//	//BGM,SE.
-//	clsSOUND_MANAGER*	pSound;
-//};
-//========== 元の姿 ===========//.
 
 
 class clsPOINTER_GROUP
@@ -28,6 +16,7 @@ public:
 	clsPOINTER_GROUP( 
 		ID3D11Device* const pDevice,
 		ID3D11DeviceContext* const pContext,
+		D3D10_VIEWPORT* const pViewPort,
 		clsDxInput* const pInput,
 		clsResource* const pResource,
 		clsEffects* const pEffects,
@@ -40,6 +29,7 @@ public:
 	//----- ポインターを渡す -----//.
 	ID3D11Device* GetDevice() const;
 	ID3D11DeviceContext* GetContext() const;
+	D3D10_VIEWPORT* GetViewPort() const;
 	//ジョイスティック.
 	clsDxInput* GetDxInput() const;
 	//リソース.
@@ -52,9 +42,11 @@ public:
 	clsCAMERA_BASE*	GetCamera() const;
 
 private:
-
+	//デバイスオブジェクト.
 	ID3D11Device*			m_wpDevice;
 	ID3D11DeviceContext*	m_wpContext;
+	//2DSp用.
+	D3D10_VIEWPORT* m_wpViewPort;
 
 	//ジョイスティック.
 	clsDxInput*		m_wpDxInput;
