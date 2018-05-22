@@ -24,9 +24,6 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup ) :
 	m_wpSound( ptrGroup->GetSound() ),
 	m_wpCamera( ptrGroup->GetCamera() )
 {
-	D3DXMatrixIdentity( &m_mView );
-	D3DXMatrixIdentity( &m_mProj );	
-	m_vLight = vLIGHT_DIR;
 }
 
 clsSCENE_BASE::~clsSCENE_BASE()
@@ -46,6 +43,11 @@ clsSCENE_BASE::~clsSCENE_BASE()
 //シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
 void clsSCENE_BASE::Create()
 {
+	D3DXMatrixIdentity( &m_mView );
+	D3DXMatrixIdentity( &m_mProj );	
+	m_vLight = vLIGHT_DIR;
+
+	//各シーンのCreate.
 	CreateProduct();
 }
 
@@ -53,8 +55,10 @@ void clsSCENE_BASE::Create()
 //				  指定したシーンが生成される ).
 void clsSCENE_BASE::Update( enSCENE &nextScene )
 {
+	//各シーンのUpdate.
 	UpdateProduct( nextScene );
 
+	//デバッグ用シーン切り替え.
 	DebugChangeScene( nextScene );
 }
 
@@ -66,7 +70,11 @@ void clsSCENE_BASE::Render()
 	//プロジェクション関数.
 	Proj();
 
-	RenderProduct();
+	//Render関数の引数を書きやすくするための変数.
+	D3DXVECTOR3 vCamPos = m_wpCamera->GetPos();
+
+	//各シーンの描画.
+	RenderProduct( vCamPos );
 }
 
 
@@ -102,11 +110,14 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &nextScene ) const
 	else if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
 		nextScene = enSCENE::ASSEMBLE;
 	}
-	else if( GetAsyncKeyState( VK_F7  ) & 0x1 ){
+	else if( GetAsyncKeyState( VK_F7 ) & 0x1 ){
 		nextScene = enSCENE::MISSION;
 	}
-	else if( GetAsyncKeyState( VK_F8  ) & 0x1 ){
+	else if( GetAsyncKeyState( VK_F8 ) & 0x1 ){
 		nextScene = enSCENE::ENDING;
+	}
+	else if( GetAsyncKeyState( VK_F9 ) & 0x1 ){
+		nextScene = enSCENE::GAMEOVER;
 	}
 }
 

@@ -45,16 +45,19 @@ clsSCENE_BASE* clsSCENE_FACTORY::CreateProduct(
 	switch( enScene )
 	{
 	case enSCENE::TITLE:
-		return new clsTITLE( m_wpPtrGroup );
+		return new clsSCENE_TITLE( m_wpPtrGroup );
 		break;
 	case enSCENE::ASSEMBLE:
-		return new clsASSEMBLE( m_wpPtrGroup );
+		return new clsSCENE_ASSEMBLE( m_wpPtrGroup );
 		break;
 	case enSCENE::MISSION:
-		return new clsMISSION( m_wpPtrGroup );
+		return new clsSCENE_MISSION( m_wpPtrGroup );
 		break;
 	case enSCENE::ENDING:
-		return new clsENDING( m_wpPtrGroup );
+		return new clsSCENE_ENDING( m_wpPtrGroup );
+		break;
+	case enSCENE::GAMEOVER:
+		return new clsSCENE_GAME_OVER( m_wpPtrGroup );
 		break;
 	default:
 		assert( !"不正なシーンが指定されました" );

@@ -7,17 +7,17 @@
 //================================//
 //========== エンディングクラス ==========//
 //================================//
-class clsENDING : public clsSCENE_BASE
+class clsSCENE_ENDING : public clsSCENE_BASE
 {
 public:
-	clsENDING( clsPOINTER_GROUP* const ptrGroup );
-	~clsENDING();
+	clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup );
+	~clsSCENE_ENDING();
 
 
 private:
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &nextScene ) final;
-	void RenderProduct() final;
+	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 
 };

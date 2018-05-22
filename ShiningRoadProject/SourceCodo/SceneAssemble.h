@@ -9,18 +9,18 @@
 //================================//
 //========== ‘g‚ÝŠ·‚¦ƒNƒ‰ƒX ==========//
 //================================//
-class clsASSEMBLE : public clsSCENE_BASE
+class clsSCENE_ASSEMBLE : public clsSCENE_BASE
 {
 public:
-	clsASSEMBLE( clsPOINTER_GROUP* const ptrGroup );
-	~clsASSEMBLE();
+	clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup );
+	~clsSCENE_ASSEMBLE();
 
 
 private:
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &nextScene ) final;
-	void RenderProduct() final;
+	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 
 	clsSPRITE2D_CENTER* m_pSprite;
