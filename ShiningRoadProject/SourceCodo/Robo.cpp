@@ -12,7 +12,7 @@ void clsRobo::RoboInit(
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
-	m_pMesh = new clsSkinMesh;
+	m_pMesh = new clsSkinMesh;//aaaaa
 
 	m_pMesh->AttachModel(m_wpResource->GetSkinModels(clsResource::enSkinModel_Player));
 	m_pMesh->SetAnimSpeed( 0.1 );
