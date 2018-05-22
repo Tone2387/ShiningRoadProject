@@ -4,19 +4,19 @@
 //================================//
 //========== タイトルクラス ==========//
 //================================//
-clsTITLE::clsTITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup ),
+clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup ),
 	m_pTestChara( nullptr )
 {
 }
 
-clsTITLE::~clsTITLE()
+clsSCENE_TITLE::~clsSCENE_TITLE()
 {
 	//newしたポインタの破棄.
 	SAFE_DELETE( m_pTestChara );
 }
 
 
-void clsTITLE::CreateProduct()
+void clsSCENE_TITLE::CreateProduct()
 {
 	//テストモデルの初期化.
 	m_pTestChara = new clsCharaStatic;
@@ -28,7 +28,7 @@ void clsTITLE::CreateProduct()
 
 }
 
-void clsTITLE::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_TITLE::UpdateProduct( enSCENE &nextScene )
 {
 	//Update関数が機能しているかのテスト用回転.
 	m_pTestChara->AddRotation( D3DXVECTOR3( 0.0f, 0.00f, 0.025f ) );
@@ -37,11 +37,8 @@ void clsTITLE::UpdateProduct( enSCENE &nextScene )
 	DebugChangeScene( nextScene );
 }
 
-void clsTITLE::RenderProduct()
+void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-	//Render関数の引数を書きやすくするための変数.
-	D3DXVECTOR3 vCamPos = m_wpCamera->GetPos();
-
 	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 }

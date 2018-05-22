@@ -3,32 +3,27 @@
 //================================//
 //========== エンディングクラス ==========//
 //================================//
-clsENDING::clsENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
+clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 {
 }
 
-clsENDING::~clsENDING()
+clsSCENE_ENDING::~clsSCENE_ENDING()
 {
 }
 
-void clsENDING::CreateProduct()
+void clsSCENE_ENDING::CreateProduct()
 {
 
 }
 
 
-void clsENDING::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_ENDING::UpdateProduct( enSCENE &nextScene )
 {
 
-
-	DebugChangeScene( nextScene );
 }
 
-void clsENDING::RenderProduct()
-
+void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-	//Render関数の引数を書きやすくするための変数.
-	D3DXVECTOR3 vCamPos = m_wpCamera->GetPos();
 
 }
 

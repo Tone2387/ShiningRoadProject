@@ -5,6 +5,7 @@
 #include "SceneAssemble.h"
 #include "SceneMission.h"
 #include "SceneEnding.h"
+#include "SceneGameOver.h"
 
 
 class clsCAMERA_BASE;

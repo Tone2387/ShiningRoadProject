@@ -4,20 +4,20 @@
 //================================//
 //========== ミッション中クラス ==========//
 //================================//
-clsMISSION::clsMISSION( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup ),
+clsSCENE_MISSION::clsSCENE_MISSION( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup ),
 	m_pTestRobo( nullptr ),
 	m_pTestChara( nullptr )
 {
 }
 
-clsMISSION::~clsMISSION()
+clsSCENE_MISSION::~clsSCENE_MISSION()
 {
 	SAFE_DELETE( m_pTestChara );
 	SAFE_DELETE( m_pTestRobo );
 }
 
 //生成時に一度だけ通る処理.
-void clsMISSION::CreateProduct()
+void clsSCENE_MISSION::CreateProduct()
 {
 	m_pTestRobo = new clsRobo;
 	m_pTestRobo->RoboInit( nullptr, nullptr, nullptr, m_wpPtrGroup );//4つ目の引数は効果音やエフェクトを出すために追加しました.
@@ -38,7 +38,7 @@ void clsMISSION::CreateProduct()
 }
 
 //毎フレーム通る処理.
-void clsMISSION::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 {
 	//nullならassert.
 	ASSERT_IF_NULL( m_pTestRobo );
@@ -50,17 +50,11 @@ void clsMISSION::UpdateProduct( enSCENE &nextScene )
 	if( !"クリア条件を満たすとここを通る" ){
 		nextScene = enSCENE::ENDING;
 	}
-
-	//デバッグ用シーン変更( キーボードのF9～12が対応している )すべてのシーンのUpdateの一番下に置く.
-	DebugChangeScene( nextScene );
 }
 
 //描画.
-void clsMISSION::RenderProduct()
+void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-	//Render関数の引数を書きやすくするための変数.
-	D3DXVECTOR3 vCamPos = m_wpCamera->GetPos();
-
 	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos );
 	m_pTestRobo->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }

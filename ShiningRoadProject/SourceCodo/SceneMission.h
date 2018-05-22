@@ -10,12 +10,12 @@
 //================================//
 //========== ミッション中クラス ==========//
 //================================//
-class clsMISSION : public clsSCENE_BASE
+class clsSCENE_MISSION : public clsSCENE_BASE
 {
 public:
 	//引数はリソースなどのポインタのまとめ( 引数は基底クラスで取り扱っているので特に意識しなくて大丈夫です ).
-	clsMISSION( clsPOINTER_GROUP* const ptrGroup );
-	~clsMISSION();
+	clsSCENE_MISSION( clsPOINTER_GROUP* const ptrGroup );
+	~clsSCENE_MISSION();
 
 //	//「SceneManager.cpp」の「SwitchScene」関数内でシーン作成直後に使用される.
 //	void Create() final;
@@ -32,7 +32,7 @@ private:
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &nextScene ) final;
-	void RenderProduct() final;
+	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 	//テスト用モデル( これは消しても良いです、いらないです ).
 	clsRobo* m_pTestRobo;

@@ -1,6 +1,8 @@
-﻿2018/05/21 15:34:11 にビルドを開始しました。
+﻿2018/05/22 17:00:33 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Build ターゲット)。
      1>FxCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"VS" /T vs_5_0 /Fo "C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\DebugText.cso" /Od /Zi Shader\DebugText.hlsl 
+         compilation object save succeeded; see C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\DebugText.cso
          C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"VS_Main" /T vs_5_0 /Fo "C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\Mesh.cso" /Od /Zi Shader\Mesh.hlsl 
      1>C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\Shader\Mesh.hlsl(62,9-35): warning X3206: implicit truncation of vector type
      1>C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\Shader\Mesh.hlsl(75,30-44): warning X3206: implicit truncation of vector type
@@ -9,10 +11,118 @@
      1>C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\Shader\Mesh.hlsl(184,30-44): warning X3206: implicit truncation of vector type
          
          compilation object save succeeded; see C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\Mesh.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"VSSkin" /T vs_5_0 /Fo "C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\MeshSkin.cso" /Od /Zi Shader\MeshSkin.hlsl 
+     1>C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\Shader\MeshSkin.hlsl(110,9-40): warning X3206: implicit truncation of vector type
+     1>C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\Shader\MeshSkin.hlsl(111,9-44): warning X3206: implicit truncation of vector type
+     1>C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\Shader\MeshSkin.hlsl(112,30-46): warning X3206: implicit truncation of vector type
+     1>C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\Shader\MeshSkin.hlsl(116,30-44): warning X3206: implicit truncation of vector type
+         
+         compilation object save succeeded; see C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\MeshSkin.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"VS" /T vs_5_0 /Fo "C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\PointSprite.cso" /Od /Zi Shader\PointSprite.hlsl 
+         compilation object save succeeded; see C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\PointSprite.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"VS" /T vs_5_0 /Fo "C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\Ray.cso" /Od /Zi Shader\Ray.hlsl 
+         compilation object save succeeded; see C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\Ray.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"VS_Main" /T vs_5_0 /Fo "C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\Sprite2D.cso" /Od /Zi Shader\Sprite2D.hlsl 
+         compilation object save succeeded; see C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\Sprite2D.cso
        Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\ShiningRoadProject.exe" /INCREMENTAL /NOLOGO /LIBPATH:SourceCodo\Effekseer\lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\ShiningRoadProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\ShiningRoadProject.lib" /MACHINE:X86 Debug\Camera.obj
+         Debug\CameraAssemble.obj
+         Debug\CameraEnding.obj
+         Debug\CameraGameOver.obj
+         Debug\CameraMission.obj
+         Debug\CameraTitle.obj
+         Debug\CD3DXSKINMESH.obj
+         Debug\Charactor.obj
+         Debug\CharaStatic.obj
+         Debug\Common.obj
+         Debug\DebugText.obj
+         Debug\DX9Mesh.obj
+         Debug\DxInput.obj
+         Debug\Effects.obj
+         Debug\FactoryCamera.obj
+         Debug\FactoryScene.obj
+         Debug\File.obj
+         Debug\Game.obj
+         Debug\GameObject.obj
+         Debug\Main.obj
+         Debug\Object.obj
+         Debug\PtrGroup.obj
+         Debug\Ray.obj
+         Debug\Resource.obj
+         Debug\Robo.obj
+         Debug\SceneAssemble.obj
+         Debug\SceneClass.obj
+         Debug\SceneEnding.obj
+         Debug\SceneGameOver.obj
+         Debug\SceneMission.obj
+         Debug\SceneTitle.obj
+         Debug\SkinMesh.obj
+         Debug\Sound.obj
+         Debug\SoundManager.obj
+         Debug\Sprite.obj
+         Debug\Sprite2D.obj
+         Debug\Sprite2DCenter.obj
+         Debug\TestObj.obj
+     1>Effekseer.lib(Effekseer.Color.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Color.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.CriticalSection.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.CriticalSection.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.DefaultEffectLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.DefaultEffectLoader.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.DefaultFile.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.DefaultFile.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Effect.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Effect.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNode.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNode.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeModel.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeModel.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeRibbon.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeRibbon.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeRing.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeRing.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeSprite.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeSprite.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeTrack.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeTrack.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.FCurves.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.FCurves.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Instance.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Instance.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.InstanceContainer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.InstanceContainer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.InstanceGlobal.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.InstanceGlobal.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.InstanceGroup.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.InstanceGroup.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Manager.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Manager.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Matrix43.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Matrix43.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Matrix44.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Matrix44.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.RectF.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.RectF.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Setting.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Setting.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Vector2D.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Vector2D.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Vector3D.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Vector3D.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.Grid.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.Grid.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.Layer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.Layer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.Matrix44.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.Matrix44.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.ObjectInternal.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.ObjectInternal.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.ReferenceObject.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.ReferenceObject.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.Vector3DF.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.Vector3DF.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.WorldInternal.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.WorldInternal.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.DeviceObject.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.DeviceObject.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.IndexBuffer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.IndexBuffer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.ModelLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.ModelLoader.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.ModelRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.ModelRenderer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.Renderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.Renderer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.RenderState.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.RenderState.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.RibbonRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.RibbonRenderer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.RingRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.RingRenderer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.Shader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.Shader.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.SpriteRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.SpriteRenderer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.TextureLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.TextureLoader.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.TrackRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.TrackRenderer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.VertexBuffer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.VertexBuffer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.IndexBufferBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.IndexBufferBase.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.ModelRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.ModelRendererBase.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.RenderStateBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.RenderStateBase.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.RibbonRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.RibbonRendererBase.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.RingRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.RingRendererBase.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.SpriteRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.SpriteRendererBase.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.TrackRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.TrackRendererBase.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.VertexBufferBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.VertexBufferBase.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.DXTK.DDSTextureLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.DXTK.DDSTextureLoader.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.PngTextureLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.PngTextureLoader.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerSoundXAudio2.lib(EffekseerSoundXAudio2.Sound.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerSoundXAudio2.lib(EffekseerSoundXAudio2.Sound.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerSoundXAudio2.lib(EffekseerSoundXAudio2.SoundLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerSoundXAudio2.lib(EffekseerSoundXAudio2.SoundLoader.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerSoundXAudio2.lib(EffekseerSoundXAudio2.SoundPlayer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerSoundXAudio2.lib(EffekseerSoundXAudio2.SoundPlayer.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerSoundXAudio2.lib(EffekseerSoundXAudio2.SoundVoice.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerSoundXAudio2.lib(EffekseerSoundXAudio2.SoundVoice.obj)' で、または 'C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
          ShiningRoadProject.vcxproj -> C:\Users\men\Documents\GitHub\ShiningRoadProject\Debug\ShiningRoadProject.exe
      1>プロジェクト "C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Build ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 
-経過時間 00:00:00.14
+経過時間 00:00:03.81

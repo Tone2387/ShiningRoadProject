@@ -20,6 +20,7 @@ public:
 	clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup );
 	virtual ~clsSCENE_BASE();
 
+	//----- 各シーン共通 -----//.
 	//シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
 	void Create();
 	//ループ内の処理( 引数を関数内で変更すると今のシーンが破棄され、.
@@ -27,6 +28,7 @@ public:
 	void Update( enSCENE &nextScene );
 	//シーン内のオブジェクトの描画関数のまとめ.
 	void Render();
+	//----- 各シーン共通 -----//.
 
 
 
@@ -36,9 +38,12 @@ public:
 
 protected:
 
+
+	//----- 各シーンごとの関数 -----//.
 	virtual void CreateProduct() = 0;//各シーンのCreate.
 	virtual void UpdateProduct( enSCENE &nextScene ) = 0;//各シーンのUpdate.
-	virtual void RenderProduct() = 0;//各シーンのRender.
+	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) = 0;//各シーンのRender.
+	//----- 各シーンごとの関数 -----//.
 
 	//3D座標をスクリーン( 2D )座標へと変換する.
 	//dimensions(次元) conversion(変換).
