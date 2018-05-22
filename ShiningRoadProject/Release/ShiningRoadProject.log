@@ -1,5 +1,5 @@
-﻿2018/05/22 12:34:31 にビルドを開始しました。
-     1>ノード 2 上のプロジェクト "C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Rebuild ターゲット)。
+﻿2018/05/22 17:20:10 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Build ターゲット)。
      1>FxCompile:
          C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"VS" /T vs_5_0 /Fo "C:\Users\men\Documents\GitHub\ShiningRoadProject\Release\DebugText.cso" Shader\DebugText.hlsl 
          compilation object save succeeded; see C:\Users\men\Documents\GitHub\ShiningRoadProject\Release\DebugText.cso
@@ -25,14 +25,15 @@
          C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"VS_Main" /T vs_5_0 /Fo "C:\Users\men\Documents\GitHub\ShiningRoadProject\Release\Sprite2D.cso" Shader\Sprite2D.hlsl 
          compilation object save succeeded; see C:\Users\men\Documents\GitHub\ShiningRoadProject\Release\Sprite2D.cso
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ISourceCodo\Effekseer\include /Zi /nologo /W3 /WX- /sdl /Od /Oy /D _MBCS /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt SourceCodo\Camera.cpp SourceCodo\CameraAssemble.cpp SourceCodo\CameraEnding.cpp SourceCodo\CameraGameOver.cpp SourceCodo\CameraMission.cpp SourceCodo\CameraTitle.cpp SourceCodo\CD3DXSKINMESH.cpp SourceCodo\Charactor.cpp SourceCodo\CharaStatic.cpp SourceCodo\Common.cpp SourceCodo\DebugText.cpp SourceCodo\DX9Mesh.cpp SourceCodo\DxInput.cpp SourceCodo\Effects.cpp SourceCodo\FactoryCamera.cpp SourceCodo\FactoryScene.cpp SourceCodo\File.cpp SourceCodo\Game.cpp SourceCodo\GameObject.cpp SourceCodo\Main.cpp SourceCodo\Object.cpp SourceCodo\PtrGroup.cpp SourceCodo\Ray.cpp SourceCodo\Resource.cpp SourceCodo\Robo.cpp SourceCodo\SceneAssemble.cpp SourceCodo\SceneClass.cpp SourceCodo\SceneEnding.cpp SourceCodo\SceneGameOver.cpp SourceCodo\SceneMission.cpp SourceCodo\SceneTitle.cpp SourceCodo\SkinMesh.cpp SourceCodo\Sound.cpp SourceCodo\SoundManager.cpp SourceCodo\Sprite.cpp SourceCodo\Sprite2D.cpp SourceCodo\Sprite2DCenter.cpp SourceCodo\TestObj.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ISourceCodo\Effekseer\include /Zi /nologo /W3 /WX- /sdl /Od /Oy /D _MBCS /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt SourceCodo\CD3DXSKINMESH.cpp SourceCodo\Camera.cpp SourceCodo\CameraAssemble.cpp SourceCodo\CameraEnding.cpp SourceCodo\CameraGameOver.cpp SourceCodo\CameraMission.cpp SourceCodo\CameraTitle.cpp SourceCodo\CharaStatic.cpp SourceCodo\Charactor.cpp SourceCodo\Common.cpp SourceCodo\DX9Mesh.cpp SourceCodo\DebugText.cpp SourceCodo\DxInput.cpp SourceCodo\Effects.cpp SourceCodo\FactoryCamera.cpp SourceCodo\FactoryScene.cpp SourceCodo\File.cpp SourceCodo\Game.cpp SourceCodo\GameObject.cpp SourceCodo\Main.cpp SourceCodo\Object.cpp SourceCodo\PtrGroup.cpp SourceCodo\Ray.cpp SourceCodo\Resource.cpp SourceCodo\Robo.cpp SourceCodo\SceneAssemble.cpp SourceCodo\SceneClass.cpp SourceCodo\SceneEnding.cpp SourceCodo\SceneGameOver.cpp SourceCodo\SceneMission.cpp SourceCodo\SceneTitle.cpp SourceCodo\SkinMesh.cpp SourceCodo\Sound.cpp SourceCodo\SoundManager.cpp SourceCodo\Sprite.cpp SourceCodo\Sprite2D.cpp SourceCodo\Sprite2DCenter.cpp SourceCodo\TestObj.cpp
+         CD3DXSKINMESH.cpp
          Camera.cpp
          CameraAssemble.cpp
          CameraEnding.cpp
          CameraGameOver.cpp
          CameraMission.cpp
          CameraTitle.cpp
-         CD3DXSKINMESH.cpp
+         CharaStatic.cpp
          Charactor.cpp
      1>c:\users\men\documents\github\shiningroadproject\shiningroadproject\sourcecodo\Charactor.h(58): warning C4244: '引数' : 'int' から 'const float' への変換です。データが失われる可能性があります。
      1>c:\users\men\documents\github\shiningroadproject\shiningroadproject\sourcecodo\Charactor.h(63): warning C4244: '=' : 'const float' から 'int' への変換です。データが失われる可能性があります。
@@ -43,10 +44,9 @@
      1>SourceCodo\Charactor.cpp(224): warning C4305: '+=' : 'double' から 'float' へ切り詰めます。
      1>SourceCodo\Charactor.cpp(229): warning C4305: '-=' : 'double' から 'float' へ切り詰めます。
      1>SourceCodo\Charactor.cpp(233): warning C4305: '+=' : 'double' から 'float' へ切り詰めます。
-         CharaStatic.cpp
          Common.cpp
-         DebugText.cpp
          DX9Mesh.cpp
+         DebugText.cpp
          DxInput.cpp
          C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
      1>SourceCodo\DxInput.cpp(192): warning C4244: '=' : 'LONG' から 'float' への変換です。データが失われる可能性があります。
@@ -169,8 +169,8 @@
          Release\Sprite2DCenter.obj
          Release\TestObj.obj
          ShiningRoadProject.vcxproj -> C:\Users\men\Documents\GitHub\ShiningRoadProject\Release\ShiningRoadProject.exe
-     1>プロジェクト "C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Rebuild ターゲット) のビルドが完了しました。
+     1>プロジェクト "C:\Users\men\Documents\GitHub\ShiningRoadProject\ShiningRoadProject\ShiningRoadProject.vcxproj" (Build ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 
-経過時間 00:00:15.86
+経過時間 00:00:15.26
