@@ -11,6 +11,9 @@ public:
 	~clsPARTS_ARMS();
 
 private:
+	clsPARTS_ARM_L* m_pL;
+	clsPARTS_ARM_R* m_pR;
+
 
 };
 

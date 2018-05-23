@@ -201,6 +201,12 @@
     <ClCompile Include="SourceCodo\PartsArmR.cpp">
       <Filter>Tahara\PartsData\Arms</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\AssembleModel.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\FactoryParts.cpp">
+      <Filter>Tahara\Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CD3DXSKINMESH.h">
@@ -376,6 +382,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\PartsArmR.h">
       <Filter>Tahara\PartsData\Arms</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AssembleModel.h">
+      <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\FactoryParts.h">
+      <Filter>Tahara\Factory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

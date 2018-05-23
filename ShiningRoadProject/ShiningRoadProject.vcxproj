@@ -101,6 +101,7 @@
     <ClCompile Include="SourceCodo\DxInput.cpp" />
     <ClCompile Include="SourceCodo\Effects.cpp" />
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
+    <ClCompile Include="SourceCodo\FactoryParts.cpp" />
     <ClCompile Include="SourceCodo\FactoryScene.cpp" />
     <ClCompile Include="SourceCodo\File.cpp" />
     <ClCompile Include="SourceCodo\Game.cpp" />
@@ -110,7 +111,10 @@
     <ClCompile Include="SourceCodo\PartsArmBase.cpp" />
     <ClCompile Include="SourceCodo\PartsArmL.cpp" />
     <ClCompile Include="SourceCodo\PartsArmR.cpp" />
-    <ClCompile Include="SourceCodo\PartsArms.cpp" />
+    <ClCompile Include="SourceCodo\PartsArms.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SourceCodo\PartsBase.cpp" />
     <ClCompile Include="SourceCodo\PartsCore.cpp" />
     <ClCompile Include="SourceCodo\PartsSet.cpp" />
@@ -121,6 +125,7 @@
     <ClCompile Include="SourceCodo\Ray.cpp" />
     <ClCompile Include="SourceCodo\Resource.cpp" />
     <ClCompile Include="SourceCodo\Robo.cpp" />
+    <ClCompile Include="SourceCodo\AssembleModel.cpp" />
     <ClCompile Include="SourceCodo\SceneAssemble.cpp" />
     <ClCompile Include="SourceCodo\SceneClass.cpp" />
     <ClCompile Include="SourceCodo\SceneEnding.cpp" />
@@ -161,6 +166,7 @@
     <ClInclude Include="SourceCodo\DxInput.h" />
     <ClInclude Include="SourceCodo\Effects.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
+    <ClInclude Include="SourceCodo\FactoryParts.h" />
     <ClInclude Include="SourceCodo\FactoryScene.h" />
     <ClInclude Include="SourceCodo\File.h" />
     <ClInclude Include="SourceCodo\Game.h" />
@@ -176,7 +182,10 @@
     <ClInclude Include="SourceCodo\PartsArmBase.h" />
     <ClInclude Include="SourceCodo\PartsArmL.h" />
     <ClInclude Include="SourceCodo\PartsArmR.h" />
-    <ClInclude Include="SourceCodo\PartsArms.h" />
+    <ClInclude Include="SourceCodo\PartsArms.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SourceCodo\PartsBase.h" />
     <ClInclude Include="SourceCodo\PartsCore.h" />
     <ClInclude Include="SourceCodo\PartsSet.h" />
@@ -187,6 +196,7 @@
     <ClInclude Include="SourceCodo\Ray.h" />
     <ClInclude Include="SourceCodo\Resource.h" />
     <ClInclude Include="SourceCodo\Robo.h" />
+    <ClInclude Include="SourceCodo\AssembleModel.h" />
     <ClInclude Include="SourceCodo\SceneAssemble.h" />
     <ClInclude Include="SourceCodo\SceneClass.h" />
     <ClInclude Include="SourceCodo\SceneEnding.h" />

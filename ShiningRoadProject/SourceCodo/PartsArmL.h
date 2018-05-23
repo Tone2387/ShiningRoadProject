@@ -5,7 +5,7 @@
 
 
 
-class clsPARTS_ARM_L
+class clsPARTS_ARM_L : public clsPARTS_BASE
 {
 public:
 	clsPARTS_ARM_L();
