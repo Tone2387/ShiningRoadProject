@@ -6,23 +6,19 @@
 //================================//
 //========== ‘g‚ÝŠ·‚¦ƒNƒ‰ƒX ==========//
 //================================//
-clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : 
-	clsSCENE_BASE( ptrGroup )
-//		m_pTestChara( nullptr ),
-//		m_pParts( nullptr ),
-//		m_pSprite( nullptr )
+clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup ),
+	m_pAsmModel( nullptr )
 {
 }
 
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 {
-//	SAFE_DELETE( m_pSprite );
-//	SAFE_DELETE( m_pParts );
-//	SAFE_DELETE( m_pTestChara );
+	SAFE_DELETE( m_pAsmModel );
 }
 
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
+
 //	m_pTestChara = new clsCharaStatic;
 //	m_pTestChara->AttachModel( 
 //		m_wpResource->GetStaticModels( 

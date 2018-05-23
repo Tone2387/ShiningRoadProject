@@ -82,6 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SourceCodo\AssembleModel.cpp" />
     <ClCompile Include="SourceCodo\Camera.cpp" />
     <ClCompile Include="SourceCodo\CameraAssemble.cpp" />
     <ClCompile Include="SourceCodo\CameraEnding.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="SourceCodo\TestObj.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SourceCodo\AssembleModel.h" />
     <ClInclude Include="SourceCodo\Camera.h" />
     <ClInclude Include="SourceCodo\CameraAssemble.h" />
     <ClInclude Include="SourceCodo\CameraEnding.h" />
