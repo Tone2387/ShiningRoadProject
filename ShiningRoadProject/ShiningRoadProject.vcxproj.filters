@@ -204,12 +204,6 @@
     <ClCompile Include="SourceCodo\PartsArmR.cpp">
       <Filter>Tahara\Parts\Arms</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\EnemyRobo.cpp">
-      <Filter>Hiyosi\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\Enemy.cpp">
-      <Filter>Hiyosi\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\AssembleModel.cpp">
       <Filter>Tahara</Filter>
     </ClCompile>

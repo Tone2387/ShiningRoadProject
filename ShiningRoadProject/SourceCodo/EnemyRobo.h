@@ -14,3 +14,10 @@ private:
 
 };
 
+clsEnemyRobo::clsEnemyRobo()
+{
+}
+
+clsEnemyRobo::~clsEnemyRobo()
+{
+}

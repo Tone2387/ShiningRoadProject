@@ -50,3 +50,10 @@ public:
 	};
 };
 
+clsEnemyBase::clsEnemyBase()
+{
+}
+
+clsEnemyBase::~clsEnemyBase()
+{
+}
