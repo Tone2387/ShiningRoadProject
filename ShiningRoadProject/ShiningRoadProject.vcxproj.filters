@@ -311,6 +311,9 @@
     <ClInclude Include="SourceCodo\CameraGameOver.h">
       <Filter>Hiyosi\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="SourceCodo\RoboCommand.h">
+      <Filter>Hiyosi</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\DebugText.hlsl">

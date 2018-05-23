@@ -17,10 +17,10 @@ public:
 
 	virtual clsInputCharctor::~clsInputCharctor()
 	{
-		delete m_pJump;
-		delete m_pComRS;
-		delete m_pComLS;
 		delete m_pDxInput;
+		delete m_pComLS;
+		delete m_pComRS;
+		delete m_pJump;
 	}
 
 	clsDxInput* m_pDxInput;
@@ -71,7 +71,7 @@ public:
 			{
 				fAngle += D3DX_PI / iDir;
 			}
-			
+
 			else
 			{
 				fAngle += -D3DX_PI / iDir;
@@ -102,37 +102,37 @@ public:
 			{
 				fAngle += D3DX_PI / iDir;
 			}
-			
+
 		}
 
-		
+
 
 		return m_pComLS;
 	};
 
 	clsCharactorCommand* RSInput(float& fPower, float& fAngle)
 	{
-			fPower = m_pDxInput->GetRSPush();
-			fAngle = m_pDxInput->GetRSDir();
+		fPower = m_pDxInput->GetRSPush();
+		fAngle = m_pDxInput->GetRSDir();
 
-			if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-			{
-				fPower = 1.0f;
-				fAngle = 0.1f;
-			}
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			fPower = 1.0f;
+			fAngle = 0.1f;
+		}
 
-			else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-			{
-				fPower = 1.0f;
-				fAngle = -0.1f;
-			}
+		else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			fPower = 1.0f;
+			fAngle = -0.1f;
+		}
 
-			return m_pComRS;
+		return m_pComRS;
 	};
 
 	virtual clsCharactorCommand* Jump()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_03) || 
+		if (m_pDxInput->IsPressKey(enPKey_03) ||
 			GetAsyncKeyState(VK_SPACE) & 0x8000)
 		{
 			return m_pJump;

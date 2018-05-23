@@ -167,6 +167,7 @@
     <ClInclude Include="SourceCodo\Ray.h" />
     <ClInclude Include="SourceCodo\Resource.h" />
     <ClInclude Include="SourceCodo\Robo.h" />
+    <ClInclude Include="SourceCodo\RoboCommand.h" />
     <ClInclude Include="SourceCodo\SceneAssemble.h" />
     <ClInclude Include="SourceCodo\SceneClass.h" />
     <ClInclude Include="SourceCodo\SceneEnding.h" />
