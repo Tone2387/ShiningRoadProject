@@ -49,6 +49,9 @@
     <Filter Include="Tahara\Parts\Arms">
       <UniqueIdentifier>{ce180e55-01a4-4623-a574-98f54dfab2cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hiyosi\Enemy">
+      <UniqueIdentifier>{411b2f1d-e09e-4f84-aeff-088ae420c14e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\Charactor.cpp">
@@ -200,6 +203,12 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\PartsArmR.cpp">
       <Filter>Tahara\Parts\Arms</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\EnemyRobo.cpp">
+      <Filter>Hiyosi\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Enemy.cpp">
+      <Filter>Hiyosi\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -379,6 +388,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\PartsArmR.h">
       <Filter>Tahara\Parts\Arms</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\EnemyRobo.h">
+      <Filter>Hiyosi\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Enemy.h">
+      <Filter>Hiyosi\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
