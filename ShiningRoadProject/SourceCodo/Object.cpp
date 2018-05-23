@@ -152,17 +152,17 @@ HRESULT clsObject::FindVecticesOnPoly(
 }
 
 //‰ñ“]’l’²®.
-void ObjRollOverGuard(float* fYaw)
+void ObjRollOverGuard(float* fRot)
 {
-	if (*fYaw > D3DX_PI * 2.0f)
+	if (*fRot > D3DX_PI * 2.0f)
 	{
 		//1üˆÈã‚µ‚Ä‚¢‚é.
-		*fYaw -= D3DX_PI * 2.0f;//2ƒÎ(360‹)•ª‚ğˆø‚­.
+		*fRot -= D3DX_PI * 2.0f;//2ƒÎ(360‹)•ª‚ğˆø‚­.
 
 		//Ä‹AŠÖ”.
-		if (*fYaw > D3DX_PI*2.0f)
+		if (*fRot > D3DX_PI*2.0f)
 		{
-			ObjRollOverGuard(fYaw);
+			ObjRollOverGuard(fRot);
 		}
 	}
 }
@@ -199,18 +199,15 @@ void clsObject::WallJudge(const clsDX9Mesh* pWall, const bool bFoll)
 	WallUp(pWall);
 }
 
-bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, const D3DXVECTOR3 vRayDir)
+bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir)
 {
 	FLOAT fDistance;//‹——£.
 	D3DXVECTOR3 vIntersect;//Œğ“_À•W.
-	float fDis, fYaw;//‹——£‚Æ‰ñ“].
+	float fDis;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 1.0f;
 	RAYSTATE rs;
 	rs.vAxis = vRayDir;
 	rs.vRayStart = m_Trans.vPos;
-
-	fYaw = fabs(m_Trans.fYaw);//fabs:â‘Î’l(float”Å)
-	ObjRollOverGuard(&fYaw);//0`2ƒÎ‚ÌŠÔ‚Éû‚ß‚é.
 
 	Intersect(rs, pWall, &fDis, &vIntersect);
 
@@ -538,15 +535,11 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 {
 	FLOAT fDistance;//‹——£.
 	D3DXVECTOR3 vIntersect;//Œğ“_À•W.
-	float fDis, fYaw;//‹——£‚Æ‰ñ“].
+	float fDis;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 1.0f;
 	RAYSTATE rs;
 	rs.vAxis = vDirUp;
 	rs.vRayStart = m_Trans.vPos;
-	//Ú²‚ÌŒü‚«‚É‚æ‚é“–‚½‚é•Ç‚Ü‚Å‚Ì‹——£‚ğ‹‚ß‚é.
-
-	fYaw = fabs(m_Trans.fYaw);//fabs:â‘Î’l(float”Å)
-	ObjRollOverGuard(&fYaw);//0`2ƒÎ‚ÌŠÔ‚Éû‚ß‚é.
 
 	Intersect(rs, pWall, &fDis, &vIntersect);
 
@@ -558,6 +551,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 		if (m_fFollPower > 0.0f)
 		{
+			m_fFollPower = 0.0f;
 			m_Trans.vPos.y = vIntersect.y - fRaySpece;
 		}
 	}
@@ -569,15 +563,11 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall, const bool bFoll)
 {
 	FLOAT fDistance;//‹——£.
 	D3DXVECTOR3 vIntersect;//Œğ“_À•W.
-	float fDis, fYaw;//‹——£‚Æ‰ñ“].
+	float fDis;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 0.5f;
 	RAYSTATE rs;
 	rs.vAxis = vDirDown;
 	rs.vRayStart = m_Trans.vPos;
-	//Ú²‚ÌŒü‚«‚É‚æ‚é“–‚½‚é•Ç‚Ü‚Å‚Ì‹——£‚ğ‹‚ß‚é.
-
-	fYaw = fabs(m_Trans.fYaw);//fabs:â‘Î’l(float”Å)
-	ObjRollOverGuard(&fYaw);//0`2ƒÎ‚ÌŠÔ‚Éû‚ß‚é.
 
 	Intersect(rs, pWall, &fDis, &vIntersect);
 

@@ -45,9 +45,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\Charactor.cpp">
       <Filter>Hiyosi</Filter>
     </ClCompile>
@@ -165,11 +162,11 @@
     <ClCompile Include="SourceCodo\CameraGameOver.cpp">
       <Filter>Hiyosi\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp">
+      <Filter>Classwork\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SourceCodo\CD3DXSKINMESH.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\Charactor.h">
       <Filter>Hiyosi</Filter>
     </ClInclude>
@@ -313,6 +310,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\RoboCommand.h">
       <Filter>Hiyosi</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CD3DXSKINMESH.h">
+      <Filter>Classwork\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

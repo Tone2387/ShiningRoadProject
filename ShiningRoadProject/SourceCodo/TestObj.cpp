@@ -26,6 +26,7 @@ void clsTestObj::Init(HWND hWnd,
 	m_pInput = new clsInputRobo;
 	m_pInput->m_pDxInput = pControll;
 
+	m_pMesh->SetAnimSpeed(0.01);
 }
 
 void clsTestObj::Action(const clsDX9Mesh* pWall)

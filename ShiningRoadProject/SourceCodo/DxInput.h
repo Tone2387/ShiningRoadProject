@@ -7,6 +7,12 @@
 #pragma comment( lib, "dxguid.lib" )
 #pragma comment( lib, "dinput8.lib" )	// コントローラ操作で使用.
 
+//---------------
+//グローバル変数
+//---------------
+const int g_iAxisMax = 1000;
+const int g_iAxisMin = g_iAxisMax / 4;
+
 //========================================================
 //	列挙体宣言.
 //========================================================
@@ -56,6 +62,16 @@ public:
 	clsDxInput();
 	~clsDxInput();
 
+	//左スティック.
+	float m_fLSDir;
+	float m_fHorLSPush;
+	float m_fVerLSPush;
+
+	//右スティック.
+	float m_fRSDir;
+	float m_fHorRSPush;
+	float m_fVerRSPush;
+
 	bool initDI(HWND hWnd);
 
 	//入力情報更新関数.
@@ -71,29 +87,20 @@ public:
 	bool IsPressKey(enPKey enKey);
 
 	float GetLSDir();
-	float m_fLSDir;
-
 	float GetLSPush();
 	float GetHorLSPush();
 	float GetVerLSPush();
-	float m_fHorLSPush;
-	float m_fVerLSPush;
 
 	float GetRSDir();
-	float m_fRSDir;
-
 	float GetRSPush();
 	float GetHorRSPush();
 	float GetVerRSPush();
-	float m_fHorRSPush;
-	float m_fVerRSPush;
 
 private:
-	LPDIRECTINPUT8 m_DI;//DxInputｵﾌﾞｼﾞｪｸﾄ.
-	LPDIRECTINPUTDEVICE8 m_Pad;//ﾃﾞﾊﾞｲｽ(ｺﾝﾄﾛｰﾗ)ｵﾌﾞｼﾞｪｸﾄ.
-
 	unsigned int m_uInputState;//入力情報.
 
+	LPDIRECTINPUT8 m_DI;//DxInputｵﾌﾞｼﾞｪｸﾄ.
+	LPDIRECTINPUTDEVICE8 m_Pad;//ﾃﾞﾊﾞｲｽ(ｺﾝﾄﾛｰﾗ)ｵﾌﾞｼﾞｪｸﾄ.
 };
 
 #endif //#ifndef _DINPUT_H_

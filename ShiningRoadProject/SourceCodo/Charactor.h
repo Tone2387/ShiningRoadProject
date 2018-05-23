@@ -58,7 +58,7 @@ public:
 		SetMoveDecelerationSpeed(m_iTopSpeedFrame);
 	}
 
-	void SetMoveDecelerationSpeed(const float iStopFrame)//Œ¸‘¬.
+	void SetMoveDecelerationSpeed(const int iStopFrame)//Œ¸‘¬.
 	{
 		m_iStopFrame = iStopFrame;
 
