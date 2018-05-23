@@ -210,6 +210,9 @@
     <ClCompile Include="SourceCodo\Enemy.cpp">
       <Filter>Hiyosi\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\AssembleModel.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -394,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Enemy.h">
       <Filter>Hiyosi\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AssembleModel.h">
+      <Filter>Tahara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

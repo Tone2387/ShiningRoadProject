@@ -6,7 +6,7 @@ public:
 	clsEnemyBase();
 	~clsEnemyBase();
 
-	
+	//sasjdflasldj
 
 private:
 
