@@ -67,8 +67,6 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	vTmp.y += 0.5f;
 	m_wpCamera->SetPos(vTmp, false);
 
-	m_wpCamera->GetPos();
-
 	m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
 	m_pTestRobo->Render(m_mView, m_mProj, m_vLight, vCamPos);
 	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
