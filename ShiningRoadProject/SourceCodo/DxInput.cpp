@@ -1,10 +1,9 @@
 #include "DxInput.h"
 #include<math.h>
 
-LPDIRECTINPUT8 pDI2 = NULL;			// DxInputオブジェクト.
-LPDIRECTINPUTDEVICE8 pPad2=NULL;	// デバイス(コントローラ)オブジェクト.
+LPDIRECTINPUT8 g_pDI2 = NULL;			// DxInputオブジェクト.
+LPDIRECTINPUTDEVICE8 g_pPad2=NULL;	// デバイス(コントローラ)オブジェクト.
 
-const int g_iAxisMax = 1000;
 
 // ジョイスティック列挙関数.
 BOOL CALLBACK EnumJoysticksCallBack( const DIDEVICEINSTANCE *pdidInstance, VOID *pContext )
@@ -12,9 +11,9 @@ BOOL CALLBACK EnumJoysticksCallBack( const DIDEVICEINSTANCE *pdidInstance, VOID 
 	HRESULT hRlt;	// 関数復帰値.
 
 	// デバイス(コントローラ)の作成.
-	hRlt = pDI2->CreateDevice(
+	hRlt = g_pDI2->CreateDevice(
 		pdidInstance->guidInstance,	// デバイスの番号.
-		&pPad2,	// (out)作成されるデバイスオブジェクト.
+		&g_pPad2,	// (out)作成されるデバイスオブジェクト.
 		NULL );
 	if( hRlt != DI_OK ){
 		return DIENUM_CONTINUE;	// 次のデバイスを要求.
@@ -41,7 +40,7 @@ BOOL CALLBACK EnumObjectsCallBack( const DIDEVICEOBJECTINSTANCE *pdidoi, VOID *p
 		diprg.lMin = -g_iAxisMax;	// 最小値
 
 		// 範囲を設定
-		if( FAILED( pPad2->SetProperty(
+		if( FAILED( g_pPad2->SetProperty(
 					DIPROP_RANGE,	// 範囲
 					&diprg.diph ) ) )// 範囲設定構造体
 		{
@@ -78,7 +77,7 @@ bool clsDxInput::initDI( HWND hWnd)
 		return false;
 	}
 
-	pDI2 = m_DI;
+	g_pDI2 = m_DI;
 
 	// 利用可能なコントローラを探す(列挙する)
 	hRlt = (*m_DI).EnumDevices(
@@ -90,21 +89,21 @@ bool clsDxInput::initDI( HWND hWnd)
 		MessageBox(NULL, "ｺﾝﾄﾛｰﾗの確認に失敗", "エラー", MB_OK);
 	}
 
-	m_Pad = pPad2;
+	m_Pad = g_pPad2;
 
 	// コントローラの接続確認
-	if( pPad2 == NULL ){
+	if( g_pPad2 == NULL ){
 		MessageBox( NULL, "ｺﾝﾄﾛｰﾗが接続されていません", "エラー", MB_OK );
 	}
 	else {
 		// コントローラ構造体のデータフォーマットを作成
-		hRlt = pPad2->SetDataFormat(
+		hRlt = g_pPad2->SetDataFormat(
 				&c_dfDIJoystick2);	//固定
 		if( hRlt != DI_OK ){
 			MessageBox( NULL, "ﾃﾞｰﾀﾌｫｰﾏｯﾄの作成失敗", "エラー", MB_OK );
 		}
 		// (他のデバイスとの)協調レベルの設定
-		hRlt = pPad2->SetCooperativeLevel(
+		hRlt = g_pPad2->SetCooperativeLevel(
 				hWnd,
 				DISCL_EXCLUSIVE |	// 排他アクセス
 				DISCL_FOREGROUND );	// フォアグラウンドアクセス権
@@ -112,7 +111,7 @@ bool clsDxInput::initDI( HWND hWnd)
 			MessageBox( NULL, "協調ﾚﾍﾞﾙの設定失敗", "エラー", MB_OK );
 		}
 		// 使用可能なオブジェクト(ボタンなど)の列挙
-		hRlt = pPad2->EnumObjects(
+		hRlt = g_pPad2->EnumObjects(
 			EnumObjectsCallBack,	// オブジェクト列挙関数
 			(VOID*)hWnd,			// コールバック関数に送る情報
 			DIDFT_ALL );			// 全てのオブジェクト
@@ -189,20 +188,20 @@ HRESULT clsDxInput::UpdataInputState()
 
 	if (abs(js.lX) > iAxisPushMin)
 	{
-		m_fHorLSPush = js.lX;
-		m_fHorLSPush /= 1000;
+		m_fHorLSPush = (float)js.lX;
+		m_fHorLSPush /= g_iAxisMax;
 	}
 
 	if (abs(js.lY) > iAxisPushMin)
 	{
-		m_fVerLSPush = js.lY;
-		m_fVerLSPush /= 1000;
+		m_fVerLSPush = (float)js.lY;
+		m_fVerLSPush /= g_iAxisMax;
 	}
 
 	if ((abs(js.lX) + abs(js.lY)) / 2 > iAxisPushMin)
 	{
 		AddInputState(enPKey_L);
-		m_fLSDir = atan2f(js.lX, -js.lY);
+		m_fLSDir = atan2f((float)js.lX, (float)-js.lY);
 	}
 
 	if (js.lRx > iAxisPushMin)
@@ -230,20 +229,20 @@ HRESULT clsDxInput::UpdataInputState()
 
 	if (abs(js.lRx) > iAxisPushMin)
 	{
-		m_fHorRSPush = js.lRx;
-		m_fHorRSPush /= 1000;
+		m_fHorRSPush = (float)js.lRx;
+		m_fHorRSPush /= g_iAxisMax;
 	}
 
 	if (abs(js.lRy) > iAxisPushMin)
 	{
-		m_fVerRSPush = js.lRy;
-		m_fVerRSPush /= 1000;
+		m_fVerRSPush = (float)js.lRy;
+		m_fVerRSPush /= g_iAxisMax;
 	}
 
 	if ((abs(js.lRx) + abs(js.lRy)) / 2 > iAxisPushMin)
 	{
 		AddInputState(enPKey_R);
-		m_fRSDir = atan2f(js.lRx, -js.lRy);
+		m_fRSDir = atan2f((float)js.lRx, (float)-js.lRy);
 	}
 
 	//ﾎﾞﾀﾝ.

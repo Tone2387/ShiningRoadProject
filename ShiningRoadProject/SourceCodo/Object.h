@@ -21,9 +21,7 @@ const D3DXVECTOR3 vDirDown		= D3DXVECTOR3(  0.0f, -1.0f,  0.0f);
 const float g_GroundSpece = 0.01f;
 
 //âÒì]ílí≤êÆ.
-//void dirOverGuard(float* fYaw);
-
-void ObjRollOverGuard(float* fYaw);
+void ObjRollOverGuard(float* fRot);
 
 class clsObject
 {
@@ -50,10 +48,10 @@ public:
 	float m_fRaySpece;
 	float m_fFollPower;
 	//à íuä÷åWä÷êî.
-	void SetPosition(D3DXVECTOR3& vPos){ m_Trans.vPos = vPos; }
+	void SetPosition(const D3DXVECTOR3& vPos){ m_Trans.vPos = vPos; }
 	D3DXVECTOR3 GetPosition(){ return m_Trans.vPos; }
 	//âÒì]ä÷åWä÷êî.
-	void SetRotation(D3DXVECTOR3& vRot)
+	void SetRotation(const D3DXVECTOR3& vRot)
 	{
 		m_Trans.fYaw = vRot.y;
 		m_Trans.fPitch = vRot.x;
@@ -76,7 +74,7 @@ public:
 
 	D3DXVECTOR3 GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis);
 
-	bool WallSetAxis(const clsDX9Mesh* pWall, const D3DXVECTOR3 vRayDir);
+	bool WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir);
 	bool WallForward(const clsDX9Mesh* pWall, const bool bSlip = true);
 	bool WallBack(const clsDX9Mesh* pWall, const bool bSlip = true);
 	bool WallLeft(const clsDX9Mesh* pWall, const bool bSlip = true);

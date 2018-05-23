@@ -8,7 +8,7 @@ clsSkinMesh::clsSkinMesh() :
 	m_dAnimSpeed( 0.1 ),
 	m_bAnimReverce( false )
 {
-//	ZeroMemory(this, sizeof(clsSkinMesh));
+
 }
 clsSkinMesh::~clsSkinMesh()
 {
@@ -25,6 +25,12 @@ void clsSkinMesh::ModelRender(
 {
 	if (m_pMesh == NULL || m_pAnimCtrl == NULL)return;
 
+	AnimUpdate();
+	m_pMesh->Render(mView, mProj, vLight, vEye, vColor, alphaFlg, m_pAnimCtrl);
+}
+
+void clsSkinMesh::AnimUpdate()
+{
 	if (!m_bAnimReverce)
 	{
 		m_AnimTime += abs(m_dAnimSpeed);
@@ -40,16 +46,14 @@ void clsSkinMesh::ModelRender(
 		{
 			m_AnimTime -= abs(m_dAnimSpeed);
 		}
-		
-		ChangeAnimSet(m_AnimNo, m_AnimTime);
+
+		SetAnimChange(m_AnimNo, m_AnimTime);
 
 		// ｱﾆﾒ進行.
 		if (m_pAnimCtrl != NULL){
 			m_pAnimCtrl->AdvanceTime(0, NULL);
 		}
 	}
-
-	m_pMesh->Render(mView, mProj, vLight, vEye, vColor, alphaFlg, m_pAnimCtrl);
 }
 
 void clsSkinMesh::DetatchModel()
@@ -101,9 +105,121 @@ int clsSkinMesh::GetAnimSetMax()
 }
 
 //ｱﾆﾒｰｼｮﾝ切り替え関数.
-void clsSkinMesh::ChangeAnimSet(int index, double dStartPos)
+void clsSkinMesh::SetAnimChange(int index, double dStartPos)
 {
 	//ｱﾆﾒｰｼｮﾝの範囲内かﾁｪｯｸ.
 	if (index < 0 || index >= GetAnimSetMax())return;
 	m_pMesh->ChangeAnimSet_StartPos(index, dStartPos, m_pAnimCtrl);
+}
+
+void clsSkinMesh::ModelUpdate(DXSKIN_TRANSFORM Transform)
+{
+	m_pMesh->m_Trans.fPitch = Transform.fPitch;
+	m_pMesh->m_Trans.fYaw = Transform.fYaw;
+	m_pMesh->m_Trans.fRoll = Transform.fRoll;
+	m_pMesh->m_Trans.vPos = Transform.vPos;
+	m_pMesh->m_Trans.vScale = Transform.vScale;
+}
+
+D3DXVECTOR3 clsSkinMesh::GetBonePos(char* sBoneName)
+{
+	D3DXVECTOR3 vBonePos;
+
+	m_pMesh->GetPosFromBone(sBoneName, &vBonePos);
+
+	return vBonePos;
+}
+
+//指定したボーン位置からvDiviation分移動した位置を取得する.
+D3DXVECTOR3 clsSkinMesh::GetBoneDiviaPos(char* sBoneName, D3DXVECTOR3 vDiviation)
+{
+	D3DXVECTOR3 vBonePos;
+
+	m_pMesh->GetDeviaPosFromBone(sBoneName, &vBonePos, vDiviation);
+	return vBonePos;
+}
+
+void clsSkinMesh::SetAnimSpeed(double dSpeed)
+{
+	m_dAnimSpeed = dSpeed;
+	m_pMesh->SetAnimSpeed(m_dAnimSpeed);
+}
+
+double clsSkinMesh::GetAnimSpeed()
+{
+	return m_dAnimSpeed;
+}
+
+double clsSkinMesh::GetAnimEndTime(int AnimIndex)
+{
+	return m_pMesh->GetAnimPeriod(AnimIndex); 
+}
+
+void clsSkinMesh::SetAnimTime(double dTime)
+{
+	m_AnimTime = dTime;
+	m_pMesh->SetAnimTime(dTime);
+}
+
+double clsSkinMesh::GetAnimTime()
+{
+	return m_AnimTime; 
+}
+
+bool clsSkinMesh::IsAnimTimeEnd(int AnimIndex)
+{
+	if (!m_bAnimReverce)
+	{
+		if (GetAnimEndTime(AnimIndex) - m_dAnimSpeed < m_AnimTime)
+		{
+			m_AnimTime = GetAnimEndTime(AnimIndex);
+			return true;
+		}
+	}
+
+	else
+	{
+		if (m_AnimTime < m_dAnimSpeed)
+		{
+			m_AnimTime = 0.0f;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool clsSkinMesh::IsAnimTimeAfter(int AnimIndex, double DesignationTime)
+{
+	if (!m_bAnimReverce)
+	{
+		if (DesignationTime - m_dAnimSpeed < m_AnimTime)
+		{
+			m_AnimTime = DesignationTime;
+			return true;
+		}
+	}
+
+	else
+	{
+		if (m_AnimTime < (DesignationTime + m_dAnimSpeed))
+		{
+			m_AnimTime = DesignationTime;
+			return true;
+		}
+	}
+
+
+	return false;
+}
+
+bool clsSkinMesh::IsAnimTimePoint(int AnimIndex, double DesignationTime)
+{
+	if (DesignationTime - m_dAnimSpeed < m_AnimTime &&
+		DesignationTime + m_dAnimSpeed > m_AnimTime)
+	{
+		return true;
+	}
+
+	return false;
 }
