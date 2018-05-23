@@ -49,6 +49,7 @@ void clsGAME::Create()
 { 
 	ASSERT_IF_NOT_NULL( m_spDxInput );
 	m_spDxInput = new clsDxInput;
+	m_spDxInput->initDI(m_hWnd);
 
 	m_pResource = new clsResource;
 	m_pResource->Create( m_hWnd, m_wpDevice, m_wpContext );
