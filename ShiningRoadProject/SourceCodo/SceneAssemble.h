@@ -4,7 +4,7 @@
 #include "CameraAssemble.h"
 
 
-
+#include <vector>
 
 //================================//
 //========== ‘g‚ÝŠ·‚¦ƒNƒ‰ƒX ==========//
@@ -15,7 +15,6 @@ public:
 	clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup );
 	~clsSCENE_ASSEMBLE();
 
-
 private:
 
 	void CreateProduct() final;
@@ -23,10 +22,13 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 
-	clsSPRITE2D_CENTER* m_pSprite;
 
-	clsCharaStatic* m_pTestChara;
-	clsCharaStatic* m_pParts;
+
+
+
+//	clsSPRITE2D_CENTER* m_pSprite;
+//	clsCharaStatic* m_pTestChara;
+//	clsCharaStatic* m_pParts;
 
 
 };

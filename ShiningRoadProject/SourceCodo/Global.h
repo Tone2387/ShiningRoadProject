@@ -15,16 +15,17 @@
 //============================================================
 //	インクルード.
 //============================================================
-#include	<Windows.h>
+#include "MyMacro.h"
+	    
+#include <Windows.h>
+	    
+#include <D3DX11.h>
+#include <D3D11.h>
+	    
+#include <D3DX10.h>//「D3DX～」の定義使用時に必要.
+#include <D3D10.h>
 
-#include	<D3DX11.h>
-#include	<D3D11.h>
-
-#include	<D3DX10.h>//「D3DX～」の定義使用時に必要.
-#include	<D3D10.h>
-
-#include	"MyMacro.h"
-
+#include <memory>
 
 //============================================================
 //	ライブラリ.
