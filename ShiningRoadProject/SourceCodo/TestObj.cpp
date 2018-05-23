@@ -35,6 +35,8 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
 
+	m_pInput->PlressInput();
+
 	pRoboCom = m_pInput->MoveSwitch();
 
 	if (pRoboCom)
