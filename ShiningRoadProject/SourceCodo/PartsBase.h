@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Global.h"
+#include"SkinMesh.h"
 
 //ロボの構成に必要なパーツ数.
 enum class enPARTS : UCHAR
@@ -18,7 +19,7 @@ enum class enPARTS : UCHAR
 
 
 //========== パーツの基底クラス ==========//.
-class clsPARTS_BASE
+class clsPARTS_BASE : clsSkinMesh
 {
 public:
 	clsPARTS_BASE();
