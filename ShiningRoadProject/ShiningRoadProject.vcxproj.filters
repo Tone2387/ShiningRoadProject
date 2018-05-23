@@ -43,6 +43,12 @@
     <Filter Include="Classwork\System">
       <UniqueIdentifier>{2eb3484b-fef4-4d30-a7a1-005746d785b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\Parts">
+      <UniqueIdentifier>{31521bf9-7681-4819-acfb-7b3b444ef9af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tahara\Parts\Arms">
+      <UniqueIdentifier>{ce180e55-01a4-4623-a574-98f54dfab2cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\Charactor.cpp">
@@ -164,6 +170,36 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp">
       <Filter>Classwork\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\FactoryParts.cpp">
+      <Filter>Tahara\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsBase.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsCore.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsHead.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsLeg.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsSet.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsWeapon.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsArmBase.cpp">
+      <Filter>Tahara\Parts\Arms</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsArmL.cpp">
+      <Filter>Tahara\Parts\Arms</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsArmR.cpp">
+      <Filter>Tahara\Parts\Arms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +349,36 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\CD3DXSKINMESH.h">
       <Filter>Classwork\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\FactoryParts.h">
+      <Filter>Tahara\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsBase.h">
+      <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsCore.h">
+      <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsHead.h">
+      <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsLeg.h">
+      <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsSet.h">
+      <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsWeapon.h">
+      <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsArmBase.h">
+      <Filter>Tahara\Parts\Arms</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsArmL.h">
+      <Filter>Tahara\Parts\Arms</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsArmR.h">
+      <Filter>Tahara\Parts\Arms</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
