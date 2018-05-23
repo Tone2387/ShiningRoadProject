@@ -162,8 +162,6 @@
     <ClInclude Include="SourceCodo\DX9Mesh.h" />
     <ClInclude Include="SourceCodo\DxInput.h" />
     <ClInclude Include="SourceCodo\Effects.h" />
-    <ClInclude Include="SourceCodo\Enemy.h" />
-    <ClInclude Include="SourceCodo\EnemyRobo.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
     <ClInclude Include="SourceCodo\FactoryScene.h" />
