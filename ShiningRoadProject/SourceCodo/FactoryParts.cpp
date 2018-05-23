@@ -26,7 +26,7 @@ clsPARTS_BASE* Create( const enPARTS enParts )
 		return new clsPARTS_WEAPON();
 		break;
 	default:
-		assert( !"不正なシーンが指定されました" );
+		assert( !"不正なパーツが指定されました" );
 		break;
 	}
 
