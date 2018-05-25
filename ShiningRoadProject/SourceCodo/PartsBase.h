@@ -6,7 +6,7 @@
 //ロボの構成に必要なパーツ数.
 enum class enPARTS : UCHAR
 {
-	LEG,
+	LEG = 0,
 	CORE,
 	HEAD,
 	ARM_L,
@@ -19,11 +19,13 @@ enum class enPARTS : UCHAR
 
 
 //========== パーツの基底クラス ==========//.
-class clsPARTS_BASE : clsSkinMesh
+class clsPARTS_BASE : public clsSkinMesh
 {
 public:
 	clsPARTS_BASE();
 	virtual ~clsPARTS_BASE();
+	
+protected:
 
 private:
 
