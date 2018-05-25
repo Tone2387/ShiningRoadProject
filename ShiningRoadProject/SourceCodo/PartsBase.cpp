@@ -4,6 +4,7 @@
 
 clsPARTS_BASE::clsPARTS_BASE()
 {
+	
 }
 
 clsPARTS_BASE::~clsPARTS_BASE()

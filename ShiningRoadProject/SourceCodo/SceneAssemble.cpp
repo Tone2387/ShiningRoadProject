@@ -47,9 +47,37 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 {
-//	m_pParts->AddRotationY( 0.01f);
-//
-//	m_pSprite->AddRot( { 0.0f, 0.0f, 0.025f } );
+	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
+//		m_pAsmModel->AttachModel( enPARTS::LEG,
+//			m_wpResource->GetSkinModels( 
+//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enLegModel0 ) ) );
+//		
+//		m_pAsmModel->AttachModel( enPARTS::CORE,
+//			m_wpResource->GetSkinModels( 
+//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enCoreModel0 ) ) );
+//		
+//		m_pAsmModel->AttachModel( enPARTS::HEAD,
+//			m_wpResource->GetSkinModels( 
+//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enHeadModel0 ) ) );
+//		
+//		m_pAsmModel->AttachModel( enPARTS::ARM_L,
+//			m_wpResource->GetSkinModels( 
+//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enArmLModel0 ) ) );
+//		
+//		m_pAsmModel->AttachModel( enPARTS::ARM_R,
+//			m_wpResource->GetSkinModels( 
+//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enArmRModel0 ) ) );
+//		
+//		m_pAsmModel->AttachModel( enPARTS::WEAPON_L,
+//			m_wpResource->GetSkinModels( 
+//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enWeaponModel0 ) ) );
+//		
+//		m_pAsmModel->AttachModel( enPARTS::WEAPON_R,
+//			m_wpResource->GetSkinModels( 
+//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enWeaponModel0 ) ) );
+	}
+
+
 	m_pAsmModel->UpDate();
 }
 

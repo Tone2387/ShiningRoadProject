@@ -9,7 +9,7 @@ const string sARML_PASS = sPARTS_PASS + "ArmL\\ArmL";
 const string sARMR_PASS = sPARTS_PASS + "ArmR\\ArmR";
 const string sWEAPON_PASS = sPARTS_PASS + "Weapon\\Weapon";
 //extension = 拡張子.
-const string sEXTENSION_X = ".x";//上記のパスとこれの間に数字を挟んで使う.
+const string sEXTENSION_X = ".X";//上記のパスとこれの間に数字を挟んで使う.
 
 
 clsResource::clsResource()
@@ -27,7 +27,7 @@ clsResource::~clsResource()
 	for( UCHAR i=0; i<enStaticModel_Max; i++ ){
 		ReleaseStaticModel( static_cast<enSTATIC_MODEL>( i ) );
 	}
-	for (UCHAR i = 0; i<enAllPartsMax; i++){
+	for (UCHAR i = 0; i<enSkinModel_Max; i++){
 		ReleaseSkinModel( static_cast<enSKIN_MODEL>( i ) );
 	}
 	//スキンメッシュのポインタ領域を解放.
@@ -56,6 +56,11 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 
 	CreateStaticModel( 
 		"Data\\Stage\\kami_map.x",
+//		"Data\\RoboParts\\Head\\Head1.X",
+//		"Data\\RoboParts\\Head\\Head1.X",
+//		"Data\\RoboParts\\Leg\\Leg1.X",
+//		"Data\\RoboParts\\ArmR\\ArmR1.X",
+//		"Data\\RoboParts\\Core\\Core1.X",
 		enSTATIC_MODEL::enStaticModel_Ground );
 	CreateStaticModel(
 		"Data\\Trap\\Spia.x", 
@@ -64,9 +69,13 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 	CreateSkinModel(
 		"Data\\hime\\hime_run.x", 
 		enSKIN_MODEL::enSkinModel_Player );
+	CreateSkinModel(
+//		"Data\\RoboParts\\Leg\\Leg1.X",
+		"Data\\hime\\hime_kougeki.x", 
+		enSKIN_MODEL::enSkinModel_Leg );
 
 	//パーツ作成.
-	CreatePartsGroup();
+//	CreatePartsGroup();
 }
 
 //パーツ作成.
@@ -75,7 +84,7 @@ void clsResource::CreatePartsGroup()
 //	//脚.
 //	for( UCHAR i=0; i<enLegModelMax - enLegModel0; i++ ){
 //		ostringstream ss;
-//		ss << i;
+//		ss << static_cast<int>( i );
 //		string tmpString = sLEG_PASS + ss.str() + sEXTENSION_X;
 //		char *tmpPass = new char[tmpString.size() + 1];
 //		char_traits<char>::copy( 
@@ -90,7 +99,7 @@ void clsResource::CreatePartsGroup()
 //	//コア.
 //	for( UCHAR i=0; i<enCoreModelMax - enCoreModel0; i++ ){
 //		ostringstream ss;
-//		ss << i;
+//		ss << static_cast<int>( i );
 //		string tmpString = sCORE_PASS + ss.str() + sEXTENSION_X;
 //		char *tmpPass = new char[tmpString.size() + 1];
 //		char_traits<char>::copy( 
@@ -101,6 +110,7 @@ void clsResource::CreatePartsGroup()
 //
 //		delete[] tmpPass;
 //	}
+
 	CreateParts( enPARTS::LEG );
 	CreateParts( enPARTS::CORE );
 	CreateParts( enPARTS::HEAD );
@@ -111,24 +121,29 @@ void clsResource::CreatePartsGroup()
 }
 void clsResource::CreateParts( const enPARTS enParts )
 {
-	UCHAR ucStart, ucMax;
-	string sPass = SetVarToCreateParts( ucStart, ucMax, enParts );
-	
-	//作成.
-	for( UCHAR i=0; i<ucMax - ucStart; i++ ){
-		ostringstream ss;
-		ss << i;
-		string tmpString = sPass + ss.str() + sEXTENSION_X;
-		char *tmpPass = new char[tmpString.size() + 1];
-		char_traits<char>::copy( 
-			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
-		CreateSkinModel(
-			tmpPass, 
-			static_cast<enSKIN_MODEL>( ucStart + i ) );
-
-		delete[] tmpPass;
-	}
+//	UCHAR ucStart, ucMax;
+//	string sPass = SetVarToCreateParts( ucStart, ucMax, enParts );
+//	
+//	//作成.
+//	for( UCHAR i=0; i<ucMax - ucStart; i++ ){
+//		ostringstream ss;
+//		ss << static_cast<int>( i );
+//		string tmpString = sPass + ss.str();
+//		tmpString += sEXTENSION_X;
+//		//メモリ確保.
+//		char *tmpPass = new char[tmpString.size() + 1];
+//		//stringからchar[]へコピー.
+//		char_traits<char>::copy( 
+//			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
+//		//作る.
+//		CreateSkinModel(
+//			tmpPass, 
+//			static_cast<enSKIN_MODEL>( ucStart + i ) );
+//
+//		delete[] tmpPass;
+//	}
 }
+/*
 //CreatePartsで必要な変数を準備する.
 string clsResource::SetVarToCreateParts(
 	UCHAR &ucStart,	//(out)そのパーツの始まり番号.
@@ -174,9 +189,7 @@ string clsResource::SetVarToCreateParts(
 	}
 	return sPass;
 }
-
-
-
+*/
 
 //==================================================.
 //	初期化.
@@ -191,7 +204,7 @@ HRESULT clsResource::InitStaticModel(
 	m_pCotext11 = pContext;
 	//スタティックメッシュのポインタ領域を確保.
 	m_ppStaticModels = new clsDX9Mesh*[ enStaticModel_Max ];
-	for( int i=0; i<enStaticModel_Max; i++ ){
+	for( UCHAR i=0; i<enStaticModel_Max; i++ ){
 		m_ppStaticModels[i] = nullptr;
 	}
 
@@ -206,8 +219,8 @@ HRESULT clsResource::InitSkinModel(
 	m_Si.pDevice = pDevice;
 	m_Si.pDeviceContext = pContext;
 	//スキンメッシュのポインタ領域を確保.
-	m_ppSkinModels = new clsD3DXSKINMESH*[enAllPartsMax];
-	for (int i = 0; i<enAllPartsMax; i++){
+	m_ppSkinModels = new clsD3DXSKINMESH*[enSkinModel_Max];
+	for ( UCHAR i = 0; i<enSkinModel_Max; i++ ){
 		m_ppSkinModels[i] = nullptr;
 	}
 
@@ -346,7 +359,7 @@ bool clsResource::IsRangeStaticModel( const enSTATIC_MODEL enModel ) const
 }
 bool clsResource::IsRangeSkinModel( const enSKIN_MODEL enModel ) const
 {
-	if (0 <= enModel && enModel < enSkinModel_Max){
+	if (0 <= enModel && enModel < enSkinModel_Max ){
 		return true;
 	}
 	return false;

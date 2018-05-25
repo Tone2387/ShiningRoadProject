@@ -32,75 +32,76 @@ public:
 	enum enSKIN_MODEL : UCHAR
 	{
 		enSkinModel_Player = 0,
+		enSkinModel_Leg,
 
 		enSkinModel_Max,//数固定モデルのmax.
 	};
 
-	//脚.
-	enum enLEG_MODEL : UCHAR
-	{
-		enLegModel0 = enSkinModel_Max,
-		enLegModel1,
-		enLegModel2,
-		enLegModel3,
-
-		enLegModelMax,
-	};
-	//コア.
-	enum enCORE_MODEL : UCHAR
-	{
-		enCoreModel0 = enLegModelMax,
-		enCoreModel1,
-		enCoreModel2,
-		enCoreModel3,
-
-		enCoreModelMax,
-	};
-	//頭.
-	enum enHEAD_MODEL : UCHAR
-	{
-		enHeadModel0 = enCoreModelMax,
-		enHeadModel1,
-		enHeadModel2,
-		enHeadModel3,
-		  
-		enHeadModelMax,
-	};
-	//左腕.
-	enum enARML_MODEL : UCHAR
-	{
-		enArmLModel0 = enHeadModelMax,
-		enArmLModel1,
-		enArmLModel2,
-		enArmLModel3,
-		  
-		enArmLModelMax,
-	};
-	//右腕.
-	enum enARMR_MODEL : UCHAR
-	{
-		enArmRModel0 = enArmLModelMax,
-		enArmRModel1,
-		enArmRModel2,
-		enArmRModel3,
-		  
-		enArmRModelMax,
-	};
-	//武器.
-	enum enWEAPON_MODEL : UCHAR
-	{
-		enWeaponModel0 = enArmRModelMax,
-		enWeaponModel1,
-		enWeaponModel2,
-		enWeaponModel3,
-
-		enWeaponModelMax,//全スキンモデルのmax.
-	};
-	//すべてのスキンモデルの数.
-	enum enALL_SKIN_MODEL : UCHAR
-	{
-		enAllPartsMax = enWeaponModelMax
-	};
+//	//脚.
+//	enum enLEG_MODEL : UCHAR
+//	{
+//		enLegModel0 = enSkinModel_Max,
+//		enLegModel1,
+//		enLegModel2,
+//		enLegModel3,
+//
+//		enLegModelMax,
+//	};
+//	//コア.
+//	enum enCORE_MODEL : UCHAR
+//	{
+//		enCoreModel0 = enLegModelMax,
+//		enCoreModel1,
+//		enCoreModel2,
+//		enCoreModel3,
+//
+//		enCoreModelMax,
+//	};
+//	//頭.
+//	enum enHEAD_MODEL : UCHAR
+//	{
+//		enHeadModel0 = enCoreModelMax,
+//		enHeadModel1,
+//		enHeadModel2,
+//		enHeadModel3,
+//		  
+//		enHeadModelMax,
+//	};
+//	//左腕.
+//	enum enARML_MODEL : UCHAR
+//	{
+//		enArmLModel0 = enHeadModelMax,
+//		enArmLModel1,
+//		enArmLModel2,
+//		enArmLModel3,
+//		  
+//		enArmLModelMax,
+//	};
+//	//右腕.
+//	enum enARMR_MODEL : UCHAR
+//	{
+//		enArmRModel0 = enArmLModelMax,
+//		enArmRModel1,
+//		enArmRModel2,
+//		enArmRModel3,
+//		  
+//		enArmRModelMax,
+//	};
+//	//武器.
+//	enum enWEAPON_MODEL : UCHAR
+//	{
+//		enWeaponModel0 = enArmRModelMax,
+//		enWeaponModel1,
+//		enWeaponModel2,
+//		enWeaponModel3,
+//
+//		enWeaponModelMax,//全スキンモデルのmax.
+//	};
+//	//すべてのスキンモデルの数.
+//	enum enALL_SKIN_MODEL : UCHAR
+//	{
+//		enAllPartsMax = enSkinModel_Max
+//	};
 
 #ifdef RESOURCE_CLASS_SINGLETON
 	//インスタンス取得(唯一のアクセス経路).
