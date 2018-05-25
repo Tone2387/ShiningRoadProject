@@ -18,7 +18,6 @@ public:
 	bool m_bDeadFlg;//Ž€–Sƒtƒ‰ƒO.
 
 	//“ü—ÍŠÖŒW.
-
 	float fPushMin;
 
 	//ˆÚ“®ŠÖŒW.
@@ -35,41 +34,49 @@ public:
 
 	D3DXVECTOR3 m_vMoveDir;
 
+
+	bool m_bRotation;
+
+	float m_fRotSpd;
+	float m_fRotSpdMax;
+
+	int m_iTopRotSpdFrame;
+	float m_fRotAccele;
+
+	int m_iStopRotFrame;
+	float m_fRotDecele;
+
+
+	float m_fJumpPower;
+
 	void Shot();
 
 	//ˆÚ“®ŠÖŒW.
 	void Move(const float fAngle, const float fPush);
+	
 	bool IsMoveing();
 	bool IsMoveControl();
+
 	void SetMoveDir(const float fAngle);
 	void MoveControl();
-	void Accele(const float fPower);
-	void Decele();
 
-	void SetMoveAcceleSpeed(
-		float fMoveSpeedMax, 
-		int iTopSpeedFrame)//‰Á‘¬.
-	{
-		m_fMoveSpeedMax = fMoveSpeedMax;
-		m_iTopSpeedFrame = iTopSpeedFrame;
+	void MoveAccele(const float fPower);
+	void MoveDecele();
 
-		m_fMoveAccele = m_fMoveSpeedMax / m_iTopSpeedFrame;
-
-		SetMoveDecelerationSpeed(m_iTopSpeedFrame);
-	}
-
-	void SetMoveDecelerationSpeed(const int iStopFrame)//Œ¸‘¬.
-	{
-		m_iStopFrame = iStopFrame;
-
-		m_fMoveDecele = abs(m_fMoveSpeed) / m_iStopFrame;
-	}
+	void SetMoveAcceleSpeed(const float fMoveSpeedMax, const int iTopSpeedFrame);//‰Á‘¬.
+	void SetMoveDecelerationSpeed(const int iMoveStopFrame);//Œ¸‘¬.
+	
 
 	//‰ñ“].
-	float m_fRotSpd;
-
-	void SetRotationSpeed(const float fSpd);
 	void Rotate(const float fAngle, const float fPush);
+	bool IsRotate();
+	bool IsRotControl();
+	void RotAccele(const float fPower);
+	void RotDecele();
+	void SetRotationSpeed(const float fRotSpeedMax, const int iTopRotSpdFrame);
+	void SetRotationSpeed(const int iRotStopFrame);
+	
+	void SetRotationSpeed(const float fSpd);
 
 	void Spin(
 		float& fNowYaw,
@@ -78,7 +85,7 @@ public:
 		const float fTurnStop);
 
 	//‹ó’†ŠÖŒW.
-	float m_fJumpPower;
+	
 
 	void SetJumpPower(const float fPower)
 	{
@@ -86,8 +93,6 @@ public:
 	}
 
 	void Jump();
-
-	float fJumpPower;
 
 	//“–‚½‚è”»’èŠÖŒW.
 

@@ -1,22 +1,20 @@
 #include"Charactor.h"
 
-void clsCharactor::Jump()
+void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//‰Á‘¬.
 {
-	if (m_bGround)
-	{
-		m_fFollPower = m_fJumpPower;
-	}
+	m_fMoveSpeedMax = fMoveSpeedMax;
+	m_iTopSpeedFrame = iTopSpeedFrame;
+
+	m_fMoveAccele = m_fMoveSpeedMax / m_iTopSpeedFrame;
+
+	SetMoveDecelerationSpeed(m_iTopSpeedFrame);
 }
 
-void clsCharactor::SetRotationSpeed(const float fSpd)
+void clsCharactor::SetMoveDecelerationSpeed(const int iStopFrame)//Œ¸‘¬.
 {
-	m_fRotSpd = fSpd;
-}
+	m_iStopFrame = iStopFrame;
 
-//‰ñ“].
-void clsCharactor::Rotate(const float fAngle, const float fPush)
-{
-	Spin(m_Trans.fYaw, fAngle, m_fRotSpd * fPush, m_fRotSpd * fPush);
+	m_fMoveDecele = abs(m_fMoveSpeed) / m_iStopFrame;
 }
 
 void clsCharactor::Move(const float fAngle, const float fPush)
@@ -27,7 +25,7 @@ void clsCharactor::Move(const float fAngle, const float fPush)
 	if (!IsMoveControl())
 	{
 		MoveControl();
-		Decele();
+		MoveDecele();
 		return;
 	}
 
@@ -35,13 +33,13 @@ void clsCharactor::Move(const float fAngle, const float fPush)
 	{
 		if (fPushPower < fPushMin)
 		{
-			Decele();
+			MoveDecele();
 		}
 
 		else
 		{
 			SetMoveDir(fAngle);
-			Accele(fPush);
+			MoveAccele(fPush);
 		}
 
 		MoveControl();
@@ -104,7 +102,7 @@ void clsCharactor::MoveControl()
 	m_Trans.vPos += m_vMoveDir * abs(m_fMoveSpeed);
 }
 
-void clsCharactor::Accele(const float fPower)
+void clsCharactor::MoveAccele(const float fPower)
 {
 	if (m_fMoveSpeed <= m_fMoveSpeedMax && m_fMoveSpeed > -m_fMoveSpeedMax)
 	{
@@ -119,7 +117,7 @@ void clsCharactor::Accele(const float fPower)
 	SetMoveDecelerationSpeed(m_iStopFrame);
 }
 
-void clsCharactor::Decele()
+void clsCharactor::MoveDecele()
 {
 	if (m_fMoveSpeed > m_fMoveDecele)
 	{
@@ -130,6 +128,59 @@ void clsCharactor::Decele()
 	{
 		m_fMoveSpeed = 0.00f;
 		m_vMoveDir = GetVec3Dir(m_Trans.fYaw, vDirForward);
+	}
+}
+
+//‰ñ“].
+void clsCharactor::SetRotationSpeed(const float fSpd)
+{
+	m_fRotSpd = fSpd;
+}
+
+bool clsCharactor::IsRotate()
+{
+	return m_bRotation;
+}
+
+bool clsCharactor::IsRotControl()
+{
+	if (abs(m_fRotSpd) > m_fRotSpdMax)
+	{
+		return false;
+	}
+
+	return true;
+}
+void clsCharactor::RotAccele(const float fPower)
+{
+	m_fRotSpd += m_fRotAccele * fPower;
+
+	if (abs(m_fRotSpd) > m_fRotSpdMax)
+	{
+		m_fRotSpd = m_fRotSpdMax * (m_fRotSpd / abs(m_fRotSpd));
+	}
+}
+
+void clsCharactor::RotDecele()
+{
+	m_fRotSpd -= m_fRotDecele;
+}
+
+void SetRotationSpeed(const float fRotSpeedMax, const int iTopRotSpdFrame);
+void SetRotationSpeed(const int iRotStopFrame);
+
+void clsCharactor::Rotate(const float fAngle, const float fPush)
+{
+	Spin(m_Trans.fYaw, fAngle, m_fRotSpd, m_fRotSpd);
+}
+
+
+
+void clsCharactor::Jump()
+{
+	if (m_bGround)
+	{
+		m_fFollPower = m_fJumpPower;
 	}
 }
 
@@ -268,7 +319,6 @@ clsCharactor::clsCharactor() :
 	m_vMoveDir( { 0.0f, 0.0f, 0.0f } ),
 	m_fRotSpd( 0.0f ),
 	m_fJumpPower( 0.0f ),
-	fJumpPower( 0.0f ),
 	RaySpece( 0.0f ),
 	m_pMeshForRay( NULL )
 {

@@ -42,7 +42,7 @@ public:
 		ID3D11DeviceContext* pContext11,
 		clsPOINTER_GROUP* const pPtrGroup );
 
-	void Update()
+	void ModelUpdate()
 	{
 		DXSKIN_TRANSFORM tmpTrans;
 
@@ -63,7 +63,7 @@ public:
 		const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f ,1.0f },
 		const bool alphaFlg = false )
 	{
-		Update();
+		ModelUpdate();
 		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
 	}
 
