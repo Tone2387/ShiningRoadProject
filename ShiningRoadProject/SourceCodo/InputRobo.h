@@ -15,7 +15,13 @@ public:
 		m_pDxInput = new clsDxInput;
 
 		m_pComLS = new clsCommandRoboMove;
+		m_pComLSHor = new clsCommandRoboMove;
+		m_pComLSVer = new clsCommandRoboMove;
+
 		m_pComRS = new clsCommandRoboRotate;
+		m_pComRSHor = new clsCommandRoboRotate;
+		m_pComRSVer = new clsCommandRoboRotate;
+
 	}
 
 	clsInputRobo::~clsInputRobo()
@@ -48,20 +54,20 @@ public:
 
 		bool bNaname = false;
 
-		if (GetAsyncKeyState('1') & 0x8000)
+		/*if (GetAsyncKeyState('W') & 0x8000)
 		{
 			fPower = 1.0f;
 			bNaname = true;
 		}
 
-		else if (GetAsyncKeyState('2') & 0x8000)
+		else if (GetAsyncKeyState('S') & 0x8000)
 		{
 			fPower = 1.0f;
 			fAngle += -D3DX_PI;
 			bNaname = true;
 		}
 
-		if (GetAsyncKeyState('3') & 0x8000)
+		if (GetAsyncKeyState('A') & 0x8000)
 		{
 			fPower = 1.0f;
 			int iDir;
@@ -87,7 +93,7 @@ public:
 			}
 		}
 
-		else if (GetAsyncKeyState('4') & 0x8000)
+		else if (GetAsyncKeyState('D') & 0x8000)
 		{
 			fPower = 1.0f;
 
@@ -112,10 +118,32 @@ public:
 				fAngle += D3DX_PI / iDir;
 			}
 
-		}
+		}*/
 
 		return m_pComLS;
 	};
+
+	clsRoboCommand* LSInputHor(float& fPower, float& fAngle)
+	{
+		fPower = 0.0f;
+		fAngle = 0.0f;
+
+		fPower = m_pDxInput->GetHorLSPush();
+		fAngle = m_pDxInput->GetLSDir();
+
+		return m_pComLSHor;
+	}
+
+	clsRoboCommand* LSInputVer(float& fPower, float& fAngle)
+	{
+		fPower = 0.0f;
+		fAngle = 0.0f;
+
+		fPower = m_pDxInput->GetVerLSPush();
+		fAngle = m_pDxInput->GetLSDir();
+
+		return m_pComLSVer;
+	}
 
 	clsRoboCommand* RSInput(float& fPower, float& fAngle)
 	{
@@ -125,7 +153,7 @@ public:
 		fPower = m_pDxInput->GetRSPush();
 		fAngle = m_pDxInput->GetRSDir();
 
-		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		/*if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 		{
 			fPower = 1.0f;
 			fAngle = 0.1f;
@@ -135,10 +163,32 @@ public:
 		{
 			fPower = 1.0f;
 			fAngle = -0.1f;
-		}
+		}*/
 
 		return m_pComRS;
 	};
+
+	clsRoboCommand* RSInputHor(float& fPower, float& fAngle)
+	{
+		fPower = 0.0f;
+		fAngle = 0.0f;
+
+		fPower = m_pDxInput->GetHorRSPush();
+		fAngle = m_pDxInput->GetRSDir();
+
+		return m_pComRSHor;
+	}
+
+	clsRoboCommand* RSInputVer(float& fPower, float& fAngle)
+	{
+		fPower = 0.0f;
+		fAngle = 0.0f;
+
+		fPower = m_pDxInput->GetVerRSPush();
+		fAngle = m_pDxInput->GetRSDir();
+
+		return m_pComRSVer;
+	}
 
 	clsRoboCommand* MoveSwitch()
 	{
@@ -179,6 +229,11 @@ private:
 	clsRoboCommand* m_pBoostRising;
 
 	clsRoboCommand* m_pComLS;
+	clsRoboCommand* m_pComLSHor;
+	clsRoboCommand* m_pComLSVer;
+
 	clsRoboCommand* m_pComRS;
+	clsRoboCommand* m_pComRSHor;
+	clsRoboCommand* m_pComRSVer;
 };
 
