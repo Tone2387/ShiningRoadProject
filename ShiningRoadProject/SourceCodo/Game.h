@@ -15,7 +15,8 @@ public:
 		const HWND hWnd, 
 		ID3D11Device* const pDevice, 
 		ID3D11DeviceContext* const pContext,
-		D3D10_VIEWPORT* const pViewPort );
+		D3D10_VIEWPORT* const pViewPort,
+		ID3D11DepthStencilState* const pDepthState );
 	~clsGAME();
 
 	//new直後に使う.
@@ -57,6 +58,8 @@ private:
 	ID3D11DeviceContext*	m_wpContext;	//デバイスコンテキスト.
 	//2DSp用.
 	D3D10_VIEWPORT* m_wpViewPort;
+	//深度(Z)テスト設定.
+	ID3D11DepthStencilState*	m_wpDepthStencilState;
 
 	//ジョイスティック.
 	clsDxInput*		m_spDxInput;

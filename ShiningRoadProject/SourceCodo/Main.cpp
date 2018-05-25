@@ -89,7 +89,7 @@ clsMain::clsMain() :
 	m_pBackBuffer_TexRTV( nullptr ),
 	m_pBackBuffer_DSTex( nullptr ),
 	m_pBackBuffer_DSTexDSV( nullptr ),
-	m_pDepthStencilState( nullptr ),
+	m_spDepthStencilState( nullptr ),
 	m_pGame( nullptr ),
 	m_spViewPort( nullptr )
 {
@@ -313,12 +313,6 @@ void clsMain::Render()
 //	SetDepth( true );	//Zテスト:ON.
 
 
-#if _DEBUG
-	SetDepth( false );	//Zテスト:OFF.
-	//デバッグテキスト.
-	RenderDebugText();
-	SetDepth( true );	//Zテスト:ON.
-#endif//#if _DEBUG
 
 	//レンダリングされたイメージを表示.
 	m_pSwapChain->Present( 0, 0 );
@@ -473,10 +467,10 @@ HRESULT clsMain::InitD3D()
 	depthStencilDesc.DepthEnable = true;
 
 	if( SUCCEEDED( m_pDevice->CreateDepthStencilState(
-		&depthStencilDesc, &m_pDepthStencilState ) ) )
+		&depthStencilDesc, &m_spDepthStencilState ) ) )
 	{
 		m_pDeviceContext->OMSetDepthStencilState(
-			m_pDepthStencilState, 1 );
+			m_spDepthStencilState, 1 );
 	}
 
 	//ビューポートの設定.
@@ -520,12 +514,6 @@ HRESULT clsMain::InitD3D()
 void clsMain::DestroyD3D()
 {
 #if _DEBUG
-	//デバッグテキスト.
-	if( m_pText != nullptr ){
-		delete m_pText;
-		m_pText = nullptr;
-	}
-
 	if( m_pRayH != nullptr ){
 		delete m_pRayH;
 		m_pRayH = nullptr;
@@ -538,9 +526,6 @@ void clsMain::DestroyD3D()
 		delete m_pRayV;
 		m_pRayV = nullptr;
 	}
-
-
-
 #endif //#if _DEBUG
 
 #ifdef Tahara
@@ -653,7 +638,8 @@ HRESULT clsMain::InitBBox( clsDX9Mesh* pMesh )
 ////============================================================
 HRESULT clsMain::ReadMesh()
 {
-	m_pGame = new clsGAME( m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort );
+	m_pGame = new clsGAME( 
+		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
 	m_pGame->Create();
 
 
@@ -680,38 +666,12 @@ HRESULT clsMain::ReadMesh()
 		m_pRayH->Init( m_pDevice, m_pDeviceContext );
 	}
 
-	//デバッグテキストの初期化.
-	m_pText = new clsDebugText;
-	D3DXVECTOR4 vColor( 1.0f, 1.0f, 1.0f, 1.0f );
-	if( FAILED( m_pText->Init(
-		m_pDeviceContext,
-		WND_W, WND_H, 50.0f,
-		vColor ) ) )
-	{
-		MessageBox( NULL, "デバッグテキスト作成失敗", "clsMain::Loop", MB_OK );
-	}
 #endif //#if _DEBUG
 
 	return S_OK;
 }
 
 
-
-//============================================================
-//	深度テスト(Zテスト)ON/OFF切替.
-//============================================================
-void clsMain::SetDepth( const bool bFlg )
-{
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	ZeroMemory( &depthStencilDesc,
-		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
-	depthStencilDesc.DepthEnable = bFlg;
-
-	m_pDevice->CreateDepthStencilState(
-		&depthStencilDesc, &m_pDepthStencilState );
-	m_pDeviceContext->OMSetDepthStencilState(
-		m_pDepthStencilState, 1 );
-}
 
 
 #if _DEBUG
@@ -796,53 +756,6 @@ void clsMain::GetPosFromBone( clsD3DXSKINMESH* skinMesh, char BoneName[], D3DXVE
 
 
 //==========
-
-void clsMain::RenderDebugText()
-{
-#if _DEBUG
-
-	//NULLチェック.
-	if ( m_pText != nullptr ){
-		char strDbgTxt[256];
-		int dbgtxty = 0;
-		int dbgTxtx = 20;
-
-
-
-		sprintf_s( strDbgTxt, 
-			"CameraPos : x[%f], y[%f], z[%f]",
-			m_pGame->GetCameraPos().x, m_pGame->GetCameraPos().y, m_pGame->GetCameraPos().z );
-		m_pText->Render(strDbgTxt, 0, dbgtxty);
-		dbgtxty += 10;
-
-		sprintf_s( strDbgTxt, 
-			"CamLokPos : x[%f], y[%f], z[%f]",
-			m_pGame->GetCameraLookPos().x, m_pGame->GetCameraLookPos().y, m_pGame->GetCameraLookPos().z );
-		m_pText->Render(strDbgTxt, 0, dbgtxty);
-		dbgtxty += 10;
-
-//		sprintf_s( strDbgTxt, 
-//			"CharacPos : x[%f], y[%f], z[%f]",
-//			m_pTestChara->GetPositionX(), m_pTestChara->GetPositionY(), m_pTestChara->GetPositionZ() );
-//		m_pText->Render(strDbgTxt, 0, dbgtxty);
-//		dbgtxty += 10;
-
-
-
-		//dbgtxty += 10;
-		//if( m_pBgm[0]->IsStopped() ){
-		//	sprintf_s( strDbgTxt, "Stopped" );
-		//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-		//}
-		//if( m_pBgm[0]->IsPlaying() ){
-		//	sprintf_s( strDbgTxt, "Playingn" );
-		//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-		//}
-	}
-
-#endif //#if _DEBUG
-
-}
 
 
 

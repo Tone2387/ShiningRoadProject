@@ -4,6 +4,17 @@
 //============================================================
 //	インクルード.
 //============================================================
+#include "Global.h"
+#include "MyMacro.h"
+
+#if _DEBUG
+#include "DebugText.h"
+#include "Ray.h"		//レイ表示クラス.
+#endif//#if _DEBUG
+
+#include "Game.h"
+
+
 #include <Windows.h>
 
 //メモリリーク検出用.
@@ -14,18 +25,6 @@
 
 #include <D3DX10.h>//「D3DX～」の定義使用時に必要.
 #include <D3D10.h>
-
-#include "Global.h"
-#include "MyMacro.h"
-
-#if _DEBUG
-#include "DebugText.h"
-#include "Ray.h"		//レイ表示クラス.
-#endif//#if _DEBUG
-
-
-
-#include "Game.h"
 
 
 
@@ -100,10 +99,6 @@ private:
 	//ボックス衝突判定関数.
 	bool BBoxCollision( clsDX9Mesh* pAttacker, clsDX9Mesh* pTarget );
 
-	//デバッグテキストクラス.
-	clsDebugText*	m_pText;
-
-
 	//レイ表示クラス.
 	clsRay*			m_pRayV;	//垂直.
 	clsRay*			m_pRayFB;	//前後.
@@ -113,23 +108,12 @@ private:
 #endif //#if _DEBUG
 
 
-	//深度テスト(Zテスト)　ON/OFF切替.
-	void SetDepth( const bool bFlg );
+//	//深度テスト(Zテスト)　ON/OFF切替.
+//	void SetDepth( const bool bFlg );
 
 	//ボーンの座標をとる(ラップ関数).
 	void GetPosFromBone( clsD3DXSKINMESH* skinMesh, char BoneName[], D3DXVECTOR3& Pos );
 
-
-
-
-
-	//デバック゛テキストの表示.
-	void RenderDebugText();
-
-
-
-
-	
 
 
 
@@ -143,18 +127,11 @@ private:
 	ID3D11Texture2D*		m_pBackBuffer_DSTex;//バックバッファ.
 	ID3D11DepthStencilView*	m_pBackBuffer_DSTexDSV;//デプスステンシルビュー.
 
-
 	//深度(Z)テスト設定.
-	ID3D11DepthStencilState* m_pDepthStencilState;
-
-
+	ID3D11DepthStencilState* m_spDepthStencilState;
 
 	//ゲーム.
 	clsGAME*		m_pGame;
-
-
-
-
 
 
 #ifdef Tahara
@@ -164,12 +141,6 @@ private:
 //	D3DXVECTOR3 ConvDimPos( D3DXVECTOR3 &v2DPos, const D3DXVECTOR3 &v3DPos );
 	//2DSp用.
 	D3D10_VIEWPORT* m_spViewPort;
-
 #endif//#ifdef Tahara
-
-
-
-
-
 
 };

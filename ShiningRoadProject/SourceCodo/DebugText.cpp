@@ -41,22 +41,16 @@ clsDebugText::clsDebugText()
 //============================================================
 clsDebugText::~clsDebugText()
 {
-	m_pDevice11 = nullptr;		//デバイスオブジェクト.
-	m_pDeviceContext11 = nullptr;	//デバイスコンテキスト.
-
-	m_pVertexShader = nullptr;	//頂点シェーダ.
-	m_pVertexLayout = nullptr;	//頂点レイアウト.
-	m_pPixelShader = nullptr;		//ピクセルシェーダ.
-	m_pConstantBuffer = nullptr;	//コンスタントバッファ.
-
+	SAFE_RELEASE( m_pBlendState );
+	SAFE_RELEASE( m_pConstantBuffer );
+	SAFE_RELEASE( m_pPixelShader );
+	SAFE_RELEASE( m_pVertexLayout );
+	SAFE_RELEASE( m_pVertexShader );
+	SAFE_RELEASE( m_pAsciiTexture );
+	SAFE_RELEASE( m_pSampleLinear );
 	for( int i=0; i<100; i++ ){
-		m_pVertexBuffer[i] = nullptr;	//頂点バッファ(100個分).
+		SAFE_RELEASE( m_pVertexBuffer[i] );
 	}
-
-	m_pAsciiTexture = nullptr;//アスキーテクスチャ.
-	m_pSampleLinear = nullptr;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
-
-	m_pBlendState = nullptr;	//ブレンドステート.
 
 	for( int i=0; i<100; i++ ){
 		m_fKerning[i] = 0.0f;
@@ -65,6 +59,10 @@ clsDebugText::~clsDebugText()
 
 	D3DXMatrixIdentity( &m_mView );
 	D3DXMatrixIdentity( &m_mProj );
+
+	m_pDevice11 = nullptr;		//デバイスオブジェクト.
+	m_pDeviceContext11 = nullptr;	//デバイスコンテキスト.
+
 }
 
 
@@ -165,9 +163,9 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 		return E_FAIL;
 	}
 
-//============================================================
-	//hlslファイル読込.
-//============================================================
+	//============================================================
+		//hlslファイル読込.
+	//============================================================
 	ID3DBlob*	pCompileShader = nullptr;
 	ID3DBlob*	pErrors	= nullptr;
 	if( FAILED( D3DX11CompileFromFile(

@@ -14,6 +14,9 @@ const float fRENDER_LIMIT = 150.0f;
 //========== 基底クラス ==========//
 //================================//
 clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup ) :
+#if _DEBUG
+	m_upText( nullptr ),
+#endif//#if _DEBUG
 	m_wpDevice( ptrGroup->GetDevice() ),
 	m_wpContext( ptrGroup->GetContext() ),
 	m_wpViewPort( ptrGroup->GetViewPort() ),
@@ -28,6 +31,9 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup ) :
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
+#if _DEBUG
+	SAFE_DELETE( m_upText );
+#endif//#if _DEBUG
 	m_wpCamera = nullptr;
 	m_wpSound = nullptr;
 	m_wpEffects = nullptr;
@@ -43,6 +49,20 @@ clsSCENE_BASE::~clsSCENE_BASE()
 //シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
 void clsSCENE_BASE::Create()
 {
+#if _DEBUG
+	//デバッグテキストの初期化.
+	m_upText = new clsDebugText;
+	D3DXVECTOR4 vColor( 1.0f, 1.0f, 1.0f, 1.0f );
+	if( FAILED( m_upText->Init(
+		m_wpContext,
+		WND_W, WND_H, 50.0f,
+		vColor ) ) )
+	{
+		MessageBox( NULL, "デバッグテキスト作成失敗", "clsMain::Loop", MB_OK );
+	}
+#endif//#if _DEBUG
+
+
 	D3DXMatrixIdentity( &m_mView );
 	D3DXMatrixIdentity( &m_mProj );	
 	m_vLight = vLIGHT_DIR;
@@ -75,7 +95,33 @@ void clsSCENE_BASE::Render()
 
 	//各シーンの描画.
 	RenderProduct( vCamPos );
+
+#if _DEBUG
+	SetDepth( false );	//Zテスト:OFF.
+	//デバッグテキスト.
+	RenderDebugText();
+	SetDepth( true );	//Zテスト:ON.
+#endif//#if _DEBUG
+
 }
+
+
+//============================================================
+//	深度テスト(Zテスト)ON/OFF切替.
+//============================================================
+void clsSCENE_BASE::SetDepth( const bool isOn )
+{
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	ZeroMemory( &depthStencilDesc,
+		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
+	depthStencilDesc.DepthEnable = isOn;
+
+	m_wpDevice->CreateDepthStencilState(
+		&depthStencilDesc, &m_wpDepthStencilState );
+	m_wpContext->OMSetDepthStencilState(
+		m_wpDepthStencilState, 1 );
+}
+
 
 
 D3DXVECTOR3 clsSCENE_BASE::GetCameraPos() const
@@ -120,6 +166,45 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &nextScene ) const
 		nextScene = enSCENE::GAMEOVER;
 	}
 }
+
+#if _DEBUG
+void clsSCENE_BASE::RenderDebugText()
+{
+	//NULLチェック.
+	ASSERT_IF_NULL( m_upText );
+
+	char strDbgTxt[256];
+	int iTxtY = 0;
+	const int iOFFSET = 10;//一行毎にだけ下にずらすか.
+
+	sprintf_s( strDbgTxt, 
+		"CameraPos : x[%f], y[%f], z[%f]",
+		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	sprintf_s( strDbgTxt, 
+		"CamLokPos : x[%f], y[%f], z[%f]",
+		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+
+	//dbgtxty += 10;
+	//if( m_pBgm[0]->IsStopped() ){
+	//	sprintf_s( strDbgTxt, "Stopped" );
+	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
+	//}
+	//if( m_pBgm[0]->IsPlaying() ){
+	//	sprintf_s( strDbgTxt, "Playingn" );
+	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
+	//}
+
+}
+#endif //#if _DEBUG
+
+
+
+
+
 
 //============================================================
 //	カメラ関数.

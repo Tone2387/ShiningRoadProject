@@ -2,6 +2,10 @@
 
 #include "Global.h"
 
+#if _DEBUG
+#include "DebugText.h"
+#endif//#if _DEBUG
+
 #include "CharaStatic.h"
 
 #include "PtrGroup.h"
@@ -61,6 +65,8 @@ protected:
 	void Camera();
 	//プロジェクション関数.
 	void Proj();
+	//深度テスト(Zテスト)　ON/OFF切替.
+	void SetDepth( const bool isOn );
 	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
 	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
@@ -70,19 +76,26 @@ protected:
 //基底クラスのポインタは基底クラスで破棄します.
 //派生クラスでは破棄しないでください.
 
+	//デバッグテキストクラス.
+#if _DEBUG
+	clsDebugText*	m_upText;
+	//デバック゛テキストの表示.
+	virtual void RenderDebugText();
+#endif//#if _DEBUG
 
 
 	//以下、消すときdeleteしないでnullしてね( この基底クラスのデストラクタでやっています ).
 	//カメラ( 必要ならばこれを消して、シーンごとに異なった機能のカメラを作りましょう ).
-	ID3D11Device*			m_wpDevice;	//デバイスオブジェクト.
-	ID3D11DeviceContext*	m_wpContext;//デバイスコンテキスト.
-	D3D10_VIEWPORT*			m_wpViewPort;//2DSp用.
+	ID3D11Device*				m_wpDevice;	//デバイスオブジェクト.
+	ID3D11DeviceContext*		m_wpContext;//デバイスコンテキスト.
+	D3D10_VIEWPORT*				m_wpViewPort;//2DSp用.
+	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
 	clsPOINTER_GROUP*	m_wpPtrGroup;
 	clsDxInput*			m_wpDxInput;
 	clsResource*		m_wpResource;
 	clsEffects*			m_wpEffects;
 	clsSOUND_MANAGER*	m_wpSound;
-	clsCAMERA_BASE*		m_wpCamera;
+	clsCAMERA_BASE*		m_wpCamera;	
 
 
 };
