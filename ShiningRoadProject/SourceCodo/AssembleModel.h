@@ -27,6 +27,9 @@ public:
 
 private:
 
+	//モデルの初期セット.
+	void Init();
+
 	clsFACTORY_PARTS*	m_pPartsFactory;
 	//パーツの数分のポインタ.
 	clsPARTS_BASE**	m_wppParts;

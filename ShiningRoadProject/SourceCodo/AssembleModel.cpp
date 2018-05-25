@@ -35,7 +35,6 @@ void clsASSEMBLE_MODEL::Create()
 
 	m_wppParts = new clsPARTS_BASE*[m_ucPartsMax];
 	for( UCHAR i=0; i<m_ucPartsMax; i++ ){
-//		m_wppParts[i] = new clsPARTS_BASE;
 //		m_wppParts[i] = nullptr;
 		m_wppParts[i] = m_pPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
@@ -43,7 +42,11 @@ void clsASSEMBLE_MODEL::Create()
 
 void clsASSEMBLE_MODEL::UpDate()
 {
-
+	ASSERT_IF_NULL( m_wppParts );
+	for( UCHAR i=0; i<m_ucPartsMax; i++ ){
+		ASSERT_IF_NULL( m_wppParts[i] );
+		m_wppParts[i]->SetPosition( { 0.0f, 1.0f, 0.0f } );
+	}
 }
 
 void clsASSEMBLE_MODEL::Render(
@@ -73,4 +76,7 @@ void clsASSEMBLE_MODEL::AttachModel(
 	ASSERT_IF_NULL( m_wppParts[ucParts] );
 	m_wppParts[ucParts]->DetatchModel();
 	m_wppParts[ucParts]->AttachModel( pModel );
+//	m_wppParts[ucParts]->
 }
+
+

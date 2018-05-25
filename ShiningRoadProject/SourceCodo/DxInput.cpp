@@ -93,7 +93,7 @@ bool clsDxInput::initDI( HWND hWnd)
 
 	// コントローラの接続確認
 	if( g_pPad2 == NULL ){
-		MessageBox( NULL, "ｺﾝﾄﾛｰﾗが接続されていません", "エラー", MB_OK );
+//		MessageBox( NULL, "ｺﾝﾄﾛｰﾗが接続されていません", "エラー", MB_OK );
 	}
 	else {
 		// コントローラ構造体のデータフォーマットを作成
