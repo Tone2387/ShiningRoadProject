@@ -57,9 +57,10 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 	CreateStaticModel( 
 		"Data\\Stage\\kami_map.x",
 //		"Data\\RoboParts\\Head\\Head1.X",
-//		"Data\\RoboParts\\Head\\Head1.X",
+//		"Data\\RoboParts\\Weapon\\Weapon1.X",
 //		"Data\\RoboParts\\Leg\\Leg4.X",
 //		"Data\\RoboParts\\ArmR\\ArmR1.X",
+//		"Data\\RoboParts\\ArmL\\ArmL1.X",
 //		"Data\\RoboParts\\Core\\Core1.X",
 		enSTATIC_MODEL::enStaticModel_Ground );
 	CreateStaticModel(
