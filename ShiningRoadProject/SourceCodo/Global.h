@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <string>
+#include <sstream>
 
 //============================================================
 //	ライブラリ.
@@ -72,6 +73,19 @@ enum class enSCENE : UCHAR
 				//なんのシーンも指定していない.
 };
 
+//ロボの構成に必要なパーツ数.
+enum class enPARTS : UCHAR
+{
+	LEG = 0,
+	CORE,
+	HEAD,
+	ARM_L,
+	ARM_R,
+	WEAPON_L,
+	WEAPON_R,
+
+	MAX
+};
 
 
 #endif//#ifndef GLOBAL_H_

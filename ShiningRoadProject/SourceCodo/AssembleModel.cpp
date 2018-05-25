@@ -74,3 +74,5 @@ void clsASSEMBLE_MODEL::AttachModel(
 	m_wppParts[ucParts]->DetatchModel();
 	m_wppParts[ucParts]->AttachModel( pModel );
 }
+
+
