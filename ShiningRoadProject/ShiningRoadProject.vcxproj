@@ -101,6 +101,8 @@
     <ClCompile Include="SourceCodo\DX9Mesh.cpp" />
     <ClCompile Include="SourceCodo\DxInput.cpp" />
     <ClCompile Include="SourceCodo\Effects.cpp" />
+    <ClCompile Include="SourceCodo\Enemy.cpp" />
+    <ClCompile Include="SourceCodo\EnemyRobo.cpp" />
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
     <ClCompile Include="SourceCodo\FactoryScene.cpp" />
@@ -162,6 +164,8 @@
     <ClInclude Include="SourceCodo\DX9Mesh.h" />
     <ClInclude Include="SourceCodo\DxInput.h" />
     <ClInclude Include="SourceCodo\Effects.h" />
+    <ClInclude Include="SourceCodo\Enemy.h" />
+    <ClInclude Include="SourceCodo\EnemyRobo.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
     <ClInclude Include="SourceCodo\FactoryScene.h" />
