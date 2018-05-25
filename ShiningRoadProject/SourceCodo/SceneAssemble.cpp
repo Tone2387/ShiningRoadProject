@@ -40,6 +40,9 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 //		m_wpDevice, m_wpContext, 
 //		TEST_TEX_PASS, tmpSs );
 //	m_pSprite->SetPos( { WND_W*0.5f, WND_H*0.5f, 0.0f } );
+
+	m_pAsmModel = new clsASSEMBLE_MODEL;
+	m_pAsmModel->Create();
 }
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
@@ -47,6 +50,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 //	m_pParts->AddRotationY( 0.01f);
 //
 //	m_pSprite->AddRot( { 0.0f, 0.0f, 0.025f } );
+	m_pAsmModel->UpDate();
 }
 
 void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
@@ -59,6 +63,7 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 //		D3DXVECTOR4(0.5f,2.0f,0.5f,0.75f), true );
 //
 //	m_pSprite->Render();
+	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }
 
 

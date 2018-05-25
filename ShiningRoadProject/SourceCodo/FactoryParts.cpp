@@ -2,9 +2,9 @@
 
 
 //パーツを吐き出す.
-clsPARTS_BASE* Create( const enPARTS enParts )
+clsPARTS_BASE* clsFACTORY_PARTS::Create( const enPARTS enParts )
 {
-	switch(enParts)
+	switch( enParts )
 	{
 	case enPARTS::LEG:
 		return new clsPARTS_LEG();
@@ -22,6 +22,7 @@ clsPARTS_BASE* Create( const enPARTS enParts )
 		return new clsPARTS_ARM_R();
 		break;
 	case enPARTS::WEAPON_L:
+		return new clsPARTS_WEAPON();
 	case enPARTS::WEAPON_R:
 		return new clsPARTS_WEAPON();
 		break;
