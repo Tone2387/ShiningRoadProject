@@ -51,18 +51,34 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 		pRoboCom->PushBotton(this);
 	}
 
-	pRoboCom = m_pInput->LSInput(fPush, fAngle);
-	pRoboCom->Trigger(this, fPush, fAngle);
+	bool bQuickTurn = false;
+
+	pRoboCom = m_pInput->RSHorInput(fPush, fAngle);
+	pRoboCom->Trigger(this, abs(fPush), fAngle);
 
 	pRoboCom = m_pInput->QuickBoost();
+
 	if (pRoboCom)
 	{
 		pRoboCom->Trigger(this, fPush, fAngle);
 		pRoboCom->PushBotton(this);
+
+		bQuickTurn = true;
 	}
 
-	pRoboCom = m_pInput->RSInput(fPush, fAngle);
-	pRoboCom->Trigger(this, fPush, m_Trans.fYaw + fAngle);
+	pRoboCom = m_pInput->LSInput(fPush, fAngle);
+	pRoboCom->Trigger(this, fPush, fAngle);
+
+
+	if (!bQuickTurn)
+	{
+		pRoboCom = m_pInput->QuickBoost();
+		if (pRoboCom)
+		{
+			pRoboCom->Trigger(this, fPush, fAngle);
+			pRoboCom->PushBotton(this);
+		}
+	}
 
 	WallJudge(pWall);
 }

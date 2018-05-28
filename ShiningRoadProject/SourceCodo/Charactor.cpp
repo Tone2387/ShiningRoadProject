@@ -3,18 +3,18 @@
 void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//‰Á‘¬.
 {
 	m_fMoveSpeedMax = fMoveSpeedMax;
-	m_iTopSpeedFrame = iTopSpeedFrame;
+	m_iTopMoveSpeedFrame = iTopSpeedFrame;
 
-	m_fMoveAccele = m_fMoveSpeedMax / m_iTopSpeedFrame;
+	m_fMoveAccele = m_fMoveSpeedMax / m_iTopMoveSpeedFrame;
 
-	SetMoveDecelerationSpeed(m_iTopSpeedFrame);
+	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
 }
 
-void clsCharactor::SetMoveDecelerationSpeed(const int iStopFrame)//Œ¸‘¬.
+void clsCharactor::SetMoveDeceleSpeed(const int iMoveStopFrame)//Œ¸‘¬.
 {
-	m_iStopFrame = iStopFrame;
+	m_iMoveStopFrame = iMoveStopFrame;
 
-	m_fMoveDecele = abs(m_fMoveSpeed) / m_iStopFrame;
+	m_fMoveDecele = abs(m_fMoveSpeed) / m_iMoveStopFrame;
 }
 
 void clsCharactor::Move(const float fAngle, const float fPush)
@@ -84,10 +84,9 @@ void clsCharactor::SetMoveDir(const float fAngle)
 	vForward = GetVec3Dir(m_Trans.fYaw, vDirForward);
 
 	//s‚«‚½‚¢•ûŒü.
-
 	D3DXVECTOR3 vAcceleDir = GetVec3Dir(fAngle, vForward);
 
-	m_vMoveDir += (vAcceleDir - m_vMoveDir) / (m_iStopFrame / 2);
+	m_vMoveDir += (vAcceleDir - m_vMoveDir);// / (m_iMoveStopFrame / 2);
 }
 
 void clsCharactor::MoveControl()
@@ -114,7 +113,7 @@ void clsCharactor::MoveAccele(const float fPower)
 		}
 	}
 
-	SetMoveDecelerationSpeed(m_iStopFrame);
+	SetMoveDeceleSpeed(m_iMoveStopFrame);
 }
 
 void clsCharactor::MoveDecele()
@@ -134,7 +133,7 @@ void clsCharactor::MoveDecele()
 //‰ñ“].
 void clsCharactor::SetRotationSpeed(const float fSpd)
 {
-	m_fRotSpd = fSpd;
+	m_fRotSpeed = fSpd;
 }
 
 bool clsCharactor::IsRotate()
@@ -144,37 +143,94 @@ bool clsCharactor::IsRotate()
 
 bool clsCharactor::IsRotControl()
 {
-	if (abs(m_fRotSpd) > m_fRotSpdMax)
+	if (abs(m_fRotSpeed) > m_fRotSpeedMax)
 	{
+		m_bRotation = false;
 		return false;
 	}
 
+	m_bRotation = true;
 	return true;
 }
 void clsCharactor::RotAccele(const float fPower)
 {
-	m_fRotSpd += m_fRotAccele * fPower;
+	m_fRotSpeed += m_fRotAccele * fPower;
 
-	if (abs(m_fRotSpd) > m_fRotSpdMax)
+	if (abs(m_fRotSpeed) > m_fRotSpeedMax)
 	{
-		m_fRotSpd = m_fRotSpdMax * (m_fRotSpd / abs(m_fRotSpd));
+		m_fRotSpeed = m_fRotSpeedMax * (m_fRotSpeed / abs(m_fRotSpeed));
 	}
+
+	SetRotDeceleSpeed(m_iMoveStopFrame);
 }
 
 void clsCharactor::RotDecele()
 {
-	m_fRotSpd -= m_fRotDecele;
+	if (m_fRotSpeed > m_fRotDecele)
+	{
+		m_fRotSpeed -= m_fRotDecele;
+	}
+
+	else
+	{
+		m_fRotSpeed = 0.00f;
+		m_bRotation = false;
+	}
 }
 
-void SetRotationSpeed(const float fRotSpeedMax, const int iTopRotSpdFrame);
-void SetRotationSpeed(const int iRotStopFrame);
+void clsCharactor::SetRotAcceleSpeed(const float fRotSpeedMax, const int iTopRotSpdFrame)
+{
+	m_fRotSpeedMax = fRotSpeedMax;
+	m_iTopRotSpeedFrame = iTopRotSpdFrame;
+
+	m_fRotAccele = m_fRotSpeedMax / m_iTopRotSpeedFrame;
+
+	SetRotDeceleSpeed(m_iTopRotSpeedFrame);
+}
+
+void clsCharactor::SetRotDeceleSpeed(const int iRotStopFrame)
+{
+	m_iRotStopFrame = iRotStopFrame;
+
+	m_fRotDecele = abs(m_fRotSpeed) / m_iRotStopFrame;
+}
+
+void clsCharactor::SetRotDir(float fAngle)
+{
+	m_fRotDir = m_Trans.fYaw + fAngle;
+}
 
 void clsCharactor::Rotate(const float fAngle, const float fPush)
 {
-	Spin(m_Trans.fYaw, fAngle, m_fRotSpd, m_fRotSpd);
+	fPushMin = 0.5f;
+	float fPushPower = abs(fPush);
+
+	if (!IsRotControl())
+	{
+		Spin(m_Trans.fYaw, m_fRotDir, m_fRotSpeed, m_fRotSpeed);
+		RotDecele();
+		return;
+	}
+
+	else
+	{
+		if (fPushPower < fPushMin)
+		{
+			RotDecele();
+		}
+
+		else
+		{
+			SetRotDir(fAngle);
+			RotAccele(fPush);
+		}
+
+		if (IsRotate())
+		{
+			Spin(m_Trans.fYaw, m_fRotDir, m_fRotSpeed, m_fRotSpeed);
+		}
+	}
 }
-
-
 
 void clsCharactor::Jump()
 {
@@ -312,12 +368,12 @@ clsCharactor::clsCharactor() :
 	fPushMin( 0.0f ),
 	m_fMoveSpeed( 0.0f ),
 	m_fMoveSpeedMax( 0.0f ),
-	m_iTopSpeedFrame( 0 ),
+	m_iTopMoveSpeedFrame( 0 ),
 	m_fMoveAccele( 0.0f ),
-	m_iStopFrame( 0 ),
+	m_iMoveStopFrame( 0 ),
 	m_fMoveDecele( 0.0f ),
 	m_vMoveDir( { 0.0f, 0.0f, 0.0f } ),
-	m_fRotSpd( 0.0f ),
+	m_fRotSpeed( 0.0f ),
 	m_fJumpPower( 0.0f ),
 	RaySpece( 0.0f ),
 	m_pMeshForRay( NULL )

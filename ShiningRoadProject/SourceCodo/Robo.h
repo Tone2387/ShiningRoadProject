@@ -70,7 +70,7 @@ public:
 	bool m_bBoost;
 
 	float m_fWalktMoveSpeedMax;
-	int m_fWalkTopSpeedFrame;
+	int m_iWalkTopSpeedFrame;
 
 	float m_fBoostMoveSpeedMax;
 	int m_iBoostTopSpeedFrame;
@@ -85,6 +85,8 @@ public:
 	void BoostRising();
 	void QuickBoost();
 	void SetDirQuickBoost(const float fAngle);
+	void QuickTurn();
+	void SetDirQuickTurn(const float fAngle);
 
 	clsRobo();
 	~clsRobo();
