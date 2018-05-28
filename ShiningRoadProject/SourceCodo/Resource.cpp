@@ -58,7 +58,7 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 		"Data\\Stage\\kami_map.x",
 //		"Data\\RoboParts\\Head\\Head1.X",
 //		"Data\\RoboParts\\Weapon\\Weapon1.X",
-//		"Data\\RoboParts\\Leg\\Leg4.X",
+//		"Data\\RoboParts\\Leg\\leg7.X",
 //		"Data\\RoboParts\\ArmR\\ArmR1.X",
 //		"Data\\RoboParts\\ArmL\\ArmL1.X",
 //		"Data\\RoboParts\\Core\\Core1.X",
@@ -71,8 +71,8 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 		"Data\\hime\\hime_run.x", 
 		enSKIN_MODEL::enSkinModel_Player );
 	CreateSkinModel(
-//		"Data\\RoboParts\\Leg\\Leg4.X",
-		"Data\\hime\\hime_kougeki.x", 
+		"Data\\RoboParts\\Leg\\leg7.X",
+//		"Data\\hime\\hime_kougeki.x", 
 		enSKIN_MODEL::enSkinModel_Leg );
 
 	//ÉpÅ[ÉcçÏê¨.
