@@ -25,7 +25,7 @@ void clsSCENE_TITLE::CreateProduct()
 			clsResource::enSTATIC_MODEL::enStaticModel_Ground ) );
 	m_pTestChara->Init();
 	m_pTestChara->SetPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
-	m_pTestChara->SetRotation( { 0.0f, static_cast<FLOAT>(D3DX_PI*0.125), 0.0f } );
+//	m_pTestChara->SetRotation( { 0.0f, static_cast<FLOAT>(D3DX_PI*0.125), 0.0f } );
 	m_pTestChara->SetScale( 0.1 );
 }
 
