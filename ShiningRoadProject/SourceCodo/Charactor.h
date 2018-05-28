@@ -26,10 +26,10 @@ public:
 	float m_fMoveSpeed;//最終的に加算されるスピード.
 	float m_fMoveSpeedMax;//スピードの最大値.
 
-	int m_iTopSpeedFrame;//↑に達するまでのフレーム値.
+	int m_iTopMoveSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fMoveAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
 	
-	int m_iStopFrame;//完全に停止するまでのフレーム値.
+	int m_iMoveStopFrame;//完全に停止するまでのフレーム値.
 	float m_fMoveDecele;// = m_fMoveSpeed / m_iStopFrame;
 
 	D3DXVECTOR3 m_vMoveDir;
@@ -37,15 +37,16 @@ public:
 
 	bool m_bRotation;
 
-	float m_fRotSpd;
-	float m_fRotSpdMax;
+	float m_fRotSpeed;
+	float m_fRotSpeedMax;
 
-	int m_iTopRotSpdFrame;
+	int m_iTopRotSpeedFrame;
 	float m_fRotAccele;
 
-	int m_iStopRotFrame;
+	int m_iRotStopFrame;
 	float m_fRotDecele;
 
+	float m_fRotDir;
 
 	float m_fJumpPower;
 
@@ -64,7 +65,7 @@ public:
 	void MoveDecele();
 
 	void SetMoveAcceleSpeed(const float fMoveSpeedMax, const int iTopSpeedFrame);//加速.
-	void SetMoveDecelerationSpeed(const int iMoveStopFrame);//減速.
+	void SetMoveDeceleSpeed(const int iMoveStopFrame);//減速.
 	
 
 	//回転.
@@ -73,8 +74,9 @@ public:
 	bool IsRotControl();
 	void RotAccele(const float fPower);
 	void RotDecele();
-	void SetRotationSpeed(const float fRotSpeedMax, const int iTopRotSpdFrame);
-	void SetRotationSpeed(const int iRotStopFrame);
+	void SetRotAcceleSpeed(const float fRotSpeedMax, const int iTopRotSpdFrame);
+	void SetRotDeceleSpeed(const int iRotStopFrame);
+	void SetRotDir(float Angle);
 	
 	void SetRotationSpeed(const float fSpd);
 

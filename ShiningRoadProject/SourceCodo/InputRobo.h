@@ -123,7 +123,7 @@ public:
 		return m_pComLS;
 	};
 
-	clsRoboCommand* LSInputHor(float& fPower, float& fAngle)
+	clsRoboCommand* LSHorInput(float& fPower, float& fAngle)
 	{
 		fPower = 0.0f;
 		fAngle = 0.0f;
@@ -134,7 +134,7 @@ public:
 		return m_pComLSHor;
 	}
 
-	clsRoboCommand* LSInputVer(float& fPower, float& fAngle)
+	clsRoboCommand* LSVerInput(float& fPower, float& fAngle)
 	{
 		fPower = 0.0f;
 		fAngle = 0.0f;
@@ -168,7 +168,7 @@ public:
 		return m_pComRS;
 	};
 
-	clsRoboCommand* RSInputHor(float& fPower, float& fAngle)
+	clsRoboCommand* RSHorInput(float& fPower, float& fAngle)
 	{
 		fPower = 0.0f;
 		fAngle = 0.0f;
@@ -179,7 +179,7 @@ public:
 		return m_pComRSHor;
 	}
 
-	clsRoboCommand* RSInputVer(float& fPower, float& fAngle)
+	clsRoboCommand* RSVerInput(float& fPower, float& fAngle)
 	{
 		fPower = 0.0f;
 		fAngle = 0.0f;

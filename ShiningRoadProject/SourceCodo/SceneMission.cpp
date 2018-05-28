@@ -63,13 +63,19 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	D3DXVECTOR3 vTmp = m_pTestRobo->m_Trans.vPos;
 	m_wpCamera->SetPos(vTmp);
 
-	vTmp = m_pTestRobo->m_Trans.vPos - (m_pTestRobo->GetVec3Dir(m_pTestRobo->m_Trans.fYaw, vDirForward) * 2);
+	vTmp = m_pTestRobo->m_Trans.vPos + (m_pTestRobo->GetVec3Dir(m_pTestRobo->m_Trans.fYaw, vDirBack) * 2);
 	vTmp.y += 0.5f;
 	m_wpCamera->SetPos(vTmp, false);
 
-	m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
-	m_pTestRobo->Render(m_mView, m_mProj, m_vLight, vCamPos);
-	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
+	//ËÞ­°(¶Ò×)•ÏŠ·.	
+	/*D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);//ã•ûˆÊ’u.
+	D3DXMatrixLookAtLH(
+		&m_mView,//(out)ËÞ­°ŒvŽZŒ‹‰Ê.
+		&m_wpCamera->GetPos(), &m_wpCamera->GetLookPos(), &vUpVec);*/
+
+	m_pTestChara->Render(m_mView, m_mProj, m_vLight, m_wpCamera->GetPos());
+	m_pTestRobo->Render(m_mView, m_mProj, m_vLight, m_wpCamera->GetPos());
+	m_pStage->Render(m_mView, m_mProj, m_vLight, m_wpCamera->GetPos());
 }
 
 

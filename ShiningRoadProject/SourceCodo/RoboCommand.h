@@ -56,6 +56,20 @@ public:
 	}
 };
 
+class clsCommandQuickTurn : public clsRoboCommand
+{
+public:
+	virtual void Trigger(clsRobo* pRobo, const float fS, const float fAngle)
+	{
+		pRobo->SetDirQuickTurn(fAngle);
+	}
+
+	virtual void PushBotton(clsRobo* pRobo)
+	{
+		pRobo->QuickTurn();
+	}
+};
+
 class clsCommandRoboRotate : public clsRoboCommand
 {
 public:

@@ -347,7 +347,13 @@ float clsDxInput::GetLSDir()
 
 float clsDxInput::GetLSPush()
 {
-	return (abs(m_fHorLSPush) + abs(m_fVerLSPush));
+	float fLSPush = abs(m_fHorLSPush) + abs(m_fVerLSPush);
+
+	if (fLSPush >= 1.0f)
+	{
+		fLSPush = 1.0f;
+	}
+	return fLSPush;
 }
 
 float clsDxInput::GetHorLSPush()
@@ -367,7 +373,14 @@ float clsDxInput::GetRSDir()
 
 float clsDxInput::GetRSPush()
 {
-	return (abs(m_fHorRSPush) + abs(m_fVerRSPush));
+	float fRSPush = abs(m_fHorRSPush) + abs(m_fVerRSPush);
+
+	if (fRSPush >= 1.0f)
+	{
+		fRSPush = 1.0f;
+	}
+
+	return fRSPush;
 }
 
 float clsDxInput::GetHorRSPush()
