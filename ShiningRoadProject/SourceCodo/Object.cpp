@@ -545,7 +545,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_GroundSpece)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
@@ -573,11 +573,11 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall, const bool bFoll)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece - m_fFollPower && fDis > g_GroundSpece)
+	if (fDis < fRaySpece - m_fFollPower && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
-		m_Trans.vPos.y = vIntersect.y + (fRaySpece - fGravity);
+		m_Trans.vPos.y = vIntersect.y + (fRaySpece - g_fGravity);
 
 		m_fFollPower = 0.0f;
 	}

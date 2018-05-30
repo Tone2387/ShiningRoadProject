@@ -8,8 +8,11 @@ class clsInputRobo
 public:
 	clsInputRobo::clsInputRobo()
 	{
+		m_bChangeSwitch = false;
+
 		m_pMoveSwitch = new clsCommandMoveSwitch;
 		m_pQuickBoost = new	clsCommandQuickBoost;
+		m_pQuickTurn = new clsCommandQuickTurn;
 		m_pBoostRising = new clsCommandBoostRising;
 
 		m_pDxInput = new clsDxInput;
@@ -195,9 +198,18 @@ public:
 		if (m_pDxInput->IsPressKey(enPKey_03) ||
 			GetAsyncKeyState(VK_F1) & 0x1)
 		{
-			return m_pMoveSwitch;
+			if (!m_bChangeSwitch)
+			{
+				m_bChangeSwitch = true;
+				return m_pMoveSwitch;
+			}
 		}
 
+		else
+		{
+			m_bChangeSwitch = false;
+		}
+		
 		return nullptr;
 	}
 
@@ -207,6 +219,17 @@ public:
 			GetAsyncKeyState(VK_F2) & 0x8000)
 		{
 			return m_pQuickBoost;
+		}
+
+		return nullptr;
+	}
+
+	clsRoboCommand* QuickTurn()
+	{
+		if (m_pDxInput->IsPressKey(enPKey_02) ||
+			GetAsyncKeyState(VK_F2) & 0x8000)
+		{
+			return m_pQuickTurn;
 		}
 
 		return nullptr;
@@ -224,8 +247,11 @@ public:
 	}
 
 private:
+	bool m_bChangeSwitch;
+
 	clsRoboCommand* m_pMoveSwitch;
 	clsRoboCommand* m_pQuickBoost;
+	clsRoboCommand* m_pQuickTurn;
 	clsRoboCommand* m_pBoostRising;
 
 	clsRoboCommand* m_pComLS;

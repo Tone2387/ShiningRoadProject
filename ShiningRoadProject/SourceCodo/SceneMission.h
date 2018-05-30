@@ -45,6 +45,8 @@ private:
 
 	clsDX9Mesh* m_pStage;
 
+	clsCAMERA_MISSION* m_pCam;
+
 	//基底クラスに以下があります.
 	//カメラ.
 	//リソース.
