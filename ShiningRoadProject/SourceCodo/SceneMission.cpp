@@ -57,7 +57,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 }
 
 //•`‰æ.
-void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 {
 	//RenderŠÖ”‚Ìˆø”‚ð‘‚«‚â‚·‚­‚·‚é‚½‚ß‚Ì•Ï”.
 	D3DXVECTOR3 vTmp = m_pTestRobo->m_Trans.vPos;
