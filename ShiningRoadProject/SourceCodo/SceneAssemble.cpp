@@ -81,7 +81,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 	m_pAsmModel->UpDate();
 }
 
-void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 {
 //	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
 ////	ConvDimPos( m_pSprite->GetPos(), m_pParts->GetPosition() );

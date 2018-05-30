@@ -7,7 +7,7 @@ const D3DXVECTOR3 vLIGHT_DIR = { 0.0f, 0.01f, 0.02f };
 //ƒJƒƒ‰‚Ì‚æ‚è‹ï‡.
 const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );
 //•`‰æŒÀŠE‹——£.
-const float fRENDER_LIMIT = 150.0f;
+const float fRENDER_LIMIT = 640.0f;//150.0f.
 
 
 //================================//

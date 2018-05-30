@@ -26,7 +26,7 @@ void clsSCENE_TITLE::CreateProduct()
 	m_pTestChara->Init();
 	m_pTestChara->SetPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 //	m_pTestChara->SetRotation( { 0.0f, static_cast<FLOAT>(D3DX_PI*0.125), 0.0f } );
-	m_pTestChara->SetScale( 0.1 );
+	m_pTestChara->SetScale( 0.05 );
 }
 
 void clsSCENE_TITLE::UpdateProduct( enSCENE &nextScene )
@@ -38,7 +38,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &nextScene )
 	DebugChangeScene( nextScene );
 }
 
-void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 {
 	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
