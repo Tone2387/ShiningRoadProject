@@ -16,8 +16,8 @@ void clsRobo::RoboInit(
 
 	m_pMesh->AttachModel(
 		m_wpResource->GetSkinModels(
-//			clsResource::enSkinModel_Player));
-			clsResource::enSkinModel_Leg ) );
+				clsResource::enSkinModel_Leg ) );
+//		m_wpResource->GetPartsModels( enPARTS::LEG, 3 ));
 	m_pMesh->SetAnimSpeed(0.1);
 
 	SetScale(0.005f);
