@@ -42,42 +42,29 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 //	m_pSprite->SetPos( { WND_W*0.5f, WND_H*0.5f, 0.0f } );
 
 	m_pAsmModel = new clsASSEMBLE_MODEL;
-	m_pAsmModel->Create();
+	m_pAsmModel->Create( m_wpResource );
+
+	m_wpCamera->SetPos( { 0.0f, 0.0f, -150.0f } );
+	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
 }
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 {
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
-//		m_pAsmModel->AttachModel( enPARTS::LEG,
-//			m_wpResource->GetSkinModels( 
-//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enLegModel0 ) ) );
-//		
-//		m_pAsmModel->AttachModel( enPARTS::CORE,
-//			m_wpResource->GetSkinModels( 
-//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enCoreModel0 ) ) );
-//		
-//		m_pAsmModel->AttachModel( enPARTS::HEAD,
-//			m_wpResource->GetSkinModels( 
-//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enHeadModel0 ) ) );
-//		
-//		m_pAsmModel->AttachModel( enPARTS::ARM_L,
-//			m_wpResource->GetSkinModels( 
-//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enArmLModel0 ) ) );
-//		
-//		m_pAsmModel->AttachModel( enPARTS::ARM_R,
-//			m_wpResource->GetSkinModels( 
-//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enArmRModel0 ) ) );
-//		
-//		m_pAsmModel->AttachModel( enPARTS::WEAPON_L,
-//			m_wpResource->GetSkinModels( 
-//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enWeaponModel0 ) ) );
-//		
-//		m_pAsmModel->AttachModel( enPARTS::WEAPON_R,
-//			m_wpResource->GetSkinModels( 
-//				static_cast<clsResource::enSKIN_MODEL>( clsResource::enWeaponModel0 ) ) );
+		static int tmpI = 0; 
+		m_pAsmModel->AttachModel( enPARTS::LEG, tmpI );
+		m_pAsmModel->AttachModel( enPARTS::CORE, tmpI );
+		m_pAsmModel->AttachModel( enPARTS::HEAD, tmpI );
+		m_pAsmModel->AttachModel( enPARTS::ARM_L, tmpI );
+		m_pAsmModel->AttachModel( enPARTS::ARM_R, tmpI );
+		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, tmpI );
+		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
+		tmpI ++;
+		if( tmpI >= 4 ) tmpI = 0;
+
+		m_pAsmModel->SetPos( { 0.0f, 0.0f, 0.0f } );
+		m_pAsmModel->SetScale( 0.005f );
 	}
-
-
 	m_pAsmModel->UpDate();
 }
 

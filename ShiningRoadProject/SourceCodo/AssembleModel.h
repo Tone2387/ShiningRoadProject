@@ -3,6 +3,8 @@
 #include "PartsBase.h"
 #include "FactoryParts.h"
 
+#include "Resource.h"
+
 //アセンブルシーンのモデルさん.
 class clsASSEMBLE_MODEL
 {
@@ -11,7 +13,7 @@ public:
 	~clsASSEMBLE_MODEL();
 
 	//アセンブルシーンの各関数内で使います.
-	void Create();
+	void Create( clsResource* const pResource );
 	void UpDate();
 	void Render(
 		const D3DXMATRIX& const mView, 
@@ -22,13 +24,26 @@ public:
 		const bool isAlpha = false );
 
 	//モデルつけ変え.
-	void AttachModel( const enPARTS enParts, clsD3DXSKINMESH* const pModel );
+	void AttachModel( const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum );
 
+	//トランスフォーム.
+	void SetPos( const D3DXVECTOR3 &vPos );
+
+	void SetRot( const D3DXVECTOR3 &vYaw );
+	void AddRot( const D3DXVECTOR3 &vYaw );
+
+	void SetScale( const float fScale );
+
+	void SetAnimSpd( const double &dSpd );
 
 private:
 
 	//モデルの初期セット.
 	void Init();
+
+	//.
+
+	clsResource* m_wpResource;
 
 	clsFACTORY_PARTS*	m_pPartsFactory;
 	//パーツの数分のポインタ.

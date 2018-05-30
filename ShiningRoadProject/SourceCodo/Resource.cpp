@@ -92,43 +92,12 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 //パーツ作成.
 void clsResource::CreatePartsGroup()
 {
-//	//脚.
-//	for( UCHAR i=0; i<enLegModelMax - enLegModel0; i++ ){
-//		ostringstream ss;
-//		ss << static_cast<int>( i );
-//		string tmpString = sLEG_PASS + ss.str() + sEXTENSION_X;
-//		char *tmpPass = new char[tmpString.size() + 1];
-//		char_traits<char>::copy( 
-//			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
-//		CreateSkinModel(
-//			tmpPass, 
-//			static_cast<enSKIN_MODEL>( enLEG_MODEL::enLegModel0 + i ) );
-//
-//		delete[] tmpPass;
-//	}
-//
-//	//コア.
-//	for( UCHAR i=0; i<enCoreModelMax - enCoreModel0; i++ ){
-//		ostringstream ss;
-//		ss << static_cast<int>( i );
-//		string tmpString = sCORE_PASS + ss.str() + sEXTENSION_X;
-//		char *tmpPass = new char[tmpString.size() + 1];
-//		char_traits<char>::copy( 
-//			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
-//		CreateSkinModel(
-//			tmpPass, 
-//			static_cast<enSKIN_MODEL>( enCORE_MODEL::enCoreModel0 + i ) );
-//
-//		delete[] tmpPass;
-//	}
-
 	CreateParts( enPARTS::LEG );
 	CreateParts( enPARTS::CORE );
 	CreateParts( enPARTS::HEAD );
 	CreateParts( enPARTS::ARM_L	);
 	CreateParts( enPARTS::ARM_R	);
 	CreateParts( enPARTS::WEAPON_L );//武器はLR同じなのでRは無視.
-
 }
 void clsResource::CreateParts( const enPARTS enParts )
 {
