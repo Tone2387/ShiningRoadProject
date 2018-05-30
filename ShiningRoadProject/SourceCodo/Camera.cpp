@@ -28,18 +28,28 @@ void clsCAMERA_BASE::SetPos( const D3DXVECTOR3& vPos, bool isWithLook )
 	m_vPos = vPos;
 }
 
-void clsCAMERA_BASE::AddPos( const D3DXVECTOR3& vPos, bool isWithLook )
+void clsCAMERA_BASE::AddPos( const D3DXVECTOR3& vVec, bool isWithLook )
 {
 	if( isWithLook ){
-		m_vLook += vPos;
+		m_vLook += vVec;
 	}
-	m_vPos += vPos;
+	m_vPos += vVec;
 }
-
 
 D3DXVECTOR3 clsCAMERA_BASE::GetPos()
 {
 	return m_vPos;
+}
+
+
+void clsCAMERA_BASE::SetLookPos( const D3DXVECTOR3& vPos )
+{
+	m_vLook = vPos;
+}
+
+void clsCAMERA_BASE::AddLookPos( const D3DXVECTOR3& vVec )
+{
+	m_vLook += vVec;
 }
 
 D3DXVECTOR3 clsCAMERA_BASE::GetLookPos()

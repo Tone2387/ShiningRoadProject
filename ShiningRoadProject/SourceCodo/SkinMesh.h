@@ -16,7 +16,7 @@ public:
 
 	clsD3DXSKINMESH* m_pMesh;
 	LPD3DXANIMATIONCONTROLLER m_pAnimCtrl;
-
+	
 	//ﾓﾃﾞﾙﾃﾞｰﾀの関連付け.
 	void AttachModel(clsD3DXSKINMESH* pModel);
 	//ﾓﾃﾞﾙﾃﾞｰﾀ関連付け解除.
