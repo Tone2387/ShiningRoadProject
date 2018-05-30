@@ -14,6 +14,7 @@ clsSCENE_MISSION::~clsSCENE_MISSION()
 {
 	SAFE_DELETE( m_pTestChara );
 	SAFE_DELETE( m_pTestRobo );
+	SAFE_DELETE( m_pCam );
 }
 
 //生成時に一度だけ通る処理.
@@ -41,6 +42,8 @@ void clsSCENE_MISSION::CreateProduct()
 	m_pStage->m_Trans.fRoll = 0.0f;
 	m_pStage->m_Trans.fPitch = 0.0f;
 	m_pStage->m_Trans.vPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	m_pCam = new clsCAMERA_MISSION;
 }
 
 //毎フレーム通る処理.
@@ -49,6 +52,18 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 	//nullならassert.
 	ASSERT_IF_NULL( m_pTestRobo );
 	m_pTestRobo->Action(m_pStage);
+
+	D3DXVECTOR3 vLookPosTmp = m_pTestRobo->m_Trans.vPos;
+	vLookPosTmp.y += 0.5f;
+	//m_wpCamera->SetPos(vTmp);
+
+	D3DXVECTOR3 vCamPosTmp = m_pTestRobo->m_Trans.vPos + (m_pTestRobo->GetVec3Dir(m_pTestRobo->m_Trans.fYaw, vDirBack) * 2);
+	vCamPosTmp.y += 0.5f;
+
+	m_pCam->Update(vCamPosTmp, vLookPosTmp);
+
+	m_wpCamera = m_pCam;
+	//m_wpCamera->SetPos(vTmp, false);
 
 	//エンディングに行く場合は以下のようにする.
 	if( !"クリア条件を満たすとここを通る" ){
@@ -60,12 +75,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 	//Render関数の引数を書きやすくするための変数.
-	D3DXVECTOR3 vTmp = m_pTestRobo->m_Trans.vPos;
-	m_wpCamera->SetPos(vTmp);
-
-	vTmp = m_pTestRobo->m_Trans.vPos + (m_pTestRobo->GetVec3Dir(m_pTestRobo->m_Trans.fYaw, vDirBack) * 2);
-	vTmp.y += 0.5f;
-	m_wpCamera->SetPos(vTmp, false);
+	
 
 	//ﾋﾞｭｰ(ｶﾒﾗ)変換.	
 	/*D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);//上方位置.
@@ -73,9 +83,9 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 		&m_mView,//(out)ﾋﾞｭｰ計算結果.
 		&m_wpCamera->GetPos(), &m_wpCamera->GetLookPos(), &vUpVec);*/
 
-	m_pTestChara->Render(m_mView, m_mProj, m_vLight, m_wpCamera->GetPos());
-	m_pTestRobo->Render(m_mView, m_mProj, m_vLight, m_wpCamera->GetPos());
-	m_pStage->Render(m_mView, m_mProj, m_vLight, m_wpCamera->GetPos());
+	m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
+	m_pTestRobo->Render(m_mView, m_mProj, m_vLight, vCamPos);
+	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
 }
 
 

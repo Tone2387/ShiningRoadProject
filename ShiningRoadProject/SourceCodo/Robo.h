@@ -1,10 +1,7 @@
 #pragma once
 
-
-
 #include"Charactor.h"
 #include"SkinMesh.h"
-
 
 //‘¾Œ´‚Ì‘‚«‘«‚µ‚½•ª.
 #ifdef Tahara

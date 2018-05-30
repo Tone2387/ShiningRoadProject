@@ -36,20 +36,18 @@ void clsRobo::RoboInit(
 
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 
-	SetRotAcceleSpeed(0.1f, 30);
+	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
 }
 
 void clsRobo::Walk()
 {
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
-	m_bBoost = false;
 }
 
 void clsRobo::Boost()
 {
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
-	m_bBoost = true;
 }
 
 void clsRobo::MoveSwitch()
@@ -59,11 +57,13 @@ void clsRobo::MoveSwitch()
 		if (m_bBoost)
 		{
 			Walk();
+			m_bBoost = false;
 		}
 
 		else
 		{
 			Boost();
+			m_bBoost = true;
 		}
 	}
 }
@@ -112,8 +112,8 @@ void clsRobo::QuickBoost()
 {
 	if (IsMoveControl())
 	{
-		m_fMoveSpeed = m_fBoostMoveSpeedMax * 5.0f;
-		SetMoveDeceleSpeed(m_iBoostTopSpeedFrame * 2);
+		m_fMoveSpeed = m_fBoostMoveSpeedMax * 3.0f;
+		SetMoveDeceleSpeed(m_iMoveStopFrame);
 	}
 }
 
@@ -134,7 +134,7 @@ void clsRobo::QuickTurn()
 	{
 		if (IsRotControl())
 		{
-			m_fRotSpeed = (float)D3DX_PI / m_iRotStopFrame;
+			m_fRotSpeed = (float)D3DX_PI / (1.5f * m_iRotStopFrame);
 			SetRotDeceleSpeed(m_iRotStopFrame);
 		}
 	}

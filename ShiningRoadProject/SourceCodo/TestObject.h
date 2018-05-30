@@ -34,6 +34,8 @@ public:
 
 	void Action(const clsDX9Mesh* pWall);
 
+	void InhUpdate();//Inheritance
+
 private:
 	clsInputRobo* m_pInput;
 };

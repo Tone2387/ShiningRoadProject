@@ -23,7 +23,7 @@ public:
 	//移動関係.
 	bool m_bMoving;
 
-	float m_fMoveSpeed;//最終的に加算されるスピード.
+	
 	float m_fMoveSpeedMax;//スピードの最大値.
 
 	int m_iTopMoveSpeedFrame;//↑に達するまでのフレーム値.
@@ -32,7 +32,7 @@ public:
 	int m_iMoveStopFrame;//完全に停止するまでのフレーム値.
 	float m_fMoveDecele;// = m_fMoveSpeed / m_iStopFrame;
 
-	D3DXVECTOR3 m_vMoveDir;
+	
 
 
 	bool m_bRotation;
@@ -100,12 +100,7 @@ public:
 
 	//スフィア.
 
-	//スフィア構造体.
-	struct SPHERE
-	{
-		D3DXVECTOR3 vCenter;//中心.
-		float fRadius;	//半径.
-	};
+	
 
 	bool PointIntersect(
 		const D3DXVECTOR3 StartPos,	//基準の位置.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include"Global.h"
+#include"Object.h"
 
 const float g_fDisStandard = 0.1f;
 const float g_fPercentage = 0.01f;
@@ -8,7 +9,13 @@ const float g_fPercentage = 0.01f;
 class clsEnemyBase
 {
 public:
+	clsObject::TRANSFORM* m_pTrans;
 
+	void Init(LPSTR strEnemyFolderName);
+
+	void SearchTarget(clsObject* pObj);
+	void SetMoveDir();
+	bool IsShot();
 
 	clsEnemyBase();
 	~clsEnemyBase();
@@ -88,5 +95,10 @@ public:
 		int iCategory;
 		EnemyVisibilityAreaState** VisAreaState;
 	};
+
+	EnemyMoveData m_MoveData;
+	EnemyShotData m_ShotData;
+	EnemyVisibilityAreaData m_visAreaData;
+	EnemyUpdateState m_UpdateState;
 };
 
