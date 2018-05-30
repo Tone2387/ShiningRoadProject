@@ -150,19 +150,19 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 //デバッグ用シーン切り替え.
 void clsSCENE_BASE::DebugChangeScene( enSCENE &nextScene ) const
 {
-	if( GetAsyncKeyState( VK_F5 ) & 0x1 ){
+	if( GetAsyncKeyState( 'Y' ) & 0x1 ){
 		nextScene = enSCENE::TITLE;
 	}
-	else if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
+	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
 		nextScene = enSCENE::ASSEMBLE;
 	}
-	else if( GetAsyncKeyState( VK_F7 ) & 0x1 ){
+	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
 		nextScene = enSCENE::MISSION;
 	}
-	else if( GetAsyncKeyState( VK_F8 ) & 0x1 ){
+	else if( GetAsyncKeyState( 'O' ) & 0x1 ){
 		nextScene = enSCENE::ENDING;
 	}
-	else if( GetAsyncKeyState( VK_F9 ) & 0x1 ){
+	else if( GetAsyncKeyState( 'P' ) & 0x1 ){
 		nextScene = enSCENE::GAMEOVER;
 	}
 }

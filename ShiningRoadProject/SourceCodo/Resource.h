@@ -3,11 +3,25 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+
+/*
+//テストモデルに足の3番のモデルを割り当てる例.
+	m_pMesh->AttachModel(
+		m_wpResource->GetPartsModels( enPARTS::LEG, 3 ) );
+
+
+//今まで.
+	m_pMesh->AttachModel(
+		m_wpResource->GetSkinModels( clsResource::enSkinModel_Leg ) );
+*/
+
 #include "Global.h"
 #include "DX9Mesh.h"
 #include "CD3DXSKINMESH.h"
 
 
+//スキンメッシュ列挙体の型.
+#define SKIN_ENUM_TYPE UCHAR
 
 //シングルトンの時はつける.
 //#define RESOURCE_CLASS_SINGLETON
@@ -25,83 +39,27 @@ public:
 		enStaticModel_Shpere,
 		enStaticModel_Enemy,
 
-		enStaticModel_Max,
+		enStaticModel_Max
 	};
 
 	//スキンモデル種類.
-	enum enSKIN_MODEL : UCHAR
+	enum enSKIN_MODEL : SKIN_ENUM_TYPE
 	{
 		enSkinModel_Player = 0,
 		enSkinModel_Leg,
 
-		enSkinModel_Max,//数固定モデルのmax.
+		enSkinModel_Max//数固定モデルのmax.
 	};
 
-//	//脚.
-//	enum enLEG_MODEL : UCHAR
-//	{
-//		enLegModel0 = enSkinModel_Max,
-//		enLegModel1,
-//		enLegModel2,
-//		enLegModel3,
-//
-//		enLegModelMax,
-//	};
-//	//コア.
-//	enum enCORE_MODEL : UCHAR
-//	{
-//		enCoreModel0 = enLegModelMax,
-//		enCoreModel1,
-//		enCoreModel2,
-//		enCoreModel3,
-//
-//		enCoreModelMax,
-//	};
-//	//頭.
-//	enum enHEAD_MODEL : UCHAR
-//	{
-//		enHeadModel0 = enCoreModelMax,
-//		enHeadModel1,
-//		enHeadModel2,
-//		enHeadModel3,
-//		  
-//		enHeadModelMax,
-//	};
-//	//左腕.
-//	enum enARML_MODEL : UCHAR
-//	{
-//		enArmLModel0 = enHeadModelMax,
-//		enArmLModel1,
-//		enArmLModel2,
-//		enArmLModel3,
-//		  
-//		enArmLModelMax,
-//	};
-//	//右腕.
-//	enum enARMR_MODEL : UCHAR
-//	{
-//		enArmRModel0 = enArmLModelMax,
-//		enArmRModel1,
-//		enArmRModel2,
-//		enArmRModel3,
-//		  
-//		enArmRModelMax,
-//	};
-//	//武器.
-//	enum enWEAPON_MODEL : UCHAR
-//	{
-//		enWeaponModel0 = enArmRModelMax,
-//		enWeaponModel1,
-//		enWeaponModel2,
-//		enWeaponModel3,
-//
-//		enWeaponModelMax,//全スキンモデルのmax.
-//	};
-//	//すべてのスキンモデルの数.
-//	enum enALL_SKIN_MODEL : UCHAR
-//	{
-//		enAllPartsMax = enSkinModel_Max
-//	};
+	//使うときはこの順番.
+	SKIN_ENUM_TYPE m_ucLegNum;	//脚の数.
+	SKIN_ENUM_TYPE m_ucCoreNum;	//コアの数.
+	SKIN_ENUM_TYPE m_ucHeadNum;	//頭の数.
+	SKIN_ENUM_TYPE m_ucArmsNum;	//腕の数( 左右共通なので一つでよい ).
+	SKIN_ENUM_TYPE m_ucWeaponNum;//武器の数.
+
+	SKIN_ENUM_TYPE m_ucSkinModelMax;
+
 
 #ifdef RESOURCE_CLASS_SINGLETON
 	//インスタンス取得(唯一のアクセス経路).
@@ -121,12 +79,19 @@ public:
 	void Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext );
 
 
-	//スタティックモデル.
+	//スタティックモデル( Attachの引数 ).
 	clsDX9Mesh* GetStaticModels( const enSTATIC_MODEL enModel ) const;
 
 
-	//スキンモデル.
+	//スキンモデル( Attachの引数 )( パーツはこれではAttach出来ない ).
 	clsD3DXSKINMESH*	GetSkinModels( const enSKIN_MODEL enModel ) const;
+
+	//ロボのパーツをAttachする関数.
+	//第一引数 : 何のパーツ?.
+	//第二引数 : そのパーツの何番目?.
+	clsD3DXSKINMESH* GetPartsModels(
+		const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum );
+
 
 #ifdef Inoue
 	enSTATIC_MODEL ItoE( const int iNum ) const {
@@ -164,10 +129,21 @@ private:
 	void CreateParts( const enPARTS enParts );
 	//CreatePartsで必要な変数を準備する.
 	std::string SetVarToCreateParts(
-		UCHAR &ucStart,	//(out)そのパーツの始まり番号.
-		UCHAR &ucMax,	//(out)そのパーツの最大番号.
+		SKIN_ENUM_TYPE &ucStart,	//(out)そのパーツの始まり番号.
+		SKIN_ENUM_TYPE &ucMax,	//(out)そのパーツの最大番号.
 		const enPARTS enParts );
 		
+
+	//GetSkinModels()の引数をどのパーツかとそのパーツの番号から引き出す関数.
+	//第一引数 : 何のパーツ?.
+	//第二引数 : そのパーツの何番目?.
+	enSKIN_MODEL GetPartsResourceNum( 
+		const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum ) const;
+
+	//SetVarToCreateParts()やGetPartsResourceNum()の補助.
+	//そのパーツの最初のナンバーをリソース番号にして教えてくれる.
+	SKIN_ENUM_TYPE GetPartsResourceStart( const enPARTS enParts ) const;
+
 
 	HWND					m_hWnd;
 	ID3D11Device*			m_pDevice11;
