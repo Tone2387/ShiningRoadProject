@@ -14,10 +14,6 @@ clsMain* g_pClsMain = nullptr;
 //	定数.
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
-
-
-
-
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //	定数終了.
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -545,94 +541,6 @@ void clsMain::DestroyD3D()
 	SAFE_RELEASE( m_pDevice );
 }
 
-
-
-#if _DEBUG
-
-////============================================================
-//	スフィア作成.
-////============================================================
-HRESULT clsMain::InitSphere( clsDX9Mesh* pMesh, float fScale )
-{
-	LPDIRECT3DVERTEXBUFFER9 pVB = nullptr;	//頂点バッファ.
-	void*	pVertices = nullptr;	//頂点.
-	D3DXVECTOR3	vCenter;		//中心.
-	float	fRadius;			//半径.
-
-	//頂点バッファを取得.
-	if( FAILED( pMesh->m_pMesh->GetVertexBuffer( &pVB ) ) ){
-		return E_FAIL;
-	}
-
-	//メッシュの頂点バッファをロックする.
-	if( FAILED( pVB->Lock( 0, 0, &pVertices, 0 ) ) ){
-		SAFE_RELEASE( pVB );
-		return E_FAIL;
-	}
-
-	//メッシュの外接円の中心と半径を計算する.
-	D3DXComputeBoundingSphere(
-		(D3DXVECTOR3*)pVertices,
-		pMesh->m_pMesh->GetNumVertices(),	//頂点の数.
-		D3DXGetFVFVertexSize( pMesh->m_pMesh->GetFVF()),	//頂点の情報.
-		&vCenter,	//(out)中心座標.
-		&fRadius );	//(out)半径.
-
-	//アンロック.
-	pVB->Unlock();
-	SAFE_RELEASE( pVB );
-
-	//中心と半径を構造体に設定.
-	pMesh->m_Sphere.vCenter	= vCenter;
-	pMesh->m_Sphere.fRadius	= fRadius * fScale;
-
-
-	return S_OK;
-}
-
-////============================================================
-//	バウンディングボックス作成.
-////============================================================
-HRESULT clsMain::InitBBox( clsDX9Mesh* pMesh )
-{
-	LPDIRECT3DVERTEXBUFFER9 pVB = nullptr;
-	VOID* pVertices = nullptr;
-	D3DXVECTOR3 Max, Min;
-
-	//メッシュの頂点バッファをロックする.
-	if( FAILED( pMesh->m_pMesh->GetVertexBuffer( &pVB ) ) ){
-		MessageBox( NULL, "頂点バッファ取得失敗", "clsMain::InitBBox()", MB_OK );
-		return E_FAIL;
-	}
-	if( FAILED( pVB->Lock( 0, 0, &pVertices, 0 ) ) ){
-		MessageBox( NULL, "頂点バッファのロックに失敗", "clsMain::InitBBox()", MB_OK );
-		return E_FAIL;
-	}
-	//メッシュ内の頂点位置の最大と最小を検索する.
-	D3DXComputeBoundingBox(
-		(D3DXVECTOR3*)pVertices,
-		pMesh->m_pMesh->GetNumVertices(),
-		D3DXGetFVFVertexSize(
-			pMesh->m_pMesh->GetFVF() ),
-			&Min, &Max );	//(out)最小、最大頂点.
-	pVB->Unlock();			//アンロック.
-	SAFE_RELEASE( pVB );	//使用済頂点バッファの解放.
-
-	pMesh->m_BBox.vPosMax = Max;
-	pMesh->m_BBox.vPosMin = Min;
-
-	//軸ベクトル,軸の長さ(この場合ボックスの各半径)を初期化する.
-	pMesh->m_BBox.fLengthX = ( Max.x - Min.x ) / 2.0f;
-	pMesh->m_BBox.fLengthY = ( Max.y - Min.y ) / 2.0f;
-	pMesh->m_BBox.fLengthZ = ( Max.z - Min.z ) / 2.0f;
-
-
-	return S_OK;
-}
-#endif //#if _DEBUG
-
-
-
 ////============================================================
 //	メッシュ読み込み関数(まとめた).
 ////============================================================
@@ -670,63 +578,6 @@ HRESULT clsMain::ReadMesh()
 
 	return S_OK;
 }
-
-
-
-
-#if _DEBUG
-////============================================================
-//	衝突判定関数.
-////============================================================
-bool clsMain::Collision( clsDX9Mesh* pAttacker, clsDX9Mesh* pTarget)
-{
-	//2つの物体の中心間の距離を求める.
-	D3DXVECTOR3 vLength
-		= pTarget->m_Trans.vPos - pAttacker->m_Trans.vPos;
-	//長さに変換する.
-	float Length = D3DXVec3Length( &vLength );
-
-	//2物体間の距離が、2物体の半径を足したものより.
-	//小さいということは、スフィア同士が重なっている.
-	//(衝突している)ということ.
-	if( Length <=
-		pAttacker->m_Sphere.fRadius + pTarget->m_Sphere.fRadius )
-	{
-		return true;//衝突した.
-	}
-	return false;	//衝突していない.
-}
-//============================================================
-//	ボックス衝突判定関数.
-//============================================================
-bool clsMain::BBoxCollision( clsDX9Mesh* pAttacker, clsDX9Mesh* pTarget )
-{
-	//攻撃側用に2つの頂点を用意し初期化する.
-	D3DXVECTOR3 vecMaxAtk, vecMinAtk;	//最大、最小頂点.
-	vecMaxAtk = pAttacker->m_BBox.vPosMax
-				+ pAttacker->m_Trans.vPos;
-	vecMinAtk = pAttacker->m_BBox.vPosMin
-				+ pAttacker->m_Trans.vPos;
-
-	//目標側用に2つの頂点を用意し初期化する.
-	D3DXVECTOR3 vecMaxTrg, vecMinTrg;	//最大、最小頂点.
-	vecMaxTrg = pTarget->m_BBox.vPosMax
-				+ pTarget->m_Trans.vPos;
-	vecMinTrg = pTarget->m_BBox.vPosMin
-				+ pTarget->m_Trans.vPos;
-
-	//2つの物体それぞれの最大、最小位置という,.
-	//4つの情報があれば、衝突を検出できる.
-	if( vecMinAtk.x < vecMaxTrg.x  &&  vecMaxAtk.x > vecMinTrg.x &&
-		vecMinAtk.y < vecMaxTrg.y  &&  vecMaxAtk.y > vecMinTrg.y &&
-		vecMinAtk.z < vecMaxTrg.z  &&  vecMaxAtk.z > vecMinTrg.z )
-	{
-		return true;//衝突している.
-	}
-
-	return false;	//衝突していない.
-}
-#endif //#if _DEBUG
 
 
 //============================================================

@@ -41,15 +41,7 @@ public:
 
 	void ModelUpdate()
 	{
-		DXSKIN_TRANSFORM tmpTrans;
-
-		tmpTrans.fPitch = m_Trans.fPitch;
-		tmpTrans.fYaw = m_Trans.fYaw;
-		tmpTrans.fRoll = m_Trans.fRoll;
-		tmpTrans.vPos = m_Trans.vPos;
-		tmpTrans.vScale = m_Trans.vScale;
-
-		m_pMesh->ModelUpdate(tmpTrans);
+		m_pMesh->ModelUpdate(m_Trans);
 	}
 
 	void Render( 

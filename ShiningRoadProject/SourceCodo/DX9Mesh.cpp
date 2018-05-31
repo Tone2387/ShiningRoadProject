@@ -25,7 +25,7 @@ clsDX9Mesh::clsDX9Mesh() :
 	m_pBlendState( nullptr )
 {
 //	ZeroMemory(this, sizeof(clsDX9Mesh));
-	m_Trans.fScale = 1.0f;
+	m_Trans.vScale = {1.0f,1.0f,1.0f};
 }
 
 //========================================================
@@ -591,7 +591,7 @@ void clsDX9Mesh::Render( const D3DXMATRIX &mView,	const D3DXMATRIX &mProj,
 	//ÉèÅ[ÉãÉhïœä∑(ï\é¶à íuÇê›íËÇ∑ÇÈ)
 	//ägèk.
 	D3DXMatrixScaling(
-		&mScale, m_Trans.fScale, m_Trans.fScale, m_Trans.fScale);
+		&mScale, m_Trans.vScale.x, m_Trans.vScale.y, m_Trans.vScale.z);
 	//âÒì].
 	D3DXMatrixRotationY(&mYaw, m_Trans.fYaw);//Yé≤âÒì].
 	D3DXMatrixRotationX(&mPitch, m_Trans.fPitch);

@@ -87,5 +87,14 @@ enum class enPARTS : UCHAR
 	MAX
 };
 
+struct TRANSFORM
+{
+	D3DXVECTOR3 vScale;
+	float		fYaw;		//‰ñ“](YŽ²)
+	float		fPitch;	//‰ñ“](XŽ²)
+	float		fRoll;	//‰ñ“](ZŽ²)
+	D3DXVECTOR3	vPos;		//ˆÊ’u(X,Y,Z)
+};
+
 
 #endif//#ifndef GLOBAL_H_

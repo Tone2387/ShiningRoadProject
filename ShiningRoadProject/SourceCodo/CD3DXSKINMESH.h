@@ -14,6 +14,8 @@
 #include <d3dx10.h>
 #include <d3dx11.h>
 
+#include "Global.h"
+
 #pragma comment(lib,"winmm.lib")
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
@@ -38,16 +40,6 @@ enum enDirection
 	enDirection_RightTurn,//右回転.
 	Left,
 	Right
-};
-
-//位置構造体.
-struct DXSKIN_TRANSFORM
-{
-	D3DXVECTOR3 vScale;
-	float		fYaw;		//回転(Y軸)
-	float		fPitch;	//回転(X軸)
-	float		fRoll;	//回転(Z軸)
-	D3DXVECTOR3	vPos;		//位置(X,Y,Z)
 };
 
 // シェーダーに渡す値.
@@ -278,7 +270,7 @@ public:
 class clsD3DXSKINMESH
 {
 public:
-	DXSKIN_TRANSFORM m_Trans;
+	TRANSFORM m_Trans;
 
 	//パーサークラスからアニメーションコントローラーを取得する.
 	LPD3DXANIMATIONCONTROLLER GetAnimController()

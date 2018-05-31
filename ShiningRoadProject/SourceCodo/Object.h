@@ -32,15 +32,6 @@ public:
 		{ ZeroMemory(this, sizeof(clsObject)); };
 	virtual ~clsObject(){};
 
-	struct TRANSFORM
-	{
-		D3DXVECTOR3 vScale;
-		float		fYaw;		//‰ñ“](YŽ²)
-		float		fPitch;	//‰ñ“](XŽ²)
-		float		fRoll;	//‰ñ“](ZŽ²)
-		D3DXVECTOR3	vPos;		//ˆÊ’u(X,Y,Z)
-	};
-
 	struct RAYSTATE
 	{
 		D3DXVECTOR3 vRayStart;

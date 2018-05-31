@@ -38,7 +38,7 @@ public:
 	void SetAnimChange(int index, double dStartPos = 0.0f);
 
 	//ç¿ïWÇ‚âÒì]ÇÃçXêV.
-	void ModelUpdate(DXSKIN_TRANSFORM Transform);
+	void ModelUpdate(TRANSFORM Transform);
 
 	D3DXVECTOR3 GetBonePos(char* sBoneName);
 

@@ -36,9 +36,9 @@ bool clsObject::Intersect(
 		pTarget->m_Trans.fRoll);
 
 	D3DXMatrixScaling(&mScale,
-		pTarget->m_Trans.fScale,
-		pTarget->m_Trans.fScale,
-		pTarget->m_Trans.fScale);
+		pTarget->m_Trans.vScale.x,
+		pTarget->m_Trans.vScale.y,
+		pTarget->m_Trans.vScale.z);
 
 	matWorld = mTrans * mRotate * mScale;
 
@@ -78,7 +78,9 @@ bool clsObject::Intersect(
 			+ U * (vVertex[1] - vVertex[0])
 			+ V * (vVertex[2] - vVertex[0]);
 
-		*pvIntersect *= pTarget->m_Trans.fScale;
+		pvIntersect->x *= pTarget->m_Trans.vScale.x;
+		pvIntersect->y *= pTarget->m_Trans.vScale.y;
+		pvIntersect->z *= pTarget->m_Trans.vScale.z;
 
 		return true;//–½’†‚µ‚Ä‚¢‚é.
 	}
