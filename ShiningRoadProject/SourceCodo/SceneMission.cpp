@@ -57,7 +57,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 	vLookPosTmp.y += 0.5f;
 	//m_wpCamera->SetPos(vTmp);
 
-	D3DXVECTOR3 vCamPosTmp = m_pTestRobo->m_Trans.vPos + (m_pTestRobo->GetVec3Dir(m_pTestRobo->m_Trans.fYaw, vDirBack) * 2);
+	D3DXVECTOR3 vCamPosTmp = m_pTestRobo->m_Trans.vPos + (GetVec3Dir(m_pTestRobo->m_Trans.fYaw, g_vDirBack) * 2);
 	vCamPosTmp.y += 0.5f;
 
 	m_pCam->Update(vCamPosTmp, vLookPosTmp);

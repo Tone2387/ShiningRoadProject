@@ -11,17 +11,19 @@
 
 const float g_fGravity = 0.01f;
 
-const D3DXVECTOR3 vDirForward	= D3DXVECTOR3(  0.0f,  0.0f,  1.0f);
-const D3DXVECTOR3 vDirBack		= D3DXVECTOR3(  0.0f,  0.0f, -1.0f);
-const D3DXVECTOR3 vDirRight		= D3DXVECTOR3(  1.0f,  0.0f,  0.0f);
-const D3DXVECTOR3 vDirLeft		= D3DXVECTOR3( -1.0f,  0.0f,  0.0f);
-const D3DXVECTOR3 vDirUp		= D3DXVECTOR3(  0.0f,  1.0f,  0.0f);
-const D3DXVECTOR3 vDirDown		= D3DXVECTOR3(  0.0f, -1.0f,  0.0f);
+const D3DXVECTOR3 g_vDirForward	= D3DXVECTOR3(  0.0f,  0.0f,  1.0f);
+const D3DXVECTOR3 g_vDirBack	= D3DXVECTOR3(  0.0f,  0.0f, -1.0f);
+const D3DXVECTOR3 g_vDirRight	= D3DXVECTOR3(  1.0f,  0.0f,  0.0f);
+const D3DXVECTOR3 g_vDirLeft	= D3DXVECTOR3( -1.0f,  0.0f,  0.0f);
+const D3DXVECTOR3 g_vDirUp		= D3DXVECTOR3(  0.0f,  1.0f,  0.0f);
+const D3DXVECTOR3 g_vDirDown	= D3DXVECTOR3(  0.0f, -1.0f,  0.0f);
 
 const float g_fGroundSpece = 0.01f;
 
 //âÒì]ílí≤êÆ.
 void ObjRollOverGuard(float* fRot);
+
+D3DXVECTOR3 GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis);
 
 class clsObject
 {
@@ -58,8 +60,6 @@ public:
 
 	SPHERE** m_ppColSpheres;
 	int m_iColSpheresMax;
-
-	D3DXVECTOR3 GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis);
 
 	//à íuä÷åWä÷êî.
 	void SetPosition(const D3DXVECTOR3& vPos){ m_Trans.vPos = vPos; }
