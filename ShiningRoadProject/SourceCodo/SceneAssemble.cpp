@@ -44,7 +44,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_pAsmModel = new clsASSEMBLE_MODEL;
 	m_pAsmModel->Create( m_wpResource );
 
-	m_wpCamera->SetPos( { 0.0f, 0.0f, -150.0f } );
+	m_wpCamera->SetPos( { 0.0f, 0.0f, -100.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
 }
 
@@ -63,8 +63,30 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
 
 		m_pAsmModel->SetPos( { 0.0f, 0.0f, 0.0f } );
-		m_pAsmModel->SetScale( 0.005f );
+		m_pAsmModel->SetScale( 0.5f );
 	}
+
+
+	if( GetAsyncKeyState( 'W' ) & 0x8000 ){
+		m_pAsmModel->AddPos( { 0.0f, 0.1f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'S' ) & 0x8000 ){
+		m_pAsmModel->AddPos( { 0.0f, -0.1f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'D' ) & 0x8000 ){
+		m_pAsmModel->AddPos( { 0.1f, 0.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'A' ) & 0x8000 ){
+		m_pAsmModel->AddPos( { -0.1f, 0.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'E' ) & 0x8000 ){
+		m_pAsmModel->AddPos( { 0.0f, 0.0f, 0.1f } );
+	}
+	if( GetAsyncKeyState( 'Q' ) & 0x8000 ){
+		m_pAsmModel->AddPos( { 0.0f, 0.0f, -0.1f } );
+	}
+
+
 	m_pAsmModel->UpDate();
 }
 
@@ -93,6 +115,13 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 	char strDbgTxt[256];
 	int iTxtY = 0;
 	const int iOFFSET = 10;//ˆês–ˆ‚É‚Ç‚ê‚¾‚¯‰º‚É‚¸‚ç‚·‚©.
+
+	sprintf_s( strDbgTxt, 
+		"ModelPos : x[%f], y[%f], z[%f]",
+		m_pAsmModel->GetPosition().x, 
+		m_pAsmModel->GetPosition().y, 
+		m_pAsmModel->GetPosition().z );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	sprintf_s( strDbgTxt, 
 		"CameraPos : x[%f], y[%f], z[%f]",

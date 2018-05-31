@@ -11,6 +11,7 @@ const string sWEAPON_PASS = sPARTS_PASS + "Weapon\\Weapon";
 //extension = 拡張子.
 const string sEXTENSION_X = ".X";//上記のパスとこれの間に数字を挟んで使う.
 
+const UCHAR ucARM_NUM = 2;//腕の本数.
 
 
 
@@ -58,7 +59,7 @@ clsResource::~clsResource()
 void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext )
 {
 	m_ucLegNum = m_ucCoreNum = m_ucHeadNum = m_ucArmsNum = m_ucWeaponNum = iTEST_ROBO_PARTS_MODEL_MAX;
-	m_ucSkinModelMax = m_ucLegNum + m_ucCoreNum + m_ucHeadNum + m_ucArmsNum + m_ucWeaponNum + enSkinModel_Max;
+	m_ucSkinModelMax = m_ucLegNum + m_ucCoreNum + m_ucHeadNum + ( ucARM_NUM * m_ucArmsNum ) + m_ucWeaponNum + enSkinModel_Max;
 
 	InitStaticModel( hWnd, pDevice, pContext );
 	InitSkinModel( hWnd, pDevice, pContext );
@@ -202,7 +203,7 @@ SKIN_ENUM_TYPE clsResource::GetPartsResourceStart( const enPARTS enParts ) const
 		break;
 	case enPARTS::WEAPON_L:
 	case enPARTS::WEAPON_R:
-		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_ucLegNum + m_ucCoreNum + m_ucHeadNum + ( m_ucArmsNum * 2 ) );
+		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_ucLegNum + m_ucCoreNum + m_ucHeadNum + ( ucARM_NUM * m_ucArmsNum ) );
 		break;
 	default:
 		assert( !"不正なパーツが指定されました" );
