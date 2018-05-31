@@ -34,6 +34,7 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 	m_wpResource = nullptr;
 }
 
+/*
 
 void clsASSEMBLE_MODEL::Create( clsResource* const pResource )
 {
@@ -172,3 +173,6 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 		m_wppParts[0]->SetAnimSpeed( dSpd );
 	}
 }
+
+
+*/

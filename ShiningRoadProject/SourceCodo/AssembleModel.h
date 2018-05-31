@@ -4,14 +4,17 @@
 #include "FactoryParts.h"
 
 #include "Resource.h"
+#include "Object.h"
+#include"SkinMesh.h"
 
 //アセンブルシーンのモデルさん.
-class clsASSEMBLE_MODEL
+class clsASSEMBLE_MODEL : public clsSkinMesh, public clsObject
 {
 public:
 	clsASSEMBLE_MODEL();
 	~clsASSEMBLE_MODEL();
 
+/*
 	//アセンブルシーンの各関数内で使います.
 	void Create( clsResource* const pResource );
 	void UpDate();
@@ -42,6 +45,9 @@ private:
 	void Init();
 
 	//.
+	*/
+
+private:
 
 	clsResource* m_wpResource;
 
@@ -49,6 +55,6 @@ private:
 	//パーツの数分のポインタ.
 	clsPARTS_BASE**	m_wppParts;
 	UCHAR			m_ucPartsMax;//パーツの最大数.
-
+	
 };
 
