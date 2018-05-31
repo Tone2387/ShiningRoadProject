@@ -98,9 +98,19 @@ void clsEnemyBase::SetMoveDir()
 	{
 		float fHorDestDis;//Destination:目的地.
 		fHorDestDis = m_MoveData.MoveState[m_iMoveCategoryNo]->iHorDistance * g_fDisStandard;
-		fHorDestDis += m_MoveData.MoveState[m_iMoveCategoryNo]->iHorDisRandMax * g_fDisStandard;
-
+		fHorDestDis += (rand() % m_MoveData.MoveState[m_iMoveCategoryNo]->iHorDisRandMax) * g_fDisStandard;
 		
+		int iMoveDir;
+		iMoveDir = m_MoveData.MoveState[m_iMoveCategoryNo]->iMoveDir;
+		iMoveDir += rand() % m_MoveData.MoveState[m_iMoveCategoryNo]->iMoveDirRandMax;
+
+		D3DXVECTOR3 vTmp;
+
+		float fVerDestDis;//Destination:目的地.
+		fVerDestDis = m_MoveData.MoveState[m_iMoveCategoryNo]->iVerDistance * g_fDisStandard;
+		fVerDestDis += (rand() % m_MoveData.MoveState[m_iMoveCategoryNo]->iVerDistRandMax)* g_fDisStandard;
+
+		m_vMoveDir.y = fVerDestDis;
 	}
 }
 

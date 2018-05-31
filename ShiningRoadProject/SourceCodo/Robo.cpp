@@ -101,7 +101,7 @@ void clsRobo::SetDirQuickBoost(const float fAngle)
 		D3DXVECTOR3 vForward;
 
 		//¡Œü‚¢‚Ä‚¢‚é•ûŒü.
-		vForward = GetVec3Dir(m_Trans.fYaw, vDirForward);
+		vForward = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
 		//s‚«‚½‚¢•ûŒü.
 		m_vMoveDir = GetVec3Dir(fAngle, vForward);
