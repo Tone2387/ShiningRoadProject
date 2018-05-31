@@ -3,6 +3,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数.
 
 /*
 //テストモデルに足の3番のモデルを割り当てる例.

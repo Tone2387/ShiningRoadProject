@@ -60,7 +60,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, tmpI );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
 		tmpI ++;
-		if( tmpI >= 4 ) tmpI = 0;
+		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
 
 		m_pAsmModel->SetPos( { 0.0f, 0.0f, 0.0f } );
 		m_pAsmModel->SetScale( 0.005f );
