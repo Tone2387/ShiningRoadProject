@@ -112,13 +112,9 @@ void clsSkinMesh::SetAnimChange(int index, double dStartPos)
 	m_pMesh->ChangeAnimSet_StartPos(index, dStartPos, m_pAnimCtrl);
 }
 
-void clsSkinMesh::ModelUpdate(DXSKIN_TRANSFORM Transform)
+void clsSkinMesh::ModelUpdate(TRANSFORM Transform)
 {
-	m_pMesh->m_Trans.fPitch = Transform.fPitch;
-	m_pMesh->m_Trans.fYaw = Transform.fYaw;
-	m_pMesh->m_Trans.fRoll = Transform.fRoll;
-	m_pMesh->m_Trans.vPos = Transform.vPos;
-	m_pMesh->m_Trans.vScale = Transform.vScale;
+	m_pMesh->m_Trans = Transform;
 }
 
 D3DXVECTOR3 clsSkinMesh::GetBonePos(char* sBoneName)

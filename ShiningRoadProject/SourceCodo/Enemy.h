@@ -11,7 +11,7 @@ const float g_fPercentage = 0.01f;
 class clsEnemyBase
 {
 public:
-	clsObject::TRANSFORM* m_pTrans;
+	TRANSFORM* m_pTrans;
 
 	D3DXVECTOR3 m_vMoveDir;
 	int m_iMoveCategoryNo;

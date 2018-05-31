@@ -57,7 +57,7 @@ void clsCharaStatic::UpDateModel()
 	m_pModel->m_Trans.fYaw	= m_vRot.y;
 	m_pModel->m_Trans.fPitch= m_vRot.x;
 	m_pModel->m_Trans.fRoll	= m_vRot.z;
-	m_pModel->m_Trans.fScale= m_fScale;
+	m_pModel->m_Trans.vScale.x = m_fScale;
 }
 
 

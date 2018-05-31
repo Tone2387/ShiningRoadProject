@@ -4,28 +4,14 @@
 #pragma warning( disable:4005 )	
 
 #include <Windows.h>
-#include <D3DX11.h>
-#include <D3D11.h>
-#include <D3DX10.h>//「D3DX～」の定義使用時に必要.
-#include <D3D10.h>
+
 #include <d3dx9.h>
 #include "MyMacro.h"
 
-
 #include "Global.h"
 
-
-#pragma comment( lib, "d3dx11.lib" )
-#pragma comment( lib, "d3d11.lib" )
-#pragma comment( lib, "d3dx10.lib" )
 #pragma comment( lib, "d3d9.lib" )
 #pragma comment( lib, "d3dx9.lib" )
-
-
-
-
-
-
 
 //============================================================
 //	構造体.
@@ -75,51 +61,6 @@ struct MY_MATERIAL
 	~MY_MATERIAL(){}
 };
 
-
-#if _DEBUG
-//スフィア構造体.
-struct SPHERE
-{
-	D3DXVECTOR3	vCenter;	//中心.
-	float		fRadius;	//半径.
-
-};
-
-//Bボックス構造体.
-struct BBOX
-{
-	D3DXVECTOR3 vPosMax;	//最大頂点.
-	D3DXVECTOR3 vPosMin;	//最小頂点.
-	D3DXVECTOR3 vAxisX;		//X軸.
-	D3DXVECTOR3 vAxisY;		//Y軸.
-	D3DXVECTOR3 vAxisZ;		//Z軸.
-	FLOAT		fLengthX;	//X長さ.
-	FLOAT		fLengthY;	//Y長さ.
-	FLOAT		fLengthZ;	//Z長さ.
-	//初期化.
-	BBOX(){
-		ZeroMemory( this, sizeof( BBOX ) );
-		vAxisX = D3DXVECTOR3( 1.0f, 0.0f, 0.0f );
-		vAxisY = D3DXVECTOR3( 0.0f, 1.0f, 0.0f );
-		vAxisZ = D3DXVECTOR3( 0.0f, 0.0f, 1.0f ); 
-	}
-};
-#endif//#if _DEBUG
-
-
-
-
-
-struct DXSTATIC_TRANSFORM
-{
-	float		fScale;
-	float		fYaw;		//回転(Y軸)
-	float		fPitch;	//回転(X軸)
-	float		fRoll;	//回転(Z軸)
-	D3DXVECTOR3	vPos;		//位置(X,Y,Z)
-};
-
-
 //メッシュデータをファイルから取り出すためだけにDirectX9を使用する.
 //※レンダリング(表示)はDirectX11で行う.
 class clsDX9Mesh
@@ -128,7 +69,7 @@ public:
 	clsDX9Mesh();	//コンストラクタ.
 	~clsDX9Mesh();	//デストラクタ.
 
-	DXSTATIC_TRANSFORM m_Trans;
+	TRANSFORM m_Trans;
 
 	//初期化.
 	HRESULT Init( const HWND hWnd, ID3D11Device* const pDevice11,
@@ -153,13 +94,6 @@ public:
 	D3DXVECTOR3	m_vRay;			//レイの位置.
 	D3DXVECTOR3	m_vAxis;		//回転軸.
 	LPD3DXMESH	m_pMeshForRay;	//レイとメッシュ用.
-
-
-
-#if _DEBUG
-	SPHERE		m_Sphere;	//スフィア構造体.
-	BBOX		m_BBox;		//BBox構造体.
-#endif//#if _DEBUG
 
 private:
 	D3DXVECTOR3 vecAxisX;

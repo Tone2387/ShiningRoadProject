@@ -37,7 +37,7 @@ void clsSCENE_MISSION::CreateProduct()
 	m_pTestChara->SetRotation( D3DXVECTOR3( 0.0f, 0.0f, D3DX_PI*0.5 ) );
 
 	m_pStage = m_wpResource->GetStaticModels(clsResource::enStaticModel_Ground);
-	m_pStage->m_Trans.fScale = 10.0f;
+	m_pStage->m_Trans.vScale = { 10.0f, 10.0f, 10.0f };
 	m_pStage->m_Trans.fYaw = 0.0f;
 	m_pStage->m_Trans.fRoll = 0.0f;
 	m_pStage->m_Trans.fPitch = 0.0f;
