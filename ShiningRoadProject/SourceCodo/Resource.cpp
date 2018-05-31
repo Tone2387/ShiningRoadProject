@@ -12,7 +12,6 @@ const string sWEAPON_PASS = sPARTS_PASS + "Weapon\\Weapon";
 const string sEXTENSION_X = ".X";//上記のパスとこれの間に数字を挟んで使う.
 
 
-const int iTEST_ROBO_PARTS_MODEL_MAX = 4;//テスト中のパーツ最大数.
 
 
 clsResource::clsResource()

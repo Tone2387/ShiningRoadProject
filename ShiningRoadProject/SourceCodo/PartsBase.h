@@ -24,6 +24,7 @@ public:
 //	void AddScale( const float &vRot );
 //	D3DXVECTOR3 GetScale();
 
+
 protected:
 
 private:
