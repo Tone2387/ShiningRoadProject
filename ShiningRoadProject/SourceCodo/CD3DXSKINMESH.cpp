@@ -1746,7 +1746,7 @@ bool clsD3DXSKINMESH::GetPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos)
 			D3DXMatrixTranslation(&mTran, tmpPos.x, tmpPos.y, tmpPos.z);
 
 			mRot = mYaw * mPitch * mRoll;
-			mWorld = mTran * mScale * mRot;
+			mWorld = mScale * mRot * mTran;
 
 			pOutPos->x = mWorld._41 + m_Trans.vPos.x;
 			pOutPos->y = mWorld._42 + m_Trans.vPos.y;

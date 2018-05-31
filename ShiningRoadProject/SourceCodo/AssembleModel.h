@@ -31,9 +31,10 @@ public:
 
 	//トランスフォーム.
 	void SetPos( const D3DXVECTOR3 &vPos );
+	void AddPos( const D3DXVECTOR3 &vVec );
 
-	void SetRot( const D3DXVECTOR3 &vYaw );
-	void AddRot( const D3DXVECTOR3 &vYaw );
+	void SetRot( const D3DXVECTOR3 &vRot );
+	void AddRot( const D3DXVECTOR3 &vRot );
 
 	void SetScale( const float fScale );
 
@@ -54,7 +55,6 @@ private:
 	clsFACTORY_PARTS*	m_pPartsFactory;
 	//パーツの数分のポインタ.
 	clsPARTS_BASE**	m_wppParts;
-	UCHAR			m_ucPartsMax;//パーツの最大数.
 	
 };
 
