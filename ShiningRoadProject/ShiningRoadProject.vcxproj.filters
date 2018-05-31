@@ -52,12 +52,12 @@
     <Filter Include="Hiyosi\Enemy">
       <UniqueIdentifier>{fa11f2f1-fb32-4caa-b1f7-b22f8b14f6b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hiyosi\Object">
+      <UniqueIdentifier>{6f2b3950-f21d-4aea-8d69-161bff4a8f56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\Charactor.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\Object.cpp">
       <Filter>Hiyosi</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\Robo.cpp">
@@ -213,6 +213,9 @@
     <ClCompile Include="SourceCodo\EnemyRobo.cpp">
       <Filter>Hiyosi\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\Object.cpp">
+      <Filter>Hiyosi\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -228,9 +231,6 @@
       <Filter>Hiyosi</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\InputRobo.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\Object.h">
       <Filter>Hiyosi</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\ObjSkinMesh.h">
@@ -400,6 +400,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\EnemyRobo.h">
       <Filter>Hiyosi\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Object.h">
+      <Filter>Hiyosi\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
