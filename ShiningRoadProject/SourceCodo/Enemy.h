@@ -1,5 +1,7 @@
 #pragma once
 
+#include<random>
+
 #include"Global.h"
 #include"Object.h"
 
@@ -11,18 +13,32 @@ class clsEnemyBase
 public:
 	clsObject::TRANSFORM* m_pTrans;
 
+	D3DXVECTOR3 m_vMoveDir;
+	int m_iMoveCategoryNo;
+
 	void Init(LPSTR strEnemyFolderName);
 
 	void SearchTarget(clsObject* pObj);
+
+	void SearchNear(clsObject* pObj);
+
 	void SetMoveDir();
+
 	bool IsShot();
 
 	clsEnemyBase();
 	~clsEnemyBase();
 
 private:
+	clsObject* m_pTarget;
 
 public:
+	struct EnemyBaseState
+	{
+		char strName[256];
+		int iMoveCategoryVisType;
+	};
+
 	struct EnemyUpdateState
 	{
 		D3DXVECTOR3 vTargetPos;
@@ -95,6 +111,8 @@ public:
 		int iCategory;
 		EnemyVisibilityAreaState** VisAreaState;
 	};
+
+	EnemyBaseState m_BaseData;
 
 	EnemyMoveData m_MoveData;
 	EnemyShotData m_ShotData;
