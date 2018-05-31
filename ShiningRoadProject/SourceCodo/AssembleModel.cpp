@@ -34,7 +34,7 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 	m_wpResource = nullptr;
 }
 
-/*
+
 
 void clsASSEMBLE_MODEL::Create( clsResource* const pResource )
 {
@@ -62,7 +62,8 @@ void clsASSEMBLE_MODEL::UpDate()
 	ASSERT_IF_NULL( m_wppParts );
 	for( UCHAR i=0; i<m_ucPartsMax; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->SetPosition( { 0.0f, 1.0f, 0.0f } );
+//		m_wppParts[i]->SetPosition( { 0.0f, 1.0f, 0.0f } );
+
 	}
 }
 
@@ -174,5 +175,3 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 	}
 }
 
-
-*/

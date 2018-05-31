@@ -14,7 +14,7 @@ public:
 	clsASSEMBLE_MODEL();
 	~clsASSEMBLE_MODEL();
 
-/*
+
 	//アセンブルシーンの各関数内で使います.
 	void Create( clsResource* const pResource );
 	void UpDate();
@@ -45,7 +45,7 @@ private:
 	void Init();
 
 	//.
-	*/
+	
 
 private:
 
