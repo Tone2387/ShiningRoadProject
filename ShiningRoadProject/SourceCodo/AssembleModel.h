@@ -51,7 +51,8 @@ private:
 	//モデルの初期セット.
 	void Init();
 
-	
+	//回転値抑制.
+	float GuardDirOver( float & outTheta ) const;
 
 
 	TRANSFORM m_Trans;

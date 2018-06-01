@@ -64,34 +64,56 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
 
 		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
+		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
 		m_pAsmModel->SetScale( 0.5f );
 	}
 
+	float fff = 1.0f;
 
 	if( GetAsyncKeyState( 'W' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.0f, 0.1f, 0.0f } );
+		m_pAsmModel->AddPos( { 0.0f, fff, 0.0f } );
 	}
 	if( GetAsyncKeyState( 'S' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.0f, -0.1f, 0.0f } );
+		m_pAsmModel->AddPos( { 0.0f, -fff, 0.0f } );
 	}
 	if( GetAsyncKeyState( 'D' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.1f, 0.0f, 0.0f } );
+		m_pAsmModel->AddPos( { fff, 0.0f, 0.0f } );
 	}
 	if( GetAsyncKeyState( 'A' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { -0.1f, 0.0f, 0.0f } );
+		m_pAsmModel->AddPos( { -fff, 0.0f, 0.0f } );
 	}
 	if( GetAsyncKeyState( 'E' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.0f, 0.0f, 0.1f } );
+		m_pAsmModel->AddPos( { 0.0f, 0.0f, fff } );
 	}
 	if( GetAsyncKeyState( 'Q' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.0f, 0.0f, -0.1f } );
+		m_pAsmModel->AddPos( { 0.0f, 0.0f, -fff } );
+	}
+
+	float rrr = 0.05f;
+	if( GetAsyncKeyState( 'T' ) & 0x8000 ){
+		m_pAsmModel->AddRot( { 0.0f, rrr, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'G' ) & 0x8000 ){
+		m_pAsmModel->AddRot( { 0.0f, -rrr, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'F' ) & 0x8000 ){
+		m_pAsmModel->AddRot( { rrr, 0.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'H' ) & 0x8000 ){
+		m_pAsmModel->AddRot( { -rrr, 0.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'R' ) & 0x8000 ){
+		m_pAsmModel->AddRot( { 0.0f, 0.0f, rrr } );
+	}
+	if( GetAsyncKeyState( 'Y' ) & 0x8000 ){
+		m_pAsmModel->AddRot( { 0.0f, 0.0f, -rrr } );
 	}
 
 
 	m_pAsmModel->UpDate();
 }
 
-void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
+void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 //	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
 ////	ConvDimPos( m_pSprite->GetPos(), m_pParts->GetPosition() );
@@ -101,7 +123,10 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 //		D3DXVECTOR4(0.5f,2.0f,0.5f,0.75f), true );
 //
 //	m_pSprite->Render();
+
 	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
+//	m_pAsmModel->SetPos( m_pAsmModel->GetPos() );
+//	m_pAsmModel->UpDate();
 }
 
 

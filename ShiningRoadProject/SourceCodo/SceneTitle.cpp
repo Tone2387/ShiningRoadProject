@@ -38,7 +38,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &nextScene )
 	DebugChangeScene( nextScene );
 }
 
-void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
+void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos );
 

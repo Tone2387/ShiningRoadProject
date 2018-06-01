@@ -46,7 +46,7 @@ protected:
 	//----- 各シーンごとの関数 -----//.
 	virtual void CreateProduct() = 0;//各シーンのCreate.
 	virtual void UpdateProduct( enSCENE &nextScene ) = 0;//各シーンのUpdate.
-	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) const = 0;//各シーンのRender.
+	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) = 0;//各シーンのRender.
 	//----- 各シーンごとの関数 -----//.
 
 	//3D座標をスクリーン( 2D )座標へと変換する.
