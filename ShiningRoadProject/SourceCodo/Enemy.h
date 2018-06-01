@@ -41,13 +41,8 @@ public:
 
 	struct EnemyUpdateState
 	{
-		D3DXVECTOR3 vTargetPos;
-		float fTargetYaw;
-
-		D3DXVECTOR3 vTargetMoveDir;
-		float fTargetMoveSpeed;
-
-		float fVerPower;
+		D3DXVECTOR3 vHorMoveDir;
+		float fVerDis;
 	};
 
 	struct EnemyMoveState

@@ -110,6 +110,12 @@ void clsSCENE_MISSION::RenderDebugText()
 		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
+	D3DXVECTOR3 vTmp = m_pTestRobo->m_pMesh->GetBonePos("");
+
+	sprintf_s(strDbgTxt,
+		"BonePos : x[%f], y[%f], z[%f]",
+		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z);
+	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
 
 	//dbgtxty += 10;
 	//if( m_pBgm[0]->IsStopped() ){
