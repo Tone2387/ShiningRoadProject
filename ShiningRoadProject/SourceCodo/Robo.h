@@ -22,7 +22,8 @@
 
 #endif//#ifdef Tahara
 
-
+const int g_iQuickInterbal = 1 * (int)g_fFPS;
+const int g_iQuickTurnFrame = 1 * (int)g_fFPS;
 
 class clsRobo : public clsCharactor
 {
@@ -68,6 +69,8 @@ public:
 	int m_iBoostRisingTopSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fBoostRisingAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
 
+	int m_iQuickInterbal;
+
 	void Walk();
 	void Boost();
 	void MoveSwitch();
@@ -76,6 +79,8 @@ public:
 	void SetDirQuickBoost(const float fAngle);
 	void QuickTurn();
 	void SetDirQuickTurn(const float fAngle);
+
+	void Updata();
 
 	clsRobo();
 	~clsRobo();

@@ -230,7 +230,7 @@ void clsMain::Loop()
 	//	フレームレート.
 	//----------------------------------------------------------
 	float fRate		= 0.0f;	//レート.
-	float fFPS		= 60.0f;//FPS値.
+	float fFPS		= g_fFPS;//FPS値.
 	DWORD sync_old	= timeGetTime();	//過去時間.
 	DWORD sync_now;
 	//時間処理の為、最小単位を1ミリ秒に変更.

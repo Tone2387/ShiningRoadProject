@@ -110,10 +110,15 @@ void clsRobo::SetDirQuickBoost(const float fAngle)
 
 void clsRobo::QuickBoost()
 {
+	
 	if (IsMoveControl())
 	{
-		m_fMoveSpeed = m_fBoostMoveSpeedMax * 3.0f;
-		SetMoveDeceleSpeed(m_iMoveStopFrame);
+		if (m_iQuickInterbal < 0)
+		{
+			m_iQuickInterbal = g_iQuickInterbal;
+			m_fMoveSpeed = m_fBoostMoveSpeedMax * 3.0f;
+			SetMoveDeceleSpeed(m_iBoostTopSpeedFrame * 2);
+		}
 	}
 }
 
@@ -123,7 +128,8 @@ void clsRobo::SetDirQuickTurn(const float fAngle)
 	{
 		if (IsRotControl())
 		{
-			SetRotDir(fAngle);
+			float fTmp = 3.0f * (fAngle / abs(fAngle));
+			SetRotDir(fTmp);
 		}
 	}
 }
@@ -134,9 +140,36 @@ void clsRobo::QuickTurn()
 	{
 		if (IsRotControl())
 		{
-			m_fRotSpeed = (float)D3DX_PI / (1.5f * m_iRotStopFrame);
-			SetRotDeceleSpeed(m_iRotStopFrame);
+			if (m_iQuickInterbal < 0)
+			{
+				m_iQuickInterbal = g_iQuickInterbal;
+				m_fRotSpeed = (float)D3DX_PI / g_iQuickTurnFrame;
+				SetRotDeceleSpeed(g_iQuickTurnFrame);
+			}
 		}
+	}
+}
+
+void clsRobo::Updata()
+{
+	m_iQuickInterbal--;
+
+	if (IsMoveControl())
+	{
+		if (!m_bBoost)
+		{
+			Walk();
+		}
+
+		else
+		{
+			Boost();
+		}
+	}
+
+	if (IsRotControl())
+	{
+		SetRotDeceleSpeed(m_iRotStopFrame);
 	}
 }
 
@@ -151,6 +184,7 @@ m_iBoostTopSpeedFrame(0),
 m_fBoostRisingSpeedMax(0.0f),
 m_iBoostRisingTopSpeedFrame(0),
 m_fBoostRisingAccele(0.0f),
+m_iQuickInterbal(0),
 
 m_wpResource(nullptr),
 m_wpEffects(nullptr),

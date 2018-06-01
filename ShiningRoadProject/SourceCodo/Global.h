@@ -47,7 +47,7 @@
 #define WND_W 1280	//ウィンドウ幅.
 #define WND_H 720	//ウィンドウ高さ.
 
-
+const float g_fFPS = 60.0f;
 
 //進行方向列挙体.
 enum class enDIRECTION : UCHAR
