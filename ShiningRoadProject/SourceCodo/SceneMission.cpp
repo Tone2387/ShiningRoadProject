@@ -72,7 +72,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 }
 
 //•`‰æ.
-void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
+void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 	//RenderŠÖ”‚Ìˆø”‚ğ‘‚«‚â‚·‚­‚·‚é‚½‚ß‚Ì•Ï”.
 	

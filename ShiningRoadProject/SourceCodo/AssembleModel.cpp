@@ -76,7 +76,7 @@ void clsASSEMBLE_MODEL::UpDate()
 	ASSERT_IF_NULL( m_wppParts );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->ModelUpdate( m_Trans );
+		m_wppParts[i]->Update();
 	}
 }
 
@@ -91,11 +91,17 @@ void clsASSEMBLE_MODEL::Render(
 	ASSERT_IF_NULL( m_wppParts );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-//		m_wppParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+		m_wppParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+		SetPos( GetPos() );
+		m_wppParts[i]->ModelUpdate( m_wppParts[i]->m_Trans );
 	}
-	m_wppParts[ucLEG]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
-	m_wppParts[ucWEAPON_L]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
-	m_wppParts[ucWEAPON_R]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+//	m_wppParts[ucLEG]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+//	m_wppParts[ucCORE]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+//	m_wppParts[ucHEAD]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+//	m_wppParts[ucARM_L]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+//	m_wppParts[ucARM_R]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+//	m_wppParts[ucWEAPON_L]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+//	m_wppParts[ucWEAPON_R]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 }
 
 
@@ -144,7 +150,7 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 		m_wppParts[ucARM_L]->GetBonePos( "ArmLJunctionWeapon" ) );
 										   
 	m_wppParts[ucWEAPON_R]->SetPosition( 
-		m_wppParts[ucARM_R]->GetBonePos( "ArmRJunctionWeapon" ) );
+		m_wppParts[ucARM_R]->GetBonePos( "ArmRJunctionWeapon" ) );//ArmLJoint2
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
@@ -160,25 +166,24 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetPos() const
 void clsASSEMBLE_MODEL::SetRot( const D3DXVECTOR3 &vRot )
 {
 	ASSERT_IF_NULL( m_wppParts );
-	m_Trans.fPitch	= vRot.x;
-	m_Trans.fYaw	= vRot.y;
-	m_Trans.fRoll	= vRot.z;
+	D3DXVECTOR3 tmpRot = vRot;
+
+	GuardDirOver( tmpRot.x );
+	GuardDirOver( tmpRot.y );
+	GuardDirOver( tmpRot.z );
+
+	m_Trans.fPitch	= tmpRot.x;
+	m_Trans.fYaw	= tmpRot.y;
+	m_Trans.fRoll	= tmpRot.z;
+
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->SetRotation( vRot );
+		m_wppParts[i]->SetRotation( tmpRot );
 	}
 }
 void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
 {
-	ASSERT_IF_NULL( m_wppParts );
-	m_Trans.fPitch	+= vRot.x;
-	m_Trans.fYaw	+= vRot.y;
-	m_Trans.fRoll	+= vRot.z;
-	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->SetRotation( 
-			m_wppParts[i]->GetRotation() + vRot );
-	}
+	SetRot( D3DXVECTOR3( m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll ) + vRot );
 }
 
 void clsASSEMBLE_MODEL::SetScale( const float fScale )
@@ -202,6 +207,28 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 	}
 }
 
+
+//回転値抑制.
+float clsASSEMBLE_MODEL::GuardDirOver( float & outTheta ) const
+{
+	float fDIR_RIMIT = static_cast<float>( D3DX_PI * 2.0 ); 
+	if( outTheta < 0.0 ){
+		outTheta += fDIR_RIMIT;
+	}
+	else if( outTheta > fDIR_RIMIT ){
+		outTheta -= fDIR_RIMIT;
+	}
+	else{
+		return outTheta;
+	}
+
+	GuardDirOver( outTheta );
+
+	return outTheta;
+}
+
+
+
 #if _DEBUG
 //各パーツのpos.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
@@ -211,3 +238,4 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
 	return m_wppParts[ucParts]->GetPosition();
 }
 #endif//#if _DEBUG
+

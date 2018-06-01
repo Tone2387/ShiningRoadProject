@@ -10,6 +10,26 @@ clsPARTS_CORE::~clsPARTS_CORE()
 {
 }
 
+//çÏê¨éû.
+void clsPARTS_CORE::CreateProduct()
+{
+}
+
+//ñàÉtÉåÅ[ÉÄ.
+void clsPARTS_CORE::UpdateProduct()
+{
+}
+
+//ï`âÊ.
+void clsPARTS_CORE::RenderProduct(
+	const D3DXMATRIX& const mView, 
+	const D3DXMATRIX& const mProj, 
+	const D3DXVECTOR3& const vLight, 
+	const D3DXVECTOR3& const vEye,
+	const D3DXVECTOR4 &vColor,
+	const bool isAlpha )
+{
+}
 
 void clsPARTS_CORE::SetHp( const int iHp )
 {
