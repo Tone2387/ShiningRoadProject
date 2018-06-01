@@ -43,6 +43,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	m_pAsmModel = new clsASSEMBLE_MODEL;
 	m_pAsmModel->Create( m_wpResource );
+	m_pAsmModel->SetAnimSpd( 0.1 );
 
 	m_wpCamera->SetPos( { 0.0f, 0.0f, -100.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
@@ -62,7 +63,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 		tmpI ++;
 		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
 
-		m_pAsmModel->SetPos( { 0.0f, 0.0f, 0.0f } );
+		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
 		m_pAsmModel->SetScale( 0.5f );
 	}
 
@@ -115,13 +116,24 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 	char strDbgTxt[256];
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
-
+	
+	//モデルのpos.
 	sprintf_s( strDbgTxt, 
 		"ModelPos : x[%f], y[%f], z[%f]",
-		m_pAsmModel->GetPosition().x, 
-		m_pAsmModel->GetPosition().y, 
-		m_pAsmModel->GetPosition().z );
+		m_pAsmModel->GetPos().x, 
+		m_pAsmModel->GetPos().y, 
+		m_pAsmModel->GetPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	//各パーツのpos.
+	for( UCHAR ucNo=0; ucNo<static_cast<UCHAR>( enPARTS::MAX ); ucNo++ ){
+		sprintf_s( strDbgTxt, 
+			"PartsPos : x[%f], y[%f], z[%f]",
+			m_pAsmModel->GetPartsPos( ucNo ).x, 
+			m_pAsmModel->GetPartsPos( ucNo ).y, 
+			m_pAsmModel->GetPartsPos( ucNo ).z );
+		m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+	}
 
 	sprintf_s( strDbgTxt, 
 		"CameraPos : x[%f], y[%f], z[%f]",
