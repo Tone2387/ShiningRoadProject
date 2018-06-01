@@ -62,7 +62,9 @@ public:
 	int m_iColSpheresMax;
 
 	//à íuä÷åWä÷êî.
-	void SetPosition(const D3DXVECTOR3& vPos){ m_Trans.vPos = vPos; }
+	void SetPosition(const D3DXVECTOR3& vPos){ 
+		m_Trans.vPos = vPos; 
+	}
 	D3DXVECTOR3 GetPosition(){ return m_Trans.vPos; }
 	//âÒì]ä÷åWä÷êî.
 	void SetRotation(const D3DXVECTOR3& vRot)

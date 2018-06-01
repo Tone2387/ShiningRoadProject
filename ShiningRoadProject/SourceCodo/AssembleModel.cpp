@@ -91,8 +91,11 @@ void clsASSEMBLE_MODEL::Render(
 	ASSERT_IF_NULL( m_wppParts );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+//		m_wppParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 	}
+	m_wppParts[ucLEG]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+	m_wppParts[ucWEAPON_L]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+	m_wppParts[ucWEAPON_R]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 }
 
 
@@ -118,33 +121,38 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	ASSERT_IF_NULL( m_wppParts );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->SetPosition( vPos );
+//		m_wppParts[i]->SetPosition( m_Trans.vPos );
 	}
 
-	m_wppParts[ucLEG]->SetPosition( vPos );
+	m_wppParts[ucLEG]->SetPosition( m_Trans.vPos );
+
 	m_wppParts[ucCORE]->SetPosition( 
-		m_wppParts[ucLEG]->GetBonePos( "LegJunctionCore" ) );
+ 		m_wppParts[ucLEG]->GetBonePos( "LegJunctionCore" ) );
+
+//	m_wppParts[ucCORE]->SetPosition( { 1.0f, 10.0f, 50.0f } );
+
 	m_wppParts[ucHEAD]->SetPosition( 
 		m_wppParts[ucCORE]->GetBonePos( "CoreJunctionHead" ) );
+
 	m_wppParts[ucARM_L]->SetPosition( 
 		m_wppParts[ucCORE]->GetBonePos( "CoreJunctionArmL" ) );
+
 	m_wppParts[ucARM_R]->SetPosition( 
 		m_wppParts[ucCORE]->GetBonePos( "CoreJunctionArmR" ) );
+
 	m_wppParts[ucWEAPON_L]->SetPosition( 
 		m_wppParts[ucARM_L]->GetBonePos( "ArmLJunctionWeapon" ) );
+										   
 	m_wppParts[ucWEAPON_R]->SetPosition( 
 		m_wppParts[ucARM_R]->GetBonePos( "ArmRJunctionWeapon" ) );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
-//	ASSERT_IF_NULL( m_wppParts );
-//	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-//		ASSERT_IF_NULL( m_wppParts[i] );
-//		m_Trans.vPos += vVec;
-//		m_wppParts[i]->SetPosition( 
-//			m_wppParts[i]->GetPosition() + vVec );
-//	}
 	SetPos( m_Trans.vPos + vVec );
+}
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetPos() const
+{
+	return m_Trans.vPos;
 }
 
 
@@ -152,22 +160,22 @@ void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 void clsASSEMBLE_MODEL::SetRot( const D3DXVECTOR3 &vRot )
 {
 	ASSERT_IF_NULL( m_wppParts );
+	m_Trans.fPitch	= vRot.x;
+	m_Trans.fYaw	= vRot.y;
+	m_Trans.fRoll	= vRot.z;
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_Trans.fPitch	= vRot.x;
-		m_Trans.fYaw	= vRot.y;
-		m_Trans.fRoll	= vRot.z;
 		m_wppParts[i]->SetRotation( vRot );
 	}
 }
 void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
 {
 	ASSERT_IF_NULL( m_wppParts );
+	m_Trans.fPitch	+= vRot.x;
+	m_Trans.fYaw	+= vRot.y;
+	m_Trans.fRoll	+= vRot.z;
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_Trans.fPitch	+= vRot.x;
-		m_Trans.fYaw	+= vRot.y;
-		m_Trans.fRoll	+= vRot.z;
 		m_wppParts[i]->SetRotation( 
 			m_wppParts[i]->GetRotation() + vRot );
 	}
@@ -176,9 +184,9 @@ void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
 void clsASSEMBLE_MODEL::SetScale( const float fScale )
 {
 	ASSERT_IF_NULL( m_wppParts );
+	m_Trans.vScale = { fScale, fScale, fScale };
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_Trans.vScale = { fScale, fScale, fScale };
 		m_wppParts[i]->SetScale( fScale );
 	}
 }
@@ -190,7 +198,16 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 	ASSERT_IF_NULL( m_wppParts );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[0]->SetAnimSpeed( dSpd );
+		m_wppParts[i]->SetAnimSpeed( dSpd );
 	}
 }
 
+#if _DEBUG
+//各パーツのpos.
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
+{
+	ASSERT_IF_NULL( m_wppParts );
+	ASSERT_IF_NULL( m_wppParts[ucParts] );
+	return m_wppParts[ucParts]->GetPosition();
+}
+#endif//#if _DEBUG

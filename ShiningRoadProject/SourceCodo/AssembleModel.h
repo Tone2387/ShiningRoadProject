@@ -8,7 +8,7 @@
 #include"SkinMesh.h"
 
 //アセンブルシーンのモデルさん.
-class clsASSEMBLE_MODEL : public clsSkinMesh, public clsObject
+class clsASSEMBLE_MODEL
 {
 public:
 	clsASSEMBLE_MODEL();
@@ -32,6 +32,7 @@ public:
 	//トランスフォーム.
 	void SetPos( const D3DXVECTOR3 &vPos );
 	void AddPos( const D3DXVECTOR3 &vVec );
+	D3DXVECTOR3 GetPos() const;
 
 	void SetRot( const D3DXVECTOR3 &vRot );
 	void AddRot( const D3DXVECTOR3 &vRot );
@@ -40,15 +41,20 @@ public:
 
 	void SetAnimSpd( const double &dSpd );
 
+#if _DEBUG
+	//各パーツのpos.
+	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
+#endif//#if _DEBUG
+
 private:
 
 	//モデルの初期セット.
 	void Init();
 
-	//.
 	
 
-private:
+
+	TRANSFORM m_Trans;
 
 	clsResource* m_wpResource;
 
@@ -56,5 +62,7 @@ private:
 	//パーツの数分のポインタ.
 	clsPARTS_BASE**	m_wppParts;
 	
+
+
 };
 
