@@ -127,11 +127,12 @@ private:
 
 	//パーツ作成.
 	void CreatePartsGroup();//CreatePartsの集合体.
-	void CreateParts( const enPARTS enParts );
+	void CreateParts( const enPARTS enParts );//引数としてenPARTS::WEAPON_Rは使わない(同じものを2つ作ってしまう).
 	//CreatePartsで必要な変数を準備する.
 	std::string SetVarToCreateParts(
 		SKIN_ENUM_TYPE &ucStart,	//(out)そのパーツの始まり番号.
 		SKIN_ENUM_TYPE &ucMax,	//(out)そのパーツの最大番号.
+		std::string &sModelName,//(out)パスにくっつけるモデル名.
 		const enPARTS enParts );
 		
 

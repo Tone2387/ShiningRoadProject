@@ -1,13 +1,23 @@
 #include "Resource.h"
 
 using namespace std;
+//パーツディレクトリのパス.
 const string sPARTS_PASS = "Data\\RoboParts\\";
-const string sLEG_PASS = sPARTS_PASS + "Leg\\Leg";
-const string sCORE_PASS = sPARTS_PASS + "Core\\Core";
-const string sHEAD_PASS = sPARTS_PASS + "Head\\Head";
-const string sARML_PASS = sPARTS_PASS + "ArmL\\ArmL";
-const string sARMR_PASS = sPARTS_PASS + "ArmR\\ArmR";
-const string sWEAPON_PASS = sPARTS_PASS + "Weapon\\Weapon";
+//各パーツのディレクトリのパス.
+const string sLEG_PASS		= sPARTS_PASS + "Leg\\Leg";
+const string sCORE_PASS		= sPARTS_PASS + "Core\\Core";
+const string sHEAD_PASS		= sPARTS_PASS + "Head\\Head";
+const string sARML_PASS		= sPARTS_PASS + "ArmL\\ArmL";
+const string sARMR_PASS		= sPARTS_PASS + "ArmR\\ArmR";
+const string sWEAPON_PASS	= sPARTS_PASS + "Weapon\\Weapon";
+//上記に数字を挟んだうえでくっつけるモデル名.
+const string sLEG_NAME		= "\\Leg";
+const string sCORE_NAME		= "\\Core";
+const string sHEAD_NAME		= "\\Head";
+const string sARML_NAME		= "\\ArmL";
+const string sARMR_NAME		= "\\ArmR";
+const string sWEAPON_NAME	= "\\Weapon";
+
 //extension = 拡張子.
 const string sEXTENSION_X = ".X";//上記のパスとこれの間に数字を挟んで使う.
 
@@ -74,14 +84,14 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 //		"Data\\RoboParts\\Core\\Core1.X",
 		enSTATIC_MODEL::enStaticModel_Ground );
 	CreateStaticModel(
-		"Data\\RoboParts\\Leg\\Leg1.x",
+		"Data\\RoboParts\\Leg\\Leg1\\Leg1.x",
 		enSTATIC_MODEL::enStaticModel_Enemy );
 
 	CreateSkinModel(
-		"Data\\RoboParts\\Leg\\Leg0.x",
+		"Data\\RoboParts\\Leg\\Leg0\\Leg0.x",
 		enSKIN_MODEL::enSkinModel_Player );
 	CreateSkinModel(
-		"Data\\RoboParts\\Leg\\Leg0.X",
+		"Data\\RoboParts\\Leg\\Leg0\\Leg0.X",
 //		"Data\\hime\\hime_kougeki.x", 
 		enSKIN_MODEL::enSkinModel_Leg );
 
@@ -102,20 +112,25 @@ void clsResource::CreatePartsGroup()
 void clsResource::CreateParts( const enPARTS enParts )
 {
 	UCHAR ucStart, ucMax;
-	string sPass = SetVarToCreateParts( ucStart, ucMax, enParts );
+	string sModelName;
+	string sPass = SetVarToCreateParts( ucStart, ucMax, sModelName, enParts );
 	
 	//作成.
 	for( UCHAR i=0; i<ucMax - ucStart; i++ ){
 		//パーツファイル名連結.
 		ostringstream ss;
-		ss << static_cast<int>( i );
-		string tmpString = sPass + ss.str();
-		tmpString += sEXTENSION_X;
+		ss << static_cast<int>( i );		//数字を文字列に( intじゃないと事故が起こるさ ).
+		string tmpString = sPass + ss.str();//パーツのディレクトリ名.
+		tmpString += sModelName + ss.str();	//パーツのモデル名.
+		tmpString += sEXTENSION_X;			//拡張子連結.
+
 		//メモリ確保.
 		char *tmpPass = new char[tmpString.size() + 1];
+
 		//stringからchar[]へコピー.
 		char_traits<char>::copy( 
 			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
+
 		//作る.
 		CreateSkinModel(
 			tmpPass, 
@@ -129,6 +144,7 @@ void clsResource::CreateParts( const enPARTS enParts )
 string clsResource::SetVarToCreateParts(
 	SKIN_ENUM_TYPE &ucStart,	//(out)そのパーツの始まり番号.
 	SKIN_ENUM_TYPE &ucMax,	//(out)そのパーツの最大番号.
+	string &sModelName,//(out)パスにくっつけるモデル名.
 	const enPARTS enParts )
 {
 	string sPass;
@@ -141,27 +157,33 @@ string clsResource::SetVarToCreateParts(
 	case enPARTS::LEG:
 		ucMax = ucStart + m_ucLegNum;
 		sPass = sLEG_PASS;
+		sModelName = sLEG_NAME;
 		break;
 	case enPARTS::CORE:
 		ucMax = ucStart + m_ucCoreNum;
 		sPass = sCORE_PASS;
+		sModelName = sCORE_NAME;
 		break;
 	case enPARTS::HEAD:
 		ucMax = ucStart + m_ucHeadNum;
 		sPass = sHEAD_PASS;
+		sModelName = sHEAD_NAME;
 		break;
 	case enPARTS::ARM_L:
 		ucMax = ucStart + m_ucArmsNum;
 		sPass = sARML_PASS;
+		sModelName = sARML_NAME;
 		break;
 	case enPARTS::ARM_R:
 		ucMax = ucStart + m_ucArmsNum;
 		sPass = sARMR_PASS;
+		sModelName = sARMR_NAME;
 		break;
 	case enPARTS::WEAPON_L:
-	case enPARTS::WEAPON_R:
+//	case enPARTS::WEAPON_R:	//二回されないように片方だけにしておく.
 		ucMax = ucStart + m_ucWeaponNum;
 		sPass = sWEAPON_PASS;
+		sModelName = sWEAPON_NAME;
 		break;
 	default:
 		assert( !"不正なパーツが指定されました" );

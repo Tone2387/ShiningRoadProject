@@ -1,5 +1,9 @@
 #include "File.h"
 
+//文字列を数値にしようとしないかのチェックで使う.
+#include <cctype>
+#include <algorithm>
+
 using namespace std;
 
 const unsigned int uiRESERVE_SIZE_ROW = 64;//ベクターの初期最大サイズ( 行 ).
@@ -24,7 +28,7 @@ clsFILE::~clsFILE()
 }
 
 
-void clsFILE::Open( string sFileName )
+void clsFILE::Open( const string sFileName )
 {
 	assert( !m_bUsing );//使用中にopenするな.
 
@@ -32,10 +36,6 @@ void clsFILE::Open( string sFileName )
 
 	//メモリ確保.
 	m_vvsData.reserve( uiRESERVE_SIZE_ROW );
-//	for( unsigned int i=0; i<m_vvsData.size(); i++ ){
-//		m_vvsData[i].reserve( uiRESERVE_SIZE_COL );
-//	}
-
 
 	//ファイルを開く.
 	ifstream ifs( m_sFileName );
@@ -47,8 +47,8 @@ void clsFILE::Open( string sFileName )
 			return;
 		}
 
-		string sBuff;
-		unsigned int uiIndexRow = 0;
+		string sBuff;//仮のデータ.
+		unsigned int uiIndexRow = 0;//何行目かを表す変数( index ).
 		//一行づつファイルすべてを読み込む.
 		while( true )
 		{
@@ -56,20 +56,23 @@ void clsFILE::Open( string sFileName )
 			if( ifs.eof() ){
 				break;
 			}
-			m_vvsData.push_back( vsINIT_LINE );
+			
+			m_vvsData.push_back( vsINIT_LINE );					//一行増やす.
 			m_vvsData[uiIndexRow].reserve( uiRESERVE_SIZE_COL );//メモリ確保.
+			
+			getline( ifs, sBuff );					//仮のデータに一行を突っ込む.
+			m_vvsData[uiIndexRow].push_back( "" );	//本データにさっき作った仮データを突っ込む猶予を作る.
+			m_vvsData[uiIndexRow][0] = sBuff;		//突っ込む.
+			m_vvsData[uiIndexRow] = Split( m_vvsData[uiIndexRow][0], cDELIMITER );//一行として突っ込んだデータを区切り文字を基準に分解する.
 
-			getline( ifs, sBuff );
-			m_vvsData[uiIndexRow].push_back( "" );
-			m_vvsData[uiIndexRow][0] = sBuff;
-			m_vvsData[uiIndexRow] = Split( m_vvsData[uiIndexRow][0], cDELIMITER );
-
+			//余分なメモリをポイする.
 			m_vvsData[uiIndexRow].shrink_to_fit();
 
 			uiIndexRow ++;
 		}
 	}
 
+	//余分なメモリをポイする.
 	m_vvsData.shrink_to_fit();
 
 	m_bUsing = true;
@@ -90,21 +93,28 @@ void clsFILE::Close()
 
 
 
-string clsFILE::GetDataString( const int iRow, const int iCol )
+string clsFILE::GetDataString( const int iRow, const int iCol ) const
 {
 	if( !m_bUsing ){
 		assert( m_bUsing );//使用中じゃなければアサート.
 		return sERROR;
 	}
 	//範囲内?.
-	if( iRow >= static_cast<int>( m_vvsData.size() ) )			return sERROR;
+	if( iRow >= static_cast<int>( m_vvsData.size() ) ){
+		return sERROR;
+	}
 	for( unsigned int i=0; i<m_vvsData.size(); i++ ){
-		if( iCol >= static_cast<int>( m_vvsData[i].size() ) )	return sERROR;
+		if( iCol >= static_cast<int>( m_vvsData[i].size() ) ){
+			return sERROR;
+		}
 	}
 	//マイナスははじく( かつエラー値ではない ).
-	if( iRow < 0 && iRow != MyFile::ERR_LINE )	return sERROR;
-	if( iCol < 0 && iCol != MyFile::ERR_LINE )	return sERROR;
-
+	if( iRow < 0 && iRow != MyFile::ERR_LINE ){	
+		return sERROR;
+	}
+	if( iCol < 0 && iCol != MyFile::ERR_LINE ){	
+		return sERROR;
+	}
 
 	//全文を返す.
 	if( iRow == MyFile::ERR_LINE ){
@@ -134,61 +144,75 @@ string clsFILE::GetDataString( const int iRow, const int iCol )
 
 int clsFILE::GetDataInt(
 	const int iRow, 
-	const int iCol )
+	const int iCol ) const
 {
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
-	if( sBuff == sERROR ){
-		return 0;	
+	//「すべてが数字」ではない || エラーならば.
+	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+		sBuff == sERROR )
+	{
+		//エラーを返す.
+		return MyFile::ERR_LINE;
 	}
 
-	int iNum = stoi( sBuff );			//文字列を数字にする.
+	int iNum = stoi( sBuff );	//文字列を数字にする.
 	return iNum;
 }
 
 float clsFILE::GetDataFloat(
 	const int iRow, 
-	const int iCol )
+	const int iCol ) const
 {
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
-	if( sBuff == sERROR ){
-		return 0;	
+	//「すべてが数字」ではない || エラーならば.
+	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+		sBuff == sERROR )
+	{
+		//エラーを返す.
+		return static_cast<float>( MyFile::ERR_LINE );
 	}
 
-	float fNum = stof( sBuff );			//文字列を数字にする.
+	float fNum = stof( sBuff );	//文字列を数字にする.
 	return fNum;
 }
 
 double clsFILE::GetDataDouble(
 	const int iRow, 
-	const int iCol )
+	const int iCol ) const
 {
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
-	if( sBuff == sERROR ){
-		return 0;	
+	//「すべてが数字」ではない || エラーならば.
+	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+		sBuff == sERROR )
+	{
+		//エラーを返す.
+		return static_cast<double>( MyFile::ERR_LINE );
 	}
 
-	double dNum = stod( sBuff );			//文字列を数字にする.
+	double dNum = stod( sBuff );	//文字列を数字にする.
 	return dNum;
 }
 
 
-//文字列分割読み込み( 第二引数は区切り文字 ).
-vector< string > clsFILE::Split( const std::string &sStr, char cSep )
+//文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).
+vector< string > clsFILE::Split( const std::string &sStr, const char cSep ) const
 {
 	vector< string > vsOut;
 	stringstream ss( sStr );
 	string sBuff;
 
+	//多めにメモリを取っておく.
 	vsOut.reserve( uiRESERVE_SIZE_COL );
 
+	//引数にした文字を区切りとして分割する.
 	while( std::getline( ss, sBuff, cSep ) ){
 		vsOut.push_back( sBuff );
 	}
-//	vsOut.pop_back();
 
+	//余分なメモリをポイする.
 	vsOut.shrink_to_fit();
 
 	return vsOut;
