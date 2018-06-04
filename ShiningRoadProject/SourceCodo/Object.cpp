@@ -1,5 +1,22 @@
 #include "Object.h"
 
+D3DXVECTOR3 GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis)
+{
+	D3DXMATRIX mYaw;
+
+	//‰ñ“].
+	D3DXMatrixRotationY(&mYaw, Angle);//Y²‰ñ“].
+
+	D3DXVECTOR3 vDir;
+
+	//Z²ÍŞ¸ÄÙ‚»‚Ì‚à‚Ì‚ğ‰ñ“]ó‘Ô‚É‚æ‚è•ÏŠ·‚·‚é.
+	D3DXVec3TransformCoord(&vDir, &vAxis, &mYaw);
+
+	D3DXVec3Normalize(&vDir, &vDir);//Œ»İŒü‚¢‚Ä‚¢‚é•ûŒüƒxƒNƒgƒ‹.
+
+	return vDir;
+}
+
 //Ú²‚ÆÒ¯¼­‚Ì“–‚½‚è”»’è.
 bool clsObject::Intersect(
 	const RAYSTATE RayState,
@@ -36,9 +53,9 @@ bool clsObject::Intersect(
 		pTarget->m_Trans.fRoll);
 
 	D3DXMatrixScaling(&mScale,
-		pTarget->m_Trans.fScale,
-		pTarget->m_Trans.fScale,
-		pTarget->m_Trans.fScale);
+		pTarget->m_Trans.vScale.x,
+		pTarget->m_Trans.vScale.y,
+		pTarget->m_Trans.vScale.z);
 
 	matWorld = mTrans * mRotate * mScale;
 
@@ -78,7 +95,9 @@ bool clsObject::Intersect(
 			+ U * (vVertex[1] - vVertex[0])
 			+ V * (vVertex[2] - vVertex[0]);
 
-		*pvIntersect *= pTarget->m_Trans.fScale;
+		pvIntersect->x *= pTarget->m_Trans.vScale.x;
+		pvIntersect->y *= pTarget->m_Trans.vScale.y;
+		pvIntersect->z *= pTarget->m_Trans.vScale.z;
 
 		return true;//–½’†‚µ‚Ä‚¢‚é.
 	}
@@ -152,40 +171,19 @@ HRESULT clsObject::FindVecticesOnPoly(
 }
 
 //‰ñ“]’l’²®.
-void ObjRollOverGuard(float* fYaw)
+void ObjRollOverGuard(float* fRot)
 {
-	if (*fYaw > D3DX_PI * 2.0f)
+	if (*fRot > D3DX_PI * 2.0f)
 	{
 		//1üˆÈã‚µ‚Ä‚¢‚é.
-		*fYaw -= D3DX_PI * 2.0f;//2ƒÎ(360‹)•ª‚ğˆø‚­.
+		*fRot -= D3DX_PI * 2.0f;//2ƒÎ(360‹)•ª‚ğˆø‚­.
 
 		//Ä‹AŠÖ”.
-		if (*fYaw > D3DX_PI*2.0f)
+		if (*fRot > D3DX_PI*2.0f)
 		{
-			ObjRollOverGuard(fYaw);
+			ObjRollOverGuard(fRot);
 		}
 	}
-}
-
-D3DXVECTOR3 clsObject::GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis)
-{
-	D3DXMATRIX mYaw;
-
-	//‰ñ“].
-	D3DXMatrixRotationY(&mYaw, Angle);//Y²‰ñ“].
-
-	D3DXVECTOR3 vDir;
-
-	//Z²ÍŞ¸ÄÙ‚»‚Ì‚à‚Ì‚ğ‰ñ“]ó‘Ô‚É‚æ‚è•ÏŠ·‚·‚é.
-	D3DXVec3TransformCoord(
-		&vDir, //(out)
-		&vAxis,
-		&mYaw);//Y²‰ñ“]s—ñ.
-
-			   //ª‚ğnormalize(³‹K‰»).
-	D3DXVec3Normalize(&vDir, &vDir);//Œ»İŒü‚¢‚Ä‚¢‚é•ûŒüƒxƒNƒgƒ‹.
-
-	return vDir;
 }
 
 void clsObject::WallJudge(const clsDX9Mesh* pWall, const bool bFoll)
@@ -199,18 +197,15 @@ void clsObject::WallJudge(const clsDX9Mesh* pWall, const bool bFoll)
 	WallUp(pWall);
 }
 
-bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, const D3DXVECTOR3 vRayDir)
+bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir)
 {
 	FLOAT fDistance;//‹——£.
 	D3DXVECTOR3 vIntersect;//Œğ“_À•W.
-	float fDis, fYaw;//‹——£‚Æ‰ñ“].
+	float fDis;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 1.0f;
 	RAYSTATE rs;
 	rs.vAxis = vRayDir;
 	rs.vRayStart = m_Trans.vPos;
-
-	fYaw = fabs(m_Trans.fYaw);//fabs:â‘Î’l(float”Å)
-	ObjRollOverGuard(&fYaw);//0`2ƒÎ‚ÌŠÔ‚Éû‚ß‚é.
 
 	Intersect(rs, pWall, &fDis, &vIntersect);
 
@@ -231,7 +226,7 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 	float fDis, fYaw;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 1.0f;
 	RAYSTATE rs;
-	rs.vAxis = vDirForward;
+	rs.vAxis = g_vDirForward;
 	rs.vRayStart = m_Trans.vPos;
 	//Ú²‚ÌŒü‚«‚É‚æ‚é“–‚½‚é•Ç‚Ü‚Å‚Ì‹——£‚ğ‹‚ß‚é.
 
@@ -309,7 +304,7 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 	float fDis, fYaw;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 1.0f;
 	RAYSTATE rs;
-	rs.vAxis = vDirBack;
+	rs.vAxis = g_vDirBack;
 	rs.vRayStart = m_Trans.vPos;
 	//Ú²‚ÌŒü‚«‚É‚æ‚é“–‚½‚é•Ç‚Ü‚Å‚Ì‹——£‚ğ‹‚ß‚é.
 
@@ -386,7 +381,7 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 	float fDis, fYaw;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 1.0f;
 	RAYSTATE rs;
-	rs.vAxis = vDirLeft;
+	rs.vAxis = g_vDirLeft;
 	rs.vRayStart = m_Trans.vPos;
 	//Ú²‚ÌŒü‚«‚É‚æ‚é“–‚½‚é•Ç‚Ü‚Å‚Ì‹——£‚ğ‹‚ß‚é.
 
@@ -464,7 +459,7 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 	float fDis, fYaw;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 1.0f;
 	RAYSTATE rs;
-	rs.vAxis = vDirRight;
+	rs.vAxis = g_vDirRight;
 	rs.vRayStart = m_Trans.vPos;
 	//Ú²‚ÌŒü‚«‚É‚æ‚é“–‚½‚é•Ç‚Ü‚Å‚Ì‹——£‚ğ‹‚ß‚é.
 
@@ -538,26 +533,23 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 {
 	FLOAT fDistance;//‹——£.
 	D3DXVECTOR3 vIntersect;//Œğ“_À•W.
-	float fDis, fYaw;//‹——£‚Æ‰ñ“].
+	float fDis;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 1.0f;
 	RAYSTATE rs;
-	rs.vAxis = vDirUp;
+	rs.vAxis = g_vDirUp;
 	rs.vRayStart = m_Trans.vPos;
-	//Ú²‚ÌŒü‚«‚É‚æ‚é“–‚½‚é•Ç‚Ü‚Å‚Ì‹——£‚ğ‹‚ß‚é.
-
-	fYaw = fabs(m_Trans.fYaw);//fabs:â‘Î’l(float”Å)
-	ObjRollOverGuard(&fYaw);//0`2ƒÎ‚ÌŠÔ‚Éû‚ß‚é.
 
 	Intersect(rs, pWall, &fDis, &vIntersect);
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_GroundSpece)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
 		if (m_fFollPower > 0.0f)
 		{
+			m_fFollPower = 0.0f;
 			m_Trans.vPos.y = vIntersect.y - fRaySpece;
 		}
 	}
@@ -569,25 +561,21 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall, const bool bFoll)
 {
 	FLOAT fDistance;//‹——£.
 	D3DXVECTOR3 vIntersect;//Œğ“_À•W.
-	float fDis, fYaw;//‹——£‚Æ‰ñ“].
+	float fDis;//‹——£‚Æ‰ñ“].
 	float fRaySpece = 0.5f;
 	RAYSTATE rs;
-	rs.vAxis = vDirDown;
+	rs.vAxis = g_vDirDown;
 	rs.vRayStart = m_Trans.vPos;
-	//Ú²‚ÌŒü‚«‚É‚æ‚é“–‚½‚é•Ç‚Ü‚Å‚Ì‹——£‚ğ‹‚ß‚é.
-
-	fYaw = fabs(m_Trans.fYaw);//fabs:â‘Î’l(float”Å)
-	ObjRollOverGuard(&fYaw);//0`2ƒÎ‚ÌŠÔ‚Éû‚ß‚é.
 
 	Intersect(rs, pWall, &fDis, &vIntersect);
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece - m_fFollPower && fDis > g_GroundSpece)
+	if (fDis < fRaySpece - m_fFollPower && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
-		m_Trans.vPos.y = vIntersect.y + fRaySpece;
+		m_Trans.vPos.y = vIntersect.y + (fRaySpece - g_fGravity);
 
 		m_fFollPower = 0.0f;
 	}

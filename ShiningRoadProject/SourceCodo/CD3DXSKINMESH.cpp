@@ -766,13 +766,40 @@ HRESULT D3DXPARSER::Release()
 *
 **/
 // コンストラクタ.
-clsD3DXSKINMESH::clsD3DXSKINMESH()
+clsD3DXSKINMESH::clsD3DXSKINMESH() :
+	m_hWnd( NULL ),
+	m_pD3d9( NULL ),
+	m_pDevice9( NULL ),
+	m_pDevice( NULL ),
+	m_pDeviceContext( NULL ),
+	m_pSampleLinear( NULL ),
+	m_pVertexShader( NULL ),
+	m_pPixelShader( NULL ),
+	m_pVertexLayout( NULL ),
+	m_pConstantBuffer0( NULL ),
+	m_pConstantBuffer1( NULL ),
+	m_pConstantBufferBone( NULL ),
+	m_pD3dxMesh( NULL )
 {
-	ZeroMemory( this, sizeof( clsD3DXSKINMESH ) );
+//	ZeroMemory( this, sizeof( clsD3DXSKINMESH ) );
+	m_Trans.vPos = vecAxisX = vecAxisZ = m_vLight = m_vEye = { 0.0f, 0.0f, 0.0f };
+	m_Trans.fPitch = m_Trans.fYaw = m_Trans.fRoll = 0.0f;
 	m_Trans.vScale = D3DXVECTOR3( 1.0f, 1.0f, 1.0f );
 
+	m_enDir = enDirection::enDirection_Stop;
+
+	D3DXMatrixIdentity( &m_mWorld );
+	D3DXMatrixIdentity( &m_mRotation );
+	D3DXMatrixIdentity( &m_mView );
+	D3DXMatrixIdentity( &m_mProj );
+
 	// 一先ず、この値.
-	m_dAnimSpeed = 0.0001f;
+	m_dAnimSpeed = 0.0001;
+	m_dAnimTime = 0.0;
+
+	ZeroMemory( m_FilePath, sizeof( m_FilePath ) );
+
+	m_iFrame = 0;
 }
 
 
@@ -1719,7 +1746,7 @@ bool clsD3DXSKINMESH::GetPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos)
 			D3DXMatrixTranslation(&mTran, tmpPos.x, tmpPos.y, tmpPos.z);
 
 			mRot = mYaw * mPitch * mRoll;
-			mWorld = mTran * mScale * mRot;
+			mWorld = mTran * mRot* mScale;
 
 			pOutPos->x = mWorld._41 + m_Trans.vPos.x;
 			pOutPos->y = mWorld._42 + m_Trans.vPos.y;

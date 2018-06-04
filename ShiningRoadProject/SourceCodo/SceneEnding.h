@@ -19,5 +19,9 @@ private:
 	void UpdateProduct( enSCENE &nextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
 
 };

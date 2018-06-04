@@ -144,27 +144,27 @@ void clsSOUND_MANAGER::CreateSound()
 
 //----- BGM -----//
 //再生関数.
-bool clsSOUND_MANAGER::PlayBGM( const enBgm bgmNo, const bool bNotify ) const
+bool clsSOUND_MANAGER::PlayBGM( const enBGM bgmNo, const bool bNotify ) const
 {
 	return m_pBgm[bgmNo]->Play( bNotify );
 }
 //停止関数.
-bool clsSOUND_MANAGER::StopBGM( const enBgm bgmNo ) const
+bool clsSOUND_MANAGER::StopBGM( const enBGM bgmNo ) const
 {
 	return m_pBgm[bgmNo]->Stop();
 }
 //音の停止を確認する関数.
-bool clsSOUND_MANAGER::IsStoppedBGM( const enBgm bgmNo ) const
+bool clsSOUND_MANAGER::IsStoppedBGM( const enBGM bgmNo ) const
 {
 	return m_pBgm[bgmNo]->IsStopped();
 }
 //音の再生中を確認する関数.
-bool clsSOUND_MANAGER::IsPlayingBGM( const enBgm bgmNo ) const
+bool clsSOUND_MANAGER::IsPlayingBGM( const enBGM bgmNo ) const
 {
 	return m_pBgm[bgmNo]->IsPlaying();
 }
 //巻き戻し関数(再生位置初期化).
-bool clsSOUND_MANAGER::SeekToStartBGM( const enBgm bgmNo ) const
+bool clsSOUND_MANAGER::SeekToStartBGM( const enBGM bgmNo ) const
 {
 	return m_pBgm[bgmNo]->SeekToStart();
 }

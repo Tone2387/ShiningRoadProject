@@ -15,16 +15,19 @@
 //============================================================
 //	インクルード.
 //============================================================
-#include	<Windows.h>
+#include "MyMacro.h"
+	    
+#include <Windows.h>
+	    
+#include <D3DX11.h>
+#include <D3D11.h>
+	    
+#include <D3DX10.h>//「D3DX～」の定義使用時に必要.
+#include <D3D10.h>
 
-#include	<D3DX11.h>
-#include	<D3D11.h>
-
-#include	<D3DX10.h>//「D3DX～」の定義使用時に必要.
-#include	<D3D10.h>
-
-#include	"MyMacro.h"
-
+#include <memory>
+#include <string>
+#include <sstream>
 
 //============================================================
 //	ライブラリ.
@@ -44,7 +47,7 @@
 #define WND_W 1280	//ウィンドウ幅.
 #define WND_H 720	//ウィンドウ高さ.
 
-
+const float g_fFPS = 60.0f;
 
 //進行方向列挙体.
 enum class enDIRECTION : UCHAR
@@ -70,6 +73,28 @@ enum class enSCENE : UCHAR
 				//なんのシーンも指定していない.
 };
 
+//ロボの構成に必要なパーツ数.
+enum class enPARTS : UCHAR
+{
+	LEG = 0,
+	CORE,
+	HEAD,
+	ARM_L,
+	ARM_R,
+	WEAPON_L,
+	WEAPON_R,
+
+	MAX
+};
+
+struct TRANSFORM
+{
+	D3DXVECTOR3 vScale;
+	float		fYaw;		//回転(Y軸)
+	float		fPitch;	//回転(X軸)
+	float		fRoll;	//回転(Z軸)
+	D3DXVECTOR3	vPos;		//位置(X,Y,Z)
+};
 
 
 #endif//#ifndef GLOBAL_H_

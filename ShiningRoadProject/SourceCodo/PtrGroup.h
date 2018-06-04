@@ -17,6 +17,7 @@ public:
 		ID3D11Device* const pDevice,
 		ID3D11DeviceContext* const pContext,
 		D3D10_VIEWPORT* const pViewPort,
+		ID3D11DepthStencilState* const pDepthState,
 		clsDxInput* const pInput,
 		clsResource* const pResource,
 		clsEffects* const pEffects,
@@ -30,15 +31,11 @@ public:
 	ID3D11Device* GetDevice() const;
 	ID3D11DeviceContext* GetContext() const;
 	D3D10_VIEWPORT* GetViewPort() const;
-	//ジョイスティック.
+	ID3D11DepthStencilState* GetDepthState() const;
 	clsDxInput* GetDxInput() const;
-	//リソース.
 	clsResource* GetResource() const;
-	//エフェクトクラス.
 	clsEffects*	GetEffects() const;
-	//BGM,SE.
 	clsSOUND_MANAGER*	GetSound() const;
-	//カメラ.
 	clsCAMERA_BASE*	GetCamera() const;
 
 private:
@@ -47,6 +44,8 @@ private:
 	ID3D11DeviceContext*	m_wpContext;
 	//2DSp用.
 	D3D10_VIEWPORT* m_wpViewPort;
+	//深度(Z)テスト設定.
+	ID3D11DepthStencilState* m_wpDepthStencilState;
 
 	//ジョイスティック.
 	clsDxInput*		m_wpDxInput;

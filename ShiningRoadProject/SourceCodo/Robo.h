@@ -1,10 +1,7 @@
 #pragma once
 
-
-
 #include"Charactor.h"
 #include"SkinMesh.h"
-
 
 //太原の書き足した分.
 #ifdef Tahara
@@ -25,7 +22,8 @@
 
 #endif//#ifdef Tahara
 
-
+const int g_iQuickInterbal = 1 * (int)g_fFPS;
+const int g_iQuickTurnFrame = 1 * (int)g_fFPS;
 
 class clsRobo : public clsCharactor
 {
@@ -42,17 +40,9 @@ public:
 		ID3D11DeviceContext* pContext11,
 		clsPOINTER_GROUP* const pPtrGroup );
 
-	void Update()
+	void ModelUpdate()
 	{
-		DXSKIN_TRANSFORM tmpTrans;
-
-		tmpTrans.fPitch = m_Trans.fPitch;
-		tmpTrans.fYaw = m_Trans.fYaw;
-		tmpTrans.fRoll = m_Trans.fRoll;
-		tmpTrans.vPos = m_Trans.vPos;
-		tmpTrans.vScale = m_Trans.vScale;
-
-		m_pMesh->ModelUpdate(tmpTrans);
+		m_pMesh->ModelUpdate(m_Trans);
 	}
 
 	void Render( 
@@ -63,14 +53,14 @@ public:
 		const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f ,1.0f },
 		const bool alphaFlg = false )
 	{
-		Update();
+		ModelUpdate();
 		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
 	}
 
 	bool m_bBoost;
 
 	float m_fWalktMoveSpeedMax;
-	int m_fWalkTopSpeedFrame;
+	int m_iWalkTopSpeedFrame;
 
 	float m_fBoostMoveSpeedMax;
 	int m_iBoostTopSpeedFrame;
@@ -79,11 +69,18 @@ public:
 	int m_iBoostRisingTopSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fBoostRisingAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
 
+	int m_iQuickInterbal;
+
 	void Walk();
 	void Boost();
 	void MoveSwitch();
 	void BoostRising();
 	void QuickBoost();
+	void SetDirQuickBoost(const float fAngle);
+	void QuickTurn();
+	void SetDirQuickTurn(const float fAngle);
+
+	void Updata();
 
 	clsRobo();
 	~clsRobo();

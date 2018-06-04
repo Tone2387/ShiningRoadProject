@@ -4,7 +4,7 @@ void clsRobo::RoboInit(
 	HWND hWnd,
 	ID3D11Device* pDevice11,
 	ID3D11DeviceContext* pContext11,
-	clsPOINTER_GROUP* const pPtrGroup )
+	clsPOINTER_GROUP* const pPtrGroup)
 {
 #ifdef Tahara
 	m_wpResource = pPtrGroup->GetResource();
@@ -14,15 +14,18 @@ void clsRobo::RoboInit(
 
 	m_pMesh = new clsSkinMesh;
 
-	m_pMesh->AttachModel(m_wpResource->GetSkinModels(clsResource::enSkinModel_Player));
-	m_pMesh->SetAnimSpeed( 0.1 );
+	m_pMesh->AttachModel(
+		m_wpResource->GetSkinModels(
+				clsResource::enSkinModel_Leg ) );
+//		m_wpResource->GetPartsModels( enPARTS::LEG, 3 ));
+	m_pMesh->SetAnimSpeed(0.1);
 
 	SetScale(0.005f);
 
 	m_Trans.vPos.y = 10.0f;
 
 	m_fWalktMoveSpeedMax = 0.25f;
-	m_fWalkTopSpeedFrame = 1;
+	m_iWalkTopSpeedFrame = 5;
 
 	m_fBoostMoveSpeedMax = 0.5;
 	m_iBoostTopSpeedFrame = 60;
@@ -31,48 +34,49 @@ void clsRobo::RoboInit(
 	m_iBoostRisingTopSpeedFrame = 20;//↑に達するまでのフレーム値.
 	m_fBoostRisingAccele = m_fBoostRisingSpeedMax / m_iBoostRisingTopSpeedFrame;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
 
-	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_fWalkTopSpeedFrame);
+	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 
-	SetRotationSpeed(0.1f);
+	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
-
-
 }
 
 void clsRobo::Walk()
 {
-	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_fWalkTopSpeedFrame);
-	m_bBoost = false;
+	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 }
 
 void clsRobo::Boost()
 {
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
-	m_bBoost = true;
 }
 
 void clsRobo::MoveSwitch()
 {
-	if (m_bBoost)
+	if (IsMoveControl())
 	{
-		Walk();
-	}
+		if (m_bBoost)
+		{
+			Walk();
+			m_bBoost = false;
+		}
 
-	else
-	{
-		Boost();
+		else
+		{
+			Boost();
+			m_bBoost = true;
+		}
 	}
 }
 
 void clsRobo::BoostRising()
 {
-	if (!m_bGround)
+	if (!m_bGround || IsMoveing())
 	{
 		if (m_fFollPower < m_fBoostMoveSpeedMax)
 		{
 			m_fFollPower += m_fBoostRisingAccele;
 		}
-		
+
 		else
 		{
 			m_fFollPower = m_fBoostMoveSpeedMax;
@@ -90,30 +94,103 @@ void clsRobo::BoostRising()
 	}
 }
 
-void clsRobo::QuickBoost()
+void clsRobo::SetDirQuickBoost(const float fAngle)
 {
 	if (IsMoveControl())
 	{
-		m_fMoveSpeed = m_fBoostMoveSpeedMax * 2.0f;
+		D3DXVECTOR3 vForward;
+
+		//今向いている方向.
+		vForward = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
+
+		//行きたい方向.
+		m_vMoveDir = GetVec3Dir(fAngle, vForward);
 	}
 }
 
-clsRobo::clsRobo() :
-	m_pMesh( NULL ),
-	m_bBoost( false ),
-	m_fWalktMoveSpeedMax( 0.0f ),
-	m_fWalkTopSpeedFrame( 0.0f ),
-	m_fBoostMoveSpeedMax( 0.0f ),
-	m_iBoostTopSpeedFrame( 0 ),
-	m_fBoostRisingSpeedMax( 0.0f ),
-	m_iBoostRisingTopSpeedFrame( 0 ),
-	m_fBoostRisingAccele( 0.0f ),
-
-	m_wpResource( nullptr ),
-	m_wpEffects( nullptr ),
-	m_wpSound( nullptr )
+void clsRobo::QuickBoost()
 {
-//	ZeroMemory(this, sizeof(clsRobo));
+	
+	if (IsMoveControl())
+	{
+		if (m_iQuickInterbal < 0)
+		{
+			m_iQuickInterbal = g_iQuickInterbal;
+			m_fMoveSpeed = m_fBoostMoveSpeedMax * 3.0f;
+			SetMoveDeceleSpeed(m_iBoostTopSpeedFrame * 2);
+		}
+	}
+}
+
+void clsRobo::SetDirQuickTurn(const float fAngle)
+{
+	if (!m_bBoost)
+	{
+		if (IsRotControl())
+		{
+			float fTmp = 3.0f * (fAngle / abs(fAngle));
+			SetRotDir(fTmp);
+		}
+	}
+}
+
+void clsRobo::QuickTurn()
+{
+	if (!m_bBoost)
+	{
+		if (IsRotControl())
+		{
+			if (m_iQuickInterbal < 0)
+			{
+				m_iQuickInterbal = g_iQuickInterbal;
+				m_fRotSpeed = (float)D3DX_PI / g_iQuickTurnFrame;
+				SetRotDeceleSpeed(g_iQuickTurnFrame);
+			}
+		}
+	}
+}
+
+void clsRobo::Updata()
+{
+	m_iQuickInterbal--;
+
+	if (IsMoveControl())
+	{
+		if (!m_bBoost)
+		{
+			Walk();
+		}
+
+		else
+		{
+			Boost();
+		}
+	}
+
+	if (IsRotControl())
+	{
+		SetRotDeceleSpeed(m_iRotStopFrame);
+	}
+}
+
+
+clsRobo::clsRobo() :
+m_pMesh(NULL),
+m_bBoost(false),
+m_fWalktMoveSpeedMax(0.0f),
+m_iWalkTopSpeedFrame(0),
+m_fBoostMoveSpeedMax(0.0f),
+m_iBoostTopSpeedFrame(0),
+m_fBoostRisingSpeedMax(0.0f),
+m_iBoostRisingTopSpeedFrame(0),
+m_fBoostRisingAccele(0.0f),
+m_iQuickInterbal(0),
+
+m_wpResource(nullptr),
+m_wpEffects(nullptr),
+m_wpSound(nullptr)
+{
+	//	ZeroMemory(this, sizeof(clsRobo));
 }
 
 clsRobo::~clsRobo()

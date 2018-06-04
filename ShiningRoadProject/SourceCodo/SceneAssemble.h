@@ -2,9 +2,9 @@
 
 #include "SceneClass.h"
 #include "CameraAssemble.h"
+#include "AssembleModel.h"
 
-
-
+#include <vector>
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -15,18 +15,24 @@ public:
 	clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup );
 	~clsSCENE_ASSEMBLE();
 
-
 private:
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &nextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
 
-	clsSPRITE2D_CENTER* m_pSprite;
 
-	clsCharaStatic* m_pTestChara;
-	clsCharaStatic* m_pParts;
+	clsASSEMBLE_MODEL*	m_pAsmModel;
+
+
+//	clsSPRITE2D_CENTER* m_pSprite;
+//	clsCharaStatic* m_pTestChara;
+//	clsCharaStatic* m_pParts;
 
 
 };

@@ -15,7 +15,8 @@ public:
 		const HWND hWnd, 
 		ID3D11Device* const pDevice, 
 		ID3D11DeviceContext* const pContext,
-		D3D10_VIEWPORT* const pViewPort );
+		D3D10_VIEWPORT* const pViewPort,
+		ID3D11DepthStencilState* const pDepthState );
 	~clsGAME();
 
 	//new直後に使う.
@@ -37,14 +38,28 @@ public:
 private:
 
 
+	//シーンクラス.
+	clsSCENE_BASE*		m_pScene;
+	//シーンのファクトリ.
+	clsSCENE_FACTORY* m_pSceneFactory;
+
+	//カメラ.
+	clsCAMERA_BASE*	m_spCamera;
+	//カメラファクトリ.
+	clsFACTORY_CAMERA* m_pCameraFactory;
+
+	//シーン初期化に必要なポインタのまとめ.
+	clsPOINTER_GROUP* m_pPtrGroup; 
 
 
-
+	//消すときdeleteしないでnullしてね.
 	HWND m_hWnd;
 	ID3D11Device*			m_wpDevice;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_wpContext;	//デバイスコンテキスト.
 	//2DSp用.
 	D3D10_VIEWPORT* m_wpViewPort;
+	//深度(Z)テスト設定.
+	ID3D11DepthStencilState*	m_wpDepthStencilState;
 
 	//ジョイスティック.
 	clsDxInput*		m_spDxInput;
@@ -57,19 +72,6 @@ private:
 	clsSOUND_MANAGER* m_pSound;
 
 
-	//シーンクラス.
-	clsSCENE_BASE*		m_pScene;
-	//シーンのファクトリ.
-	clsSCENE_FACTORY* m_pSceneFactory;
-
-	//カメラ.
-	clsCAMERA_BASE*	m_spCamera;
-	//カメラファクトリ.
-	clsFACTORY_CAMERA* m_pCameraFactory;
-
-
-	//消すときdeleteしないでnullしてね.
-	clsPOINTER_GROUP* m_pPtrGroup; 
 };
 
 

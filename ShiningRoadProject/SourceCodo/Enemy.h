@@ -1,153 +1,117 @@
-#ifndef _ENEMY_H_
-#define _ENEMY_H_
-#pragma warning(disable:4005)//警告についてのｺｰﾄﾞ分析を無効にする.4005:再定義.
+#pragma once
 
-#define _CRT_SECURE_NO_WARNINGS
+#include<random>
 
-#include"CD3DXSKINMESH.h"
-#include"DX9Mesh.h"
-#include"CSkinChara.h"
-#include<math.h>
-#include"UISprite.h"
-#include "Resource.h"
-#include "Shot.h"
+#include"Global.h"
+#include"Object.h"
 
-//========================================================
-//	定数.
-//========================================================
-#define E_MOVE_SPEED 0.075f//移動速度.
-#define E_HP 10
+const float g_fDisStandard = 0.1f;
+const float g_fPercentage = 0.01f;
 
-#define E_DOWNBOM 2
-
-#define E_SHOTCNT 60
-
-#define HP_DISP 5
-
-//========================================================
-//	構造体.
-//========================================================
-
-/*struct sound_data//ｻｳﾝﾄﾞ構造体.
-{
-char sPath[256];//ﾌｧｲﾙ名.
-char sAlias[256];//ｴｲﾘｱｽ.
-};*/
-
-
-
-//========================================================
-//	ﾌﾟﾚｲﾔｰｸﾗｽ.
-//========================================================
-
-enum E_MOVEPATTERN
-{
-	enMPattaern_None = 0,
-	enMPattaern_Normal,
-};
-
-struct FILELOAD
-{
-	D3DXVECTOR3 vOrizinPos;
-	int MovePattern;
-};
-
-class clsEnemy : public clsSkinChara
+class clsEnemyBase
 {
 public:
-	//========================================================
-	//	列挙体.
-	//========================================================
+	TRANSFORM* m_pTrans;
 
-	//軸ﾍﾞｸﾄﾙ.
-	D3DXVECTOR3 vecAxisZ;
-	D3DXVECTOR3 vecAxisX;
+	D3DXVECTOR3 m_vMoveDir;
+	int m_iMoveCategoryNo;
 
-	D3DXVECTOR3 m_vCamPos;
+	void Init(LPSTR strEnemyFolderName);
 
-	int HP;//体力.
-	int m_MaxHP;//最大体力.
+	void SearchTarget(clsObject* pObj);
 
-	//位置構造体.
-	//DXSTATIC_TRANSFORM m_StaticTrans;
+	void SearchNear(clsObject* pObj);
 
-	clsDX9Mesh* m_pDX9Mesh;
+	void SetMoveDir();
 
-	bool m_bDeadFlg;//死亡ﾌﾗｸﾞ.
+	bool IsShot();
 
-	//音声(ここで使うかはわからない)
-	clsSound** m_pSE;
-	int m_iSoundMaxNo;
-
-	int m_iShotMax;
-	int m_iShotCnt;
-	D3DXVECTOR3 m_vShotStartPos;
-	clsShot** m_ppShot;
-
-	//当たり判定関係.
-	SPHERE m_BodySphere;
-
-	bool ShotCollision(SPHERE* pTargrt, int iSphereMax = 1);
-	bool BodyCollision(SPHERE* pTargrt, int iSphereMax = 1);
-	
-#if _DEBUG
-	//ﾊﾞｳﾝﾃﾞｨﾝｸﾞｽﾌｨｱ用.
-	clsDX9Mesh* m_pBodySphere;
-#endif
-
-	D3DXVECTOR3 m_vOriginPos;//定位置.
-	D3DXVECTOR3 m_vOldPos;
-
-	int m_iThisEnemyIndex;
-	int m_iMovePattern;
-
-	/*====/ ｴﾌｪｸﾄ /====*/
-
-	clsEffects* m_pEffect;
-	/*/ ﾊﾝﾄﾞﾙ /*/
-	::Effekseer::Handle m_DownEfc;
-	::Effekseer::Handle m_DeadEfc;
-
-	int m_iDownEfcCnt;
-
-	clsEnemy();
-	~clsEnemy();
-
-	HRESULT Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11);
-
-	void HPUIRender(D3DXMATRIX& mView, D3DXMATRIX& mProj, D3DXVECTOR3& vEye);
-
-	bool LockOnFlg;
-	void LockOnRender(D3DXMATRIX& mView, D3DXMATRIX& mProj, D3DXVECTOR3& vEye);
-
-	void GameMove(D3DXVECTOR3 PlayerPos, clsDX9Mesh* Ground);//ｹﾞｰﾑ中での動き.
-
-	void SEInit(HWND hWnd);
-	void SEUpdate();
-
-	void UpdateCollisionPos();
-
-	void TrackingMove(D3DXVECTOR3 PlayerPos, clsDX9Mesh* Ground);
-
-	void Update();
-	void Render(D3DXMATRIX& mView, D3DXMATRIX& mProj, D3DXVECTOR3& vLight, D3DXVECTOR3& vEye, LPD3DXANIMATIONCONTROLLER pAC = NULL);
-
-	void Hit(int Damage);
-
-	void VectorInput(FILE *fp, int No);//csvﾌｧｲﾙからfloatの数値を入れる(改良の余地あり)
-
-	void ReStart();
+	clsEnemyBase();
+	~clsEnemyBase();
 
 private:
-	clsUISprite* m_pHp;//HPｹﾞｰｼﾞ表示.
-	clsUISprite* m_pHpFrame;//HPｹﾞｰｼﾞの枠.
-	clsUISprite* m_pLockOn;//ﾛｯｸｵﾝｶｰｿﾙ.
+	clsObject* m_pTarget;
 
-	void HPUIInit(ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11);
-	void HPUIControl();
+public:
+	struct EnemyBaseState
+	{
+		char strName[256];
+		int iMoveCategoryVisType;
+	};
 
-	void LockOnInit(ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11);
-	void LockOnControl();
+	struct EnemyUpdateState
+	{
+		D3DXVECTOR3 vHorMoveDir;
+		float fVerDis;
+	};
+
+	struct EnemyMoveState
+	{
+		int iHorDistance;
+		int iHorDisRandMax;
+		int iMoveDir;
+		int iMoveDirRandMax;
+		int iVerDistance;
+		int iVerDistRandMax;
+		int iVerMoveENLimitParcent;
+		int iActUpDateInterval;
+	};
+
+	struct EnemyShotState
+	{
+		int iShotDisMin;
+		int iShotDisMax;
+		int iShotENLimitParcent;
+	};
+
+	struct EnemyVisibilityAreaState
+	{
+		int iVisType;
+		int iVisDistance;
+		int iVisAngle;
+	};
+
+	struct EnemyMoveData
+	{
+		int iCategory;
+		EnemyMoveState** MoveState;
+	};
+
+	struct EnemyShotData
+	{
+		int iCategory;
+		EnemyShotState** ShotState;
+
+		~EnemyShotData()
+		{
+			for (int i = 0; i < iCategory; i++)
+			{
+				if (ShotState[iCategory])
+				{
+					delete ShotState[iCategory];
+					ShotState[iCategory] = nullptr;
+				}
+			}
+
+			if (ShotState)
+			{
+				delete[] ShotState;
+				ShotState = nullptr;
+			}
+		};
+	};
+
+	struct EnemyVisibilityAreaData
+	{
+		int iCategory;
+		EnemyVisibilityAreaState** VisAreaState;
+	};
+
+	EnemyBaseState m_BaseData;
+
+	EnemyMoveData m_MoveData;
+	EnemyShotData m_ShotData;
+	EnemyVisibilityAreaData m_visAreaData;
+	EnemyUpdateState m_UpdateState;
 };
 
-#endif//#ifndef _ENEMY_H_

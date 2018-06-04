@@ -4,7 +4,7 @@
 #include "CameraMission.h"
 
 
-#include"Robo.h"
+#include"TestObject.h"
 
 
 //================================//
@@ -34,9 +34,18 @@ private:
 	void UpdateProduct( enSCENE &nextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
+
 	//テスト用モデル( これは消しても良いです、いらないです ).
-	clsRobo* m_pTestRobo;
+	clsTestObj* m_pTestRobo;
 	clsCharaStatic* m_pTestChara;
+
+	clsDX9Mesh* m_pStage;
+
+	clsCAMERA_MISSION* m_pCam;
 
 	//基底クラスに以下があります.
 	//カメラ.

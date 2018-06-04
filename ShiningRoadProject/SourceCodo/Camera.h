@@ -16,10 +16,12 @@ public:
 
 	//‘æ“ñˆø”‚ªtrue->m_vLook‚à‚Â‚¢‚Ä‚­‚é.
 	//‘æ“ñˆø”‚ªfalse->m_vLook‚Í‚»‚Ì‚Ü‚Ü‚ÌˆÊ’u.
-	virtual void SetPos( const D3DXVECTOR3& vPos, bool isWithLook = true );
-	virtual void AddPos( const D3DXVECTOR3& vPos, bool isWithLook = true );
-
+	void SetPos( const D3DXVECTOR3& vPos, bool isWithLook = true );
+	void AddPos( const D3DXVECTOR3& vVec, bool isWithLook = true );
 	D3DXVECTOR3 GetPos();
+
+	void SetLookPos( const D3DXVECTOR3& vPos );
+	void AddLookPos( const D3DXVECTOR3& vVec );
 	D3DXVECTOR3 GetLookPos();
 
 protected:

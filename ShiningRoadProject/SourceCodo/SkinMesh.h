@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 #ifndef SKINMESH
 #define SKINMESH
@@ -8,7 +8,15 @@
 class clsSkinMesh
 {
 public:
+	double m_AnimTime;
+	//ﾓｰｼｮﾝ関係.
+	int m_AnimNo;//ﾓｰｼｮﾝ番号.
+	double m_dAnimSpeed;
+	bool m_bAnimReverce;
+
 	clsD3DXSKINMESH* m_pMesh;
+	LPD3DXANIMATIONCONTROLLER m_pAnimCtrl;
+	
 	//ﾓﾃﾞﾙﾃﾞｰﾀの関連付け.
 	void AttachModel(clsD3DXSKINMESH* pModel);
 	//ﾓﾃﾞﾙﾃﾞｰﾀ関連付け解除.
@@ -23,99 +31,30 @@ public:
 		const D3DXVECTOR4 &vColor,
 		const bool alphaFlg );
 
+	void AnimUpdate();
 	//ｱﾆﾒｰｼｮﾝ最大数を取得.
 	int GetAnimSetMax();
 	//ｱﾆﾒｰｼｮﾝ切り替え関数.
-	void ChangeAnimSet(int index, double dStartPos = 0.0f);
-
-	double m_AnimTime;
-	//ﾓｰｼｮﾝ関係.
-	int m_AnimNo;//ﾓｰｼｮﾝ番号.
+	void SetAnimChange(int index, double dStartPos = 0.0f);
 
 	//座標や回転の更新.
-	//void Update();
+	void ModelUpdate(TRANSFORM Transform);
 
-	void ModelUpdate(DXSKIN_TRANSFORM Transform)
-	{
-		m_pMesh->m_Trans.fPitch = Transform.fPitch;
-		m_pMesh->m_Trans.fYaw = Transform.fYaw;
-		m_pMesh->m_Trans.fRoll = Transform.fRoll;
-		m_pMesh->m_Trans.vPos = Transform.vPos;
-		m_pMesh->m_Trans.vScale = Transform.vScale;
-	}
+	D3DXVECTOR3 GetBonePos(char* sBoneName);
 
-	D3DXVECTOR3 GetBonePos(char* sBoneName)
-	{
-		D3DXVECTOR3 vBonePos;
+	//指定したボーン位置からvDiviation分移動した位置を取得する.
+	D3DXVECTOR3 GetBoneDiviaPos(char* sBoneName, D3DXVECTOR3 vDiviation);
 
-		m_pMesh->GetPosFromBone(sBoneName, &vBonePos);
+	void SetAnimSpeed(double dSpeed);
+	double GetAnimSpeed();
 
-		return vBonePos;
-	}
-
-	D3DXVECTOR3 GetBoneDiviaPos(char* sBoneName,D3DXVECTOR3 vDiviation)
-	{
-		D3DXVECTOR3 vBonePos;
-
-		m_pMesh->GetDeviaPosFromBone(sBoneName, &vBonePos, vDiviation);
-
-		return vBonePos;
-	}
-
-	LPD3DXANIMATIONCONTROLLER m_pAnimCtrl;
-	double m_dAnimSpeed;
-	bool m_bAnimReverce;
-
-	//D3DXMATRIX GetMatWorld(){ return m_pMesh->m_mWorld; }
-
-	void SetAnimSpeed(double dSpeed)
-	{
-		m_dAnimSpeed = dSpeed;
-		m_pMesh->SetAnimSpeed(m_dAnimSpeed);
-	}
-	double GetAnimSpeed(){ return m_dAnimSpeed; }
-	double GetAnimEndTime(int AnimIndex){ return m_pMesh->GetAnimPeriod(AnimIndex); }
-	void SetAnimTime(double dTime)
-	{
-		m_AnimTime = dTime;
-		m_pMesh->SetAnimTime(dTime);
-	}
-
-	double GetAnimTime(){ return m_AnimTime; }
-
-	bool IsAnimTimeAfter(int AnimIndex, double DesignationTime = 1.00f)
-	{
-		if (!m_bAnimReverce)
-		{
-			if (GetAnimEndTime(AnimIndex) / DesignationTime - m_dAnimSpeed < m_AnimTime)
-			{
-				return true;
-			}
-		}
-
-		else
-		{
-			if (m_AnimTime < (DesignationTime * m_dAnimSpeed))
-			{
-				return true;
-			}
-		}
-
-
-		return false;
-	}
-
-	bool IsAnimTimePoint(int AnimIndex, double DesignationTime = 1.00f)
-	{
-		if (m_pMesh->GetAnimPeriod(AnimIndex) / DesignationTime - m_dAnimSpeed - 0.036f < m_AnimTime &&
-			m_pMesh->GetAnimPeriod(AnimIndex) / DesignationTime + m_dAnimSpeed + 0.036f > m_AnimTime)
-		{
-			return true;
-		}
-
-		return false;
-	}
-
+	double GetAnimTime();
+	void SetAnimTime(double dTime);
+	double GetAnimEndTime(int AnimIndex);
+	
+	bool IsAnimTimeEnd(int AnimIndex);
+	bool IsAnimTimeAfter(int AnimIndex, double DesignationTime);
+	bool IsAnimTimePoint(int AnimIndex, double DesignationTime);
 
 	clsSkinMesh();
 	virtual ~clsSkinMesh();

@@ -26,6 +26,7 @@ void clsTestObj::Init(HWND hWnd,
 	m_pInput = new clsInputRobo;
 	m_pInput->m_pDxInput = pControll;
 
+	m_pMesh->SetAnimSpeed(0.01);
 }
 
 void clsTestObj::Action(const clsDX9Mesh* pWall)
@@ -34,14 +35,12 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
 
-	pRoboCom = m_pInput->QuickBoost();
-	if (pRoboCom)
-	{
-		pRoboCom->PushBotton(this);
-	}
+	Updata();
+
+	m_pInput->PlressInput();
 
 	pRoboCom = m_pInput->MoveSwitch();
-	
+
 	if (pRoboCom)
 	{
 		pRoboCom->PushBotton(this);
@@ -54,13 +53,34 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 		pRoboCom->PushBotton(this);
 	}
 
-	clsCharactorCommand* pCharaCom;
-	
-	pCharaCom = m_pInput->LSInput(fPush, fAngle);
-	pCharaCom->Trigger(this, fPush, fAngle);
+	pRoboCom = m_pInput->RSHorInput(fPush, fAngle);
+	pRoboCom->Trigger(this, abs(fPush), fAngle);
 
-	pCharaCom = m_pInput->RSInput(fPush, fAngle);
-	pCharaCom->Trigger(this, fPush, m_Trans.fYaw + fAngle);
-	
+	if (abs(fPush) > 0.0f)
+	{
+		pRoboCom = m_pInput->QuickTurn();
+
+		if (pRoboCom)
+		{
+			pRoboCom->Trigger(this, fPush, fAngle);
+			pRoboCom->PushBotton(this);
+		}
+	}
+
+	pRoboCom = m_pInput->LSInput(fPush, fAngle);
+	pRoboCom->Trigger(this, fPush, fAngle);
+
+	pRoboCom = m_pInput->QuickBoost();
+	if (pRoboCom)
+	{
+		pRoboCom->Trigger(this, fPush, fAngle);
+		pRoboCom->PushBotton(this);
+	}
+
 	WallJudge(pWall);
+}
+
+void clsTestObj::InhUpdate()
+{
+	m_pMesh->SetAnimSpeed(0.01);
 }

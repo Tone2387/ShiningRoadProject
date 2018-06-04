@@ -18,58 +18,67 @@ public:
 	bool m_bDeadFlg;//死亡フラグ.
 
 	//入力関係.
-
 	float fPushMin;
 
 	//移動関係.
 	bool m_bMoving;
 
-	float m_fMoveSpeed;//最終的に加算されるスピード.
+	
 	float m_fMoveSpeedMax;//スピードの最大値.
 
-	int m_iTopSpeedFrame;//↑に達するまでのフレーム値.
+	int m_iTopMoveSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fMoveAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
 	
-	int m_iStopFrame;//完全に停止するまでのフレーム値.
+	int m_iMoveStopFrame;//完全に停止するまでのフレーム値.
 	float m_fMoveDecele;// = m_fMoveSpeed / m_iStopFrame;
 
-	D3DXVECTOR3 m_vMoveDir;
+	
+
+
+	bool m_bRotation;
+
+	float m_fRotSpeed;
+	float m_fRotSpeedMax;
+
+	int m_iTopRotSpeedFrame;
+	float m_fRotAccele;
+
+	int m_iRotStopFrame;
+	float m_fRotDecele;
+
+	float m_fRotDir;
+
+	float m_fJumpPower;
 
 	void Shot();
 
 	//移動関係.
 	void Move(const float fAngle, const float fPush);
+	
 	bool IsMoveing();
 	bool IsMoveControl();
+
 	void SetMoveDir(const float fAngle);
 	void MoveControl();
-	void Accele(const float fPower);
-	void Decele();
 
-	void SetMoveAcceleSpeed(
-		float fMoveSpeedMax, 
-		int iTopSpeedFrame)//加速.
-	{
-		m_fMoveSpeedMax = fMoveSpeedMax;
-		m_iTopSpeedFrame = iTopSpeedFrame;
+	void MoveAccele(const float fPower);
+	void MoveDecele();
 
-		m_fMoveAccele = m_fMoveSpeedMax / m_iTopSpeedFrame;
-
-		SetMoveDecelerationSpeed(m_iTopSpeedFrame);
-	}
-
-	void SetMoveDecelerationSpeed(const float iStopFrame)//減速.
-	{
-		m_iStopFrame = iStopFrame;
-
-		m_fMoveDecele = abs(m_fMoveSpeed) / m_iStopFrame;
-	}
+	void SetMoveAcceleSpeed(const float fMoveSpeedMax, const int iTopSpeedFrame);//加速.
+	void SetMoveDeceleSpeed(const int iMoveStopFrame);//減速.
+	
 
 	//回転.
-	float m_fRotSpd;
-
-	void SetRotationSpeed(const float fSpd);
 	void Rotate(const float fAngle, const float fPush);
+	bool IsRotate();
+	bool IsRotControl();
+	void RotAccele(const float fPower);
+	void RotDecele();
+	void SetRotAcceleSpeed(const float fRotSpeedMax, const int iTopRotSpdFrame);
+	void SetRotDeceleSpeed(const int iRotStopFrame);
+	void SetRotDir(float Angle);
+	
+	void SetRotationSpeed(const float fSpd);
 
 	void Spin(
 		float& fNowYaw,
@@ -78,7 +87,7 @@ public:
 		const float fTurnStop);
 
 	//空中関係.
-	float m_fJumpPower;
+	
 
 	void SetJumpPower(const float fPower)
 	{
@@ -87,18 +96,11 @@ public:
 
 	void Jump();
 
-	float fJumpPower;
-
 	//当たり判定関係.
 
 	//スフィア.
 
-	//スフィア構造体.
-	struct SPHERE
-	{
-		D3DXVECTOR3 vCenter;//中心.
-		float fRadius;	//半径.
-	};
+	
 
 	bool PointIntersect(
 		const D3DXVECTOR3 StartPos,	//基準の位置.

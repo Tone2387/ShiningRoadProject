@@ -5,7 +5,7 @@
 
 
 //音指定用列挙体.
-enum enBgm : UCHAR
+enum enBGM : UCHAR
 {
 //	enBGM_START_UP = 0,
 	enBGM_TITLE = 0,
@@ -34,15 +34,15 @@ public:
 
 	//----- BGM -----//
 	//再生関数.
-	bool PlayBGM( const enBgm bgmNo, const bool bNotify = true ) const;
+	bool PlayBGM( const enBGM bgmNo, const bool bNotify = true ) const;
 	//停止関数.
-	bool StopBGM( const enBgm bgmNo ) const;
+	bool StopBGM( const enBGM bgmNo ) const;
 	//音の停止を確認する関数.
-	bool IsStoppedBGM( const enBgm bgmNo ) const;
+	bool IsStoppedBGM( const enBGM bgmNo ) const;
 	//音の再生中を確認する関数.
-	bool IsPlayingBGM( const enBgm bgmNo ) const;
+	bool IsPlayingBGM( const enBGM bgmNo ) const;
 	//巻き戻し関数(再生位置初期化).
-	bool SeekToStartBGM( const enBgm bgmNo ) const;
+	bool SeekToStartBGM( const enBGM bgmNo ) const;
 
 
 	//----- SE -----//
