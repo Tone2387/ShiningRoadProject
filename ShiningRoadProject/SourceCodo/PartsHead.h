@@ -10,25 +10,22 @@ public:
 	clsPARTS_HEAD();
 	~clsPARTS_HEAD();
 
-	void SetHp( const int iHp );
-	int GetHp() const;
-	void AddHp( const int iHp );
+	enum enSTATUS : PARTS_STATUS_TYPE
+	{
+		HP = 0,	//体力.
+		SEARCH,	//索敵性能.
+
+		MAX
+	};
+
 
 
 private:
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 	void CreateProduct() final;//各シーンのCreate.
 	void UpdateProduct() final;//各シーンのUpdate.
-	void RenderProduct(
-		const D3DXMATRIX& const mView, 
-		const D3DXMATRIX& const mProj, 
-		const D3DXVECTOR3& const vLight, 
-		const D3DXVECTOR3& const vEye,
-		const D3DXVECTOR4 &vColor,
-		const bool isAlpha ) final;//各シーンのRender.
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 
-	int m_iHp;
 
 };
 
