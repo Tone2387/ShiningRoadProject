@@ -8,22 +8,22 @@ clsGAME::clsGAME(
 	const HWND hWnd, 
 	ID3D11Device* const pDevice, 
 	ID3D11DeviceContext* const pContext,
-		D3D10_VIEWPORT* const pViewPort,
-		ID3D11DepthStencilState* const pDepthState  ) :
-	m_hWnd( hWnd ),
-	m_wpDevice( pDevice ),
-	m_wpContext( pContext ),
-	m_wpViewPort( pViewPort ),
-	m_wpDepthStencilState( pDepthState ),
-	m_pPtrGroup( nullptr ),
-	m_spDxInput( nullptr ),
-	m_pResource( nullptr ),
-	m_pEffect( nullptr ),
-	m_pSound( nullptr ),
-	m_pScene( nullptr ),
-	m_pSceneFactory( nullptr ),
-	m_spCamera( nullptr ),
-	m_pCameraFactory( nullptr )
+	D3D10_VIEWPORT* const pViewPort,
+	ID3D11DepthStencilState* const pDepthState  ) :
+		m_hWnd( hWnd ),
+		m_wpDevice( pDevice ),
+		m_wpContext( pContext ),
+		m_wpViewPort( pViewPort ),
+		m_wpDepthStencilState( pDepthState ),
+		m_pPtrGroup( nullptr ),
+		m_spDxInput( nullptr ),
+		m_pResource( nullptr ),
+		m_pEffect( nullptr ),
+		m_pSound( nullptr ),
+		m_pScene( nullptr ),
+		m_pSceneFactory( nullptr ),
+		m_spCamera( nullptr ),
+		m_pCameraFactory( nullptr )
 {
 
 }

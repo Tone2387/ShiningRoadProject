@@ -147,9 +147,6 @@
     <ClCompile Include="SourceCodo\Effects.cpp">
       <Filter>Classwork\System</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\File.cpp">
-      <Filter>Classwork\System</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\Resource.cpp">
       <Filter>Classwork\System</Filter>
     </ClCompile>
@@ -215,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\Object.cpp">
       <Filter>Hiyosi\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\File.cpp">
+      <Filter>Tahara</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,9 +326,6 @@
     <ClInclude Include="SourceCodo\Effects.h">
       <Filter>Classwork\System</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\File.h">
-      <Filter>Classwork\System</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\Global.h">
       <Filter>Classwork\System</Filter>
     </ClInclude>
@@ -403,6 +400,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Object.h">
       <Filter>Hiyosi\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\File.h">
+      <Filter>Tahara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
