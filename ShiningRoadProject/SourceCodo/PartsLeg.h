@@ -10,27 +10,25 @@ public:
 	clsPARTS_LEG();
 	~clsPARTS_LEG();
 
-	void SetWalkSpd( const float fSpd );
-	float GetWalkSpd() const;
+	//ステータス変数の添え字.
+	enum enSTATUS : PARTS_STATUS_TYPE
+	{
+		HP = 0,		//体力.
+		WALK_SPD,	//歩行速度.
+		STABILITY,	//安定性能.
+		JUMP_POWER,	//ジャンプ力.
+						
+		MAX
+	};
 
-	void SetBoostSpd( const float fSpd );
-	float GetBoostSpd() const;
 
 private:
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 	void CreateProduct() final;//各シーンのCreate.
 	void UpdateProduct() final;//各シーンのUpdate.
-	void RenderProduct(
-		const D3DXMATRIX& const mView, 
-		const D3DXMATRIX& const mProj, 
-		const D3DXVECTOR3& const vLight, 
-		const D3DXVECTOR3& const vEye,
-		const D3DXVECTOR4 &vColor,
-		const bool isAlpha ) final;//各シーンのRender.
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 
-	float m_fWalkSpd;
-	float m_fBoostSpd;
+
 
 };
 
