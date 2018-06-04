@@ -74,11 +74,11 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 //		"Data\\RoboParts\\Core\\Core1.X",
 		enSTATIC_MODEL::enStaticModel_Ground );
 	CreateStaticModel(
-		"Data\\Trap\\Spia.x",
+		"Data\\RoboParts\\Leg\\Leg1.x",
 		enSTATIC_MODEL::enStaticModel_Enemy );
 
 	CreateSkinModel(
-		"Data\\hime\\hime_run.x",
+		"Data\\RoboParts\\Leg\\Leg0.x",
 		enSKIN_MODEL::enSkinModel_Player );
 	CreateSkinModel(
 		"Data\\RoboParts\\Leg\\Leg0.X",
