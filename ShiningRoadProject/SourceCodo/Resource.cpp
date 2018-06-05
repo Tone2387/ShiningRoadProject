@@ -7,8 +7,8 @@ const string sPARTS_PASS = "Data\\RoboParts\\";
 const string sLEG_PASS		= sPARTS_PASS + "Leg\\Leg";
 const string sCORE_PASS		= sPARTS_PASS + "Core\\Core";
 const string sHEAD_PASS		= sPARTS_PASS + "Head\\Head";
-const string sARML_PASS		= sPARTS_PASS + "ArmL\\ArmL";
-const string sARMR_PASS		= sPARTS_PASS + "ArmR\\ArmR";
+const string sARML_PASS		= sPARTS_PASS + "Arms\\ArmL";
+const string sARMR_PASS		= sPARTS_PASS + "Arms\\ArmR";
 const string sWEAPON_PASS	= sPARTS_PASS + "Weapon\\Weapon";
 //è„ãLÇ…êîéöÇã≤ÇÒÇæÇ§Ç¶Ç≈Ç≠Ç¡Ç¬ÇØÇÈÉÇÉfÉãñº.
 const string sLEG_NAME		= "\\Leg";
