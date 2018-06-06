@@ -18,6 +18,10 @@ public:
 	clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup );
 	~clsSCENE_ASSEMBLE();
 
+
+
+private:
+
 	//選択肢のあるパーツの種類( 配列の添え字になる ).
 	enum enPARTS_TYPES : UCHAR
 	{
@@ -42,12 +46,30 @@ public:
 	}m_PartsSelect;
 
 
-
-private:
-
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &nextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
+
+	//コントローラ操作.
+	//カーソル移動.
+	void MoveCursorUp();
+	void MoveCursorDown();
+	void MoveCursorRight();
+	void MoveCursorLeft();
+	//決定.
+	void Enter();
+	//戻る.
+	void Undo();
+	PARTS_SELECT m_OldSelect;//Undo()のために必要( のちに配列化する ).
+
+
+
+	//範囲内に収める( パーツの選択肢がオーバーしないようにする ).
+	//minはその数値より小さくならない、maxはそれ以上にはならない.
+	// min <= t < max.
+	template< class T, class MIN, class MAX >
+	T KeepRange( T t, const MIN min, const MAX max ) const;	
+
 
 #if _DEBUG
 	//デバック゛テキストの表示.

@@ -1,10 +1,6 @@
 #pragma once
 
 #include <string>
-#include <sstream>
-#include <fstream>
-#include <iostream>
-#include <assert.h>
 #include <vector>
 
 namespace MyFile{
@@ -42,9 +38,14 @@ public:
 		const int iCol ) const;
 
 
+	//何行あるか.
+	unsigned int GetSizeRow();
+	//その行は何列あるか.
+	unsigned int GetSizeCol( unsigned int uiRow = 0 );
+
 private:
 
-
+	//ファイルパス.
 	std::string m_sFileName;
 
 	//二次元配列として考えます.
