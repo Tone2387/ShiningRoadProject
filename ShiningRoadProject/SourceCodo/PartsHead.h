@@ -15,7 +15,7 @@ public:
 		HP = 0,	//‘Ì—Í.
 		SEARCH,	//õ“G«”\.
 
-		MAX
+		size
 	};
 
 

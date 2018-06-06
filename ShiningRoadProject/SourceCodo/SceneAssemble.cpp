@@ -111,6 +111,11 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 
 
 	m_pAsmModel->UpDate();
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x8000 ){
+		nextScene = enSCENE::MISSION;
+	}
+
 }
 
 void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )

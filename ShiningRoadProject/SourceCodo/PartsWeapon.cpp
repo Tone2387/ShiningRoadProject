@@ -12,7 +12,7 @@ clsPARTS_WEAPON::~clsPARTS_WEAPON()
 //ì¬.
 void clsPARTS_WEAPON::CreateProduct()
 {
-	SetStatusMax( enSTATUS::MAX );
+	SetStatusMax( enSTATUS::size );
 }
 
 //–ˆƒtƒŒ[ƒ€.

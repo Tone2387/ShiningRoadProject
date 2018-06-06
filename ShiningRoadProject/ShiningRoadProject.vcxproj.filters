@@ -216,6 +216,9 @@
     <ClCompile Include="SourceCodo\File.cpp">
       <Filter>Tahara</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\RoboStatus.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -403,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\File.h">
       <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboStatus.h">
+      <Filter>Tahara\Parts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
