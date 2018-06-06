@@ -1,19 +1,41 @@
 #include "SceneAssemble.h"
 
+using namespace std;
+
 #define TEST_TEX_PASS "Data\\Load\\LoadBack.png"
+
+const string sPARTS_STATUS_PASS[clsSCENE_ASSEMBLE::ENUM_SIZE] =
+{
+	"Data\\RoboParts\\Leg\\RoboPartsData.csv",
+	"Data\\RoboParts\\Core\\RoboPartsData.csv",
+	"Data\\RoboParts\\Head\\RoboPartsData.csv",
+	"Data\\RoboParts\\Arms\\RoboPartsData.csv",
+	"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
+};
 
 
 //================================//
 //========== 組み換えクラス ==========//
 //================================//
-clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup ),
-	m_pAsmModel( nullptr )
+clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
+	,m_pFile()//配列を0で初期化.
+	,m_pAsmModel( nullptr )
 {
+	//念のため.
+	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
+		m_pFile[i] = nullptr;
+	}
 }
 
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 {
 	SAFE_DELETE( m_pAsmModel );
+
+	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
+		if( m_pFile[i] == nullptr ) continue;
+		SAFE_DELETE( m_pFile[i] );
+	}
+	
 }
 
 void clsSCENE_ASSEMBLE::CreateProduct()
@@ -41,6 +63,14 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 //		TEST_TEX_PASS, tmpSs );
 //	m_pSprite->SetPos( { WND_W*0.5f, WND_H*0.5f, 0.0f } );
 
+	//パーツのステータス読み込み.
+	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
+		if( m_pFile[i] != nullptr ) continue;
+		m_pFile[i] = new clsFILE;
+		m_pFile[i]->Open( sPARTS_STATUS_PASS[i] );
+	}
+
+	//モデルさん作成.
 	m_pAsmModel = new clsASSEMBLE_MODEL;
 	m_pAsmModel->Create( m_wpResource );
 	m_pAsmModel->SetAnimSpd( 0.1 );
@@ -51,6 +81,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 {
+	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
 		static int tmpI = 0; 
 		m_pAsmModel->AttachModel( enPARTS::LEG, tmpI );
@@ -68,47 +99,33 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 		m_pAsmModel->SetScale( 0.5f );
 	}
 
+	//テストモデル移動.
 	float fff = 1.0f;
-
-	if( GetAsyncKeyState( 'W' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.0f, fff, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'S' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.0f, -fff, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'D' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { fff, 0.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'A' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { -fff, 0.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'E' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.0f, 0.0f, fff } );
-	}
-	if( GetAsyncKeyState( 'Q' ) & 0x8000 ){
-		m_pAsmModel->AddPos( { 0.0f, 0.0f, -fff } );
-	}
-
+	if( GetAsyncKeyState( 'W' ) & 0x8000 ) m_pAsmModel->AddPos( { 0.0f, fff, 0.0f } );
+	if( GetAsyncKeyState( 'S' ) & 0x8000 ) m_pAsmModel->AddPos( { 0.0f, -fff, 0.0f } );
+	if( GetAsyncKeyState( 'D' ) & 0x8000 ) m_pAsmModel->AddPos( { fff, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( 'A' ) & 0x8000 ) m_pAsmModel->AddPos( { -fff, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( 'E' ) & 0x8000 ) m_pAsmModel->AddPos( { 0.0f, 0.0f, fff } );
+	if( GetAsyncKeyState( 'Q' ) & 0x8000 ) m_pAsmModel->AddPos( { 0.0f, 0.0f, -fff } );
 	float rrr = 0.05f;
-	if( GetAsyncKeyState( 'T' ) & 0x8000 ){
-		m_pAsmModel->AddRot( { 0.0f, rrr, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'G' ) & 0x8000 ){
-		m_pAsmModel->AddRot( { 0.0f, -rrr, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'F' ) & 0x8000 ){
-		m_pAsmModel->AddRot( { rrr, 0.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'H' ) & 0x8000 ){
-		m_pAsmModel->AddRot( { -rrr, 0.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'R' ) & 0x8000 ){
-		m_pAsmModel->AddRot( { 0.0f, 0.0f, rrr } );
-	}
-	if( GetAsyncKeyState( 'Y' ) & 0x8000 ){
-		m_pAsmModel->AddRot( { 0.0f, 0.0f, -rrr } );
-	}
+	if( GetAsyncKeyState( 'T' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, rrr, 0.0f } );
+	if( GetAsyncKeyState( 'G' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, -rrr, 0.0f } );
+	if( GetAsyncKeyState( 'F' ) & 0x8000 ) m_pAsmModel->AddRot( { rrr, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( 'H' ) & 0x8000 ) m_pAsmModel->AddRot( { -rrr, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( 'R' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, 0.0f, rrr } );
+	if( GetAsyncKeyState( 'Y' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, 0.0f, -rrr } );
 
+
+	//選択肢.
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x1 )m_PartsSelect.iType ++;
+	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ) m_PartsSelect.iType --;
+	if( GetAsyncKeyState( VK_UP ) & 0x1 )	m_PartsSelect.iNum --;
+	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ) m_PartsSelect.iNum ++;
+	//オーバーguard.
+	if( 0 > m_PartsSelect.iType )	m_PartsSelect.iType = 0;
+	if( m_PartsSelect.iType > enPARTS_TYPES::ENUM_SIZE )m_PartsSelect.iType = enPARTS_TYPES::ENUM_SIZE;
+	if( 0 > m_PartsSelect.iNum )	m_PartsSelect.iNum = 0;
+	if( m_PartsSelect.iNum > 5 )	m_PartsSelect.iNum = 5;
 
 	m_pAsmModel->UpDate();
 
@@ -165,6 +182,7 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 		m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 	}
 
+	//カメラ.
 	sprintf_s( strDbgTxt, 
 		"CameraPos : x[%f], y[%f], z[%f]",
 		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
@@ -175,16 +193,20 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
+	//選択肢.
+	sprintf_s( strDbgTxt, 
+		"PartsSelect : Type[%f], Num[%f]",
+		static_cast<float>( m_PartsSelect.iType ), static_cast<float>( m_PartsSelect.iNum ) );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	//dbgtxty += 10;
-	//if( m_pBgm[0]->IsStopped() ){
-	//	sprintf_s( strDbgTxt, "Stopped" );
-	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-	//}
-	//if( m_pBgm[0]->IsPlaying() ){
-	//	sprintf_s( strDbgTxt, "Playingn" );
-	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-	//}
+//	//テスト用に数値を出す.
+//	string tmpsString;
+//	tmpsString = m_pFile->GetDataString( m_PartsSelect.iType, m_PartsSelect.iNum );
+//	const char* tmpcString = tmpsString.c_str();
+//	sprintf_s( strDbgTxt, 
+//		tmpcString );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
 }
 #endif //#if _DEBUG
 
