@@ -75,7 +75,10 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 		pRoboCom->PushBotton(this);
 	}
 
-	WallJudge(pWall);
+	if (pWall)
+	{
+		WallJudge(pWall);
+	}
 }
 
 void clsTestObj::InhUpdate()

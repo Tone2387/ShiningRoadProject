@@ -56,6 +56,8 @@ public:
 		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
 	}
 
+	virtual void tenshi()override{};
+
 	bool m_bBoost;
 
 	float m_fWalktMoveSpeedMax;
