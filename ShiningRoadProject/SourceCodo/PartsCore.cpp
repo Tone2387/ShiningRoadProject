@@ -12,7 +12,7 @@ clsPARTS_CORE::~clsPARTS_CORE()
 //ì¬.
 void clsPARTS_CORE::CreateProduct()
 {
-	SetStatusMax( enSTATUS::MAX );
+	SetStatusMax( enSTATUS::size );
 }
 
 //–ˆƒtƒŒ[ƒ€.

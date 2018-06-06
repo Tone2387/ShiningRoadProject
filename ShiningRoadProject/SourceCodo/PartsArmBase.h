@@ -16,9 +16,9 @@ public:
 	enum enSTATUS : PARTS_STATUS_TYPE
 	{
 		HP = 0,	//体力.
-		AIMING,	//照準制度( エイム ).
+		AIMING,	//照準精度( エイム ).
 						
-		MAX
+		size
 	};
 
 

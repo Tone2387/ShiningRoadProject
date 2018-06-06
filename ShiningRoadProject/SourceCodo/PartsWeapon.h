@@ -25,7 +25,7 @@ public:
 		MAGAZINE_LOAD_TIME,	//ƒ}ƒKƒWƒ“‘•“UŽžŠÔ.
 		BULLETS_NUM,		//‘•’e”.
 						
-		MAX
+		size
 	};
 
 

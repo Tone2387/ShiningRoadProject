@@ -18,7 +18,7 @@ public:
 		STABILITY,	//ˆÀ’è«”\.
 		JUMP_POWER,	//ƒWƒƒƒ“ƒv—Í.
 						
-		MAX
+		size
 	};
 
 
