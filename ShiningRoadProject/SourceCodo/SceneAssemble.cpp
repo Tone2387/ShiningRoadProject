@@ -4,7 +4,8 @@ using namespace std;
 
 #define TEST_TEX_PASS "Data\\Load\\LoadBack.png"
 
-const string sPARTS_STATUS_PASS[clsSCENE_ASSEMBLE::ENUM_SIZE] =
+//要素数は<clsSCENE_ASSEMBLE::ENUM_SIZE>.
+const string sPARTS_STATUS_PASS[] =
 {
 	"Data\\RoboParts\\Leg\\RoboPartsData.csv",
 	"Data\\RoboParts\\Core\\RoboPartsData.csv",
@@ -117,15 +118,14 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 
 
 	//選択肢.
-	if( GetAsyncKeyState( VK_RIGHT ) & 0x1 )m_PartsSelect.iType ++;
-	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ) m_PartsSelect.iType --;
-	if( GetAsyncKeyState( VK_UP ) & 0x1 )	m_PartsSelect.iNum --;
-	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ) m_PartsSelect.iNum ++;
-	//オーバーguard.
-	if( 0 > m_PartsSelect.iType )	m_PartsSelect.iType = 0;
-	if( m_PartsSelect.iType > enPARTS_TYPES::ENUM_SIZE )m_PartsSelect.iType = enPARTS_TYPES::ENUM_SIZE;
-	if( 0 > m_PartsSelect.iNum )	m_PartsSelect.iNum = 0;
-	if( m_PartsSelect.iNum > 5 )	m_PartsSelect.iNum = 5;
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x1 )MoveCursorRight();
+	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ) MoveCursorLeft();
+	if( GetAsyncKeyState( VK_UP ) & 0x1 )	MoveCursorUp();
+	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ) MoveCursorDown();
+
+
+
+
 
 	m_pAsmModel->UpDate();
 
@@ -151,6 +151,81 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 //	m_pAsmModel->UpDate();
 }
 
+
+
+//カーソル移動.
+void clsSCENE_ASSEMBLE::MoveCursorUp()
+{
+	m_PartsSelect.iNum --;
+
+	m_PartsSelect.iNum = 
+		KeepRange( m_PartsSelect.iNum, 0, m_pFile[m_PartsSelect.iType]->GetSizeRow() );
+}
+
+void clsSCENE_ASSEMBLE::MoveCursorDown()
+{
+	m_PartsSelect.iNum ++;
+
+	m_PartsSelect.iNum = 
+		KeepRange( m_PartsSelect.iNum, 0, m_pFile[m_PartsSelect.iType]->GetSizeRow() );
+}
+
+void clsSCENE_ASSEMBLE::MoveCursorRight()
+{
+	m_PartsSelect.iType ++;
+
+	m_PartsSelect.iType = 
+		KeepRange( m_PartsSelect.iType, 0, enPARTS_TYPES::ENUM_SIZE );
+	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
+	m_PartsSelect.iNum = 
+		KeepRange( m_PartsSelect.iNum, 0, m_pFile[m_PartsSelect.iType]->GetSizeRow() );
+}
+
+void clsSCENE_ASSEMBLE::MoveCursorLeft()
+{
+	m_PartsSelect.iType --;
+
+	m_PartsSelect.iType = 
+		KeepRange( m_PartsSelect.iType, 0, enPARTS_TYPES::ENUM_SIZE );
+	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
+	m_PartsSelect.iNum = 
+		KeepRange( m_PartsSelect.iNum, 0, m_pFile[m_PartsSelect.iType]->GetSizeRow() );
+}
+
+//決定.
+void clsSCENE_ASSEMBLE::Enter()
+{
+
+}
+
+//戻る.
+void clsSCENE_ASSEMBLE::Undo()
+{
+
+}
+
+
+
+
+
+//範囲内に収める( パーツの選択肢がオーバーしないようにする ).
+//minはその数値より小さくならない、maxはそれ以上にはならない.
+// min <= t < max.
+template<class T, class MIN, class MAX >
+T clsSCENE_ASSEMBLE::KeepRange( T t, const MIN min, const MAX max ) const
+{
+	T tMin = static_cast<T>( min );
+	T tMax = static_cast<T>( max );
+	
+	if( tMin > t ){
+		t = tMin;
+	}
+	else if( t >= tMax ){
+		t = tMax - 1;
+	}
+
+	return t;
+}
 
 
 //============================ デバッグテキスト ===========================//
@@ -199,13 +274,13 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 		static_cast<float>( m_PartsSelect.iType ), static_cast<float>( m_PartsSelect.iNum ) );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-//	//テスト用に数値を出す.
-//	string tmpsString;
-//	tmpsString = m_pFile->GetDataString( m_PartsSelect.iType, m_PartsSelect.iNum );
-//	const char* tmpcString = tmpsString.c_str();
-//	sprintf_s( strDbgTxt, 
-//		tmpcString );
-//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+	//テスト用に数値を出す.
+	string tmpsString;
+	tmpsString = m_pFile[m_PartsSelect.iType]->GetDataString( m_PartsSelect.iNum );
+	const char* tmpcString = tmpsString.c_str();
+	sprintf_s( strDbgTxt, 
+		tmpcString );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 }
 #endif //#if _DEBUG

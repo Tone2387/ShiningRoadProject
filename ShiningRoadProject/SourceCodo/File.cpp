@@ -4,6 +4,11 @@
 #include <cctype>
 #include <algorithm>
 
+#include <sstream>
+#include <fstream>
+#include <iostream>
+#include <assert.h>
+
 using namespace std;
 
 const unsigned int uiRESERVE_SIZE_ROW = 64;//ベクターの初期最大サイズ( 行 ).
@@ -194,6 +199,21 @@ double clsFILE::GetDataDouble(
 
 	double dNum = stod( sBuff );	//文字列を数字にする.
 	return dNum;
+}
+
+
+//何行あるか.
+unsigned int clsFILE::GetSizeRow()
+{
+	return m_vvsData.size();
+}
+
+//その行は何列あるか.
+unsigned int clsFILE::GetSizeCol( unsigned int uiRow )
+{
+	//範囲外は許さない.
+	if( uiRow >= m_vvsData.size() ) return 0;
+	return m_vvsData[uiRow].size();
 }
 
 
