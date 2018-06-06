@@ -34,7 +34,7 @@ void clsSCENE_MISSION::CreateProduct()
 			clsResource::enSTATIC_MODEL::enStaticModel_Enemy ) );
 	m_pTestChara->Init();
 	m_pTestChara->SetPosition( D3DXVECTOR3( -2.0f, 0.0f, 0.0f ) );
-	m_pTestChara->SetRotation( D3DXVECTOR3( 0.0f, 0.0f, D3DX_PI*0.5 ) );
+	m_pTestChara->SetRotation( D3DXVECTOR3( 0.0f, 0.0f, (float)D3DX_PI*0.5 ) );
 
 	m_pStage = m_wpResource->GetStaticModels(clsResource::enStaticModel_Ground);
 	m_pStage->m_Trans.vScale = { 10.0f, 10.0f, 10.0f };

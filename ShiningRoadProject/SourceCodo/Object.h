@@ -56,6 +56,17 @@ public:
 	float m_fMoveSpeed;//最終的に加算されるスピード.
 	D3DXVECTOR3 m_vMoveDir;
 
+	void Updata(const clsDX9Mesh* pGround)
+	{
+		m_vOldPos = m_Trans.vPos;
+
+		tenshi();
+
+		WallJudge(pGround);
+	}
+
+	virtual void tenshi(){};
+
 	bool m_bGround;
 
 	SPHERE** m_ppColSpheres;
