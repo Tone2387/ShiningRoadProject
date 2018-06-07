@@ -122,16 +122,18 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ) MoveCursorLeft();
 	if( GetAsyncKeyState( VK_UP ) & 0x1 )	MoveCursorUp();
 	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ) MoveCursorDown();
-
+	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
+		Enter();
+	}
+	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
+		Undo();
+	}
 
 
 
 
 	m_pAsmModel->UpDate();
 
-	if( GetAsyncKeyState( VK_RETURN ) & 0x8000 ){
-		nextScene = enSCENE::MISSION;
-	}
 
 }
 
@@ -156,46 +158,99 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 //カーソル移動.
 void clsSCENE_ASSEMBLE::MoveCursorUp()
 {
-	m_PartsSelect.iNum --;
+	//unsigned の -1対策.
+	short tmpNum = m_PartsSelect.Num - 1;
 
-	m_PartsSelect.iNum = 
-		KeepRange( m_PartsSelect.iNum, 0, m_pFile[m_PartsSelect.iType]->GetSizeRow() );
+	m_PartsSelect.Num = 
+		KeepRange( tmpNum, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
 {
-	m_PartsSelect.iNum ++;
+	m_PartsSelect.Num ++;
 
-	m_PartsSelect.iNum = 
-		KeepRange( m_PartsSelect.iNum, 0, m_pFile[m_PartsSelect.iType]->GetSizeRow() );
+	m_PartsSelect.Num = 
+		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorRight()
 {
-	m_PartsSelect.iType ++;
+	m_PartsSelect.Type ++;
 
-	m_PartsSelect.iType = 
-		KeepRange( m_PartsSelect.iType, 0, enPARTS_TYPES::ENUM_SIZE );
+	m_PartsSelect.Type = 
+		KeepRange( m_PartsSelect.Type, 0, enPARTS_TYPES::ENUM_SIZE );
 	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
-	m_PartsSelect.iNum = 
-		KeepRange( m_PartsSelect.iNum, 0, m_pFile[m_PartsSelect.iType]->GetSizeRow() );
+	m_PartsSelect.Num = 
+		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorLeft()
 {
-	m_PartsSelect.iType --;
+	//unsigned の -1対策.
+	short tmpType = m_PartsSelect.Type - 1;
 
-	m_PartsSelect.iType = 
-		KeepRange( m_PartsSelect.iType, 0, enPARTS_TYPES::ENUM_SIZE );
+	m_PartsSelect.Type = 
+		KeepRange( tmpType, 0, enPARTS_TYPES::ENUM_SIZE );
 	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
-	m_PartsSelect.iNum = 
-		KeepRange( m_PartsSelect.iNum, 0, m_pFile[m_PartsSelect.iType]->GetSizeRow() );
+	m_PartsSelect.Num = 
+		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 //決定.
 void clsSCENE_ASSEMBLE::Enter()
 {
+	//ステータスの、CSVから削る行数.
+	const int iSTATUS_CUT_NUM = 2;//番号と名前.
 
+	//ステータスが何項目あるのか.
+	const int iStatusSize = m_pFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
+
+	//引数用変数.
+	vector<int> tmpStatus;
+	tmpStatus.reserve( iStatusSize );
+	for( unsigned int i=0; i<iStatusSize; i++ ){
+		//m_pFile[]の添え字はどのパーツか、である.
+		tmpStatus.push_back( 
+			m_pFile[ m_PartsSelect.Type ]->
+				GetDataInt( m_PartsSelect.Num, i + iSTATUS_CUT_NUM ) );
+		//GetDataInt()の第一引数は、そのパーツ部位の何番目の行を参照すればよいのか.
+		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
+	}
+
+	switch( m_PartsSelect.Type )
+	{
+	case enPARTS_TYPES::LEG:
+		m_wpRoboStatus->ReceiveLeg( tmpStatus );
+		m_pAsmModel->AttachModel( enPARTS::LEG, m_PartsSelect.Num );
+		break;
+	case enPARTS_TYPES::CORE:
+		m_wpRoboStatus->ReceiveCore( tmpStatus );
+		m_pAsmModel->AttachModel( enPARTS::CORE, m_PartsSelect.Num );
+		break;
+	case enPARTS_TYPES::HEAD:
+		m_wpRoboStatus->ReceiveHead( tmpStatus );
+		m_pAsmModel->AttachModel( enPARTS::HEAD, m_PartsSelect.Num );
+		break;
+	case enPARTS_TYPES::ARMS:
+		m_wpRoboStatus->ReceiveArms( tmpStatus );
+		m_pAsmModel->AttachModel( enPARTS::ARM_L, m_PartsSelect.Num );
+		m_pAsmModel->AttachModel( enPARTS::ARM_R, m_PartsSelect.Num );
+		break;
+	case enPARTS_TYPES::WEAPON:
+		m_wpRoboStatus->ReceiveWeaponL( tmpStatus );
+		m_wpRoboStatus->ReceiveWeaponR( tmpStatus );
+		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, m_PartsSelect.Num );
+		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, m_PartsSelect.Num );
+		break;
+	default:
+		break;
+	}
+
+	//引数用変数の片づけ.
+	tmpStatus.clear();
+	tmpStatus.shrink_to_fit();
+
+//	nextScene = enSCENE::MISSION;
 }
 
 //戻る.
@@ -214,17 +269,18 @@ void clsSCENE_ASSEMBLE::Undo()
 template<class T, class MIN, class MAX >
 T clsSCENE_ASSEMBLE::KeepRange( T t, const MIN min, const MAX max ) const
 {
-	T tMin = static_cast<T>( min );
-	T tMax = static_cast<T>( max );
+	int num = static_cast<int>( t );
+	int Min = static_cast<int>( min );
+	int Max = static_cast<int>( max );
 	
-	if( tMin > t ){
-		t = tMin;
+	if( Min > num ){
+		num = Min;
 	}
-	else if( t >= tMax ){
-		t = tMax - 1;
+	else if( num >= Max ){
+		num = Max - 1;
 	}
 
-	return t;
+	return static_cast<T>( num );
 }
 
 
@@ -268,15 +324,21 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
+	//ライト.
+	sprintf_s( strDbgTxt, 
+		"Light : x[%f], y[%f], z[%f]",
+		m_vLight.x, m_vLight.y, m_vLight.z );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
 	//選択肢.
 	sprintf_s( strDbgTxt, 
 		"PartsSelect : Type[%f], Num[%f]",
-		static_cast<float>( m_PartsSelect.iType ), static_cast<float>( m_PartsSelect.iNum ) );
+		static_cast<float>( m_PartsSelect.Type ), static_cast<float>( m_PartsSelect.Num ) );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	//テスト用に数値を出す.
 	string tmpsString;
-	tmpsString = m_pFile[m_PartsSelect.iType]->GetDataString( m_PartsSelect.iNum );
+	tmpsString = m_pFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num );
 	const char* tmpcString = tmpsString.c_str();
 	sprintf_s( strDbgTxt, 
 		tmpcString );

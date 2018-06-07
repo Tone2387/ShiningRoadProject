@@ -8,22 +8,25 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 	clsDxInput* const pInput,
 	clsResource* const pResource,
 	clsEffects* const pEffects,
-	clsSOUND_MANAGER* const pSound ) :
-		m_wpDevice( pDevice ),
-		m_wpContext( pContext ),
-		m_wpViewPort( pViewPort ),
-		m_wpDepthStencilState( pDepthState ),
-		m_wpDxInput( pInput ),
-		m_wpResource( pResource ),
-		m_wpEffects( pEffects ),
-		m_wpSound( pSound ),
-		m_wpCamera( nullptr )
+	clsSOUND_MANAGER* const pSound,
+	clsROBO_STATUS* const pRoboStatus )
+		:m_wpDevice( pDevice )
+		,m_wpContext( pContext )
+		,m_wpViewPort( pViewPort )
+		,m_wpDepthStencilState( pDepthState )
+		,m_wpDxInput( pInput )
+		,m_wpResource( pResource )
+		,m_wpEffects( pEffects )
+		,m_wpSound( pSound )
+		,m_wpRoboStatus( pRoboStatus )
+		,m_wpCamera( nullptr )
 {
 }
 
 clsPOINTER_GROUP::~clsPOINTER_GROUP()
 {
 	m_wpCamera = nullptr;
+	m_wpRoboStatus = nullptr;
 	m_wpSound = nullptr;
 	m_wpEffects = nullptr;
 	m_wpResource = nullptr;
@@ -87,4 +90,10 @@ clsSOUND_MANAGER* clsPOINTER_GROUP::GetSound() const
 clsCAMERA_BASE*	clsPOINTER_GROUP::GetCamera() const
 {
 	return m_wpCamera;
+}
+
+//( シーンをまたぐ )ロボットのステータス.
+clsROBO_STATUS* clsPOINTER_GROUP::GetRoboStatus() const
+{
+	return m_wpRoboStatus;
 }
