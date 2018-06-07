@@ -34,6 +34,7 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
 		if( m_pFile[i] == nullptr ) continue;
+		m_pFile[i]->Close();
 		SAFE_DELETE( m_pFile[i] );
 	}
 	
@@ -158,11 +159,10 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 //カーソル移動.
 void clsSCENE_ASSEMBLE::MoveCursorUp()
 {
-	//unsigned の -1対策.
-	short tmpNum = m_PartsSelect.Num - 1;
+	m_PartsSelect.Num --;
 
 	m_PartsSelect.Num = 
-		KeepRange( tmpNum, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
@@ -186,11 +186,10 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 
 void clsSCENE_ASSEMBLE::MoveCursorLeft()
 {
-	//unsigned の -1対策.
-	short tmpType = m_PartsSelect.Type - 1;
+	m_PartsSelect.Type --;
 
 	m_PartsSelect.Type = 
-		KeepRange( tmpType, 0, enPARTS_TYPES::ENUM_SIZE );
+		KeepRange( m_PartsSelect.Type, 0, enPARTS_TYPES::ENUM_SIZE );
 	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
 	m_PartsSelect.Num = 
 		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );

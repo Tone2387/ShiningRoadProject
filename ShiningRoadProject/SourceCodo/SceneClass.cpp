@@ -17,9 +17,6 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	:m_wpDevice( ptrGroup->GetDevice() )
 	,m_wpContext( ptrGroup->GetContext() )
 	,m_wpViewPort( ptrGroup->GetViewPort() )
-#if _DEBUG
-	,m_upText( nullptr )
-#endif//#if _DEBUG
 	,m_wpPtrGroup( ptrGroup )
 	,m_wpDxInput( ptrGroup->GetDxInput() )
 	,m_wpResource( ptrGroup->GetResource() )
@@ -27,6 +24,9 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpSound( ptrGroup->GetSound() )
 	,m_wpCamera( ptrGroup->GetCamera() )
 	,m_wpRoboStatus( ptrGroup->GetRoboStatus() )
+#if _DEBUG
+	,m_upText( nullptr )
+#endif//#if _DEBUG
 {
 }
 
@@ -90,15 +90,7 @@ void clsSCENE_BASE::Render()
 	//カメラ関数.
 	Camera();
 	//プロジェクション関数.
-	Proj();
-
-	if( GetAsyncKeyState( 'X' ) & 0x8000 ) m_vLight.x += 0.1f;
-	if( GetAsyncKeyState( 'C' ) & 0x8000 ) m_vLight.x -= 0.1f;
-	if( GetAsyncKeyState( 'V' ) & 0x8000 ) m_vLight.y += 0.1f;
-	if( GetAsyncKeyState( 'B' ) & 0x8000 ) m_vLight.y -= 0.1f;
-	if( GetAsyncKeyState( 'N' ) & 0x8000 ) m_vLight.z += 0.1f;
-	if( GetAsyncKeyState( 'M' ) & 0x8000 ) m_vLight.z -= 0.1f;
-	
+	Proj();	
 
 	//各シーンの描画.
 	RenderProduct( m_wpCamera->GetPos() );

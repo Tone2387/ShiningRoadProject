@@ -54,6 +54,7 @@ private:
 	//‰ñ“]’l—}§.
 	float GuardDirOver( float & outTheta ) const;
 
+	double m_dAnimSpd;
 
 	TRANSFORM m_Trans;
 

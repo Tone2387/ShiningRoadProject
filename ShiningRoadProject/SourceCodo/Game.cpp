@@ -84,11 +84,6 @@ void clsGAME::Create()
 	//最初のシーンはタイトルを指定する.
 	SwitchScene( START_UP_SCENE );
 
-//	//シーン.
-//	ASSERT_IF_NOT_NULL( m_pSceneManager );
-//	m_pSceneManager = new clsSCENE_MANAGER( m_pPtrGroup );
-//	m_pSceneManager->Create(); 
-
 	//起動音再生.
 	m_pSound->PlayBGM( enBGM_TITLE );
 
@@ -119,7 +114,6 @@ void clsGAME::Update()
 //毎フレーム使う.
 void clsGAME::Render()
 { 
-
 	ASSERT_IF_NULL( m_pScene );
 	m_pScene->Render(); 
 }
