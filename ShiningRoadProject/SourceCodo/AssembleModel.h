@@ -52,7 +52,7 @@ private:
 	void Init();
 
 	//‰ñ“]’l—}§.
-	float GuardDirOver( float & outTheta ) const;
+	float GuardDirOver( float &outTheta ) const;
 
 	double m_dAnimSpd;
 
@@ -65,6 +65,11 @@ private:
 	clsPARTS_BASE**	m_wppParts;
 	
 
+
+	//˜r‚ÌŠp“x‚ğ•Ší‚à–ÍÊ‚·‚é.
+	void FitJointModel( 
+		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
+		const char const *RootBone, const char const *EndBone );
 
 };
 

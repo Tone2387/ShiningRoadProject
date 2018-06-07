@@ -75,7 +75,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	//ƒ‚ƒfƒ‹‚³‚ñì¬.
 	m_pAsmModel = new clsASSEMBLE_MODEL;
 	m_pAsmModel->Create( m_wpResource );
-	m_pAsmModel->SetAnimSpd( 0.1 );
+	m_pAsmModel->SetAnimSpd( 0.01 );
 
 	m_wpCamera->SetPos( { 0.0f, 0.0f, -100.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
