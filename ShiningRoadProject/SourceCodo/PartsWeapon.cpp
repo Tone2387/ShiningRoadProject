@@ -12,7 +12,6 @@ clsPARTS_WEAPON::~clsPARTS_WEAPON()
 //ì¬.
 void clsPARTS_WEAPON::CreateProduct()
 {
-	SetStatusMax( enSTATUS::size );
 }
 
 //–ˆƒtƒŒ[ƒ€.

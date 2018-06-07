@@ -12,11 +12,13 @@ const UCHAR ucWEAPON_R = static_cast<UCHAR>( enPARTS::WEAPON_R );
 //ÉpÅ[ÉcéÌóﬁÇÃêî.
 const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
 
-clsASSEMBLE_MODEL::clsASSEMBLE_MODEL() :
-	m_wpResource( nullptr ),
-	m_pPartsFactory( nullptr ),
-	m_wppParts( nullptr )
+clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
+	:m_wpResource( nullptr )
+	,m_pPartsFactory( nullptr )
+	,m_wppParts( nullptr )
+	,m_dAnimSpd( 0.0 )
 {
+	m_dAnimSpd = 1.0;
 }
 
 clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
@@ -69,6 +71,7 @@ void clsASSEMBLE_MODEL::Init()
 	SetPos( { 0.0f, 0.0f, 0.0f } );
 	SetRot( { 0.0f, 0.0f, 0.0f } );
 	SetScale( 1.0f );
+	SetAnimSpd( 1.0 );
 }
 
 void clsASSEMBLE_MODEL::UpDate()
@@ -116,6 +119,8 @@ void clsASSEMBLE_MODEL::AttachModel(
 	m_wppParts[ucParts]->DetatchModel();
 	m_wppParts[ucParts]->AttachModel( 
 		m_wpResource->GetPartsModels( enParts, PartsNum ) );
+	m_wppParts[ucParts]->SetAnimSpeed( m_dAnimSpd );
+	
 }
 
 
@@ -135,8 +140,6 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	m_wppParts[ucCORE]->SetPosition( 
  		m_wppParts[ucLEG]->GetBonePos( "LegJunctionCore" ) );
 
-//	m_wppParts[ucCORE]->SetPosition( { 1.0f, 10.0f, 50.0f } );
-
 	m_wppParts[ucHEAD]->SetPosition( 
 		m_wppParts[ucCORE]->GetBonePos( "CoreJunctionHead" ) );
 
@@ -150,7 +153,7 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 		m_wppParts[ucARM_L]->GetBonePos( "ArmLJunctionWeapon" ) );
 										   
 	m_wppParts[ucWEAPON_R]->SetPosition( 
-		m_wppParts[ucARM_R]->GetBonePos( "ArmRJunctionWeapon" ) );//ArmLJoint2
+		m_wppParts[ucARM_R]->GetBonePos( "ArmRJunctionWeapon" ) );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
@@ -201,9 +204,10 @@ void clsASSEMBLE_MODEL::SetScale( const float fScale )
 void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 {
 	ASSERT_IF_NULL( m_wppParts );
+	m_dAnimSpd = dSpd;
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->SetAnimSpeed( dSpd );
+		m_wppParts[i]->SetAnimSpeed( m_dAnimSpd );
 	}
 }
 

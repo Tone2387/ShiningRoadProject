@@ -58,25 +58,8 @@ protected:
 	//----- 各パーツごとの関数 -----//.
 
 
-	//ステータス.
-	void SetStatusMax( PARTS_STATUS_TYPE Num );
-	PARTS_STATUS_TYPE GetStatusMax();
-
-
-	//ステータス.
-	//わざわざパーツがステータスを持つのは、.
-	//アセンブル画面の都合である。.
-	std::vector<int> m_viStatus;
-	//パーツ名.
-	std::string		m_sName;
 
 private:
-
-	//ステータスが範囲オーバーしていないかのチェック.
-	bool isWithInRange( PARTS_STATUS_TYPE Num );
-
-	//各継承クラスのステータスの最大数.
-	PARTS_STATUS_TYPE m_StatusMax;
 
 };
 

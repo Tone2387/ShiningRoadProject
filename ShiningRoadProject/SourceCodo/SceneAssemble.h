@@ -37,8 +37,8 @@ private:
 	//どのパーツを選んでるの?.
 	struct PARTS_SELECT
 	{
-		SKIN_ENUM_TYPE Type;	//パーツの種類( 脚、コア等 ).
-		SKIN_ENUM_TYPE Num;	//パーツ番号.
+		short Type;	//パーツの種類( 脚、コア等 ).
+		short Num;	//パーツ番号.
 
 		PARTS_SELECT(){
 			Type = Num = 0;
