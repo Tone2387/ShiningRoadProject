@@ -12,6 +12,17 @@ const UCHAR ucWEAPON_R = static_cast<UCHAR>( enPARTS::WEAPON_R );
 //パーツ種類の数.
 const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
 
+
+//連結部分のボーン名.
+#define BONE_NAME_LEG_TO_CORE		"LegJunctionCore"
+#define BONE_NAME_CORE_TO_HEAD		"CoreJunctionHead"
+#define BONE_NAME_CORE_TO_ARM_L	 	"CoreJunctionArmL"
+#define BONE_NAME_CORE_TO_ARM_R	 	"CoreJunctionArmR"
+#define BONE_NAME_ARM_L_TO_WEAPON_L "ArmLJunctionWeapon"
+#define BONE_NAME_ARM_R_TO_WEAPON_R "ArmRJunctionWeapon"
+
+
+
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
 	,m_pPartsFactory( nullptr )
@@ -27,6 +38,7 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 		for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 			if( m_wppParts[i] != nullptr ){
 				m_wppParts[i]->DetatchModel();
+				delete m_wppParts[i];
 				m_wppParts[i] = nullptr;
 			}
 		}
@@ -71,7 +83,7 @@ void clsASSEMBLE_MODEL::Init()
 	SetPos( { 0.0f, 0.0f, 0.0f } );
 	SetRot( { 0.0f, 0.0f, 0.0f } );
 	SetScale( 1.0f );
-	SetAnimSpd( 1.0 );
+	SetAnimSpd( 0.1 );
 }
 
 void clsASSEMBLE_MODEL::UpDate()
@@ -138,22 +150,27 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	m_wppParts[ucLEG]->SetPosition( m_Trans.vPos );
 
 	m_wppParts[ucCORE]->SetPosition( 
- 		m_wppParts[ucLEG]->GetBonePos( "LegJunctionCore" ) );
+ 		m_wppParts[ucLEG]->GetBonePos( BONE_NAME_LEG_TO_CORE ) );
 
 	m_wppParts[ucHEAD]->SetPosition( 
-		m_wppParts[ucCORE]->GetBonePos( "CoreJunctionHead" ) );
+		m_wppParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_HEAD ) );
 
 	m_wppParts[ucARM_L]->SetPosition( 
-		m_wppParts[ucCORE]->GetBonePos( "CoreJunctionArmL" ) );
+		m_wppParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_L ) );
 
 	m_wppParts[ucARM_R]->SetPosition( 
-		m_wppParts[ucCORE]->GetBonePos( "CoreJunctionArmR" ) );
+		m_wppParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_R ) );
 
 	m_wppParts[ucWEAPON_L]->SetPosition( 
-		m_wppParts[ucARM_L]->GetBonePos( "ArmLJunctionWeapon" ) );
+		m_wppParts[ucARM_L]->GetBonePos( BONE_NAME_ARM_L_TO_WEAPON_L ) );
 										   
 	m_wppParts[ucWEAPON_R]->SetPosition( 
-		m_wppParts[ucARM_R]->GetBonePos( "ArmRJunctionWeapon" ) );
+		m_wppParts[ucARM_R]->GetBonePos( BONE_NAME_ARM_R_TO_WEAPON_R ) );
+
+	FitJointModel( m_wppParts[ucWEAPON_L], m_wppParts[ucARM_L],
+		"ArmL0", "ArmLJunctionWeapon" );
+	FitJointModel( m_wppParts[ucWEAPON_R], m_wppParts[ucARM_R],
+		"ArmR0", "ArmRJunctionWeapon" );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
@@ -213,7 +230,7 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 
 
 //回転値抑制.
-float clsASSEMBLE_MODEL::GuardDirOver( float & outTheta ) const
+float clsASSEMBLE_MODEL::GuardDirOver( float &outTheta ) const
 {
 	float fDIR_RIMIT = static_cast<float>( D3DX_PI * 2.0 ); 
 	if( outTheta < 0.0 ){
@@ -230,6 +247,33 @@ float clsASSEMBLE_MODEL::GuardDirOver( float & outTheta ) const
 
 	return outTheta;
 }
+
+
+
+
+//腕の角度を武器も模写する.
+void clsASSEMBLE_MODEL::FitJointModel( 
+	clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
+	const char const *RootBone, const char const *EndBone )
+{
+	//ボーンのベクトルを出す.
+	D3DXVECTOR3 vVec = 
+		pBace->GetBonePos( const_cast<char*>( EndBone ) ) - 
+		pBace->GetBonePos( const_cast<char*>( RootBone ) );
+	D3DXVec3Normalize( &vVec, &vVec );
+
+	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
+	vRot.x = atan2f( vVec.y, vVec.z );
+	vRot.y = atan2f( vVec.z, vVec.x );
+	vRot.z = atan2f( vVec.y, -vVec.x );
+
+	vRot.x = GuardDirOver( vRot.x );
+	vRot.y = GuardDirOver( vRot.y );
+	vRot.z = GuardDirOver( vRot.z );
+
+	pMover->SetRotation( vRot );
+}
+
 
 
 
