@@ -79,6 +79,9 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	m_wpCamera->SetPos( { 0.0f, 0.0f, -100.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
+
+	//ミッションシーンに引き継ぐ情報の初期化.
+	m_wpRoboStatus->Clear();
 }
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )

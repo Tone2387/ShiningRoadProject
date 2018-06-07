@@ -142,9 +142,9 @@ int clsROBO_STATUS::GetRoboState( const enROBO_STATE enStateNum )
 	}
 	//HPçáéZ.
 	if( enStateNum == enROBO_STATE::HP ){
-		m_iRoboState[enROBO_STATE::HP] = 0;
+		m_iRoboState[enStateNum] = 0;
 		for( UCHAR i=0; i<enHAVE_HP_PARTS_SIZE; i++ ){
-			m_iRoboState[enROBO_STATE::HP] += m_iRoboHp[i];
+			m_iRoboState[enStateNum] += m_iRoboHp[i];
 		}
 	}
 
