@@ -63,6 +63,7 @@ private:
 	int m_iHp;			//四つのパーツに影響される.
 	int m_iWalkSpd;		//歩行速度.
 	int m_iStability;	//安定性能.
+	int m_iSpn;			//旋回性能.
 	int m_iJumpPower;	//ジャンプ力.
 	int m_iSearch;		//索敵性能.
 	int m_iEnCapa;		//エネルギー容量 エネルギー : energy  容量 : capacity.

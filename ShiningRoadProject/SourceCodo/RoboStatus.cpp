@@ -30,6 +30,7 @@ void clsROBO_STATUS::Clear()
 	m_iHp = 0;
 	m_iWalkSpd = 0;
 	m_iStability = 0;
+	m_iSpn = 0;
 	m_iJumpPower = 0;
 	m_iSearch = 0;
 	m_iEnCapa = 0;
@@ -56,6 +57,7 @@ void clsROBO_STATUS::ReceiveLeg( vector<int> LegDatas )
 	m_iHp		+= LegDatas[clsPARTS_LEG::HP];			//四つのパーツに影響される.
 	m_iWalkSpd	 = LegDatas[clsPARTS_LEG::WALK_SPD];	//歩行速度.
 	m_iStability = LegDatas[clsPARTS_LEG::STABILITY];	//安定性能.
+	m_iSpn		 = LegDatas[clsPARTS_LEG::SPIN];		//旋回性能.
 	m_iJumpPower = LegDatas[clsPARTS_LEG::JUMP_POWER];	//ジャンプ力.
 }
 
@@ -134,7 +136,6 @@ void clsROBO_STATUS::ReceiveWeaponR( vector<int> WeaponRDatas )
 	m_WeaponR.iAccuracy			= WeaponRDatas[clsPARTS_WEAPON::ACCURACY];			//射撃精度.
 	m_WeaponR.iMagazineLoadTime	= WeaponRDatas[clsPARTS_WEAPON::MAGAZINE_LOAD_TIME];//マガジン装填時間.
 	m_WeaponR.iBulletNum		= WeaponRDatas[clsPARTS_WEAPON::BULLETS_NUM];		//装弾数.
-
 }
 
 

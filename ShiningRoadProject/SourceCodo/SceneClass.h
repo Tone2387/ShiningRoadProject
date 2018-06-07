@@ -96,6 +96,6 @@ protected:
 	clsEffects*			m_wpEffects;
 	clsSOUND_MANAGER*	m_wpSound;
 	clsCAMERA_BASE*		m_wpCamera;	
-
+	clsROBO_STATUS*		m_wpRoboStatus;
 
 };

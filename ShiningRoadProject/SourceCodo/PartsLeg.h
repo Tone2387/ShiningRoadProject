@@ -16,6 +16,7 @@ public:
 		HP = 0,		//体力.
 		WALK_SPD,	//歩行速度.
 		STABILITY,	//安定性能.
+		SPIN,		//旋回性能.
 		JUMP_POWER,	//ジャンプ力.
 						
 		size

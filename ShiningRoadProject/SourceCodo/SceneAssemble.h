@@ -37,11 +37,11 @@ private:
 	//どのパーツを選んでるの?.
 	struct PARTS_SELECT
 	{
-		int iType;	//パーツの種類( 脚、コア等 ).
-		int iNum;	//パーツ番号.
+		SKIN_ENUM_TYPE Type;	//パーツの種類( 脚、コア等 ).
+		SKIN_ENUM_TYPE Num;	//パーツ番号.
 
 		PARTS_SELECT(){
-			iType = iNum = 0;
+			Type = Num = 0;
 		}
 	}m_PartsSelect;
 

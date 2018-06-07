@@ -71,6 +71,8 @@ private:
 	//サウンド.
 	clsSOUND_MANAGER* m_pSound;
 
+	//( シーンをまたぐ )ロボットのステータス.
+	clsROBO_STATUS*		m_spRoboStatus;
 
 };
 
