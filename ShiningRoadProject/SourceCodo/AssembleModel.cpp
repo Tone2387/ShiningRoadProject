@@ -168,9 +168,9 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 		m_wppParts[ucARM_R]->GetBonePos( BONE_NAME_ARM_R_TO_WEAPON_R ) );
 
 	FitJointModel( m_wppParts[ucWEAPON_L], m_wppParts[ucARM_L],
-		"ArmL0", "ArmLJunctionWeapon" );
+		"ArmLJunctionCore", "ArmLJunctionWeapon" );//ArmLJunctionWeapon.
 	FitJointModel( m_wppParts[ucWEAPON_R], m_wppParts[ucARM_R],
-		"ArmR0", "ArmRJunctionWeapon" );
+		"ArmR0", "ArmR3" );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
@@ -265,7 +265,9 @@ void clsASSEMBLE_MODEL::FitJointModel(
 	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
 	vRot.x = atan2f( vVec.y, vVec.z );
 	vRot.y = atan2f( vVec.z, vVec.x );
-	vRot.z = atan2f( vVec.y, -vVec.x );
+	vRot.z = atan2f( vVec.x, vVec.y );
+
+
 
 	vRot.x = GuardDirOver( vRot.x );
 	vRot.y = GuardDirOver( vRot.y );

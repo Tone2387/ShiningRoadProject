@@ -88,7 +88,11 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 {
 	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
+#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
 		static int tmpI = 0; 
+		tmpI ++;
+		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
+
 		m_pAsmModel->AttachModel( enPARTS::LEG, tmpI );
 		m_pAsmModel->AttachModel( enPARTS::CORE, tmpI );
 		m_pAsmModel->AttachModel( enPARTS::HEAD, tmpI );
@@ -96,12 +100,15 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 		m_pAsmModel->AttachModel( enPARTS::ARM_R, tmpI );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, tmpI );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
-		tmpI ++;
-		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
 
 		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
 		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
 		m_pAsmModel->SetScale( 0.5f );
+#else//#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
+		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
+		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
+		m_pAsmModel->SetScale( 0.5f );
+#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
 	}
 
 	//テストモデル移動.
