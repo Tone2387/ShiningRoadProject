@@ -71,6 +71,8 @@ public:
 	int m_iBoostRisingTopSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fBoostRisingAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
 
+	float m_fBoostFollRes;
+
 	int m_iQuickInterbal;
 
 	void Walk();

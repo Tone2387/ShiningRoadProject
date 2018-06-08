@@ -6,14 +6,13 @@
 #include"Object.h"
 
 const float g_fDisStandard = 0.1f;
-const float g_fPercentage = 0.01f;
 
 class clsEnemyBase
 {
 public:
 	TRANSFORM* m_pTrans;
 
-	D3DXVECTOR3 m_vMoveDir;
+	D3DXVECTOR3 m_vMovePlansDir;
 	int m_iMoveCategoryNo;
 
 	void Init(LPSTR strEnemyFolderName);
