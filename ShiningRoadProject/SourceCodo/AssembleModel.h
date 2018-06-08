@@ -1,11 +1,13 @@
 #pragma once
 
-#include "PartsBase.h"
 #include "FactoryParts.h"
 
 #include "Resource.h"
-#include "Object.h"
-#include"SkinMesh.h"
+
+
+//#include "PartsBase.h"
+
+
 
 //アセンブルシーンのモデルさん.
 class clsASSEMBLE_MODEL

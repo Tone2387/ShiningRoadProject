@@ -8,8 +8,6 @@
 #include "RoboStatus.h"
 
 
-
-
 class clsPOINTER_GROUP
 {
 public:

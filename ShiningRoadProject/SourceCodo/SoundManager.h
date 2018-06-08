@@ -4,6 +4,7 @@
 #include "Sound.h"
 
 
+
 //‰¹Žw’è—p—ñ‹“‘Ì.
 enum enBGM : UCHAR
 {
