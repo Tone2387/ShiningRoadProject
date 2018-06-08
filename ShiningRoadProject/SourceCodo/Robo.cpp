@@ -30,11 +30,14 @@ void clsRobo::RoboInit(
 	m_fBoostMoveSpeedMax = 0.5;
 	m_iBoostTopSpeedFrame = 60;
 
+	m_fBoostFollRes = 0.05f;
+
 	m_fBoostRisingSpeedMax = 0.5f;//スピードの最大値.
 	m_iBoostRisingTopSpeedFrame = 20;//↑に達するまでのフレーム値.
 	m_fBoostRisingAccele = m_fBoostRisingSpeedMax / m_iBoostRisingTopSpeedFrame;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
 
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
+	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
 
 	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
@@ -43,11 +46,13 @@ void clsRobo::RoboInit(
 void clsRobo::Walk()
 {
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
+	m_iMoveStopFrame = m_iWalkTopSpeedFrame;
 }
 
 void clsRobo::Boost()
 {
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
+	m_iMoveStopFrame = m_iBoostTopSpeedFrame;
 }
 
 void clsRobo::MoveSwitch()
@@ -110,7 +115,6 @@ void clsRobo::SetDirQuickBoost(const float fAngle)
 
 void clsRobo::QuickBoost()
 {
-	
 	if (IsMoveControl())
 	{
 		if (m_iQuickInterbal < 0)
@@ -153,6 +157,14 @@ void clsRobo::QuickTurn()
 void clsRobo::Updata()
 {
 	m_iQuickInterbal--;
+
+	if (m_bBoost)
+	{
+		if (m_fFollPower < -m_fBoostFollRes)
+		{
+			m_fFollPower += g_fGravity;
+		}
+	}
 
 	if (IsMoveControl())
 	{

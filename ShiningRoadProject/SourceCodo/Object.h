@@ -9,6 +9,8 @@
 #include"Global.h"
 #include"DX9Mesh.h"
 
+const float g_fPercentage = 0.01f;
+
 const float g_fGravity = 0.01f;
 
 const D3DXVECTOR3 g_vDirForward	= D3DXVECTOR3(  0.0f,  0.0f,  1.0f);
