@@ -60,25 +60,6 @@ public:
 	};
 
 
-	//読み込むパーツ種類.
-	enum enPARTS_READ : UCHAR
-	{
-		LEG = 0,
-		CORE,
-		HEAD,
-		ARMS,
-		WEAPON,
-
-		enPARTS_READ_SIZE
-	};
-	//使うときはこの順番.
-//	SKIN_ENUM_TYPE m_ucLegNum;	//脚の数.
-//	SKIN_ENUM_TYPE m_ucCoreNum;	//コアの数.
-//	SKIN_ENUM_TYPE m_ucHeadNum;	//頭の数.
-//	SKIN_ENUM_TYPE m_ucArmsNum;	//腕の数( 左右共通なので一つでよい ).
-//	SKIN_ENUM_TYPE m_ucWeaponNum;//武器の数.
-	SKIN_ENUM_TYPE m_PartsNum[enPARTS_READ_SIZE];
-	SKIN_ENUM_TYPE m_ucSkinModelMax;
 
 
 #ifdef RESOURCE_CLASS_SINGLETON
@@ -113,15 +94,6 @@ public:
 		const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum );
 
 
-#ifdef Inoue
-	enSTATIC_MODEL ItoE( const int iNum ) const {
-		return static_cast<enSTATIC_MODEL>( iNum );
-	}
-
-	int EtoI( const enSTATIC_MODEL iNum ) const {
-		return static_cast<int>( iNum );
-	}
-#endif//#ifdef Inoue.
 
 private:
 
@@ -170,6 +142,27 @@ private:
 	bool IsRangeStaticModel( const enSTATIC_MODEL enModel ) const;
 	bool IsRangeSkinModel( const enSKIN_MODEL enModel ) const;
 
+
+
+	//読み込むパーツ種類.
+	enum enPARTS_READ : UCHAR
+	{
+		LEG = 0,
+		CORE,
+		HEAD,
+		ARMS,
+		WEAPON,
+
+		enPARTS_READ_SIZE
+	};
+	//使うときはこの順番.
+//	SKIN_ENUM_TYPE m_ucLegNum;	//脚の数.
+//	SKIN_ENUM_TYPE m_ucCoreNum;	//コアの数.
+//	SKIN_ENUM_TYPE m_ucHeadNum;	//頭の数.
+//	SKIN_ENUM_TYPE m_ucArmsNum;	//腕の数( 左右共通なので一つでよい ).
+//	SKIN_ENUM_TYPE m_ucWeaponNum;//武器の数.
+	SKIN_ENUM_TYPE m_PartsNum[enPARTS_READ_SIZE];
+	SKIN_ENUM_TYPE m_ucSkinModelMax;
 
 
 	HWND					m_hWnd;

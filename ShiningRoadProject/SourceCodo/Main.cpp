@@ -183,14 +183,14 @@ LRESULT clsMain::MsgProc(
 	case WM_DROPFILES:
 //		{
 //		HDROP hDrop;
-//		UINT uFileNo;
+//		UINT uiFileNo;
 //		g_bFileActive = true;
 //		hDrop = (HDROP)wParam;
-//		uFileNo = DragQueryFile( (HDROP)wParam, 0xFFFFFFFF, NULL, 0 );
+//		uiFileNo = DragQueryFile( (HDROP)wParam, 0xFFFFFFFF, NULL, 0 );
 //		char Path[MAX_PATH];
-//		for (int i = 0; i < (int)uFileNo; i++){
+//		for (UINT i = 0; i < uiFileNo; i++){
 //			DragQueryFile( hDrop, i, Path, sizeof( Path ) );
-//			g_vsFilePath.push_back(Path);
+//			g_vsFilePath.push_back( Path );
 //		}
 //		DragFinish( hDrop );
 //		}
