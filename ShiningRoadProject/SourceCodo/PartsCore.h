@@ -23,7 +23,7 @@ public:
 		QUICK_THRUST,	//クイック推力.
 		QUICK_COST,		//クイック消費エネルギー.
 		ACT_TIME,		//活動時間(ActivityTime).
-		QUIC_KTIME,		//クイック噴射時間.
+		QUICK_TIME,		//クイック噴射時間.
 						
 		size
 	};

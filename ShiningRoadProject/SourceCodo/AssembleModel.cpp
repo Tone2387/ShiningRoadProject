@@ -22,6 +22,8 @@ const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
 #define BONE_NAME_ARM_R_TO_WEAPON_R "ArmRJunctionWeapon"
 
 
+const double dANIM_SPD = 0.016;
+
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
@@ -29,7 +31,7 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	,m_wppParts( nullptr )
 	,m_dAnimSpd( 0.0 )
 {
-	m_dAnimSpd = 1.0;
+	m_dAnimSpd = dANIM_SPD;
 }
 
 clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
@@ -51,7 +53,7 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 
 
 
-void clsASSEMBLE_MODEL::Create( clsResource* const pResource )
+void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus )
 {
 	ASSERT_IF_NOT_NULL( m_pPartsFactory );
 	ASSERT_IF_NOT_NULL( m_wppParts );
@@ -67,23 +69,25 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource )
 		m_wppParts[i] = m_pPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
-	Init();
+	Init( pStatus );
 }
 
 //モデルの初期セット.
-void clsASSEMBLE_MODEL::Init()
+void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 {
-	AttachModel( enPARTS::LEG, 0 );
-	AttachModel( enPARTS::CORE, 0 );
-	AttachModel( enPARTS::HEAD, 0 );
-	AttachModel( enPARTS::ARM_L, 0 );
-	AttachModel( enPARTS::ARM_R, 0 );
-	AttachModel( enPARTS::WEAPON_L, 0 );
-	AttachModel( enPARTS::WEAPON_R, 0 );
+	assert( pStatus );
+	AttachModel( enPARTS::LEG,		pStatus->GetPartsNum( enPARTS::LEG ) );
+	AttachModel( enPARTS::CORE,		pStatus->GetPartsNum( enPARTS::CORE ) );
+	AttachModel( enPARTS::HEAD,		pStatus->GetPartsNum( enPARTS::HEAD ) );
+	AttachModel( enPARTS::ARM_L,	pStatus->GetPartsNum( enPARTS::ARM_L ) );
+	AttachModel( enPARTS::ARM_R,	pStatus->GetPartsNum( enPARTS::ARM_R ) );
+	AttachModel( enPARTS::WEAPON_L, pStatus->GetPartsNum( enPARTS::WEAPON_L ) );
+	AttachModel( enPARTS::WEAPON_R, pStatus->GetPartsNum( enPARTS::WEAPON_R ) );
+
 	SetPos( { 0.0f, 0.0f, 0.0f } );
 	SetRot( { 0.0f, 0.0f, 0.0f } );
 	SetScale( 1.0f );
-	SetAnimSpd( 0.1 );
+	SetAnimSpd( dANIM_SPD );
 }
 
 void clsASSEMBLE_MODEL::UpDate()

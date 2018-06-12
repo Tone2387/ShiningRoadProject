@@ -74,8 +74,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//ƒ‚ƒfƒ‹‚³‚ñì¬.
 	m_pAsmModel = new clsASSEMBLE_MODEL;
-	m_pAsmModel->Create( m_wpResource );
-	m_pAsmModel->SetAnimSpd( 0.01 );
+	m_pAsmModel->Create( m_wpResource, m_wpRoboStatus );
 
 	m_wpCamera->SetPos( { 0.0f, 0.0f, -100.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
@@ -229,25 +228,25 @@ void clsSCENE_ASSEMBLE::Enter()
 	switch( m_PartsSelect.Type )
 	{
 	case enPARTS_TYPES::LEG:
-		m_wpRoboStatus->ReceiveLeg( tmpStatus );
+		m_wpRoboStatus->ReceiveLeg( tmpStatus, m_PartsSelect.Num );
 		m_pAsmModel->AttachModel( enPARTS::LEG, m_PartsSelect.Num );
 		break;
 	case enPARTS_TYPES::CORE:
-		m_wpRoboStatus->ReceiveCore( tmpStatus );
+		m_wpRoboStatus->ReceiveCore( tmpStatus, m_PartsSelect.Num );
 		m_pAsmModel->AttachModel( enPARTS::CORE, m_PartsSelect.Num );
 		break;
 	case enPARTS_TYPES::HEAD:
-		m_wpRoboStatus->ReceiveHead( tmpStatus );
+		m_wpRoboStatus->ReceiveHead( tmpStatus, m_PartsSelect.Num );
 		m_pAsmModel->AttachModel( enPARTS::HEAD, m_PartsSelect.Num );
 		break;
 	case enPARTS_TYPES::ARMS:
-		m_wpRoboStatus->ReceiveArms( tmpStatus );
+		m_wpRoboStatus->ReceiveArms( tmpStatus, m_PartsSelect.Num );
 		m_pAsmModel->AttachModel( enPARTS::ARM_L, m_PartsSelect.Num );
 		m_pAsmModel->AttachModel( enPARTS::ARM_R, m_PartsSelect.Num );
 		break;
 	case enPARTS_TYPES::WEAPON:
-		m_wpRoboStatus->ReceiveWeaponL( tmpStatus );
-		m_wpRoboStatus->ReceiveWeaponR( tmpStatus );
+		m_wpRoboStatus->ReceiveWeaponL( tmpStatus, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveWeaponR( tmpStatus, m_PartsSelect.Num );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, m_PartsSelect.Num );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, m_PartsSelect.Num );
 		break;

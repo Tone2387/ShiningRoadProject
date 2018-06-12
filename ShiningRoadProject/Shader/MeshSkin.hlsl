@@ -136,15 +136,15 @@ float4 PSSkin( PSSkinIn input ) : SV_Target
 
 
 
-	//フォグ処理.
-	float d = input.Pos.z * input.Pos.w;	//距離.
-	float density = 0.03f;		//密度//0.025f.
-	float e = 2.71828;		//自然対数の底(ネイピア数).
-
-	float f = pow(e, -d*density);	//フォグファクター.
-	f *= 0.5f + 0.5f + 0.5f;
-	f = saturate(f);
-	RetColor = f*RetColor + (1-f)*0.0f;
+//	//フォグ処理.
+//	float d = input.Pos.z * input.Pos.w;	//距離.
+//	float density = 0.03f;		//密度//0.025f.
+//	float e = 2.71828;		//自然対数の底(ネイピア数).
+//
+//	float f = pow(e, -d*density);	//フォグファクター.
+//	f *= 0.5f + 0.5f + 0.5f;
+//	f = saturate(f);
+//	RetColor = f*RetColor + (1-f)*0.0f;
 
 
 
