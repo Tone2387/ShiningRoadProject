@@ -25,10 +25,10 @@
 // 最大ｱﾆﾒｰｼｮﾝｾｯﾄ数.
 #define MAX_ANIM_SET	100
 
-// マクロ.
-#define SAFE_RELEASE(p)		{ if(p) { (p)->Release(); (p)=NULL; } }
-#define SAFE_DELETE(p)		{ if(p) { delete (p);     (p)=NULL; } }
-#define SAFE_DELETE_ARRAY(p){ if(p) { delete[] (p);   (p)=NULL; } }
+//// マクロ.
+//#define SAFE_RELEASE(p)		{ if(p) { (p)->Release(); (p)=NULL; } }
+//#define SAFE_DELETE(p)		{ if(p) { delete (p);     (p)=NULL; } }
+//#define SAFE_DELETE_ARRAY(p){ if(p) { delete[] (p);   (p)=NULL; } }
 
 //方向列挙体.
 enum enDirection

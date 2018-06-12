@@ -76,7 +76,7 @@ private:
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
-
+	//‚¨’…Š·‚¦‚·‚éƒ‚ƒfƒ‹.
 	clsASSEMBLE_MODEL*	m_pAsmModel;
 
 	clsFILE*	m_pFile[enPARTS_TYPES::ENUM_SIZE];

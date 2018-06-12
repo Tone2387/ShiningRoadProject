@@ -3,6 +3,7 @@
 #include "SceneClass.h"
 #include "CameraTitle.h"
 
+#include "AssembleModel.h"
 
 
 //================================//
@@ -29,8 +30,9 @@ private:
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
-	//テスト用モデル( これは消しても良いです、いらないです ).
-	clsCharaStatic* m_pTestChara;
+	//タイトルでズンとただずむロボット君.
+	clsASSEMBLE_MODEL*	m_pRoboModel;
+
 
 
 };

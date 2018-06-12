@@ -42,7 +42,7 @@ void clsROBO_STATUS::Clear()
 
 
 //データの受け取り.
-void clsROBO_STATUS::ReceiveLeg( const vector<int> &LegDatas )
+void clsROBO_STATUS::ReceiveLeg( const vector<int> &LegDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
 {
 	if( LegDatas.size() > clsPARTS_LEG::size ){
 		assert( !"受け取ったvectorデータのsizeが大きすぎます" );
@@ -53,9 +53,11 @@ void clsROBO_STATUS::ReceiveLeg( const vector<int> &LegDatas )
 	m_iRoboState[enROBO_STATE::STABILITY] = LegDatas[clsPARTS_LEG::STABILITY];	//安定性能.
 	m_iRoboState[enROBO_STATE::TURN]	  = LegDatas[clsPARTS_LEG::TURN];		//旋回性能.
 	m_iRoboState[enROBO_STATE::JUMP_POWER]= LegDatas[clsPARTS_LEG::JUMP_POWER];	//ジャンプ力.
+
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::LEG ) ] = PartsNum;
 }
 
-void clsROBO_STATUS::ReceiveCore( const vector<int> &CoreDatas )
+void clsROBO_STATUS::ReceiveCore( const vector<int> &CoreDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
 {
 	if( CoreDatas.size() > clsPARTS_CORE::size ){
 		assert( !"受け取ったvectorデータのsizeが大きすぎます" );
@@ -69,10 +71,12 @@ void clsROBO_STATUS::ReceiveCore( const vector<int> &CoreDatas )
 	m_iRoboState[enROBO_STATE::QUICK_THRUST]= CoreDatas[clsPARTS_CORE::QUICK_THRUST];	//クイック推力.
 	m_iRoboState[enROBO_STATE::QUICK_COST]  = CoreDatas[clsPARTS_CORE::QUICK_COST];		//クイック消費エネルギー.
 	m_iRoboState[enROBO_STATE::ACT_TIME]	= CoreDatas[clsPARTS_CORE::ACT_TIME];		//活動時間(ActivityTime).
-	m_iRoboState[enROBO_STATE::QUIC_KTIME]	= CoreDatas[clsPARTS_CORE::QUIC_KTIME];		//クイック噴射時間.
+	m_iRoboState[enROBO_STATE::QUICK_TIME]	= CoreDatas[clsPARTS_CORE::QUICK_TIME];		//クイック噴射時間.
+
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::CORE ) ] = PartsNum;
 }
 
-void clsROBO_STATUS::ReceiveHead( const vector<int> &HeadDatas )
+void clsROBO_STATUS::ReceiveHead( const vector<int> &HeadDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
 {
 	if( HeadDatas.size() > clsPARTS_HEAD::size ){
 		assert( !"受け取ったvectorデータのsizeが大きすぎます" );
@@ -80,9 +84,11 @@ void clsROBO_STATUS::ReceiveHead( const vector<int> &HeadDatas )
 
 	m_iRoboHp[enHAVE_HP_PARTS::HEAD]  = HeadDatas[clsPARTS_HEAD::HP];		//四つのパーツに影響される.
 	m_iRoboState[enROBO_STATE::SEARCH]= HeadDatas[clsPARTS_HEAD::SEARCH];	//索敵性能.
+
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::HEAD ) ] = PartsNum;
 }
 
-void clsROBO_STATUS::ReceiveArms( const vector<int> &ArmsDatas )
+void clsROBO_STATUS::ReceiveArms( const vector<int> &ArmsDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
 {
 	if( ArmsDatas.size() > clsPARTS_ARM_BASE::size ){
 		assert( !"受け取ったvectorデータのsizeが大きすぎます" );
@@ -90,9 +96,12 @@ void clsROBO_STATUS::ReceiveArms( const vector<int> &ArmsDatas )
 
 	m_iRoboHp[enHAVE_HP_PARTS::ARMS]  = ArmsDatas[clsPARTS_ARM_BASE::HP];		//四つのパーツに影響される.
 	m_iRoboState[enROBO_STATE::AIMING]= ArmsDatas[clsPARTS_ARM_BASE::AIMING]; //照準精度( エイム ).
+
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::ARM_L ) ] = PartsNum;
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::ARM_R ) ] = PartsNum;
 }
 
-void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas )
+void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
 {
 	if( WeaponLDatas.size() > clsPARTS_WEAPON::size ){
 		assert( !"受け取ったvectorデータのsizeが大きすぎます" );
@@ -110,9 +119,11 @@ void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas )
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::ACCURACY]	= WeaponLDatas[clsPARTS_WEAPON::ACCURACY];						//射撃精度.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::MAGAZINE_LOAD_TIME]	= WeaponLDatas[clsPARTS_WEAPON::MAGAZINE_LOAD_TIME];	//マガジン装填時間.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::BULLETS_NUM]	= WeaponLDatas[clsPARTS_WEAPON::BULLETS_NUM];					//装弾数.
+
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_L ) ] = PartsNum;
 }
 
-void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas )
+void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
 {
 	if( WeaponRDatas.size() > clsPARTS_WEAPON::size ){
 		assert( !"受け取ったvectorデータのsizeが大きすぎます" );
@@ -130,6 +141,8 @@ void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas )
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::ACCURACY]	= WeaponRDatas[clsPARTS_WEAPON::ACCURACY];						//射撃精度.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::MAGAZINE_LOAD_TIME]	= WeaponRDatas[clsPARTS_WEAPON::MAGAZINE_LOAD_TIME];	//マガジン装填時間.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::BULLETS_NUM]	= WeaponRDatas[clsPARTS_WEAPON::BULLETS_NUM];				//装弾数.
+
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_R ) ] = PartsNum;
 }
 
 
@@ -158,10 +171,18 @@ int clsROBO_STATUS::GetWeaponState(
 		assert( !"不正な数の武器が指定されました" );
 		return 0;
 	}
+
 	if( enStateNum >= enWEAPON_STATE_SIZE ){
 		assert( !"不正な武器情報を取得しようとされました" );
 		return 0;
 	}
 
 	return m_iWeaponState[enArmLR][enStateNum];
+}
+
+
+//パーツ番号を返す.
+UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType )
+{
+	return m_ucPartsModelNum[ static_cast<int>( PartsType ) ];
 }

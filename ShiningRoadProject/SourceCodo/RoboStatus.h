@@ -4,7 +4,8 @@
 
 #include <vector>
 
-
+//アセンブルシーンでの選択肢の型.
+#define ASSEMBLE_SCENE_SELECT_TYPE short 
 
 //ゲームクラスで作成、.
 //アセンブルシーンで値を設定、.
@@ -20,12 +21,14 @@ public:
 
 	//データの受け取り.
 	//これらの関数でデータを受け取る前にClear()しておくこと.
-	void ReceiveLeg( const std::vector<int> &LegDatas );
-	void ReceiveCore( const std::vector<int> &CoreDatas );
-	void ReceiveHead( const std::vector<int> &HeadDatas );
-	void ReceiveArms( const std::vector<int> &ArmsDatas );
-	void ReceiveWeaponL( const std::vector<int> &WeaponLDatas );
-	void ReceiveWeaponR( const std::vector<int> &WeaponRDatas );
+	//第一引数 : 攻撃力などのパラメータ群.
+	//第二引数 : モデル番号.
+	void ReceiveLeg( const std::vector<int> &LegDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveCore( const std::vector<int> &CoreDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveHead( const std::vector<int> &HeadDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveArms( const std::vector<int> &ArmsDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveWeaponL( const std::vector<int> &WeaponLDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveWeaponR( const std::vector<int> &WeaponRDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
 	 
 	//ロボのステータス配列の引数.
 	enum enROBO_STATE : UCHAR
@@ -43,7 +46,7 @@ public:
 		QUICK_THRUST,	//クイック推力.
 		QUICK_COST,		//クイック消費エネルギー.
 		ACT_TIME,		//活動時間(ActivityTime).
-		QUIC_KTIME,		//クイック噴射時間.
+		QUICK_TIME,		//クイック噴射時間.
 
 		SEARCH,	//索敵性能.
 
@@ -86,6 +89,8 @@ public:
 	//武器の情報を吐き出す.
 	int GetWeaponState( const enWEAPON_NUM enArmLR, const enWEAPON_STATE enStateNum ) const;
 
+	//パーツ番号を返す.//#define SKIN_ENUM_TYPE UCHAR.
+	UCHAR GetPartsNum( const enPARTS PartsType );
 
 private:
 
@@ -106,6 +111,9 @@ private:
 	//武器のパラメータ.
 	int m_iWeaponState[enWEAPON_NUM_SIZE][enWEAPON_STATE_SIZE];
 
+	//ロボのHPを後で合算するための変数.
 	int m_iRoboHp[enHAVE_HP_PARTS_SIZE];
 
+	//パーツ番号の配列.//#define SKIN_ENUM_TYPE UCHAR.
+	UCHAR m_ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
 };

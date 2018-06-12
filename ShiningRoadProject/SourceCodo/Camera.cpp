@@ -8,9 +8,6 @@ clsCAMERA_BASE::clsCAMERA_BASE() :
 	m_vRot( vVEC3_ZERO )
 {
 	 D3DXMatrixIdentity( &m_mRot );
-
-	 //テスト用でとりあえずおいている.
-	 m_vPos.z -= 10.0f;
 }
 
 clsCAMERA_BASE::~clsCAMERA_BASE()

@@ -4,8 +4,7 @@
 
 #include "Resource.h"
 
-
-//#include "PartsBase.h"
+#include "RoboStatus.h"
 
 
 
@@ -18,7 +17,7 @@ public:
 
 
 	//アセンブルシーンの各関数内で使います.
-	void Create( clsResource* const pResource );
+	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus );
 	void UpDate();
 	void Render(
 		const D3DXMATRIX& mView, 
@@ -27,6 +26,9 @@ public:
 		const D3DXVECTOR3& vEye,
 		const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
 		const bool isAlpha = false );
+
+	//モデルの初期セット.
+	void Init( clsROBO_STATUS* const pStatus );
 
 	//モデルつけ変え.
 	void AttachModel( const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum );
@@ -50,8 +52,6 @@ public:
 
 private:
 
-	//モデルの初期セット.
-	void Init();
 
 	//回転値抑制.
 	float GuardDirOver( float &outTheta ) const;
