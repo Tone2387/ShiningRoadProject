@@ -8,22 +8,23 @@ clsGAME::clsGAME(
 	const HWND hWnd, 
 	ID3D11Device* const pDevice, 
 	ID3D11DeviceContext* const pContext,
-		D3D10_VIEWPORT* const pViewPort,
-		ID3D11DepthStencilState* const pDepthState  ) :
-	m_hWnd( hWnd ),
-	m_wpDevice( pDevice ),
-	m_wpContext( pContext ),
-	m_wpViewPort( pViewPort ),
-	m_wpDepthStencilState( pDepthState ),
-	m_pPtrGroup( nullptr ),
-	m_spDxInput( nullptr ),
-	m_pResource( nullptr ),
-	m_pEffect( nullptr ),
-	m_pSound( nullptr ),
-	m_pScene( nullptr ),
-	m_pSceneFactory( nullptr ),
-	m_spCamera( nullptr ),
-	m_pCameraFactory( nullptr )
+	D3D10_VIEWPORT* const pViewPort,
+	ID3D11DepthStencilState* const pDepthState  )
+		:m_hWnd( hWnd )
+		,m_wpDevice( pDevice )
+		,m_wpContext( pContext )
+		,m_wpViewPort( pViewPort )
+		,m_wpDepthStencilState( pDepthState )
+		,m_pPtrGroup( nullptr )
+		,m_spDxInput( nullptr )
+		,m_pResource( nullptr )
+		,m_pEffect( nullptr )
+		,m_pSound( nullptr )
+		,m_pScene( nullptr )
+		,m_pSceneFactory( nullptr )
+		,m_spCamera( nullptr )
+		,m_pCameraFactory( nullptr )
+		,m_spRoboStatus( nullptr )
 {
 
 }
@@ -35,6 +36,7 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_pCameraFactory );
 	SAFE_DELETE( m_pSceneFactory );
 	SAFE_DELETE( m_pPtrGroup );
+	SAFE_DELETE( m_spRoboStatus );
 	SAFE_DELETE( m_pSound );
 	SAFE_DELETE( m_pEffect );
 	SAFE_DELETE( m_pResource );
@@ -62,12 +64,15 @@ void clsGAME::Create()
 
 	m_pSound = new clsSOUND_MANAGER( m_hWnd );
 
+	m_spRoboStatus = new clsROBO_STATUS;
+
 	//引数のポインタの集合体.
 	m_pPtrGroup = new clsPOINTER_GROUP( 
 		m_wpDevice, m_wpContext, 
 		m_wpViewPort, m_wpDepthStencilState,
 		m_spDxInput, m_pResource, 
-		m_pEffect, m_pSound );
+		m_pEffect, m_pSound,
+		m_spRoboStatus );
 
 
 	//ファクトリの作成.
@@ -78,11 +83,6 @@ void clsGAME::Create()
 
 	//最初のシーンはタイトルを指定する.
 	SwitchScene( START_UP_SCENE );
-
-//	//シーン.
-//	ASSERT_IF_NOT_NULL( m_pSceneManager );
-//	m_pSceneManager = new clsSCENE_MANAGER( m_pPtrGroup );
-//	m_pSceneManager->Create(); 
 
 	//起動音再生.
 	m_pSound->PlayBGM( enBGM_TITLE );
@@ -114,7 +114,6 @@ void clsGAME::Update()
 //毎フレーム使う.
 void clsGAME::Render()
 { 
-
 	ASSERT_IF_NULL( m_pScene );
 	m_pScene->Render(); 
 }

@@ -57,6 +57,8 @@ public:
 		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
 	}
 
+	virtual void tenshi()override{};
+
 	bool m_bBoost;
 
 	float m_fWalktMoveSpeedMax;
@@ -68,6 +70,8 @@ public:
 	float m_fBoostRisingSpeedMax;//スピードの最大値.
 	int m_iBoostRisingTopSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fBoostRisingAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
+
+	float m_fBoostFollRes;
 
 	int m_iQuickInterbal;
 

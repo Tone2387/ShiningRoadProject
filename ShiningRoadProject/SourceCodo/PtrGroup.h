@@ -5,8 +5,7 @@
 #include "Effects.h"
 #include "SoundManager.h"
 #include "Camera.h"
-
-
+#include "RoboStatus.h"
 
 
 class clsPOINTER_GROUP
@@ -21,7 +20,8 @@ public:
 		clsDxInput* const pInput,
 		clsResource* const pResource,
 		clsEffects* const pEffects,
-		clsSOUND_MANAGER* const pSound );
+		clsSOUND_MANAGER* const pSound,
+		clsROBO_STATUS* const pRoboStatus );
 	~clsPOINTER_GROUP();
 
 	//カメラのアドレス取得.
@@ -37,6 +37,7 @@ public:
 	clsEffects*	GetEffects() const;
 	clsSOUND_MANAGER*	GetSound() const;
 	clsCAMERA_BASE*	GetCamera() const;
+	clsROBO_STATUS* GetRoboStatus() const;
 
 private:
 	//デバイスオブジェクト.
@@ -59,5 +60,7 @@ private:
 	//カメラ( こいつだけシーン切り替えごとに変わる ).
 	clsCAMERA_BASE*		m_wpCamera;
 
+	//( シーンをまたぐ )ロボットのステータス.
+	clsROBO_STATUS*		m_wpRoboStatus;
 };
 

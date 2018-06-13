@@ -34,8 +34,8 @@ public:
 	void AnimUpdate();
 	//ｱﾆﾒｰｼｮﾝ最大数を取得.
 	int GetAnimSetMax();
-	//ｱﾆﾒｰｼｮﾝ切り替え関数.
-	void SetAnimChange(int index, double dStartPos = 0.0f);
+	//ｱﾆﾒｰｼｮﾝ切り替え関数.//変更できるならtrue, 変更できないならfalseが返る.
+	bool SetAnimChange(int index, double dStartPos = 0.0f);
 
 	//座標や回転の更新.
 	void ModelUpdate(TRANSFORM Transform);

@@ -147,9 +147,6 @@
     <ClCompile Include="SourceCodo\Effects.cpp">
       <Filter>Classwork\System</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\File.cpp">
-      <Filter>Classwork\System</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\Resource.cpp">
       <Filter>Classwork\System</Filter>
     </ClCompile>
@@ -189,9 +186,6 @@
     <ClCompile Include="SourceCodo\PartsLeg.cpp">
       <Filter>Tahara\Parts</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\PartsSet.cpp">
-      <Filter>Tahara\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\PartsWeapon.cpp">
       <Filter>Tahara\Parts</Filter>
     </ClCompile>
@@ -215,6 +209,12 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\Object.cpp">
       <Filter>Hiyosi\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\File.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboStatus.cpp">
+      <Filter>Tahara\Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,9 +326,6 @@
     <ClInclude Include="SourceCodo\Effects.h">
       <Filter>Classwork\System</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\File.h">
-      <Filter>Classwork\System</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\Global.h">
       <Filter>Classwork\System</Filter>
     </ClInclude>
@@ -377,9 +374,6 @@
     <ClInclude Include="SourceCodo\PartsLeg.h">
       <Filter>Tahara\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\PartsSet.h">
-      <Filter>Tahara\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\PartsWeapon.h">
       <Filter>Tahara\Parts</Filter>
     </ClInclude>
@@ -403,6 +397,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Object.h">
       <Filter>Hiyosi\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\File.h">
+      <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboStatus.h">
+      <Filter>Tahara\Parts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,8 +6,6 @@ void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//
 	m_iTopMoveSpeedFrame = iTopSpeedFrame;
 
 	m_fMoveAccele = m_fMoveSpeedMax / m_iTopMoveSpeedFrame;
-
-	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
 }
 
 void clsCharactor::SetMoveDeceleSpeed(const int iMoveStopFrame)//å∏ë¨.
@@ -44,11 +42,6 @@ void clsCharactor::Move(const float fAngle, const float fPush)
 
 		MoveControl();
 	}
-
-	
-	//ï«Ç∆ÇÃìñÇΩÇËîªíË.
-
-
 }
 
 bool clsCharactor::IsMoveing()
@@ -75,7 +68,7 @@ void clsCharactor::SetMoveDir(const float fAngle)
 {
 	if (!IsMoveing())
 	{
-		m_vMoveDir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		m_vMoveDir = { 0.0f, 0.0f, 0.0f };
 	}
 
 	D3DXVECTOR3 vForward;
@@ -86,7 +79,7 @@ void clsCharactor::SetMoveDir(const float fAngle)
 	//çsÇ´ÇΩÇ¢ï˚å¸.
 	D3DXVECTOR3 vAcceleDir = GetVec3Dir(fAngle, vForward);
 
-	m_vMoveDir += (vAcceleDir - m_vMoveDir);// / (m_iMoveStopFrame / 2);
+	m_vMoveDir += (vAcceleDir - m_vMoveDir) / (m_iMoveStopFrame / 2);
 }
 
 void clsCharactor::MoveControl()

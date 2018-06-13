@@ -11,18 +11,23 @@ public:
 	clsPARTS_ARM_BASE();
 	virtual ~clsPARTS_ARM_BASE();
 
+
+	//ステータス変数の添え字.
+	enum enSTATUS : PARTS_STATUS_TYPE
+	{
+		HP = 0,	//体力.
+		AIMING,	//照準精度( エイム ).
+						
+		size
+	};
+
+
 private:
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 	virtual void CreateProduct() override;//各シーンのCreate.
 	virtual void UpdateProduct() override;//各シーンのUpdate.
-	virtual void RenderProduct(
-		const D3DXMATRIX& const mView, 
-		const D3DXMATRIX& const mProj, 
-		const D3DXVECTOR3& const vLight, 
-		const D3DXVECTOR3& const vEye,
-		const D3DXVECTOR4 &vColor,
-		const bool isAlpha ) override;//各シーンのRender.
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
+
 
 };
 

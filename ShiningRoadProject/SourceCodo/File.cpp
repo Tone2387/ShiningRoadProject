@@ -1,230 +1,240 @@
-#include"File.h"
+#include "File.h"
 
-//Using宣言.
+//文字列を数値にしようとしないかのチェックで使う.
+#include <cctype>
+#include <algorithm>
+
+#include <sstream>
+#include <fstream>
+#include <iostream>
+#include <assert.h>
+
 using namespace std;
 
-//ファイル読込み関数.
-clsFile::clsFile()
+const unsigned int uiRESERVE_SIZE_ROW = 64;//ベクターの初期最大サイズ( 行 ).
+const unsigned int uiRESERVE_SIZE_COL = 16;//ベクターの初期最大サイズ( 行のカンマ区切りの数 ).
+
+const char cDELIMITER = ',';//区切り文字.
+	
+const string sERROR = "THIS_IS_ERROR";//エラー用文字列.
+
+//初期化用データ作成( プッシュバック用 ).
+const vector<string> vsINIT_LINE;
+
+
+clsFILE::clsFILE() :
+	m_bUsing( false )
 {
-	m_Data.en_Extension = Error;
-	m_Data.iLineMax		= NULL;
 }
 
-clsFile::~clsFile()
+clsFILE::~clsFILE()
 {
-	m_Data.sDataAry.clear();
-	m_Data.sDataAry.shrink_to_fit();
+	Close();
 }
 
-//ファイル書き込み.
-void clsFile::Write(char* FilePath, char* Content){
-	ofstream ofs(FilePath);
-	if (!ofs) {
-		cerr << "ファイルオープンに失敗" << endl;
-		exit(1);
-	}
-	ofs << Content << "\n" << endl;
-}
 
-//ファイル書き込み.
-template<typename T>
-void clsFile::Write(char* FilePath, vector<T> DataAry)
+void clsFILE::Open( const string sFileName )
 {
-	ofstream ofs(FilePath);
-	if (!ofs) {
-		cerr << "ファイルオープンに失敗" << endl;
-		exit(1);
-	}
-	for (size_t i = 0; i < DataAry.size(); i++)
+	assert( !m_bUsing );//使用中にopenするな.
+
+	m_sFileName = sFileName;
+
+	//メモリ確保.
+	m_vvsData.reserve( uiRESERVE_SIZE_ROW );
+
+	//ファイルを開く.
+	ifstream ifs( m_sFileName );
 	{
-		ofs << DataAry[i] << "," << endl;
-	}
-}
+		//openチェック.
+		if( !ifs ){
+			cout << "ひらけなかったよ" << endl;
+			cin.get();
+			return;
+		}
 
-//ファイル書き込み.
-void clsFile::Write(char* FilePath, int NewLine){
-	ofstream ofs(FilePath);
-	if (!ofs) {
-		cerr << "ファイルオープンに失敗" << endl;
-		exit(1);
-	}
-	for (size_t i = 0; i < m_Data.sDataAry.size(); i++)
-	{
-		if ((1 + i) % NewLine == 0)
+		string sBuff;//仮のデータ.
+		unsigned int uiIndexRow = 0;//何行目かを表す変数( index ).
+		//一行づつファイルすべてを読み込む.
+		while( true )
 		{
-			ofs << m_Data.sDataAry[i] << "," << endl;
-		}
-		else{
-			ofs << m_Data.sDataAry[i] << ",";
+			//ファイルの終端まで来たら終了.
+			if( ifs.eof() ){
+				break;
+			}
+			
+			m_vvsData.push_back( vsINIT_LINE );					//一行増やす.
+			m_vvsData[uiIndexRow].reserve( uiRESERVE_SIZE_COL );//メモリ確保.
+			
+			getline( ifs, sBuff );					//仮のデータに一行を突っ込む.
+			m_vvsData[uiIndexRow].push_back( "" );	//本データにさっき作った仮データを突っ込む猶予を作る.
+			m_vvsData[uiIndexRow][0] = sBuff;		//突っ込む.
+			m_vvsData[uiIndexRow] = Split( m_vvsData[uiIndexRow][0], cDELIMITER );//一行として突っ込んだデータを区切り文字を基準に分解する.
+
+			//余分なメモリをポイする.
+			m_vvsData[uiIndexRow].shrink_to_fit();
+
+			uiIndexRow ++;
 		}
 	}
+
+	//余分なメモリをポイする.
+	m_vvsData.shrink_to_fit();
+
+	m_bUsing = true;
 }
 
-void clsFile::Read()
+
+void clsFILE::Close()
 {
-	ifstream ifs(m_Data.sPath);
+	for( unsigned int i=0; i<m_vvsData.size(); i++ ){
+		m_vvsData[i].clear();
+		m_vvsData[i].shrink_to_fit();
+	}
+	m_vvsData.clear();
+	m_vvsData.shrink_to_fit();
 
-	//ファイル読込前に前のデータを削除.
-	if (m_Data.sDataAry.empty())
-	{
-		m_Data.sDataAry.clear();
-		m_Data.sDataAry.shrink_to_fit();
-	}
-	if (ifs)
-	{
-		//データを削除
-		string buf((istreambuf_iterator<char>(ifs)),
-					istreambuf_iterator<char>());
-		switch (m_Data.en_Extension)
-		{
-			case Txt:
-			case Csv:
-			FileDataSplit(buf);
-			//データの最大数
-			m_Data.iLineMax = m_Data.sDataAry.size();
-			break;
-		default:
-			//読めないファイル.
-			break;
-		}
-	}
+	m_bUsing = false;
 }
 
-//データの区分け.
-void clsFile::FileDataSplit(string Data)
+
+
+string clsFILE::GetDataString( const int iRow, const int iCol ) const
 {
-	vector<string> sTmpArray;
-	//余計なコメントや改行等を削除してカンマに.
-	while (Data.find('[') != Data.npos){
-		Data = ReplaceString(Data, "", "[", "]");
+	if( !m_bUsing ){
+		assert( m_bUsing );//使用中じゃなければアサート.
+		return sERROR;
 	}
-	while (Data.find('\t') != Data.npos){
-		Data = ReplaceString(Data, ",", "\t");
+	//範囲内?.
+	if( iRow >= static_cast<int>( m_vvsData.size() ) ){
+		return sERROR;
 	}
-	while (Data.find('\n') != Data.npos){
-		Data = ReplaceString(Data, ",", "\n");
-	}
-	while (Data.find('\"') != Data.npos){
-		Data = ReplaceString(Data, ",", "\"");
-	}
-
-	//文字列区分け.
-	split(Data, ",", sTmpArray);
-
-	//NULLチェックして中身がなければ削除.
-	for (int i = sTmpArray.size() - 1; i >= 0; i--)
-	{
-		if (sTmpArray[i].empty())
-		{
-			sTmpArray.erase(sTmpArray.begin() + i);
+	for( unsigned int i=0; i<m_vvsData.size(); i++ ){
+		if( iCol >= static_cast<int>( m_vvsData[i].size() ) ){
+			return sERROR;
 		}
 	}
-	sTmpArray.swap(m_Data.sDataAry);
+	//マイナスははじく( かつエラー値ではない ).
+	if( iRow < 0 && iRow != MyFile::ERR_LINE ){	
+		return sERROR;
+	}
+	if( iCol < 0 && iCol != MyFile::ERR_LINE ){	
+		return sERROR;
+	}
+
+	//全文を返す.
+	if( iRow == MyFile::ERR_LINE ){
+		string sData;
+		//全文連結.
+		for( unsigned int i=0; i<m_vvsData.size(); i++ ){
+			for( unsigned int j=0; j<m_vvsData[i].size(); j++ ){
+				sData += m_vvsData[i][j];
+			}
+		}
+		return sData;
+	}
+
+	//指定行を返す.
+	if( iCol == MyFile::ERR_LINE ){
+		string sData;
+		//一行連結.
+		for( unsigned int i=0; i<m_vvsData[iRow].size(); i++ ){
+			sData += m_vvsData[iRow][i];
+		}
+		return sData;
+	}
+
+	//指定部分を返す.
+	return m_vvsData[iRow][iCol];
 }
 
-//拡張子判断.
-void clsFile::ExtensionJudgment()
+int clsFILE::GetDataInt(
+	const int iRow, 
+	const int iCol ) const
 {
-	size_t PathSize = NULL;
-	string tmp;
-	PathSize = m_Data.sPath.find(".");
-	tmp = m_Data.sPath.substr(PathSize + 1, m_Data.sPath.size());
+	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
-	if (tmp == "txt" || tmp == "TXT"){
-		m_Data.en_Extension = Txt;
-	}
-	else if (tmp == "csv" || tmp == "CSV"){
-		m_Data.en_Extension = Csv;
-	}
-	else if (tmp == "x" || tmp == "X"){
-		m_Data.en_Extension = x;
-	}
-	else if (tmp == "png" || tmp == "PNG"){
-		m_Data.en_Extension = png;
-	}
-	else{
-		//エラー（対応していない）
-		m_Data.en_Extension =  Error;
-	}
-}
-
-//文字列置換.
-string clsFile::ReplaceString
-(
-  string String1   // 置き換え対象.
-, string String2   // 置き換える内容.
-, string String3   // 検索対象.
-, string String4   // 上の検索対象との間を消す.
-)
-{
-	if (String4 == "NULL"){
-		string::size_type  Pos(String1.find(String3));
-
-		while (Pos != string::npos)
-		{
-			String1.replace(Pos, String3.length(), String2);
-			Pos = String1.find(String3, Pos + String2.length());
-		}
-	}
-	else
+	//「すべてが数字」ではない || エラーならば.
+	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+		sBuff == sERROR )
 	{
-		string::size_type  Pos1(String1.find(String3));
-
-		string::size_type  Pos2(String1.find(String4));
-
-		string::size_type  Pos3(String1.find(String4) - String1.find(String3));
-
-		int tmp1;
-		int tmp2;
-		int tmp3;
-
-		tmp1 = String1.find(String3);
-		tmp2 = String1.find(String4);
-		tmp3 = tmp2 - tmp1 + 1;
-		String1.replace(tmp1, tmp3, String2);
+		//エラーを返す.
+		return MyFile::ERR_LINE;
 	}
-	return String1;
+
+	int iNum = stoi( sBuff );	//文字列を数字にする.
+	return iNum;
 }
 
-template <typename List>
-void clsFile::split(const string& s, const string& delim, List& result)
+float clsFILE::GetDataFloat(
+	const int iRow, 
+	const int iCol ) const
 {
-	result.clear();
+	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
-	int SizeMax;
-	SizeMax = 0;
-
-	for (unsigned int j = 0; j < s.size(); j++)
+	//「すべてが数字」ではない || エラーならば.
+	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+		sBuff == sERROR )
 	{
-		if (s.compare(j, 1, delim) == 0)
-		{
-			SizeMax++;
-		}
+		//エラーを返す.
+		return static_cast<float>( MyFile::ERR_LINE );
 	}
 
-	//最大数+1でちょうどよい.
-	result.reserve(SizeMax + 1);
-
-	using string = string;
-	string::size_type pos = 0;
-
-	while (pos != string::npos)
-	{
-		string::size_type p = s.find(delim, pos);
-		if (p == string::npos)
-		{
-			result.push_back(s.substr(pos));
-			break;
-		}
-		else {
-			result.push_back(s.substr(pos, p - pos));
-		}
-		pos = p + delim.size();
-	}
+	float fNum = stof( sBuff );	//文字列を数字にする.
+	return fNum;
 }
 
-void clsFile::Init(const char* fileName)
+double clsFILE::GetDataDouble(
+	const int iRow, 
+	const int iCol ) const
 {
-	m_Data.sPath = fileName;
-	ExtensionJudgment();
+	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
+
+	//「すべてが数字」ではない || エラーならば.
+	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+		sBuff == sERROR )
+	{
+		//エラーを返す.
+		return static_cast<double>( MyFile::ERR_LINE );
+	}
+
+	double dNum = stod( sBuff );	//文字列を数字にする.
+	return dNum;
 }
+
+
+//何行あるか.
+unsigned int clsFILE::GetSizeRow()
+{
+	return m_vvsData.size();
+}
+
+//その行は何列あるか.
+unsigned int clsFILE::GetSizeCol( unsigned int uiRow )
+{
+	//範囲外は許さない.
+	if( uiRow >= m_vvsData.size() ) return 0;
+	return m_vvsData[uiRow].size();
+}
+
+
+//文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).
+vector< string > clsFILE::Split( const std::string &sStr, const char cSep ) const
+{
+	vector< string > vsOut;
+	stringstream ss( sStr );
+	string sBuff;
+
+	//多めにメモリを取っておく.
+	vsOut.reserve( uiRESERVE_SIZE_COL );
+
+	//引数にした文字を区切りとして分割する.
+	while( std::getline( ss, sBuff, cSep ) ){
+		vsOut.push_back( sBuff );
+	}
+
+	//余分なメモリをポイする.
+	vsOut.shrink_to_fit();
+
+	return vsOut;
+}
+

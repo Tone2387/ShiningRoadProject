@@ -1,30 +1,56 @@
 #include "Resource.h"
 
 using namespace std;
+//パーツディレクトリのパス.
 const string sPARTS_PASS = "Data\\RoboParts\\";
-const string sLEG_PASS = sPARTS_PASS + "Leg\\Leg";
-const string sCORE_PASS = sPARTS_PASS + "Core\\Core";
-const string sHEAD_PASS = sPARTS_PASS + "Head\\Head";
-const string sARML_PASS = sPARTS_PASS + "ArmL\\ArmL";
-const string sARMR_PASS = sPARTS_PASS + "ArmR\\ArmR";
-const string sWEAPON_PASS = sPARTS_PASS + "Weapon\\Weapon";
+//各パーツのディレクトリのパス.
+const string sLEG_PASS		= sPARTS_PASS + "Leg\\Leg";
+const string sCORE_PASS		= sPARTS_PASS + "Core\\Core";
+const string sHEAD_PASS		= sPARTS_PASS + "Head\\Head";
+const string sARML_PASS		= sPARTS_PASS + "Arms\\ArmL";
+const string sARMR_PASS		= sPARTS_PASS + "Arms\\ArmR";
+const string sWEAPON_PASS	= sPARTS_PASS + "Weapon\\Weapon";
+//上記に数字を挟んだうえでくっつけるモデル名.
+const string sLEG_NAME		= "\\Leg";
+const string sCORE_NAME		= "\\Core";
+const string sHEAD_NAME		= "\\Head";
+const string sARML_NAME		= "\\ArmL";
+const string sARMR_NAME		= "\\ArmR";
+const string sWEAPON_NAME	= "\\Weapon";
+
 //extension = 拡張子.
 const string sEXTENSION_X = ".X";//上記のパスとこれの間に数字を挟んで使う.
 
 const UCHAR ucARM_NUM = 2;//腕の本数.
 
 
+//データファイルのパス.
+const string sDATA_PASS_ROOT = "Data\\RoboParts\\";
+const string sDATA_PASS_MID[] =
+{
+	"Leg",
+	"Core",
+	"Head",
+	"Arms",
+	"Weapon"
+};
+const string sDATA_PASS_END	 = "\\RoboPartsData.csv";
+
 
 clsResource::clsResource()
+	:m_hWnd( nullptr )
+	,m_pDevice11( nullptr )
+	,m_pCotext11( nullptr )
+	,m_ppStaticModels( nullptr )
+	,m_ppSkinModels( nullptr )
+	,m_ucSkinModelMax( 0 )
+	,m_PartsNum( )
+	,m_pFile( nullptr )
+	,m_FilePath()
 {
-	m_hWnd = nullptr;
-	m_pDevice11 = nullptr;
-	m_pCotext11 = nullptr;
-	m_ppStaticModels = nullptr;
-	m_ppSkinModels = nullptr;
-
-	m_ucSkinModelMax = m_ucLegNum = m_ucCoreNum = m_ucHeadNum = m_ucArmsNum = m_ucWeaponNum = 0;
-
+	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
+		m_PartsNum[i] = 0;
+	}
 	ZeroMemory( m_FilePath, sizeof( m_FilePath ) );
 }
 
@@ -47,19 +73,57 @@ clsResource::~clsResource()
 		m_ppStaticModels = nullptr;
 	}
 
-	m_ucSkinModelMax = m_ucLegNum = m_ucCoreNum = m_ucHeadNum = m_ucArmsNum = m_ucWeaponNum = 0;
+	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
+		m_PartsNum[i] = 0;
+	}
+
+	m_ucSkinModelMax = 0;
 
 	m_pCotext11 = nullptr;
 	m_pDevice11 = nullptr;
 	m_hWnd = nullptr;
+	SAFE_DELETE( m_pFile );
 }
 
+//パーツの数を吐き出す.
+SKIN_ENUM_TYPE clsResource::GetPartsNum( const enPARTS_READ enPartsRead )
+{
+	SKIN_ENUM_TYPE tmpNum = 0;
+
+	string tmpPass =  sDATA_PASS_ROOT + sDATA_PASS_MID[enPartsRead] + sDATA_PASS_END;
+	
+	m_pFile = new clsFILE;
+	m_pFile->Open( tmpPass );
+
+	tmpNum = m_pFile->GetSizeRow();
+
+	m_pFile->Close();
+	SAFE_DELETE( m_pFile );
+	return tmpNum;
+}
 
 //new直後に使う.
 void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext )
 {
-	m_ucLegNum = m_ucCoreNum = m_ucHeadNum = m_ucArmsNum = m_ucWeaponNum = iTEST_ROBO_PARTS_MODEL_MAX;
-	m_ucSkinModelMax = m_ucLegNum + m_ucCoreNum + m_ucHeadNum + ( ucARM_NUM * m_ucArmsNum ) + m_ucWeaponNum + enSkinModel_Max;
+#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
+	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
+		m_PartsNum[i] = iTEST_ROBO_PARTS_MODEL_MAX;
+	}
+#else#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
+	m_PartsNum[enPARTS_READ::LEG] = GetPartsNum( enPARTS_READ::LEG );
+	m_PartsNum[enPARTS_READ::CORE] = GetPartsNum( enPARTS_READ::CORE );
+	m_PartsNum[enPARTS_READ::HEAD] = GetPartsNum( enPARTS_READ::HEAD );
+	m_PartsNum[enPARTS_READ::ARMS] = GetPartsNum( enPARTS_READ::ARMS );
+	m_PartsNum[enPARTS_READ::WEAPON] = GetPartsNum( enPARTS_READ::WEAPON );
+#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
+
+	m_ucSkinModelMax = 
+		m_PartsNum[enPARTS_READ::LEG] + 
+		m_PartsNum[enPARTS_READ::CORE] + 
+		m_PartsNum[enPARTS_READ::HEAD] + 
+		( ucARM_NUM * m_PartsNum[enPARTS_READ::ARMS] ) + 
+		m_PartsNum[enPARTS_READ::WEAPON] + 
+		enSkinModel_Max;
 
 	InitStaticModel( hWnd, pDevice, pContext );
 	InitSkinModel( hWnd, pDevice, pContext );
@@ -74,14 +138,14 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 //		"Data\\RoboParts\\Core\\Core1.X",
 		enSTATIC_MODEL::enStaticModel_Ground );
 	CreateStaticModel(
-		"Data\\RoboParts\\Leg\\Leg1.x",
+		"Data\\RoboParts\\Leg\\Leg1\\Leg1.x",
 		enSTATIC_MODEL::enStaticModel_Enemy );
 
 	CreateSkinModel(
-		"Data\\RoboParts\\Leg\\Leg0.x",
+		"Data\\RoboParts\\Leg\\Leg0\\Leg0.x",
 		enSKIN_MODEL::enSkinModel_Player );
 	CreateSkinModel(
-		"Data\\RoboParts\\Leg\\Leg0.X",
+		"Data\\RoboParts\\Leg\\Leg0\\Leg0.X",
 //		"Data\\hime\\hime_kougeki.x", 
 		enSKIN_MODEL::enSkinModel_Leg );
 
@@ -102,20 +166,25 @@ void clsResource::CreatePartsGroup()
 void clsResource::CreateParts( const enPARTS enParts )
 {
 	UCHAR ucStart, ucMax;
-	string sPass = SetVarToCreateParts( ucStart, ucMax, enParts );
+	string sModelName;
+	string sPass = SetVarToCreateParts( ucStart, ucMax, sModelName, enParts );
 	
 	//作成.
 	for( UCHAR i=0; i<ucMax - ucStart; i++ ){
 		//パーツファイル名連結.
 		ostringstream ss;
-		ss << static_cast<int>( i );
-		string tmpString = sPass + ss.str();
-		tmpString += sEXTENSION_X;
+		ss << static_cast<int>( i );		//数字を文字列に( intじゃないと事故が起こるさ ).
+		string tmpString = sPass + ss.str();//パーツのディレクトリ名.
+		tmpString += sModelName + ss.str();	//パーツのモデル名.
+		tmpString += sEXTENSION_X;			//拡張子連結.
+
 		//メモリ確保.
 		char *tmpPass = new char[tmpString.size() + 1];
+
 		//stringからchar[]へコピー.
 		char_traits<char>::copy( 
 			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
+
 		//作る.
 		CreateSkinModel(
 			tmpPass, 
@@ -129,6 +198,7 @@ void clsResource::CreateParts( const enPARTS enParts )
 string clsResource::SetVarToCreateParts(
 	SKIN_ENUM_TYPE &ucStart,	//(out)そのパーツの始まり番号.
 	SKIN_ENUM_TYPE &ucMax,	//(out)そのパーツの最大番号.
+	string &sModelName,//(out)パスにくっつけるモデル名.
 	const enPARTS enParts )
 {
 	string sPass;
@@ -139,29 +209,35 @@ string clsResource::SetVarToCreateParts(
 	switch( enParts )
 	{
 	case enPARTS::LEG:
-		ucMax = ucStart + m_ucLegNum;
+		ucMax = ucStart + m_PartsNum[enPARTS_READ::LEG];
 		sPass = sLEG_PASS;
+		sModelName = sLEG_NAME;
 		break;
 	case enPARTS::CORE:
-		ucMax = ucStart + m_ucCoreNum;
+		ucMax = ucStart + m_PartsNum[enPARTS_READ::CORE];
 		sPass = sCORE_PASS;
+		sModelName = sCORE_NAME;
 		break;
 	case enPARTS::HEAD:
-		ucMax = ucStart + m_ucHeadNum;
+		ucMax = ucStart + m_PartsNum[enPARTS_READ::HEAD];
 		sPass = sHEAD_PASS;
+		sModelName = sHEAD_NAME;
 		break;
 	case enPARTS::ARM_L:
-		ucMax = ucStart + m_ucArmsNum;
+		ucMax = ucStart + m_PartsNum[enPARTS_READ::ARMS];
 		sPass = sARML_PASS;
+		sModelName = sARML_NAME;
 		break;
 	case enPARTS::ARM_R:
-		ucMax = ucStart + m_ucArmsNum;
+		ucMax = ucStart + m_PartsNum[enPARTS_READ::ARMS];
 		sPass = sARMR_PASS;
+		sModelName = sARMR_NAME;
 		break;
 	case enPARTS::WEAPON_L:
-	case enPARTS::WEAPON_R:
-		ucMax = ucStart + m_ucWeaponNum;
+//	case enPARTS::WEAPON_R:	//二回されないように片方だけにしておく.
+		ucMax = ucStart + m_PartsNum[enPARTS_READ::WEAPON];
 		sPass = sWEAPON_PASS;
+		sModelName = sWEAPON_NAME;
 		break;
 	default:
 		assert( !"不正なパーツが指定されました" );
@@ -169,17 +245,45 @@ string clsResource::SetVarToCreateParts(
 	}
 	return sPass;
 }
+
 //GetSkinModels()の引数をどのパーツかとそのパーツの番号から引き出す関数.
 clsResource::enSKIN_MODEL clsResource::GetPartsResourceNum( 
-	const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum ) const
+	const enPARTS enParts, SKIN_ENUM_TYPE PartsNum ) const
 {
-	enSKIN_MODEL SkinResourceNo;
+	enSKIN_MODEL SkinResourceNo;//return.
+
+	//オーバーしていたら0にする.
+	switch( enParts )
+	{
+	case enPARTS::LEG:
+		if( m_PartsNum[enPARTS_READ::LEG] <= PartsNum ) PartsNum = 0;
+		break;
+	case enPARTS::CORE:
+		if( m_PartsNum[enPARTS_READ::CORE] <= PartsNum ) PartsNum = 0;
+		break;
+	case enPARTS::HEAD:
+		if( m_PartsNum[enPARTS_READ::HEAD] <= PartsNum ) PartsNum = 0;
+		break;
+	case enPARTS::ARM_L:
+	case enPARTS::ARM_R:
+		if( m_PartsNum[enPARTS_READ::ARMS] <= PartsNum ) PartsNum = 0;
+		break;
+	case enPARTS::WEAPON_L:
+	case enPARTS::WEAPON_R:
+		if( m_PartsNum[enPARTS_READ::WEAPON] <= PartsNum ) PartsNum = 0;
+		break;
+	default:
+		assert( !"不正なパーツが指定されました" );
+		break;
+	}
+
 
 	SkinResourceNo = 
 		static_cast<enSKIN_MODEL>( GetPartsResourceStart( enParts ) + PartsNum );
 
 	return SkinResourceNo;
 }
+
 //SetVarToCreateParts()やGetPartsResourceNum()の補助.
 //そのパーツの最初のナンバーをリソース番号にして教えてくれる.
 SKIN_ENUM_TYPE clsResource::GetPartsResourceStart( const enPARTS enParts ) const
@@ -190,20 +294,20 @@ SKIN_ENUM_TYPE clsResource::GetPartsResourceStart( const enPARTS enParts ) const
 		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max );
 		break;
 	case enPARTS::CORE:
-		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_ucLegNum );
+		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_PartsNum[enPARTS_READ::LEG] );
 		break;
 	case enPARTS::HEAD:
-		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_ucLegNum + m_ucCoreNum );
+		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_PartsNum[enPARTS_READ::LEG] + m_PartsNum[enPARTS_READ::CORE] );
 		break;
 	case enPARTS::ARM_L:
-		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_ucLegNum + m_ucCoreNum + m_ucHeadNum );
+		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_PartsNum[enPARTS_READ::LEG] + m_PartsNum[enPARTS_READ::CORE] + m_PartsNum[enPARTS_READ::HEAD] );
 		break;
 	case enPARTS::ARM_R:
-		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_ucLegNum + m_ucCoreNum + m_ucHeadNum + m_ucArmsNum );
+		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_PartsNum[enPARTS_READ::LEG] + m_PartsNum[enPARTS_READ::CORE] + m_PartsNum[enPARTS_READ::HEAD] + m_PartsNum[enPARTS_READ::ARMS] );
 		break;
 	case enPARTS::WEAPON_L:
 	case enPARTS::WEAPON_R:
-		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_ucLegNum + m_ucCoreNum + m_ucHeadNum + ( ucARM_NUM * m_ucArmsNum ) );
+		return static_cast<SKIN_ENUM_TYPE>( enSkinModel_Max + m_PartsNum[enPARTS_READ::LEG] + m_PartsNum[enPARTS_READ::CORE] + m_PartsNum[enPARTS_READ::HEAD] + ( ucARM_NUM * m_PartsNum[enPARTS_READ::ARMS] ) );
 		break;
 	default:
 		assert( !"不正なパーツが指定されました" );

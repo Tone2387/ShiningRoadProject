@@ -11,29 +11,30 @@ public:
 	clsPARTS_CORE();
 	~clsPARTS_CORE();
 
-	void SetHp( const int iHp );
-	int GetHp() const;
-	void AddHp( const int iHp );
 
-	void SetActTime( const int iTime );
-	int GetActTime() const;
-	void AddActTime( const int iTime );
+	//ステータス変数の添え字.
+	enum enSTATUS : PARTS_STATUS_TYPE
+	{
+		HP = 0,			//体力.
+		EN_CAPA,		//エネルギー容量 エネルギー : energy  容量 : capacity.
+		EN_OUTPUT,		//エネルギー出力( 回復量 ).
+		BOOST_THRUST,	//ブースター推力.
+		BOOST_COST,		//ブースター消費エネルギー.
+		QUICK_THRUST,	//クイック推力.
+		QUICK_COST,		//クイック消費エネルギー.
+		ACT_TIME,		//活動時間(ActivityTime).
+		QUICK_TIME,		//クイック噴射時間.
+						
+		size
+	};
+
 
 private:
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 	void CreateProduct() final;//各シーンのCreate.
 	void UpdateProduct() final;//各シーンのUpdate.
-	void RenderProduct(
-		const D3DXMATRIX& const mView, 
-		const D3DXMATRIX& const mProj, 
-		const D3DXVECTOR3& const vLight, 
-		const D3DXVECTOR3& const vEye,
-		const D3DXVECTOR4 &vColor,
-		const bool isAlpha ) final;//各シーンのRender.
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 
-	int m_iHp;
-	int m_iActTime;	//活動時間(ActivityTime).
 
 };
 

@@ -3,7 +3,16 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-const int iTEST_ROBO_PARTS_MODEL_MAX = 4;//テスト中のパーツ最大数.
+
+//シングルトンの時はつける.
+//#define RESOURCE_CLASS_SINGLETON
+
+//テスト中はつける( パーツの読み込み数を固定化 ).
+#define RESOURCE_READ_PARTS_MODEL_LOCK
+#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
+const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数 : 4.
+#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
+
 
 /*
 //テストモデルに足の3番のモデルを割り当てる例.
@@ -20,12 +29,10 @@ const int iTEST_ROBO_PARTS_MODEL_MAX = 4;//テスト中のパーツ最大数.
 #include "DX9Mesh.h"
 #include "CD3DXSKINMESH.h"
 
+#include "File.h"
 
 //スキンメッシュ列挙体の型.
 #define SKIN_ENUM_TYPE UCHAR
-
-//シングルトンの時はつける.
-//#define RESOURCE_CLASS_SINGLETON
 
 
 //3Dモデルのもとデータを格納するクラス.
@@ -52,14 +59,7 @@ public:
 		enSkinModel_Max//数固定モデルのmax.
 	};
 
-	//使うときはこの順番.
-	SKIN_ENUM_TYPE m_ucLegNum;	//脚の数.
-	SKIN_ENUM_TYPE m_ucCoreNum;	//コアの数.
-	SKIN_ENUM_TYPE m_ucHeadNum;	//頭の数.
-	SKIN_ENUM_TYPE m_ucArmsNum;	//腕の数( 左右共通なので一つでよい ).
-	SKIN_ENUM_TYPE m_ucWeaponNum;//武器の数.
 
-	SKIN_ENUM_TYPE m_ucSkinModelMax;
 
 
 #ifdef RESOURCE_CLASS_SINGLETON
@@ -94,15 +94,6 @@ public:
 		const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum );
 
 
-#ifdef Inoue
-	enSTATIC_MODEL ItoE( const int iNum ) const {
-		return static_cast<enSTATIC_MODEL>( iNum );
-	}
-
-	int EtoI( const enSTATIC_MODEL iNum ) const {
-		return static_cast<int>( iNum );
-	}
-#endif//#ifdef Inoue.
 
 private:
 
@@ -127,11 +118,12 @@ private:
 
 	//パーツ作成.
 	void CreatePartsGroup();//CreatePartsの集合体.
-	void CreateParts( const enPARTS enParts );
+	void CreateParts( const enPARTS enParts );//引数としてenPARTS::WEAPON_Rは使わない(同じものを2つ作ってしまう).
 	//CreatePartsで必要な変数を準備する.
 	std::string SetVarToCreateParts(
 		SKIN_ENUM_TYPE &ucStart,	//(out)そのパーツの始まり番号.
 		SKIN_ENUM_TYPE &ucMax,	//(out)そのパーツの最大番号.
+		std::string &sModelName,//(out)パスにくっつけるモデル名.
 		const enPARTS enParts );
 		
 
@@ -139,11 +131,38 @@ private:
 	//第一引数 : 何のパーツ?.
 	//第二引数 : そのパーツの何番目?.
 	enSKIN_MODEL GetPartsResourceNum( 
-		const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum ) const;
+		const enPARTS enParts, SKIN_ENUM_TYPE PartsNum ) const;
 
 	//SetVarToCreateParts()やGetPartsResourceNum()の補助.
 	//そのパーツの最初のナンバーをリソース番号にして教えてくれる.
 	SKIN_ENUM_TYPE GetPartsResourceStart( const enPARTS enParts ) const;
+
+
+	//範囲内かチェックする関数.
+	bool IsRangeStaticModel( const enSTATIC_MODEL enModel ) const;
+	bool IsRangeSkinModel( const enSKIN_MODEL enModel ) const;
+
+
+
+	//読み込むパーツ種類.
+	enum enPARTS_READ : UCHAR
+	{
+		LEG = 0,
+		CORE,
+		HEAD,
+		ARMS,
+		WEAPON,
+
+		enPARTS_READ_SIZE
+	};
+	//使うときはこの順番.
+//	SKIN_ENUM_TYPE m_ucLegNum;	//脚の数.
+//	SKIN_ENUM_TYPE m_ucCoreNum;	//コアの数.
+//	SKIN_ENUM_TYPE m_ucHeadNum;	//頭の数.
+//	SKIN_ENUM_TYPE m_ucArmsNum;	//腕の数( 左右共通なので一つでよい ).
+//	SKIN_ENUM_TYPE m_ucWeaponNum;//武器の数.
+	SKIN_ENUM_TYPE m_PartsNum[enPARTS_READ_SIZE];
+	SKIN_ENUM_TYPE m_ucSkinModelMax;
 
 
 	HWND					m_hWnd;
@@ -154,14 +173,14 @@ private:
 	clsDX9Mesh**			m_ppStaticModels;
 	clsD3DXSKINMESH**		m_ppSkinModels;
 
-	//範囲内かチェックする関数.
-	bool IsRangeStaticModel( const enSTATIC_MODEL enModel ) const;
-	bool IsRangeSkinModel( const enSKIN_MODEL enModel ) const;
-
 
 	char m_FilePath[255];
 
 
+	//読み込むパーツ数を数えるため.
+	clsFILE* m_pFile;
+	//パーツの数を吐き出す.
+	SKIN_ENUM_TYPE GetPartsNum( const enPARTS_READ enPartsRead );
 };
 
 #endif//#ifndef RESOURCE_H_

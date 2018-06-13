@@ -1,9 +1,18 @@
 #pragma once
 
+
+
 #include "Global.h"
 #include "SkinMesh.h"
 
 #include "Object.h"
+
+
+#include <vector>
+#include <string>
+
+//ステータス列挙体の型( 継承クラスで定義している ).
+#define PARTS_STATUS_TYPE UCHAR
 
 //========== パーツの基底クラス ==========//.
 class clsPARTS_BASE : public clsSkinMesh , public clsObject
@@ -18,28 +27,25 @@ public:
 	void Update();
 	//描画.
 	void Render(
-		const D3DXMATRIX& const mView, 
-		const D3DXMATRIX& const mProj, 
-		const D3DXVECTOR3& const vLight, 
-		const D3DXVECTOR3& const vEye,
+		const D3DXMATRIX& mView, 
+		const D3DXMATRIX& mProj, 
+		const D3DXVECTOR3& vLight, 
+		const D3DXVECTOR3& vEye,
 		const D3DXVECTOR4 &vColor,
 		const bool isAlpha );
 
+	//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
+	bool PartsAnimChange( const int iIndex );
+
 protected:
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 	virtual void CreateProduct() = 0;//各シーンのCreate.
 	virtual void UpdateProduct() = 0;//各シーンのUpdate.
-	virtual void RenderProduct(
-		const D3DXMATRIX& const mView, 
-		const D3DXMATRIX& const mProj, 
-		const D3DXVECTOR3& const vLight, 
-		const D3DXVECTOR3& const vEye,
-		const D3DXVECTOR4 &vColor,
-		const bool isAlpha ) = 0;//各シーンのRender.
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
+
+
 
 private:
-
 
 };
 

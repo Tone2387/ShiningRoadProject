@@ -3,34 +3,39 @@
 #include "PartsBase.h"
 
 
-
 class clsPARTS_WEAPON : public clsPARTS_BASE
 {
 public:
 	clsPARTS_WEAPON();
 	~clsPARTS_WEAPON();
 
-	void SetAtk( const int iAtk );
-	int GetAtk() const;
+	//ステータス変数の添え字.
+	enum enSTATUS : PARTS_STATUS_TYPE
+	{
+		ATK = 0,			//攻撃力.
+		BULLET_SPD,			//弾速.
+		RANGE,				//射程距離.
+		COST,				//消費エネルギー.
+		LOAD_TIME,			//装填時間.
+		LOCK_SPD,			//ロック速度.
+		LOCK_RANGE,			//ロック距離.
 
-	void SetLoadTime( const int iLoad );
-	int GetLoadTime() const;
+		REACTION,			//射撃反動.
+		ACCURACY,			//射撃精度.
+		MAGAZINE_LOAD_TIME,	//マガジン装填時間.
+		BULLETS_NUM,		//装弾数.
+						
+		size
+	};
+
+
 
 private:
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 	void CreateProduct() final;//各シーンのCreate.
 	void UpdateProduct() final;//各シーンのUpdate.
-	void RenderProduct(
-		const D3DXMATRIX& const mView, 
-		const D3DXMATRIX& const mProj, 
-		const D3DXVECTOR3& const vLight, 
-		const D3DXVECTOR3& const vEye,
-		const D3DXVECTOR4 &vColor,
-		const bool isAlpha ) final;//各シーンのRender.
-	//----- 各シーンごとの関数 -----//.
+	//----- 各パーツごとの関数 -----//.
 
-	int m_iAtk;		//攻撃力.
-	int m_iLoadTime;//装填時間.
 
 };
 

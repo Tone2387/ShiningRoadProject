@@ -67,7 +67,7 @@ void clsEnemyBase::SearchTarget(clsObject* pObj)
 
 void clsEnemyBase::SetMoveDir()
 {
-	m_vMoveDir = { 0.0f, 0.0f, 0.0f };
+	m_vMovePlansDir = { 0.0f, 0.0f, 0.0f };
 
 	m_UpdateState.vHorMoveDir = { 0.0f, 0.0f, 0.0f };
 	m_UpdateState.fVerDis = 0.0f;

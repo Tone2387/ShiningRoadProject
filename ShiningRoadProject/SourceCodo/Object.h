@@ -9,6 +9,8 @@
 #include"Global.h"
 #include"DX9Mesh.h"
 
+const float g_fPercentage = 0.01f;
+
 const float g_fGravity = 0.01f;
 
 const D3DXVECTOR3 g_vDirForward	= D3DXVECTOR3(  0.0f,  0.0f,  1.0f);
@@ -55,6 +57,17 @@ public:
 
 	float m_fMoveSpeed;//最終的に加算されるスピード.
 	D3DXVECTOR3 m_vMoveDir;
+
+	void Updata(const clsDX9Mesh* pGround)
+	{
+		m_vOldPos = m_Trans.vPos;
+
+		tenshi();
+
+		WallJudge(pGround);
+	}
+
+	virtual void tenshi(){};
 
 	bool m_bGround;
 

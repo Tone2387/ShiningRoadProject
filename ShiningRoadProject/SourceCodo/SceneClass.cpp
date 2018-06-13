@@ -3,7 +3,7 @@
 
 
 //ライト方向.
-const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, 0.02f };
+const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -2.0f };
 //カメラのより具合.
 const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );
 //描画限界距離.
@@ -13,19 +13,20 @@ const float fRENDER_LIMIT = 640.0f;//150.0f.
 //================================//
 //========== 基底クラス ==========//
 //================================//
-clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup ) :
+clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
+	:m_wpDevice( ptrGroup->GetDevice() )
+	,m_wpContext( ptrGroup->GetContext() )
+	,m_wpViewPort( ptrGroup->GetViewPort() )
+	,m_wpPtrGroup( ptrGroup )
+	,m_wpDxInput( ptrGroup->GetDxInput() )
+	,m_wpResource( ptrGroup->GetResource() )
+	,m_wpEffects( ptrGroup->GetEffects() )
+	,m_wpSound( ptrGroup->GetSound() )
+	,m_wpCamera( ptrGroup->GetCamera() )
+	,m_wpRoboStatus( ptrGroup->GetRoboStatus() )
 #if _DEBUG
-	m_upText( nullptr ),
+	,m_upText( nullptr )
 #endif//#if _DEBUG
-	m_wpDevice( ptrGroup->GetDevice() ),
-	m_wpContext( ptrGroup->GetContext() ),
-	m_wpViewPort( ptrGroup->GetViewPort() ),
-	m_wpPtrGroup( ptrGroup ),
-	m_wpDxInput( ptrGroup->GetDxInput() ),
-	m_wpResource( ptrGroup->GetResource() ),
-	m_wpEffects( ptrGroup->GetEffects() ),
-	m_wpSound( ptrGroup->GetSound() ),
-	m_wpCamera( ptrGroup->GetCamera() )
 {
 }
 
@@ -34,6 +35,7 @@ clsSCENE_BASE::~clsSCENE_BASE()
 #if _DEBUG
 	SAFE_DELETE( m_upText );
 #endif//#if _DEBUG
+	m_wpRoboStatus = nullptr;
 	m_wpCamera = nullptr;
 	m_wpSound = nullptr;
 	m_wpEffects = nullptr;
@@ -88,13 +90,10 @@ void clsSCENE_BASE::Render()
 	//カメラ関数.
 	Camera();
 	//プロジェクション関数.
-	Proj();
-
-	//Render関数の引数を書きやすくするための変数.
-	D3DXVECTOR3 vCamPos = m_wpCamera->GetPos();
+	Proj();	
 
 	//各シーンの描画.
-	RenderProduct( vCamPos );
+	RenderProduct( m_wpCamera->GetPos() );
 
 #if _DEBUG
 	SetDepth( false );	//Zテスト:OFF.
@@ -106,9 +105,7 @@ void clsSCENE_BASE::Render()
 }
 
 
-//============================================================
-//	深度テスト(Zテスト)ON/OFF切替.
-//============================================================
+//深度テスト(Zテスト)ON/OFF切替.
 void clsSCENE_BASE::SetDepth( const bool isOn )
 {
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
@@ -206,9 +203,7 @@ void clsSCENE_BASE::RenderDebugText()
 
 
 
-//============================================================
-//	カメラ関数.
-//============================================================
+//カメラ関数.
 void clsSCENE_BASE::Camera()
 {
 	//ビュー(カメラ)変換.
@@ -218,9 +213,7 @@ void clsSCENE_BASE::Camera()
 		&GetCameraPos(), &GetCameraLookPos(), &vUpVec );
 
 }
-//============================================================
-//	プロジェクション関数.
-//============================================================
+//プロジェクション関数.
 void clsSCENE_BASE::Proj()
 {
 	//プロジェクション(射影行列)変換.
