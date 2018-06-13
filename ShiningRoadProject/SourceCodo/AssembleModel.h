@@ -6,7 +6,8 @@
 
 #include "RoboStatus.h"
 
-
+//改名案.
+//clsROBO_MODEL_SET.
 
 //アセンブルシーンのモデルさん.
 class clsASSEMBLE_MODEL

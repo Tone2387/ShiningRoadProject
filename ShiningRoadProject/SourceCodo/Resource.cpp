@@ -7,8 +7,8 @@ const string sPARTS_PASS = "Data\\RoboParts\\";
 const string sLEG_PASS		= sPARTS_PASS + "Leg\\Leg";
 const string sCORE_PASS		= sPARTS_PASS + "Core\\Core";
 const string sHEAD_PASS		= sPARTS_PASS + "Head\\Head";
-const string sARML_PASS		= sPARTS_PASS + "Arms\\ArmL";
-const string sARMR_PASS		= sPARTS_PASS + "Arms\\ArmR";
+const string sARML_PASS		= sPARTS_PASS + "Arms\\Arms";//腕が左右同じなのに分けているのは仕様変更の可能性があるため.
+const string sARMR_PASS		= sPARTS_PASS + "Arms\\Arms";
 const string sWEAPON_PASS	= sPARTS_PASS + "Weapon\\Weapon";
 //上記に数字を挟んだうえでくっつけるモデル名.
 const string sLEG_NAME		= "\\Leg";
@@ -165,18 +165,24 @@ void clsResource::CreatePartsGroup()
 }
 void clsResource::CreateParts( const enPARTS enParts )
 {
+	//そのパーツの始まりと終わりの番号が、それぞれスキンメッシュ全体の何番目にあたるか、の変数.
 	UCHAR ucStart, ucMax;
+	//Xファイルの名前.
 	string sModelName;
+	//DataディレクトリからXファイルまでのパス.
 	string sPass = SetVarToCreateParts( ucStart, ucMax, sModelName, enParts );
+	//パスとモデル名を切り離しているのは、ディレクトリ名とモデル名に番号を入れるため.
 	
-	//作成.
+	//作成.//そのパーツのモデル種類の数だけ繰り返す.
 	for( UCHAR i=0; i<ucMax - ucStart; i++ ){
 		//パーツファイル名連結.
 		ostringstream ss;
 		ss << static_cast<int>( i );		//数字を文字列に( intじゃないと事故が起こるさ ).
+		//ディレクトリ名、モデル名に数字を連結.
 		string tmpString = sPass + ss.str();//パーツのディレクトリ名.
 		tmpString += sModelName + ss.str();	//パーツのモデル名.
 		tmpString += sEXTENSION_X;			//拡張子連結.
+		//パーツファイル名連結完了.
 
 		//メモリ確保.
 		char *tmpPass = new char[tmpString.size() + 1];
