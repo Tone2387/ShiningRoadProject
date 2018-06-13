@@ -38,3 +38,8 @@ void clsPARTS_BASE::Render(
 
 
 
+//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
+bool clsPARTS_BASE::PartsAnimChange( const int iIndex )
+{
+	return SetAnimChange( iIndex );
+}
