@@ -104,12 +104,18 @@ int clsSkinMesh::GetAnimSetMax()
 	return -1;
 }
 
-//ｱﾆﾒｰｼｮﾝ切り替え関数.
-void clsSkinMesh::SetAnimChange(int index, double dStartPos)
+//ｱﾆﾒｰｼｮﾝ切り替え関数.//変更できるならtrue, 変更できないならfalseが返る.
+bool clsSkinMesh::SetAnimChange(int index, double dStartPos)
 {
 	//ｱﾆﾒｰｼｮﾝの範囲内かﾁｪｯｸ.
-	if (index < 0 || index >= GetAnimSetMax())return;
+	if (index < 0 || index >= GetAnimSetMax()){
+		//範囲外なら初期アニメーションを再生し,怒る.
+		m_pMesh->ChangeAnimSet_StartPos(0, dStartPos, m_pAnimCtrl);
+		assert( !"範囲外のアニメーションが指定されました" );
+		return false;
+	}
 	m_pMesh->ChangeAnimSet_StartPos(index, dStartPos, m_pAnimCtrl);
+	return true;
 }
 
 void clsSkinMesh::ModelUpdate(TRANSFORM Transform)

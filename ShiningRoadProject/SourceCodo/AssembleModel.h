@@ -45,6 +45,9 @@ public:
 
 	void SetAnimSpd( const double &dSpd );
 
+	//パーツのアニメーション変更.
+	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
+
 #if _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
@@ -52,6 +55,8 @@ public:
 
 private:
 
+	//アニメーションリセット.
+	void AnimReSet();
 
 	//回転値抑制.
 	float GuardDirOver( float &outTheta ) const;
@@ -71,7 +76,7 @@ private:
 	//腕の角度を武器も模写する.
 	void FitJointModel( 
 		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-		const char const *RootBone, const char const *EndBone );
+		char *RootBone, char *EndBone );
 
 };
 

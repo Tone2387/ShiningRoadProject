@@ -186,9 +186,6 @@
     <ClCompile Include="SourceCodo\PartsLeg.cpp">
       <Filter>Tahara\Parts</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\PartsSet.cpp">
-      <Filter>Tahara\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\PartsWeapon.cpp">
       <Filter>Tahara\Parts</Filter>
     </ClCompile>
@@ -375,9 +372,6 @@
       <Filter>Tahara\Parts</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\PartsLeg.h">
-      <Filter>Tahara\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\PartsSet.h">
       <Filter>Tahara\Parts</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\PartsWeapon.h">

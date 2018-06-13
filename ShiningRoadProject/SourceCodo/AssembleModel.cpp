@@ -88,6 +88,8 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 	SetRot( { 0.0f, 0.0f, 0.0f } );
 	SetScale( 1.0f );
 	SetAnimSpd( dANIM_SPD );
+
+//	AnimReSet();
 }
 
 void clsASSEMBLE_MODEL::UpDate()
@@ -137,6 +139,7 @@ void clsASSEMBLE_MODEL::AttachModel(
 		m_wpResource->GetPartsModels( enParts, PartsNum ) );
 	m_wppParts[ucParts]->SetAnimSpeed( m_dAnimSpd );
 	
+//	AnimReSet();
 }
 
 
@@ -233,6 +236,18 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 }
 
 
+
+//パーツのアニメーション変更.
+bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex )
+{
+	char cPartsIndex = static_cast<char>( enParts );
+	assert( m_wppParts );
+	assert( m_wppParts[ cPartsIndex ] );
+	return m_wppParts[ cPartsIndex ]->PartsAnimChange( iIndex );
+}
+
+
+
 //回転値抑制.
 float clsASSEMBLE_MODEL::GuardDirOver( float &outTheta ) const
 {
@@ -258,12 +273,12 @@ float clsASSEMBLE_MODEL::GuardDirOver( float &outTheta ) const
 //腕の角度を武器も模写する.
 void clsASSEMBLE_MODEL::FitJointModel( 
 	clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-	const char const *RootBone, const char const *EndBone )
+	char *RootBone, char *EndBone )
 {
 	//ボーンのベクトルを出す.
 	D3DXVECTOR3 vVec = 
-		pBace->GetBonePos( const_cast<char*>( EndBone ) ) - 
-		pBace->GetBonePos( const_cast<char*>( RootBone ) );
+		pBace->GetBonePos( EndBone ) - 
+		pBace->GetBonePos( RootBone );
 	D3DXVec3Normalize( &vVec, &vVec );
 
 	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
@@ -280,6 +295,14 @@ void clsASSEMBLE_MODEL::FitJointModel(
 	pMover->SetRotation( vRot );
 }
 
+
+//アニメーションリセット.
+void clsASSEMBLE_MODEL::AnimReSet()
+{
+	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
+		m_wppParts[i]->PartsAnimChange( 0 );
+	}
+}
 
 
 

@@ -137,6 +137,9 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 	}
 	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		Undo();
+		static int siCORE_ANIM_NO = 0;
+		m_pAsmModel->PartsAnimChange( enPARTS::CORE, siCORE_ANIM_NO++ );
+		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
 	}
 
 

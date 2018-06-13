@@ -1,16 +1,6 @@
 #pragma once
 
 
-//
-//	ステータスがこいつに必要なのかが非常に怪しい。.
-//
-//	アセンブルシーンに各パーツのファイルクラスを持たせよう.
-//
-//
-//
-//
-//
-//
 
 #include "Global.h"
 #include "SkinMesh.h"
@@ -44,12 +34,8 @@ public:
 		const D3DXVECTOR4 &vColor,
 		const bool isAlpha );
 
-
-	//パーツのステータスを吐き出す( 添え字は各クラスの列挙体を参照されたし ).
-	int GetStatus( PARTS_STATUS_TYPE Num );
-	//ステータスセット( 第一引数:ステータスに入れる数  第二引数:for文のカウント ).
-	template<class T>
-	void SetStatus( const int iStatus, const T tNum );
+	//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
+	bool PartsAnimChange( const int iIndex );
 
 protected:
 	//----- 各パーツごとの関数 -----//.
