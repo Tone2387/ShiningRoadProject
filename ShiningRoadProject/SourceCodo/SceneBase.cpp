@@ -14,19 +14,21 @@ const float fRENDER_LIMIT = 640.0f;//150.0f.
 //========== 基底クラス ==========//
 //================================//
 clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
-	:m_wpDevice( ptrGroup->GetDevice() )
-	,m_wpContext( ptrGroup->GetContext() )
-	,m_wpViewPort( ptrGroup->GetViewPort() )
-	,m_wpPtrGroup( ptrGroup )
-	,m_wpDxInput( ptrGroup->GetDxInput() )
-	,m_wpResource( ptrGroup->GetResource() )
-	,m_wpEffects( ptrGroup->GetEffects() )
-	,m_wpSound( ptrGroup->GetSound() )
-	,m_wpCamera( ptrGroup->GetCamera() )
-	,m_wpRoboStatus( ptrGroup->GetRoboStatus() )
+	:m_wpPtrGroup( ptrGroup )
+	,m_wpDevice(		m_wpPtrGroup->GetDevice() )
+	,m_wpContext(		m_wpPtrGroup->GetContext() )
+	,m_wpViewPort(		m_wpPtrGroup->GetViewPort() )
+	,m_wpDxInput(		m_wpPtrGroup->GetDxInput() )
+	,m_wpResource(		m_wpPtrGroup->GetResource() )
+	,m_wpEffects(		m_wpPtrGroup->GetEffects() )
+	,m_wpSound(			m_wpPtrGroup->GetSound() )
+	,m_wpCamera(		m_wpPtrGroup->GetCamera() )
+	,m_wpRoboStatus(	m_wpPtrGroup->GetRoboStatus() )
+	,m_wpBlackScreen(	m_wpPtrGroup->GetBlackScreen() )
 #if _DEBUG
 	,m_upText( nullptr )
 #endif//#if _DEBUG
+	,m_enNextScene( enSCENE::NOTHING )
 {
 }
 
@@ -35,6 +37,10 @@ clsSCENE_BASE::~clsSCENE_BASE()
 #if _DEBUG
 	SAFE_DELETE( m_upText );
 #endif//#if _DEBUG
+
+	m_enNextScene = enSCENE::NOTHING;
+
+	m_wpBlackScreen = nullptr;
 	m_wpRoboStatus = nullptr;
 	m_wpCamera = nullptr;
 	m_wpSound = nullptr;
@@ -51,6 +57,15 @@ clsSCENE_BASE::~clsSCENE_BASE()
 //シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
 void clsSCENE_BASE::Create()
 {
+
+	D3DXMatrixIdentity( &m_mView );
+	D3DXMatrixIdentity( &m_mProj );	
+	m_vLight = vLIGHT_DIR;
+
+	m_wpBlackScreen->GetBright();
+
+	m_enNextScene = enSCENE::NOTHING;
+
 #if _DEBUG
 	//デバッグテキストの初期化.
 	m_upText = new clsDebugText;
@@ -64,11 +79,6 @@ void clsSCENE_BASE::Create()
 	}
 #endif//#if _DEBUG
 
-
-	D3DXMatrixIdentity( &m_mView );
-	D3DXMatrixIdentity( &m_mProj );	
-	m_vLight = vLIGHT_DIR;
-
 	//各シーンのCreate.
 	CreateProduct();
 }
@@ -77,8 +87,30 @@ void clsSCENE_BASE::Create()
 //				  指定したシーンが生成される ).
 void clsSCENE_BASE::Update( enSCENE &enNextScene )
 {
+	//enNextSceneは各シーンに直接は動かさせない.
+	enSCENE tmpScene = enNextScene;
+
+	//暗転更新.
+	m_wpBlackScreen->Update();
+
 	//各シーンのUpdate.
-	UpdateProduct( enNextScene );
+	UpdateProduct( tmpScene );
+
+//	//UpdateProduct内での受け取り( 更新 )忘れ防止.
+	m_wpBlackScreen->isBrightEnd();
+
+	//シーン変更が命令されたら.
+	if( tmpScene != enSCENE::NOTHING ){
+		//暗転開始.
+		m_wpBlackScreen->GetDark();
+		m_enNextScene = tmpScene;//次に変更するシーンを覚えさせる.
+	}
+
+	//暗転しきったらご注文のシーンに切り替える.
+	if( m_wpBlackScreen->isDarkEnd() ){
+		enNextScene = m_enNextScene;//覚えていたシーンを教える.
+		m_enNextScene = enSCENE::NOTHING;//初期化.//覚えていた忘れる.
+	}
 
 	//デバッグ用シーン切り替え.
 	DebugChangeScene( enNextScene );
@@ -94,6 +126,9 @@ void clsSCENE_BASE::Render()
 
 	//各シーンの描画.
 	RenderProduct( m_wpCamera->GetPos() );
+
+	//暗転描画.
+	m_wpBlackScreen->Render();
 
 #if _DEBUG
 	SetDepth( false );	//Zテスト:OFF.

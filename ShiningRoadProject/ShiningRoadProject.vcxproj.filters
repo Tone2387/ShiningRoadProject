@@ -216,6 +216,9 @@
     <ClCompile Include="SourceCodo\SceneBase.cpp">
       <Filter>Tahara\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\BlackScreen.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -403,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneBase.h">
       <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\BlackScreen.h">
+      <Filter>Tahara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

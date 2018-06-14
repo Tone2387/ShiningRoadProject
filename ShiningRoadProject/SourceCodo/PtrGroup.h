@@ -6,7 +6,7 @@
 #include "SoundManager.h"
 #include "Camera.h"
 #include "RoboStatus.h"
-
+#include "BlackScreen.h"
 
 class clsPOINTER_GROUP
 {
@@ -21,7 +21,8 @@ public:
 		clsResource* const pResource,
 		clsEffects* const pEffects,
 		clsSOUND_MANAGER* const pSound,
-		clsROBO_STATUS* const pRoboStatus );
+		clsROBO_STATUS* const pRoboStatus,
+		clsBLACK_SCREEN* const pBlack );
 	~clsPOINTER_GROUP();
 
 	//カメラのアドレス取得.
@@ -38,6 +39,7 @@ public:
 	clsSOUND_MANAGER*	GetSound() const;
 	clsCAMERA_BASE*	GetCamera() const;
 	clsROBO_STATUS* GetRoboStatus() const;
+	clsBLACK_SCREEN* GetBlackScreen() const;
 
 private:
 	//デバイスオブジェクト.
@@ -62,5 +64,8 @@ private:
 
 	//( シーンをまたぐ )ロボットのステータス.
 	clsROBO_STATUS*		m_wpRoboStatus;
+
+	//暗転用黒スプライト.
+	clsBLACK_SCREEN*	m_wpBlackScreen;
 };
 

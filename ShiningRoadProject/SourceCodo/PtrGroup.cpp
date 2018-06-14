@@ -9,7 +9,8 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 	clsResource* const pResource,
 	clsEffects* const pEffects,
 	clsSOUND_MANAGER* const pSound,
-	clsROBO_STATUS* const pRoboStatus )
+	clsROBO_STATUS* const pRoboStatus,
+	clsBLACK_SCREEN* const pBlack )
 		:m_wpDevice( pDevice )
 		,m_wpContext( pContext )
 		,m_wpViewPort( pViewPort )
@@ -19,6 +20,7 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 		,m_wpEffects( pEffects )
 		,m_wpSound( pSound )
 		,m_wpRoboStatus( pRoboStatus )
+		,m_wpBlackScreen( pBlack )
 		,m_wpCamera( nullptr )
 {
 }
@@ -26,6 +28,7 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 clsPOINTER_GROUP::~clsPOINTER_GROUP()
 {
 	m_wpCamera = nullptr;
+	m_wpBlackScreen = nullptr;
 	m_wpRoboStatus = nullptr;
 	m_wpSound = nullptr;
 	m_wpEffects = nullptr;
@@ -96,4 +99,10 @@ clsCAMERA_BASE*	clsPOINTER_GROUP::GetCamera() const
 clsROBO_STATUS* clsPOINTER_GROUP::GetRoboStatus() const
 {
 	return m_wpRoboStatus;
+}
+
+//暗転用黒スプライト.
+clsBLACK_SCREEN* clsPOINTER_GROUP::GetBlackScreen() const
+{
+	return m_wpBlackScreen;
 }

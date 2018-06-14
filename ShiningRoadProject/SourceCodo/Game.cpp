@@ -1,5 +1,7 @@
 #include "Game.h"
 
+using namespace std;
+
 //起動時の初期シーン.
 #define START_UP_SCENE enSCENE::TITLE
 
@@ -25,6 +27,7 @@ clsGAME::clsGAME(
 		,m_spCamera( nullptr )
 		,m_pCameraFactory( nullptr )
 		,m_spRoboStatus( nullptr )
+		,m_spBlackScreen( nullptr )
 {
 
 }
@@ -36,6 +39,7 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_pCameraFactory );
 	SAFE_DELETE( m_pSceneFactory );
 	SAFE_DELETE( m_pPtrGroup );
+	SAFE_DELETE( m_spBlackScreen );
 	SAFE_DELETE( m_spRoboStatus );
 	SAFE_DELETE( m_pSound );
 	SAFE_DELETE( m_pEffect );
@@ -66,13 +70,21 @@ void clsGAME::Create()
 
 	m_spRoboStatus = new clsROBO_STATUS;
 
+	//暗転.
+	SPRITE_STATE ss;
+	ss.Anim = { 0.0f, 0.0f };
+	ss.Disp = { WND_W, WND_H };
+	m_spBlackScreen = new clsBLACK_SCREEN;
+	m_spBlackScreen->Create( m_wpDevice, m_wpContext,
+		"Data\\Image\\BlackScreen.png", ss );
+
 	//引数のポインタの集合体.
 	m_pPtrGroup = new clsPOINTER_GROUP( 
 		m_wpDevice, m_wpContext, 
 		m_wpViewPort, m_wpDepthStencilState,
 		m_spDxInput, m_pResource, 
 		m_pEffect, m_pSound,
-		m_spRoboStatus );
+		m_spRoboStatus, m_spBlackScreen );
 
 
 	//ファクトリの作成.
@@ -139,6 +151,9 @@ void clsGAME::SwitchScene( const enSCENE enNextScene )
 	//お待ちかねのシーン本体.
 	m_pScene = m_pSceneFactory->Create( enNextScene );
 	m_pScene->Create();
+
+	//明転開始.
+	m_spBlackScreen->GetBright();
 }
 
 
