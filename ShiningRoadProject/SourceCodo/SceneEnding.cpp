@@ -22,7 +22,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &nextScene )
 
 }
 
-void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 {
 
 }

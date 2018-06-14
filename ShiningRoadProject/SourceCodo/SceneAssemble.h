@@ -48,7 +48,7 @@ private:
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &nextScene ) final;
-	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
+	void RenderProduct( const D3DXVECTOR3 &vCamPos ) const final;
 
 	//コントローラ操作.
 	//カーソル移動.

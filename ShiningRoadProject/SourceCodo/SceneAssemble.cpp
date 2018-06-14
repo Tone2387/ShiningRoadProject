@@ -1,5 +1,7 @@
 #include "SceneAssemble.h"
 
+
+
 using namespace std;
 
 #define TEST_TEX_PASS "Data\\Load\\LoadBack.png"
@@ -150,7 +152,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 
 }
 
-void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 {
 //	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
 ////	ConvDimPos( m_pSprite->GetPos(), m_pParts->GetPosition() );
@@ -162,8 +164,6 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 //	m_pSprite->Render();
 
 	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
-//	m_pAsmModel->SetPos( m_pAsmModel->GetPos() );
-//	m_pAsmModel->UpDate();
 }
 
 
@@ -219,7 +219,7 @@ void clsSCENE_ASSEMBLE::Enter()
 	//引数用変数.
 	vector<int> tmpStatus;
 	tmpStatus.reserve( iStatusSize );
-	for( unsigned int i=0; i<iStatusSize; i++ ){
+	for( int i=0; i<iStatusSize; i++ ){
 		//m_pFile[]の添え字はどのパーツか、である.
 		tmpStatus.push_back( 
 			m_pFile[ m_PartsSelect.Type ]->

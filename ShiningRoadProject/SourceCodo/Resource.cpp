@@ -1,4 +1,6 @@
 #include "Resource.h"
+//コンストラクタでの配列初期化の為.
+#pragma warning( disable : 4351 )
 
 using namespace std;
 //パーツディレクトリのパス.
