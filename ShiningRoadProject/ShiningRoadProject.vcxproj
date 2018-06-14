@@ -111,6 +111,7 @@
     <ClCompile Include="SourceCodo\GameObject.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\Object.cpp" />
+    <ClCompile Include="SourceCodo\ObjFactory.cpp" />
     <ClCompile Include="SourceCodo\PartsArmBase.cpp" />
     <ClCompile Include="SourceCodo\PartsArmL.cpp" />
     <ClCompile Include="SourceCodo\PartsArmR.cpp" />
@@ -120,6 +121,7 @@
     <ClCompile Include="SourceCodo\PartsLeg.cpp" />
     <ClCompile Include="SourceCodo\PartsSet.cpp" />
     <ClCompile Include="SourceCodo\PartsWeapon.cpp" />
+    <ClCompile Include="SourceCodo\Player.cpp" />
     <ClCompile Include="SourceCodo\PtrGroup.cpp" />
     <ClCompile Include="SourceCodo\Ray.cpp" />
     <ClCompile Include="SourceCodo\Resource.cpp" />
@@ -179,6 +181,7 @@
     <ClInclude Include="SourceCodo\Main.h" />
     <ClInclude Include="SourceCodo\MyMacro.h" />
     <ClInclude Include="SourceCodo\Object.h" />
+    <ClInclude Include="SourceCodo\ObjFactory.h" />
     <ClInclude Include="SourceCodo\ObjSkinMesh.h" />
     <ClInclude Include="SourceCodo\ObjStaticMesh.h" />
     <ClInclude Include="SourceCodo\PartsArmBase.h" />
@@ -190,6 +193,7 @@
     <ClInclude Include="SourceCodo\PartsLeg.h" />
     <ClInclude Include="SourceCodo\PartsSet.h" />
     <ClInclude Include="SourceCodo\PartsWeapon.h" />
+    <ClInclude Include="SourceCodo\Player.h" />
     <ClInclude Include="SourceCodo\PtrGroup.h" />
     <ClInclude Include="SourceCodo\Ray.h" />
     <ClInclude Include="SourceCodo\Resource.h" />

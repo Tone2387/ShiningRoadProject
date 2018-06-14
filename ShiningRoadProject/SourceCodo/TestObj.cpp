@@ -29,7 +29,7 @@ void clsTestObj::Init(HWND hWnd,
 	m_pMesh->SetAnimSpeed(0.01);
 }
 
-void clsTestObj::Action(const clsDX9Mesh* pWall)
+void clsTestObj::Act(const clsDX9Mesh* pWall)
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;

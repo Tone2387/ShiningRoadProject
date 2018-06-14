@@ -32,9 +32,9 @@ public:
 		clsDxInput* pControll,
 		clsPOINTER_GROUP* const pPtrGroup );
 
-	void Action(const clsDX9Mesh* pWall);
+	void Act(const clsDX9Mesh* pWall);
 
-	void tenshi()final{ Action(NULL); };
+	void Action()final{ Act(NULL); };
 
 	void InhUpdate();//Inheritance
 

@@ -55,6 +55,9 @@
     <Filter Include="Hiyosi\Object">
       <UniqueIdentifier>{6f2b3950-f21d-4aea-8d69-161bff4a8f56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hiyosi\Player">
+      <UniqueIdentifier>{c55eb77a-6d81-4026-97f6-1f580f3326b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\Charactor.cpp">
@@ -218,6 +221,12 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\RoboStatus.cpp">
       <Filter>Tahara\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\ObjFactory.cpp">
+      <Filter>Hiyosi\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Player.cpp">
+      <Filter>Hiyosi\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -409,6 +418,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\RoboStatus.h">
       <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\ObjFactory.h">
+      <Filter>Hiyosi\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Player.h">
+      <Filter>Hiyosi\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

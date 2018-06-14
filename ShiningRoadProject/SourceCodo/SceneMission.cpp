@@ -51,11 +51,12 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 {
 	//null‚È‚çassert.
 	ASSERT_IF_NULL( m_pTestRobo );
-	m_pTestRobo->Action(m_pStage);
+	m_pTestRobo->Act(m_pStage);
 
 	D3DXVECTOR3 vLookPosTmp = m_pTestRobo->m_Trans.vPos;
 	vLookPosTmp.y += 0.5f;
 	//m_wpCamera->SetPos(vTmp);
+	//m_pTestRobo->clsObject::Updata(m_pStage);
 
 	D3DXVECTOR3 vCamPosTmp = m_pTestRobo->m_Trans.vPos + (GetVec3Dir(m_pTestRobo->m_Trans.fYaw, g_vDirBack) * 2);
 	vCamPosTmp.y += 0.5f;
