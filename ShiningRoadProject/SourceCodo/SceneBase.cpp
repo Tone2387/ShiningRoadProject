@@ -1,4 +1,4 @@
-#include "SceneClass.h"
+#include "SceneBase.h"
 #include <Windows.h>
 
 
@@ -75,13 +75,13 @@ void clsSCENE_BASE::Create()
 
 //ループ内の処理( 引数を関数内で変更すると今のシーンが破棄され、.
 //				  指定したシーンが生成される ).
-void clsSCENE_BASE::Update( enSCENE &nextScene )
+void clsSCENE_BASE::Update( enSCENE &enNextScene )
 {
 	//各シーンのUpdate.
-	UpdateProduct( nextScene );
+	UpdateProduct( enNextScene );
 
 	//デバッグ用シーン切り替え.
-	DebugChangeScene( nextScene );
+	DebugChangeScene( enNextScene );
 }
 
 //シーン内のオブジェクトの描画関数のまとめ.
@@ -144,25 +144,6 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 }
 
 
-//デバッグ用シーン切り替え.
-void clsSCENE_BASE::DebugChangeScene( enSCENE &nextScene ) const
-{
-	if( GetAsyncKeyState( 'Y' ) & 0x1 ){
-		nextScene = enSCENE::TITLE;
-	}
-	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
-		nextScene = enSCENE::ASSEMBLE;
-	}
-	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
-		nextScene = enSCENE::MISSION;
-	}
-	else if( GetAsyncKeyState( 'O' ) & 0x1 ){
-		nextScene = enSCENE::ENDING;
-	}
-	else if( GetAsyncKeyState( 'P' ) & 0x1 ){
-		nextScene = enSCENE::GAMEOVER;
-	}
-}
 
 #if _DEBUG
 void clsSCENE_BASE::RenderDebugText()
@@ -223,4 +204,25 @@ void clsSCENE_BASE::Proj()
 		static_cast<FLOAT>( WND_W ) / static_cast<FLOAT>( WND_H ),//アスペクト比(幅/高さ).
 		0.1f,				//近いビュー平面のz値.
 		fRENDER_LIMIT );	//遠いビュー平面のz値.
+}
+
+
+//デバッグ用シーン切り替え.
+void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
+{
+	if( GetAsyncKeyState( 'Y' ) & 0x1 ){
+		enNextScene = enSCENE::TITLE;
+	}
+	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
+		enNextScene = enSCENE::ASSEMBLE;
+	}
+	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
+		enNextScene = enSCENE::MISSION;
+	}
+	else if( GetAsyncKeyState( 'O' ) & 0x1 ){
+		enNextScene = enSCENE::ENDING;
+	}
+	else if( GetAsyncKeyState( 'P' ) & 0x1 ){
+		enNextScene = enSCENE::GAMEOVER;
+	}
 }

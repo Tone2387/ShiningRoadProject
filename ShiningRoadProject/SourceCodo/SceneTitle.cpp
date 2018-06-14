@@ -29,7 +29,7 @@ void clsSCENE_TITLE::CreateProduct()
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
 }
 
-void clsSCENE_TITLE::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 {
 //	//Update関数が機能しているかのテスト用回転.
 //	m_pRoboModel->AddRot( D3DXVECTOR3( 0.0f, 0.00f, 0.025f ) );

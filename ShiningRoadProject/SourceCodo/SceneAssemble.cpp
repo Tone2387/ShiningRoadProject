@@ -85,7 +85,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_wpRoboStatus->Clear();
 }
 
-void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 {
 	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
@@ -228,30 +228,33 @@ void clsSCENE_ASSEMBLE::Enter()
 		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
 	}
 
+	//何度もキャストをするのは嫌なので.
+	UCHAR tmpPartsNum = static_cast<UCHAR>( m_PartsSelect.Num );
+
 	switch( m_PartsSelect.Type )
 	{
 	case enPARTS_TYPES::LEG:
-		m_wpRoboStatus->ReceiveLeg( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::LEG, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveLeg( tmpStatus,	tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::LEG, tmpPartsNum );
 		break;
 	case enPARTS_TYPES::CORE:
-		m_wpRoboStatus->ReceiveCore( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::CORE, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveCore( tmpStatus,		tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::CORE,	tmpPartsNum );
 		break;
 	case enPARTS_TYPES::HEAD:
-		m_wpRoboStatus->ReceiveHead( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::HEAD, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveHead( tmpStatus,		tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::HEAD,	tmpPartsNum );
 		break;
 	case enPARTS_TYPES::ARMS:
-		m_wpRoboStatus->ReceiveArms( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::ARM_L, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::ARM_R, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveArms( tmpStatus,		tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::ARM_L,	tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::ARM_R,	tmpPartsNum );
 		break;
 	case enPARTS_TYPES::WEAPON:
-		m_wpRoboStatus->ReceiveWeaponL( tmpStatus, m_PartsSelect.Num );
-		m_wpRoboStatus->ReceiveWeaponR( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveWeaponL( tmpStatus,	tmpPartsNum );
+		m_wpRoboStatus->ReceiveWeaponR( tmpStatus,	tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::WEAPON_L,tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::WEAPON_R,tmpPartsNum );
 		break;
 	default:
 		break;
@@ -261,7 +264,7 @@ void clsSCENE_ASSEMBLE::Enter()
 	tmpStatus.clear();
 	tmpStatus.shrink_to_fit();
 
-//	nextScene = enSCENE::MISSION;
+//	enNextScene = enSCENE::MISSION;
 }
 
 //戻る.
