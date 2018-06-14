@@ -440,10 +440,30 @@ void clsSprite2D::SetScale( const float &fScale, const bool withZ )
 	m_vScale.z = fScale;
 }
 
-void clsSprite2D::SetAlpha( const float &fAlpha )
+void clsSprite2D::SetAlpha( const float fAlpha )
 {
 	m_fAlpha = fAlpha;
 }
+bool clsSprite2D::AddAlpha( const float fAlpha )
+{
+	//”ÍˆÍ“à.
+	bool isWithInRange = true;
+
+	m_fAlpha += fAlpha;
+
+	//”ÍˆÍŠm”F.
+	if( m_fAlpha < 0.0f ){
+		m_fAlpha = 0.0f;
+		isWithInRange = false;
+	}
+	else if( m_fAlpha > 1.0 ){
+		m_fAlpha = 1.0f;
+		isWithInRange = false;
+	}
+
+	return isWithInRange;
+}
+
 
 D3DXVECTOR3 clsSprite2D::GetPos() const
 {

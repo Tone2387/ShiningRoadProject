@@ -34,7 +34,9 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 //	//Update関数が機能しているかのテスト用回転.
 //	m_pRoboModel->AddRot( D3DXVECTOR3( 0.0f, 0.00f, 0.025f ) );
 
-
+	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
+		enNextScene = enSCENE::ASSEMBLE;
+	}
 }
 
 void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const

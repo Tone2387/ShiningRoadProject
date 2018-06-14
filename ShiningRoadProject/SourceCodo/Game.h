@@ -4,7 +4,9 @@
 #include "FactoryCamera.h"
 #include "DxInput.h"
 
+#include "BlackScreen.h"
 
+#include <memory>
 
 //ゲームの動きはこのクラスの中で行う.
 class clsGAME
@@ -47,6 +49,7 @@ private:
 	clsCAMERA_BASE*	m_spCamera;
 	//カメラファクトリ.
 	clsFACTORY_CAMERA* m_pCameraFactory;
+	
 
 	//シーン初期化に必要なポインタのまとめ.
 	clsPOINTER_GROUP* m_pPtrGroup; 
@@ -73,6 +76,9 @@ private:
 
 	//( シーンをまたぐ )ロボットのステータス.
 	clsROBO_STATUS*		m_spRoboStatus;
+
+	//暗幕を作ろう.
+	clsBLACK_SCREEN* m_spBlackScreen;
 
 };
 

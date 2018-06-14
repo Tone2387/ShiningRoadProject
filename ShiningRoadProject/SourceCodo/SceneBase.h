@@ -13,7 +13,6 @@
 #include "Sprite2DCenter.h"
 
 
-
 //================================//
 //========== 基底クラス ==========//
 //================================//
@@ -82,6 +81,7 @@ protected:
 	clsSOUND_MANAGER*	m_wpSound;
 	clsCAMERA_BASE*		m_wpCamera;	
 	clsROBO_STATUS*		m_wpRoboStatus;
+	clsBLACK_SCREEN*	m_wpBlackScreen;
 
 
 private:
@@ -96,28 +96,13 @@ private:
 	//デバッグ用シーン切り替え.
 	void DebugChangeScene( enSCENE &enNextScene ) const;
 
+	//暗転中に待ってくれるために必要.
+	enSCENE m_enNextScene;
+
 	ID3D11Device*				m_wpDevice;	//デバイスオブジェクト.
 	ID3D11DeviceContext*		m_wpContext;//デバイスコンテキスト.
 	D3D10_VIEWPORT*				m_wpViewPort;//2DSp用.
 	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
 
 
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
-	//暗幕を作ろう.
 };

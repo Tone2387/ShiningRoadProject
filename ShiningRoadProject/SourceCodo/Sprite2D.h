@@ -60,7 +60,9 @@ public:
 	void SetScale( const float &fScale, 
 		const bool withZ = false );	//X‚ÆY‚ğ“™‚µ‚¢”{—¦‚Å‘‚¯‚é.
 									//‘æ“ñˆø”‚ğtrue‚É‚·‚é‚ÆZ‚É‚à‰e‹¿‚·‚é.		
-	void SetAlpha( const float &fAlpha );
+	void SetAlpha( const float fAlpha );
+	//”ÍˆÍ‚ğover‚·‚é‚Æfalse‚ª•Ô‚Á‚Ä‚­‚é.
+	bool AddAlpha( const float fAlpha );
 
 	D3DXVECTOR3 GetPos() const;
 	D3DXVECTOR3 GetScale() const;

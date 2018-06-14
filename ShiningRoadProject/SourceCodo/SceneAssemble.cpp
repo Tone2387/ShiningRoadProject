@@ -90,6 +90,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK
+
 		static int tmpI = 0; 
 		tmpI ++;
 		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
@@ -102,14 +103,10 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, tmpI );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
 
-		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetScale( 0.5f );
-#else//#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
-		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetScale( 0.5f );
 #endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
+		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
+		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
+		m_pAsmModel->SetScale( 0.5f );
 	}
 
 	//テストモデル移動.
@@ -140,10 +137,13 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		Undo();
 		static int siCORE_ANIM_NO = 0;
-		m_pAsmModel->PartsAnimChange( enPARTS::CORE, siCORE_ANIM_NO++ );
+		m_pAsmModel->PartsAnimChange( enPARTS::LEG, siCORE_ANIM_NO++ );
 		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
 	}
 
+	if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
+		enNextScene = enSCENE::MISSION;
+	}
 
 
 
