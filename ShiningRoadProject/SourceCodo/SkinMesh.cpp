@@ -111,7 +111,7 @@ bool clsSkinMesh::SetAnimChange(int index, double dStartPos)
 	if (index < 0 || index >= GetAnimSetMax()){
 		//範囲外なら初期アニメーションを再生し,怒る.
 		m_pMesh->ChangeAnimSet_StartPos(0, dStartPos, m_pAnimCtrl);
-		assert( !"範囲外のアニメーションが指定されました" );
+//		assert( !"範囲外のアニメーションが指定されました" );
 		return false;
 	}
 	m_pMesh->ChangeAnimSet_StartPos(index, dStartPos, m_pAnimCtrl);

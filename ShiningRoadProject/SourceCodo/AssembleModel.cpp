@@ -112,9 +112,9 @@ void clsASSEMBLE_MODEL::Render(
 	ASSERT_IF_NULL( m_wppParts );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 		SetPos( GetPos() );
 		m_wppParts[i]->ModelUpdate( m_wppParts[i]->m_Trans );
+		m_wppParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 	}
 //	m_wppParts[ucLEG]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 //	m_wppParts[ucCORE]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
