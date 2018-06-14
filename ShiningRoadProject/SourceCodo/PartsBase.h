@@ -11,6 +11,10 @@
 #include <vector>
 #include <string>
 
+//コンストラクタでの配列初期化の為.
+#pragma warning( disable : 4351 )
+
+
 //ステータス列挙体の型( 継承クラスで定義している ).
 #define PARTS_STATUS_TYPE UCHAR
 

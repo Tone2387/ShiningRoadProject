@@ -35,10 +35,9 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &nextScene )
 //	m_pRoboModel->AddRot( D3DXVECTOR3( 0.0f, 0.00f, 0.025f ) );
 
 
-	DebugChangeScene( nextScene );
 }
 
-void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 {
 	m_pRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 

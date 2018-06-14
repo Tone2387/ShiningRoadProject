@@ -72,16 +72,8 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 }
 
 //•`‰æ.
-void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 {
-	//RenderŠÖ”‚Ìˆø”‚ð‘‚«‚â‚·‚­‚·‚é‚½‚ß‚Ì•Ï”.
-	
-
-	//ËÞ­°(¶Ò×)•ÏŠ·.	
-	/*D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);//ã•ûˆÊ’u.
-	D3DXMatrixLookAtLH(
-		&m_mView,//(out)ËÞ­°ŒvŽZŒ‹‰Ê.
-		&m_wpCamera->GetPos(), &m_wpCamera->GetLookPos(), &vUpVec);*/
 
 	m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
 	m_pTestRobo->Render(m_mView, m_mProj, m_vLight, vCamPos);

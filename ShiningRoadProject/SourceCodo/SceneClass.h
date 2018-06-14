@@ -46,7 +46,7 @@ protected:
 	//----- 各シーンごとの関数 -----//.
 	virtual void CreateProduct() = 0;//各シーンのCreate.
 	virtual void UpdateProduct( enSCENE &nextScene ) = 0;//各シーンのUpdate.
-	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) = 0;//各シーンのRender.
+	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) const = 0;//各シーンのRender.
 	//----- 各シーンごとの関数 -----//.
 
 	//3D座標をスクリーン( 2D )座標へと変換する.
@@ -55,16 +55,7 @@ protected:
 	D3DXVECTOR3 ConvDimPos( const D3DXVECTOR3 &v3DPos );
 
 
-	//デバッグ用シーン切り替え.
-	//すべてのシーンの一番下に置いておく.
-	void DebugChangeScene( enSCENE &nextScene ) const;
-
-
 	//----- Render用 -----//.
-	//カメラ関数.
-	void Camera();
-	//プロジェクション関数.
-	void Proj();
 	//深度テスト(Zテスト)　ON/OFF切替.
 	void SetDepth( const bool isOn );
 	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
@@ -73,8 +64,6 @@ protected:
 	//----- Render用 -----//.
 
 
-//基底クラスのポインタは基底クラスで破棄します.
-//派生クラスでは破棄しないでください.
 
 	//デバッグテキストクラス.
 #if _DEBUG
@@ -84,12 +73,11 @@ protected:
 #endif//#if _DEBUG
 
 
+	//基底クラスのポインタは基底クラスで破棄します.
+	//派生クラスでは破棄しないでください.
+
 	//以下、消すときdeleteしないでnullしてね( この基底クラスのデストラクタでやっています ).
 	//カメラ( 必要ならばこれを消して、シーンごとに異なった機能のカメラを作りましょう ).
-	ID3D11Device*				m_wpDevice;	//デバイスオブジェクト.
-	ID3D11DeviceContext*		m_wpContext;//デバイスコンテキスト.
-	D3D10_VIEWPORT*				m_wpViewPort;//2DSp用.
-	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
 	clsPOINTER_GROUP*	m_wpPtrGroup;
 	clsDxInput*			m_wpDxInput;
 	clsResource*		m_wpResource;
@@ -97,5 +85,23 @@ protected:
 	clsSOUND_MANAGER*	m_wpSound;
 	clsCAMERA_BASE*		m_wpCamera;	
 	clsROBO_STATUS*		m_wpRoboStatus;
+
+
+private:
+
+	//----- Render用 -----//.
+	//カメラ関数.
+	void Camera();
+	//プロジェクション関数.
+	void Proj();
+	//----- Render用 -----//.
+
+	//デバッグ用シーン切り替え.
+	void DebugChangeScene( enSCENE &nextScene ) const;
+
+	ID3D11Device*				m_wpDevice;	//デバイスオブジェクト.
+	ID3D11DeviceContext*		m_wpContext;//デバイスコンテキスト.
+	D3D10_VIEWPORT*				m_wpViewPort;//2DSp用.
+	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
 
 };

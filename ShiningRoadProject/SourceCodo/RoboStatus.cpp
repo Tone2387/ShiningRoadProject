@@ -54,7 +54,7 @@ void clsROBO_STATUS::ReceiveLeg( const vector<int> &LegDatas, const ASSEMBLE_SCE
 	m_iRoboState[enROBO_STATE::TURN]	  = LegDatas[clsPARTS_LEG::TURN];		//旋回性能.
 	m_iRoboState[enROBO_STATE::JUMP_POWER]= LegDatas[clsPARTS_LEG::JUMP_POWER];	//ジャンプ力.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::LEG ) ] = PartsNum;
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::LEG ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveCore( const vector<int> &CoreDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -73,7 +73,7 @@ void clsROBO_STATUS::ReceiveCore( const vector<int> &CoreDatas, const ASSEMBLE_S
 	m_iRoboState[enROBO_STATE::ACT_TIME]	= CoreDatas[clsPARTS_CORE::ACT_TIME];		//活動時間(ActivityTime).
 	m_iRoboState[enROBO_STATE::QUICK_TIME]	= CoreDatas[clsPARTS_CORE::QUICK_TIME];		//クイック噴射時間.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::CORE ) ] = PartsNum;
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::CORE ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveHead( const vector<int> &HeadDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -85,7 +85,7 @@ void clsROBO_STATUS::ReceiveHead( const vector<int> &HeadDatas, const ASSEMBLE_S
 	m_iRoboHp[enHAVE_HP_PARTS::HEAD]  = HeadDatas[clsPARTS_HEAD::HP];		//四つのパーツに影響される.
 	m_iRoboState[enROBO_STATE::SEARCH]= HeadDatas[clsPARTS_HEAD::SEARCH];	//索敵性能.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::HEAD ) ] = PartsNum;
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::HEAD ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveArms( const vector<int> &ArmsDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -97,8 +97,8 @@ void clsROBO_STATUS::ReceiveArms( const vector<int> &ArmsDatas, const ASSEMBLE_S
 	m_iRoboHp[enHAVE_HP_PARTS::ARMS]  = ArmsDatas[clsPARTS_ARM_BASE::HP];		//四つのパーツに影響される.
 	m_iRoboState[enROBO_STATE::AIMING]= ArmsDatas[clsPARTS_ARM_BASE::AIMING]; //照準精度( エイム ).
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::ARM_L ) ] = PartsNum;
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::ARM_R ) ] = PartsNum;
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::ARM_L ) ] = static_cast<UCHAR>( PartsNum );
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::ARM_R ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -120,7 +120,7 @@ void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas, const ASSE
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::MAGAZINE_LOAD_TIME]	= WeaponLDatas[clsPARTS_WEAPON::MAGAZINE_LOAD_TIME];	//マガジン装填時間.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::BULLETS_NUM]	= WeaponLDatas[clsPARTS_WEAPON::BULLETS_NUM];					//装弾数.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_L ) ] = PartsNum;
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_L ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -142,7 +142,7 @@ void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSE
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::MAGAZINE_LOAD_TIME]	= WeaponRDatas[clsPARTS_WEAPON::MAGAZINE_LOAD_TIME];	//マガジン装填時間.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::BULLETS_NUM]	= WeaponRDatas[clsPARTS_WEAPON::BULLETS_NUM];				//装弾数.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_R ) ] = PartsNum;
+	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_R ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 
