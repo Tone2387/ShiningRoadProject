@@ -99,9 +99,6 @@
     <ClCompile Include="SourceCodo\SceneAssemble.cpp">
       <Filter>Tahara\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\SceneClass.cpp">
-      <Filter>Tahara\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\FactoryCamera.cpp">
       <Filter>Tahara\Factory</Filter>
     </ClCompile>
@@ -216,6 +213,9 @@
     <ClCompile Include="SourceCodo\RoboStatus.cpp">
       <Filter>Tahara\Parts</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\SceneBase.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -276,9 +276,6 @@
       <Filter>Tahara\Camera</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneAssemble.h">
-      <Filter>Tahara\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SceneClass.h">
       <Filter>Tahara\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\FactoryCamera.h">
@@ -403,6 +400,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\RoboStatus.h">
       <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneBase.h">
+      <Filter>Tahara\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

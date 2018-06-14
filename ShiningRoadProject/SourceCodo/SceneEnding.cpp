@@ -17,7 +17,7 @@ void clsSCENE_ENDING::CreateProduct()
 }
 
 
-void clsSCENE_ENDING::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 {
 
 }

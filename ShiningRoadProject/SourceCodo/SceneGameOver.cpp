@@ -17,7 +17,7 @@ void clsSCENE_GAME_OVER::CreateProduct()
 }
 
 
-void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 {
 
 }

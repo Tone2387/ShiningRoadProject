@@ -29,11 +29,10 @@ public:
 	void Create();
 	//ループ内の処理( 引数を関数内で変更すると今のシーンが破棄され、.
 	//				  指定したシーンが生成される ).
-	void Update( enSCENE &nextScene );
+	void Update( enSCENE &enNextScene );
 	//シーン内のオブジェクトの描画関数のまとめ.
 	void Render();
 	//----- 各シーン共通 -----//.
-
 
 
 	//メインまで送り上げる.
@@ -42,10 +41,9 @@ public:
 
 protected:
 
-
 	//----- 各シーンごとの関数 -----//.
 	virtual void CreateProduct() = 0;//各シーンのCreate.
-	virtual void UpdateProduct( enSCENE &nextScene ) = 0;//各シーンのUpdate.
+	virtual void UpdateProduct( enSCENE &enNextScene ) = 0;//各シーンのUpdate.
 	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) const = 0;//各シーンのRender.
 	//----- 各シーンごとの関数 -----//.
 
@@ -64,7 +62,6 @@ protected:
 	//----- Render用 -----//.
 
 
-
 	//デバッグテキストクラス.
 #if _DEBUG
 	clsDebugText*	m_upText;
@@ -78,7 +75,7 @@ protected:
 
 	//以下、消すときdeleteしないでnullしてね( この基底クラスのデストラクタでやっています ).
 	//カメラ( 必要ならばこれを消して、シーンごとに異なった機能のカメラを作りましょう ).
-	clsPOINTER_GROUP*	m_wpPtrGroup;
+	clsPOINTER_GROUP*	m_wpPtrGroup;//エフェクトや効果音を必要とするロボちゃんの為にもprivateにするわけにはいかない.
 	clsDxInput*			m_wpDxInput;
 	clsResource*		m_wpResource;
 	clsEffects*			m_wpEffects;
@@ -97,11 +94,30 @@ private:
 	//----- Render用 -----//.
 
 	//デバッグ用シーン切り替え.
-	void DebugChangeScene( enSCENE &nextScene ) const;
+	void DebugChangeScene( enSCENE &enNextScene ) const;
 
 	ID3D11Device*				m_wpDevice;	//デバイスオブジェクト.
 	ID3D11DeviceContext*		m_wpContext;//デバイスコンテキスト.
 	D3D10_VIEWPORT*				m_wpViewPort;//2DSp用.
 	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
 
+
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
+	//暗幕を作ろう.
 };

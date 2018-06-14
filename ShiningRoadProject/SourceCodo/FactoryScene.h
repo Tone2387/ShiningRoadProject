@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneClass.h"
+//#include "SceneBase.h"
 #include "SceneTitle.h"
 #include "SceneAssemble.h"
 #include "SceneMission.h"

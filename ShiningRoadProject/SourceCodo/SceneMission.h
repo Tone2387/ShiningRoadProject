@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneClass.h"
+#include "SceneBase.h"
 #include "CameraMission.h"
 
 
@@ -23,7 +23,7 @@ public:
 //	//ループ内の処理( 引数のフラグをを関数内で変更すると今のシーンが破棄され、.
 //	//				  指定したシーンが生成される ).
 //	//このフラグの詳細は「SceneClass.h」の「enSCENE」を見てください.
-//	void Update( enSCENE &nextScene ) final;
+//	void Update( enSCENE &enNextScene ) final;
 //
 //	//シーン内のオブジェクトの描画関数のまとめ.
 //	void Render() final;
@@ -31,7 +31,7 @@ public:
 private:
 
 	void CreateProduct() final;
-	void UpdateProduct( enSCENE &nextScene ) final;
+	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) const final;
 
 #if _DEBUG

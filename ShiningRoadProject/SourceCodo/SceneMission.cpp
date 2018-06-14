@@ -47,7 +47,7 @@ void clsSCENE_MISSION::CreateProduct()
 }
 
 //毎フレーム通る処理.
-void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 {
 	//nullならassert.
 	ASSERT_IF_NULL( m_pTestRobo );
@@ -67,7 +67,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &nextScene )
 
 	//エンディングに行く場合は以下のようにする.
 	if( !"クリア条件を満たすとここを通る" ){
-		nextScene = enSCENE::ENDING;
+		enNextScene = enSCENE::ENDING;
 	}
 }
 

@@ -2,7 +2,7 @@
 
 #include "File.h"
 
-#include "SceneClass.h"
+#include "SceneBase.h"
 #include "CameraAssemble.h"
 #include "AssembleModel.h"
 
@@ -47,7 +47,7 @@ private:
 
 
 	void CreateProduct() final;
-	void UpdateProduct( enSCENE &nextScene ) final;
+	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) const final;
 
 	//ƒRƒ“ƒgƒ[ƒ‰‘€ì.
