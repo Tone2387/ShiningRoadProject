@@ -31,7 +31,7 @@ clsSprite2D::~clsSprite2D()
 //初期化.
 HRESULT clsSprite2D::Create(
 	ID3D11Device* const pDevice11, ID3D11DeviceContext* const pContext11,
-	LPSTR const fileName, const SPRITE_STATE ss )
+	const char* const fileName, const SPRITE_STATE ss )
 {
 	m_pDevice11 = pDevice11;
 	m_pDeviceContext11 = pContext11;
@@ -283,7 +283,7 @@ HRESULT clsSprite2D::InitModel( SPRITE_STATE ss )
 //	テクスチャ作成.
 //================================================
 HRESULT clsSprite2D::CreateTexture(
-	LPSTR fileName,
+	const char* const fileName,
 	ID3D11ShaderResourceView** pTex )
 {
 	//テクスチャ作成.
@@ -409,14 +409,11 @@ void clsSprite2D::Release()
 	SAFE_RELEASE( m_pVertexLayout );
 	SAFE_RELEASE( m_pVertexShader );
 
-
-//	m_pVertexShader = nullptr;
-//	m_pVertexLayout = nullptr;
-//	m_pPixelShader = nullptr;	
-//	m_pConstantBuffer = nullptr;
-//	m_pVertexBuffer = nullptr;
-//	m_pTexture = nullptr;
-//	m_pSampleLinear = nullptr;
+	m_fAlpha = 0.0f;
+	m_vScale = m_vPos = { 0.0f, 0.0f, 0.0f };
+	m_fPatternNo = { 0.0f, 0.0f };
+	m_SState.Anim = { 0.0f, 0.0f };
+	m_SState.Disp = { 0.0f, 0.0f };
 }
 
 
