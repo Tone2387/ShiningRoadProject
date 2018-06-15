@@ -55,6 +55,9 @@
     <Filter Include="Hiyosi\Object">
       <UniqueIdentifier>{6f2b3950-f21d-4aea-8d69-161bff4a8f56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\AssembleUI">
+      <UniqueIdentifier>{d9f0ad52-5110-481d-9fb5-99933f2625a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\Charactor.cpp">
@@ -218,6 +221,9 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\BlackScreen.cpp">
       <Filter>Tahara</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\AssembleUi.cpp">
+      <Filter>Tahara\AssembleUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -409,6 +415,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\BlackScreen.h">
       <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AssembleUi.h">
+      <Filter>Tahara\AssembleUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

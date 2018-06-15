@@ -14,6 +14,16 @@ const string sPARTS_STATUS_PASS[] =
 	"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
 };
 
+//モデルさんの初期位置.
+const D3DXVECTOR3 vINIT_ROBO_POS = { 41.0f, -29.0f, 0.0f };
+const D3DXVECTOR3 vINIT_ROBO_ROT = { 5.98f, 0.615f, 0.05f };
+const float fINIT_ROBO_SCALE = 0.5f;
+
+//カメラの初期位置.
+const D3DXVECTOR3 vINIT_CAMERA_POS = { 0.0f, 0.0f, -100.0f };
+const D3DXVECTOR3 vINIT_CAMERA_LOOK_POS = { 0.0f, 0.0f, 0.0f };
+
+
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -67,17 +77,24 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//パーツのステータス読み込み.
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
-		if( m_pFile[i] != nullptr ) continue;
+		if( m_pFile[i] != nullptr ){
+			assert( !"m_pFile[i]は作成済みです" );
+			continue;
+		}
 		m_pFile[i] = new clsFILE;
 		m_pFile[i]->Open( sPARTS_STATUS_PASS[i] );
 	}
 
 	//モデルさん作成.
+	assert( m_pAsmModel == nullptr );
 	m_pAsmModel = new clsASSEMBLE_MODEL;
 	m_pAsmModel->Create( m_wpResource, m_wpRoboStatus );
+	m_pAsmModel->SetPos( vINIT_ROBO_POS );
+	m_pAsmModel->SetRot( vINIT_ROBO_ROT );
+	m_pAsmModel->SetScale( fINIT_ROBO_SCALE );
 
-	m_wpCamera->SetPos( { 0.0f, 0.0f, -100.0f } );
-	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
+	m_wpCamera->SetPos( vINIT_CAMERA_POS );
+	m_wpCamera->SetLookPos( vINIT_CAMERA_LOOK_POS );
 
 	//ミッションシーンに引き継ぐ情報の初期化.
 	m_wpRoboStatus->Clear();
@@ -85,6 +102,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 {
+#if _DEBUG
 	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK
@@ -102,9 +120,9 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
 
 #endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
-		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetScale( 0.5f );
+		m_pAsmModel->SetPos( vINIT_ROBO_POS );
+		m_pAsmModel->SetRot( vINIT_ROBO_ROT );
+		m_pAsmModel->SetScale( fINIT_ROBO_SCALE );
 	}
 
 	//テストモデル移動.
@@ -124,6 +142,24 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( GetAsyncKeyState( 'Y' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, 0.0f, -rrr } );
 
 
+	if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
+//		enNextScene = enSCENE::MISSION;
+		static int tmpLAnim = 0;
+		m_pAsmModel->PartsAnimChange( static_cast<enPARTS>( m_PartsSelect.Type ), tmpLAnim++ );
+		if( tmpLAnim >= 5 ) tmpLAnim = 0;
+	}
+	if( GetAsyncKeyState( VK_F7 ) & 0x1 ){
+		static int siCORE_ANIM_NO = 0;
+		m_pAsmModel->PartsAnimChange( enPARTS::LEG, siCORE_ANIM_NO++ );
+		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
+	}
+
+#endif//#if _DEBUG
+
+
+
+
+
 	//選択肢.
 	if( GetAsyncKeyState( VK_RIGHT ) & 0x1 )MoveCursorRight();
 	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ) MoveCursorLeft();
@@ -134,17 +170,8 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	}
 	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		Undo();
-		static int siCORE_ANIM_NO = 0;
-		m_pAsmModel->PartsAnimChange( enPARTS::LEG, siCORE_ANIM_NO++ );
-		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
 	}
 
-	if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
-//		enNextScene = enSCENE::MISSION;
-		static int tmpLAnim = 0;
-		m_pAsmModel->PartsAnimChange( static_cast<enPARTS>( m_PartsSelect.Type ), tmpLAnim++ );
-		if( tmpLAnim >= 5 ) tmpLAnim = 0;
-	}
 
 
 

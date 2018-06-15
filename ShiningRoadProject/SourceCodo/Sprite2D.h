@@ -46,9 +46,11 @@ public:
 	virtual ~clsSprite2D();	//デストラクタ.
 
 	//初期化.
-	HRESULT Create( ID3D11Device* const pDevice11,
+	HRESULT Create( 
+		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11,
-		LPSTR const fileName, const SPRITE_STATE ss );
+		const char* const fileName, 
+		const SPRITE_STATE ss );
 
 
 	//描画(レンダリング)
@@ -81,7 +83,7 @@ protected:
 	//モデル作成.
 	virtual HRESULT InitModel( SPRITE_STATE ss );
 	//テクスチャ作成.
-	HRESULT CreateTexture( LPSTR fileName,
+	HRESULT CreateTexture( const char* const fileName,
 		ID3D11ShaderResourceView** pTex );
 
 	void Release();
