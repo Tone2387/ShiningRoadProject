@@ -31,6 +31,7 @@ const D3DXVECTOR3 vINIT_CAMERA_LOOK_POS = { 0.0f, 0.0f, 0.0f };
 clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pFile()//îzóÒÇ0Ç≈èâä˙âª.
 	,m_pAsmModel( nullptr )
+	,m_pUI( nullptr )
 {
 	//îOÇÃÇΩÇﬂ.
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
@@ -41,6 +42,7 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 {
 	SAFE_DELETE( m_pAsmModel );
+	SAFE_DELETE( m_pUI );
 
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
 		if( m_pFile[i] == nullptr ) continue;
@@ -84,6 +86,10 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 		m_pFile[i] = new clsFILE;
 		m_pFile[i]->Open( sPARTS_STATUS_PASS[i] );
 	}
+
+	//UI.
+	m_pUI = new clsASSEMBLE_UI;
+	m_pUI->Create( m_wpDevice, m_wpContext );
 
 	//ÉÇÉfÉãÇ≥ÇÒçÏê¨.
 	assert( m_pAsmModel == nullptr );
@@ -173,14 +179,14 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	}
 
 
-
-
+	m_pUI->Input();
+	m_pUI->Update();
 	m_pAsmModel->UpDate();
 
 
 }
 
-void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
+void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 //	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
 ////	ConvDimPos( m_pSprite->GetPos(), m_pParts->GetPosition() );
@@ -192,6 +198,10 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
 //	m_pSprite->Render();
 
 	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
+
+	SetDepth( false );
+	m_pUI->Render();
+	SetDepth( true );
 }
 
 

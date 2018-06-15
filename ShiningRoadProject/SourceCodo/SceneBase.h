@@ -43,7 +43,7 @@ protected:
 	//----- 各シーンごとの関数 -----//.
 	virtual void CreateProduct() = 0;//各シーンのCreate.
 	virtual void UpdateProduct( enSCENE &enNextScene ) = 0;//各シーンのUpdate.
-	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) const = 0;//各シーンのRender.
+	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) = 0;//各シーンのRender.
 	//----- 各シーンごとの関数 -----//.
 
 	//3D座標をスクリーン( 2D )座標へと変換する.
@@ -74,14 +74,16 @@ protected:
 
 	//以下、消すときdeleteしないでnullしてね( この基底クラスのデストラクタでやっています ).
 	//カメラ( 必要ならばこれを消して、シーンごとに異なった機能のカメラを作りましょう ).
-	clsPOINTER_GROUP*	m_wpPtrGroup;//エフェクトや効果音を必要とするロボちゃんの為にもprivateにするわけにはいかない.
-	clsDxInput*			m_wpDxInput;
-	clsResource*		m_wpResource;
-	clsEffects*			m_wpEffects;
-	clsSOUND_MANAGER*	m_wpSound;
-	clsCAMERA_BASE*		m_wpCamera;	
-	clsROBO_STATUS*		m_wpRoboStatus;
-	clsBLACK_SCREEN*	m_wpBlackScreen;
+	clsPOINTER_GROUP*		m_wpPtrGroup;//エフェクトや効果音を必要とするロボちゃんの為にもprivateにするわけにはいかない.
+	ID3D11Device*			m_wpDevice;	//デバイスオブジェクト.
+	ID3D11DeviceContext*	m_wpContext;//デバイスコンテキスト.
+	clsDxInput*				m_wpDxInput;
+	clsResource*			m_wpResource;
+	clsEffects*				m_wpEffects;
+	clsSOUND_MANAGER*		m_wpSound;
+	clsCAMERA_BASE*			m_wpCamera;	
+	clsROBO_STATUS*			m_wpRoboStatus;
+	clsBLACK_SCREEN*		m_wpBlackScreen;
 
 
 private:
@@ -99,8 +101,6 @@ private:
 	//暗転中に待ってくれるために必要.
 	enSCENE m_enNextScene;
 
-	ID3D11Device*				m_wpDevice;	//デバイスオブジェクト.
-	ID3D11DeviceContext*		m_wpContext;//デバイスコンテキスト.
 	D3D10_VIEWPORT*				m_wpViewPort;//2DSp用.
 	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
 

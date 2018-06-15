@@ -23,7 +23,7 @@ private:
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
-	void RenderProduct( const D3DXVECTOR3 &vCamPos ) const final;
+	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 #if _DEBUG
 	//デバック゛テキストの表示.

@@ -72,7 +72,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 }
 
 //•`‰æ.
-void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
+void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 
 	m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);

@@ -6,6 +6,8 @@
 #include "CameraAssemble.h"
 #include "AssembleModel.h"
 
+#include "AssembleUi.h"
+
 #include <vector>
 #include <string>
 
@@ -48,7 +50,7 @@ private:
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
-	void RenderProduct( const D3DXVECTOR3 &vCamPos ) const final;
+	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 	//コントローラ操作.
 	//カーソル移動.
@@ -78,6 +80,9 @@ private:
 
 	//お着換えするモデル.
 	clsASSEMBLE_MODEL*	m_pAsmModel;
+
+	//UI.
+	clsASSEMBLE_UI*		m_pUI;
 
 	clsFILE*	m_pFile[enPARTS_TYPES::ENUM_SIZE];
 
