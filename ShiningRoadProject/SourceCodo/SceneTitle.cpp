@@ -39,7 +39,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	}
 }
 
-void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos ) const
+void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 	m_pRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
