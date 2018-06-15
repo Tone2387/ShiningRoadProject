@@ -21,6 +21,7 @@ const D3DXVECTOR3 g_vDirUp		= D3DXVECTOR3(  0.0f,  1.0f,  0.0f);
 const D3DXVECTOR3 g_vDirDown	= D3DXVECTOR3(  0.0f, -1.0f,  0.0f);
 
 const float g_fGroundSpece = 0.01f;
+const float g_fRaySpace = 1.0f;
 
 //ЙёУ]ТlТ▓Ро.
 void ObjRollOverGuard(float* fRot);
