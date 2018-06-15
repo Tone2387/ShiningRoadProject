@@ -59,21 +59,42 @@ public:
 
 	virtual void tenshi()override{};
 
-	bool m_bBoost;
+	bool m_bBoost;//true:ブースター展開/false:非展開.
 
-	float m_fWalktMoveSpeedMax;
-	int m_iWalkTopSpeedFrame;
+	//Headパーツから数値を取得する変数と関連する変数//
+
+	//Coreパーツから数値を取得する変数と関連する変数//
+	int m_iEnelgyMax;//エネルギー最大容量.
+	int m_iEnelgy;//現在エネルギー残量.
+	int m_iEnelgyOutput;//エネルギー出力(回復量)
 
 	float m_fBoostMoveSpeedMax;
-	int m_iBoostTopSpeedFrame;
 
-	float m_fBoostRisingSpeedMax;//スピードの最大値.
+	float m_fQuickMoveSpeedMax;//
+	int m_iQuickEnelgyCost;
+	int m_iQuickTopSpeedTime;//最高速を保つフレーム値.
+
+	int m_iQuickDecStartTime;//残クイック噴射時間.
+
+	int m_iQuickInterbal;//クイックブーストの再噴射までのフレーム.
+
+	float m_fBoostRisingSpeedMax;//ブースター垂直移動の最高速.
 	int m_iBoostRisingTopSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fBoostRisingAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
+	float m_fBoostFollRes;//ブースター展開時に
 
-	float m_fBoostFollRes;
+	//Armパーツから数値を取得する変数と関連する変数//
 
-	int m_iQuickInterbal;
+	//Legパーツから数値を取得する変数と関連する変数//
+	float m_fWalktMoveSpeedMax;//Legパーツから取得する歩行速度.
+	int m_iWalkTopSpeedFrame;//安定性能から計算.
+	
+
+	int m_iBoostTopSpeedFrame;//安定性能から計算.
+
+	
+
+	
 
 	void Walk();
 	void Boost();
