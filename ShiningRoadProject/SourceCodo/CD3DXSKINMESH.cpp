@@ -1492,6 +1492,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	D3DXMATRIX	Scale, Yaw, Pitch, Roll, Tran;
 	// Šgk.
 	D3DXMatrixScaling( &Scale, m_Trans.vScale.x, m_Trans.vScale.y, m_Trans.vScale.z );
+	//‰ñ“].
 	D3DXMatrixRotationY( &Yaw, m_Trans.fYaw );		// YŽ²‰ñ“].
 	D3DXMatrixRotationX( &Pitch, m_Trans.fPitch );	// XŽ²‰ñ“].
 	D3DXMatrixRotationZ( &Roll, m_Trans.fRoll );		// ZŽ²‰ñ“].
@@ -1499,7 +1500,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	//=================================================================//
 
 	// ‰ñ“]s—ñ(‡¬)
-	m_mRotation = Yaw * Pitch * Roll;	
+	m_mRotation = Roll * Pitch * Yaw;	
 	// •½sˆÚ“®.
 	D3DXMatrixTranslation( &Tran, m_Trans.vPos.x, m_Trans.vPos.y, m_Trans.vPos.z );
 	// ƒ[ƒ‹ƒhs—ñ.
@@ -1745,8 +1746,8 @@ bool clsD3DXSKINMESH::GetPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos)
 			D3DXMatrixRotationZ( &mRoll, m_Trans.fRoll);
 			D3DXMatrixTranslation(&mTran, tmpPos.x, tmpPos.y, tmpPos.z);
 
-			mRot = mYaw * mPitch * mRoll;
-			mWorld = mTran * mRot* mScale;
+			mRot = mRoll * mPitch * mYaw;
+			mWorld = mTran * mRot * mScale;
 
 			pOutPos->x = mWorld._41 + m_Trans.vPos.x;
 			pOutPos->y = mWorld._42 + m_Trans.vPos.y;
@@ -1775,7 +1776,7 @@ bool clsD3DXSKINMESH::GetDeviaPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos,
 			D3DXMatrixRotationZ(&mRoll, m_Trans.fRoll);
 			D3DXMatrixTranslation(&mTran, tmpPos.x, tmpPos.y, tmpPos.z);
 
-			mRot = mYaw * mPitch * mRoll;
+			mRot = mRoll * mPitch * mYaw;
 			mWorld = mTran * mScale * mRot;
 
 			pOutPos->x = mWorld._41 + m_Trans.vPos.x;

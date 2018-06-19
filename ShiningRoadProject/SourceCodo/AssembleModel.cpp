@@ -175,9 +175,9 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 		m_wppParts[ucARM_R]->GetBonePos( BONE_NAME_ARM_R_TO_WEAPON_R ) );
 
 	FitJointModel( m_wppParts[ucWEAPON_L], m_wppParts[ucARM_L],
-		"ArmLJunctionCore", "ArmLJunctionWeapon" );//ArmLJunctionWeapon.
+		"ArmLJunctionCore", "ArmLJunctionWeapon" );//ArmLJunctionWeapon.ArmLJunctionCore
 	FitJointModel( m_wppParts[ucWEAPON_R], m_wppParts[ucARM_R],
-		"ArmR0", "ArmR3" );
+		"ArmRJunctionCore", "ArmRJunctionWeapon" );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
@@ -212,6 +212,11 @@ void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
 {
 	SetRot( D3DXVECTOR3( m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll ) + vRot );
 }
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetRot() const
+{
+	return { m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll };
+}
+
 
 void clsASSEMBLE_MODEL::SetScale( const float fScale )
 {
@@ -282,11 +287,14 @@ void clsASSEMBLE_MODEL::FitJointModel(
 	D3DXVec3Normalize( &vVec, &vVec );
 
 	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
-	vRot.x = atan2f( vVec.y, vVec.z );
-	vRot.y = atan2f( vVec.z, vVec.x );
-	vRot.z = atan2f( vVec.x, vVec.y );
-
-
+//	//この三行はメモ.
+//	vRot.x = atan2f( vVec.y, -vVec.z );
+//	vRot.y = atan2f( vVec.z, -vVec.x );
+//	vRot.z = atan2f( vVec.x, -vVec.y );	
+	
+	vRot.x = atanf( vVec.y );//このゲームの仕様なら正解( 2018/06/19(火)現在 ).
+	vRot.y = atan2f( vVec.z, -vVec.x );//正解.
+	vRot.y += static_cast<float>( D3DX_PI ) * 0.5f;
 
 	vRot.x = GuardDirOver( vRot.x );
 	vRot.y = GuardDirOver( vRot.y );

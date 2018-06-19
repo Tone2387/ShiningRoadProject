@@ -115,7 +115,7 @@ void clsSPRITE2D_CENTER::Render()
 		m_vPos.x, m_vPos.y, m_vPos.z);
 
 	//合成.
-	mWorld = mScale * mYaw * mPitch * mRoll * mTrans;
+	mWorld = mScale * mRoll * mPitch * mYaw * mTrans;
 
 	//使用するシェーダの登録.
 	m_pDeviceContext11->VSSetShader(m_pVertexShader, NULL, 0);

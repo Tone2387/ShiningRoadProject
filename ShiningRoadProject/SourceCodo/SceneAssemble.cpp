@@ -129,6 +129,8 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_pAsmModel->SetPos( vINIT_ROBO_POS );
 		m_pAsmModel->SetRot( vINIT_ROBO_ROT );
 		m_pAsmModel->SetScale( fINIT_ROBO_SCALE );
+
+		m_pAsmModel->SetRot( { 0.0f, 0.0f, 0.0f } );
 	}
 
 	//テストモデル移動.
@@ -353,6 +355,13 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 		m_pAsmModel->GetPos().x, 
 		m_pAsmModel->GetPos().y, 
 		m_pAsmModel->GetPos().z );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	sprintf_s( strDbgTxt, 
+		"ModelRot : x[%f], y[%f], z[%f]",
+		m_pAsmModel->GetRot().x, 
+		m_pAsmModel->GetRot().y, 
+		m_pAsmModel->GetRot().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	//各パーツのpos.
