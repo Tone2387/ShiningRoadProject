@@ -96,8 +96,8 @@
     <ClCompile Include="SourceCodo\CharaStatic.cpp" />
     <ClCompile Include="SourceCodo\Common.cpp" />
     <ClCompile Include="SourceCodo\CXInput.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="SourceCodo\DebugText.cpp" />
     <ClCompile Include="SourceCodo\DX9Mesh.cpp" />
@@ -161,8 +161,8 @@
     <ClInclude Include="SourceCodo\CharaStatic.h" />
     <ClInclude Include="SourceCodo\Common.h" />
     <ClInclude Include="SourceCodo\CXInput.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="SourceCodo\DebugText.h" />
     <ClInclude Include="SourceCodo\DX9Mesh.h" />
