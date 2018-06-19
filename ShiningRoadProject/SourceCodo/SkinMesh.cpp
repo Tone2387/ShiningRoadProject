@@ -123,11 +123,11 @@ void clsSkinMesh::ModelUpdate(TRANSFORM Transform)
 	m_pMesh->m_Trans = Transform;
 }
 
-D3DXVECTOR3 clsSkinMesh::GetBonePos(char* sBoneName)
+D3DXVECTOR3 clsSkinMesh::GetBonePos( const char* sBoneName, const bool isLocalPos )
 {
 	D3DXVECTOR3 vBonePos;
 
-	m_pMesh->GetPosFromBone(sBoneName, &vBonePos);
+	m_pMesh->GetPosFromBone( sBoneName, &vBonePos, isLocalPos );
 
 	return vBonePos;
 }

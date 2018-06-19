@@ -693,7 +693,7 @@ int D3DXPARSER::GetAnimMax( LPD3DXANIMATIONCONTROLLER pAC )
 
 
 // 指定したボーン情報(行列)を取得する関数.
-bool D3DXPARSER::GetMatrixFromBone( char* sBoneName, D3DXMATRIX* pOutMat )
+bool D3DXPARSER::GetMatrixFromBone( const char* sBoneName, D3DXMATRIX* const  pOutMat ) const
 {
 	LPD3DXFRAME pFrame;
 	pFrame = (MYFRAME*)D3DXFrameFind( m_pFrameRoot, sBoneName );
@@ -711,7 +711,7 @@ bool D3DXPARSER::GetMatrixFromBone( char* sBoneName, D3DXMATRIX* pOutMat )
 
 
 // 指定したボーン情報(座標)を取得する関数.
-bool D3DXPARSER::GetPosFromBone( char* sBoneName, D3DXVECTOR3* pOutPos )
+bool D3DXPARSER::GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutPos ) const
 {
 	D3DXMATRIX mBone;
 	if( !GetMatrixFromBone( sBoneName, &mBone ) ){
@@ -1733,7 +1733,7 @@ bool clsD3DXSKINMESH::GetMatrixFromBone( char* sBoneName, D3DXMATRIX* pOutMat )
 	return false;
 }
 // 指定したボーン情報(座標)を取得する関数.
-bool clsD3DXSKINMESH::GetPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos)
+bool clsD3DXSKINMESH::GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutPos, bool isLocalPos ) const
 {
 	if( m_pD3dxMesh != NULL ){
 		D3DXVECTOR3 tmpPos;
@@ -1746,12 +1746,25 @@ bool clsD3DXSKINMESH::GetPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos)
 			D3DXMatrixRotationZ( &mRoll, m_Trans.fRoll);
 			D3DXMatrixTranslation(&mTran, tmpPos.x, tmpPos.y, tmpPos.z);
 
-			mRot = mRoll * mPitch * mYaw;
+			//ローカル座標を指定されたら.
+			if( isLocalPos ){
+				D3DXMatrixIdentity( &mRot );
+			}
+			//ワールド座標なら( 普通はこっち ).
+			else{
+				mRot = mRoll * mPitch * mYaw;
+			}
+
 			mWorld = mTran * mRot * mScale;
 
-			pOutPos->x = mWorld._41 + m_Trans.vPos.x;
-			pOutPos->y = mWorld._42 + m_Trans.vPos.y;
-			pOutPos->z = mWorld._43 + m_Trans.vPos.z;
+			pOutPos->x = mWorld._41;
+			pOutPos->y = mWorld._42;
+			pOutPos->z = mWorld._43;
+
+			//ワールド座標なら( 普通はこっち ).
+			if( !isLocalPos ){
+				*pOutPos += m_Trans.vPos;
+			}
 
 			return true;
 		}
