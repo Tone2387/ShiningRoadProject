@@ -253,8 +253,8 @@ public:
 	int GetAnimMax( LPD3DXANIMATIONCONTROLLER pAC=NULL );
 
 	// 指定したボーン情報(座標・行列)を取得する関数.
-	bool GetMatrixFromBone(char* sBoneName, D3DXMATRIX* pOutMat);
-	bool GetPosFromBone( char* sBoneName, D3DXVECTOR3* pOutPos );
+	bool GetMatrixFromBone( const char* sBoneName, D3DXMATRIX* const pOutMat ) const;
+	bool GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutPos ) const;
 
 	// メッシュ解放.
 	HRESULT ReleaseMesh( LPD3DXFRAME pFrame );
@@ -337,7 +337,7 @@ public:
 
 	// 指定したボーン情報(座標・行列)を取得する関数.
 	bool GetMatrixFromBone( char* sBoneName, D3DXMATRIX* pOutMat );
-	bool GetPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos);
+	bool GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutPos, const bool isLocalPos = false ) const;
 	bool GetDeviaPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos, D3DXVECTOR3 vDeviation = D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 private:

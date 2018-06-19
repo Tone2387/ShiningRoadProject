@@ -25,6 +25,7 @@ const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
 const double dANIM_SPD = 0.016;
 
 
+
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
 	,m_pPartsFactory( nullptr )
@@ -278,27 +279,29 @@ float clsASSEMBLE_MODEL::GuardDirOver( float &outTheta ) const
 //腕の角度を武器も模写する.
 void clsASSEMBLE_MODEL::FitJointModel( 
 	clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-	char *RootBone, char *EndBone )
+	const char *RootBone, const char *EndBone )
 {
-	//ボーンのベクトルを出す.
-	D3DXVECTOR3 vVec = 
+	//ボーンのベクトルを出す( ローカル ).
+	D3DXVECTOR3 vVecLocal = 
+		pBace->GetBonePos( EndBone, true ) - 
+		pBace->GetBonePos( RootBone, true );
+	D3DXVec3Normalize( &vVecLocal, &vVecLocal );
+
+	//ボーンのベクトルを出す( ワールド ).
+	D3DXVECTOR3 vVecWorld = 
 		pBace->GetBonePos( EndBone ) - 
 		pBace->GetBonePos( RootBone );
-	D3DXVec3Normalize( &vVec, &vVec );
+	D3DXVec3Normalize( &vVecWorld, &vVecWorld );
 
+	//ベクトルから回転値を求める.
 	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
-//	//この三行はメモ.
-//	vRot.x = atan2f( vVec.y, -vVec.z );
-//	vRot.y = atan2f( vVec.z, -vVec.x );
-//	vRot.z = atan2f( vVec.x, -vVec.y );	
-	
-	vRot.x = atanf( vVec.y );//このゲームの仕様なら正解( 2018/06/19(火)現在 ).
-	vRot.y = atan2f( vVec.z, -vVec.x );//正解.
-	vRot.y += static_cast<float>( D3DX_PI ) * 0.5f;
+//	vRot.x = atanf( vVec.y );//このゲームの仕様なら正解( 2018/06/19(火)現在 )( つまりゴリ押し ).
+	vRot.x = atan2f( vVecLocal.y, -vVecLocal.z );//( ゴリ押しの解決 ).
+	vRot.y = atan2f( -vVecWorld.x, -vVecWorld.z );//( 何故、マイナスがかかっていたり、X,Zが入れ替わっているのかといえば、0度でモデルがこっちを向くから ).
 
 	vRot.x = GuardDirOver( vRot.x );
 	vRot.y = GuardDirOver( vRot.y );
-	vRot.z = GuardDirOver( vRot.z );
+//	vRot.z = GuardDirOver( vRot.z );
 
 	pMover->SetRotation( vRot );
 }

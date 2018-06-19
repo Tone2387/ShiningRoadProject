@@ -78,7 +78,7 @@ private:
 	//˜r‚ÌŠp“x‚ğ•Ší‚à–ÍÊ‚·‚é.
 	void FitJointModel( 
 		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-		char *RootBone, char *EndBone );
+		const char *RootBone, const char *EndBone );
 
 };
 
