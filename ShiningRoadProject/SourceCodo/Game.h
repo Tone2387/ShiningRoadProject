@@ -2,7 +2,9 @@
 
 #include "FactoryScene.h"
 #include "FactoryCamera.h"
+
 #include "DxInput.h"
+#include "CXInput.h"
 
 #include "BlackScreen.h"
 
@@ -66,6 +68,7 @@ private:
 
 	//ジョイスティック.
 	clsDxInput*		m_spDxInput;
+	clsXInput*		m_spXInput;
 
 	//リソースクラス.
 	clsResource*	m_pResource;

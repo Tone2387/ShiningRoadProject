@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DxInput.h"
+#include "CXInput.h"
 #include "Resource.h"
 #include "Effects.h"
 #include "SoundManager.h"
@@ -17,7 +18,8 @@ public:
 		ID3D11DeviceContext* const pContext,
 		D3D10_VIEWPORT* const pViewPort,
 		ID3D11DepthStencilState* const pDepthState,
-		clsDxInput* const pInput,
+		clsDxInput* const pDxInput,
+		clsXInput* const pXInput,
 		clsResource* const pResource,
 		clsEffects* const pEffects,
 		clsSOUND_MANAGER* const pSound,
@@ -34,6 +36,7 @@ public:
 	D3D10_VIEWPORT* GetViewPort() const;
 	ID3D11DepthStencilState* GetDepthState() const;
 	clsDxInput* GetDxInput() const;
+	clsXInput* GetXInput() const;
 	clsResource* GetResource() const;
 	clsEffects*	GetEffects() const;
 	clsSOUND_MANAGER*	GetSound() const;
@@ -52,6 +55,7 @@ private:
 
 	//ジョイスティック.
 	clsDxInput*		m_wpDxInput;
+	clsXInput*		m_wpXInput;
 	//リソース.
 	clsResource* m_wpResource;
 	//エフェクトクラス.

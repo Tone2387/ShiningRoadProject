@@ -3,8 +3,6 @@
 #include <math.h>
 
 
-const float fSTICK_SLOPE_HIGH = 30000;
-const float fSTICK_SLOPE_LOW = 10000;
 
 
 //更新.
@@ -46,14 +44,14 @@ bool clsXInput::UpdateKeyStatus(){
 	return false;
 }
 
-bool clsXInput::IsPressStay( const WORD _padKey ) const
+bool clsXInput::isPressStay( const WORD _padKey ) const
 {
 	if( m_state.Gamepad.wButtons & _padKey ){
 		return true;
 	}
 	return false;
 }
-bool clsXInput::IsPressEnter( const WORD _padKey ) const
+bool clsXInput::isPressEnter( const WORD _padKey ) const
 {
 	if( m_state.Gamepad.wButtons & _padKey &&
 		!( m_stateOld.Gamepad.wButtons & _padKey ) )
@@ -62,7 +60,7 @@ bool clsXInput::IsPressEnter( const WORD _padKey ) const
 	}
 	return false;
 }
-bool clsXInput::IsPressExit( const WORD _padKey ) const
+bool clsXInput::isPressExit( const WORD _padKey ) const
 {
 	if( !( m_state.Gamepad.wButtons & _padKey ) &&
 		m_stateOld.Gamepad.wButtons & _padKey )
@@ -71,6 +69,64 @@ bool clsXInput::IsPressExit( const WORD _padKey ) const
 	}
 	return false;
 }
+
+//LRトリガーをボタンのように扱おう.
+bool clsXInput::isLTriggerEnter() const
+{
+	if( GetLTrigger() >= INPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bLeftTrigger < INPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+bool clsXInput::isLTriggerStay() const
+{
+	if( GetLTrigger() > 0.0f ){
+		return true;
+	}
+	return false;
+}
+bool clsXInput::isLTriggerExit() const
+{
+	if( GetLTrigger() < INPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bLeftTrigger >= INPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerEnter() const
+{
+	if( GetRTrigger() >= INPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bRightTrigger < INPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerStay() const
+{
+	if( GetRTrigger() > 0.0f ){
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerExit() const
+{
+	if( GetRTrigger() < INPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bRightTrigger >= INPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
+
+
 
 bool clsXInput::SetVibration( WORD LMotorSpd, WORD RMotorSpd )
 {
@@ -124,23 +180,22 @@ float clsXInput::GetRStickTheta() const
 }
 
 //各スティックの倒し具合.
-clsXInput::enSTICK_SLOPE clsXInput::GetLStickSlope() const
+float clsXInput::GetLStickSlope() const
 {
+	//斜めの長さが出る.
 	float fSlope = GetStickSlope( GetLThumbY(), GetLThumbX() ); 
 
-	if( fSlope > fSTICK_SLOPE_HIGH )	return enSTICK_SLOPE::HIGH;
-	else if( fSlope > fSTICK_SLOPE_LOW )return enSTICK_SLOPE::LOW;
-	
-	return enSTICK_SLOPE::NOTHING;
+	fSlope = fSlope / INPUT_THUMB_MAX;
+
+	return fSlope;
 }
-clsXInput::enSTICK_SLOPE clsXInput::GetRStickSlope() const
+float clsXInput::GetRStickSlope() const
 {
 	float fSlope = GetStickSlope( GetRThumbY(), GetRThumbX() ); 
 
-	if( fSlope > fSTICK_SLOPE_HIGH )	return enSTICK_SLOPE::HIGH;
-	else if( fSlope > fSTICK_SLOPE_LOW )return enSTICK_SLOPE::LOW;
+	fSlope = fSlope / INPUT_THUMB_MAX;
 
-	return enSTICK_SLOPE::NOTHING;
+	return fSlope;
 }
 
 
