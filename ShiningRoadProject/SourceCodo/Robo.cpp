@@ -162,7 +162,7 @@ void clsRobo::Updata()
 	{
 		if (m_fFollPower < -m_fBoostFollRes)
 		{
-			m_fFollPower += g_fGravity;
+			m_fFollPower += m_fBoostFollRes;
 		}
 	}
 
