@@ -41,6 +41,7 @@ public:
 
 	void SetRot( const D3DXVECTOR3 &vRot );
 	void AddRot( const D3DXVECTOR3 &vRot );
+	D3DXVECTOR3 GetRot() const;
 
 	void SetScale( const float fScale );
 

@@ -646,7 +646,7 @@ void clsDX9Mesh::Render( const D3DXMATRIX &mView,	const D3DXMATRIX &mProj,
 		m_Trans.vPos.x, m_Trans.vPos.y, m_Trans.vPos.z);
 
 	//合成.
-	mWorld = mScale * mYaw * mPitch * mRoll * mTrans;
+	mWorld = mScale * mRoll * mPitch * mYaw * mTrans;
 
 	//使用するシェーダをセット.
 	m_pDeviceContext11->VSSetShader(m_pVertexShader, NULL, 0);//頂点シェーダ.
