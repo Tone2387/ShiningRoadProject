@@ -1,18 +1,38 @@
 #ifndef XINPUT_H_
 #define XINPUT_H_
 
+
+/*
+	//Sceneクラスでの使い方.
+	if( m_wpXInput->isPressEnter( XINPUT_B ) ){}//ボタン.
+	if( m_wpXInput->isRTriggerEnter() ){}		//トリガーが押し込まれた瞬間.
+
+
+	//各スティックの倒し具合.
+	if( m_wpXInput->GetLStickTheta() ){}//スティックの角度(方向).
+	if( m_wpXInput->GetLStickSlope() ){}//どれだけ深く倒しているか：0.0f～1.0fで返す.
+
+
+	if( m_wpXInput->SetVibPowerL( INPUT_VIBRATION_MAX, 60, 0 ) ){}	//振動.
+
+*/
+
 #include <Windows.h>
 #include <Xinput.h>
 
 #pragma comment( lib, "xinput.lib" )
 
 //値.
-#define INPUT_TRIGGER_MIN	(0)
+#define INPUT_TRIGGER_MIN	(0)		//トリガー.
 #define INPUT_TRIGGER_MAX	(255)
-#define INPUT_THUMB_MIN		(-32768)
+#define INPUT_THUMB_MIN		(-32768)//スティック.
 #define INPUT_THUMB_MAX		(32767)
-#define INPUT_VIBRATION_MIN	(0)
+#define INPUT_VIBRATION_MIN	(0)		//振動.
 #define INPUT_VIBRATION_MAX	(65535)
+
+//スティックの倒し具合.
+const float fSLOPE_MAX = 1.0f;
+const float fSLOPE_MIN = 0.0f;
 
 
 
@@ -36,27 +56,22 @@
 class clsXInput
 {
 public:
-	//スティックの倒され具合による動作の変化.
-	enum class enSTICK_SLOPE : UCHAR
-	{
-		NOTHING = 0,
-		LOW,
-		HIGH
-	};
 
 	clsXInput(){
 		ZeroMemory( this, sizeof( clsXInput ) );
 	}
-	~clsXInput(){}
+	~clsXInput(){
+	
+	}
 
 	//毎フレーム回す.
 	bool UpdateStatus();
 	bool UpdateKeyStatus();//使わないかも?.
 
 	//ボタン入力.
-	bool IsPressEnter( const WORD _padKey ) const;
-	bool IsPressStay( const WORD _padKey ) const;
-	bool IsPressExit( const WORD _padKey ) const;
+	bool isPressEnter( const WORD _padKey ) const;	//押した瞬間.
+	bool isPressStay( const WORD _padKey ) const;	//押されてる間.
+	bool isPressExit( const WORD _padKey ) const;	//離した瞬間.
 
 	//トリガーボタン入力.
 	BYTE GetLTrigger() const {
@@ -77,6 +92,15 @@ public:
 	SHORT GetRThumbY() const {
 		return m_state.Gamepad.sThumbRY;
 	}
+	
+	//LRトリガーをボタンのように扱おう.
+	bool isLTriggerEnter() const;
+	bool isLTriggerStay() const;
+	bool isLTriggerExit() const;
+	bool isRTriggerEnter() const;
+	bool isRTriggerStay() const;
+	bool isRTriggerExit() const;
+
 
 
 	//左スティックの角度.
@@ -84,12 +108,12 @@ public:
 	//右スティックの角度.
 	float GetRStickTheta() const;
 
-	//各スティックの倒し具合.
-	enSTICK_SLOPE GetLStickSlope() const;
-	enSTICK_SLOPE GetRStickSlope() const;
+	//各スティックの倒し具合( どれだけ深く倒しているか：0.0f～1.0fで返す ).
+	float GetLStickSlope() const;
+	float GetRStickSlope() const;
 
 
-	//振動を与えよう.
+	//振動を与えよう.//第一引数：振動の強さ, 第二引数：振動時間(何フレーム), 第三引数：減衰量(1フレームあたりの).
 	void SetVibPowerL( int iVibL, const int iTime, int iVibDecL = 0 );
 	void SetVibPowerR( int iVibR, const int iTime, int iVibDecR = 0 );
 

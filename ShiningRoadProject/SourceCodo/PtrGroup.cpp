@@ -5,7 +5,8 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 	ID3D11DeviceContext* const pContext,
 	D3D10_VIEWPORT* const pViewPort,
 	ID3D11DepthStencilState* const pDepthState,
-	clsDxInput* const pInput,
+		clsDxInput* const pDxInput,
+		clsXInput* const pXInput,
 	clsResource* const pResource,
 	clsEffects* const pEffects,
 	clsSOUND_MANAGER* const pSound,
@@ -15,7 +16,8 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 		,m_wpContext( pContext )
 		,m_wpViewPort( pViewPort )
 		,m_wpDepthStencilState( pDepthState )
-		,m_wpDxInput( pInput )
+		,m_wpDxInput( pDxInput )
+		,m_wpXInput( pXInput )
 		,m_wpResource( pResource )
 		,m_wpEffects( pEffects )
 		,m_wpSound( pSound )
@@ -33,6 +35,7 @@ clsPOINTER_GROUP::~clsPOINTER_GROUP()
 	m_wpSound = nullptr;
 	m_wpEffects = nullptr;
 	m_wpResource = nullptr;
+	m_wpXInput = nullptr;
 	m_wpDxInput = nullptr;
 	m_wpDepthStencilState = nullptr;
 	m_wpViewPort = nullptr;
@@ -71,6 +74,10 @@ ID3D11DepthStencilState* clsPOINTER_GROUP::GetDepthState() const
 clsDxInput* clsPOINTER_GROUP::GetDxInput() const
 {
 	return m_wpDxInput;
+}
+clsXInput* clsPOINTER_GROUP::GetXInput() const
+{
+	return m_wpXInput;
 }
 
 //ÉäÉ\Å[ÉX.

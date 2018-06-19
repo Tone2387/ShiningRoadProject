@@ -78,6 +78,7 @@ protected:
 	ID3D11Device*			m_wpDevice;	//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_wpContext;//デバイスコンテキスト.
 	clsDxInput*				m_wpDxInput;
+	clsXInput*				m_wpXInput;
 	clsResource*			m_wpResource;
 	clsEffects*				m_wpEffects;
 	clsSOUND_MANAGER*		m_wpSound;

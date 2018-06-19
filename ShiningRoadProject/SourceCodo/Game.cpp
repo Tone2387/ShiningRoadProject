@@ -19,6 +19,7 @@ clsGAME::clsGAME(
 		,m_wpDepthStencilState( pDepthState )
 		,m_pPtrGroup( nullptr )
 		,m_spDxInput( nullptr )
+		,m_spXInput( nullptr )
 		,m_pResource( nullptr )
 		,m_pEffect( nullptr )
 		,m_pSound( nullptr )
@@ -44,6 +45,13 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_pSound );
 	SAFE_DELETE( m_pEffect );
 	SAFE_DELETE( m_pResource );
+//	SAFE_DELETE( m_spXInput );
+	if( m_spXInput != nullptr ){
+		m_spXInput->EndProc();
+		XInputEnable( false );
+		delete m_spXInput;
+		m_spXInput = nullptr;
+	}
 	SAFE_DELETE( m_spDxInput );
 
 	m_wpDepthStencilState = nullptr;
@@ -59,6 +67,9 @@ void clsGAME::Create()
 	ASSERT_IF_NOT_NULL( m_spDxInput );
 	m_spDxInput = new clsDxInput;
 	m_spDxInput->initDI(m_hWnd);
+
+	ASSERT_IF_NOT_NULL( m_spXInput );
+	m_spXInput = new clsXInput;
 
 	m_pResource = new clsResource;
 	m_pResource->Create( m_hWnd, m_wpDevice, m_wpContext );
@@ -82,8 +93,8 @@ void clsGAME::Create()
 	m_pPtrGroup = new clsPOINTER_GROUP( 
 		m_wpDevice, m_wpContext, 
 		m_wpViewPort, m_wpDepthStencilState,
-		m_spDxInput, m_pResource, 
-		m_pEffect, m_pSound,
+		m_spDxInput, m_spXInput,
+		m_pResource, m_pEffect, m_pSound,
 		m_spRoboStatus, m_spBlackScreen );
 
 
@@ -108,6 +119,9 @@ void clsGAME::Update()
 	//コントローラ入力情報更新.
 	ASSERT_IF_NULL( m_spDxInput );
 	m_spDxInput->UpdataInputState();
+
+	ASSERT_IF_NULL( m_spXInput );
+	m_spXInput->UpdateStatus();
 
 	//シーンが作られているなら.
 	ASSERT_IF_NULL( m_pScene );
