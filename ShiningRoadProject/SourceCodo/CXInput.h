@@ -1,19 +1,26 @@
 #ifndef XINPUT_H_
 #define XINPUT_H_
 
+//アナログ入力を正規化する.
+#define NORMALIZE_ANALOG_INPUT
+
+//日吉君のDxInputとのすり合わせ( スティックの角度を[0～360]->[-180～180]にする ).
+#define HIYOSHI_DX_INPUT
 
 /*
-	//Sceneクラスでの使い方.
+	//----- Sceneクラスでの使用例 -----//.
+
+	//ボタン.
 	if( m_wpXInput->isPressEnter( XINPUT_B ) ){}//ボタン.
 	if( m_wpXInput->isRTriggerEnter() ){}		//トリガーが押し込まれた瞬間.
 
 
 	//各スティックの倒し具合.
-	if( m_wpXInput->GetLStickTheta() ){}//スティックの角度(方向).
-	if( m_wpXInput->GetLStickSlope() ){}//どれだけ深く倒しているか：0.0f～1.0fで返す.
+	float fVar = m_wpXInput->GetLStickTheta(); 	//スティックの角度(方向)を返す( -180～180を弧度法の値で返す ).
+	if( m_wpXInput->GetLStickSlope() > 0.95f ){}//どれだけ深く倒しているか：0.0f～1.0fで返す.
 
-
-	if( m_wpXInput->SetVibPowerL( INPUT_VIBRATION_MAX, 60, 0 ) ){}	//振動.
+	//左のモーターの振動( この場合：最大の強さで160フレームの間振動し、1フレーム当たり5ずつ振動が弱くなる ).
+	m_wpXInput->SetVibPowerL( XINPUT_VIBRATION_MAX, 160, 5 );	
 
 */
 
@@ -23,16 +30,13 @@
 #pragma comment( lib, "xinput.lib" )
 
 //値.
-#define INPUT_TRIGGER_MIN	(0)		//トリガー.
-#define INPUT_TRIGGER_MAX	(255)
-#define INPUT_THUMB_MIN		(-32768)//スティック.
-#define INPUT_THUMB_MAX		(32767)
-#define INPUT_VIBRATION_MIN	(0)		//振動.
-#define INPUT_VIBRATION_MAX	(65535)
+#define XINPUT_TRIGGER_MIN		(0)		//トリガー.
+#define XINPUT_TRIGGER_MAX		(255)
+#define XINPUT_THUMB_MIN		(-32768)//スティック.
+#define XINPUT_THUMB_MAX		(32767)
+#define XINPUT_VIBRATION_MIN	(0)		//振動.
+#define XINPUT_VIBRATION_MAX	(65535)
 
-//スティックの倒し具合.
-const float fSLOPE_MAX = 1.0f;
-const float fSLOPE_MIN = 0.0f;
 
 
 
@@ -57,42 +61,36 @@ class clsXInput
 {
 public:
 
-	clsXInput(){
-		ZeroMemory( this, sizeof( clsXInput ) );
-	}
-	~clsXInput(){
-	
-	}
+	clsXInput();
+	~clsXInput();
 
 	//毎フレーム回す.
 	bool UpdateStatus();
-	bool UpdateKeyStatus();//使わないかも?.
+//	bool UpdateKeyStatus();//使わないかも?.
 
 	//ボタン入力.
 	bool isPressEnter( const WORD _padKey ) const;	//押した瞬間.
 	bool isPressStay( const WORD _padKey ) const;	//押されてる間.
 	bool isPressExit( const WORD _padKey ) const;	//離した瞬間.
 
-	//トリガーボタン入力.
-	BYTE GetLTrigger() const {
-		return m_state.Gamepad.bLeftTrigger;
-	}
-	BYTE GetRTrigger() const {
-		return m_state.Gamepad.bRightTrigger;
-	}
-	SHORT GetLThumbX() const {
-		return m_state.Gamepad.sThumbLX;
-	}
-	SHORT GetLThumbY() const {
-		return m_state.Gamepad.sThumbLY;
-	}
-	SHORT GetRThumbX() const {
-		return m_state.Gamepad.sThumbRX;
-	}
-	SHORT GetRThumbY() const {
-		return m_state.Gamepad.sThumbRY;
-	}
-	
+	//トリガー、スティック入力.
+#ifndef NORMALIZE_ANALOG_INPUT
+	BYTE GetLTrigger() const;
+	BYTE GetRTrigger() const;
+	SHORT GetLStickX() const;
+	SHORT GetLStickY() const;
+	SHORT GetRStickX() const;
+	SHORT GetRStickY() const;
+#else//##ifndef NORMALIZE_ANALOG_INPUT
+	float GetLTrigger() const;
+	float GetRTrigger() const;
+	float GetLStickX() const;
+	float GetLStickY() const;
+	float GetRStickX() const;
+	float GetRStickY() const;
+#endif//##ifndef NORMALIZE_ANALOG_INPUT
+	//関数名をスティックにする.
+
 	//LRトリガーをボタンのように扱おう.
 	bool isLTriggerEnter() const;
 	bool isLTriggerStay() const;
@@ -118,10 +116,7 @@ public:
 	void SetVibPowerR( int iVibR, const int iTime, int iVibDecR = 0 );
 
 	//終了処理.
-	void EndProc(){
-		SetVibration( 0, 0 );
-//		XInputEnable( false );
-	}
+	void EndProc();
 
 private:
 	//振動.
@@ -131,6 +126,13 @@ private:
 	float GetStickTheta( const SHORT lY, const SHORT lX ) const;
 	//スティックの傾き.
 	float GetStickSlope( const SHORT lY, const SHORT lX ) const;
+
+
+	//スティック入力( GetStickSlope()とGetStickTheta()の為 ).
+	SHORT GetLThumbXtoSlope() const;
+	SHORT GetLThumbYtoSlope() const;
+	SHORT GetRThumbXtoSlope() const;
+	SHORT GetRThumbYtoSlope() const;
 
 
 	DWORD				m_padId;

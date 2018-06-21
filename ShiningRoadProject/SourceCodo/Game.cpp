@@ -45,13 +45,13 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_pSound );
 	SAFE_DELETE( m_pEffect );
 	SAFE_DELETE( m_pResource );
-//	SAFE_DELETE( m_spXInput );
-	if( m_spXInput != nullptr ){
-		m_spXInput->EndProc();
-		XInputEnable( false );
-		delete m_spXInput;
-		m_spXInput = nullptr;
-	}
+	SAFE_DELETE( m_spXInput );
+//	if( m_spXInput != nullptr ){
+//		m_spXInput->EndProc();
+//		XInputEnable( false );
+//		delete m_spXInput;
+//		m_spXInput = nullptr;
+//	}
 	SAFE_DELETE( m_spDxInput );
 
 	m_wpDepthStencilState = nullptr;
