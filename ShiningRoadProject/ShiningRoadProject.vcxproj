@@ -108,6 +108,7 @@
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
     <ClCompile Include="SourceCodo\FactoryScene.cpp" />
+    <ClCompile Include="SourceCodo\FactorySound.cpp" />
     <ClCompile Include="SourceCodo\File.cpp" />
     <ClCompile Include="SourceCodo\Game.cpp" />
     <ClCompile Include="SourceCodo\GameObject.cpp" />
@@ -121,7 +122,6 @@
     <ClCompile Include="SourceCodo\PartsHead.cpp" />
     <ClCompile Include="SourceCodo\PartsLeg.cpp" />
     <ClCompile Include="SourceCodo\PartsWeapon.cpp" />
-    <ClCompile Include="SourceCodo\Player.cpp" />
     <ClCompile Include="SourceCodo\PtrGroup.cpp" />
     <ClCompile Include="SourceCodo\Ray.cpp" />
     <ClCompile Include="SourceCodo\Resource.cpp" />
@@ -139,7 +139,12 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\SkinMesh.cpp" />
     <ClCompile Include="SourceCodo\Sound.cpp" />
-    <ClCompile Include="SourceCodo\SoundManager.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerAssemble.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerBase.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerEnding.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerMission.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerTitle.cpp" />
     <ClCompile Include="SourceCodo\Sprite.cpp" />
     <ClCompile Include="SourceCodo\Sprite2D.cpp" />
     <ClCompile Include="SourceCodo\Sprite2DCenter.cpp" />
@@ -174,6 +179,7 @@
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
     <ClInclude Include="SourceCodo\FactoryScene.h" />
+    <ClInclude Include="SourceCodo\FactorySound.h" />
     <ClInclude Include="SourceCodo\File.h" />
     <ClInclude Include="SourceCodo\Game.h" />
     <ClInclude Include="SourceCodo\GameObject.h" />
@@ -193,7 +199,6 @@
     <ClInclude Include="SourceCodo\PartsHead.h" />
     <ClInclude Include="SourceCodo\PartsLeg.h" />
     <ClInclude Include="SourceCodo\PartsWeapon.h" />
-    <ClInclude Include="SourceCodo\Player.h" />
     <ClInclude Include="SourceCodo\PtrGroup.h" />
     <ClInclude Include="SourceCodo\Ray.h" />
     <ClInclude Include="SourceCodo\Resource.h" />
@@ -212,7 +217,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SkinMesh.h" />
     <ClInclude Include="SourceCodo\Sound.h" />
-    <ClInclude Include="SourceCodo\SoundManager.h" />
+    <ClInclude Include="SourceCodo\SoundManagerAssemble.h" />
+    <ClInclude Include="SourceCodo\SoundManagerBase.h" />
+    <ClInclude Include="SourceCodo\SoundManagerEnding.h" />
+    <ClInclude Include="SourceCodo\SoundManagerGameOver.h" />
+    <ClInclude Include="SourceCodo\SoundManagerMission.h" />
+    <ClInclude Include="SourceCodo\SoundManagerTitle.h" />
     <ClInclude Include="SourceCodo\Sprite.h" />
     <ClInclude Include="SourceCodo\Sprite2D.h" />
     <ClInclude Include="SourceCodo\Sprite2DCenter.h" />

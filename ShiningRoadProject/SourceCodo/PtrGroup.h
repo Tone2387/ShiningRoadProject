@@ -4,7 +4,7 @@
 #include "CXInput.h"
 #include "Resource.h"
 #include "Effects.h"
-#include "SoundManager.h"
+#include "SoundManagerBase.h"
 #include "Camera.h"
 #include "RoboStatus.h"
 #include "BlackScreen.h"

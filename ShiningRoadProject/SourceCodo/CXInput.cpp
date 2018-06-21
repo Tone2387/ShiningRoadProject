@@ -9,7 +9,7 @@ const float fSLOPE_MIN = 0.0f;
 
 //日吉君のDxInputとのすり合わせ( スティックの角度を[0～360]->[-180～180]にする ).
 #ifdef HIYOSHI_DX_INPUT
-//difference = 差.
+//DIFF : difference = 差.
 const float fDIFF_HIYOSHI_DX_INPUT_DIR = static_cast<float>( M_PI );
 #endif//#ifdef HIYOSHI_DX_INPUT
 
@@ -98,60 +98,6 @@ bool clsXInput::isPressExit( const WORD _padKey ) const
 	return false;
 }
 
-//LRトリガーをボタンのように扱おう.
-bool clsXInput::isLTriggerEnter() const
-{
-	if( GetLTrigger() >= XINPUT_TRIGGER_MAX &&
-		m_stateOld.Gamepad.bLeftTrigger < XINPUT_TRIGGER_MAX )
-	{
-		return true;
-	}
-	return false;
-}
-bool clsXInput::isLTriggerStay() const
-{
-	if( GetLTrigger() > 0.0f ){
-		return true;
-	}
-	return false;
-}
-bool clsXInput::isLTriggerExit() const
-{
-	if( GetLTrigger() < XINPUT_TRIGGER_MAX &&
-		m_stateOld.Gamepad.bLeftTrigger >= XINPUT_TRIGGER_MAX )
-	{
-		return true;
-	}
-	return false;
-}
-
-bool clsXInput::isRTriggerEnter() const
-{
-	if( GetRTrigger() >= XINPUT_TRIGGER_MAX &&
-		m_stateOld.Gamepad.bRightTrigger < XINPUT_TRIGGER_MAX )
-	{
-		return true;
-	}
-	return false;
-}
-
-bool clsXInput::isRTriggerStay() const
-{
-	if( GetRTrigger() > 0.0f ){
-		return true;
-	}
-	return false;
-}
-
-bool clsXInput::isRTriggerExit() const
-{
-	if( GetRTrigger() < XINPUT_TRIGGER_MAX &&
-		m_stateOld.Gamepad.bRightTrigger >= XINPUT_TRIGGER_MAX )
-	{
-		return true;
-	}
-	return false;
-}
 
 //トリガー、スティック.
 #ifndef NORMALIZE_ANALOG_INPUT
@@ -179,6 +125,62 @@ SHORT clsXInput::GetRStickY() const
 {
 	return m_state.Gamepad.sThumbRY;
 }
+
+//LRトリガーをボタンのように扱おう.
+bool clsXInput::isLTriggerEnter() const
+{
+	if( GetLTrigger() >= XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bLeftTrigger < XINPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+bool clsXInput::isLTriggerStay() const
+{
+	if( GetLTrigger() > 0 ){
+		return true;
+	}
+	return false;
+}
+bool clsXInput::isLTriggerExit() const
+{
+	if( GetLTrigger() < XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bLeftTrigger >= XINPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerEnter() const
+{
+	if( GetRTrigger() >= XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bRightTrigger < XINPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerStay() const
+{
+	if( GetRTrigger() > 0 ){
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerExit() const
+{
+	if( GetRTrigger() < XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bRightTrigger >= XINPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
 #else//##ifndef NORMALIZE_ANALOG_INPUT
 float clsXInput::GetLTrigger() const 
 {
@@ -204,6 +206,62 @@ float clsXInput::GetRStickY() const
 {
 	return static_cast<float>( m_state.Gamepad.sThumbRY ) / static_cast<float>( XINPUT_THUMB_MAX );
 }
+
+//LRトリガーをボタンのように扱おう.
+bool clsXInput::isLTriggerEnter() const
+{
+	if( GetLTriggerInside() >= XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bLeftTrigger < XINPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+bool clsXInput::isLTriggerStay() const
+{
+	if( GetLTriggerInside() > 0 ){
+		return true;
+	}
+	return false;
+}
+bool clsXInput::isLTriggerExit() const
+{
+	if( GetLTriggerInside() < XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bLeftTrigger >= XINPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerEnter() const
+{
+	if( GetRTriggerInside() >= XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bRightTrigger < XINPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerStay() const
+{
+	if( GetRTriggerInside() > 0 ){
+		return true;
+	}
+	return false;
+}
+
+bool clsXInput::isRTriggerExit() const
+{
+	if( GetRTriggerInside() < XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bRightTrigger >= XINPUT_TRIGGER_MAX )
+	{
+		return true;
+	}
+	return false;
+}
+
 #endif//##ifndef NORMALIZE_ANALOG_INPUT
 
 
@@ -253,7 +311,7 @@ float clsXInput::GetStickSlope( const SHORT lY, const SHORT lX ) const
 //左スティックの角度.
 float clsXInput::GetLStickTheta() const
 {
-	float fReturn = GetStickTheta( GetLThumbXtoSlope(), GetLThumbYtoSlope() );
+	float fReturn = GetStickTheta( GetLThumbXInside(), GetLThumbYInside() );
 #ifdef HIYOSHI_DX_INPUT
 	fReturn -= fDIFF_HIYOSHI_DX_INPUT_DIR;
 #endif//#ifdef HIYOSHI_DX_INPUT
@@ -262,7 +320,7 @@ float clsXInput::GetLStickTheta() const
 //右スティックの角度.
 float clsXInput::GetRStickTheta() const
 {
-	float fReturn = GetStickTheta( GetRThumbXtoSlope(), GetRThumbYtoSlope() );
+	float fReturn = GetStickTheta( GetRThumbXInside(), GetRThumbYInside() );
 #ifdef HIYOSHI_DX_INPUT
 	fReturn -= fDIFF_HIYOSHI_DX_INPUT_DIR;
 #endif//#ifdef HIYOSHI_DX_INPUT
@@ -273,7 +331,7 @@ float clsXInput::GetRStickTheta() const
 float clsXInput::GetLStickSlope() const
 {
 	//斜めの長さが出る.
-	float fSlope = GetStickSlope( GetLThumbYtoSlope(), GetLThumbXtoSlope() ); 
+	float fSlope = GetStickSlope( GetLThumbYInside(), GetLThumbXInside() ); 
 
 	fSlope = fSlope / XINPUT_THUMB_MAX;
 
@@ -281,27 +339,36 @@ float clsXInput::GetLStickSlope() const
 }
 float clsXInput::GetRStickSlope() const
 {
-	float fSlope = GetStickSlope( GetRThumbYtoSlope(), GetRThumbXtoSlope() ); 
+	float fSlope = GetStickSlope( GetRThumbYInside(), GetRThumbXInside() ); 
 
 	fSlope = fSlope / XINPUT_THUMB_MAX;
 
 	return fSlope;
 }
 
+//トリガー入力( isLTriggerとisRTriggerの為 ).
+BYTE clsXInput::GetLTriggerInside() const
+{
+	return m_state.Gamepad.bLeftTrigger;
+}
+BYTE clsXInput::GetRTriggerInside() const
+{
+	return m_state.Gamepad.bRightTrigger;
+}
 //スティック入力( GetStickSlope()とGetStickTheta()の為 ).
-SHORT clsXInput::GetLThumbXtoSlope() const 
+SHORT clsXInput::GetLThumbXInside() const 
 {
 	return m_state.Gamepad.sThumbLX;
 }
-SHORT clsXInput::GetLThumbYtoSlope() const 
+SHORT clsXInput::GetLThumbYInside() const 
 {
 	return m_state.Gamepad.sThumbLY;
 }
-SHORT clsXInput::GetRThumbXtoSlope() const 
+SHORT clsXInput::GetRThumbXInside() const 
 {
 	return m_state.Gamepad.sThumbRX;
 }
-SHORT clsXInput::GetRThumbYtoSlope() const 
+SHORT clsXInput::GetRThumbYInside() const 
 {
 	return m_state.Gamepad.sThumbRY;
 }

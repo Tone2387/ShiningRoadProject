@@ -58,6 +58,12 @@
     <Filter Include="Tahara\AssembleUI">
       <UniqueIdentifier>{d9f0ad52-5110-481d-9fb5-99933f2625a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\Sound">
+      <UniqueIdentifier>{fb495207-4f89-4f73-b144-5a168eaaa282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Sound">
+      <UniqueIdentifier>{39cef0fa-5af8-44d1-93e0-5e23832d5e43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\Charactor.cpp">
@@ -112,9 +118,6 @@
       <Filter>Tahara</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\PtrGroup.cpp">
-      <Filter>Tahara</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SoundManager.cpp">
       <Filter>Tahara</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\CharaStatic.cpp">
@@ -225,8 +228,26 @@
     <ClCompile Include="SourceCodo\AssembleUi.cpp">
       <Filter>Tahara\AssembleUI</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\Player.cpp">
-      <Filter>Hiyosi</Filter>
+    <ClCompile Include="SourceCodo\SoundManagerBase.cpp">
+      <Filter>Tahara\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\FactorySound.cpp">
+      <Filter>Tahara\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerAssemble.cpp">
+      <Filter>Tahara\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerTitle.cpp">
+      <Filter>Hiyosi\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerMission.cpp">
+      <Filter>Hiyosi\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerEnding.cpp">
+      <Filter>Hiyosi\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp">
+      <Filter>Hiyosi\Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,9 +321,6 @@
       <Filter>Tahara</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\PtrGroup.h">
-      <Filter>Tahara</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SoundManager.h">
       <Filter>Tahara</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\CharaStatic.h">
@@ -422,8 +440,26 @@
     <ClInclude Include="SourceCodo\AssembleUi.h">
       <Filter>Tahara\AssembleUI</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\Player.h">
-      <Filter>Hiyosi</Filter>
+    <ClInclude Include="SourceCodo\SoundManagerBase.h">
+      <Filter>Tahara\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\FactorySound.h">
+      <Filter>Tahara\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerAssemble.h">
+      <Filter>Tahara\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerTitle.h">
+      <Filter>Hiyosi\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerMission.h">
+      <Filter>Hiyosi\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerEnding.h">
+      <Filter>Hiyosi\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerGameOver.h">
+      <Filter>Hiyosi\Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

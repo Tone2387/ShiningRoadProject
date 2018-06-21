@@ -35,6 +35,9 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
+	//‰¹‚ðŽ~‚ß‚é.
+	m_wpSound->StopAllSound();
+
 #if _DEBUG
 	SAFE_DELETE( m_upText );
 #endif//#if _DEBUG

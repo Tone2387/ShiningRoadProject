@@ -9,7 +9,7 @@
 
 
 //文字列バッファ.
-const int STR_BUFF_MAX = 255;
+const int STR_BUFF_MAX = 256;
 
 
 

@@ -42,9 +42,9 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_pPtrGroup );
 	SAFE_DELETE( m_spBlackScreen );
 	SAFE_DELETE( m_spRoboStatus );
-	SAFE_DELETE( m_pSound );
 	SAFE_DELETE( m_pEffect );
 	SAFE_DELETE( m_pResource );
+	SAFE_DELETE( m_pSound );
 	SAFE_DELETE( m_spXInput );
 //	if( m_spXInput != nullptr ){
 //		m_spXInput->EndProc();
@@ -71,13 +71,14 @@ void clsGAME::Create()
 	ASSERT_IF_NOT_NULL( m_spXInput );
 	m_spXInput = new clsXInput;
 
+	m_pSound = new clsSOUND_MANAGER( m_hWnd );
+	m_pSound->PlayBGM( 0 );			//起動音再生.
+
 	m_pResource = new clsResource;
 	m_pResource->Create( m_hWnd, m_wpDevice, m_wpContext );
 
 	m_pEffect = new clsEffects;
 	m_pEffect->Create( m_wpDevice, m_wpContext );
-
-	m_pSound = new clsSOUND_MANAGER( m_hWnd );
 
 	m_spRoboStatus = new clsROBO_STATUS;
 
@@ -106,10 +107,6 @@ void clsGAME::Create()
 
 	//最初のシーンはタイトルを指定する.
 	SwitchScene( START_UP_SCENE );
-
-	//起動音再生.
-	m_pSound->PlayBGM( enBGM_TITLE );
-
 
 }
 
@@ -168,6 +165,9 @@ void clsGAME::SwitchScene( const enSCENE enNextScene )
 
 	//明転開始.
 	m_spBlackScreen->GetBright();
+
+//BGM再生.//( 各クラスのコンストラクタでやる ).
+m_pSound->PlayBGM( (int)enNextScene );
 }
 
 
