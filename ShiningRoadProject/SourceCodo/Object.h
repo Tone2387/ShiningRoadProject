@@ -63,12 +63,14 @@ public:
 	{
 		m_vOldPos = m_Trans.vPos;
 
-		tenshi();
+		ActionProduct();
 
 		WallJudge(pGround);
 	}
 
 	virtual void tenshi(){};
+
+	virtual void ActionProduct(){};
 
 	bool m_bGround;
 

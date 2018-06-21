@@ -30,6 +30,8 @@ void clsRobo::RoboInit(
 	m_fBoostMoveSpeedMax = 0.5;
 	m_iBoostTopSpeedFrame = 60;
 
+	m_fQuickMoveSpeedMax = m_fBoostMoveSpeedMax * 3.0f;
+
 	m_fBoostFollRes = 0.05f;
 
 	m_fBoostRisingSpeedMax = 0.5f;//スピードの最大値.
@@ -47,12 +49,14 @@ void clsRobo::Walk()
 {
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 	m_iMoveStopFrame = m_iWalkTopSpeedFrame;
+	m_iMoveReverseDirInertia = m_iMoveStopFrame / 2;
 }
 
 void clsRobo::Boost()
 {
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
 	m_iMoveStopFrame = m_iBoostTopSpeedFrame;
+	m_iMoveReverseDirInertia = m_iMoveStopFrame / 2;
 }
 
 void clsRobo::MoveSwitch()
@@ -120,8 +124,8 @@ void clsRobo::QuickBoost()
 		if (m_iQuickInterbal < 0)
 		{
 			m_iQuickInterbal = g_iQuickInterbal;
-			m_fMoveSpeed = m_fBoostMoveSpeedMax * 3.0f;
-			SetMoveDeceleSpeed(m_iBoostTopSpeedFrame * 2);
+			m_fMoveSpeed = m_fQuickMoveSpeedMax;
+			SetMoveDeceleSpeed(m_iQuickInterbal);
 		}
 	}
 }
@@ -132,7 +136,7 @@ void clsRobo::SetDirQuickTurn(const float fAngle)
 	{
 		if (IsRotControl())
 		{
-			float fTmp = 3.0f * (fAngle / abs(fAngle));
+			float fTmp = D3DX_PI * (fAngle / abs(fAngle));
 			SetRotDir(fTmp);
 		}
 	}

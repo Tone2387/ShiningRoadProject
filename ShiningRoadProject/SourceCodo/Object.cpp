@@ -202,7 +202,7 @@ bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
-	float fRaySpece = m_fMoveSpeed;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = vRayDir;
 	rs.vRayStart = m_Trans.vPos;
@@ -224,7 +224,7 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
-	float fRaySpece = m_fMoveSpeed;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirForward;
 	rs.vRayStart = m_Trans.vPos;
@@ -302,7 +302,7 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
-	float fRaySpece = m_fMoveSpeed;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirBack;
 	rs.vRayStart = m_Trans.vPos;
@@ -379,7 +379,7 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
-	float fRaySpece = m_fMoveSpeed;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirLeft;
 	rs.vRayStart = m_Trans.vPos;
@@ -457,7 +457,7 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
-	float fRaySpece = m_fMoveSpeed;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirRight;
 	rs.vRayStart = m_Trans.vPos;
