@@ -13,18 +13,11 @@ clsTestObj::~clsTestObj()
 void clsTestObj::Init(HWND hWnd,
 	ID3D11Device* pDevice11,
 	ID3D11DeviceContext* pContext11,
-	clsDxInput* pControll,
 	clsPOINTER_GROUP* const pPtrGroup )
 {
 	RoboInit(hWnd, pDevice11, pContext11, pPtrGroup);
 
-	if (!pControll)
-	{
-		return;
-	}
-
 	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
-	m_pInput->m_pDxInput = pControll;
 
 	m_pMesh->SetAnimSpeed(0.01);
 }
@@ -36,8 +29,6 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 	clsRoboCommand* pRoboCom;
 
 	Updata();
-
-	m_pInput->PlressInput();
 
 	pRoboCom = m_pInput->MoveSwitch();
 
@@ -53,10 +44,23 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 		pRoboCom->PushBotton(this);
 	}
 
+	pRoboCom = m_pInput->LSInput(fPush, fAngle);
+	pRoboCom->Trigger(this, fPush, fAngle);
+
+	pRoboCom = m_pInput->QuickBoost();
+	if (pRoboCom)
+	{
+		if (abs(fPush) >= 0.5f)
+		{
+			pRoboCom->Trigger(this, fPush, fAngle);
+		}
+		pRoboCom->PushBotton(this);
+	}
+
 	pRoboCom = m_pInput->RSHorInput(fPush, fAngle);
 	pRoboCom->Trigger(this, abs(fPush), fAngle);
 
-	if (abs(fPush) > 0.0f)
+	if (abs(fPush) >= 0.5f)
 	{
 		pRoboCom = m_pInput->QuickTurn();
 
@@ -65,16 +69,6 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 			pRoboCom->Trigger(this, fPush, fAngle);
 			pRoboCom->PushBotton(this);
 		}
-	}
-
-	pRoboCom = m_pInput->LSInput(fPush, fAngle);
-	pRoboCom->Trigger(this, fPush, fAngle);
-
-	pRoboCom = m_pInput->QuickBoost();
-	if (pRoboCom)
-	{
-		pRoboCom->Trigger(this, fPush, fAngle);
-		pRoboCom->PushBotton(this);
 	}
 
 	if (pWall)

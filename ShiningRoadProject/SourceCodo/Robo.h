@@ -70,7 +70,7 @@ public:
 
 	float m_fBoostMoveSpeedMax;
 
-	float m_fQuickMoveSpeedMax;//
+	float m_fQuickMoveSpeedMax;
 	int m_iQuickEnelgyCost;
 	int m_iQuickTopSpeedTime;//Å‚‘¬‚ğ•Û‚ÂƒtƒŒ[ƒ€’l.
 

@@ -45,7 +45,7 @@ private:
 
 	//テスト用モデル( これは消しても良いです、いらないです ).
 	clsTestObj* m_pTestRobo;
-	clsCharaStatic* m_pTestChara;
+	//clsCharaStatic* m_pTestChara;
 
 	clsDX9Mesh* m_pStage;
 

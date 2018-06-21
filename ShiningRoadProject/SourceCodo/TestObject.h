@@ -29,7 +29,6 @@ public:
 	void Init(HWND hWnd, 
 		ID3D11Device* pDevice11, 
 		ID3D11DeviceContext* pContext11, 
-		clsDxInput* pControll,
 		clsPOINTER_GROUP* const pPtrGroup );
 
 	void Action(const clsDX9Mesh* pWall);

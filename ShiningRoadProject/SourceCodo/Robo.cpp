@@ -17,7 +17,7 @@ void clsRobo::RoboInit(
 	m_pMesh->AttachModel(
 		m_wpResource->GetSkinModels(
 				clsResource::enSkinModel_Leg ) );
-//		m_wpResource->GetPartsModels( enPARTS::LEG, 3 ));
+	//m_wpResource->GetPartsModels( enPARTS::LEG, 3 ));
 	m_pMesh->SetAnimSpeed(0.1);
 
 	SetScale(0.005f);
@@ -31,6 +31,7 @@ void clsRobo::RoboInit(
 	m_iBoostTopSpeedFrame = 60;
 
 	m_fQuickMoveSpeedMax = m_fBoostMoveSpeedMax * 3.0f;
+	m_iQuickTopSpeedTime = 1 * g_fFPS;
 
 	m_fBoostFollRes = 0.05f;
 
@@ -125,7 +126,8 @@ void clsRobo::QuickBoost()
 		{
 			m_iQuickInterbal = g_iQuickInterbal;
 			m_fMoveSpeed = m_fQuickMoveSpeedMax;
-			SetMoveDeceleSpeed(m_iQuickInterbal);
+			m_iQuickDecStartTime = m_iQuickTopSpeedTime;
+			SetMoveDeceleSpeed(g_iQuickInterbal);
 		}
 	}
 }
@@ -160,7 +162,11 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
-	m_iQuickInterbal--;
+	if (m_iQuickDecStartTime > 0)
+	{
+		m_fMoveSpeed = m_fQuickMoveSpeedMax;
+		m_iQuickDecStartTime--;
+	}
 
 	if (m_bBoost)
 	{
@@ -187,6 +193,8 @@ void clsRobo::Updata()
 	{
 		SetRotDeceleSpeed(m_iRotStopFrame);
 	}
+
+	m_iQuickInterbal--;
 }
 
 
