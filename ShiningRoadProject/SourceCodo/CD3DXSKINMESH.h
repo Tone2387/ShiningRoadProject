@@ -2,8 +2,8 @@
 *	SkinMeshCode Version 1.50
 *	LastUpdate	: 2017/06/30
 **/
-#ifndef _CD3DXSKINMESH_H_
-#define _CD3DXSKINMESH_H_
+#ifndef C_D3DXSKINMESH_H_
+#define C_D3DXSKINMESH_H_
 // 警告についてのコード分析を無効にする。4005：再定義.
 #pragma warning( disable : 4005 )
 
@@ -84,7 +84,11 @@ struct MY_SKINMATERIAL
 	DWORD dwNumFace;	// そのマテリアルであるポリゴン数.
 	MY_SKINMATERIAL()
 	{
-		ZeroMemory( this, sizeof( MY_SKINMATERIAL ) );
+		ZeroMemory( szName, 110 );
+		Ka = Kd = Ks = { 0.0f, 0.0f, 0.0f, 0.0f };
+		ZeroMemory( szTextureName, 512 );
+		pTexture = NULL;
+		dwNumFace = 0;
 	}
 	~MY_SKINMATERIAL()
 	{
@@ -102,7 +106,13 @@ struct MY_SKINVERTEX
 	float bBoneWeight[4];	// ボーン 重み.
 	MY_SKINVERTEX()
 	{
-		ZeroMemory( this, sizeof( MY_SKINVERTEX ) );
+//		ZeroMemory( this, sizeof( MY_SKINVERTEX ) );
+		vPos = vNorm = { 0.0f, 0.0f, 0.0f };
+		vTex = { 0.0f, 0.0f };
+		for( char i=0; i<4; i++ ){
+			bBoneIndex[i] = 0;
+			bBoneWeight[i] = 0.0f;
+		}
 	}
 };
 // ボーン構造体.
@@ -144,9 +154,14 @@ struct SKIN_PARTS_MESH
 
 	SKIN_PARTS_MESH()
 	{
-		ZeroMemory( this, sizeof( SKIN_PARTS_MESH ) );
+//		ZeroMemory( this, sizeof( SKIN_PARTS_MESH ) );
+		dwNumVert = dwNumFace = dwNumUV = dwNumMaterial = 0;
+		pMaterial = NULL;
+		ZeroMemory( TextureFileName, 8 * 256 );
+		bTex = bEnableBones = false;
 		pVertexBuffer = NULL;
 		ppIndexBuffer = NULL;
+		iNumBone = 0;
 		pBoneArray = NULL;
 	}
 };
@@ -159,6 +174,12 @@ struct CD3DXSKINMESH_INIT
 	HWND hWnd;
 	ID3D11Device* pDevice;
 	ID3D11DeviceContext* pDeviceContext;
+
+	CD3DXSKINMESH_INIT(){
+		hWnd = NULL;
+		pDevice = NULL;
+		pDeviceContext = NULL;
+	}
 };
 
 // 派生フレーム構造体.
@@ -168,7 +189,9 @@ struct MYFRAME: public D3DXFRAME
 	D3DXMATRIX CombinedTransformationMatrix;
 	SKIN_PARTS_MESH* pPartsMesh;
 	MYFRAME(){
-		ZeroMemory( this, sizeof( MYFRAME ));
+//		ZeroMemory( this, sizeof( MYFRAME ));
+		ZeroMemory( &CombinedTransformationMatrix, sizeof( D3DXMATRIX ));
+		pPartsMesh = NULL;
 	}
 };
 // 派生メッシュコンテナー構造体.
@@ -203,6 +226,10 @@ public:
 class D3DXPARSER
 {
 public:
+
+	D3DXPARSER();
+	~D3DXPARSER();
+
 	MY_HIERARCHY cHierarchy;
 	MY_HIERARCHY* m_pHierarchy;
 	LPD3DXFRAME m_pFrameRoot;
@@ -403,4 +430,4 @@ private:
 	HRESULT DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p );
 };
 
-#endif//#ifndef _CD3DXSKINMESH_H_
+#endif//#ifndef C_D3DXSKINMESH_H_
