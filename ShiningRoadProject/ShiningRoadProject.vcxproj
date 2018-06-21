@@ -108,7 +108,7 @@
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
     <ClCompile Include="SourceCodo\FactoryScene.cpp" />
-    <ClCompile Include="SourceCodo\FactorySound.cpp" />
+    <ClCompile Include="SourceCodo\FactorySoundManager.cpp" />
     <ClCompile Include="SourceCodo\File.cpp" />
     <ClCompile Include="SourceCodo\Game.cpp" />
     <ClCompile Include="SourceCodo\GameObject.cpp" />
@@ -179,7 +179,7 @@
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
     <ClInclude Include="SourceCodo\FactoryScene.h" />
-    <ClInclude Include="SourceCodo\FactorySound.h" />
+    <ClInclude Include="SourceCodo\FactorySoundManager.h" />
     <ClInclude Include="SourceCodo\File.h" />
     <ClInclude Include="SourceCodo\Game.h" />
     <ClInclude Include="SourceCodo\GameObject.h" />

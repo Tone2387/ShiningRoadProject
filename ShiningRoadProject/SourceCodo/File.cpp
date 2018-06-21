@@ -33,7 +33,7 @@ clsFILE::~clsFILE()
 }
 
 
-void clsFILE::Open( const string sFileName )
+bool clsFILE::Open( const string sFileName )
 {
 	assert( !m_bUsing );//使用中にopenするな.
 
@@ -49,7 +49,7 @@ void clsFILE::Open( const string sFileName )
 		if( !ifs ){
 			cout << "ひらけなかったよ" << endl;
 			cin.get();
-			return;
+			return false;
 		}
 
 		string sBuff;//仮のデータ.
@@ -81,6 +81,8 @@ void clsFILE::Open( const string sFileName )
 	m_vvsData.shrink_to_fit();
 
 	m_bUsing = true;
+
+	return true;
 }
 
 
@@ -92,7 +94,7 @@ void clsFILE::Close()
 	}
 	m_vvsData.clear();
 	m_vvsData.shrink_to_fit();
-
+	
 	m_bUsing = false;
 }
 

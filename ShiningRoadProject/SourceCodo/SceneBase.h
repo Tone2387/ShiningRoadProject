@@ -81,7 +81,7 @@ protected:
 	clsXInput*				m_wpXInput;
 	clsResource*			m_wpResource;
 	clsEffects*				m_wpEffects;
-	clsSOUND_MANAGER*		m_wpSound;
+	clsSOUND_MANAGER_BASE*	m_wpSound;
 	clsCAMERA_BASE*			m_wpCamera;	
 	clsROBO_STATUS*			m_wpRoboStatus;
 	clsBLACK_SCREEN*		m_wpBlackScreen;

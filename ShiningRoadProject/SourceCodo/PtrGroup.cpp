@@ -9,7 +9,7 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 		clsXInput* const pXInput,
 	clsResource* const pResource,
 	clsEffects* const pEffects,
-	clsSOUND_MANAGER* const pSound,
+	clsSOUND_MANAGER_BASE* const pSound,
 	clsROBO_STATUS* const pRoboStatus,
 	clsBLACK_SCREEN* const pBlack )
 		:m_wpDevice( pDevice )
@@ -91,7 +91,7 @@ clsEffects*	clsPOINTER_GROUP::GetEffects() const
 	return m_wpEffects;
 }
 //BGM,SE.
-clsSOUND_MANAGER* clsPOINTER_GROUP::GetSound() const
+clsSOUND_MANAGER_BASE* clsPOINTER_GROUP::GetSound() const
 {
 	return m_wpSound;
 }

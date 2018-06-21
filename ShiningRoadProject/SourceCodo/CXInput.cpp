@@ -184,33 +184,40 @@ bool clsXInput::isRTriggerExit() const
 #else//##ifndef NORMALIZE_ANALOG_INPUT
 float clsXInput::GetLTrigger() const 
 {
-	return static_cast<float>( m_state.Gamepad.bLeftTrigger ) / static_cast<float>( XINPUT_TRIGGER_MAX );
+	float fReturn = static_cast<float>( m_state.Gamepad.bLeftTrigger ) / static_cast<float>( XINPUT_TRIGGER_MAX );
+	return fReturn;
 }
 float clsXInput::GetRTrigger() const 
 {
-	return static_cast<float>( m_state.Gamepad.bRightTrigger ) / static_cast<float>( XINPUT_TRIGGER_MAX );
+	float fReturn =  static_cast<float>( m_state.Gamepad.bRightTrigger ) / static_cast<float>( XINPUT_TRIGGER_MAX );
+	return fReturn;
 }
 float clsXInput::GetLStickX() const 
 {
-	return static_cast<float>( m_state.Gamepad.sThumbLX ) / static_cast<float>( XINPUT_THUMB_MAX );
+	float fReturn =  static_cast<float>( m_state.Gamepad.sThumbLX ) / static_cast<float>( XINPUT_THUMB_MAX );
+	return fReturn;
 }
 float clsXInput::GetLStickY() const 
 {
-	return static_cast<float>( m_state.Gamepad.sThumbLY ) / static_cast<float>( XINPUT_THUMB_MAX );
+	float fReturn =  static_cast<float>( m_state.Gamepad.sThumbLY ) / static_cast<float>( XINPUT_THUMB_MAX );
+	return fReturn;
 }
 float clsXInput::GetRStickX() const 
 {
-	return static_cast<float>( m_state.Gamepad.sThumbRX ) / static_cast<float>( XINPUT_THUMB_MAX );
+	float fReturn =  static_cast<float>( m_state.Gamepad.sThumbRX ) / static_cast<float>( XINPUT_THUMB_MAX );
+	return fReturn;
 }
 float clsXInput::GetRStickY() const 
 {
-	return static_cast<float>( m_state.Gamepad.sThumbRY ) / static_cast<float>( XINPUT_THUMB_MAX );
+	float fReturn =  static_cast<float>( m_state.Gamepad.sThumbRY ) / static_cast<float>( XINPUT_THUMB_MAX );
+	return fReturn;
 }
 
 //LRトリガーをボタンのように扱おう.
 bool clsXInput::isLTriggerEnter() const
 {
-	if( GetLTriggerInside() >= XINPUT_TRIGGER_MAX &&
+	BYTE TrigerState = GetLTriggerInside();
+	if( TrigerState >= XINPUT_TRIGGER_MAX &&
 		m_stateOld.Gamepad.bLeftTrigger < XINPUT_TRIGGER_MAX )
 	{
 		return true;
@@ -219,14 +226,16 @@ bool clsXInput::isLTriggerEnter() const
 }
 bool clsXInput::isLTriggerStay() const
 {
-	if( GetLTriggerInside() > 0 ){
+	BYTE TrigerState = GetLTriggerInside();
+	if( TrigerState > 0 ){
 		return true;
 	}
 	return false;
 }
 bool clsXInput::isLTriggerExit() const
 {
-	if( GetLTriggerInside() < XINPUT_TRIGGER_MAX &&
+	BYTE TrigerState = GetLTriggerInside();
+	if( TrigerState < XINPUT_TRIGGER_MAX &&
 		m_stateOld.Gamepad.bLeftTrigger >= XINPUT_TRIGGER_MAX )
 	{
 		return true;
@@ -236,7 +245,8 @@ bool clsXInput::isLTriggerExit() const
 
 bool clsXInput::isRTriggerEnter() const
 {
-	if( GetRTriggerInside() >= XINPUT_TRIGGER_MAX &&
+	BYTE TrigerState = GetRTriggerInside();
+	if( TrigerState >= XINPUT_TRIGGER_MAX &&
 		m_stateOld.Gamepad.bRightTrigger < XINPUT_TRIGGER_MAX )
 	{
 		return true;
@@ -246,7 +256,8 @@ bool clsXInput::isRTriggerEnter() const
 
 bool clsXInput::isRTriggerStay() const
 {
-	if( GetRTriggerInside() > 0 ){
+	BYTE TrigerState = GetRTriggerInside();
+	if( TrigerState > 0 ){
 		return true;
 	}
 	return false;
@@ -254,7 +265,8 @@ bool clsXInput::isRTriggerStay() const
 
 bool clsXInput::isRTriggerExit() const
 {
-	if( GetRTriggerInside() < XINPUT_TRIGGER_MAX &&
+	BYTE TrigerState = GetRTriggerInside();
+	if( TrigerState < XINPUT_TRIGGER_MAX &&
 		m_stateOld.Gamepad.bRightTrigger >= XINPUT_TRIGGER_MAX )
 	{
 		return true;
@@ -349,28 +361,34 @@ float clsXInput::GetRStickSlope() const
 //トリガー入力( isLTriggerとisRTriggerの為 ).
 BYTE clsXInput::GetLTriggerInside() const
 {
-	return m_state.Gamepad.bLeftTrigger;
+	BYTE Return = m_state.Gamepad.bLeftTrigger;
+	return Return;
 }
 BYTE clsXInput::GetRTriggerInside() const
 {
-	return m_state.Gamepad.bRightTrigger;
+	BYTE Return =  m_state.Gamepad.bRightTrigger;
+	return Return;
 }
 //スティック入力( GetStickSlope()とGetStickTheta()の為 ).
 SHORT clsXInput::GetLThumbXInside() const 
 {
-	return m_state.Gamepad.sThumbLX;
+	SHORT Return =  m_state.Gamepad.sThumbLX;
+	return Return;
 }
 SHORT clsXInput::GetLThumbYInside() const 
 {
-	return m_state.Gamepad.sThumbLY;
+	SHORT Return =  m_state.Gamepad.sThumbLY;
+	return Return;
 }
 SHORT clsXInput::GetRThumbXInside() const 
 {
-	return m_state.Gamepad.sThumbRX;
+	SHORT Return =  m_state.Gamepad.sThumbRX;
+	return Return;
 }
 SHORT clsXInput::GetRThumbYInside() const 
 {
-	return m_state.Gamepad.sThumbRY;
+	SHORT Return =  m_state.Gamepad.sThumbRY;
+	return Return;
 }
 
 

@@ -22,7 +22,7 @@ public:
 		clsXInput* const pXInput,
 		clsResource* const pResource,
 		clsEffects* const pEffects,
-		clsSOUND_MANAGER* const pSound,
+		clsSOUND_MANAGER_BASE* const pSound,
 		clsROBO_STATUS* const pRoboStatus,
 		clsBLACK_SCREEN* const pBlack );
 	~clsPOINTER_GROUP();
@@ -39,7 +39,7 @@ public:
 	clsXInput* GetXInput() const;
 	clsResource* GetResource() const;
 	clsEffects*	GetEffects() const;
-	clsSOUND_MANAGER*	GetSound() const;
+	clsSOUND_MANAGER_BASE*	GetSound() const;
 	clsCAMERA_BASE*	GetCamera() const;
 	clsROBO_STATUS* GetRoboStatus() const;
 	clsBLACK_SCREEN* GetBlackScreen() const;
@@ -61,7 +61,7 @@ private:
 	//エフェクトクラス.
 	clsEffects*	m_wpEffects;
 	//BGM,SE.
-	clsSOUND_MANAGER*	m_wpSound;
+	clsSOUND_MANAGER_BASE*	m_wpSound;
 
 	//カメラ( こいつだけシーン切り替えごとに変わる ).
 	clsCAMERA_BASE*		m_wpCamera;

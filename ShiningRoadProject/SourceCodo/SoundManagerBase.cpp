@@ -29,25 +29,32 @@ const clsSound::SOUND_DATA SE_DATA[] =
 	{ "Exit", "SE\\700Button\\200Exit.wav", 300 },
 };
 
+//push_back用.
+const clsSound::SOUND_DATA INIT_SOUND_DATA = { "", "", 1000 };
+const char cALIAS_NUM = 0;
+const char cPATH_NUM = 1;
+const char cVOLUME_NUM = 2;
+
+//ファイルクラスのパス用.
+const string sDATA_PASS = "Data\\Sound\\Data\\";
+const string sBGM_PASS = "BGM.csv";
+const string sSE_PASS = "SE.csv";
 
 
-
-
-clsSOUND_MANAGER::clsSOUND_MANAGER( const HWND hWnd )
+clsSOUND_MANAGER_BASE::clsSOUND_MANAGER_BASE( const HWND hWnd )
 	:m_hWnd( hWnd )
 	,m_vupBgm()
 	,m_vupSe()
+	,m_uiRESERVE_SIZE_BGM( uiRESERVE_SIZE_BGM )
+	,m_uiRESERVE_SIZE_SE( uiRESERVE_SIZE_SE )	
 {
-
-	//BGM作成.
-	CreateSound();
-
 }
 
-clsSOUND_MANAGER::~clsSOUND_MANAGER()
+clsSOUND_MANAGER_BASE::~clsSOUND_MANAGER_BASE()
 {
 	StopAllSound();
 
+	//サウンドクラス.
 	for( unsigned int i=0; i<m_vupSe.size(); i++ ){
 		if( m_vupSe[i] ){
 			m_vupSe[i]->Close();
@@ -72,7 +79,7 @@ clsSOUND_MANAGER::~clsSOUND_MANAGER()
 }
 
 //すべて停止.
-void clsSOUND_MANAGER::StopAllSound()
+void clsSOUND_MANAGER_BASE::StopAllSound()
 {
 	for( unsigned int i=0; i<m_vupBgm.size(); i++ ){
 		if( m_vupBgm[i] ){
@@ -90,91 +97,109 @@ void clsSOUND_MANAGER::StopAllSound()
 
 
 
-void clsSOUND_MANAGER::CreateSound()
+void clsSOUND_MANAGER_BASE::Create()
 {
+	//継承クラスで動く関数( m_sSceneNameを入れる ).
+	CreateSceneName();
+
+	string tmpPass = sDATA_PASS + m_sSceneName;
+
 	//BGM.
-	{
-		//音の数.
-		int iBgmNum = sizeof( BGM_DATA ) / sizeof( BGM_DATA[0] );
-
-		//容量を多めにとる.
-		m_vupBgm.reserve( uiRESERVE_SIZE_BGM );
-
-		for( int i=0; i<iBgmNum; i++ ){
-			//配列を増やしてnew( make_unique )する.
-			m_vupBgm.push_back( nullptr );
-			m_vupBgm[i] = make_unique<clsSound>();
-
-			//名前.
-			char cAliasName[STR_BUFF_MAX] = "";
-			strcat_s( cAliasName, sizeof( cAliasName ), BGM_DATA[i].sAlias );
-			//作成.
-			m_vupBgm[i]->Open( BGM_DATA[i].sPath, cAliasName, m_hWnd );
-			//最大音量設定.
-			m_vupBgm[i]->SetMaxVolume( BGM_DATA[i].iMaxVolume );
-			//現音量初期化.
-			m_vupBgm[i]->SetVolume( BGM_DATA[i].iMaxVolume );
-		}
-		//余分な分を消す.
-		m_vupBgm.shrink_to_fit();
-	}
-
-
+	CreateSound( m_vupBgm, tmpPass + sBGM_PASS );
 	//SE.
-	{
-		//音の数.
-		int iSeNum = sizeof( SE_DATA ) / sizeof( SE_DATA[0] );
-
-		//容量を多めにとる.
-		m_vupSe.reserve( uiRESERVE_SIZE_SE );
-
-		for( int i=0; i<iSeNum; i++ ){
-			m_vupSe.push_back( nullptr );
-			m_vupSe[i] = make_unique<clsSound>();
-			//名前.
-			char cAliasName[STR_BUFF_MAX] = "";
-			strcat_s( cAliasName, sizeof( cAliasName ), SE_DATA[i].sAlias );
-			//作成.
-			m_vupSe[i]->Open( SE_DATA[i].sPath, cAliasName, m_hWnd );
-			//最大音量設定.
-			m_vupSe[i]->SetMaxVolume( SE_DATA[i].iMaxVolume );
-			//現音量初期化.
-			m_vupSe[i]->SetVolume( SE_DATA[i].iMaxVolume );
-		}
-		//余分な分を消す.
-		m_vupSe.shrink_to_fit();
-	}
+	CreateSound( m_vupSe, tmpPass + sSE_PASS );
 }
 
 
 
+//サウンドクラス作成.
+void clsSOUND_MANAGER_BASE::CreateSound( 
+	vector< unique_ptr< clsSound > > &vpSound,
+	const std::string sFilePath )
+{
+	//サウンドデータ.
+	std::vector< clsSound::SOUND_DATA > vData;
+	CreateSoundData( vData, sFilePath );
+
+	//音の数.
+	int iSoundNum = vData.size();
+
+	//容量を多めにとる.
+	vpSound.reserve( uiRESERVE_SIZE_BGM );
+
+	for( int i=0; i<iSoundNum; i++ ){
+		//配列を増やしてnew( make_unique )する.
+		vpSound.push_back( nullptr );
+		vpSound[i] = make_unique<clsSound>();
+
+		//名前.
+		char cAliasName[STR_BUFF_MAX] = "";
+		strcat_s( cAliasName, sizeof( cAliasName ), vData[i].sAlias.c_str() );
+		//作成.
+		vpSound[i]->Open( vData[i].sPath.c_str(), cAliasName, m_hWnd );
+		//最大音量設定.
+		vpSound[i]->SetMaxVolume( vData[i].iMaxVolume );
+		//現音量初期化.
+		vpSound[i]->SetVolume( vData[i].iMaxVolume );
+	}
+	//余分な分を消す.
+	vpSound.shrink_to_fit();
+	vData.clear();
+	vData.shrink_to_fit();
+}
+
+//サウンドデータ作成.
+void clsSOUND_MANAGER_BASE::CreateSoundData(
+	std::vector< clsSound::SOUND_DATA > &vData,
+	const std::string sFilePath )
+{
+	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
+	//開けなかったらスルー.
+	if( upFile->Open( sFilePath ) ){
+		//とりあえず消す.
+		vData.clear();
+		//ファイルがとった行数分増やす.
+		vData.reserve( upFile->GetSizeRow() );
+		for( unsigned int i=0; i<upFile->GetSizeRow(); i++ ){
+			vData.push_back( INIT_SOUND_DATA );
+
+			vData[i].sAlias = upFile->GetDataString( i, cALIAS_NUM );
+			vData[i].sPath = upFile->GetDataString( i, cPATH_NUM );
+			vData[i].iMaxVolume = upFile->GetDataInt( i, cVOLUME_NUM );
+		}
+		vData.shrink_to_fit();
+
+	}
+	upFile->Close();
+	upFile.reset( nullptr );
+}
 
 
 
 
 //----- BGM -----//
 //再生関数.
-bool clsSOUND_MANAGER::PlayBGM( const int bgmNo, const bool bNotify ) const
+bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify ) const
 {
 	return m_vupBgm[bgmNo]->Play( bNotify );
 }
 //停止関数.
-bool clsSOUND_MANAGER::StopBGM( const int bgmNo ) const
+bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo ) const
 {
 	return m_vupBgm[bgmNo]->Stop();
 }
 //音の停止を確認する関数.
-bool clsSOUND_MANAGER::IsStoppedBGM( const int bgmNo ) const
+bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
 {
 	return m_vupBgm[bgmNo]->IsStopped();
 }
 //音の再生中を確認する関数.
-bool clsSOUND_MANAGER::IsPlayingBGM( const int bgmNo ) const
+bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
 {
 	return m_vupBgm[bgmNo]->IsPlaying();
 }
 //巻き戻し関数(再生位置初期化).
-bool clsSOUND_MANAGER::SeekToStartBGM( const int bgmNo ) const
+bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
 {
 	return m_vupBgm[bgmNo]->SeekToStart();
 }
@@ -182,27 +207,27 @@ bool clsSOUND_MANAGER::SeekToStartBGM( const int bgmNo ) const
 
 //----- SE -----//
 //再生関数.
-bool clsSOUND_MANAGER::PlaySE( const int seNo, const bool bNotify ) const
+bool clsSOUND_MANAGER_BASE::PlaySE( const int seNo, const bool bNotify ) const
 {
 	return m_vupSe[seNo]->Play( bNotify );
 }
 //停止関数.
-bool clsSOUND_MANAGER::StopSE( const int seNo ) const
+bool clsSOUND_MANAGER_BASE::StopSE( const int seNo ) const
 {
 	return m_vupSe[seNo]->Stop();
 }
 //音の停止を確認する関数.
-bool clsSOUND_MANAGER::IsStoppedSE( const int seNo ) const
+bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
 {
 	return m_vupSe[seNo]->Stop();
 }
 //音の再生中を確認する関数.
-bool clsSOUND_MANAGER::IsPlayingSE( const int seNo ) const
+bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
 {
 	return m_vupSe[seNo]->Stop();
 }
 //巻き戻し関数(再生位置初期化).
-bool clsSOUND_MANAGER::SeekToStartSE( const int seNo ) const
+bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
 {
 	return m_vupSe[seNo]->Stop();
 }
