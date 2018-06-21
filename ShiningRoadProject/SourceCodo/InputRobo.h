@@ -2,20 +2,21 @@
 
 #include"RoboCommand.h"
 #include"DxInput.h"
+#include"CXInput.h"
 
 class clsInputRobo
 {
 public:
 	clsInputRobo::clsInputRobo()
 	{
+		m_pDxInput = new clsDxInput;
+
 		m_bChangeSwitch = false;
 
 		m_pMoveSwitch = new clsCommandMoveSwitch;
 		m_pQuickBoost = new	clsCommandQuickBoost;
 		m_pQuickTurn = new clsCommandQuickTurn;
 		m_pBoostRising = new clsCommandBoostRising;
-
-		m_pDxInput = new clsDxInput;
 
 		m_pComLS = new clsCommandRoboMove;
 		m_pComLSHor = new clsCommandRoboMove;
@@ -38,11 +39,18 @@ public:
 		delete m_pBoostRising;
 	}
 
-	clsDxInput* m_pDxInput;
-
 	clsRoboCommand* PlressInput()
 	{
-		m_pDxInput->UpdataInputState();
+		if (m_pXInput)
+		{
+			m_pXInput->UpdateStatus();
+		}
+
+		else if (m_pDxInput)
+		{
+			m_pDxInput->UpdataInputState();
+		}
+		
 
 		return nullptr;
 	}
@@ -245,6 +253,9 @@ public:
 
 		return nullptr;
 	}
+
+	clsDxInput* m_pDxInput;
+	clsXInput* m_pXInput;
 
 private:
 	bool m_bChangeSwitch;

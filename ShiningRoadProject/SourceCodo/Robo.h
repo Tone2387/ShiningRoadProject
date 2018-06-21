@@ -81,7 +81,7 @@ public:
 	float m_fBoostRisingSpeedMax;//ブースター垂直移動の最高速.
 	int m_iBoostRisingTopSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fBoostRisingAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
-	float m_fBoostFollRes;//ブースター展開時に
+	float m_fBoostFollRes;//ブースター展開時に落ちる速度.
 
 	//Armパーツから数値を取得する変数と関連する変数//
 
@@ -89,12 +89,7 @@ public:
 	float m_fWalktMoveSpeedMax;//Legパーツから取得する歩行速度.
 	int m_iWalkTopSpeedFrame;//安定性能から計算.
 	
-
 	int m_iBoostTopSpeedFrame;//安定性能から計算.
-
-	
-
-	
 
 	void Walk();
 	void Boost();

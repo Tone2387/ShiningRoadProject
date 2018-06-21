@@ -32,6 +32,8 @@ public:
 	int m_iMoveStopFrame;//完全に停止するまでのフレーム値.
 	float m_fMoveDecele;// = m_fMoveSpeed / m_iStopFrame;
 
+	int m_iMoveReverseDirInertia;
+
 	virtual void tenshi()override{};
 
 	bool m_bRotation;

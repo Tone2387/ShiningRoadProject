@@ -79,7 +79,7 @@ void clsCharactor::SetMoveDir(const float fAngle)
 	//çsÇ´ÇΩÇ¢ï˚å¸.
 	D3DXVECTOR3 vAcceleDir = GetVec3Dir(fAngle, vForward);
 
-	m_vMoveDir += (vAcceleDir - m_vMoveDir) / (m_iMoveStopFrame / 2);
+	m_vMoveDir += (vAcceleDir - m_vMoveDir) / (m_iMoveReverseDirInertia);
 }
 
 void clsCharactor::MoveControl()
@@ -94,7 +94,7 @@ void clsCharactor::MoveControl()
 	m_Trans.vPos += m_vMoveDir * abs(m_fMoveSpeed);
 }
 
-void clsCharactor::MoveAccele(const float fPower)
+void clsCharactor::MoveAccele(const float fPower)//Ç¢ÇÁÇÒÇ©Ç‡.
 {
 	if (m_fMoveSpeed <= m_fMoveSpeedMax && m_fMoveSpeed > -m_fMoveSpeedMax)
 	{

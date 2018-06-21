@@ -39,6 +39,10 @@ private:
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
+	//m_pPlayer
+	//m_vpFrends
+	//m_vpEnemys
+
 	//テスト用モデル( これは消しても良いです、いらないです ).
 	clsTestObj* m_pTestRobo;
 	clsCharaStatic* m_pTestChara;
