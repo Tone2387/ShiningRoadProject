@@ -23,7 +23,7 @@ void clsTestObj::Init(HWND hWnd,
 		return;
 	}
 
-	m_pInput = new clsInputRobo;
+	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
 	m_pInput->m_pDxInput = pControll;
 
 	m_pMesh->SetAnimSpeed(0.01);

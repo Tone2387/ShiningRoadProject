@@ -136,7 +136,7 @@ void clsRobo::SetDirQuickTurn(const float fAngle)
 	{
 		if (IsRotControl())
 		{
-			float fTmp = D3DX_PI * (fAngle / abs(fAngle));
+			float fTmp = (int)D3DX_PI * (fAngle / abs(fAngle));
 			SetRotDir(fTmp);
 		}
 	}
