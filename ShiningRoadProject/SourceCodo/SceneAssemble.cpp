@@ -349,6 +349,16 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
 	
+	//トリガー.
+	sprintf_s( strDbgTxt, 
+		"XInputTrigger : LTHX[%f], LTHY[%f], LTHSlope[%f], LTHTheta[%f], DxDir[%f]",
+		m_wpXInput->GetLStickX(),
+		m_wpXInput->GetLStickY(),
+		m_wpXInput->GetLStickSlope(),
+		m_wpXInput->GetLStickTheta(),
+		m_wpDxInput->GetLSDir() );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
 	//モデルのpos.
 	sprintf_s( strDbgTxt, 
 		"ModelPos : x[%f], y[%f], z[%f]",

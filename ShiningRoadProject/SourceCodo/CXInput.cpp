@@ -3,6 +3,34 @@
 #include <math.h>
 
 
+//スティックの倒し具合.
+const float fSLOPE_MAX = 1.0f;
+const float fSLOPE_MIN = 0.0f;
+
+//日吉君のDxInputとのすり合わせ( スティックの角度を[0～360]->[-180～180]にする ).
+#ifdef HIYOSHI_DX_INPUT
+//difference = 差.
+const float fDIFF_HIYOSHI_DX_INPUT_DIR = static_cast<float>( M_PI );
+#endif//#ifdef HIYOSHI_DX_INPUT
+
+
+clsXInput::clsXInput()
+{
+	ZeroMemory( this, sizeof( clsXInput ) );
+}
+clsXInput::~clsXInput()
+{
+	EndProc();
+}
+
+//終了処理.
+void clsXInput::EndProc()
+{
+	SetVibration( 0, 0 );
+	XInputEnable( false );
+}
+
+
 
 
 //更新.
@@ -26,23 +54,23 @@ bool clsXInput::UpdateStatus(){
 
 	if( ERROR_SUCCESS == XInputGetState(
 		m_padId,
-		&m_state )) 
+		&m_state ) ) 
 	{
 		return true;
 	}
 	return false;
 }
-//更新( 使わない? ).
-bool clsXInput::UpdateKeyStatus(){
-	if( ERROR_SUCCESS == XInputGetKeystroke(
-		m_padId,
-		0,
-		&m_keystroke ) )
-	{
-		return true;
-	}
-	return false;
-}
+////更新( 使わない? ).
+//bool clsXInput::UpdateKeyStatus(){
+//	if( ERROR_SUCCESS == XInputGetKeystroke(
+//		m_padId,
+//		0,
+//		&m_keystroke ) )
+//	{
+//		return true;
+//	}
+//	return false;
+//}
 
 bool clsXInput::isPressStay( const WORD _padKey ) const
 {
@@ -73,8 +101,8 @@ bool clsXInput::isPressExit( const WORD _padKey ) const
 //LRトリガーをボタンのように扱おう.
 bool clsXInput::isLTriggerEnter() const
 {
-	if( GetLTrigger() >= INPUT_TRIGGER_MAX &&
-		m_stateOld.Gamepad.bLeftTrigger < INPUT_TRIGGER_MAX )
+	if( GetLTrigger() >= XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bLeftTrigger < XINPUT_TRIGGER_MAX )
 	{
 		return true;
 	}
@@ -89,8 +117,8 @@ bool clsXInput::isLTriggerStay() const
 }
 bool clsXInput::isLTriggerExit() const
 {
-	if( GetLTrigger() < INPUT_TRIGGER_MAX &&
-		m_stateOld.Gamepad.bLeftTrigger >= INPUT_TRIGGER_MAX )
+	if( GetLTrigger() < XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bLeftTrigger >= XINPUT_TRIGGER_MAX )
 	{
 		return true;
 	}
@@ -99,8 +127,8 @@ bool clsXInput::isLTriggerExit() const
 
 bool clsXInput::isRTriggerEnter() const
 {
-	if( GetRTrigger() >= INPUT_TRIGGER_MAX &&
-		m_stateOld.Gamepad.bRightTrigger < INPUT_TRIGGER_MAX )
+	if( GetRTrigger() >= XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bRightTrigger < XINPUT_TRIGGER_MAX )
 	{
 		return true;
 	}
@@ -117,13 +145,67 @@ bool clsXInput::isRTriggerStay() const
 
 bool clsXInput::isRTriggerExit() const
 {
-	if( GetRTrigger() < INPUT_TRIGGER_MAX &&
-		m_stateOld.Gamepad.bRightTrigger >= INPUT_TRIGGER_MAX )
+	if( GetRTrigger() < XINPUT_TRIGGER_MAX &&
+		m_stateOld.Gamepad.bRightTrigger >= XINPUT_TRIGGER_MAX )
 	{
 		return true;
 	}
 	return false;
 }
+
+//トリガー、スティック.
+#ifndef NORMALIZE_ANALOG_INPUT
+BYTE clsXInput::GetLTrigger() const 
+{
+	return m_state.Gamepad.bLeftTrigger;
+}
+BYTE clsXInput::GetRTrigger() const 
+{
+	return m_state.Gamepad.bRightTrigger;
+}
+SHORT clsXInput::GetLStickX() const 
+{
+	return m_state.Gamepad.sThumbLX;
+}
+SHORT clsXInput::GetLStickY() const 
+{
+	return m_state.Gamepad.sThumbLY;
+}
+SHORT clsXInput::GetRStickX() const 
+{
+	return m_state.Gamepad.sThumbRX;
+}
+SHORT clsXInput::GetRStickY() const 
+{
+	return m_state.Gamepad.sThumbRY;
+}
+#else//##ifndef NORMALIZE_ANALOG_INPUT
+float clsXInput::GetLTrigger() const 
+{
+	return static_cast<float>( m_state.Gamepad.bLeftTrigger ) / static_cast<float>( XINPUT_TRIGGER_MAX );
+}
+float clsXInput::GetRTrigger() const 
+{
+	return static_cast<float>( m_state.Gamepad.bRightTrigger ) / static_cast<float>( XINPUT_TRIGGER_MAX );
+}
+float clsXInput::GetLStickX() const 
+{
+	return static_cast<float>( m_state.Gamepad.sThumbLX ) / static_cast<float>( XINPUT_THUMB_MAX );
+}
+float clsXInput::GetLStickY() const 
+{
+	return static_cast<float>( m_state.Gamepad.sThumbLY ) / static_cast<float>( XINPUT_THUMB_MAX );
+}
+float clsXInput::GetRStickX() const 
+{
+	return static_cast<float>( m_state.Gamepad.sThumbRX ) / static_cast<float>( XINPUT_THUMB_MAX );
+}
+float clsXInput::GetRStickY() const 
+{
+	return static_cast<float>( m_state.Gamepad.sThumbRY ) / static_cast<float>( XINPUT_THUMB_MAX );
+}
+#endif//##ifndef NORMALIZE_ANALOG_INPUT
+
 
 
 
@@ -162,7 +244,7 @@ float clsXInput::GetStickSlope( const SHORT lY, const SHORT lX ) const
 	LONG LX = lX * lX;
 	LONG LY = lY * lY;
 
-	float slope = (float)sqrt( (double)LY + (double)LX );
+	float slope = sqrtf( (float)LY + (float)LX );
 
 	return slope;
 }
@@ -171,42 +253,68 @@ float clsXInput::GetStickSlope( const SHORT lY, const SHORT lX ) const
 //左スティックの角度.
 float clsXInput::GetLStickTheta() const
 {
-	return GetStickTheta( GetLThumbX(), GetLThumbY() );
+	float fReturn = GetStickTheta( GetLThumbXtoSlope(), GetLThumbYtoSlope() );
+#ifdef HIYOSHI_DX_INPUT
+	fReturn -= fDIFF_HIYOSHI_DX_INPUT_DIR;
+#endif//#ifdef HIYOSHI_DX_INPUT
+	return fReturn;
 }
 //右スティックの角度.
 float clsXInput::GetRStickTheta() const
 {
-	return GetStickTheta( GetRThumbX(), GetRThumbY() );
+	float fReturn = GetStickTheta( GetRThumbXtoSlope(), GetRThumbYtoSlope() );
+#ifdef HIYOSHI_DX_INPUT
+	fReturn -= fDIFF_HIYOSHI_DX_INPUT_DIR;
+#endif//#ifdef HIYOSHI_DX_INPUT
+	return fReturn;
 }
 
 //各スティックの倒し具合.
 float clsXInput::GetLStickSlope() const
 {
 	//斜めの長さが出る.
-	float fSlope = GetStickSlope( GetLThumbY(), GetLThumbX() ); 
+	float fSlope = GetStickSlope( GetLThumbYtoSlope(), GetLThumbXtoSlope() ); 
 
-	fSlope = fSlope / INPUT_THUMB_MAX;
+	fSlope = fSlope / XINPUT_THUMB_MAX;
 
 	return fSlope;
 }
 float clsXInput::GetRStickSlope() const
 {
-	float fSlope = GetStickSlope( GetRThumbY(), GetRThumbX() ); 
+	float fSlope = GetStickSlope( GetRThumbYtoSlope(), GetRThumbXtoSlope() ); 
 
-	fSlope = fSlope / INPUT_THUMB_MAX;
+	fSlope = fSlope / XINPUT_THUMB_MAX;
 
 	return fSlope;
+}
+
+//スティック入力( GetStickSlope()とGetStickTheta()の為 ).
+SHORT clsXInput::GetLThumbXtoSlope() const 
+{
+	return m_state.Gamepad.sThumbLX;
+}
+SHORT clsXInput::GetLThumbYtoSlope() const 
+{
+	return m_state.Gamepad.sThumbLY;
+}
+SHORT clsXInput::GetRThumbXtoSlope() const 
+{
+	return m_state.Gamepad.sThumbRX;
+}
+SHORT clsXInput::GetRThumbYtoSlope() const 
+{
+	return m_state.Gamepad.sThumbRY;
 }
 
 
 //範囲内に収める.
 void clsXInput::VibSafe( int &iVibPower, int &iVibDec ) const
 {
-	if( iVibPower > INPUT_VIBRATION_MAX ){
-		iVibPower = INPUT_VIBRATION_MAX;
+	if( iVibPower > XINPUT_VIBRATION_MAX ){
+		iVibPower = XINPUT_VIBRATION_MAX;
 	}
-	else if( iVibPower < INPUT_VIBRATION_MIN ){
-		iVibPower = INPUT_VIBRATION_MIN;
+	else if( iVibPower < XINPUT_VIBRATION_MIN ){
+		iVibPower = XINPUT_VIBRATION_MIN;
 		iVibDec = 0;
 	}
 }
