@@ -108,6 +108,7 @@
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
     <ClCompile Include="SourceCodo\FactoryScene.cpp" />
+    <ClCompile Include="SourceCodo\FactorySound.cpp" />
     <ClCompile Include="SourceCodo\File.cpp" />
     <ClCompile Include="SourceCodo\Game.cpp" />
     <ClCompile Include="SourceCodo\GameObject.cpp" />
@@ -138,7 +139,7 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\SkinMesh.cpp" />
     <ClCompile Include="SourceCodo\Sound.cpp" />
-    <ClCompile Include="SourceCodo\SoundManager.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerBase.cpp" />
     <ClCompile Include="SourceCodo\Sprite.cpp" />
     <ClCompile Include="SourceCodo\Sprite2D.cpp" />
     <ClCompile Include="SourceCodo\Sprite2DCenter.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
     <ClInclude Include="SourceCodo\FactoryScene.h" />
+    <ClInclude Include="SourceCodo\FactorySound.h" />
     <ClInclude Include="SourceCodo\File.h" />
     <ClInclude Include="SourceCodo\Game.h" />
     <ClInclude Include="SourceCodo\GameObject.h" />
@@ -210,7 +212,7 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SkinMesh.h" />
     <ClInclude Include="SourceCodo\Sound.h" />
-    <ClInclude Include="SourceCodo\SoundManager.h" />
+    <ClInclude Include="SourceCodo\SoundManagerBase.h" />
     <ClInclude Include="SourceCodo\Sprite.h" />
     <ClInclude Include="SourceCodo\Sprite2D.h" />
     <ClInclude Include="SourceCodo\Sprite2DCenter.h" />

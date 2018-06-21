@@ -35,6 +35,9 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
+	//音を止める.
+	m_wpSound->StopAllSound();
+
 #if _DEBUG
 	SAFE_DELETE( m_upText );
 #endif//#if _DEBUG
@@ -246,10 +249,11 @@ void clsSCENE_BASE::Proj()
 //デバッグ用シーン切り替え.
 void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 {
-	if( GetAsyncKeyState( 'Y' ) & 0x1 ){
+	if( GetAsyncKeyState( 'Y' ) & 0x1
+		|| m_wpXInput->isLTriggerEnter()){
 		enNextScene = enSCENE::TITLE;
 	}
-	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
+	else if( GetAsyncKeyState( 'U' ) & 0x1|| m_wpXInput->isRTriggerExit() ){
 		enNextScene = enSCENE::ASSEMBLE;
 	}
 	else if( GetAsyncKeyState( 'I' ) & 0x1 ){

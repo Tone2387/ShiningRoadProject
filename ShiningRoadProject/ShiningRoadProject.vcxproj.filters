@@ -9,18 +9,8 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Hiyosi">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Classwork">
       <UniqueIdentifier>{435300eb-b68f-4921-9e6e-5afcfc4d1e06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Hiyosi\Camera">
-      <UniqueIdentifier>{19258b01-4433-47fd-9ad9-b617f4f903ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Hiyosi\Scene">
-      <UniqueIdentifier>{2a69d18e-0474-4061-bdb3-a39c2dc8284b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Tahara\Camera">
       <UniqueIdentifier>{0710d15e-7308-4eed-a8ae-4494b90102a1}</UniqueIdentifier>
@@ -49,14 +39,27 @@
     <Filter Include="Tahara\Parts\Arms">
       <UniqueIdentifier>{ce180e55-01a4-4623-a574-98f54dfab2cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\AssembleUI">
+      <UniqueIdentifier>{d9f0ad52-5110-481d-9fb5-99933f2625a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tahara\Sound">
+      <UniqueIdentifier>{84bf5b78-2615-447f-a7bb-d9988c8172c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Hiyosi\Camera">
+      <UniqueIdentifier>{19258b01-4433-47fd-9ad9-b617f4f903ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Scene">
+      <UniqueIdentifier>{2a69d18e-0474-4061-bdb3-a39c2dc8284b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Hiyosi\Enemy">
       <UniqueIdentifier>{fa11f2f1-fb32-4caa-b1f7-b22f8b14f6b0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Hiyosi\Object">
       <UniqueIdentifier>{6f2b3950-f21d-4aea-8d69-161bff4a8f56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Tahara\AssembleUI">
-      <UniqueIdentifier>{d9f0ad52-5110-481d-9fb5-99933f2625a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -112,9 +115,6 @@
       <Filter>Tahara</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\PtrGroup.cpp">
-      <Filter>Tahara</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SoundManager.cpp">
       <Filter>Tahara</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\CharaStatic.cpp">
@@ -225,6 +225,12 @@
     <ClCompile Include="SourceCodo\AssembleUi.cpp">
       <Filter>Tahara\AssembleUI</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\FactorySound.cpp">
+      <Filter>Tahara\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerBase.cpp">
+      <Filter>Tahara\Sound</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -297,9 +303,6 @@
       <Filter>Tahara</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\PtrGroup.h">
-      <Filter>Tahara</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SoundManager.h">
       <Filter>Tahara</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\CharaStatic.h">
@@ -418,6 +421,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\AssembleUi.h">
       <Filter>Tahara\AssembleUI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\FactorySound.h">
+      <Filter>Tahara\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerBase.h">
+      <Filter>Tahara\Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

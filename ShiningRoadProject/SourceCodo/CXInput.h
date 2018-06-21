@@ -92,6 +92,7 @@ public:
 	//関数名をスティックにする.
 
 	//LRトリガーをボタンのように扱おう.
+	//( 「NORMALIZE_ANALOG_INPUT」 が定義されているか次第で中身が変わる ).
 	bool isLTriggerEnter() const;
 	bool isLTriggerStay() const;
 	bool isLTriggerExit() const;
@@ -128,11 +129,14 @@ private:
 	float GetStickSlope( const SHORT lY, const SHORT lX ) const;
 
 
+	//トリガー入力( isLTriggerとisRTriggerの為 ).
+	BYTE GetLTriggerInside() const;
+	BYTE GetRTriggerInside() const;
 	//スティック入力( GetStickSlope()とGetStickTheta()の為 ).
-	SHORT GetLThumbXtoSlope() const;
-	SHORT GetLThumbYtoSlope() const;
-	SHORT GetRThumbXtoSlope() const;
-	SHORT GetRThumbYtoSlope() const;
+	SHORT GetLThumbXInside() const;
+	SHORT GetLThumbYInside() const;
+	SHORT GetRThumbXInside() const;
+	SHORT GetRThumbYInside() const;
 
 
 	DWORD				m_padId;
