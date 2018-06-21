@@ -186,6 +186,11 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	m_pAsmModel->UpDate();
 
 
+	if( m_wpXInput->isLTriggerEnter() ){
+		if( m_wpXInput->isLTriggerEnter() ){
+			enNextScene = enSCENE::ASSEMBLE;
+		}
+	}
 }
 
 void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )

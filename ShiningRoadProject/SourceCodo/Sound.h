@@ -2,7 +2,7 @@
 #define SOUND_H_
 
 #include <Windows.h>
-
+#include <string>
 //ライブラリ.
 #pragma comment( lib, "winmm.lib" )
 
@@ -27,8 +27,8 @@ public:
 	//サウンド構造体.
 	struct SOUND_DATA
 	{
-		char sAlias[STR_BUFF_MAX];	//エイリアス名.
-		char sPath[STR_BUFF_MAX];	//ファイルパス (「BGM」or「SE」からでよい ).
+		std::string sAlias;	//エイリアス名.
+		std::string sPath;	//ファイルパス (「BGM」or「SE」からでよい ).
 		int  iMaxVolume;			//最大音量.
 	};
 

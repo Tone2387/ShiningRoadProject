@@ -2,6 +2,8 @@
 
 #include "FactoryScene.h"
 #include "FactoryCamera.h"
+#include "FactorySoundManager.h"
+
 
 #include "DxInput.h"
 #include "CXInput.h"
@@ -51,6 +53,9 @@ private:
 	clsCAMERA_BASE*	m_spCamera;
 	//カメラファクトリ.
 	clsFACTORY_CAMERA* m_pCameraFactory;
+
+	//サウンドのファクトリ.
+	std::unique_ptr< clsFACTORY_SOUND_MANAGER > m_upSoundFactory;
 	
 
 	//シーン初期化に必要なポインタのまとめ.
@@ -75,7 +80,7 @@ private:
 	//エフェクト.
 	clsEffects*		m_pEffect;
 	//サウンド.
-	clsSOUND_MANAGER* m_pSound;
+	clsSOUND_MANAGER_BASE* m_pSound;
 
 	//( シーンをまたぐ )ロボットのステータス.
 	clsROBO_STATUS*		m_spRoboStatus;

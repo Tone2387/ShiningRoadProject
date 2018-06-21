@@ -14,7 +14,8 @@ public:
 	clsFILE();
 	~clsFILE();
 
-	void Open( const std::string sFileName );
+	//ŠJ‚¯‚È‚©‚Á‚½‚çfalse‚ª•Ô‚é.
+	bool Open( const std::string sFileName );
 	void Close();
 
 

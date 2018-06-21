@@ -45,6 +45,7 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_pEffect );
 	SAFE_DELETE( m_pResource );
 	SAFE_DELETE( m_pSound );
+	m_upSoundFactory.reset();
 	SAFE_DELETE( m_spXInput );
 //	if( m_spXInput != nullptr ){
 //		m_spXInput->EndProc();
@@ -71,7 +72,10 @@ void clsGAME::Create()
 	ASSERT_IF_NOT_NULL( m_spXInput );
 	m_spXInput = new clsXInput;
 
-	m_pSound = new clsSOUND_MANAGER( m_hWnd );
+	m_upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
+
+	m_pSound = new clsSOUND_MANAGER_ASSEMBLE( m_hWnd );
+	m_pSound->Create();
 	m_pSound->PlayBGM( 0 );			//ãNìÆâπçƒê∂.
 
 	m_pResource = new clsResource;

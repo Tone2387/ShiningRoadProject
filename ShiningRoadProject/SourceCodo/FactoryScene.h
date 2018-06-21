@@ -8,7 +8,6 @@
 #include "SceneGameOver.h"
 
 
-class clsCAMERA_BASE;
 
 //Šî’êƒNƒ‰ƒX.
 class clsFACTORY

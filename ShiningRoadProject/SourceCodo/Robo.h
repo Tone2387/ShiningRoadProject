@@ -113,7 +113,7 @@ private:
 	//Á‚·‚Æ‚«delete‚µ‚È‚¢‚Ånull‚µ‚Ä‚Ë.
 	clsResource*		m_wpResource;
 	clsEffects*			m_wpEffects;
-	clsSOUND_MANAGER*	m_wpSound;
+	clsSOUND_MANAGER_BASE*	m_wpSound;
 #endif//#ifdef Tahara
 
 
