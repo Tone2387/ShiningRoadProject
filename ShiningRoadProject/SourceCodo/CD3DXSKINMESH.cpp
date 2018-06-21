@@ -191,6 +191,23 @@ HRESULT MY_HIERARCHY::DestroyMeshContainer( LPD3DXMESHCONTAINER pMeshContainerBa
 *	以降、パーサークラス.
 *
 **/
+
+D3DXPARSER::D3DXPARSER()
+	:m_pHierarchy( NULL )
+	,m_pFrameRoot( NULL )
+	,m_pAnimController( NULL )
+//	,m_pAnimSet()
+{
+	ZeroMemory( &cHierarchy, sizeof( cHierarchy ) );
+	for( int i=0; i<MAX_ANIM_SET; i++ ){
+		m_pAnimSet[i] = NULL;
+	}
+}
+
+D3DXPARSER::~D3DXPARSER()
+{
+}
+
 // ボーン行列の領域確保.
 HRESULT D3DXPARSER::AllocateBoneMatrix( LPD3DXMESHCONTAINER pMeshContainerBase )
 {
@@ -827,6 +844,7 @@ clsD3DXSKINMESH::~clsD3DXSKINMESH()
 	// Dx11 デバイス関係.
 	m_pDeviceContext = NULL;
 	m_pDevice = NULL;
+	m_hWnd = NULL;
 }
 
 
