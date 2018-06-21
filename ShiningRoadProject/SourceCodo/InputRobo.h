@@ -50,21 +50,6 @@ public:
 		delete m_pBoostRising;
 	}
 
-	clsRoboCommand* PlressInput()
-	{
-		if (m_pXInput)
-		{
-			m_pXInput->UpdateStatus();
-		}
-
-		else if(m_pDxInput)
-		{
-			m_pDxInput->UpdataInputState();
-		}
-
-		return nullptr;
-	}
-
 	clsRoboCommand* LSInput(float& fPower, float& fAngle)
 	{
 		fPower = 0.0f;
@@ -241,7 +226,7 @@ public:
 
 		if (m_pXInput)
 		{
-			fPower = m_pXInput->GetRStickY();
+			fPower = m_pXInput->GetRStickSlope();
 			fAngle = m_pXInput->GetRStickTheta();
 		}
 
