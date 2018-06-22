@@ -19,8 +19,11 @@ const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
 #define BONE_NAME_CORE_TO_ARM_L	 	"CoreJunctionArmL"
 #define BONE_NAME_CORE_TO_ARM_R	 	"CoreJunctionArmR"
 #define BONE_NAME_ARM_L_TO_WEAPON_L "ArmLJunctionWeapon"
-#define BONE_NAME_ARM_R_TO_WEAPON_R "ArmRJunctionWeapon"
+#define BONE_NAME_ARM_R_TO_WEAPON_R /*"ArmRJunctionWeapon"*/"JunctionWeapon"
 
+
+#define BONE_NAME_WEAPON_VEC_ROOT /*"WeaponVecRoot"*/"JunctionWeapon"
+#define BONE_NAME_WEAPON_VEC_END "WeaponVecEnd"
 
 const double dANIM_SPD = 0.016;
 
@@ -176,9 +179,9 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 		m_wppParts[ucARM_R]->GetBonePos( BONE_NAME_ARM_R_TO_WEAPON_R ) );
 
 	FitJointModel( m_wppParts[ucWEAPON_L], m_wppParts[ucARM_L],
-		"ArmLJunctionCore", "ArmLJunctionWeapon" );//ArmLJunctionWeapon.ArmLJunctionCore
+		BONE_NAME_WEAPON_VEC_ROOT, BONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
 	FitJointModel( m_wppParts[ucWEAPON_R], m_wppParts[ucARM_R],
-		"ArmRJunctionCore", "ArmRJunctionWeapon" );
+		BONE_NAME_WEAPON_VEC_ROOT, BONE_NAME_WEAPON_VEC_END );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
