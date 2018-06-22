@@ -76,11 +76,11 @@ private:
 	clsXInput*		m_spXInput;
 
 	//リソースクラス.
-	clsResource*	m_pResource;
+	clsResource*	m_spResource;
 	//エフェクト.
-	clsEffects*		m_pEffect;
+	clsEffects*		m_spEffect;
 	//サウンド.
-	clsSOUND_MANAGER_BASE* m_pSound;
+	clsSOUND_MANAGER_BASE* m_spSound;
 
 	//( シーンをまたぐ )ロボットのステータス.
 	clsROBO_STATUS*		m_spRoboStatus;

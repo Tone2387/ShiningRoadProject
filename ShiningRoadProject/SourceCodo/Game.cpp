@@ -2,9 +2,12 @@
 
 using namespace std;
 
+const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
+
 //起動時の初期シーン.
 #define START_UP_SCENE enSCENE::TITLE
 
+const unsigned char cSTART_UP_MUSIC_NO = 0;
 
 clsGAME::clsGAME( 
 	const HWND hWnd, 
@@ -20,9 +23,9 @@ clsGAME::clsGAME(
 		,m_pPtrGroup( nullptr )
 		,m_spDxInput( nullptr )
 		,m_spXInput( nullptr )
-		,m_pResource( nullptr )
-		,m_pEffect( nullptr )
-		,m_pSound( nullptr )
+		,m_spResource( nullptr )
+		,m_spEffect( nullptr )
+		,m_spSound( nullptr )
 		,m_pScene( nullptr )
 		,m_pSceneFactory( nullptr )
 		,m_spCamera( nullptr )
@@ -42,9 +45,9 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_pPtrGroup );
 	SAFE_DELETE( m_spBlackScreen );
 	SAFE_DELETE( m_spRoboStatus );
-	SAFE_DELETE( m_pEffect );
-	SAFE_DELETE( m_pResource );
-	SAFE_DELETE( m_pSound );
+	SAFE_DELETE( m_spEffect );
+	SAFE_DELETE( m_spResource );
+	SAFE_DELETE( m_spSound );
 	m_upSoundFactory.reset();
 	SAFE_DELETE( m_spXInput );
 //	if( m_spXInput != nullptr ){
@@ -74,15 +77,15 @@ void clsGAME::Create()
 
 	m_upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
 
-	m_pSound = new clsSOUND_MANAGER_ASSEMBLE( m_hWnd );
-	m_pSound->Create();
-	m_pSound->PlayBGM( 0 );			//起動音再生.
+	m_spSound = m_upSoundFactory->Create( START_UP_SCENE, m_hWnd );
+	m_spSound->Create();
+	m_spSound->PlayBGM( cSTART_UP_MUSIC_NO );//起動音再生.
 
-	m_pResource = new clsResource;
-	m_pResource->Create( m_hWnd, m_wpDevice, m_wpContext );
+	m_spResource = new clsResource;
+	m_spResource->Create( m_hWnd, m_wpDevice, m_wpContext );
 
-	m_pEffect = new clsEffects;
-	m_pEffect->Create( m_wpDevice, m_wpContext );
+	m_spEffect = new clsEffects;
+	m_spEffect->Create( m_wpDevice, m_wpContext );
 
 	m_spRoboStatus = new clsROBO_STATUS;
 
@@ -92,14 +95,14 @@ void clsGAME::Create()
 	ss.Disp = { WND_W, WND_H };
 	m_spBlackScreen = new clsBLACK_SCREEN;
 	m_spBlackScreen->Create( m_wpDevice, m_wpContext,
-		"Data\\Image\\BlackScreen.png", ss );
+		cBLACK_FILE_NAME, ss );
 
 	//引数のポインタの集合体.
 	m_pPtrGroup = new clsPOINTER_GROUP( 
 		m_wpDevice, m_wpContext, 
 		m_wpViewPort, m_wpDepthStencilState,
 		m_spDxInput, m_spXInput,
-		m_pResource, m_pEffect, m_pSound,
+		m_spResource, m_spEffect, m_spSound,
 		m_spRoboStatus, m_spBlackScreen );
 
 
@@ -157,9 +160,15 @@ void clsGAME::SwitchScene( const enSCENE enNextScene )
 	//今のシーンを消して.
 	SAFE_DELETE( m_pScene );
 	SAFE_DELETE( m_spCamera );
+	SAFE_DELETE( m_spSound );
 
 	//指示どうりのシーンを作る.
-	//まずはカメラ.
+	//サウンド.
+	m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
+	m_spSound->Create();
+	m_pPtrGroup->UpdateSoundPtr( m_spSound );
+
+	//カメラ.
 	m_spCamera = m_pCameraFactory->Create( enNextScene );
 	m_pPtrGroup->UpdateCameraPtr( m_spCamera );
 
@@ -170,10 +179,9 @@ void clsGAME::SwitchScene( const enSCENE enNextScene )
 	//明転開始.
 	m_spBlackScreen->GetBright();
 
-//BGM再生.//( 各クラスのコンストラクタでやる ).
-m_pSound->PlayBGM( (int)enNextScene );
+//	//BGM再生.//( 各クラスのコンストラクタでやる ).
+//	m_spSound->PlayBGM( 0 );
 }
-
 
 
 

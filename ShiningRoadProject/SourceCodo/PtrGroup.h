@@ -27,6 +27,8 @@ public:
 		clsBLACK_SCREEN* const pBlack );
 	~clsPOINTER_GROUP();
 
+	//サウンドのアドレス取得.
+	void UpdateSoundPtr( clsSOUND_MANAGER_BASE* const pSound );
 	//カメラのアドレス取得.
 	void UpdateCameraPtr( clsCAMERA_BASE* const pCamera );
 
