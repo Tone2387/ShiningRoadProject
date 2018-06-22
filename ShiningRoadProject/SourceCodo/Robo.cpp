@@ -30,8 +30,11 @@ void clsRobo::RoboInit(
 	m_fBoostMoveSpeedMax = 0.5;
 	m_iBoostTopSpeedFrame = 60;
 
-	m_fQuickMoveSpeedMax = m_fBoostMoveSpeedMax * 3.0f;
-	m_iQuickTopSpeedTime = 1 * g_fFPS;
+	m_fQuickBoostSpeedMax = m_fBoostMoveSpeedMax * 3.0f;
+	m_iQuickBoostTopSpeedTime = 1 * g_fFPS;
+
+	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
+	m_iQuickTrunTopSpeedTime = 15;
 
 	m_fBoostFollRes = 0.05f;
 
@@ -50,14 +53,16 @@ void clsRobo::Walk()
 {
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 	m_iMoveStopFrame = m_iWalkTopSpeedFrame;
-	m_iMoveReverseDirInertia = m_iMoveStopFrame / 2;
+	
+	m_bBoost = false;
 }
 
 void clsRobo::Boost()
 {
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
 	m_iMoveStopFrame = m_iBoostTopSpeedFrame;
-	m_iMoveReverseDirInertia = m_iMoveStopFrame / 2;
+
+	m_bBoost = true;
 }
 
 void clsRobo::MoveSwitch()
@@ -67,13 +72,11 @@ void clsRobo::MoveSwitch()
 		if (m_bBoost)
 		{
 			Walk();
-			m_bBoost = false;
 		}
 
 		else
 		{
 			Boost();
-			m_bBoost = true;
 		}
 	}
 }
@@ -125,9 +128,9 @@ void clsRobo::QuickBoost()
 		if (m_iQuickInterbal < 0)
 		{
 			m_iQuickInterbal = g_iQuickInterbal;
-			m_fMoveSpeed = m_fQuickMoveSpeedMax;
-			m_iQuickDecStartTime = m_iQuickTopSpeedTime;
-			SetMoveDeceleSpeed(g_iQuickInterbal);
+			m_fMoveSpeed = m_fQuickBoostSpeedMax;
+			m_iQuickBoostDecStartTime = m_iQuickBoostTopSpeedTime;
+			SetMoveDeceleSpeed(m_iQuickInterbal);
 		}
 	}
 }
@@ -153,8 +156,9 @@ void clsRobo::QuickTurn()
 			if (m_iQuickInterbal < 0)
 			{
 				m_iQuickInterbal = g_iQuickInterbal;
-				m_fRotSpeed = (float)D3DX_PI / g_iQuickTurnFrame;
-				SetRotDeceleSpeed(g_iQuickTurnFrame);
+				m_fRotSpeed = m_fQuickTrunSpeedMax;
+				m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
+				SetRotDeceleSpeed(m_iQuickInterbal);
 			}
 		}
 	}
@@ -162,10 +166,16 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
-	if (m_iQuickDecStartTime > 0)
+	if (m_iQuickBoostDecStartTime > 0)
 	{
-		m_fMoveSpeed = m_fQuickMoveSpeedMax;
-		m_iQuickDecStartTime--;
+		m_fMoveSpeed = m_fQuickBoostSpeedMax;
+		m_iQuickBoostDecStartTime--;
+	}
+
+	if (m_iQuickTrunDecStartTime > 0)
+	{
+		m_fRotSpeed = m_fQuickTrunSpeedMax;
+		m_iQuickTrunDecStartTime--;
 	}
 
 	if (m_bBoost)
@@ -197,6 +207,48 @@ void clsRobo::Updata()
 	m_iQuickInterbal--;
 }
 
+void clsRobo::EnelgyRecovery()
+{
+	SetEnelgyRecoveryAmount();
+
+	m_iEnelgy += m_iEnelgyRecoveryPoint;
+
+	if (m_iEnelgy > m_iEnelgyMax)
+	{
+		m_iEnelgy = m_iEnelgyMax;
+	}
+}
+
+void clsRobo::SetEnelgyRecoveryAmount()
+{
+	m_iEnelgyRecoveryPoint = m_iEnelgyOutput;
+
+	if (m_bBoost)
+	{
+		if (!m_bGround)
+		{
+			m_iEnelgyRecoveryPoint /= 2;
+		}
+
+		m_iEnelgyRecoveryPoint -= m_iBoostMoveCost;
+	}
+
+	if (false)
+	{
+		m_iEnelgyRecoveryPoint;
+	}
+}
+
+bool clsRobo::EnelgyConsumption(const int iConsumption)
+{
+	if (m_iEnelgy >= iConsumption)
+	{
+		m_iEnelgy -= iConsumption;
+		return true;
+	}
+
+	return false;
+}
 
 clsRobo::clsRobo() :
 m_pMesh(NULL),
