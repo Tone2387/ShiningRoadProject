@@ -28,6 +28,8 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
 
+	float fPushMin = 0.5f;
+
 	Updata();
 
 	pRoboCom = m_pInput->MoveSwitch();
@@ -47,29 +49,51 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 	pRoboCom = m_pInput->LSInput(fPush, fAngle);
 	pRoboCom->Trigger(this, fPush, fAngle);
 
-	pRoboCom = m_pInput->QuickBoost();
-	if (pRoboCom)
+	if (abs(fPush) >= fPushMin)//LS押し込み.
 	{
-		if (abs(fPush) >= 0.5f)
-		{
-			pRoboCom->Trigger(this, fPush, fAngle);
-		}
-		pRoboCom->PushBotton(this);
-	}
-
-	pRoboCom = m_pInput->RSHorInput(fPush, fAngle);
-	pRoboCom->Trigger(this, abs(fPush), fAngle);
-
-	if (abs(fPush) >= 0.5f)
-	{
-		pRoboCom = m_pInput->QuickTurn();
-
+		pRoboCom = m_pInput->QuickBoost();//クイックブースト.
 		if (pRoboCom)
 		{
 			pRoboCom->Trigger(this, fPush, fAngle);
 			pRoboCom->PushBotton(this);
 		}
+
+		pRoboCom = m_pInput->RSHorInput(fPush, fAngle);//旋回.
+		pRoboCom->Trigger(this, abs(fPush), fAngle);
 	}
+
+	else
+	{
+		pRoboCom = m_pInput->RSHorInput(fPush, fAngle);//旋回.
+		pRoboCom->Trigger(this, abs(fPush), fAngle);
+
+		if (abs(fPush) >= fPushMin)//RS押し込み.
+		{
+			pRoboCom = m_pInput->QuickTurn();
+
+			if (pRoboCom)
+			{
+				pRoboCom->Trigger(this, fPush, fAngle);
+				pRoboCom->PushBotton(this);
+			}
+		}
+
+		else
+		{
+			pRoboCom = m_pInput->QuickBoost();
+
+			if (pRoboCom)
+			{
+				pRoboCom->PushBotton(this);
+			}
+		}
+	}
+
+	
+
+
+
+	
 
 	if (pWall)
 	{

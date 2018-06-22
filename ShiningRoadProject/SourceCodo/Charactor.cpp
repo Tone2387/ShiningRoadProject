@@ -11,6 +11,7 @@ void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//
 void clsCharactor::SetMoveDeceleSpeed(const int iMoveStopFrame)//Œ¸‘¬.
 {
 	m_iMoveStopFrame = iMoveStopFrame;
+	m_iMoveReverseDirInertia = m_iMoveStopFrame / 2;
 
 	m_fMoveDecele = abs(m_fMoveSpeed) / m_iMoveStopFrame;
 }

@@ -67,20 +67,31 @@ public:
 	int m_iEnelgyMax;//エネルギー最大容量.
 	int m_iEnelgy;//現在エネルギー残量.
 	int m_iEnelgyOutput;//エネルギー出力(回復量)
+	int m_iEnelgyRecoveryPoint;//現在のエネルギー回復量.
+
+	void EnelgyRecovery();
+	void SetEnelgyRecoveryAmount();
+	bool EnelgyConsumption(const int iConsumption);//エネルギー消費はここから.
 
 	float m_fBoostMoveSpeedMax;
+	int m_iBoostMoveCost;
 
-	float m_fQuickMoveSpeedMax;
-	int m_iQuickEnelgyCost;
-	int m_iQuickTopSpeedTime;//最高速を保つフレーム値.
+	float m_fQuickBoostSpeedMax;
+	int m_iQuickBoostEnelgyCost;
+	int m_iQuickBoostTopSpeedTime;//最高速を保つフレーム値.
+	int m_iQuickBoostDecStartTime;//残クイック噴射時間.
 
-	int m_iQuickDecStartTime;//残クイック噴射時間.
+	float m_fQuickTrunSpeedMax;
+	int m_iQuickTrunEnelgyCost;
+	int m_iQuickTrunTopSpeedTime;//最高速を保つフレーム値.
+	int m_iQuickTrunDecStartTime;//残クイック噴射時間.
 
 	int m_iQuickInterbal;//クイックブーストの再噴射までのフレーム.
 
 	float m_fBoostRisingSpeedMax;//ブースター垂直移動の最高速.
 	int m_iBoostRisingTopSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fBoostRisingAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
+	int m_iBoostRisingyCost;
 	float m_fBoostFollRes;//ブースター展開時に落ちる速度.
 
 	//Armパーツから数値を取得する変数と関連する変数//
