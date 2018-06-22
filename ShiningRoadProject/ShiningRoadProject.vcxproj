@@ -104,7 +104,6 @@
     <ClCompile Include="SourceCodo\DxInput.cpp" />
     <ClCompile Include="SourceCodo\Effects.cpp" />
     <ClCompile Include="SourceCodo\Enemy.cpp" />
-    <ClCompile Include="SourceCodo\EnemyChara.cpp" />
     <ClCompile Include="SourceCodo\EnemyRobo.cpp" />
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
@@ -176,7 +175,6 @@
     <ClInclude Include="SourceCodo\DxInput.h" />
     <ClInclude Include="SourceCodo\Effects.h" />
     <ClInclude Include="SourceCodo\Enemy.h" />
-    <ClInclude Include="SourceCodo\EnemyChara.h" />
     <ClInclude Include="SourceCodo\EnemyRobo.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />

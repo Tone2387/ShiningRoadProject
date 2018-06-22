@@ -249,9 +249,6 @@
     <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp">
       <Filter>Hiyosi\Sound</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\EnemyChara.cpp">
-      <Filter>Hiyosi\Enemy</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -463,9 +460,6 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SoundManagerGameOver.h">
       <Filter>Hiyosi\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\EnemyChara.h">
-      <Filter>Hiyosi\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
