@@ -13,7 +13,8 @@ clsSCENE_ENDING::~clsSCENE_ENDING()
 
 void clsSCENE_ENDING::CreateProduct()
 {
-
+	//BGMÄ¶.
+	m_wpSound->PlayBGM( 0 );
 }
 
 

@@ -54,6 +54,8 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
+	//BGMÄ¶.
+	m_wpSound->PlayBGM( 0 );
 
 //	m_pTestChara = new clsCharaStatic;
 //	m_pTestChara->AttachModel( 

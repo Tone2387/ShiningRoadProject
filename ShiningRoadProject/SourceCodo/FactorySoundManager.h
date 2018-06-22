@@ -14,7 +14,9 @@ class clsFACTORY_SOUND_MANAGER
 {
 public:
 
-	clsSOUND_MANAGER_BASE* Create( const enSCENE enNextScene, HWND const hWnd );
+	clsSOUND_MANAGER_BASE* Create( 
+		const enSCENE enNextScene,
+		HWND const hWnd );
 
 };
 

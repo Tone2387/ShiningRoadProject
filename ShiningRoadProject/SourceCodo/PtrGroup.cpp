@@ -43,6 +43,12 @@ clsPOINTER_GROUP::~clsPOINTER_GROUP()
 	m_wpDevice = nullptr;
 }
 
+//サウンドのアドレス取得.
+void clsPOINTER_GROUP::UpdateSoundPtr( clsSOUND_MANAGER_BASE* const pSound )
+{
+	m_wpSound = pSound;
+}
+
 //カメラのアドレス取得.
 void clsPOINTER_GROUP::UpdateCameraPtr( clsCAMERA_BASE* const pCamera )
 {

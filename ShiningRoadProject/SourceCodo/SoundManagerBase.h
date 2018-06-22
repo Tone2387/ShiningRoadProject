@@ -2,8 +2,8 @@
 
 
 #include "Sound.h"
-#include "File.h"
 
+#include <vector>
 #include <memory>
 
 
@@ -50,16 +50,7 @@ protected:
 	//各継承クラスのクラス名をm_sSceneNameに入れる.
 	virtual void CreateSceneName() = 0;
 
-	//サウンドクラス作成.
-	void CreateSound( 
-		std::vector< std::unique_ptr< clsSound > > &vpSound,
-		const std::string sFilePath );
-
-	//サウンドクラス.
-	std::vector< std::unique_ptr< clsSound > > m_vupBgm;
-	std::vector< std::unique_ptr< clsSound > > m_vupSe;
-
-	//継承クラスで入れる.
+	//継承クラスで中身を入れる.
 	std::string m_sSceneName;
 
 private:
@@ -69,12 +60,20 @@ private:
 		std::vector< clsSound::SOUND_DATA > &vData,
 		const std::string sFilePath );
 
+	//サウンドクラス作成.
+	void CreateSound( 
+		std::vector< std::unique_ptr< clsSound > > &vpSound,
+		const std::string sFilePath );
+
+	//サウンドクラス.
+	std::vector< std::unique_ptr< clsSound > > m_vupBgm;
+	std::vector< std::unique_ptr< clsSound > > m_vupSe;
+
 	//リザーブのサイズ.
 	const unsigned int m_uiRESERVE_SIZE_BGM;
 	const unsigned int m_uiRESERVE_SIZE_SE;
 
-
-
 	HWND m_hWnd;
+
 };
 
