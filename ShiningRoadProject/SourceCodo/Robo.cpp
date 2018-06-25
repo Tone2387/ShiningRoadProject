@@ -36,14 +36,21 @@ void clsRobo::RoboInit(
 	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
 	m_iQuickTrunTopSpeedTime = 15;
 
-	m_fBoostFollRes = 0.05f;
-
 	m_fBoostRisingSpeedMax = 0.5f;//スピードの最大値.
 	m_iBoostRisingTopSpeedFrame = 20;//↑に達するまでのフレーム値.
 	m_fBoostRisingAccele = m_fBoostRisingSpeedMax / m_iBoostRisingTopSpeedFrame;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
+	m_fBoostFollRes = m_fBoostRisingSpeedMax / 10;
 
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
+
+	m_iQuickBoostEnelgyCost = 1000;
+	m_iQuickTrunEnelgyCost = 1000;
+	m_iBoostRisingyCost = 100;
+
+	m_iEnelgyMax = 10000;
+	m_iEnelgy = m_iEnelgyMax;
+	m_iEnelgyOutput = 1500 / g_fFPS;
 
 	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
@@ -85,19 +92,27 @@ void clsRobo::BoostRising()
 {
 	if (!m_bGround || IsMoveing())
 	{
-		if (m_fFollPower < m_fBoostMoveSpeedMax)
+		if (EnelgyConsumption(m_iBoostRisingyCost))
 		{
-			m_fFollPower += m_fBoostRisingAccele;
+			if (m_fFollPower < m_fBoostMoveSpeedMax)
+			{
+				m_fFollPower += m_fBoostRisingAccele;
+			}
+
+			else
+			{
+				m_fFollPower = m_fBoostMoveSpeedMax;
+			}
+
+			if (!m_bBoost)
+			{
+				Boost();
+			}
 		}
 
 		else
 		{
-			m_fFollPower = m_fBoostMoveSpeedMax;
-		}
-
-		if (!m_bBoost)
-		{
-			Boost();
+			Walk();
 		}
 	}
 
@@ -125,12 +140,15 @@ void clsRobo::QuickBoost()
 {
 	if (IsMoveControl())
 	{
-		if (m_iQuickInterbal < 0)
+		if (EnelgyConsumption(m_iQuickBoostEnelgyCost))
 		{
-			m_iQuickInterbal = g_iQuickInterbal;
-			m_fMoveSpeed = m_fQuickBoostSpeedMax;
-			m_iQuickBoostDecStartTime = m_iQuickBoostTopSpeedTime;
-			SetMoveDeceleSpeed(m_iQuickInterbal);
+			if (m_iQuickInterbal < 0)
+			{
+				m_iQuickInterbal = g_iQuickInterbal;
+				m_fMoveSpeed = m_fQuickBoostSpeedMax;
+				m_iQuickBoostDecStartTime = m_iQuickBoostTopSpeedTime;
+				SetMoveDeceleSpeed(m_iQuickInterbal);
+			}
 		}
 	}
 }
@@ -151,14 +169,17 @@ void clsRobo::QuickTurn()
 {
 	if (!m_bBoost)
 	{
-		if (IsRotControl())
+		if (EnelgyConsumption(m_iQuickTrunEnelgyCost))
 		{
-			if (m_iQuickInterbal < 0)
+			if (IsRotControl())
 			{
-				m_iQuickInterbal = g_iQuickInterbal;
-				m_fRotSpeed = m_fQuickTrunSpeedMax;
-				m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
-				SetRotDeceleSpeed(m_iQuickInterbal);
+				if (m_iQuickInterbal < 0)
+				{
+					m_iQuickInterbal = g_iQuickInterbal;
+					m_fRotSpeed = m_fQuickTrunSpeedMax;
+					m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
+					SetRotDeceleSpeed(m_iQuickInterbal);
+				}
 			}
 		}
 	}
@@ -166,24 +187,16 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
-	if (m_iQuickBoostDecStartTime > 0)
+	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
 		m_fMoveSpeed = m_fQuickBoostSpeedMax;
 		m_iQuickBoostDecStartTime--;
 	}
 
-	if (m_iQuickTrunDecStartTime > 0)
+	if (m_iQuickTrunDecStartTime > 0)//クイックターン.
 	{
 		m_fRotSpeed = m_fQuickTrunSpeedMax;
 		m_iQuickTrunDecStartTime--;
-	}
-
-	if (m_bBoost)
-	{
-		if (m_fFollPower < -m_fBoostFollRes)
-		{
-			m_fFollPower += m_fBoostFollRes;
-		}
 	}
 
 	if (IsMoveControl())
@@ -199,12 +212,40 @@ void clsRobo::Updata()
 		}
 	}
 
+	if (m_bBoost)
+	{
+		if (m_fFollPower < -m_fBoostFollRes)
+		{
+			m_fFollPower += m_fBoostFollRes;
+
+			if (m_fFollPower > -m_fBoostFollRes)
+			{
+				m_fFollPower = -m_fBoostFollRes;
+			}
+		}
+	}
+
 	if (IsRotControl())
 	{
 		SetRotDeceleSpeed(m_iRotStopFrame);
 	}
 
-	m_iQuickInterbal--;
+	if (m_iQuickInterbal >= 0)
+	{
+		m_iQuickInterbal--;
+	}
+
+	EnelgyRecovery();
+}
+
+void clsRobo::UpdataLimitTime()
+{
+	m_iActivityLimitTime--;
+
+	if (m_iActivityLimitTime < 0)
+	{
+		m_bTimeUp = true;
+	}
 }
 
 void clsRobo::EnelgyRecovery()
@@ -233,9 +274,9 @@ void clsRobo::SetEnelgyRecoveryAmount()
 		m_iEnelgyRecoveryPoint -= m_iBoostMoveCost;
 	}
 
-	if (false)
+	if (false)//射撃準備完了.
 	{
-		m_iEnelgyRecoveryPoint;
+		m_iEnelgyRecoveryPoint - (m_iEnelgyOutput);
 	}
 }
 
