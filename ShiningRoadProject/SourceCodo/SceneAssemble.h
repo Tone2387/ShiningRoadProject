@@ -91,6 +91,21 @@ private:
 //	clsCharaStatic* m_pParts;
 
 
+
+	//âπÇÃà¯êî.
+	enum enBGM : int
+	{
+		ASSEMBLE = 0,
+	};
+
+	enum enSE : int
+	{
+		CURSOL_MOVE = 0,
+		ENTER,
+		EXIT,
+		MISSION_START,
+	};
+
 };
 
 

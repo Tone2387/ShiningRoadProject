@@ -132,12 +132,6 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 
 	CreateStaticModel( 
 		"Data\\Stage\\kami_map.x",
-//		"Data\\RoboParts\\Head\\Head1.X",
-//		"Data\\RoboParts\\Weapon\\Weapon1.X",
-//		"Data\\RoboParts\\Leg\\Leg0.X",
-//		"Data\\RoboParts\\ArmR\\ArmR1.X",
-//		"Data\\RoboParts\\ArmL\\ArmL1.X",
-//		"Data\\RoboParts\\Core\\Core1.X",
 		enSTATIC_MODEL::enStaticModel_Ground );
 	CreateStaticModel(
 		"Data\\RoboParts\\Leg\\Leg1\\Leg1.x",
@@ -186,19 +180,19 @@ void clsResource::CreateParts( const enPARTS enParts )
 		tmpString += sEXTENSION_X;			//拡張子連結.
 		//パーツファイル名連結完了.
 
-		//メモリ確保.
-		char *tmpPass = new char[tmpString.size() + 1];
-
-		//stringからchar[]へコピー.
-		char_traits<char>::copy( 
-			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
+//		//メモリ確保.
+//		char *tmpPass = new char[tmpString.size() + 1];
+//
+//		//stringからchar[]へコピー.
+//		char_traits<char>::copy( 
+//			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
 
 		//作る.
 		CreateSkinModel(
-			tmpPass, 
+			const_cast<LPSTR>( tmpString.c_str() ), //tmpPass.
 			static_cast<enSKIN_MODEL>( ucStart + i ) );
 
-		delete[] tmpPass;
+//		delete[] tmpPass;
 	}
 }
 
