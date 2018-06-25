@@ -94,6 +94,9 @@ public:
 	int m_iBoostRisingyCost;
 	float m_fBoostFollRes;//ブースター展開時に落ちる速度.
 
+	int m_iActivityLimitTime;//活動限界時間.
+	bool m_bTimeUp;
+
 	//Armパーツから数値を取得する変数と関連する変数//
 
 	//Legパーツから数値を取得する変数と関連する変数//
@@ -112,6 +115,9 @@ public:
 	void SetDirQuickTurn(const float fAngle);
 
 	void Updata();
+	void UpdataQuick();
+	void UpdataLimitTime();
+	void UpdataBoost();
 
 	clsRobo();
 	~clsRobo();

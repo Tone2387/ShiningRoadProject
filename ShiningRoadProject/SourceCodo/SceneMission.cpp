@@ -109,6 +109,23 @@ void clsSCENE_MISSION::RenderDebugText()
 		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z);
 	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
 
+	sprintf_s(strDbgTxt,
+		"Enelgy : [%d]",
+		m_pTestRobo->m_iEnelgy);
+	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
+
+	if (m_pTestRobo->m_bBoost)
+	{
+		sprintf_s(strDbgTxt,"ON");
+		m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
+	}
+
+	else
+	{
+		sprintf_s(strDbgTxt,"OFF");
+		m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
+	}
+
 	//dbgtxty += 10;
 	//if( m_pBgm[0]->IsStopped() ){
 	//	sprintf_s( strDbgTxt, "Stopped" );

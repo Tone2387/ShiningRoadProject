@@ -52,6 +52,7 @@ public:
 
 	TRANSFORM m_Trans;
 	D3DXVECTOR3 m_vOldPos;
+	D3DXVECTOR3 m_vCenterPos;//オブジェクトの中心.
 
 	float m_fRaySpece;
 	float m_fFollPower;
