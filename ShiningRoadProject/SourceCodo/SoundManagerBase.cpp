@@ -57,6 +57,8 @@ clsSOUND_MANAGER_BASE::clsSOUND_MANAGER_BASE( const HWND hWnd )
 	:m_hWnd( hWnd )
 	,m_vupBgm()
 	,m_vupSe()
+//	,m_dqbLoopBgm()
+//	,m_dqbLoopSe()
 	,m_uiRESERVE_SIZE_BGM( uiRESERVE_SIZE_BGM )
 	,m_uiRESERVE_SIZE_SE( uiRESERVE_SIZE_SE )	
 {
@@ -87,7 +89,34 @@ clsSOUND_MANAGER_BASE::~clsSOUND_MANAGER_BASE()
 	m_vupBgm.clear();
 	m_vupBgm.shrink_to_fit();
 
+	m_dqbLoopBgm.clear();
+	m_dqbLoopBgm.shrink_to_fit();
+	m_dqbLoopSe.clear();
+	m_dqbLoopSe.shrink_to_fit();
+
 	m_hWnd = nullptr;
+}
+
+
+
+
+void clsSOUND_MANAGER_BASE::Create()
+{
+	//継承クラスで動く関数( m_sSceneNameを入れる ).
+	CreateSceneName();
+
+	string tmpPass = sDATA_PASS + m_sSceneName;
+
+	//BGM.
+	CreateSound( m_vupBgm, m_dqbLoopBgm, uiRESERVE_SIZE_BGM, tmpPass + sBGM_PASS );
+	//SE.
+	CreateSound( m_vupSe, m_dqbLoopSe, uiRESERVE_SIZE_SE, tmpPass + sSE_PASS );
+}
+
+//毎フレーム一回使う.
+void clsSOUND_MANAGER_BASE::Update()
+{
+	
 }
 
 //すべて停止.
@@ -107,26 +136,11 @@ void clsSOUND_MANAGER_BASE::StopAllSound()
 }
 
 
-
-
-void clsSOUND_MANAGER_BASE::Create()
-{
-	//継承クラスで動く関数( m_sSceneNameを入れる ).
-	CreateSceneName();
-
-	string tmpPass = sDATA_PASS + m_sSceneName;
-
-	//BGM.
-	CreateSound( m_vupBgm, tmpPass + sBGM_PASS );
-	//SE.
-	CreateSound( m_vupSe, tmpPass + sSE_PASS );
-}
-
-
-
 //サウンドクラス作成.
 void clsSOUND_MANAGER_BASE::CreateSound( 
 	SOUND_SET &vpSound,
+	std::deque<bool> &dqbLoop,
+	const unsigned int uiRESERVE_SIZE,
 	const string sFilePath )
 {
 	//サウンドデータ.
@@ -137,12 +151,17 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 	int iSoundNum = vData.size();
 
 	//容量を多めにとる.
-	vpSound.reserve( uiRESERVE_SIZE_BGM );
+	vpSound.reserve( uiRESERVE_SIZE );
+
+//	dqbLoop.;
+
+//	dqbLoop.reserve( uiRESERVE_SIZE );
 
 	for( int i=0; i<iSoundNum; i++ ){
 		//配列を増やしてnew( make_unique )する.
 		vpSound.push_back( nullptr );
 		vpSound[i] = make_unique<clsSound>();
+		dqbLoop.push_back( false );
 
 		//作成.
 		vpSound[i]->Open( vData[i].sPath.c_str(), vData[i].sAlias.c_str(), m_hWnd );
@@ -153,6 +172,7 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 	}
 	//余分な分を消す.
 	vpSound.shrink_to_fit();
+	dqbLoop.shrink_to_fit();
 	vData.clear();
 	vData.shrink_to_fit();
 }
@@ -192,6 +212,8 @@ bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
 	m_vupBgm[bgmNo]->SeekToStart();
+	vector<bool> vb;
+//	m_dqbLoopBgm[bgmNo] = true;
 	return m_vupBgm[bgmNo]->Play( bNotify );
 }
 //停止関数.
@@ -205,21 +227,18 @@ bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo ) const
 bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
-	m_vupBgm[bgmNo]->SeekToStart();
 	return m_vupBgm[bgmNo]->IsStopped();
 }
 //音の再生中を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
-	m_vupBgm[bgmNo]->SeekToStart();
 	return m_vupBgm[bgmNo]->IsPlaying();
 }
 //巻き戻し関数(再生位置初期化).
 bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
-	m_vupBgm[bgmNo]->SeekToStart();
 	return m_vupBgm[bgmNo]->SeekToStart();
 }
 
@@ -243,22 +262,19 @@ bool clsSOUND_MANAGER_BASE::StopSE( const int seNo ) const
 bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
-	m_vupSe[seNo]->SeekToStart();
-	return m_vupSe[seNo]->Stop();
+	return m_vupSe[seNo]->IsStopped();
 }
 //音の再生中を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
-	m_vupSe[seNo]->SeekToStart();
-	return m_vupSe[seNo]->Stop();
+	return m_vupSe[seNo]->IsPlaying();
 }
 //巻き戻し関数(再生位置初期化).
 bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
-	m_vupSe[seNo]->SeekToStart();
-	return m_vupSe[seNo]->Stop();
+	return m_vupSe[seNo]->SeekToStart();
 }
 
 

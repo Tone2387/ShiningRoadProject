@@ -4,6 +4,7 @@
 #include "Sound.h"
 
 #include <vector>
+#include <deque>
 #include <memory>
 
 
@@ -17,6 +18,9 @@ public:
 
 	//new直後に一度だけ使用.
 	void Create();
+
+	//毎フレーム一回使う.
+	void Update();
 
 	//すべて停止.
 	void StopAllSound();
@@ -59,20 +63,24 @@ private:
 	//長い型は嫌いなので.
 	using SOUND_SET = std::vector< std::unique_ptr< clsSound > >;
 
+	//サウンドクラス作成.
+	void CreateSound( 
+		SOUND_SET &vpSound,
+		std::deque<bool> &dqbLoop,
+		const unsigned int uiRESERVE_SIZE,
+		const std::string sFilePath );
 
 	//サウンドデータ作成.
 	void CreateSoundData(
 		std::vector< clsSound::SOUND_DATA > &vData,
 		const std::string sFilePath );
 
-	//サウンドクラス作成.
-	void CreateSound( 
-		SOUND_SET &vpSound,
-		const std::string sFilePath );
-
 	//サウンドクラス.
 	SOUND_SET m_vupBgm;
 	SOUND_SET m_vupSe;
+	//ループ再生するかのフラグ.
+	std::deque<bool> m_dqbLoopBgm;
+	std::deque<bool> m_dqbLoopSe;
 
 	//リザーブのサイズ.
 	const unsigned int m_uiRESERVE_SIZE_BGM;
