@@ -126,7 +126,7 @@ void clsSOUND_MANAGER_BASE::Create()
 
 //サウンドクラス作成.
 void clsSOUND_MANAGER_BASE::CreateSound( 
-	vector< unique_ptr< clsSound > > &vpSound,
+	SOUND_SET &vpSound,
 	const string sFilePath )
 {
 	//サウンドデータ.
@@ -144,11 +144,8 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 		vpSound.push_back( nullptr );
 		vpSound[i] = make_unique<clsSound>();
 
-		//名前.
-		char cAliasName[STR_BUFF_MAX] = "";
-		strcat_s( cAliasName, sizeof( cAliasName ), vData[i].sAlias.c_str() );
 		//作成.
-		vpSound[i]->Open( vData[i].sPath.c_str(), cAliasName, m_hWnd );
+		vpSound[i]->Open( vData[i].sPath.c_str(), vData[i].sAlias.c_str(), m_hWnd );
 		//最大音量設定.
 		vpSound[i]->SetMaxVolume( vData[i].iMaxVolume );
 		//現音量初期化.
@@ -194,30 +191,35 @@ void clsSOUND_MANAGER_BASE::CreateSoundData(
 bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
+	m_vupBgm[bgmNo]->SeekToStart();
 	return m_vupBgm[bgmNo]->Play( bNotify );
 }
 //停止関数.
 bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
+	m_vupBgm[bgmNo]->SeekToStart();
 	return m_vupBgm[bgmNo]->Stop();
 }
 //音の停止を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
+	m_vupBgm[bgmNo]->SeekToStart();
 	return m_vupBgm[bgmNo]->IsStopped();
 }
 //音の再生中を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
+	m_vupBgm[bgmNo]->SeekToStart();
 	return m_vupBgm[bgmNo]->IsPlaying();
 }
 //巻き戻し関数(再生位置初期化).
 bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
+	m_vupBgm[bgmNo]->SeekToStart();
 	return m_vupBgm[bgmNo]->SeekToStart();
 }
 
@@ -227,30 +229,35 @@ bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
 bool clsSOUND_MANAGER_BASE::PlaySE( const int seNo, const bool bNotify ) const
 {
 	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
+	m_vupSe[seNo]->SeekToStart();
 	return m_vupSe[seNo]->Play( bNotify );
 }
 //停止関数.
 bool clsSOUND_MANAGER_BASE::StopSE( const int seNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
+	m_vupSe[seNo]->SeekToStart();
 	return m_vupSe[seNo]->Stop();
 }
 //音の停止を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
+	m_vupSe[seNo]->SeekToStart();
 	return m_vupSe[seNo]->Stop();
 }
 //音の再生中を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
+	m_vupSe[seNo]->SeekToStart();
 	return m_vupSe[seNo]->Stop();
 }
 //巻き戻し関数(再生位置初期化).
 bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
 {
 	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
+	m_vupSe[seNo]->SeekToStart();
 	return m_vupSe[seNo]->Stop();
 }
 

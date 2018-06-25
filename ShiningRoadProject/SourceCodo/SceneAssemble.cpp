@@ -55,7 +55,7 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
 	//BGMÄ¶.
-	m_wpSound->PlayBGM( 0 );
+	m_wpSound->PlayBGM( enBGM::ASSEMBLE );
 
 //	m_pTestChara = new clsCharaStatic;
 //	m_pTestChara->AttachModel( 
@@ -177,9 +177,11 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ) MoveCursorDown();
 	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		Enter();
+		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
 	}
 	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		Undo();
+		m_wpSound->PlaySE( enSE::ENTER );
 	}
 
 

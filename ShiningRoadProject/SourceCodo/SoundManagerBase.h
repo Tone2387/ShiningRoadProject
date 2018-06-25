@@ -7,6 +7,7 @@
 #include <memory>
 
 
+
 //サウンドクラスの基底クラス.
 class clsSOUND_MANAGER_BASE
 {
@@ -55,6 +56,10 @@ protected:
 
 private:
 
+	//長い型は嫌いなので.
+	using SOUND_SET = std::vector< std::unique_ptr< clsSound > >;
+
+
 	//サウンドデータ作成.
 	void CreateSoundData(
 		std::vector< clsSound::SOUND_DATA > &vData,
@@ -62,12 +67,12 @@ private:
 
 	//サウンドクラス作成.
 	void CreateSound( 
-		std::vector< std::unique_ptr< clsSound > > &vpSound,
+		SOUND_SET &vpSound,
 		const std::string sFilePath );
 
 	//サウンドクラス.
-	std::vector< std::unique_ptr< clsSound > > m_vupBgm;
-	std::vector< std::unique_ptr< clsSound > > m_vupSe;
+	SOUND_SET m_vupBgm;
+	SOUND_SET m_vupSe;
 
 	//リザーブのサイズ.
 	const unsigned int m_uiRESERVE_SIZE_BGM;
