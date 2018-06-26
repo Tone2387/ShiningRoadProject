@@ -1,30 +1,21 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include"Shot.h"
+#include"Resource.h"
 
 clsShot::clsShot()
 {
 	ZeroMemory(this, sizeof(clsShot));
-	m_pEffect = clsEffects::GetInstance();
 }
 
 clsShot::~clsShot()
 {
 }
 
-HRESULT clsShot::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11,SHOT_EFC ShotEffects,clsEffects::UseChar UseChar)
+HRESULT clsShot::Init(const float fScale)
 {
-	ShotEfcTypes = ShotEffects;
-
-	m_UseChar = UseChar;
-
-	//HPUIInit(pDevice11, pContext11);
-	SEInit(hWnd);
-	//LockOnInit(pDevice11, pContext11);
-
-	m_Trans.fScale = 0.1f;
-
 	//当たり判定の大きさを決める.
-	m_Sphere.fRadius = m_Trans.fScale;
+	m_Sphere.vCenter = &m_Trans.vPos;
+	m_Sphere.fRadius = fScale;
 	//確認用のｽﾌｨｱをﾚﾝﾀﾞﾘﾝｸﾞする.
 	//当たり判定としては、ここ以降は不要.
 
@@ -32,41 +23,7 @@ HRESULT clsShot::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* p
 	//m_pBodySphere = clsResource::GetInstance()->GetStaticModels(clsResource::enStaticModel_Shpere);
 #endif
 
-
-	//ﾎﾞｰﾝ名のｾｯﾄ.
-	//体のﾎﾞｰﾝ.
-
-	SEInit(hWnd);
-
 	return S_OK;
-}
-
-void clsShot::SEInit(HWND hWnd)
-{
-	sound_data tmpSData[] =
-	{
-		{ "Data\\Sound\\SE\\Player\\Bash2.mp3", "Shoot" },
-		{ "Data\\Sound\\SE\\SE01", "ShotHit" }
-	};
-
-	m_iSoundMaxNo = sizeof(tmpSData) / sizeof(tmpSData[0]);
-	m_ppSE = new clsSound*[m_iSoundMaxNo];
-
-	for (int i = 0; i < m_iSoundMaxNo; i++)
-	{
-
-		char No[STR_BUFF_MAX];
-		sprintf(No, "%d", m_iThisShotIndex);
-
-		strcat_s(tmpSData[i].sAlias, sizeof(tmpSData[i].sAlias), No);//ｴｲﾘｱｽを結合.
-
-		m_ppSE[i] = new clsSound;
-		//音声ﾌｧｲﾙを開く.
-		m_ppSE[i]->Open(
-			tmpSData[i].sPath,
-			tmpSData[i].sAlias,
-			hWnd);
-	}
 }
 
 bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
@@ -77,18 +34,10 @@ bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
 		{
 			if (Collision(m_Sphere, ppTargetSphere[i]))
 			{
-				m_pEffect->SetLocation(m_HitEfcH, m_Trans.vPos);
-				m_HitEfcH = m_pEffect->Play(m_Trans.vPos, ShotEfcTypes.HitEfcType, m_UseChar);
+				//m_pEffect->SetLocation(m_HitEfcH, m_Trans.vPos);
+				m_HitEfcH = //m_pEffect->Play(clsEffects::enEFFECTS_ARBIA_ATK,m_Trans.vPos);
 
-				if (m_UseChar == clsEffects::enUse_Player)
-				{
-					m_pEffect->SetScale(m_HitEfcH, D3DXVECTOR3(0.5f, 0.5f, 0.5f));
-				}
-
-				else
-				{
-					m_pEffect->SetScale(m_HitEfcH, D3DXVECTOR3(0.2f, 0.2f, 0.2f));
-				}
+				//m_pEffect->SetScale(m_HitEfcH, D3DXVECTOR3(1.0f,1.0f,1.0f));
 
 				m_bShotExistFlg = false;
 				return true;
@@ -125,7 +74,9 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vTarget)
 	m_vMoveAxis = vTar - vStart;
 	D3DXVec3Normalize(&m_vMoveAxis, &m_vMoveAxis);
 
-	m_Trans.vPos = m_vStartPos = m_Sphere.vCenter = vShotPos - m_vMoveAxis * SHOT_SPEED;
+	
+
+	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveAxis * m_fMoveSpeed;
 
 	m_bShotExistFlg = true;
 	m_bExistFlg = true;
@@ -137,37 +88,36 @@ void clsShot::Move()
 {
 	if (!m_bShotExistFlg)
 	{
-		if (!m_pEffect->PlayCheck(m_LineEfcH) && !m_pEffect->PlayCheck(m_HitEfcH))
+		/*if (!//m_pEffect->PlayCheck(m_LineEfcH) && !//m_pEffect->PlayCheck(m_HitEfcH))
 		{
 			m_bExistFlg = false;
 		}
 
-		m_pEffect->Stop(m_ShotEfcH);
+		//m_pEffect->Stop(m_ShotEfcH);*/
 		return;
 	}
 
 	if (D3DXVec3Length(&(m_Trans.vPos - m_vStartPos)) > 50.0f)
 	{
-		m_pEffect->Stop(m_ShotEfcH);
+		//m_pEffect->Stop(m_ShotEfcH);
 		m_bShotExistFlg = false;
 	}
 
-	if (!m_pEffect->PlayCheck(m_ShotEfcH))
+	/*if (!//m_pEffect->PlayCheck(m_ShotEfcH))
 	{
-		m_ShotEfcH = m_pEffect->Play(m_Trans.vPos, ShotEfcTypes.ShotEfcType, m_UseChar);
-		m_pEffect->SetScale(m_ShotEfcH, D3DXVECTOR3(0.5f, 0.5f, 0.5f));
-		m_LineEfcH = m_pEffect->Play(m_Trans.vPos, ShotEfcTypes.LineEfcType, m_UseChar);
-		m_pEffect->SetScale(m_LineEfcH, D3DXVECTOR3(0.5f, 0.5f, 0.5f));
-	}
-	
-	else
-	{
-		m_Trans.vPos += m_vMoveAxis  * SHOT_SPEED;
-		m_Sphere.vCenter = m_Trans.vPos;
+		/*m_ShotEfcH = //m_pEffect->Play(m_Trans.vPos, ShotEfcTypes.ShotEfcType, m_UseChar);
+		//m_pEffect->SetScale(m_ShotEfcH, D3DXVECTOR3(0.5f, 0.5f, 0.5f));
+		m_LineEfcH = //m_pEffect->Play(m_Trans.vPos, ShotEfcTypes.LineEfcType, m_UseChar);
+		//m_pEffect->SetScale(m_LineEfcH, D3DXVECTOR3(0.5f, 0.5f, 0.5f));
 	}
 
-	m_pEffect->SetLocation(m_ShotEfcH, m_Trans.vPos);
-	m_pEffect->SetLocation(m_LineEfcH, m_Trans.vPos);
+	else
+	{
+		m_Trans.vPos += m_vMoveAxis  * m_fMoveSpeed;
+	}
+
+	//m_pEffect->SetLocation(m_ShotEfcH, m_Trans.vPos);
+	//m_pEffect->SetLocation(m_LineEfcH, m_Trans.vPos);*/
 
 }
 

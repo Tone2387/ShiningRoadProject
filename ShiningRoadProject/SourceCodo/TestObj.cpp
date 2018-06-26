@@ -10,12 +10,9 @@ clsTestObj::~clsTestObj()
 
 }
 
-void clsTestObj::Init(HWND hWnd,
-	ID3D11Device* pDevice11,
-	ID3D11DeviceContext* pContext11,
-	clsPOINTER_GROUP* const pPtrGroup )
+void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup )
 {
-	RoboInit(hWnd, pDevice11, pContext11, pPtrGroup);
+	RoboInit(pPtrGroup);
 
 	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
 

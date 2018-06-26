@@ -1,10 +1,6 @@
 #include"Robo.h"
 
-void clsRobo::RoboInit(
-	HWND hWnd,
-	ID3D11Device* pDevice11,
-	ID3D11DeviceContext* pContext11,
-	clsPOINTER_GROUP* const pPtrGroup)
+void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup)
 {
 #ifdef Tahara
 	m_wpResource = pPtrGroup->GetResource();
@@ -51,6 +47,7 @@ void clsRobo::RoboInit(
 	m_iEnelgyMax = 10000;
 	m_iEnelgy = m_iEnelgyMax;
 	m_iEnelgyOutput = 1500 / g_fFPS;
+	m_iBoostFloatRecovery = m_iEnelgyOutput / 2;
 
 	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
@@ -268,7 +265,7 @@ void clsRobo::SetEnelgyRecoveryAmount()
 	{
 		if (!m_bGround)
 		{
-			m_iEnelgyRecoveryPoint /= 2;
+			m_iEnelgyRecoveryPoint -= m_iBoostFloatRecovery;
 		}
 
 		m_iEnelgyRecoveryPoint -= m_iBoostMoveCost;

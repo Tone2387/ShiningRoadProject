@@ -592,3 +592,36 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall, const bool bFoll)
 	return bResult;
 }
 
+bool clsObject::Collision(SPHERE pAttacker, SPHERE pTarget)
+{
+	//2つの物体の中心間の距離を求める.
+	D3DXVECTOR3 vLength = *pTarget.vCenter - *pAttacker.vCenter;
+	//長さに変換する.
+	float Length = D3DXVec3Length(&vLength);
+
+	//2物体間の距離が、2物体の半径を足したもの.
+	//小さいということは、ｽﾌｨｱ同士が重なっている.
+	//(衝突している)ということ.
+	if (Length <=
+		pAttacker.fRadius + pTarget.fRadius)
+	{
+		return true;//衝突.
+	}
+	return false;//衝突していない.
+}
+
+bool clsObject::ObjectCollision(SPHERE* pTarget, const int iNumMax)
+{
+	for (int i = 0; i < m_iColSpheresMax; i++)
+	{
+		for (int j = 0; j < iNumMax; j++)
+		{
+			if (Collision(*m_ppColSpheres[i], pTarget[j]))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
