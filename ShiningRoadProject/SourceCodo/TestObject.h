@@ -26,10 +26,7 @@ public:
 	clsTestObj();
 	~clsTestObj();
 
-	void Init(HWND hWnd, 
-		ID3D11Device* pDevice11, 
-		ID3D11DeviceContext* pContext11, 
-		clsPOINTER_GROUP* const pPtrGroup );
+	void Init( clsPOINTER_GROUP* const pPtrGroup );
 
 	void Action(const clsDX9Mesh* pWall);
 

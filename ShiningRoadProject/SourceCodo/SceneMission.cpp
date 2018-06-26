@@ -21,7 +21,7 @@ clsSCENE_MISSION::~clsSCENE_MISSION()
 void clsSCENE_MISSION::CreateProduct()
 {
 	m_pTestRobo = new clsTestObj;
-	m_pTestRobo->Init(nullptr, nullptr, nullptr, m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
+	m_pTestRobo->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
 
 	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
 	m_pTestRobo->SetPosition(tmpVec3);

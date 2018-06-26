@@ -134,8 +134,8 @@
     <ClCompile Include="SourceCodo\SceneMission.cpp" />
     <ClCompile Include="SourceCodo\SceneTitle.cpp" />
     <ClCompile Include="SourceCodo\Shot.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="SourceCodo\SkinMesh.cpp" />
     <ClCompile Include="SourceCodo\Sound.cpp" />
@@ -212,8 +212,8 @@
     <ClInclude Include="SourceCodo\SceneMission.h" />
     <ClInclude Include="SourceCodo\SceneTitle.h" />
     <ClInclude Include="SourceCodo\Shot.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="SourceCodo\SkinMesh.h" />
     <ClInclude Include="SourceCodo\Sound.h" />

@@ -35,10 +35,7 @@ public:
 	clsSkinMesh * m_pLeg;*/
 	clsSkinMesh* m_pMesh;
 
-	void RoboInit(HWND hWnd,
-		ID3D11Device* pDevice11,
-		ID3D11DeviceContext* pContext11,
-		clsPOINTER_GROUP* const pPtrGroup );
+	void RoboInit(clsPOINTER_GROUP* const pPtrGroup);
 
 	void ModelUpdate()
 	{
@@ -68,6 +65,7 @@ public:
 	int m_iEnelgy;//現在エネルギー残量.
 	int m_iEnelgyOutput;//エネルギー出力(回復量)
 	int m_iEnelgyRecoveryPoint;//現在のエネルギー回復量.
+	int m_iBoostFloatRecovery;//空中でブースト展開中のエネルギー使用量.
 
 	void EnelgyRecovery();
 	void SetEnelgyRecoveryAmount();

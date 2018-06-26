@@ -94,6 +94,11 @@ public:
 		ObjRollOverGuard(&m_Trans.fPitch);
 		ObjRollOverGuard(&m_Trans.fRoll);
 	}
+
+	//スフィア衝突判定関数.
+	bool Collision(SPHERE pAttacker, SPHERE pTarget);//Sphere対Sphereの当たり判定.
+	bool ObjectCollision(SPHERE* pTarget,const int iNumMax);
+
 	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
 	void SetScale(float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
 	
