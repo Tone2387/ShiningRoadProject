@@ -20,16 +20,16 @@ public:
 	void Create();
 
 	//毎フレーム一回使う.
-	void Update();
+	void UpdateLoop();
 
 	//すべて停止.
 	void StopAllSound();
 
 	//----- BGM -----//
 	//再生関数.
-	bool PlayBGM( const int bgmNo, const bool bNotify = true ) const;
+	bool PlayBGM( const int bgmNo, const bool bNotify = true );
 	//停止関数.
-	bool StopBGM( const int bgmNo ) const;
+	bool StopBGM( const int bgmNo );
 	//音の停止を確認する関数.
 	bool IsStoppedBGM( const int bgmNo ) const;
 	//音の再生中を確認する関数.
@@ -40,9 +40,9 @@ public:
 
 	//----- SE -----//
 	//再生関数.
-	bool PlaySE( const int seNo, const bool bNotify = false ) const;
+	bool PlaySE( const int seNo, const bool bNotify = false );
 	//停止関数.
-	bool StopSE( const int seNo ) const;
+	bool StopSE( const int seNo );
 	//音の停止を確認する関数.
 	bool IsStoppedSE( const int seNo ) const;
 	//音の再生中を確認する関数.

@@ -13,8 +13,6 @@ clsSCENE_GAME_OVER::~clsSCENE_GAME_OVER()
 
 void clsSCENE_GAME_OVER::CreateProduct()
 {
-	//BGMÄ¶.
-	m_wpSound->PlayBGM( 0 );
 
 }
 
