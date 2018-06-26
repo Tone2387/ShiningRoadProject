@@ -91,6 +91,9 @@ void clsSCENE_BASE::Create()
 //				  指定したシーンが生成される ).
 void clsSCENE_BASE::Update( enSCENE &enNextScene )
 {
+	//サウンドループ.
+	m_wpSound->UpdateLoop();
+
 	//enNextSceneは各シーンに直接は動かさせない.
 	enSCENE tmpScene = enNextScene;
 

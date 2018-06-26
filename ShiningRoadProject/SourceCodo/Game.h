@@ -33,9 +33,6 @@ public:
 	void Render();
 
 
-	//引数のシーンに切り替え.
-	void SwitchScene( const enSCENE enNextScene );
-
 	//ラップ関数.
 	D3DXVECTOR3 GetCameraPos() const;
 	D3DXVECTOR3 GetCameraLookPos() const;
@@ -43,6 +40,8 @@ public:
 
 private:
 
+	//引数のシーンに切り替え.
+	void SwitchScene( const enSCENE enNextScene, const bool bStartUp = false );
 
 	//シーンクラス.
 	clsSCENE_BASE*		m_pScene;

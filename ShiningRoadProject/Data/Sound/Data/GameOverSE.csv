@@ -1,2 +1,3 @@
-Enter,SE\\Other\\100Enter.wav,750,起動時,
-Exit,SE\\Other\\200Exit.wav,650,普段,
+Cursol,SE\\Other\\CursorMove.wav,750,カーソルを動かしたとき,
+Enter,SE\\Other\\Enter.wav,750,決定時,
+Exit,SE\\Other\\Exit.wav,650,キャンセル時,

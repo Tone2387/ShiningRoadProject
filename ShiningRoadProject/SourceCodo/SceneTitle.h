@@ -16,9 +16,6 @@ public:
 	~clsSCENE_TITLE();
 
 
-
-
-
 private:
 
 	void CreateProduct() final;
@@ -32,7 +29,5 @@ private:
 
 	//タイトルでズンとただずむロボット君.
 	clsASSEMBLE_MODEL*	m_pRoboModel;
-
-
 
 };

@@ -19,8 +19,6 @@ clsSCENE_TITLE::~clsSCENE_TITLE()
 
 void clsSCENE_TITLE::CreateProduct()
 {
-	//BGMÄ¶.
-	m_wpSound->PlayBGM( 0 );
 
 	//ƒ‚ƒfƒ‹‚³‚ñì¬.
 	m_pRoboModel = new clsASSEMBLE_MODEL;
