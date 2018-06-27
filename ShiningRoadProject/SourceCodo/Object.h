@@ -69,8 +69,6 @@ public:
 		WallJudge(pGround);
 	}
 
-	void Render();
-
 	virtual void tenshi(){};
 
 	virtual void ActionProduct(){};
