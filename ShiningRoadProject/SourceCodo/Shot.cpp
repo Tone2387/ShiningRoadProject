@@ -35,7 +35,7 @@ bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
 			if (Collision(m_Sphere, ppTargetSphere[i]))
 			{
 				//m_pEffect->SetLocation(m_HitEfcH, m_Trans.vPos);
-				m_HitEfcH = //m_pEffect->Play(clsEffects::enEFFECTS_ARBIA_ATK,m_Trans.vPos);
+				//m_HitEfcH = m_pEffect->Play(clsEffects::enEFFECTS_ARBIA_ATK,m_Trans.vPos);
 
 				//m_pEffect->SetScale(m_HitEfcH, D3DXVECTOR3(1.0f,1.0f,1.0f));
 
@@ -73,8 +73,6 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vTarget)
 
 	m_vMoveAxis = vTar - vStart;
 	D3DXVec3Normalize(&m_vMoveAxis, &m_vMoveAxis);
-
-	
 
 	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveAxis * m_fMoveSpeed;
 
