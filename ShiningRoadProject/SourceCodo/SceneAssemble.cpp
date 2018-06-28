@@ -131,6 +131,8 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_pAsmModel->SetScale( fINIT_ROBO_SCALE );
 
 		m_pAsmModel->SetRot( { 0.0f, 0.0f, 0.0f } );
+
+		m_wpSound->StopAllSound();
 	}
 
 	//テストモデル移動.
@@ -162,18 +164,14 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
 	}
 
-	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-		m_wpSound->PlayBGM( enBGM::ASSEMBLE );
-	}
-	if( GetAsyncKeyState( 'X' ) & 0x1 ){
-		m_wpSound->StopBGM( enBGM::ASSEMBLE );
-	}
 
-	if( m_wpXInput->isLTriggerEnter() ){
-		if( m_wpXInput->isLTriggerEnter() ){
-			enNextScene = enSCENE::ASSEMBLE;
-		}
-	}
+
+	if( GetAsyncKeyState( 'Z' ) & 0x1 )m_wpSound->PlaySE( 0 );
+	if( GetAsyncKeyState( 'X' ) & 0x1 )m_wpSound->PlaySE( 1 );
+	if( GetAsyncKeyState( 'C' ) & 0x1 )m_wpSound->PlaySE( 2 );
+	if( GetAsyncKeyState( 'V' ) & 0x1 )m_wpSound->PlaySE( 3 );
+	if( GetAsyncKeyState( 'B' ) & 0x1 )m_wpSound->PlaySE( 4 );
+
 
 
 #endif//#if _DEBUG
@@ -189,11 +187,11 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ) MoveCursorDown();
 	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		Enter();
-		m_wpSound->PlaySE( enSE::CURSOL_MOVE, true );
+		m_wpSound->PlaySE( enSE::ENTER );
 	}
 	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		Undo();
-		m_wpSound->PlaySE( enSE::ENTER );
+		m_wpSound->PlaySE( enSE::EXIT, true );
 	}
 
 

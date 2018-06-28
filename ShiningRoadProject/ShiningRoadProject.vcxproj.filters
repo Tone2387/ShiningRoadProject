@@ -461,11 +461,11 @@
     <ClInclude Include="SourceCodo\FactorySoundManager.h">
       <Filter>Tahara\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\Sound.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\OperationString.h">
       <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Sound.h">
+      <Filter>Classwork\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -62,24 +62,29 @@ private:
 
 	//長い型は嫌いなので.
 	using SOUND_SET = 
-		std::vector< std::unique_ptr< clsSound > >;
+		std::vector< std::vector< std::unique_ptr< clsSound > > >;
 
 	//サウンドクラス作成.
 	void CreateSound( 
 		SOUND_SET &vpSound,
 		std::deque<bool> &dqbLoop,
 		const unsigned int uiRESERVE_SIZE,
-		const std::string sFilePath );
+		const std::string sFilePath,
+		std::vector<int> &viMaxNum );
 
 	//サウンドデータ作成.
 	void CreateSoundData(
 		std::vector< clsSound::SOUND_DATA > &vData,
-		const std::string sFilePath );
+		const std::string &sFilePath,
+		std::vector<int> &viMaxNum );
 
 
-	//各関数の中身.
+	//----- 各関数の中身 -----//.
+	//再生関数.
 	bool Play( 
-		const SOUND_SET &vpSound, std::deque<bool> &dqbLoop,
+		const SOUND_SET &vpSound, 
+		std::deque<bool> &dqbLoop,
+		std::vector<int> &viNum,
 		const int No, const bool bNotify );
 	//停止関数.
 	bool Stop( 
@@ -94,11 +99,16 @@ private:
 
 
 	//サウンドクラス.
-	SOUND_SET m_vupBgm;
-	SOUND_SET m_vupSe;
+	SOUND_SET m_vvupBgm;
+	SOUND_SET m_vvupSe;
 	//ループ再生するかのフラグ.
 	std::deque<bool> m_dqbLoopBgm;
 	std::deque<bool> m_dqbLoopSe;
+	//音を同時再生用に何個作る?のフラグ( 起動時のみ ).
+	//兼、次に再生するのは何番目かを指すフラグ.
+	std::vector<int> m_viBgmNum;
+	std::vector<int> m_viSeNum;
+
 
 	//リザーブのサイズ.
 	const unsigned int m_uiRESERVE_SIZE_BGM;

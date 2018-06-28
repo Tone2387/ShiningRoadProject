@@ -179,10 +179,12 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 
 	//お待ちかねのシーン本体.
 	m_pScene = m_pSceneFactory->Create( enNextScene );
+
 	//起動時は無視.
 	if( !bStartUp ){
 		m_spSound->PlayBGM( iINIT_SCENE_BGM_NO );//BGM再生.
 	}
+
 	m_pScene->Create();//シーン初期化.
 
 	//明転開始.
