@@ -8,30 +8,6 @@ using namespace std;
 const unsigned int uiRESERVE_SIZE_BGM = 16;
 const unsigned int uiRESERVE_SIZE_SE = 256;
 
-////BGM.
-//const clsSound::SOUND_DATA BGM_DATA[] =
-//{
-//	//タイトル.
-//	{ "Title", "BGM\\100Title\\100Title.mp3", 350 },
-//	//アセンブル.
-//	{ "Assemble", "BGM\\200Main\\010Stage.mp3", 250 },
-//	//ミッション.
-//	{ "Mission", "BGM\\300Result\\200ResultJingle.mp3", 350 },
-//	//クリア.
-//	{ "Clear", "BGM\\400Clear\\100EndRoll.mp3", 200 },
-//	//ゲームオーバー.
-//	{ "GameOver", "BGM\\500Over\\100Bye.mp3", 300 },
-//};
-//
-////SE.
-//const clsSound::SOUND_DATA SE_DATA[] =
-//{
-//	//明るいやつ.
-//	{ "Enter", "SE\\700Button\\100Enter.wav", 300 },
-//	//暗いやつ.
-//	{ "Exit", "SE\\700Button\\200Exit.wav", 300 },
-//};
-
 //push_back用.
 const clsSound::SOUND_DATA INIT_SOUND_DATA = { "", "", 1000 };
 const char cALIAS_NUM = 0;
@@ -235,40 +211,28 @@ void clsSOUND_MANAGER_BASE::CreateSoundData(
 //再生関数.
 bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify )
 {
-	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
-	m_vupBgm[bgmNo]->SeekToStart();
+	return Play( m_vupBgm, m_dqbLoopBgm, bgmNo, bNotify );
 
-	m_dqbLoopBgm[bgmNo] = bNotify;
-
-	return m_vupBgm[bgmNo]->Play( bNotify );
 }
 //停止関数.
 bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo )
 {
-	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
-	m_vupBgm[bgmNo]->SeekToStart();
-
-	m_dqbLoopBgm[bgmNo] = bLOOP_INIT;
-
-	return m_vupBgm[bgmNo]->Stop();
+	return Stop( m_vupBgm, m_dqbLoopBgm, bgmNo );
 }
 //音の停止を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
 {
-	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
-	return m_vupBgm[bgmNo]->IsStopped();
+	return IsStopped( m_vupBgm, bgmNo );
 }
 //音の再生中を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
 {
-	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
-	return m_vupBgm[bgmNo]->IsPlaying();
+	return IsPlaying( m_vupBgm, bgmNo );
 }
 //巻き戻し関数(再生位置初期化).
 bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
 {
-	SOUND_NUMBER_OVER_SHECK( bgmNo, m_vupBgm );
-	return m_vupBgm[bgmNo]->SeekToStart();
+	return SeekToStart( m_vupBgm, bgmNo );
 }
 
 
@@ -276,42 +240,74 @@ bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
 //再生関数.
 bool clsSOUND_MANAGER_BASE::PlaySE( const int seNo, const bool bNotify )
 {
-	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
-	m_vupSe[seNo]->SeekToStart();
-
-	m_dqbLoopSe[seNo] = bNotify;
-
-	return m_vupSe[seNo]->Play( bNotify );
+	return Play( m_vupSe, m_dqbLoopSe, seNo, bNotify );
 }
 //停止関数.
 bool clsSOUND_MANAGER_BASE::StopSE( const int seNo )
 {
-	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
-	m_vupSe[seNo]->SeekToStart();
-
-	m_dqbLoopSe[seNo] = bLOOP_INIT;
-
-	return m_vupSe[seNo]->Stop();
+	return Stop( m_vupSe, m_dqbLoopSe, seNo );
 }
 //音の停止を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
 {
-	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
-	return m_vupSe[seNo]->IsStopped();
+	return IsStopped( m_vupSe, seNo );
 }
 //音の再生中を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
 {
-	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
-	return m_vupSe[seNo]->IsPlaying();
+	return IsPlaying( m_vupSe, seNo );
 }
 //巻き戻し関数(再生位置初期化).
 bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
 {
-	SOUND_NUMBER_OVER_SHECK( seNo, m_vupSe );
-	return m_vupSe[seNo]->SeekToStart();
+	return SeekToStart( m_vupSe, seNo );
 }
 
 
+//各関数の中身.
+bool clsSOUND_MANAGER_BASE::Play( 
+	const SOUND_SET &vpSound, std::deque<bool> &dqbLoop,
+	const int No, const bool bNotify )
+{
+	SOUND_NUMBER_OVER_SHECK( No, vpSound );
+	vpSound[No]->SeekToStart();
+
+	dqbLoop[No] = bNotify;
+
+	return vpSound[No]->Play( bNotify );
+}
+
+//停止関数.
+bool clsSOUND_MANAGER_BASE::Stop( 
+	const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No )
+{
+	SOUND_NUMBER_OVER_SHECK( No, vpSound );
+	vpSound[No]->SeekToStart();
+
+	dqbLoop[No] = bLOOP_INIT;
+
+	return vpSound[No]->Stop();
+}
+
+//音の停止を確認する関数.
+bool clsSOUND_MANAGER_BASE::IsStopped( const SOUND_SET &vpSound, const int No ) const
+{
+	SOUND_NUMBER_OVER_SHECK( No, vpSound );
+	return vpSound[No]->IsStopped();
+}
+
+//音の再生中を確認する関数.
+bool clsSOUND_MANAGER_BASE::IsPlaying( const SOUND_SET &vpSound, const int No ) const
+{
+	SOUND_NUMBER_OVER_SHECK( No, vpSound );
+	return vpSound[No]->IsPlaying();
+}
+
+//巻き戻し関数(再生位置初期化).
+bool clsSOUND_MANAGER_BASE::SeekToStart( const SOUND_SET &vpSound, const int No ) const
+{
+	SOUND_NUMBER_OVER_SHECK( No, vpSound );
+	return vpSound[No]->SeekToStart();
+}
 
 
