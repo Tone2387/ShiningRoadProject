@@ -1,6 +1,8 @@
 #include "Resource.h"
-//コンストラクタでの配列初期化の為.
-#pragma warning( disable : 4351 )
+
+#include "OperationString.h"
+
+
 
 using namespace std;
 //パーツディレクトリのパス.
@@ -171,6 +173,7 @@ void clsResource::CreateParts( const enPARTS enParts )
 	
 	//作成.//そのパーツのモデル種類の数だけ繰り返す.
 	for( UCHAR i=0; i<ucMax - ucStart; i++ ){
+#if 0
 		//パーツファイル名連結.
 		ostringstream ss;
 		ss << static_cast<int>( i );		//数字を文字列に( intじゃないと事故が起こるさ ).
@@ -179,20 +182,22 @@ void clsResource::CreateParts( const enPARTS enParts )
 		tmpString += sModelName + ss.str();	//パーツのモデル名.
 		tmpString += sEXTENSION_X;			//拡張子連結.
 		//パーツファイル名連結完了.
+#else
+		//文字列操作クラス作成.
+		unique_ptr<clsOPERATION_STRING> upOprtStr = make_unique<clsOPERATION_STRING>();
+	
+		string tmpString = upOprtStr->ConsolidatedNumber( sPass, i );//パーツのディレクトリ名.
+		tmpString += upOprtStr->ConsolidatedNumber( sModelName, i );//パーツのモデル名.
+		tmpString += sEXTENSION_X;									//拡張子連結.
 
-//		//メモリ確保.
-//		char *tmpPass = new char[tmpString.size() + 1];
-//
-//		//stringからchar[]へコピー.
-//		char_traits<char>::copy( 
-//			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
+		upOprtStr.reset( nullptr );
+#endif
 
 		//作る.
 		CreateSkinModel(
 			const_cast<LPSTR>( tmpString.c_str() ), //tmpPass.
 			static_cast<enSKIN_MODEL>( ucStart + i ) );
 
-//		delete[] tmpPass;
 	}
 }
 

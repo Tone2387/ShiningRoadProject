@@ -582,9 +582,9 @@ HRESULT clsDX9Mesh::InitShader()
 }
 
 //レンダリング用(※DX9MESH内とMain内の二つに存在するので注意)
-void clsDX9Mesh::Render( const D3DXMATRIX &mView,	const D3DXMATRIX &mProj,
-						 const D3DXVECTOR3 &vLight,	const D3DXVECTOR3 &vEye,
-						 const D3DXVECTOR4 &vColor,	const bool alphaFlg )
+void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
+						 const D3DXVECTOR3& vLight,	const D3DXVECTOR3& vEye,
+						 const D3DXVECTOR4& vColor,	const bool alphaFlg )
 {
 	D3DXMATRIX mWorld, mScale, mYaw, mPitch, mRoll,mTrans;
 
@@ -597,48 +597,48 @@ void clsDX9Mesh::Render( const D3DXMATRIX &mView,	const D3DXMATRIX &mProj,
 	D3DXMatrixRotationX(&mPitch, m_Trans.fPitch);
 	D3DXMatrixRotationZ(&mRoll, m_Trans.fRoll);
 
-	//=================================================================//
-	//キャラクター移動処理(ラジコン)
-	vecAxisX = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
-	vecAxisZ = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
-
-	D3DXVec3TransformCoord(
-		&vecAxisX, //(out)
-		&vecAxisX,
-		&mYaw);//Y軸回転行列.
-
-	//Z軸ベクトルそのものを回転状態により変換する.
-	D3DXVec3TransformCoord(
-		&vecAxisZ, //(out)
-		&vecAxisZ, 
-		&mYaw);//Y軸回転行列.
-
-	//方向によって進行させる値を設定.
-	/*switch (m_enDir)
-	{
-	case enDirection_Foward://前進.
-		//向かう方向×進める値(0.1f)
-		m_Trans.vPos += vecAxisZ * 0.1f;
-		break;
-	case enDirection_Backward://後退.
-		m_Trans.vPos -= vecAxisZ * 0.1f;
-		break;
-	case Left:
-		m_Trans.vPos -= vecAxisX * 0.1f;
-		break;
-	case Right:
-		m_Trans.vPos += vecAxisX * 0.1f;
-		break;
-
-	case enDirection_LeftTurn:
-
-		break;
-	case enDirection_RightTurn:
-
-		break;
-	}
-	m_enDir = enDirection_Stop;//停止.*/
-	//=================================================================//
+//	//=================================================================//
+//	//キャラクター移動処理(ラジコン)
+//	vecAxisX = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+//	vecAxisZ = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+//
+//	D3DXVec3TransformCoord(
+//		&vecAxisX, //(out)
+//		&vecAxisX,
+//		&mYaw);//Y軸回転行列.
+//
+//	//Z軸ベクトルそのものを回転状態により変換する.
+//	D3DXVec3TransformCoord(
+//		&vecAxisZ, //(out)
+//		&vecAxisZ, 
+//		&mYaw);//Y軸回転行列.
+//
+//	//方向によって進行させる値を設定.
+//	/*switch (m_enDir)
+//	{
+//	case enDirection_Foward://前進.
+//		//向かう方向×進める値(0.1f)
+//		m_Trans.vPos += vecAxisZ * 0.1f;
+//		break;
+//	case enDirection_Backward://後退.
+//		m_Trans.vPos -= vecAxisZ * 0.1f;
+//		break;
+//	case Left:
+//		m_Trans.vPos -= vecAxisX * 0.1f;
+//		break;
+//	case Right:
+//		m_Trans.vPos += vecAxisX * 0.1f;
+//		break;
+//
+//	case enDirection_LeftTurn:
+//
+//		break;
+//	case enDirection_RightTurn:
+//
+//		break;
+//	}
+//	m_enDir = enDirection_Stop;//停止.*/
+//	//=================================================================//
 
 
 	//移動.

@@ -340,8 +340,8 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye, 
-		const D3DXVECTOR4 &vColor = D3DXVECTOR4( 1.0f, 1.0f, 1.0f ,1.0f ),
-		const bool alphaFlg = false, 
+		const D3DXVECTOR4& vColor = D3DXVECTOR4( 1.0f, 1.0f, 1.0f ,1.0f ),
+		const bool isAlpha = false, 
 		LPD3DXANIMATIONCONTROLLER pAC=NULL );
 	// 解放関数.
 	HRESULT Release();
@@ -415,14 +415,14 @@ private:
 	void DrawFrame( 
 		LPD3DXFRAME pFrame,
 		const D3DXVECTOR4 &vColor, 
-		const bool alphaFlg );
+		const bool isAlpha );
 	// パーツ描画.
 	void DrawPartsMesh( 
 		SKIN_PARTS_MESH* p, 
 		D3DXMATRIX World, 
 		MYMESHCONTAINER* const pContainer,
 		const D3DXVECTOR4 &vColor, 
-		const bool alphaFlg );
+		const bool isAlpha );
 	void DrawPartsMeshStatic( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
 
 	// 全てのメッシュを削除.

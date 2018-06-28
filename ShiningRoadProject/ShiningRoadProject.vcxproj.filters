@@ -249,6 +249,9 @@
     <ClCompile Include="SourceCodo\FactorySoundManager.cpp">
       <Filter>Tahara\Factory</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\OperationString.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -460,6 +463,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Sound.h">
       <Filter>Hiyosi</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\OperationString.h">
+      <Filter>Tahara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

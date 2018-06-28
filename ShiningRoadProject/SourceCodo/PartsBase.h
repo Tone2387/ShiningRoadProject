@@ -9,8 +9,6 @@
 
 
 
-//コンストラクタでの配列初期化の為.
-#pragma warning( disable : 4351 )
 
 
 //ステータス列挙体の型( 継承クラスで定義している列挙体の型 ).
@@ -33,7 +31,7 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4 &vColor,
+		const D3DXVECTOR4& vColor,
 		const bool isAlpha );
 
 	//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
