@@ -37,6 +37,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 
 	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		enNextScene = enSCENE::ASSEMBLE;
+		m_wpSound->PlaySE( 0 );
 	}
 }
 
