@@ -37,6 +37,8 @@ clsSCENE_BASE::~clsSCENE_BASE()
 {
 //	//音を止める.
 //	m_wpSound->StopAllSound();
+	//次のシーンに余計なエフェクトを持ち込まない.
+	m_wpEffects->StopAll();
 
 #if _DEBUG
 	SAFE_DELETE( m_upText );
@@ -133,6 +135,9 @@ void clsSCENE_BASE::Render()
 
 	//各シーンの描画.
 	RenderProduct( m_wpCamera->GetPos() );
+
+	//エフェクト描画.
+	m_wpEffects->Render( m_mView, m_mProj, m_wpCamera->GetPos() );
 
 	//暗転描画.
 	m_wpBlackScreen->Render();

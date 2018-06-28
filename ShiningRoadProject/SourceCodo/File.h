@@ -15,7 +15,7 @@ public:
 	~clsFILE();
 
 	//開けなかったらfalseが返る.
-	bool Open( const std::string sFileName );
+	bool Open( const std::string &sFileName );
 	void Close();
 
 
@@ -46,14 +46,14 @@ public:
 
 private:
 
+	//文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).
+	std::vector< std::string > Split( const std::string &sStr, const char cSep ) const;
+
 	//ファイルパス.
 	std::string m_sFileName;
 
 	//二次元配列として考えます.
 	std::vector< std::vector< std::string > > m_vvsData;
-
-	//文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).
-	std::vector< std::string > Split( const std::string &sStr, const char cSep ) const;
 
 	bool m_bUsing;//使用中ならtrue.
 

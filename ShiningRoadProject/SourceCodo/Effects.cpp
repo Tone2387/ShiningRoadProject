@@ -1,31 +1,44 @@
 #include "Effects.h"
 #include "Global.h"
 
+#include "File.h"
+
+using namespace std;
+
 //最大描画スプライト数.(やばいならint型にする)
-const /*int32_t*/ int g_RenderSpriteMax = 8192;
+const /*int32_t*/ int g_RenderSpriteMax = 4096;
 //エフェクト管理用インスタンス最大数.
 const int g_EffectInstanceMax = 4096;
 
+const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
 
-//エフェクトファイルのリスト.
-const wchar_t g_strFileNameList[ clsEffects::enEFFECTS_MAX ][128] =
-{
-	L"Data\\Effekseer\\tex\\asiato.efk",
-	L"Data\\Effekseer\\tex\\arbia_kougeki.efk",
-	L"Data\\Effekseer\\tex\\syougekiha.efk",
-	L"Data\\Effekseer\\tex\\kougeki.efk",
+const string sFILE_PATH = "Data\\Effekseer\\tex\\";
 
-	L"Data\\Effekseer\\tex\\Teki_kougeki.efk",
-	L"Data\\Effekseer\\tex\\yarare.efk",
-	L"Data\\Effekseer\\tex\\bikkuri.efk",
+const int uiEFFECT_FILE_NAME_INDEX = 0;//ファイル名が格納されているインデックス.
+const int uiMAX_PLAY_INDEX = 1;//最大再生数.
 
-	L"Data\\Effekseer\\tex\\hibana.efk",
 
-	L"Data\\Effekseer\\tex\\takara_hasira.efk",
-	L"Data\\Effekseer\\tex\\takara_nakami.efk",
+const int iRESURVE_SIZE_EFFECTS_MAX = 64;
 
-	L"Data\\Effekseer\\tex\\tobira_sunabokori.efk",
-};
+////エフェクトファイルのリスト.
+//const wchar_t g_strFileNameList[ clsEffects::enEFFECTS_MAX ][128] =
+//{
+//	L"Data\\Effekseer\\tex\\asiato.efk",
+//	L"Data\\Effekseer\\tex\\arbia_kougeki.efk",
+//	L"Data\\Effekseer\\tex\\syougekiha.efk",
+//	L"Data\\Effekseer\\tex\\kougeki.efk",
+//
+//	L"Data\\Effekseer\\tex\\Teki_kougeki.efk",
+//	L"Data\\Effekseer\\tex\\yarare.efk",
+//	L"Data\\Effekseer\\tex\\bikkuri.efk",
+//
+//	L"Data\\Effekseer\\tex\\hibana.efk",
+//
+//	L"Data\\Effekseer\\tex\\takara_hasira.efk",
+//	L"Data\\Effekseer\\tex\\takara_nakami.efk",
+//
+//	L"Data\\Effekseer\\tex\\tobira_sunabokori.efk",
+//};
 
 
 clsEffects::clsEffects()
@@ -36,8 +49,8 @@ clsEffects::clsEffects()
 	m_pSound = nullptr;
 	m_pXA2 = nullptr;
 	m_pXA2Master = nullptr;
-	for( int i=0; i<enEFFECTS_MAX; i++ ){
-		m_pEffect[i] = nullptr;
+	for( int i=0; i<m_vpEffect.size(); i++ ){
+		m_vpEffect[i] = nullptr;
 	}
 }
 
@@ -45,57 +58,6 @@ clsEffects::~clsEffects()
 {
 	Destroy();
 }
-
-
-//==================================================
-//	構築関数.
-//==================================================
-HRESULT clsEffects::Create( ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext )
-{
-	//XAudio2の初期化を行う.
-	if( FAILED( XAudio2Create( &m_pXA2 ) ) ){
-		ERR_MSG( "XAudio2作成失敗", "clsEffects::Create()" );
-		return E_FAIL;
-	}
-	if( FAILED( m_pXA2->CreateMasteringVoice( &m_pXA2Master ) ) ){
-		ERR_MSG( "MasteringVoice作成失敗", "clsEffects::Create()" );
-		return E_FAIL;
-	}
-
-
-	//描画用インスタンスの生成.
-	m_pRender = ::EffekseerRendererDX11::Renderer::Create(
-		pDevice, pContext, g_RenderSpriteMax );
-
-	//エフェクト管理用インスタンス.
-	m_pManager = ::Effekseer::Manager::Create( g_EffectInstanceMax );
-
-	//描画用インスタンスから描画機能を設定.
-	m_pManager->SetSpriteRenderer( m_pRender->CreateSpriteRenderer() );
-	m_pManager->SetRibbonRenderer( m_pRender->CreateRibbonRenderer() );
-	m_pManager->SetRingRenderer( m_pRender->CreateRingRenderer() );
-	m_pManager->SetModelRenderer( m_pRender->CreateModelRenderer() );
-
-	//描画インスタンスからテクスチャの読込機能を設定.
-	//独自拡張可能、現在はファイルから読み込んでいる.
-	m_pManager->SetTextureLoader( m_pRender->CreateTextureLoader() );
-	m_pManager->SetModelLoader( m_pRender->CreateModelLoader() );
-
-	//音再生用インスタンスの生成.
-	m_pSound = ::EffekseerSound::Sound::Create( m_pXA2, 16, 16 );
-
-
-	//音再生用インスタンスから再生機能を設定.
-	m_pManager->SetSoundPlayer( m_pSound->CreateSoundPlayer() );
-
-	//音再生用インスタンスからサウンドデータの読込機能を設定.
-	//独自拡張可能、現在はファイルから読み込んでいる.
-	m_pManager->SetSoundLoader( m_pSound->CreateSoundLoader() );
-
-
-	return S_OK;
-}
-
 
 //==================================================
 //	破棄関数.
@@ -127,49 +89,123 @@ HRESULT clsEffects::Destroy()
 	return S_OK;
 }
 
-
-//==================================================
-//	データ読込関数.
-//==================================================
-HRESULT clsEffects::LoadData()
-{
-	////エフェクトの読込.
-	//m_pEffect =
-	//	::Effekseer::Effect::Create( 
-	//		m_pManager, (const EFK_CHAR*)L"Data\\Effekseer\\mari.efk" );
-	//if( m_pEffect == NULL ){
-	//	ERR_MSG( "エフェクトファイル読込失敗", "clsEffects::LoadData()" );
-	//	return E_FAIL;
-	//}
-
-	//エフェクトの読込.
-	for( int i=0; i<enEFFECTS_MAX; i++ ){
-		m_pEffect[i] =
-			::Effekseer::Effect::Create( 
-				m_pManager, 
-				(const EFK_CHAR*)g_strFileNameList[i] );
-		if( m_pEffect[i] == nullptr ){
-			char strMsg[128];
-			wsprintf( strMsg, "clsEffects::LoadData()\n%ls",
-				g_strFileNameList[i] );
-
-			ERR_MSG( strMsg, "エフェクトファイル読込失敗" );
-			return E_FAIL;
-		}
-	}
-
-	return S_OK;
-}
-
 //==================================================
 //	データ解放関数.
 //==================================================
 HRESULT clsEffects::ReleaseData()
 {
 	//エフェクトの破棄.
-	for( int i=0; i<enEFFECTS_MAX; i++ ){
-		ES_SAFE_RELEASE( m_pEffect[i] );
+	for( int i=0; i<m_vpEffect.size(); i++ ){
+		ES_SAFE_RELEASE( m_vpEffect[i] );
 	}
+
+	return S_OK;
+}
+
+
+//==================================================
+//	構築関数.
+//==================================================
+HRESULT clsEffects::Create( ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext )
+{
+	//初期化.
+	if( FAILED( Init( pDevice, pContext ) ) ){
+		return E_FAIL;
+	}
+
+	//データ読込.
+	if( FAILED( LoadData() ) ){
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+//初期化.
+HRESULT clsEffects::Init( ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext )
+{
+	//XAudio2の初期化を行う.
+	if( FAILED( XAudio2Create( &m_pXA2 ) ) ){
+		ERR_MSG( "XAudio2作成失敗", "clsEffects::Create()" );
+		return E_FAIL;
+	}
+	if( FAILED( m_pXA2->CreateMasteringVoice( &m_pXA2Master ) ) ){
+		ERR_MSG( "MasteringVoice作成失敗", "clsEffects::Create()" );
+		return E_FAIL;
+	}
+
+	//描画用インスタンスの生成.
+	m_pRender = ::EffekseerRendererDX11::Renderer::Create(
+		pDevice, pContext, g_RenderSpriteMax );
+
+	//エフェクト管理用インスタンス.
+	m_pManager = ::Effekseer::Manager::Create( g_EffectInstanceMax );
+
+	//描画用インスタンスから描画機能を設定.
+	m_pManager->SetSpriteRenderer( m_pRender->CreateSpriteRenderer() );
+	m_pManager->SetRibbonRenderer( m_pRender->CreateRibbonRenderer() );
+	m_pManager->SetRingRenderer( m_pRender->CreateRingRenderer() );
+	m_pManager->SetModelRenderer( m_pRender->CreateModelRenderer() );
+
+	//描画インスタンスからテクスチャの読込機能を設定.
+	//独自拡張可能、現在はファイルから読み込んでいる.
+	m_pManager->SetTextureLoader( m_pRender->CreateTextureLoader() );
+	m_pManager->SetModelLoader( m_pRender->CreateModelLoader() );
+
+	//音再生用インスタンスの生成.
+	m_pSound = ::EffekseerSound::Sound::Create( m_pXA2, 16, 16 );
+
+	//音再生用インスタンスから再生機能を設定.
+	m_pManager->SetSoundPlayer( m_pSound->CreateSoundPlayer() );
+
+	//音再生用インスタンスからサウンドデータの読込機能を設定.
+	//独自拡張可能、現在はファイルから読み込んでいる.
+	m_pManager->SetSoundLoader( m_pSound->CreateSoundLoader() );
+
+	return S_OK;
+}
+
+//==================================================
+//	データ読込関数.
+//==================================================
+HRESULT clsEffects::LoadData()
+{
+	unique_ptr< clsFILE > upFile = make_unique<clsFILE>();
+	upFile->Open( sDATA_PATH );
+
+	string tmpString;
+
+	m_vpEffect.reserve( iRESURVE_SIZE_EFFECTS_MAX );
+
+	//エフェクトの読込.
+	for( unsigned int i=0; i<upFile->GetSizeRow(); i++ ){
+		m_vpEffect.push_back( nullptr );
+
+		//パスを作る.
+		tmpString = sFILE_PATH + upFile->GetDataString( i, uiEFFECT_FILE_NAME_INDEX );
+
+		wchar_t *tmpPath = (wchar_t*)( tmpString.c_str() );
+
+		m_vpEffect[i] =
+			::Effekseer::Effect::Create( 
+				m_pManager, 
+				(const EFK_CHAR*)( tmpPath ) );
+
+
+		//エラー.
+		if( m_vpEffect[i] == nullptr ){
+			char strMsg[128];
+			wsprintf( strMsg, "clsEffects::LoadData()\n%ls",
+				tmpPath );
+
+			ERR_MSG( strMsg, "エフェクトファイル読込失敗" );
+			return E_FAIL;
+		}
+	}
+	m_vpEffect.shrink_to_fit();
+
+	upFile->Close();
+	upFile.reset( nullptr );
 
 	return S_OK;
 }

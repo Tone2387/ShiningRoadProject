@@ -189,9 +189,6 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 
 	//明転開始.
 	m_spBlackScreen->GetBright();
-
-//	//BGM再生.//( 各クラスのコンストラクタでやる ).
-//	m_spSound->PlayBGM( 0 );
 }
 
 
