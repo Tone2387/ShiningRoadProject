@@ -61,7 +61,8 @@ protected:
 private:
 
 	//長い型は嫌いなので.
-	using SOUND_SET = std::vector< std::unique_ptr< clsSound > >;
+	using SOUND_SET = 
+		std::vector< std::unique_ptr< clsSound > >;
 
 	//サウンドクラス作成.
 	void CreateSound( 
@@ -74,6 +75,23 @@ private:
 	void CreateSoundData(
 		std::vector< clsSound::SOUND_DATA > &vData,
 		const std::string sFilePath );
+
+
+	//各関数の中身.
+	bool Play( 
+		const SOUND_SET &vpSound, std::deque<bool> &dqbLoop,
+		const int No, const bool bNotify );
+	//停止関数.
+	bool Stop( 
+		const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No );
+	//音の停止を確認する関数.
+	bool IsStopped( const SOUND_SET &vpSound, const int No ) const;
+	//音の再生中を確認する関数.
+	bool IsPlaying( const SOUND_SET &vpSound, const int No ) const;
+	//巻き戻し関数(再生位置初期化).
+	bool SeekToStart( const SOUND_SET &vpSound, const int No ) const;
+
+
 
 	//サウンドクラス.
 	SOUND_SET m_vupBgm;

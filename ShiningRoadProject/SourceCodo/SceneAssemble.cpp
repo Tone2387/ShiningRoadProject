@@ -162,6 +162,20 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
 	}
 
+	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+		m_wpSound->PlayBGM( enBGM::ASSEMBLE );
+	}
+	if( GetAsyncKeyState( 'X' ) & 0x1 ){
+		m_wpSound->StopBGM( enBGM::ASSEMBLE );
+	}
+
+	if( m_wpXInput->isLTriggerEnter() ){
+		if( m_wpXInput->isLTriggerEnter() ){
+			enNextScene = enSCENE::ASSEMBLE;
+		}
+	}
+
+
 #endif//#if _DEBUG
 
 
@@ -187,12 +201,6 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	m_pUI->Update();
 	m_pAsmModel->UpDate();
 
-
-	if( m_wpXInput->isLTriggerEnter() ){
-		if( m_wpXInput->isLTriggerEnter() ){
-			enNextScene = enSCENE::ASSEMBLE;
-		}
-	}
 }
 
 void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
@@ -420,6 +428,18 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 	const char* tmpcString = tmpsString.c_str();
 	sprintf_s( strDbgTxt, 
 		tmpcString );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+
+	//BGMŽ~‚Ü‚Á‚Ä‚¢‚é?.
+	if( m_wpSound->IsPlayingBGM( 0 ) ){
+		sprintf_s( strDbgTxt, 
+			"BGMPLAYING" );
+	}
+	if( m_wpSound->IsStoppedBGM( 0 ) ){
+		sprintf_s( strDbgTxt, 
+			"BGMSTOP" );
+	}
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 }
