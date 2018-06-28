@@ -1190,8 +1190,8 @@ HRESULT clsD3DXSKINMESH::CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buf
 void clsD3DXSKINMESH::Render(
 	const D3DXMATRIX& mView, const D3DXMATRIX& mProj,
 	const D3DXVECTOR3& vLight, const D3DXVECTOR3& vEye,
-	const D3DXVECTOR4 &vColor,
-	const bool alphaFlg, 
+	const D3DXVECTOR4& vColor,
+	const bool isAlpha, 
 	LPD3DXANIMATIONCONTROLLER pAC )
 {
 	m_mView		= mView;
@@ -1210,7 +1210,7 @@ void clsD3DXSKINMESH::Render(
 	D3DXMATRIX m;
 	D3DXMatrixIdentity( &m );
 	m_pD3dxMesh->UpdateFrameMatrices( m_pD3dxMesh->m_pFrameRoot, &m );
-	DrawFrame( m_pD3dxMesh->m_pFrameRoot, vColor, alphaFlg );
+	DrawFrame( m_pD3dxMesh->m_pFrameRoot, vColor, isAlpha );
 }
 
 
@@ -1461,7 +1461,7 @@ D3DXMATRIX clsD3DXSKINMESH::GetCurrentPoseMatrix( SKIN_PARTS_MESH* pParts, int i
 VOID clsD3DXSKINMESH::DrawFrame(
 	LPD3DXFRAME p,
 	const D3DXVECTOR4 &vColor, 
-	const bool alphaFlg )
+	const bool isAlpha )
 {
 	MYFRAME*			pFrame	= (MYFRAME*)p;
 	SKIN_PARTS_MESH*	pPartsMesh	= pFrame->pPartsMesh;
@@ -1473,19 +1473,19 @@ VOID clsD3DXSKINMESH::DrawFrame(
 			pPartsMesh, 
 			pFrame->CombinedTransformationMatrix,
 			pContainer,
-			vColor, alphaFlg );
+			vColor, isAlpha );
 	}
 
 	//再帰関数.
 	//(兄弟)
 	if( pFrame->pFrameSibling != NULL )
 	{
-		DrawFrame( pFrame->pFrameSibling, vColor, alphaFlg );
+		DrawFrame( pFrame->pFrameSibling, vColor, isAlpha );
 	}
 	//(親子)
 	if( pFrame->pFrameFirstChild != NULL )
 	{
-		DrawFrame( pFrame->pFrameFirstChild, vColor, alphaFlg );
+		DrawFrame( pFrame->pFrameFirstChild, vColor, isAlpha );
 	}
 }
 
@@ -1496,7 +1496,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	D3DXMATRIX World, 
 	MYMESHCONTAINER* const pContainer,
 	const D3DXVECTOR4 &vColor, 
-	const bool alphaFlg )
+	const bool isAlpha )
 {
 	D3D11_MAPPED_SUBRESOURCE pData;
 

@@ -114,6 +114,7 @@
     <ClCompile Include="SourceCodo\GameObject.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\Object.cpp" />
+    <ClCompile Include="SourceCodo\OperationString.cpp" />
     <ClCompile Include="SourceCodo\PartsArmBase.cpp" />
     <ClCompile Include="SourceCodo\PartsArmL.cpp" />
     <ClCompile Include="SourceCodo\PartsArmR.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="SourceCodo\Object.h" />
     <ClInclude Include="SourceCodo\ObjSkinMesh.h" />
     <ClInclude Include="SourceCodo\ObjStaticMesh.h" />
+    <ClInclude Include="SourceCodo\OperationString.h" />
     <ClInclude Include="SourceCodo\PartsArmBase.h" />
     <ClInclude Include="SourceCodo\PartsArmL.h" />
     <ClInclude Include="SourceCodo\PartsArmR.h" />

@@ -16,11 +16,11 @@ clsSkinMesh::~clsSkinMesh()
 }
 
 void clsSkinMesh::ModelRender(
-	const D3DXMATRIX& const mView, 
-	const D3DXMATRIX& const mProj, 
-	const D3DXVECTOR3& const vLight, 
-	const D3DXVECTOR3& const vEye,
-	const D3DXVECTOR4 &vColor,
+	const D3DXMATRIX& mView, 
+	const D3DXMATRIX& mProj, 
+	const D3DXVECTOR3& vLight, 
+	const D3DXVECTOR3& vEye,
+	const D3DXVECTOR4& vColor,
 	const bool alphaFlg )
 {
 	if (m_pMesh == NULL || m_pAnimCtrl == NULL)return;
