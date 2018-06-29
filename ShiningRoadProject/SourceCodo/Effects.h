@@ -120,14 +120,20 @@ public:
 	}
 	
 	//サイズ指定.
+	void SetScale( const ::Effekseer::Handle handle, const float fScale ) const {
+		m_pManager->SetScale( handle,
+			fScale, fScale, fScale );
+	}
 	void SetScale( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vScale ) const {
 		m_pManager->SetScale( handle,
 			vScale.x, vScale.y, vScale.z );
 	}
+
 	//スピード指定.
 	void SetSpd( const ::Effekseer::Handle handle, const float fSpd ) const {
 		m_pManager->SetSpeed( handle, fSpd );
 	}
+
 	//回転指定.
 	void SetRotation( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vRot ) const{
 		m_pManager->SetRotation( handle,

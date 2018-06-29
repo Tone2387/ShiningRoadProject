@@ -30,4 +30,8 @@ private:
 	//タイトルでズンとただずむロボット君.
 	clsASSEMBLE_MODEL*	m_pRoboModel;
 
+
+	//エフェクト.
+	::Effekseer::Handle m_ehHibana;
+
 };

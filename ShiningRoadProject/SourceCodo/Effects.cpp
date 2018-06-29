@@ -1,3 +1,5 @@
+//#define _CRT_SECURE_NO_WARNINGS
+
 #include "Effects.h"
 #include "Global.h"
 
@@ -49,7 +51,7 @@ clsEffects::clsEffects()
 	m_pSound = nullptr;
 	m_pXA2 = nullptr;
 	m_pXA2Master = nullptr;
-	for( int i=0; i<m_vpEffect.size(); i++ ){
+	for( unsigned int i=0; i<m_vpEffect.size(); i++ ){
 		m_vpEffect[i] = nullptr;
 	}
 }
@@ -95,7 +97,7 @@ HRESULT clsEffects::Destroy()
 HRESULT clsEffects::ReleaseData()
 {
 	//エフェクトの破棄.
-	for( int i=0; i<m_vpEffect.size(); i++ ){
+	for( unsigned int i=0; i<m_vpEffect.size(); i++ ){
 		ES_SAFE_RELEASE( m_vpEffect[i] );
 	}
 
@@ -184,13 +186,22 @@ HRESULT clsEffects::LoadData()
 		//パスを作る.
 		tmpString = sFILE_PATH + upFile->GetDataString( i, uiEFFECT_FILE_NAME_INDEX );
 
-		wchar_t *tmpPath = (wchar_t*)( tmpString.c_str() );
+		//パスをwcharにする.
+		//中継用のchar.
+		const char *tmpC = tmpString.c_str();
+		size_t newSize = strlen( tmpC ) + 1;
+		wchar_t *tmpPath = new wchar_t[ newSize ];
+
+		//charからwcharへ.
+		size_t convChars = 0;
+		mbstowcs_s( &convChars, tmpPath, newSize, tmpC, _TRUNCATE );
 
 		m_vpEffect[i] =
 			::Effekseer::Effect::Create( 
 				m_pManager, 
 				(const EFK_CHAR*)( tmpPath ) );
 
+		delete[] tmpPath;
 
 		//エラー.
 		if( m_vpEffect[i] == nullptr ){

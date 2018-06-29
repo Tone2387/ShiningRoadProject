@@ -4,6 +4,7 @@ using namespace std;
 
 const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
 
+
 //起動時の初期シーン.
 #define START_UP_SCENE enSCENE::TITLE
 //シーン初期化時の初期BGM番号.
@@ -93,8 +94,6 @@ void clsGAME::Create()
 
 	//暗転.
 	SPRITE_STATE ss;
-	ss.Anim = { 0.0f, 0.0f };
-	ss.Disp = { WND_W, WND_H };
 	m_spBlackScreen = new clsBLACK_SCREEN;
 	m_spBlackScreen->Create( m_wpDevice, m_wpContext,
 		cBLACK_FILE_NAME, ss );

@@ -171,7 +171,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( GetAsyncKeyState( 'C' ) & 0x1 )m_wpSound->PlaySE( 2 );
 	if( GetAsyncKeyState( 'V' ) & 0x1 )m_wpSound->PlaySE( 3 );
 	if( GetAsyncKeyState( 'B' ) & 0x1 )m_wpSound->PlaySE( 4 );
-	if( GetAsyncKeyState( 'Q' ) & 0x1 ){
+	if( GetAsyncKeyState( 'N' ) & 0x1 ){
 		m_ehHibana = m_wpEffects->Play( 
 			2, { 0.0f, 20.0f, 0.0f } );
 	}
