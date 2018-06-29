@@ -33,7 +33,7 @@ clsFILE::~clsFILE()
 }
 
 
-bool clsFILE::Open( const string sFileName )
+bool clsFILE::Open( const string &sFileName )
 {
 	assert( !m_bUsing );//Žg—p’†‚Éopen‚·‚é‚È.
 	if( m_bUsing ) return false;

@@ -41,7 +41,7 @@
 //シングルトンの時はつける.
 //#define EFFECTS_CLASS_SINGLETON
 
-
+#include <vector>
 
 //==================================================
 //	フリーソフトEffekseerのデータを使うためのクラス.
@@ -49,35 +49,35 @@
 class clsEffects
 {
 public:
-	//エフェクト種類列挙体.
-	enum enEFFECTS : UCHAR
-	{
-		//Arbia.
-		enEFFECTS_STEP = 0,	//asiato.v
-		enEFFECTS_ARBIA_ATK,//arbia_kougeki.v
-		enEFFECTS_WAVE,		//syougekiha.v
-		enEFFECTS_KICK_HIT,	//kougeki.v
+//	//エフェクト種類列挙体.
+//	enum enEFFECTS : UCHAR
+//	{
+//		//Arbia.
+//		enEFFECTS_STEP = 0,	//asiato.v
+//		enEFFECTS_ARBIA_ATK,//arbia_kougeki.v
+//		enEFFECTS_WAVE,		//syougekiha.v
+//		enEFFECTS_KICK_HIT,	//kougeki.v
+//
+//		//Enemy.
+//		enEFFECTS_ENEMY_ATK,//teki_kougeki.
+//		enEFFECTS_SLASH_HIT,//yarare.v
+//		enEFFECTS_SLASH_DISC,//bikkuri.v
+//
+//		//Pendulum.
+//		enEFFECTS_PEND_FIRE,//hibana.v
+//
+//		//TreasureBox.
+//		enEFFECTS_TRB_OPEN,	//takara_hasira.v
+//		enEFFECTS_TRB_LOOP,	//takara_nakami.v
+//
+//		//Door.
+//		enEFFECTS_DOOR_DUST,//takara_nakami.v
+//
+//		//for loop.
+//		enEFFECTS_MAX
+//	};
 
-		//Enemy.
-		enEFFECTS_ENEMY_ATK,//teki_kougeki.
-		enEFFECTS_SLASH_HIT,//yarare.v
-		enEFFECTS_SLASH_DISC,//bikkuri.v
-
-		//Pendulum.
-		enEFFECTS_PEND_FIRE,//hibana.v
-
-		//TreasureBox.
-		enEFFECTS_TRB_OPEN,	//takara_hasira.v
-		enEFFECTS_TRB_LOOP,	//takara_nakami.v
-
-		//Door.
-		enEFFECTS_DOOR_DUST,//takara_nakami.v
-
-		//for loop.
-		enEFFECTS_MAX
-	};
-
-
+	
 #ifdef EFFECTS_CLASS_SINGLETON
 	//インスタンス取得(唯一のアクセス経路).
 	static clsEffects* GetInstance()
@@ -95,27 +95,16 @@ public:
 	//構築関数.
 	HRESULT Create( ID3D11Device* const pDevice,
 					ID3D11DeviceContext* const pContext );
-	//破棄関数.
-	HRESULT Destroy();
-	//データ読込関数.
-	HRESULT LoadData();
-	//データ解放関数.
-	HRESULT ReleaseData();
 
 	//描画.
 	void Render( 
 		const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const D3DXVECTOR3& vEye ) const;
 
-	//ビュー行列設定.
-	void SetViewMatrix( const D3DXMATRIX& mView ) const;
-	//プロジェクション行列設定.
-	void SetProjectionMatrix( const D3DXMATRIX& mProj ) const;
-
 
 	//再生関数.
-	::Effekseer::Handle Play( const enEFFECTS EfcType, const D3DXVECTOR3 vPos ) const {
+	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) const {
 		return m_pManager->Play(
-			m_pEffect[EfcType], vPos.x, vPos.y, vPos.z );
+			m_vpEffect[EfcType], vPos.x, vPos.y, vPos.z );
 	};
 	//一時停止.
 	void Paused( const ::Effekseer::Handle handle, const bool bFlag ) const {
@@ -126,32 +115,38 @@ public:
 		m_pManager->StopEffect( handle );
 	}
 	//すべて停止.
-	void StopAll( const ::Effekseer::Handle handle ) const {
+	void StopAll() const {
 		m_pManager->StopAllEffects();
 	}
-
+	
 	//サイズ指定.
-	void SetScale( const ::Effekseer::Handle handle, const D3DXVECTOR3 vScale ) const {
+	void SetScale( const ::Effekseer::Handle handle, const float fScale ) const {
+		m_pManager->SetScale( handle,
+			fScale, fScale, fScale );
+	}
+	void SetScale( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vScale ) const {
 		m_pManager->SetScale( handle,
 			vScale.x, vScale.y, vScale.z );
 	}
+
 	//スピード指定.
 	void SetSpd( const ::Effekseer::Handle handle, const float fSpd ) const {
 		m_pManager->SetSpeed( handle, fSpd );
 	}
+
 	//回転指定.
-	void SetRotation( const ::Effekseer::Handle handle, const D3DXVECTOR3 vRot ) const {
+	void SetRotation( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vRot ) const{
 		m_pManager->SetRotation( handle,
 			vRot.x, vRot.y, vRot.z );
 	}
 	void SetRotation( const ::Effekseer::Handle handle,
-			const D3DXVECTOR3 vAxis, const float fAngle ) const {
+			const D3DXVECTOR3 &vAxis, const float fAngle ) const {
 		m_pManager->SetRotation( handle,
 			::Effekseer::Vector3D( vAxis.x, vAxis.y, vAxis.z ),
 			fAngle );
 	}
 	//位置指定.
-	void SetLocation( const ::Effekseer::Handle handle, const D3DXVECTOR3 vPos ) const {
+	void SetPosition( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vPos ) const {
 		m_pManager->SetLocation( handle,
 			::Effekseer::Vector3D( vPos.x, vPos.y, vPos.z ) );
 	}
@@ -162,7 +157,29 @@ public:
 		return m_pManager->Exists( handle );
 	}
 
+private:
+#ifdef EFFECTS_CLASS_SINGLETON
+	//生成やコピーを禁止する.
+	clsEffects();
+	clsEffects( const clsEffects& rhs );
+	clsEffects& operator = ( const clsEffects& rhs ) const;
+#endif//#ifdef EFFECTS_CLASS_SINGLETON
 
+	//初期化.
+	HRESULT Init( 
+		ID3D11Device* const pDevice,
+		ID3D11DeviceContext* const pContext );
+	//データ読込関数.
+	HRESULT LoadData();
+	//破棄関数.
+	HRESULT Destroy();
+	//データ解放関数.
+	HRESULT ReleaseData();
+
+	//ビュー行列設定.
+	void SetViewMatrix( const D3DXMATRIX& mView ) const;
+	//プロジェクション行列設定.
+	void SetProjectionMatrix( const D3DXMATRIX& mProj ) const;
 
 	//ベクター変換関数.
 	::Effekseer::Vector3D Vector3DDxToEfk( 
@@ -177,14 +194,6 @@ public:
 					const ::Effekseer::Matrix44* pSrcMatEfk ) const;
 
 
-private:
-#ifdef EFFECTS_CLASS_SINGLETON
-	//生成やコピーを禁止する.
-	clsEffects();
-	clsEffects( const clsEffects& rhs );
-	clsEffects& operator = ( const clsEffects& rhs ) const;
-#endif//#ifdef EFFECTS_CLASS_SINGLETON
-
 	//エフェクトを作動させるために必要.
 	::Effekseer::Manager*			m_pManager;
 	::EffekseerRenderer::Renderer*	m_pRender;
@@ -195,7 +204,7 @@ private:
 
 
 	//エフェクトの種類ごとに必要.
-	::Effekseer::Effect*			m_pEffect[ enEFFECTS_MAX ];
+	std::vector< ::Effekseer::Effect* >	m_vpEffect;
 
 
 };
@@ -217,33 +226,25 @@ private:
 
 
 //	//----- hでの使用例 -----//.
-//	//名前省略用.
-//	clsEffects*				m_pEffect;
 //	//ハンドル eh = EffekseerHandle.
 //	::Effekseer::Handle		m_ehBomb;
 
 
 //	//----- cppでの使用例 -----//.
 //	//コンストラクタかCreateにて.
-//	m_pEffect = nullptr;.
-//	if( m_pEffect == nullptr ){
-//		m_pEffect = clsEffects::GetInstance();
+//	m_wpEffect = nullptr;.
+//	if( m_wpEffect == nullptr ){
+//		m_wpEffect = clsEffects::GetInstance();
 //	}
 
 //	//出したいタイミング.
-//	if( !m_pEffect->PlayCheck( m_ehBomb ) ){
-//		m_ehBomb = m_pEffect->Play( clsEffects::enEFFECTS_MgcDrk, m_vPos );
-//	}
-//	m_pEffect->SetLocation( m_ehBomb, m_vPos );
+//	m_ehBomb = m_wpEffect->Play( clsEffects::enEFFECTS_MgcDrk, m_vPos );
+//	m_wpEffect->SetLocation( m_ehBomb, m_vPos );
 
 //	main関数のRenderに
 //	clsEffects::GetInstance()->Render( m_mView, m_mProj, m_Camera.vEye );
 
 
-
-//	//Release()関数にて.
-//	 m_pEffect = nullptr;.
-//	※各クラスでこれをdeleteはしてはならない.
 
 
 //旧解説.
