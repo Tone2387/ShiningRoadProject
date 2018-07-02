@@ -6,6 +6,8 @@ const int g_iColNum = 1;
 clsShot::clsShot(clsPOINTER_GROUP* pPtrGroup)
 {
 	ZeroMemory(this, sizeof(clsShot));
+
+	m_wpEffect = pPtrGroup->GetEffects();
 }
 
 clsShot::~clsShot()
@@ -49,11 +51,7 @@ bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
 			{
 				if (Collision(*m_ppColSpheres[i], ppTargetSphere[j]))
 				{
-					//m_pEffect->SetLocation(m_HitEfcH, m_Trans.vPos);
-					m_HitEfcH = //m_pEffect->Play(clsEffects::enEFFECTS_ARBIA_ATK,m_Trans.vPos);
-
-					//m_pEffect->SetScale(m_HitEfcH, D3DXVECTOR3(1.0f,1.0f,1.0f));
-
+					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
 					m_bShotExistFlg = false;
 					return true;
 				}
@@ -87,13 +85,17 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vTarget)
 	D3DXVec3TransformCoord(&vStart, &vShotPos, &mInv);
 	D3DXVec3TransformCoord(&vTar, &vTarget, &mInv);
 
-	m_vMoveAxis = vTar - vStart;
-	D3DXVec3Normalize(&m_vMoveAxis, &m_vMoveAxis);
+	m_vMoveDir = vTar - vStart;
+	D3DXVec3Normalize(&m_vMoveDir, &m_vMoveDir);
 
-	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveAxis * m_fMoveSpeed;
+	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveDir * m_fMoveSpeed;
 
 	m_bShotExistFlg = true;
 	m_bExistFlg = true;
+
+	//Excelの行番号	座標.
+	m_ShotEfcHandles[enEfcShot] = m_wpEffect->Play(m_ShotState.iShotEfcNum, m_Trans.vPos);
+	m_ShotEfcHandles[enEfcLine] = m_wpEffect->Play(m_ShotState.iLineEfcNum, m_Trans.vPos);
 
 	return true;
 }
@@ -113,25 +115,18 @@ void clsShot::Move()
 
 	if (D3DXVec3Length(&(m_Trans.vPos - m_vStartPos)) > 50.0f)
 	{
-		//m_pEffect->Stop(m_ShotEfcH);
+		m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
 		m_bShotExistFlg = false;
 	}
 
-	/*if (!//m_pEffect->PlayCheck(m_ShotEfcH))
+	if (!m_bShotExistFlg)
 	{
-		/*m_ShotEfcH = //m_pEffect->Play(m_Trans.vPos, ShotEfcTypes.ShotEfcType, m_UseChar);
-		//m_pEffect->SetScale(m_ShotEfcH, D3DXVECTOR3(0.5f, 0.5f, 0.5f));
-		m_LineEfcH = //m_pEffect->Play(m_Trans.vPos, ShotEfcTypes.LineEfcType, m_UseChar);
-		//m_pEffect->SetScale(m_LineEfcH, D3DXVECTOR3(0.5f, 0.5f, 0.5f));
+		m_Trans.vPos += m_vMoveDir  * m_fMoveSpeed;
 	}
 
-	else
-	{
-		m_Trans.vPos += m_vMoveAxis  * m_fMoveSpeed;
-	}
-
-	//m_pEffect->SetLocation(m_ShotEfcH, m_Trans.vPos);
-	//m_pEffect->SetLocation(m_LineEfcH, m_Trans.vPos);*/
+	//座標.
+	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcShot], m_Trans.vPos);
+	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcLine], m_Trans.vPos);
 
 }
 
@@ -140,3 +135,4 @@ void clsShot::ReStart()
 	m_bShotExistFlg = false;//弾の存在確認(falseなら弾が存在しない状態).
 	m_bExistFlg = false;//弾,爆発,軌跡の存在確認(falseならそれら全てが存在しない状態)
 }
+

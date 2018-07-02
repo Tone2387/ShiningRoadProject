@@ -186,15 +186,20 @@ void ObjRollOverGuard(float* fRot)
 	}
 }
 
-void clsObject::WallJudge(const clsDX9Mesh* pWall, const bool bFoll)
+bool clsObject::WallJudge(const clsDX9Mesh* pWall, const bool bFoll)
 {
-	WallForward(pWall);
-	WallBack(pWall);
-	WallLeft(pWall);
-	WallRight(pWall);
+	bool bHit = false;
+
+	if (WallForward(pWall))if (!bHit)bHit = true;
+	if(WallBack(pWall))if (!bHit)bHit = true;
+	if(WallLeft(pWall))if (!bHit)bHit = true;
+	if(WallRight(pWall))if (!bHit)bHit = true;
 
 	m_bGround = WallUnder(pWall, bFoll);
-	WallUp(pWall);
+	if (m_bGround)if (!bHit)bHit = true;
+	if(WallUp(pWall))if (!bHit)bHit = true;
+
+	return bHit;
 }
 
 bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir)
@@ -580,15 +585,6 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall, const bool bFoll)
 		m_fFollPower = 0.0f;
 	}
 
-	else
-	{
-		if (bFoll)
-		{
-			FreeFoll();
-			m_Trans.vPos.y += m_fFollPower;
-		}
-	}
-
 	return bResult;
 }
 
@@ -624,4 +620,13 @@ bool clsObject::ObjectCollision(SPHERE* pTarget, const int iNumMax)
 	}
 
 	return false;
+}
+
+void clsObject::FreeFoll()
+{
+	if (!m_bGround)
+	{
+		m_fFollPower -= g_fGravity;
+		m_Trans.vPos.y += m_fFollPower;
+	}
 }
