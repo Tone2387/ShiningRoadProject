@@ -8,6 +8,11 @@
 
 struct ShotState
 {
+	int iShotAtk;
+	float fShotMoveSpeed;
+	float fShotLenghtMax;
+
+	float fShotSpeed;
 	float fShotScale;
 
 	int iSEShotNum;
@@ -16,6 +21,12 @@ struct ShotState
 	int iShotEfcNum;
 	int iLineEfcNum;
 	int iHitEfcNum;
+};
+
+struct ShotFormState
+{
+	D3DXVECTOR3 vShotStartPos;
+	D3DXVECTOR3 vShotMoveDir;
 };
 
 class clsShot : public clsObject

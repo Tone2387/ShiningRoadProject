@@ -186,22 +186,6 @@ void ObjRollOverGuard(float* fRot)
 	}
 }
 
-bool clsObject::WallJudge(const clsDX9Mesh* pWall, const bool bFoll)
-{
-	bool bHit = false;
-
-	if (WallForward(pWall))if (!bHit)bHit = true;
-	if(WallBack(pWall))if (!bHit)bHit = true;
-	if(WallLeft(pWall))if (!bHit)bHit = true;
-	if(WallRight(pWall))if (!bHit)bHit = true;
-
-	m_bGround = WallUnder(pWall, bFoll);
-	if (m_bGround)if (!bHit)bHit = true;
-	if(WallUp(pWall))if (!bHit)bHit = true;
-
-	return bHit;
-}
-
 bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir)
 {
 	FLOAT fDistance;//ãóó£.
@@ -562,7 +546,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 	return bResult;
 }
 
-bool clsObject::WallUnder(const clsDX9Mesh* pWall, const bool bFoll)
+bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 {
 	FLOAT fDistance;//ãóó£.
 	D3DXVECTOR3 vIntersect;//åì_ç¿ïW.
