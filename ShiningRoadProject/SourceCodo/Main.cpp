@@ -7,8 +7,8 @@ using namespace std;
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //グローバル変数.
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-clsMain* g_pClsMain = nullptr;
-
+//clsMain* g_pClsMain = nullptr;
+unique_ptr< clsMain >	g_upMain;
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //	定数.
@@ -30,28 +30,30 @@ INT WINAPI WinMain(
 	// メモリリーク検出
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	g_pClsMain = new clsMain;	//初期化&クラスの宣言.
+//	g_pClsMain = new clsMain;	//初期化&クラスの宣言.
+	g_upMain = make_unique< clsMain >();
 
 	//クラスが存在しているかチェック.
-	if( g_pClsMain != nullptr ){
+	if( g_upMain != nullptr ){
 		//ウィンドウ作成成功.
 		if( SUCCEEDED(
-			g_pClsMain->InitWindow(
+			g_upMain->InitWindow(
 				hInstance,
 				64, 64,
 				WND_W, WND_H,
 				WND_TITLE ) ) )
 		{
 			//Dx11用の初期化
-			if( SUCCEEDED( g_pClsMain->InitD3D() ) ){
+			if( SUCCEEDED( g_upMain->InitD3D() ) ){
 				//メッセージループ.
-				g_pClsMain->Loop();
+				g_upMain->Loop();
 			}
 		}
 		//終了.
-		g_pClsMain->DestroyD3D();//Direct3Dの解放.
+		g_upMain->DestroyD3D();//Direct3Dの解放.
 
-		delete g_pClsMain;		//クラスの破棄.
+//		delete g_upMain;		//クラスの破棄.
+		g_upMain.reset( nullptr );
 	}
 
 	return 0;
@@ -66,7 +68,7 @@ LRESULT CALLBACK WndProc(
 	WPARAM wParam, LPARAM lParam )
 {
 	//プロシージャ.
-	return g_pClsMain->MsgProc( hWnd, uMsg, wParam, lParam );
+	return g_upMain->MsgProc( hWnd, uMsg, wParam, lParam );
 }
 
 
@@ -86,7 +88,7 @@ clsMain::clsMain() :
 	m_pBackBuffer_DSTex( nullptr ),
 	m_pBackBuffer_DSTexDSV( nullptr ),
 	m_spDepthStencilState( nullptr ),
-	m_pGame( nullptr ),
+	m_upGame( nullptr ),
 	m_spViewPort( nullptr )
 {
 
@@ -274,8 +276,8 @@ void clsMain::AppMain()
 #endif //#if _DEBUG
 
 	//ゲームループ.
-	ASSERT_IF_NULL( m_pGame );
-	m_pGame->Update();
+	ASSERT_IF_NULL( m_upGame );
+	m_upGame->Update();
 
 	//レンダリング.
 	Render();
@@ -301,8 +303,8 @@ void clsMain::Render()
 
 
 	//このRender関数の前のAppMain関数でチェックしているのでアサートは省く.
-//	ASSERT_IF_NULL( m_pGame );
-	m_pGame->Render();
+//	ASSERT_IF_NULL( m_upGame );
+	m_upGame->Render();
 	
 	//2D?.
 //	SetDepth( false );	//Zテスト:OFF.
@@ -527,8 +529,10 @@ void clsMain::DestroyD3D()
 #ifdef Tahara
 
 
-	SAFE_DELETE( m_pGame );
-
+//	SAFE_DELETE( m_upGame );
+	if( m_upGame ){
+		m_upGame.reset( nullptr );
+	}
 
 #endif //#ifdef Tahara
 
@@ -546,9 +550,11 @@ void clsMain::DestroyD3D()
 ////============================================================
 HRESULT clsMain::ReadMesh()
 {
-	m_pGame = new clsGAME( 
+//	m_upGame = new clsGAME( 
+//		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
+	m_upGame = make_unique< clsGAME >( 
 		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
-	m_pGame->Create();
+	m_upGame->Create();
 
 
 
@@ -580,37 +586,6 @@ HRESULT clsMain::ReadMesh()
 }
 
 
-//============================================================
-//	ボーンの座標をとる.
-//============================================================
-void clsMain::GetPosFromBone( clsD3DXSKINMESH* skinMesh, char BoneName[], D3DXVECTOR3& Pos )
-{
-	D3DXVECTOR3 vBonePos;
-	if( skinMesh->GetPosFromBone( BoneName, &vBonePos ) ){
-		Pos = vBonePos;
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//==========
-
-
-
-
 #ifdef Tahara
 //ConvDimPosの事前準備.
 void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
@@ -626,15 +601,6 @@ void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
 	m_spViewPort->Width	= static_cast<UINT>( Vp->Width );
 	m_spViewPort->Height	= static_cast<UINT>( Vp->Height );
 };
-
-////3D座標のスクリーン( 2D )座標変換.dimensions(次元) conversion(変換)
-//D3DXVECTOR3 clsMain::ConvDimPos( D3DXVECTOR3 &v2DPos, const D3DXVECTOR3 &v3DPos )
-//{
-//	D3DXMATRIX mWorld;
-//	D3DXMatrixIdentity( &mWorld );
-//	D3DXVec3Project( &v2DPos, &v3DPos, m_spViewPort, &m_mProj, &m_mView, &mWorld );
-//	return v2DPos;
-//}
 
 
 #endif//#ifdef Tahara

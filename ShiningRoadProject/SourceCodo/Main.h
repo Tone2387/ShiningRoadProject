@@ -108,12 +108,9 @@ private:
 #endif //#if _DEBUG
 
 
-//	//深度テスト(Zテスト)　ON/OFF切替.
-//	void SetDepth( const bool bFlg );
-
-	//ボーンの座標をとる(ラップ関数).
-	void GetPosFromBone( clsD3DXSKINMESH* skinMesh, char BoneName[], D3DXVECTOR3& Pos );
-
+	//ゲーム.
+	//clsGAME*		m_upGame;
+	std::unique_ptr< clsGAME >	m_upGame;
 
 
 
@@ -130,17 +127,14 @@ private:
 	//深度(Z)テスト設定.
 	ID3D11DepthStencilState* m_spDepthStencilState;
 
-	//ゲーム.
-	clsGAME*		m_pGame;
-
-
 #ifdef Tahara
+
+	//シーンクラスにて使用する関数に必要.
 	//ConvDimPosの事前準備.
 	void SetViewPort10( D3D11_VIEWPORT* const Vp );
-//	//3D座標をスクリーン( 2D )座標へと変換する.dimensions(次元) conversion(変換)
-//	D3DXVECTOR3 ConvDimPos( D3DXVECTOR3 &v2DPos, const D3DXVECTOR3 &v3DPos );
 	//2DSp用.
 	D3D10_VIEWPORT* m_spViewPort;
+
 #endif//#ifdef Tahara
 
 };

@@ -11,13 +11,6 @@ public:
 	clsBLACK_SCREEN();
 	~clsBLACK_SCREEN();
 
-	//暗転中ですか?、のフラグ.
-	enum class enSTATE : UCHAR
-	{
-		NEUTRAL = 0,//何もしていない.
-		DARK,		//暗転.
-		BRIGHT		//明転.
-	};
 
 	//----- 暗明転の指示 -----.
 	//暗転指示.//Alpha Per Frame.
@@ -44,19 +37,22 @@ private:
 		BRIGHT_ROUTE,//明転中.
 	};
 
+	//暗転中ですか?、のフラグ.
+	enum class enSTATE : UCHAR
+	{
+		NEUTRAL = 0,//何もしていない.
+		DARK,		//暗転.
+		BRIGHT		//明転.
+	}	m_enState;
+
+
 	//ビットフラグ更新.
 	void UpdateBitFlg( const enFLG_GROUP enFlg, const bool bStand );
 	//フラグチェック.
 	bool isBitFlg( const enFLG_GROUP enFlg ) const;
 
-	//暗転中ですか?、のフラグ.
-	enSTATE m_enState;
-
 	//暗明転速度.
 	float m_fChangeSpd;
-
-//	//暗転の終了を知らせるフラグ.
-//	bool m_bDarkEnd;
 
 	//各種フラグまとめ.
 	unsigned int m_uiFlgGroup;

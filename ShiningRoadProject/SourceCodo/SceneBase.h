@@ -63,7 +63,8 @@ protected:
 
 	//デバッグテキストクラス.
 #if _DEBUG
-	clsDebugText*	m_upText;
+//	clsDebugText*	m_upText;
+	std::unique_ptr< clsDebugText >	m_upText;
 	//デバック゛テキストの表示.
 	virtual void RenderDebugText();
 #endif//#if _DEBUG

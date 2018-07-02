@@ -16,7 +16,7 @@ clsBLACK_SCREEN::~clsBLACK_SCREEN()
 {
 	m_uiFlgGroup = 0;
 	m_fChangeSpd = 0;
-	m_enState = enSTATE::BRIGHT;
+	m_enState = enSTATE::NEUTRAL;
 }
 
 //à√ì]éwé¶.//Alpha Per Frame.
@@ -28,8 +28,8 @@ void clsBLACK_SCREEN::GetDark( const float fDarkSpd )
 	if( fDarkSpd <= 0.0f )	return;
 
 	m_fChangeSpd = fDarkSpd;
-	UpdateBitFlg( DARK_ROUTE, true );
-	UpdateBitFlg( BRIGHT_ROUTE, false );
+	UpdateBitFlg( enFLG_GROUP::DARK_ROUTE, true );
+	UpdateBitFlg( enFLG_GROUP::BRIGHT_ROUTE, false );
 	m_enState = enSTATE::DARK;
 }
 
@@ -42,8 +42,8 @@ void clsBLACK_SCREEN::GetBright( const float fBrightSpd )
 	if( fBrightSpd >= 0.0f )	return;
 
 	m_fChangeSpd = fBrightSpd;
-	UpdateBitFlg( BRIGHT_ROUTE, true );
-	UpdateBitFlg( DARK_ROUTE, false );
+	UpdateBitFlg( enFLG_GROUP::BRIGHT_ROUTE, true );
+	UpdateBitFlg( enFLG_GROUP::DARK_ROUTE, false );
 	m_enState = enSTATE::BRIGHT;
 }
 
@@ -56,14 +56,14 @@ void clsBLACK_SCREEN::Update()
 	if( !AddAlpha( m_fChangeSpd ) ){
 		//Ç±ÇÃifï∂ÇÃíÜÇ÷ÇÕÅAìßâﬂílÇ™ÉIÅ[ÉoÅ[ÇµÇΩÇÁì¸ÇÈ.
 		//à√ì]íÜÇæÇ¡ÇΩÇ»ÇÁ.
-		if( isBitFlg( DARK_ROUTE ) ){
-			UpdateBitFlg( DARK_ROUTE, false );
-			UpdateBitFlg( DARK_END, true );
+		if( isBitFlg( enFLG_GROUP::DARK_ROUTE ) ){
+			UpdateBitFlg( enFLG_GROUP::DARK_ROUTE, false );
+			UpdateBitFlg( enFLG_GROUP::DARK_END, true );
 		}
 		//ñæì]íÜÇæÇ¡ÇΩÇ»ÇÁ.
-		else if( isBitFlg( BRIGHT_ROUTE ) ){
-			UpdateBitFlg( BRIGHT_ROUTE, false );
-			UpdateBitFlg( BRIGHT_END, true );
+		else if( isBitFlg( enFLG_GROUP::BRIGHT_ROUTE ) ){
+			UpdateBitFlg( enFLG_GROUP::BRIGHT_ROUTE, false );
+			UpdateBitFlg( enFLG_GROUP::BRIGHT_END, true );
 		}
 		m_enState = enSTATE::NEUTRAL;
 	}
@@ -72,8 +72,8 @@ void clsBLACK_SCREEN::Update()
 //à√ì]Ç™äÆóπÇ∑ÇÈÇ∆trueÇï‘Ç∑.
 bool clsBLACK_SCREEN::isDarkEnd()
 {
-	if( isBitFlg( DARK_END ) ){
-		UpdateBitFlg( DARK_END, false );
+	if( isBitFlg( enFLG_GROUP::DARK_END ) ){
+		UpdateBitFlg( enFLG_GROUP::DARK_END, false );
 		m_enState = enSTATE::NEUTRAL;
 		return true;
 	}
@@ -85,8 +85,8 @@ bool clsBLACK_SCREEN::isDarkEnd()
 //ñæì]Ç™äÆóπÇ∑ÇÈÇ∆trueÇï‘Ç∑.
 bool clsBLACK_SCREEN::isBrightEnd()
 {
-	if( isBitFlg( BRIGHT_END ) ){
-		UpdateBitFlg( BRIGHT_END, false );
+	if( isBitFlg( enFLG_GROUP::BRIGHT_END ) ){
+		UpdateBitFlg( enFLG_GROUP::BRIGHT_END, false );
 		m_enState = enSTATE::NEUTRAL;
 		return true;
 	}

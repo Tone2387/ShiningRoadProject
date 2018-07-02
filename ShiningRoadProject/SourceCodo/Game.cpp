@@ -23,16 +23,16 @@ clsGAME::clsGAME(
 		,m_wpContext( pContext )
 		,m_wpViewPort( pViewPort )
 		,m_wpDepthStencilState( pDepthState )
-		,m_pPtrGroup( nullptr )
+		,m_spPtrGroup( nullptr )
 		,m_spDxInput( nullptr )
 		,m_spXInput( nullptr )
 		,m_spResource( nullptr )
 		,m_spEffect( nullptr )
 		,m_spSound( nullptr )
-		,m_pScene( nullptr )
-		,m_pSceneFactory( nullptr )
+		,m_upScene( nullptr )
+		,m_upSceneFactory( nullptr )
 		,m_spCamera( nullptr )
-		,m_pCameraFactory( nullptr )
+		,m_upCameraFactory( nullptr )
 		,m_spRoboStatus( nullptr )
 		,m_spBlackScreen( nullptr )
 {
@@ -41,11 +41,17 @@ clsGAME::clsGAME(
 
 clsGAME::~clsGAME()
 {
-	SAFE_DELETE( m_pScene );
+	SAFE_DELETE( m_upScene );
 	SAFE_DELETE( m_spCamera );
-	SAFE_DELETE( m_pCameraFactory );
-	SAFE_DELETE( m_pSceneFactory );
-	SAFE_DELETE( m_pPtrGroup );
+//	SAFE_DELETE( m_upCameraFactory );
+	if( m_upCameraFactory ){
+		m_upCameraFactory.reset( nullptr );
+	}
+//	SAFE_DELETE( m_upSceneFactory );
+	if( m_upSceneFactory ){
+		m_upSceneFactory.reset( nullptr );
+	}
+	SAFE_DELETE( m_spPtrGroup );
 	SAFE_DELETE( m_spBlackScreen );
 	SAFE_DELETE( m_spRoboStatus );
 	SAFE_DELETE( m_spEffect );
@@ -99,7 +105,7 @@ void clsGAME::Create()
 		cBLACK_FILE_NAME, ss );
 
 	//引数のポインタの集合体.
-	m_pPtrGroup = new clsPOINTER_GROUP( 
+	m_spPtrGroup = new clsPOINTER_GROUP( 
 		m_wpDevice, m_wpContext, 
 		m_wpViewPort, m_wpDepthStencilState,
 		m_spDxInput, m_spXInput,
@@ -108,10 +114,12 @@ void clsGAME::Create()
 
 
 	//ファクトリの作成.
-	ASSERT_IF_NOT_NULL( m_pSceneFactory );
-	m_pSceneFactory = new clsSCENE_FACTORY( m_pPtrGroup );
-	ASSERT_IF_NOT_NULL( m_pCameraFactory );
-	m_pCameraFactory = new clsFACTORY_CAMERA;
+	ASSERT_IF_NOT_NULL( m_upSceneFactory );
+//	m_pSceneFactory = new clsSCENE_FACTORY( m_spPtrGroup );
+	m_upSceneFactory = make_unique< clsSCENE_FACTORY >( m_spPtrGroup );
+	ASSERT_IF_NOT_NULL( m_upCameraFactory );
+//	m_pCameraFactory = new clsFACTORY_CAMERA;
+	m_upCameraFactory = make_unique< clsFACTORY_CAMERA >();
 
 	//最初のシーンはタイトルを指定する.
 	SwitchScene( START_UP_SCENE, true );
@@ -129,12 +137,12 @@ void clsGAME::Update()
 	m_spXInput->UpdateStatus();
 
 	//シーンが作られているなら.
-	ASSERT_IF_NULL( m_pScene );
+	ASSERT_IF_NULL( m_upScene );
 
 	//次のシーンは何?フラグ.
 	enSCENE enNextScene = enSCENE::NOTHING;
 
-	m_pScene->Update( enNextScene );
+	m_upScene->Update( enNextScene );
 
 	//フラグに変更があればシーン変更.
 	if( enNextScene != enSCENE::NOTHING ){
@@ -145,8 +153,8 @@ void clsGAME::Update()
 //毎フレーム使う.
 void clsGAME::Render()
 { 
-	ASSERT_IF_NULL( m_pScene );
-	m_pScene->Render(); 
+	ASSERT_IF_NULL( m_upScene );
+	m_upScene->Render(); 
 }
 
 
@@ -159,7 +167,7 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	}
 
 	//今のシーンを消して.
-	SAFE_DELETE( m_pScene );
+	SAFE_DELETE( m_upScene );
 	SAFE_DELETE( m_spCamera );
 
 	//起動時は無視.
@@ -169,22 +177,22 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 		//サウンド.
 		m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
 		m_spSound->Create();
-		m_pPtrGroup->UpdateSoundPtr( m_spSound );
+		m_spPtrGroup->UpdateSoundPtr( m_spSound );
 	}
 
 	//カメラ.
-	m_spCamera = m_pCameraFactory->Create( enNextScene );
-	m_pPtrGroup->UpdateCameraPtr( m_spCamera );
+	m_spCamera = m_upCameraFactory->Create( enNextScene );
+	m_spPtrGroup->UpdateCameraPtr( m_spCamera );
 
 	//お待ちかねのシーン本体.
-	m_pScene = m_pSceneFactory->Create( enNextScene );
+	m_upScene = m_upSceneFactory->Create( enNextScene );
 
 	//起動時は無視.
 	if( !bStartUp ){
 		m_spSound->PlayBGM( iINIT_SCENE_BGM_NO );//BGM再生.
 	}
 
-	m_pScene->Create();//シーン初期化.
+	m_upScene->Create();//シーン初期化.
 
 	//明転開始.
 	m_spBlackScreen->GetBright();
@@ -196,11 +204,11 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 //ラップ関数.
 D3DXVECTOR3 clsGAME::GetCameraPos() const
 {
-	return m_pScene->GetCameraPos();
+	return m_upScene->GetCameraPos();
 }
 D3DXVECTOR3 clsGAME::GetCameraLookPos() const
 {
-	return m_pScene->GetCameraLookPos();
+	return m_upScene->GetCameraLookPos();
 }
 
 

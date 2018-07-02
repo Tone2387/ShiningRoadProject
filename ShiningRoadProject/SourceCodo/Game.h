@@ -44,21 +44,21 @@ private:
 	void SwitchScene( const enSCENE enNextScene, const bool bStartUp = false );
 
 	//シーンクラス.
-	clsSCENE_BASE*		m_pScene;
+	clsSCENE_BASE*		m_upScene;
 	//シーンのファクトリ.
-	clsSCENE_FACTORY* m_pSceneFactory;
+	std::unique_ptr< clsSCENE_FACTORY > m_upSceneFactory;
 
 	//カメラ.
 	clsCAMERA_BASE*	m_spCamera;
 	//カメラファクトリ.
-	clsFACTORY_CAMERA* m_pCameraFactory;
+	std::unique_ptr< clsFACTORY_CAMERA > m_upCameraFactory;
 
 	//サウンドのファクトリ.
 	std::unique_ptr< clsFACTORY_SOUND_MANAGER > m_upSoundFactory;
 	
 
 	//シーン初期化に必要なポインタのまとめ.
-	clsPOINTER_GROUP* m_pPtrGroup; 
+	clsPOINTER_GROUP* m_spPtrGroup; 
 
 
 	//消すときdeleteしないでnullしてね.

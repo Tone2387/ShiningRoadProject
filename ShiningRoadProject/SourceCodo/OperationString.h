@@ -21,8 +21,19 @@ public:
 	std::string ConsolidatedNumber( const std::string& s, const char			num ) const;
 	std::string ConsolidatedNumber( const std::string& s, const unsigned char	num	) const;
 
+
+	//マルチバイト文字列( char* )からワイドバイト文字列( wchat_t* )を作成.
+	//wchar_t型を内部でnewしているので、使用後は必ずdelete[]すること.
+	wchar_t* CreateWcharPtrFromCharPtr( const char *c );
+
+	//ワイドバイト文字列( wchat_t* )からマルチバイト文字列( char* )を作成.
+	//char型を内部でnewしているので、使用後は必ずdelete[]すること.
+	char* CreateCharPtrFromWcharPtr( const wchar_t *wc );
+
 private:
 
+	//数字と連結.
+	//連結 : consolidated.
 	template<class T>
 	std::string ConsolidatedNumberProduct( std::string s, const T num ) const
 	{

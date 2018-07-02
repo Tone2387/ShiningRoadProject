@@ -1,8 +1,6 @@
-//#define _CRT_SECURE_NO_WARNINGS
-
 #include "Effects.h"
 #include "Global.h"
-
+#include "OperationString.h"
 #include "File.h"
 
 using namespace std;
@@ -17,7 +15,7 @@ const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
 const string sFILE_PATH = "Data\\Effekseer\\tex\\";
 
 const int uiEFFECT_FILE_NAME_INDEX = 0;//ファイル名が格納されているインデックス.
-const int uiMAX_PLAY_INDEX = 1;//最大再生数.
+//const int uiMAX_PLAY_INDEX = 1;//最大再生数.
 
 
 const int iRESURVE_SIZE_EFFECTS_MAX = 64;
@@ -100,6 +98,8 @@ HRESULT clsEffects::ReleaseData()
 	for( unsigned int i=0; i<m_vpEffect.size(); i++ ){
 		ES_SAFE_RELEASE( m_vpEffect[i] );
 	}
+	m_vpEffect.clear();
+	m_vpEffect.shrink_to_fit();
 
 	return S_OK;
 }
@@ -179,6 +179,9 @@ HRESULT clsEffects::LoadData()
 
 	m_vpEffect.reserve( iRESURVE_SIZE_EFFECTS_MAX );
 
+	//文字列操作用.
+	clsOPERATION_STRING OprtStr;
+
 	//エフェクトの読込.
 	for( unsigned int i=0; i<upFile->GetSizeRow(); i++ ){
 		m_vpEffect.push_back( nullptr );
@@ -186,32 +189,28 @@ HRESULT clsEffects::LoadData()
 		//パスを作る.
 		tmpString = sFILE_PATH + upFile->GetDataString( i, uiEFFECT_FILE_NAME_INDEX );
 
-		//パスをwcharにする.
-		//中継用のchar.
-		const char *tmpC = tmpString.c_str();
-		size_t newSize = strlen( tmpC ) + 1;
-		wchar_t *tmpPath = new wchar_t[ newSize ];
+		//マルチバイト文字列( char* )からワイドバイト文字列( wchat_t* )を作成.
+		const wchar_t *tmpPath = OprtStr.CreateWcharPtrFromCharPtr( tmpString.c_str() );
 
-		//charからwcharへ.
-		size_t convChars = 0;
-		mbstowcs_s( &convChars, tmpPath, newSize, tmpC, _TRUNCATE );
-
+		//作成.
 		m_vpEffect[i] =
 			::Effekseer::Effect::Create( 
 				m_pManager, 
 				(const EFK_CHAR*)( tmpPath ) );
 
+		//作ったものは消す.
 		delete[] tmpPath;
 
-		//エラー.
-		if( m_vpEffect[i] == nullptr ){
-			char strMsg[128];
-			wsprintf( strMsg, "clsEffects::LoadData()\n%ls",
-				tmpPath );
-
-			ERR_MSG( strMsg, "エフェクトファイル読込失敗" );
-			return E_FAIL;
-		}
+//		//エラー.
+//		if( m_vpEffect[i] == nullptr ){
+//			char strMsg[128];
+//			wsprintf( strMsg, "clsEffects::LoadData()\n%ls",
+//				tmpPath );
+//
+//			ERR_MSG( strMsg, "エフェクトファイル読込失敗" );
+//			return E_FAIL;
+//		}
+		assert( m_vpEffect[i] );
 	}
 	m_vpEffect.shrink_to_fit();
 
@@ -282,13 +281,6 @@ void clsEffects::SetProjectionMatrix( const D3DXMATRIX& mProj ) const
 
 }
 
-
-
-
-
-
-
-
 //==================================================
 //	ベクター変換関数(1)	DirectX Vector3 → Effekseer Vector3.
 //==================================================
@@ -299,6 +291,7 @@ void clsEffects::SetProjectionMatrix( const D3DXMATRIX& mProj ) const
 		pSrcVec3Dx->y,
 		pSrcVec3Dx->z );
 }
+
 //==================================================
 //	ベクター変換関数(2)	Effekseer Matrix → DirectX Matrix.
 //==================================================
@@ -352,6 +345,7 @@ D3DXVECTOR3 clsEffects::Vector3EfkToDx( const ::Effekseer::Vector3D* pSrcVec3Efk
 
 	return OutMatEfk;
 }
+
 //==================================================
 //	行列変換関数(2)	Effekseer Matrix → DirectX Matrix.
 //==================================================
