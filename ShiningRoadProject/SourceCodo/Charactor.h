@@ -4,7 +4,6 @@
 #define CHARACTOR
 
 #include"Global.h"
-#include"DX9Mesh.h"
 #include"Object.h"
 
 class clsCharactor : public clsObject
@@ -33,8 +32,6 @@ public:
 	float m_fMoveDecele;// = m_fMoveSpeed / m_iStopFrame;
 
 	int m_iMoveReverseDirInertia;
-
-	virtual void tenshi()override{};
 
 	bool m_bRotation;
 
@@ -119,6 +116,7 @@ public:
 		const D3DXVECTOR3 CenterPos, 
 		const D3DXVECTOR3 TargetPos, 
 		const float Range);//‰~‚Ì”ÍˆÍ”»’è.
+protected:
 
 private:
 	LPD3DXMESH m_pMeshForRay;//Ú²‚Ì‚½‚ß‚ÌÒ¯¼­—p.

@@ -30,8 +30,6 @@ public:
 
 	void Action(const clsDX9Mesh* pWall);
 
-	void tenshi()final{ Action(NULL); };
-
 	void InhUpdate();//Inheritance
 
 private:
