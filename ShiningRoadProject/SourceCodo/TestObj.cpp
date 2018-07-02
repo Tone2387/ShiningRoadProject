@@ -85,17 +85,6 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 			}
 		}
 	}
-
-	
-
-
-
-	
-
-	if (pWall)
-	{
-		WallJudge(pWall);
-	}
 }
 
 void clsTestObj::InhUpdate()

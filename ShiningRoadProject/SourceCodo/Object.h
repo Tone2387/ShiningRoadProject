@@ -60,20 +60,24 @@ public:
 	float m_fMoveSpeed;//最終的に加算されるスピード.
 	D3DXVECTOR3 m_vMoveDir;
 
-	void Updata(const clsDX9Mesh* pGround)
+	void Updata(const clsDX9Mesh* pGround = nullptr)
 	{
 		m_vOldPos = m_Trans.vPos;
 
 		ActionProduct();
 
-		WallJudge(pGround);
-
-		FreeFoll();
+		if (pGround&&m_NoFollObj)
+		{
+			FreeFoll();
+		}
 	}
 
 	virtual void ActionProduct(){};
+	virtual void Render(D3DXMATRIX& mView,D3DXMATRIX& mProj,D3DXVECTOR3 vLight,D3DXVECTOR3 vEye){};
 
 	bool m_bGround;
+
+	bool m_NoFollObj;
 
 	SPHERE** m_ppColSpheres;
 	int m_iColSpheresMax;
@@ -101,8 +105,6 @@ public:
 
 	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
 	void SetScale(float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
-	
-	bool WallJudge(const clsDX9Mesh* pWall, const bool bFoll = true);
 
 	bool WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir);
 	bool WallForward(const clsDX9Mesh* pWall, const bool bSlip = true);
@@ -110,7 +112,7 @@ public:
 	bool WallLeft(const clsDX9Mesh* pWall, const bool bSlip = true);
 	bool WallRight(const clsDX9Mesh* pWall, const bool bSlip = true);
 	bool WallUp(const clsDX9Mesh* pWall);
-	bool WallUnder(const clsDX9Mesh* pWall, const bool bFoll);
+	bool WallUnder(const clsDX9Mesh* pWall);
 
 	bool Intersect(
 		const RAYSTATE RayState,

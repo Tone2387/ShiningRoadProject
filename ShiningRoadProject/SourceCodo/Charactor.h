@@ -5,6 +5,7 @@
 
 #include"Global.h"
 #include"Object.h"
+#include"Shot.h"
 
 class clsCharactor : public clsObject
 {
@@ -21,7 +22,6 @@ public:
 
 	//移動関係.
 	bool m_bMoving;
-
 	
 	float m_fMoveSpeedMax;//スピードの最大値.
 
@@ -49,6 +49,14 @@ public:
 	float m_fJumpPower;
 
 	void Shot();
+	void Reload();
+
+	clsShot** m_ppShot;
+	ShotFormState** m_pShot;
+	int m_iShotNum;
+
+	int m_iShotMax;
+	int m_iShotNumNow;
 
 	//移動関係.
 	void Move(const float fAngle, const float fPush);
