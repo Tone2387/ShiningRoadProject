@@ -67,15 +67,17 @@ private:
 	//サウンドクラス作成.
 	void CreateSound( 
 		SOUND_SET &vpSound,
-		std::deque<bool> &dqbLoop,
-		const unsigned int uiRESERVE_SIZE,
-		const std::string sFilePath,
+		std::deque<bool> &dqbLoop,			//ループフラグの数を準備する.
+		const unsigned int uiRESERVE_SIZE,	//BGMとSEで違うので引数にする.
+		const std::string &sFilePath,		
+		const std::string &sSubPath,
 		std::vector<int> &viMaxNum );
 
 	//サウンドデータ作成.
 	void CreateSoundData(
 		std::vector< clsSound::SOUND_DATA > &vData,
 		const std::string &sFilePath,
+		const std::string &sSubPath,
 		std::vector<int> &viMaxNum );
 
 

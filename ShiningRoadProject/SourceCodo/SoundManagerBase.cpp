@@ -13,15 +13,19 @@ const unsigned int uiRESURVE_SIZE_MAX = 8;	//同時再生数.
 
 //push_back用.
 const clsSound::SOUND_DATA INIT_SOUND_DATA = { "", "", 1000 };
-const char cALIAS_NUM = 0;
-const char cPATH_NUM = 1;
-const char cVOLUME_NUM = 2;
-const char cMAX_NUM = 3;
+
+//添え字.
+const char cALIAS_NUM = 0;	//エイリアス名.
+const char cPATH_NUM = 1;	//音声データのファイルパス.
+const char cVOLUME_NUM = 2;	//最大音量.
+const char cMAX_NUM = 3;	//同時再生可能数.
 
 //ファイルクラスのパス用.
 const string sDATA_PASS = "Data\\Sound\\Data\\";
 const string sBGM_PASS = "BGM.csv";
 const string sSE_PASS = "SE.csv";
+const string sSUB_PASS_BGM = "BGM\\";
+const string sSUB_PASS_SE = "SE\\";
 
 //サウンドクラスへ指示を出す際にvectorの範囲を超えていたら、だめですとおしかりをくれるマクロ.
 #define SOUND_NUMBER_OVER_SHECK(no,vp) \
@@ -106,12 +110,15 @@ void clsSOUND_MANAGER_BASE::Create()
 	//継承クラスで動く関数( m_sSceneNameを入れる ).
 	CreateSceneName();
 
-	string tmpPass = sDATA_PASS + m_sSceneName;
+	//CSVデータのパス.
+	string tmpDataPass = sDATA_PASS + m_sSceneName;
+	string BgmDataPath = tmpDataPass + sBGM_PASS;
+	string SeDataPath  = tmpDataPass + sSE_PASS;
 
 	//BGM.
-	CreateSound( m_vvupBgm, m_dqbLoopBgm, uiRESERVE_SIZE_BGM, tmpPass + sBGM_PASS, m_viBgmNum );
+	CreateSound( m_vvupBgm, m_dqbLoopBgm, uiRESERVE_SIZE_BGM, BgmDataPath, sSUB_PASS_BGM, m_viBgmNum );
 	//SE.
-	CreateSound( m_vvupSe,  m_dqbLoopSe,  uiRESERVE_SIZE_SE,  tmpPass + sSE_PASS,  m_viSeNum );
+	CreateSound( m_vvupSe,  m_dqbLoopSe,  uiRESERVE_SIZE_SE,  SeDataPath,  sSUB_PASS_SE,  m_viSeNum );
 }
 
 //毎フレーム一回使う.
@@ -165,12 +172,13 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 	SOUND_SET &vpSound,
 	std::deque<bool> &dqbLoop,
 	const unsigned int uiRESERVE_SIZE,
-	const string sFilePath,
+	const string &sFilePath,
+	const string &sSubPath,
 	vector<int> &viMaxNum )
 {
 	//サウンドデータ.
 	vector< clsSound::SOUND_DATA > vData;
-	CreateSoundData( vData, sFilePath, viMaxNum );
+	CreateSoundData( vData, sFilePath, sSubPath, viMaxNum );
 
 	//音の数.
 	int iSoundNum = vData.size();
@@ -217,6 +225,7 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 void clsSOUND_MANAGER_BASE::CreateSoundData(
 	vector< clsSound::SOUND_DATA > &vData,
 	const string &sFilePath,
+	const string &sSubPath,
 	std::vector<int> &viMaxNum )
 {
 	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
@@ -233,7 +242,7 @@ void clsSOUND_MANAGER_BASE::CreateSoundData(
 			vData.push_back( INIT_SOUND_DATA );
 
 			vData[i].sAlias = upFile->GetDataString( i, cALIAS_NUM );
-			vData[i].sPath = upFile->GetDataString( i, cPATH_NUM );
+			vData[i].sPath = sSubPath + upFile->GetDataString( i, cPATH_NUM );
 			vData[i].iMaxVolume = upFile->GetDataInt( i, cVOLUME_NUM );
 			
 			viMaxNum.push_back( upFile->GetDataInt( i, cMAX_NUM ) );
