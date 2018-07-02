@@ -252,7 +252,7 @@
     <ClCompile Include="SourceCodo\OperationString.cpp">
       <Filter>Tahara</Filter>
     </ClCompile>
-    <ClCompile Include="Stage.cpp">
+    <ClCompile Include="SourceCodo\Stage.cpp">
       <Filter>Hiyosi</Filter>
     </ClCompile>
   </ItemGroup>
@@ -470,7 +470,7 @@
     <ClInclude Include="SourceCodo\Sound.h">
       <Filter>Classwork\System</Filter>
     </ClInclude>
-    <ClInclude Include="Stage.h">
+    <ClInclude Include="SourceCodo\Stage.h">
       <Filter>Hiyosi</Filter>
     </ClInclude>
   </ItemGroup>
