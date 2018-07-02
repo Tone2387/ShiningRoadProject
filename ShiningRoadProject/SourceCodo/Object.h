@@ -67,9 +67,9 @@ public:
 		ActionProduct();
 
 		WallJudge(pGround);
-	}
 
-	virtual void tenshi(){};
+		FreeFoll();
+	}
 
 	virtual void ActionProduct(){};
 
@@ -102,7 +102,7 @@ public:
 	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
 	void SetScale(float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
 	
-	void WallJudge(const clsDX9Mesh* pWall, const bool bFoll = true);
+	bool WallJudge(const clsDX9Mesh* pWall, const bool bFoll = true);
 
 	bool WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir);
 	bool WallForward(const clsDX9Mesh* pWall, const bool bSlip = true);
@@ -125,10 +125,7 @@ private:
 		const DWORD dwPolyIndex,
 		D3DXVECTOR3* pVecVertices);
 
-	void FreeFoll()
-	{
-		m_fFollPower -= g_fGravity;
-	}
+	void FreeFoll();
 };
 
 #endif

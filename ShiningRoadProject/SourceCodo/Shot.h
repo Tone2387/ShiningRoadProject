@@ -6,37 +6,48 @@
 #include"Object.h"
 #include "PtrGroup.h"
 
-struct ShotInitState
+struct ShotState
 {
 	float fShotScale;
 
-	clsSound* pSEShot;
-	clsSound* pSEHit;
+	int iSEShotNum;
+	int iSEHitNum;
 
-	
+	int iShotEfcNum;
+	int iLineEfcNum;
+	int iHitEfcNum;
 };
 
 class clsShot : public clsObject
 {
+private:
+	enum enSEType
+	{
+		enSEShot = 0,
+		enSEHit,
+
+		enSESize
+	};
+
+	enum enEfcType
+	{
+		enEfcShot = 0,
+		enEfcLine,
+		enEfcHit,
+
+		enEfcSize
+	};
+
 public:
 	clsShot(clsPOINTER_GROUP* pPtrGroup);
 	~clsShot();
 
 	int m_iThisShotIndex;
 
-	clsSound** m_ppSE;
-	int m_iSoundMaxNo;
-
 	bool m_bShotExistFlg;//íeÇÃë∂ç›ämîF(falseÇ»ÇÁíeÇ™ë∂ç›ÇµÇ»Ç¢èÛë‘).
 	bool m_bExistFlg;//íe,îöî≠,ãOê’ÇÃë∂ç›ämîF(falseÇ»ÇÁÇªÇÍÇÁëSÇƒÇ™ë∂ç›ÇµÇ»Ç¢èÛë‘)
 
 	HRESULT Init(LPSTR strWeaponFolderName);
-
-	clsEffects* m_pEffect;
-
-	::Effekseer::Handle m_ShotEfcH;
-	::Effekseer::Handle m_LineEfcH;
-	::Effekseer::Handle m_HitEfcH;
 
 	void SEInit(HWND hWnd);
 
@@ -46,8 +57,16 @@ public:
 	void ReStart();
 
 private:
+
+	clsSound* m_ppSE[enSESize];
+
+	clsEffects* m_wpEffect;
+
+	::Effekseer::Handle m_ShotEfcHandles[enEfcSize];
+
 	D3DXVECTOR3 m_vStartPos;
-	D3DXVECTOR3 m_vMoveAxis;
+
+	ShotState m_ShotState;
 };
 
 #endif //#ifndef _SHOT_H_
