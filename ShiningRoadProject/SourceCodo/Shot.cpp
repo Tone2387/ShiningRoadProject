@@ -1,8 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include"Shot.h"
-#include"Resource.h"
 
-clsShot::clsShot()
+const int g_iColNum = 1;
+
+clsShot::clsShot(clsPOINTER_GROUP* pPtrGroup)
 {
 	ZeroMemory(this, sizeof(clsShot));
 }
@@ -11,11 +12,23 @@ clsShot::~clsShot()
 {
 }
 
-HRESULT clsShot::Init(const float fScale)
+HRESULT clsShot::Init(LPSTR strWeaponFolderName)
 {
+	//strWeaponFileNameから情報を受け取る.
+	//球の大きさ.
+	//音量.
+	//エフェクト.
+
+
 	//当たり判定の大きさを決める.
-	m_Sphere.vCenter = &m_Trans.vPos;
-	m_Sphere.fRadius = fScale;
+	m_ppColSpheres = new clsObject::SPHERE * [g_iColNum];
+
+	for (int i = 0; i < g_iColNum; i++)
+	{
+		m_ppColSpheres[i]->vCenter = &m_Trans.vPos;
+		m_ppColSpheres[i]->fRadius = 1.0f;
+	}
+	
 	//確認用のｽﾌｨｱをﾚﾝﾀﾞﾘﾝｸﾞする.
 	//当たり判定としては、ここ以降は不要.
 
@@ -30,17 +43,20 @@ bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
 {
 	if (m_bShotExistFlg)
 	{
-		for (int i = 0; i < iSphereMax; i++)
+		for (int i = 0; i < g_iColNum; i++)
 		{
-			if (Collision(m_Sphere, ppTargetSphere[i]))
+			for (int j = 0; j < iSphereMax; i++)
 			{
-				//m_pEffect->SetLocation(m_HitEfcH, m_Trans.vPos);
-				m_HitEfcH = //m_pEffect->Play(clsEffects::enEFFECTS_ARBIA_ATK,m_Trans.vPos);
+				if (Collision(*m_ppColSpheres[i], ppTargetSphere[j]))
+				{
+					//m_pEffect->SetLocation(m_HitEfcH, m_Trans.vPos);
+					m_HitEfcH = //m_pEffect->Play(clsEffects::enEFFECTS_ARBIA_ATK,m_Trans.vPos);
 
-				//m_pEffect->SetScale(m_HitEfcH, D3DXVECTOR3(1.0f,1.0f,1.0f));
+					//m_pEffect->SetScale(m_HitEfcH, D3DXVECTOR3(1.0f,1.0f,1.0f));
 
-				m_bShotExistFlg = false;
-				return true;
+					m_bShotExistFlg = false;
+					return true;
+				}
 			}
 		}
 	}
@@ -73,8 +89,6 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vTarget)
 
 	m_vMoveAxis = vTar - vStart;
 	D3DXVec3Normalize(&m_vMoveAxis, &m_vMoveAxis);
-
-	
 
 	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveAxis * m_fMoveSpeed;
 

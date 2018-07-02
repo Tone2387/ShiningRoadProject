@@ -54,8 +54,6 @@ public:
 		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
 	}
 
-	virtual void tenshi()override{};
-
 	bool m_bBoost;//true:ブースター展開/false:非展開.
 
 	//Headパーツから数値を取得する変数と関連する変数//
