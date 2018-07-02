@@ -1,6 +1,7 @@
 #include "SceneBase.h"
 #include <Windows.h>
 
+using namespace std;
 
 //ライト方向.
 const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -2.0f };
@@ -41,7 +42,10 @@ clsSCENE_BASE::~clsSCENE_BASE()
 	m_wpEffects->StopAll();
 
 #if _DEBUG
-	SAFE_DELETE( m_upText );
+//	SAFE_DELETE( m_upText );
+	if( m_upText ){
+		m_upText.reset();
+	}
 #endif//#if _DEBUG
 
 	m_enNextScene = enSCENE::NOTHING;
@@ -74,7 +78,8 @@ void clsSCENE_BASE::Create()
 
 #if _DEBUG
 	//デバッグテキストの初期化.
-	m_upText = new clsDebugText;
+//	m_upText = new clsDebugText;
+	m_upText = make_unique< clsDebugText >();
 	D3DXVECTOR4 vColor( 1.0f, 1.0f, 1.0f, 1.0f );
 	if( FAILED( m_upText->Init(
 		m_wpContext,

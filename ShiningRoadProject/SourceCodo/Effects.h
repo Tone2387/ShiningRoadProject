@@ -49,6 +49,7 @@
 class clsEffects
 {
 public:
+
 //	//エフェクト種類列挙体.
 //	enum enEFFECTS : UCHAR
 //	{
@@ -77,7 +78,6 @@ public:
 //		enEFFECTS_MAX
 //	};
 
-	
 #ifdef EFFECTS_CLASS_SINGLETON
 	//インスタンス取得(唯一のアクセス経路).
 	static clsEffects* GetInstance()
@@ -93,71 +93,89 @@ public:
 	~clsEffects();
 
 	//構築関数.
-	HRESULT Create( ID3D11Device* const pDevice,
-					ID3D11DeviceContext* const pContext );
+	HRESULT Create( 
+		ID3D11Device* const pDevice,
+		ID3D11DeviceContext* const pContext );
 
 	//描画.
 	void Render( 
-		const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const D3DXVECTOR3& vEye ) const;
+		const D3DXMATRIX& mView, 
+		const D3DXMATRIX& mProj, 
+		const D3DXVECTOR3& vEye ) const;
 
 
 	//再生関数.
-	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) const {
+	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) const 
+	{
 		return m_pManager->Play(
 			m_vpEffect[EfcType], vPos.x, vPos.y, vPos.z );
 	};
 	//一時停止.
-	void Paused( const ::Effekseer::Handle handle, const bool bFlag ) const {
+	void Paused( const ::Effekseer::Handle handle, const bool bFlag ) const 
+	{
 		m_pManager->SetPaused( handle, bFlag );	//bFlag:true = 一時停止.
 	}
 	//停止.
-	void Stop( const ::Effekseer::Handle handle ) const {
+	void Stop( const ::Effekseer::Handle handle ) const 
+	{
 		m_pManager->StopEffect( handle );
 	}
 	//すべて停止.
-	void StopAll() const {
+	void StopAll() const 
+	{
 		m_pManager->StopAllEffects();
 	}
 	
+	//位置指定.
+	void SetPosition( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vPos ) const 
+	{
+		m_pManager->SetLocation( handle,
+			::Effekseer::Vector3D( vPos.x, vPos.y, vPos.z ) );
+	}
+
+
+	//回転指定.
+	void SetRotation( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vRot ) const
+	{
+		m_pManager->SetRotation( handle,
+			vRot.x, vRot.y, vRot.z );
+	}
+	void SetRotation( 
+		const ::Effekseer::Handle handle,
+		const D3DXVECTOR3 &vAxis, const float fAngle ) const 
+	{
+			m_pManager->SetRotation( handle,
+				::Effekseer::Vector3D( vAxis.x, vAxis.y, vAxis.z ),
+				fAngle );
+	}
+
 	//サイズ指定.
-	void SetScale( const ::Effekseer::Handle handle, const float fScale ) const {
+	void SetScale( const ::Effekseer::Handle handle, const float fScale ) const 
+	{
 		m_pManager->SetScale( handle,
 			fScale, fScale, fScale );
 	}
-	void SetScale( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vScale ) const {
+	void SetScale( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vScale ) const 
+	{
 		m_pManager->SetScale( handle,
 			vScale.x, vScale.y, vScale.z );
 	}
 
 	//スピード指定.
-	void SetSpd( const ::Effekseer::Handle handle, const float fSpd ) const {
+	void SetSpd( const ::Effekseer::Handle handle, const float fSpd ) const 
+	{
 		m_pManager->SetSpeed( handle, fSpd );
 	}
 
-	//回転指定.
-	void SetRotation( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vRot ) const{
-		m_pManager->SetRotation( handle,
-			vRot.x, vRot.y, vRot.z );
-	}
-	void SetRotation( const ::Effekseer::Handle handle,
-			const D3DXVECTOR3 &vAxis, const float fAngle ) const {
-		m_pManager->SetRotation( handle,
-			::Effekseer::Vector3D( vAxis.x, vAxis.y, vAxis.z ),
-			fAngle );
-	}
-	//位置指定.
-	void SetPosition( const ::Effekseer::Handle handle, const D3DXVECTOR3 &vPos ) const {
-		m_pManager->SetLocation( handle,
-			::Effekseer::Vector3D( vPos.x, vPos.y, vPos.z ) );
-	}
 
 	//動いてる?.
-	bool PlayCheck( const ::Effekseer::Handle handle ) const
+	bool isPlay( const ::Effekseer::Handle handle ) const
 	{
 		return m_pManager->Exists( handle );
 	}
 
 private:
+
 #ifdef EFFECTS_CLASS_SINGLETON
 	//生成やコピーを禁止する.
 	clsEffects();
@@ -169,10 +187,13 @@ private:
 	HRESULT Init( 
 		ID3D11Device* const pDevice,
 		ID3D11DeviceContext* const pContext );
+
 	//データ読込関数.
 	HRESULT LoadData();
+
 	//破棄関数.
 	HRESULT Destroy();
+
 	//データ解放関数.
 	HRESULT ReleaseData();
 
@@ -212,43 +233,18 @@ private:
 //=======================================================
 //	使い方.
 //=======================================================
-
-//.	//MainのCreateにこれ
-//	clsEffects::GetInstance()->Create( m_pDevice, m_pDeviceContext );
-//	clsEffects::GetInstance()->LoadData();
-
-
-
-
+//
 //	//エフェクトを出したいクラスのヘッダーに.
 //	//これと同じ型の変数を宣言する.
 //	::Effekseer::Handle		m_Handle;
-
-
-//	//----- hでの使用例 -----//.
-//	//ハンドル eh = EffekseerHandle.
-//	::Effekseer::Handle		m_ehBomb;
-
-
+//
+//
 //	//----- cppでの使用例 -----//.
-//	//コンストラクタかCreateにて.
-//	m_wpEffect = nullptr;.
-//	if( m_wpEffect == nullptr ){
-//		m_wpEffect = clsEffects::GetInstance();
-//	}
-
+//
 //	//出したいタイミング.
-//	m_ehBomb = m_wpEffect->Play( clsEffects::enEFFECTS_MgcDrk, m_vPos );
-//	m_wpEffect->SetLocation( m_ehBomb, m_vPos );
+//	m_ehBomb = m_wpEffect->Play( 0, m_vPos );
+//	m_wpEffect->SetRotation( m_ehBomb, m_vRot );
 
-//	main関数のRenderに
-//	clsEffects::GetInstance()->Render( m_mView, m_mProj, m_Camera.vEye );
-
-
-
-
-//旧解説.
-	//エフェクト毎に必要(同じエフェクトを3つ出すなら3つ必要).
 
 
 #endif//#ifndef EFFECTS_H_
