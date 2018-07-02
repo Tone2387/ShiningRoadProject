@@ -43,19 +43,17 @@ const string sDATA_PASS_END	 = "\\RoboPartsData.csv";
 
 clsResource::clsResource()
 	:m_hWnd( nullptr )
-	,m_pDevice11( nullptr )
-	,m_pCotext11( nullptr )
+	,m_wpDevice11( nullptr )
+	,m_wpCotext11( nullptr )
 	,m_ppStaticModels( nullptr )
 	,m_ppSkinModels( nullptr )
 	,m_ucSkinModelMax( 0 )
 	,m_PartsNum( )
 	,m_pFile( nullptr )
-	,m_FilePath()
 {
 	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
 		m_PartsNum[i] = 0;
 	}
-	ZeroMemory( m_FilePath, sizeof( m_FilePath ) );
 }
 
 clsResource::~clsResource()
@@ -83,8 +81,8 @@ clsResource::~clsResource()
 
 	m_ucSkinModelMax = 0;
 
-	m_pCotext11 = nullptr;
-	m_pDevice11 = nullptr;
+	m_wpCotext11 = nullptr;
+	m_wpDevice11 = nullptr;
 	m_hWnd = nullptr;
 	SAFE_DELETE( m_pFile );
 }
@@ -342,8 +340,8 @@ HRESULT clsResource::InitStaticModel(
 			ID3D11DeviceContext* const pContext)
 {
 	m_hWnd = hWnd;
-	m_pDevice11 = pDevice;
-	m_pCotext11 = pContext;
+	m_wpDevice11 = pDevice;
+	m_wpCotext11 = pContext;
 	//スタティックメッシュのポインタ領域を確保.
 	m_ppStaticModels = new clsDX9Mesh*[ enStaticModel_Max ];
 	for( UCHAR i=0; i<enStaticModel_Max; i++ ){
@@ -389,7 +387,7 @@ HRESULT clsResource::CreateStaticModel( LPSTR const fileName, const enSTATIC_MOD
 	//モデル読込.
 	m_ppStaticModels[ enModel ] = new clsDX9Mesh;
 	m_ppStaticModels[ enModel ]->Init(
-		m_hWnd, m_pDevice11, m_pCotext11, fileName );
+		m_hWnd, m_wpDevice11, m_wpCotext11, fileName );
 
 	return S_OK;
 }

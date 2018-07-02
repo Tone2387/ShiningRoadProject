@@ -8,7 +8,7 @@
 //#define RESOURCE_CLASS_SINGLETON
 
 //テスト中はつける( パーツの読み込み数を固定化 ).
-#define RESOURCE_READ_PARTS_MODEL_LOCK
+//#define RESOURCE_READ_PARTS_MODEL_LOCK
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK
 const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数 : 4.
 #endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
@@ -32,7 +32,7 @@ const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数 : 4.
 #include "File.h"
 
 //スキンメッシュ列挙体の型.
-#define SKIN_ENUM_TYPE UCHAR
+using SKIN_ENUM_TYPE = UCHAR;
 
 
 //3Dモデルのもとデータを格納するクラス.
@@ -166,15 +166,12 @@ private:
 
 
 	HWND					m_hWnd;
-	ID3D11Device*			m_pDevice11;
-	ID3D11DeviceContext*	m_pCotext11;
+	ID3D11Device*			m_wpDevice11;
+	ID3D11DeviceContext*	m_wpCotext11;
 	CD3DXSKINMESH_INIT		m_Si;
 
 	clsDX9Mesh**			m_ppStaticModels;
 	clsD3DXSKINMESH**		m_ppSkinModels;
-
-
-	char m_FilePath[255];
 
 
 	//読み込むパーツ数を数えるため.
