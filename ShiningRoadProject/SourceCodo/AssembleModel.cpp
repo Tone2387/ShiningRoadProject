@@ -34,7 +34,7 @@ const double dANIM_SPD = 0.016;
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
 	,m_upPartsFactory( nullptr )
-	,m_wppParts( nullptr )
+	,m_vpParts()
 	,m_dAnimSpd( 0.0 )
 {
 	m_dAnimSpd = dANIM_SPD;
@@ -42,17 +42,16 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 
 clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 {
-	if( m_wppParts != nullptr ){
-		for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-			if( m_wppParts[i] != nullptr ){
-				m_wppParts[i]->DetatchModel();
-				delete m_wppParts[i];
-				m_wppParts[i] = nullptr;
-			}
+	for( unsigned int i=0; i<m_vpParts.size(); i++ ){
+		if( m_vpParts[i] != nullptr ){
+			m_vpParts[i]->DetatchModel();
+			delete m_vpParts[i];
+			m_vpParts[i] = nullptr;
 		}
-		delete[] m_wppParts;
-		m_wppParts = nullptr;
 	}
+	m_vpParts.clear();
+	m_vpParts.shrink_to_fit();
+
 //	SAFE_DELETE( m_upPartsFactory );
 	if( m_upPartsFactory ){
 		m_upPartsFactory.reset( nullptr );
@@ -66,16 +65,18 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus )
 {
 	ASSERT_IF_NOT_NULL( m_upPartsFactory );
-	ASSERT_IF_NOT_NULL( m_wppParts );
+	assert( !m_vpParts.size() );
 	ASSERT_IF_NOT_NULL( m_wpResource );
 
 	m_wpResource = pResource;
 
 	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
-	m_wppParts = new clsPARTS_BASE*[ucPARTS_MAX];
+//	m_vpParts = new clsPARTS_BASE*[ucPARTS_MAX];
+	m_vpParts.reserve( ucPARTS_MAX );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_wppParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
+		m_vpParts.push_back( nullptr );
+		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
 	Init( pStatus );
@@ -103,10 +104,9 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 
 void clsASSEMBLE_MODEL::UpDate()
 {
-	ASSERT_IF_NULL( m_wppParts );
-	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->Update();
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->Update();
 	}
 }
 
@@ -118,12 +118,11 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXVECTOR4& vColor,
 	const bool isAlpha )
 {
-	ASSERT_IF_NULL( m_wppParts );
-	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		ASSERT_IF_NULL( m_wppParts[i] );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
 		SetPos( GetPos() );
-		m_wppParts[i]->ModelUpdate( m_wppParts[i]->m_Trans );
-		m_wppParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
+		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 	}
 }
 
@@ -134,12 +133,11 @@ void clsASSEMBLE_MODEL::AttachModel(
 	const SKIN_ENUM_TYPE PartsNum )
 {
 	UCHAR ucParts = static_cast<UCHAR>( enParts );
-	ASSERT_IF_NULL( m_wppParts );
-	ASSERT_IF_NULL( m_wppParts[ucParts] );
-	m_wppParts[ucParts]->DetatchModel();
-	m_wppParts[ucParts]->AttachModel( 
+	assert( m_vpParts[ucParts] );
+	m_vpParts[ucParts]->DetatchModel();
+	m_vpParts[ucParts]->AttachModel( 
 		m_wpResource->GetPartsModels( enParts, PartsNum ) );
-	m_wppParts[ucParts]->SetAnimSpeed( m_dAnimSpd );
+	m_vpParts[ucParts]->SetAnimSpeed( m_dAnimSpd );
 	
 //	AnimReSet();
 }
@@ -150,35 +148,34 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 {
 	m_Trans.vPos = vPos;
 
-	ASSERT_IF_NULL( m_wppParts );
-	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		ASSERT_IF_NULL( m_wppParts[i] );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
 //		m_wppParts[i]->SetPosition( m_Trans.vPos );
 	}
 
-	m_wppParts[ucLEG]->SetPosition( m_Trans.vPos );
+	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
 
-	m_wppParts[ucCORE]->SetPosition( 
- 		m_wppParts[ucLEG]->GetBonePos( BONE_NAME_LEG_TO_CORE ) );
+	m_vpParts[ucCORE]->SetPosition( 
+ 		m_vpParts[ucLEG]->GetBonePos( BONE_NAME_LEG_TO_CORE ) );
 
-	m_wppParts[ucHEAD]->SetPosition( 
-		m_wppParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_HEAD ) );
+	m_vpParts[ucHEAD]->SetPosition( 
+		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_HEAD ) );
 
-	m_wppParts[ucARM_L]->SetPosition( 
-		m_wppParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_L ) );
+	m_vpParts[ucARM_L]->SetPosition( 
+		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_L ) );
 
-	m_wppParts[ucARM_R]->SetPosition( 
-		m_wppParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_R ) );
+	m_vpParts[ucARM_R]->SetPosition( 
+		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_R ) );
 
-	m_wppParts[ucWEAPON_L]->SetPosition( 
-		m_wppParts[ucARM_L]->GetBonePos( BONE_NAME_ARM_L_TO_WEAPON_L ) );
+	m_vpParts[ucWEAPON_L]->SetPosition( 
+		m_vpParts[ucARM_L]->GetBonePos( BONE_NAME_ARM_L_TO_WEAPON_L ) );
 										   
-	m_wppParts[ucWEAPON_R]->SetPosition( 
-		m_wppParts[ucARM_R]->GetBonePos( BONE_NAME_ARM_R_TO_WEAPON_R ) );
+	m_vpParts[ucWEAPON_R]->SetPosition( 
+		m_vpParts[ucARM_R]->GetBonePos( BONE_NAME_ARM_R_TO_WEAPON_R ) );
 
-	FitJointModel( m_wppParts[ucWEAPON_L], m_wppParts[ucARM_L],
+	FitJointModel( m_vpParts[ucWEAPON_L], m_vpParts[ucARM_L],
 		BONE_NAME_WEAPON_VEC_ROOT, BONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
-	FitJointModel( m_wppParts[ucWEAPON_R], m_wppParts[ucARM_R],
+	FitJointModel( m_vpParts[ucWEAPON_R], m_vpParts[ucARM_R],
 		BONE_NAME_WEAPON_VEC_ROOT, BONE_NAME_WEAPON_VEC_END );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
@@ -194,7 +191,6 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetPos() const
 
 void clsASSEMBLE_MODEL::SetRot( const D3DXVECTOR3 &vRot )
 {
-	ASSERT_IF_NULL( m_wppParts );
 	D3DXVECTOR3 tmpRot = vRot;
 
 	GuardDirOver( tmpRot.x );
@@ -205,9 +201,9 @@ void clsASSEMBLE_MODEL::SetRot( const D3DXVECTOR3 &vRot )
 	m_Trans.fYaw	= tmpRot.y;
 	m_Trans.fRoll	= tmpRot.z;
 
-	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->SetRotation( tmpRot );
+	for( UCHAR i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->SetRotation( tmpRot );
 	}
 }
 void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
@@ -222,11 +218,10 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetRot() const
 
 void clsASSEMBLE_MODEL::SetScale( const float fScale )
 {
-	ASSERT_IF_NULL( m_wppParts );
 	m_Trans.vScale = { fScale, fScale, fScale };
-	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->SetScale( fScale );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->SetScale( fScale );
 	}
 }
 
@@ -234,11 +229,10 @@ void clsASSEMBLE_MODEL::SetScale( const float fScale )
 
 void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 {
-	ASSERT_IF_NULL( m_wppParts );
 	m_dAnimSpd = dSpd;
-	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		ASSERT_IF_NULL( m_wppParts[i] );
-		m_wppParts[i]->SetAnimSpeed( m_dAnimSpd );
+	for( UCHAR i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->SetAnimSpeed( m_dAnimSpd );
 	}
 }
 
@@ -248,9 +242,8 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex )
 {
 	char cPartsIndex = static_cast<char>( enParts );
-	assert( m_wppParts );
-	assert( m_wppParts[ cPartsIndex ] );
-	return m_wppParts[ cPartsIndex ]->PartsAnimChange( iIndex );
+	assert( m_vpParts[ cPartsIndex ] );
+	return m_vpParts[ cPartsIndex ]->PartsAnimChange( iIndex );
 }
 
 
@@ -311,8 +304,8 @@ void clsASSEMBLE_MODEL::FitJointModel(
 //アニメーションリセット.
 void clsASSEMBLE_MODEL::AnimReSet()
 {
-	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_wppParts[i]->PartsAnimChange( 0 );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		m_vpParts[i]->PartsAnimChange( 0 );
 	}
 }
 
@@ -322,9 +315,8 @@ void clsASSEMBLE_MODEL::AnimReSet()
 //各パーツのpos.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
 {
-	ASSERT_IF_NULL( m_wppParts );
-	ASSERT_IF_NULL( m_wppParts[ucParts] );
-	return m_wppParts[ucParts]->GetPosition();
+	ASSERT_IF_NULL( m_vpParts[ucParts] );
+	return m_vpParts[ucParts]->GetPosition();
 }
 #endif//#if _DEBUG
 
