@@ -12,7 +12,8 @@
 
 
 //ステータス列挙体の型( 継承クラスで定義している列挙体の型 ).
-#define PARTS_STATUS_TYPE UCHAR
+//#define PARTS_STATUS_TYPE UCHAR
+using PARTS_STATUS_TYPE = UCHAR;
 
 //========== パーツの基底クラス ==========//.
 class clsPARTS_BASE : public clsSkinMesh , public clsObject

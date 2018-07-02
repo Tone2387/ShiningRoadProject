@@ -19,12 +19,17 @@ public:
 		LOAD_TIME,			//装填時間.
 		LOCK_SPD,			//ロック速度.
 		LOCK_RANGE,			//ロック距離.
-
-		REACTION,			//射撃反動.
-		ACCURACY,			//射撃精度.
+		STABILITY,			//射撃安定.
 		MAGAZINE_LOAD_TIME,	//マガジン装填時間.
 		BULLETS_NUM,		//装弾数.
-						
+
+		COL_SIZE,	//弾の当たり判定サイズ.
+		EFC_BULLET,	//弾本体のエフェクト.
+		EFC_LOCUS,	//弾の軌跡のエフェクト.
+		EFC_HIT,	//着弾のエフェクト.
+		SE_FIER,	//発射SE.
+		SE_HIT,		//着弾のSE.
+
 		size
 	};
 

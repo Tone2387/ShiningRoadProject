@@ -18,6 +18,8 @@ public:
 		HP = 0,	//体力.
 		AIMING,	//照準精度( エイム ).
 						
+		COL_SIZE,	//当たり判定サイズ.
+
 		size
 	};
 

@@ -18,13 +18,17 @@ public:
 		HP = 0,			//体力.
 		EN_CAPA,		//エネルギー容量 エネルギー : energy  容量 : capacity.
 		EN_OUTPUT,		//エネルギー出力( 回復量 ).
-		BOOST_THRUST,	//ブースター推力.
-		BOOST_COST,		//ブースター消費エネルギー.
+		BOOST_THRUST_H,	//ブースター推力( 水平 ).
+		BOOST_COST_H,	//ブースター消費エネルギー( 水平 ).
+		BOOST_THRUST_V,	//ブースター推力( 水直 ).
+		BOOST_COST_V,	//ブースター消費エネルギー( 水直 ).
 		QUICK_THRUST,	//クイック推力.
 		QUICK_COST,		//クイック消費エネルギー.
 		ACT_TIME,		//活動時間(ActivityTime).
 		QUICK_TIME,		//クイック噴射時間.
 						
+		COL_SIZE,	//当たり判定サイズ.
+
 		size
 	};
 

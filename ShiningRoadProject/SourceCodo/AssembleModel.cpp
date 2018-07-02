@@ -1,5 +1,7 @@
 #include "AssembleModel.h"
 
+using namespace std;
+
 //配列の添え字.
 const UCHAR ucLEG = static_cast<UCHAR>( enPARTS::LEG );
 const UCHAR ucCORE = static_cast<UCHAR>( enPARTS::CORE );
@@ -31,7 +33,7 @@ const double dANIM_SPD = 0.016;
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
-	,m_pPartsFactory( nullptr )
+	,m_upPartsFactory( nullptr )
 	,m_wppParts( nullptr )
 	,m_dAnimSpd( 0.0 )
 {
@@ -51,7 +53,11 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 		delete[] m_wppParts;
 		m_wppParts = nullptr;
 	}
-	SAFE_DELETE( m_pPartsFactory );
+//	SAFE_DELETE( m_upPartsFactory );
+	if( m_upPartsFactory ){
+		m_upPartsFactory.reset( nullptr );
+	}
+
 	m_wpResource = nullptr;
 }
 
@@ -59,18 +65,17 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 
 void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus )
 {
-	ASSERT_IF_NOT_NULL( m_pPartsFactory );
+	ASSERT_IF_NOT_NULL( m_upPartsFactory );
 	ASSERT_IF_NOT_NULL( m_wppParts );
 	ASSERT_IF_NOT_NULL( m_wpResource );
 
 	m_wpResource = pResource;
 
-
-	m_pPartsFactory = new clsFACTORY_PARTS;
+	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
 	m_wppParts = new clsPARTS_BASE*[ucPARTS_MAX];
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_wppParts[i] = m_pPartsFactory->Create( static_cast<enPARTS>( i ) );
+		m_wppParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
 	Init( pStatus );
@@ -110,7 +115,7 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const D3DXVECTOR4 &vColor,
+	const D3DXVECTOR4& vColor,
 	const bool isAlpha )
 {
 	ASSERT_IF_NULL( m_wppParts );
@@ -120,13 +125,6 @@ void clsASSEMBLE_MODEL::Render(
 		m_wppParts[i]->ModelUpdate( m_wppParts[i]->m_Trans );
 		m_wppParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 	}
-//	m_wppParts[ucLEG]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
-//	m_wppParts[ucCORE]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
-//	m_wppParts[ucHEAD]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
-//	m_wppParts[ucARM_L]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
-//	m_wppParts[ucARM_R]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
-//	m_wppParts[ucWEAPON_L]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
-//	m_wppParts[ucWEAPON_R]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
 }
 
 
@@ -299,7 +297,7 @@ void clsASSEMBLE_MODEL::FitJointModel(
 	//ベクトルから回転値を求める.
 	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
 //	vRot.x = atanf( vVec.y );//このゲームの仕様なら正解( 2018/06/19(火)現在 )( つまりゴリ押し ).
-	vRot.x = atan2f( vVecLocal.y, -vVecLocal.z );//( ゴリ押しの解決 ).
+	vRot.x = atan2f( vVecLocal.y, -vVecLocal.z );//.
 	vRot.y = atan2f( -vVecWorld.x, -vVecWorld.z );//( 何故、マイナスがかかっていたり、X,Zが入れ替わっているのかといえば、0度でモデルがこっちを向くから ).
 
 	vRot.x = GuardDirOver( vRot.x );
