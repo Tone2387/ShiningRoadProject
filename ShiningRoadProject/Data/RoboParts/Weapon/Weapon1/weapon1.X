@@ -144,14 +144,14 @@ template AnimationKey {
 }
 
 
-Material _01_-_Default {
+Material _03_-_Default {
  1.000000;1.000000;1.000000;1.000000;;
  9.999999;
  0.000000;0.000000;0.000000;;
  0.000000;0.000000;0.000000;;
 
  TextureFilename {
-  "blue.png";
+  "red.png";
  }
 }
 
@@ -833,7 +833,7 @@ Frame test {
     0,
     0,
     0;
-    { _01_-_Default }
+    { _03_-_Default }
    }
 
    MeshTextureCoords c1 {

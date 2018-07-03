@@ -80,6 +80,9 @@ public:
 
 private:
 
+	//起動中の描画.
+	void RenderAtStartUp();
+
 	//アプリケーションメイン処理.
 	void AppMain();
 	//描画(レンダリング).
@@ -127,7 +130,6 @@ private:
 	//深度(Z)テスト設定.
 	ID3D11DepthStencilState* m_spDepthStencilState;
 
-#ifdef Tahara
 
 	//シーンクラスにて使用する関数に必要.
 	//ConvDimPosの事前準備.
@@ -135,6 +137,5 @@ private:
 	//2DSp用.
 	D3D10_VIEWPORT* m_spViewPort;
 
-#endif//#ifdef Tahara
 
 };

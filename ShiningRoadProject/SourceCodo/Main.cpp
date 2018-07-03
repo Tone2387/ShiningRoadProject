@@ -91,8 +91,6 @@ clsMain::clsMain() :
 	m_upGame( nullptr ),
 	m_spViewPort( nullptr )
 {
-
-
 }
 
 //============================================================
@@ -100,7 +98,6 @@ clsMain::clsMain() :
 //============================================================
 clsMain::~clsMain()
 {
-
 }
 
 //============================================================
@@ -224,9 +221,10 @@ LRESULT clsMain::MsgProc(
 //============================================================
 void clsMain::Loop()
 {
+	//起動中の描画.
+	RenderAtStartUp();
 	//メッシュ読み込み関数をまとめたもの.
 	ReadMesh();
-
 
 	//----------------------------------------------------------
 	//	フレームレート.
@@ -237,7 +235,6 @@ void clsMain::Loop()
 	DWORD sync_now;
 	//時間処理の為、最小単位を1ミリ秒に変更.
 	timeBeginPeriod( 1 );
-
 
 	//メッセージループ.
 	MSG msg = { 0 };
@@ -271,10 +268,6 @@ void clsMain::Loop()
 //============================================================
 void clsMain::AppMain()
 {
-#if _DEBUG
-
-#endif //#if _DEBUG
-
 	//ゲームループ.
 	ASSERT_IF_NULL( m_upGame );
 	m_upGame->Update();
@@ -315,6 +308,24 @@ void clsMain::Render()
 	//レンダリングされたイメージを表示.
 	m_pSwapChain->Present( 0, 0 );
 
+}
+
+//起動中の描画.
+void clsMain::RenderAtStartUp()
+{
+	//画面のクリア.
+	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+	//カラーバックバッファ.
+	m_pDeviceContext->ClearRenderTargetView(
+		m_pBackBuffer_TexRTV, ClearColor );
+	//デプスステンシルビューバックバッファ.
+	m_pDeviceContext->ClearDepthStencilView(
+		m_pBackBuffer_DSTexDSV,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0f, 0 );
+
+	//レンダリングされたイメージを表示.
+	m_pSwapChain->Present( 0, 0 );
 }
 
 
@@ -553,7 +564,11 @@ HRESULT clsMain::ReadMesh()
 //	m_upGame = new clsGAME( 
 //		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
 	m_upGame = make_unique< clsGAME >( 
-		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
+		m_hWnd, 
+		m_pDevice, 
+		m_pDeviceContext, 
+		m_spViewPort, 
+		m_spDepthStencilState );
 	m_upGame->Create();
 
 
@@ -574,7 +589,6 @@ HRESULT clsMain::ReadMesh()
 	//レイ表示の初期化(左右).
 	if( m_pRayH == nullptr ){
 		m_pRayH = new clsRay;
-		int r = sizeof( clsRay );
 		m_pRayH->m_Ray.vPoint[0] = D3DXVECTOR3(-5.0f, 0.0f, 0.0f);
 		m_pRayH->m_Ray.vPoint[1] = D3DXVECTOR3( 5.0f, 0.0f, 0.0f);
 		m_pRayH->Init( m_pDevice, m_pDeviceContext );
@@ -586,7 +600,6 @@ HRESULT clsMain::ReadMesh()
 }
 
 
-#ifdef Tahara
 //ConvDimPosの事前準備.
 void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
 {
@@ -594,13 +607,12 @@ void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
 		m_spViewPort = new D3D10_VIEWPORT;
 	}
 
-	m_spViewPort->TopLeftX = static_cast<INT>( Vp->TopLeftX );
-	m_spViewPort->TopLeftY = static_cast<INT>( Vp->TopLeftY );
-	m_spViewPort->MaxDepth = Vp->MaxDepth;
-	m_spViewPort->MinDepth = Vp->MinDepth;
-	m_spViewPort->Width	= static_cast<UINT>( Vp->Width );
+	m_spViewPort->TopLeftX	= static_cast<INT>( Vp->TopLeftX );
+	m_spViewPort->TopLeftY	= static_cast<INT>( Vp->TopLeftY );
+	m_spViewPort->MaxDepth	= Vp->MaxDepth;
+	m_spViewPort->MinDepth	= Vp->MinDepth;
+	m_spViewPort->Width		= static_cast<UINT>( Vp->Width );
 	m_spViewPort->Height	= static_cast<UINT>( Vp->Height );
 };
 
 
-#endif//#ifdef Tahara
