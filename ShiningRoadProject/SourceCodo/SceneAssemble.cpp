@@ -15,8 +15,8 @@ const string sPARTS_STATUS_PASS[] =
 };
 
 //モデルさんの初期位置.
-const D3DXVECTOR3 vINIT_ROBO_POS = { 41.0f, -29.0f, 0.0f };
-const D3DXVECTOR3 vINIT_ROBO_ROT = { 5.98f, 0.615f, 0.05f };
+const D3DXVECTOR3 vINIT_ROBO_POS = { 38.0f, -30.0f, 0.0f };
+const D3DXVECTOR3 vINIT_ROBO_ROT = { 6.033185f, 0.5f, 6.183186f };
 const float fINIT_ROBO_SCALE = 0.5f;
 
 //カメラの初期位置.
