@@ -10,6 +10,15 @@
 class clsCharactor : public clsObject
 {
 
+	struct Weapon
+	{
+		clsShot m_ppShot;
+		ShotFormState m_pShot;
+
+		int m_iShotNumMax;
+		int m_iRemainingShotNumNow;
+	};
+
 public:
 	//共通ステータス.
 	int HP;//体力.
@@ -51,12 +60,8 @@ public:
 	void Shot();
 	void Reload();
 
-	clsShot** m_ppShot;
-	ShotFormState** m_pShot;
-	int m_iShotNum;
-
-	int m_iShotMax;
-	int m_iShotNumNow;
+	Weapon** m_Weapon;
+	int m_iWeaponNum;
 
 	//移動関係.
 	void Move(const float fAngle, const float fPush);
