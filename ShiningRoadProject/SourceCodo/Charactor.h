@@ -12,11 +12,13 @@ class clsCharactor : public clsObject
 
 	struct Weapon
 	{
-		clsShot m_ppShot;
-		ShotFormState m_pShot;
+		clsShot* pShot;
+		ShotFormState ShotState;
 
-		int m_iShotNumMax;
-		int m_iRemainingShotNumNow;
+		int iShotNumMax;
+		int iRemainingShotNumNow;
+
+		char* strWeaponBoneName;
 	};
 
 public:
@@ -58,9 +60,10 @@ public:
 	float m_fJumpPower;
 
 	void Shot();
+	//virtual void ShotInit();
 	void Reload();
 
-	Weapon** m_Weapon;
+	Weapon** m_ppWeapon;
 	int m_iWeaponNum;
 
 	//ˆÚ“®ŠÖŒW.
