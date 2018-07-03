@@ -1,4 +1,5 @@
 #include "Resource.h"
+#include "File.h"
 
 #include "OperationString.h"
 
@@ -49,7 +50,6 @@ clsResource::clsResource()
 	,m_ppSkinModels( nullptr )
 	,m_ucSkinModelMax( 0 )
 	,m_PartsNum( )
-	,m_pFile( nullptr )
 {
 	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
 		m_PartsNum[i] = 0;
@@ -84,7 +84,6 @@ clsResource::~clsResource()
 	m_wpCotext11 = nullptr;
 	m_wpDevice11 = nullptr;
 	m_hWnd = nullptr;
-	SAFE_DELETE( m_pFile );
 }
 
 //パーツの数を吐き出す.
@@ -94,13 +93,13 @@ SKIN_ENUM_TYPE clsResource::GetPartsNum( const enPARTS_READ enPartsRead )
 
 	string tmpPass =  sDATA_PASS_ROOT + sDATA_PASS_MID[enPartsRead] + sDATA_PASS_END;
 	
-	m_pFile = new clsFILE;
-	m_pFile->Open( tmpPass );
+	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
+	upFile->Open( tmpPass );
 
-	tmpNum = m_pFile->GetSizeRow();
+	tmpNum = upFile->GetSizeRow();
 
-	m_pFile->Close();
-	SAFE_DELETE( m_pFile );
+	upFile->Close();
+	upFile.reset( nullptr );
 	return tmpNum;
 }
 
@@ -132,10 +131,13 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 
 	CreateStaticModel( 
 		"Data\\Stage\\kami_map.x",
-		enSTATIC_MODEL::enStaticModel_Ground );
+		enSTATIC_MODEL::enStaticModel_StageBase );
 	CreateStaticModel(
 		"Data\\RoboParts\\Leg\\Leg1\\Leg1.x",
-		enSTATIC_MODEL::enStaticModel_Enemy );
+		enSTATIC_MODEL::enStaticModel_Obstacle );
+	CreateStaticModel(
+		"Data\\Collision\\Sphere.x",
+		enSTATIC_MODEL::enStaticModel_Shpere );
 
 	CreateSkinModel(
 		"Data\\RoboParts\\Leg\\Leg0\\Leg0.x",
