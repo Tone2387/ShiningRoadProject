@@ -230,7 +230,8 @@ void clsMain::Loop()
 			m_pDeviceContext,
 			m_pSwapChain,
 			m_pBackBuffer_TexRTV,
-			m_pBackBuffer_DSTexDSV );
+			m_pBackBuffer_DSTexDSV,
+			m_spDepthStencilState );
 //	thread th( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
 	thread th( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
 //	upRenderAtStartUp->Loop();
