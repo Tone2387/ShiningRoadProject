@@ -33,6 +33,8 @@ clsFILE::~clsFILE()
 }
 
 
+
+//----- 読み込み関係 -----//.
 bool clsFILE::Open( const string &sFileName )
 {
 	assert( !m_bUsing );//使用中にopenするな.
@@ -221,7 +223,7 @@ unsigned int clsFILE::GetSizeCol( unsigned int uiRow )
 
 
 //文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).
-vector< string > clsFILE::Split( const std::string &sStr, const char cSep ) const
+vector< string > clsFILE::Split( const string &sStr, const char cSep ) const
 {
 	vector< string > vsOut;
 	stringstream ss( sStr );
@@ -241,3 +243,76 @@ vector< string > clsFILE::Split( const std::string &sStr, const char cSep ) cons
 	return vsOut;
 }
 
+
+
+//----- 吐き出し関係 -----//.
+//CSVに吐き出し.
+bool clsFILE::OutPutCsv( const FILE_DATA &data )
+{
+	//開く.
+	ofstream ofs( m_sFileName );
+
+	//開けた?.
+	if( !ofs ){
+		cout << "ひらけなかったよ" << endl;
+		cin.get();
+		return false;
+	}
+
+	//出力用文字列作成.
+	string OutPut = ConcForOutPut( data );
+	ofs << OutPut;//endlを入れると、このファイルクラスの仕様上、読み込むときにおかしなことになる( 改行文字だけの行が出来てしまう ).
+
+	return true;
+}
+
+//出力用文字列作成.
+//連結.Concatenation : 連結
+string clsFILE::ConcForOutPut( const FILE_DATA &data )
+{
+	string OutPut;
+	for( int i=0; i<data.size(); i++ ){
+		//最初は無視.
+		if( i ){
+			OutPut += "\n";//改行文字.
+		}
+
+		for( int j=0; j<data[i].size(); j++ ){
+			OutPut += data[i][j];//連結.
+			OutPut += cDELIMITER;//区切り文字.
+		}
+	}
+
+	return OutPut;
+}
+
+
+//OutPutCsvの引数の枠づくり.
+void clsFILE::CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol )
+{
+	//初期化.
+	for( unsigned int i=0; i<Outdata.size(); i++ ){
+		Outdata.clear();
+		Outdata.shrink_to_fit();
+	}
+	Outdata.clear();
+	Outdata.shrink_to_fit();
+
+	//push_back用.
+	FILE_DATA_ROW init_data;
+
+	Outdata.reserve( iRow );
+	for( int i=0; i<iRow; i++ ){
+
+		Outdata.push_back( init_data );
+		Outdata[i].reserve( iCol );
+
+		for( int j=0; j<iCol; j++ ){
+			Outdata[i].push_back( "" );
+		}
+
+		Outdata[i].shrink_to_fit();
+	}
+	Outdata.shrink_to_fit();
+
+}
