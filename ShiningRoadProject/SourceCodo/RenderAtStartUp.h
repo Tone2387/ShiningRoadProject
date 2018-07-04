@@ -3,6 +3,7 @@
 //#include "Global.h"
 #include "Sprite2DCenter.h"
 
+#define TEST_MAX_BEI_MAX 256
 
 class clsRENDER_AT_START_UP
 {
@@ -18,13 +19,17 @@ public:
 	//ループ処理.
 	void Loop();
 
+	//終了処理.
+	void End();
 
 private:
 
 	//描画.
 	void Render();
 
-	std::unique_ptr< clsSPRITE2D_CENTER > m_upRogo;
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upRogo[TEST_MAX_BEI_MAX];
+
+	bool					m_bEnd;//trueになったら終了.
 
 	ID3D11Device*			m_wpDevice;
 	ID3D11DeviceContext*	m_wpContext;			//デバイスコンテキスト.
