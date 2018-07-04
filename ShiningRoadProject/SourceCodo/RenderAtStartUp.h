@@ -24,6 +24,8 @@ public:
 
 private:
 
+	void Update();
+
 	//•`‰æ.
 	void Render();
 

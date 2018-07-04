@@ -80,7 +80,7 @@ void clsRENDER_AT_START_UP::Loop()
 	//	フレームレート.
 	//----------------------------------------------------------
 	float fRate		= 0.0f;	//レート.
-	float fFPS		= g_fFPS;//FPS値.
+	float fFPS		= 60.0f;//FPS値.
 	DWORD sync_old	= timeGetTime();	//過去時間.
 	DWORD sync_now;
 	//時間処理の為、最小単位を1ミリ秒に変更.
@@ -96,10 +96,7 @@ void clsRENDER_AT_START_UP::Loop()
 		if( sync_now - sync_old >= fRate ){
 			sync_old = sync_now;	//現在時間に置きかえ.
 
-			for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
-				m_vupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
-			}
-			Render();
+			Update();
 		}
 	}
 	timeEndPeriod( 1 );	//解除.
@@ -111,6 +108,15 @@ void clsRENDER_AT_START_UP::End()
 	m_bEnd = true;
 }
 
+
+void clsRENDER_AT_START_UP::Update()
+{
+	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
+		m_vupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
+	}
+	Render();
+
+}
 
 //起動中の描画.
 void clsRENDER_AT_START_UP::Render()
@@ -127,9 +133,13 @@ void clsRENDER_AT_START_UP::Render()
 		1.0f, 0 );
 
 	SetDepth( false );	//Zテスト:OFF.
+
+
 	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
 		m_vupRogo[i]->Render();
 	}
+
+
 	SetDepth( true );	//Zテスト:ON.
 
 	//レンダリングされたイメージを表示.
