@@ -14,6 +14,10 @@ public:
 	clsFILE();
 	~clsFILE();
 
+	//ファイルデータの型.
+	using FILE_DATA = std::vector< std::vector< std::string > >;
+
+	//----- 読み込み関係 -----//.
 	//開けなかったらfalseが返る.
 	bool Open( const std::string &sFileName );
 	void Close();
@@ -44,16 +48,30 @@ public:
 	//その行は何列あるか.
 	unsigned int GetSizeCol( unsigned int uiRow = 0 );
 
+
+	//----- 吐き出し関係 -----//.
+	//CSVに吐き出し.
+	bool OutPutCsv( const FILE_DATA &data );
+	//OutPutCsvの引数の枠づくり.
+	void CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol );
+
 private:
+
+	//ファイルデータの型のpush_back用.
+	using FILE_DATA_ROW = std::vector< std::string >;
 
 	//文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).
 	std::vector< std::string > Split( const std::string &sStr, const char cSep ) const;
+
+	//出力用文字列作成.
+	//連結.Concatenation : 連結
+	std::string ConcForOutPut( const FILE_DATA &data );
 
 	//ファイルパス.
 	std::string m_sFileName;
 
 	//二次元配列として考えます.
-	std::vector< std::vector< std::string > > m_vvsData;
+	FILE_DATA m_vvsData;
 
 	bool m_bUsing;//使用中ならtrue.
 
