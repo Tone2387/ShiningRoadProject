@@ -5,20 +5,10 @@
 
 #include"Global.h"
 #include"Object.h"
-#include"Shot.h"
+#include"Weapon.h"
 
 class clsCharactor : public clsObject
 {
-
-	struct WeaponState
-	{
-		ShotState BulletState;//弾に持たせる情報.
-		ShotFormState ShootingState;//射撃時に必要な情報.
-
-		int iShotNumMax;//装弾数.
-		int iRemainingShotNumNow;//残弾数.
-	};
-
 public:
 	//共通ステータス.
 	int HP;//体力.
@@ -57,10 +47,10 @@ public:
 
 	float m_fJumpPower;
 
-	virtual void Shot();
-	void ShotInit();
-	void Reload();
-
+	void Shot();
+	void WeaponInit(WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
+	
+	clsWeapon** m_ppWeapon;
 	
 	int m_iWeaponNum;
 
