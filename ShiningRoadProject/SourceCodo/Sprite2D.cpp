@@ -493,3 +493,8 @@ void clsSprite2D::AddScale( const float &fScale, const bool withZ )
 	if( withZ ) return;
 	m_vScale.z *= fScale;
 }
+
+void clsSprite2D::SetAnim( const POINTFLOAT anim )
+{
+	m_fPatternNo = anim;
+}
