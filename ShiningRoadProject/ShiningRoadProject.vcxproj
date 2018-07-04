@@ -152,6 +152,7 @@
     <ClCompile Include="SourceCodo\Sprite2DCenter.cpp" />
     <ClCompile Include="SourceCodo\Stage.cpp" />
     <ClCompile Include="SourceCodo\TestObj.cpp" />
+    <ClCompile Include="SourceCodo\Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\AssembleModel.h" />
@@ -233,6 +234,7 @@
     <ClInclude Include="SourceCodo\Sprite2DCenter.h" />
     <ClInclude Include="SourceCodo\Stage.h" />
     <ClInclude Include="SourceCodo\TestObject.h" />
+    <ClInclude Include="SourceCodo\Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\DebugText.hlsl">
