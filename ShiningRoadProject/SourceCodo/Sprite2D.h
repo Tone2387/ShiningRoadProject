@@ -74,7 +74,7 @@ public:
 	void AddScale( const D3DXVECTOR3 &vScale );	//à¯êîî{Ç…Ç∑ÇÈ.
 	void AddScale( const float &fScale, const bool withZ = false );
 
-	void SetAnim( const POINTFLOAT anim );
+	void SetAnim( const POINTFLOAT &anim );
 
 protected:
 

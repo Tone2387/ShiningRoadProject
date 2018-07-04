@@ -38,7 +38,10 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 		m_vupRogo[i]->Create( m_wpDevice, m_wpContext, cIMAGE_PATH, ss );
 
 	//	m_upRogo->SetPos( vINIT_POS );
-		m_vupRogo[i]->SetPos( { 256.0f, 0.0f, 0.0f } );//256size.
+		float tmpY;
+		if( i%2 )	tmpY = -128.0f;
+		else		tmpY = WND_H * 0.5f;
+		m_vupRogo[i]->SetPos( { -128.0f, tmpY, 0.0f } );//256size.
 		m_vupRogo[i]->AddPos( { 96.0f*i, 32.0f*i, 0.0f } );
 		m_vupRogo[i]->SetAnim( { ( i % 3 ), ( i % 2 ) } );
 		float tmpAlpha;
@@ -94,7 +97,7 @@ void clsRENDER_AT_START_UP::Loop()
 			sync_old = sync_now;	//åªç›éûä‘Ç…íuÇ´Ç©Ç¶.
 
 			for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
-				m_vupRogo[i]->AddRot( vUPDATE_ROT*(i+1) );
+				m_vupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
 			}
 			Render();
 		}

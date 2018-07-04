@@ -103,7 +103,7 @@ public:
 	//武器の情報を吐き出す.
 	int GetWeaponState( const enWEAPON_NUM enArmLR, const enWEAPON_STATE enStateNum ) const;
 
-	//パーツ番号を返す.//#define SKIN_ENUM_TYPE UCHAR.
+	//パーツ番号を返す( いま装備しているパーツが何番か ).//#define SKIN_ENUM_TYPE UCHAR.
 	UCHAR GetPartsNum( const enPARTS PartsType );
 
 private:
