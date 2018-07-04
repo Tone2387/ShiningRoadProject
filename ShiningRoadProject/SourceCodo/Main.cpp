@@ -1,5 +1,6 @@
 #include "Main.h"
 #include <stdio.h>
+#include "RenderAtStartUp.h"
 
 //Using宣言.
 using namespace std;
@@ -222,9 +223,20 @@ LRESULT clsMain::MsgProc(
 void clsMain::Loop()
 {
 	//起動中の描画.
-	RenderAtStartUp();
+	unique_ptr< clsRENDER_AT_START_UP > upRenderAtStartUp =
+		make_unique< clsRENDER_AT_START_UP >( 
+			m_pDevice,
+			m_pDeviceContext,
+			m_pSwapChain,
+			m_pBackBuffer_TexRTV,
+			m_pBackBuffer_DSTexDSV );
+	upRenderAtStartUp->Loop();
+
 	//メッシュ読み込み関数をまとめたもの.
 	ReadMesh();
+
+	//必要なくなったので閉じる.
+	upRenderAtStartUp.reset();
 
 	//----------------------------------------------------------
 	//	フレームレート.
@@ -310,23 +322,6 @@ void clsMain::Render()
 
 }
 
-//起動中の描画.
-void clsMain::RenderAtStartUp()
-{
-	//画面のクリア.
-	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
-	//カラーバックバッファ.
-	m_pDeviceContext->ClearRenderTargetView(
-		m_pBackBuffer_TexRTV, ClearColor );
-	//デプスステンシルビューバックバッファ.
-	m_pDeviceContext->ClearDepthStencilView(
-		m_pBackBuffer_DSTexDSV,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0f, 0 );
-
-	//レンダリングされたイメージを表示.
-	m_pSwapChain->Present( 0, 0 );
-}
 
 
 //============================================================

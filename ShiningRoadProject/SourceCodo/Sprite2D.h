@@ -49,7 +49,7 @@ public:
 	HRESULT Create( 
 		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11,
-		const char* const fileName, 
+		const char* fileName, 
 		const SPRITE_STATE ss );
 
 

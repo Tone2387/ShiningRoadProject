@@ -81,7 +81,6 @@ public:
 private:
 
 	//起動中の描画.
-	void RenderAtStartUp();
 
 	//アプリケーションメイン処理.
 	void AppMain();

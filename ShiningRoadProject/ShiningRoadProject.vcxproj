@@ -125,6 +125,7 @@
     <ClCompile Include="SourceCodo\PartsWeapon.cpp" />
     <ClCompile Include="SourceCodo\PtrGroup.cpp" />
     <ClCompile Include="SourceCodo\Ray.cpp" />
+    <ClCompile Include="SourceCodo\RenderAtStartUp.cpp" />
     <ClCompile Include="SourceCodo\Resource.cpp" />
     <ClCompile Include="SourceCodo\Robo.cpp" />
     <ClCompile Include="SourceCodo\RoboStatus.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="SourceCodo\PartsWeapon.h" />
     <ClInclude Include="SourceCodo\PtrGroup.h" />
     <ClInclude Include="SourceCodo\Ray.h" />
+    <ClInclude Include="SourceCodo\RenderAtStartUp.h" />
     <ClInclude Include="SourceCodo\Resource.h" />
     <ClInclude Include="SourceCodo\Robo.h" />
     <ClInclude Include="SourceCodo\RoboCommand.h" />
