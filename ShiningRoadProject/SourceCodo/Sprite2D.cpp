@@ -31,7 +31,7 @@ clsSprite2D::~clsSprite2D()
 //èâä˙âª.
 HRESULT clsSprite2D::Create(
 	ID3D11Device* const pDevice11, ID3D11DeviceContext* const pContext11,
-	const char* const fileName, const SPRITE_STATE ss )
+	const char* fileName, const SPRITE_STATE ss )
 {
 	m_pDevice11 = pDevice11;
 	m_pDeviceContext11 = pContext11;

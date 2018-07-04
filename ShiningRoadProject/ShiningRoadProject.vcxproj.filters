@@ -255,6 +255,9 @@
     <ClCompile Include="SourceCodo\Stage.cpp">
       <Filter>Hiyosi</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\RenderAtStartUp.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -472,6 +475,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Stage.h">
       <Filter>Hiyosi</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RenderAtStartUp.h">
+      <Filter>Tahara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
