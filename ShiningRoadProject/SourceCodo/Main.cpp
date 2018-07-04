@@ -1,5 +1,6 @@
 #include "Main.h"
 #include <stdio.h>
+#include <thread>
 #include "RenderAtStartUp.h"
 
 //Using宣言.
@@ -230,12 +231,16 @@ void clsMain::Loop()
 			m_pSwapChain,
 			m_pBackBuffer_TexRTV,
 			m_pBackBuffer_DSTexDSV );
-	upRenderAtStartUp->Loop();
+//	thread th( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
+	thread th( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
+//	upRenderAtStartUp->Loop();
 
 	//メッシュ読み込み関数をまとめたもの.
 	ReadMesh();
 
 	//必要なくなったので閉じる.
+	upRenderAtStartUp->End();
+	th.join();
 	upRenderAtStartUp.reset();
 
 	//----------------------------------------------------------
