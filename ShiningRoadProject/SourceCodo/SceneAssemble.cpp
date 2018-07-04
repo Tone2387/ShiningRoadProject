@@ -69,13 +69,6 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 //	m_pParts->Init();
 //	m_pParts->SetPosition( D3DXVECTOR3( -2.0f, 1.0f, 0.0f ) );
 //
-//
-//	m_pSprite = new clsSPRITE2D_CENTER;
-//	SPRITE_STATE tmpSs;
-//	m_pSprite->Create( 
-//		m_wpDevice, m_wpContext, 
-//		TEST_TEX_PASS, tmpSs );
-//	m_pSprite->SetPos( { WND_W*0.5f, WND_H*0.5f, 0.0f } );
 
 	//パーツのステータス読み込み.
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
@@ -213,8 +206,6 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 //	m_pParts->Render( m_mView, m_mProj, m_vLight, vCamPos );
 //	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos, 
 //		D3DXVECTOR4(0.5f,2.0f,0.5f,0.75f), true );
-//
-//	m_pSprite->Render();
 
 	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
@@ -366,62 +357,58 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
 	
-	//トリガー.
-	sprintf_s( strDbgTxt, 
-		"XInputTrigger : LTHX[%f], LTHY[%f], LTHSlope[%f], LTHTheta[%f], DxDir[%f]",
-		m_wpXInput->GetLStickX(),
-		m_wpXInput->GetLStickY(),
-		m_wpXInput->GetLStickSlope(),
-		m_wpXInput->GetLStickTheta(),
-		m_wpDxInput->GetLSDir() );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	//モデルのpos.
+//	sprintf_s( strDbgTxt, 
+//		"ModelPos : x[%f], y[%f], z[%f]",
+//		m_pAsmModel->GetPos().x, 
+//		m_pAsmModel->GetPos().y, 
+//		m_pAsmModel->GetPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"ModelRot : x[%f], y[%f], z[%f]",
+//		m_pAsmModel->GetRot().x, 
+//		m_pAsmModel->GetRot().y, 
+//		m_pAsmModel->GetRot().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	//各パーツのpos.
+//	for( UCHAR ucNo=0; ucNo<static_cast<UCHAR>( enPARTS::MAX ); ucNo++ ){
+//		sprintf_s( strDbgTxt, 
+//			"PartsPos : x[%f], y[%f], z[%f]",
+//			m_pAsmModel->GetPartsPos( ucNo ).x, 
+//			m_pAsmModel->GetPartsPos( ucNo ).y, 
+//			m_pAsmModel->GetPartsPos( ucNo ).z );
+//		m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	}
+//
+//	//カメラ.
+//	sprintf_s( strDbgTxt, 
+//		"CameraPos : x[%f], y[%f], z[%f]",
+//		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"CamLokPos : x[%f], y[%f], z[%f]",
+//		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	//ライト.
+//	sprintf_s( strDbgTxt, 
+//		"Light : x[%f], y[%f], z[%f]",
+//		m_vLight.x, m_vLight.y, m_vLight.z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	//モデルのpos.
-	sprintf_s( strDbgTxt, 
-		"ModelPos : x[%f], y[%f], z[%f]",
-		m_pAsmModel->GetPos().x, 
-		m_pAsmModel->GetPos().y, 
-		m_pAsmModel->GetPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"ModelRot : x[%f], y[%f], z[%f]",
-		m_pAsmModel->GetRot().x, 
-		m_pAsmModel->GetRot().y, 
-		m_pAsmModel->GetRot().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	//各パーツのpos.
-	for( UCHAR ucNo=0; ucNo<static_cast<UCHAR>( enPARTS::MAX ); ucNo++ ){
-		sprintf_s( strDbgTxt, 
-			"PartsPos : x[%f], y[%f], z[%f]",
-			m_pAsmModel->GetPartsPos( ucNo ).x, 
-			m_pAsmModel->GetPartsPos( ucNo ).y, 
-			m_pAsmModel->GetPartsPos( ucNo ).z );
-		m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-	}
-
-	//カメラ.
-	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	//ライト.
-	sprintf_s( strDbgTxt, 
-		"Light : x[%f], y[%f], z[%f]",
-		m_vLight.x, m_vLight.y, m_vLight.z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	//ライト.
+//	sprintf_s( strDbgTxt, 
+//		"Light : x[%f], y[%f], z[%f]",
+//		m_vLight.x, m_vLight.y, m_vLight.z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	//選択肢.
 	sprintf_s( strDbgTxt, 
-		"PartsSelect : Type[%f], Num[%f]",
-		static_cast<float>( m_PartsSelect.Type ), static_cast<float>( m_PartsSelect.Num ) );
+		"UiPos : x[%f], y[%f]",
+		m_pUI->GetUiPos().x, m_pUI->GetUiPos().y );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	//テスト用に数値を出す.
@@ -433,16 +420,6 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 
-	//BGM止まっている?.
-	if( m_wpSound->IsPlayingBGM( 0 ) ){
-		sprintf_s( strDbgTxt, 
-			"BGMPLAYING" );
-	}
-	if( m_wpSound->IsStoppedBGM( 0 ) ){
-		sprintf_s( strDbgTxt, 
-			"BGMSTOP" );
-	}
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 }
 #endif //#if _DEBUG

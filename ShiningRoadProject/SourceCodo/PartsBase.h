@@ -35,8 +35,13 @@ public:
 		const D3DXVECTOR4& vColor,
 		const bool isAlpha );
 
+	D3DXVECTOR3 GetBonePos( const char* sBoneName, const bool isLocalPos = false ) override;
+
 	//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
 	bool PartsAnimChange( const int iIndex );
+
+	//パーツの名前を覚える.
+	void SetPartsName( const std::string &sPartsName );
 
 protected:
 	//----- 各パーツごとの関数 -----//.
@@ -44,7 +49,8 @@ protected:
 	virtual void UpdateProduct() = 0;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 
-
+	//パーツの名前.
+	std::string m_sPartsName;
 
 private:
 

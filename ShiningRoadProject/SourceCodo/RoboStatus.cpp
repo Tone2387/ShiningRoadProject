@@ -35,6 +35,11 @@ void clsROBO_STATUS::Clear()
 	for( UCHAR i=0; i<enHAVE_HP_PARTS_SIZE; i++ ){
 		m_iRoboHp[i] = 0;
 	}
+	
+	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
+	for( UCHAR i=0; i<tmpSize; i++ ){
+		m_ucPartsModelNum[i] = 0;
+	}
 }
 
 
@@ -75,7 +80,7 @@ int clsROBO_STATUS::GetWeaponState(
 }
 
 
-//パーツ番号を返す.
+//パーツ番号を返す( いま装備しているパーツが何番か ).
 UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType )
 {
 	return m_ucPartsModelNum[ static_cast<int>( PartsType ) ];

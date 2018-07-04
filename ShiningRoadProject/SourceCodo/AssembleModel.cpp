@@ -1,5 +1,7 @@
 #include "AssembleModel.h"
 
+#include "OperationString.h"
+
 using namespace std;
 
 //配列の添え字.
@@ -13,6 +15,11 @@ const UCHAR ucWEAPON_R = static_cast<UCHAR>( enPARTS::WEAPON_R );
 
 //パーツ種類の数.
 const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
+//パーツ名を渡すため.
+const string sPARTS_NAME[ucPARTS_MAX] =
+{
+	"Leg", "Core", "Head", "ArmL", "ArmR", "WeaponL", "WeaponR"
+};
 
 
 //連結部分のボーン名.
@@ -139,6 +146,11 @@ void clsASSEMBLE_MODEL::AttachModel(
 		m_wpResource->GetPartsModels( enParts, PartsNum ) );
 	m_vpParts[ucParts]->SetAnimSpeed( m_dAnimSpd );
 	
+	//パーツ名を教える( ボーンが無いよ用 ).
+	clsOPERATION_STRING OprtStr;
+	string tmpName = sPARTS_NAME[ucParts];						//どのパーツ?.
+	tmpName = OprtStr.ConsolidatedNumber( tmpName, PartsNum );	//そのパーツの何番?.
+	m_vpParts[ucParts]->SetPartsName( tmpName );				//名前教える.
 //	AnimReSet();
 }
 

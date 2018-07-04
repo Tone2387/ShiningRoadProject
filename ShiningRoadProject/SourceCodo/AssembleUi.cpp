@@ -5,10 +5,10 @@
 using namespace std;
 
 //パーツアイコンサイズ.
-const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 128.0f, 64.0f };
+const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 120.0f, 60.0f };
 
 //パス.
-const string sIMAGE_PASS = "Data\\Image\\PartsIcon\\";
+const char* sIMAGE_PASS = "Data\\Image\\PartsIcon\\";
 //エラー画像.
 const string sNO_DATA_FILE_NAME = "NoData.png";
 //パーツ種類の画像.
@@ -17,19 +17,77 @@ const string sPARTS_FILE_NAME[] =
 	"Leg", "Core", "Head", "Arms", "Weapon"
 };
 
+//パーツカテゴリUIの基準位置.
+const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 21.75f, 95.0f, 0.0f };
+//パーツカテゴリの座標の差.
+const float fOFFSET_POS_X_PARTS_TYPE = PARTS_TYPE_SIZE.w + 4.0f;
+
+//ステータスウィンドウ.
+const D3DXVECTOR3 vINIT_POS_STATUS_WINDOW = { 156.0f, 183.25f, 0.0f };
+const WHSIZE_FLOAT INIT_SIZE_STATUS_WINDOW  = { 300.0f, 468.0f };
+const char* sPATH_STATUS_WINDOW = "Data\\Image\\PartsIcon\\NoData.png";
+
+//パーツの姿のまどX座標.
+//478.25f.
+const D3DXVECTOR3 vINIT_POS_PARTS_WINDOW = { 468.75f, 183.25f, 0.0f };
+const char* sPATH_PARTS_WINDOW = "Data\\Image\\PartsIcon\\NoData.png";
+
+
+
+#if _DEBUG
+//目安.
+const char* sPATH_DESIGN = "Data\\Image\\AssembleDesign.png";
+const D3DXVECTOR3 vINIT_POS_DESIGN = { 0.0f, 0.0f, 0.0f };
+const float fINIT_SCALE_DESIGN = 0.1875f;
+#endif//#if _DEBUG
+
+
 
 clsASSEMBLE_UI::clsASSEMBLE_UI()
-	:m_pStatusWindow( nullptr )
-	,m_pPartsTypeSelect( nullptr )
-	,m_pPartsNumSelect( nullptr )
 {
 }
 
 clsASSEMBLE_UI::~clsASSEMBLE_UI()
 {
-	SAFE_DELETE( m_pPartsNumSelect );
-	SAFE_DELETE( m_pPartsTypeSelect );
-	SAFE_DELETE( m_pStatusWindow );
+#if _DEBUG
+	if( m_upDegine ){
+		m_upDegine.reset( nullptr );
+	}
+#endif//#if _DEBUG
+
+	for( unsigned int i=0; i<m_pArrow.size(); i++ ){
+		if( m_pArrow[i] ){
+			m_pArrow[i].reset( nullptr );
+		}
+	}
+	m_pArrow.clear();
+	m_pArrow.shrink_to_fit();
+
+	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
+		if( m_vupPartsType[i] ){
+			m_vupPartsType[i].reset( nullptr );
+		}
+	}
+	m_vupPartsType.clear();
+	m_vupPartsType.shrink_to_fit();
+
+
+	if( m_upPartsNumSelect ){
+		m_upPartsNumSelect.reset( nullptr );
+	}
+
+	if( m_upPartsTypeSelect ){
+		m_upPartsTypeSelect.reset( nullptr );
+	}
+
+	if( m_upStatusWindow ){
+		m_upStatusWindow.reset( nullptr );
+	}
+
+	if( m_upPartsWindow ){
+		m_upPartsWindow.reset( nullptr );
+	}
+
 }
 
 
@@ -41,24 +99,62 @@ void clsASSEMBLE_UI::Create(
 	string tmpString = sIMAGE_PASS;
 
 	//パーツ項目初期化.
-	assert( m_vpPartsType.size() == 0 );
-	m_vpPartsType.reserve( enPARTS_TYPE_SIZE );
+	assert( m_vupPartsType.size() == 0 );
+	m_vupPartsType.reserve( enPARTS_TYPE_SIZE );
 	SPRITE_STATE ss;
 	ss.Disp = PARTS_TYPE_SIZE;
 	for( unsigned int i=0; i<enPARTS_TYPE_SIZE; i++ ){
-		m_vpPartsType.push_back( nullptr );
-		m_vpPartsType[i] = new clsSprite2D;
+		m_vupPartsType.push_back( nullptr );
+		m_vupPartsType[i] = make_unique< clsSprite2D >();
+
 		tmpString = sIMAGE_PASS + sNO_DATA_FILE_NAME;
-		m_vpPartsType[i]->Create( pDevice, pContext, tmpString.c_str(), ss );
-		m_vpPartsType[i]->SetPos( { (float)(i*128), (float)(i*128), 0.0f } );
+		m_vupPartsType[i]->Create( pDevice, pContext, tmpString.c_str(), ss );
+
+		m_vupPartsType[i]->SetPos( vINIT_POS_PARTS_TYPE );//148.25f.
+		m_vupPartsType[i]->AddPos( { fOFFSET_POS_X_PARTS_TYPE * static_cast<float>( i ), 0.0f, 0.0f } );
 	}
 
+	//ステータスが表示される.
+	assert( !m_upStatusWindow );
+	ss.Disp = INIT_SIZE_STATUS_WINDOW;
+	m_upStatusWindow = make_unique< clsSprite2D >();
+	m_upStatusWindow->Create( pDevice, pContext, sPATH_STATUS_WINDOW, ss );
+	m_upStatusWindow->SetPos( vINIT_POS_STATUS_WINDOW );
+
+	//パーツの単体モデル表示される.
+	assert( !m_upPartsWindow );
+	ss.Disp = INIT_SIZE_STATUS_WINDOW;
+	m_upPartsWindow = make_unique< clsSprite2D >();
+	m_upPartsWindow->Create( pDevice, pContext, sPATH_PARTS_WINDOW, ss );
+	m_upPartsWindow->SetPos( vINIT_POS_PARTS_WINDOW );
+
+
+#if _DEBUG
+	ss.Disp = { WND_W, WND_H };
+	m_upDegine = make_unique< clsSprite2D >();
+	m_upDegine->Create( pDevice, pContext, sPATH_DESIGN, ss );
+	m_upDegine->SetPos( vINIT_POS_DESIGN );
+	m_upDegine->SetAlpha( fINIT_SCALE_DESIGN );
+#endif//#if _DEBUG
 }
 
 
 void clsASSEMBLE_UI::Input()
 {
-
+#if _DEBUG
+	float move = 0.25f;
+	if( GetAsyncKeyState( VK_RIGHT )& 0x8000 )	m_upStatusWindow->AddPos( { move, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_upStatusWindow->AddPos( {-move, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( VK_UP )	& 0x8000 )	m_upStatusWindow->AddPos( { 0.0f,-move, 0.0f } );
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_upStatusWindow->AddPos( { 0.0f, move, 0.0f } );
+	float scale = 0.01f;
+	if( GetAsyncKeyState( 'D' ) & 0x8000 )	m_upStatusWindow->AddScale( { 1+scale, 1.0f, 0.0f } );
+	if( GetAsyncKeyState( 'A' ) & 0x8000 )	m_upStatusWindow->AddScale( { 1-scale, 1.0f, 0.0f } );
+	if( GetAsyncKeyState( 'W' ) & 0x8000 )	m_upStatusWindow->AddScale( { 1.0f, 1-scale, 0.0f } );
+	if( GetAsyncKeyState( 'S' ) & 0x8000 )	m_upStatusWindow->AddScale( { 1.0f, 1+scale, 0.0f } );
+	if( GetAsyncKeyState( 'E' ) & 0x8000 )	m_upStatusWindow->AddScale( 1+scale );
+	if( GetAsyncKeyState( 'Q' ) & 0x8000 )	m_upStatusWindow->AddScale( 1-scale );
+#endif//#if _DEBUG
 }
 
 
@@ -70,12 +166,27 @@ void clsASSEMBLE_UI::Update()
 
 void clsASSEMBLE_UI::Render()
 {
+#if _DEBUG
+	m_upDegine->Render();
+#endif//#if _DEBUG
+
 	for( unsigned int i=0; i<enPARTS_TYPE_SIZE; i++ ){
-		m_vpPartsType[i]->Render();
+		m_vupPartsType[i]->Render();
 	}
+
+	m_upStatusWindow->Render();
+	m_upPartsWindow->Render();
 
 }
 
 
 
 
+
+#if _DEBUG
+//デバッグテキスト用.
+D3DXVECTOR3 clsASSEMBLE_UI::GetUiPos()
+{
+	return m_upStatusWindow->GetPos();
+}
+#endif//#if _DEBUG

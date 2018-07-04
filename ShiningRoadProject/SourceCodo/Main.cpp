@@ -232,16 +232,16 @@ void clsMain::Loop()
 			m_pBackBuffer_TexRTV,
 			m_pBackBuffer_DSTexDSV,
 			m_spDepthStencilState );
-//	thread th( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
-	thread th( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
-//	upRenderAtStartUp->Loop();
+	//別スレッドで描画.
+//	thread thStartUpRender( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
+	thread thStartUpRender( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
 
 	//メッシュ読み込み関数をまとめたもの.
 	ReadMesh();
 
 	//必要なくなったので閉じる.
 	upRenderAtStartUp->End();
-	th.join();
+	thStartUpRender.join();
 	upRenderAtStartUp.reset();
 
 	//----------------------------------------------------------
