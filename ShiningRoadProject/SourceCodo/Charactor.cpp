@@ -354,9 +354,14 @@ void clsCharactor::Spin(float& NowYaw, const float TargetYaw, const float TurnSp
 	ObjRollOverGuard(&NowYaw);
 }
 
-void Shot()
+void clsCharactor::Shot()
 {
 
+}
+
+void clsCharactor::ShotInit()
+{
+	
 }
 
 clsCharactor::clsCharactor() :

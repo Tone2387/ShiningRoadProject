@@ -25,8 +25,8 @@ struct ShotState
 
 struct ShotFormState
 {
-	D3DXVECTOR3 vShotStartPos;
-	D3DXVECTOR3 vShotMoveDir;
+	D3DXVECTOR3* vShotStartPos;
+	D3DXVECTOR3* vShotMoveDir;
 };
 
 class clsShot : public clsObject
