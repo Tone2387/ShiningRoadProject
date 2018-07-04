@@ -6,14 +6,14 @@
 #include"Object.h"
 #include "PtrGroup.h"
 
-struct ShotState
+struct BulletState
 {
-	int iShotAtk;
-	float fShotMoveSpeed;
-	float fShotLenghtMax;
+	int iAtk;
+	float fMoveSpeed;
+	float fRangeMax;
 
-	float fShotSpeed;
-	float fShotScale;
+	float fSpeed;
+	float fScale;
 
 	int iSEShotNum;
 	int iSEHitNum;
@@ -23,7 +23,7 @@ struct ShotState
 	int iHitEfcNum;
 };
 
-struct ShotFormState
+struct ShootingState
 {
 	D3DXVECTOR3* vShotStartPos;
 	D3DXVECTOR3* vShotMoveDir;
@@ -58,7 +58,7 @@ public:
 	bool m_bShotExistFlg;//弾の存在確認(falseなら弾が存在しない状態).
 	bool m_bExistFlg;//弾,爆発,軌跡の存在確認(falseならそれら全てが存在しない状態)
 
-	HRESULT Init(LPSTR strWeaponFolderName);
+	HRESULT Init(BulletState BState);
 
 	void SEInit(HWND hWnd);
 
@@ -77,7 +77,7 @@ private:
 
 	D3DXVECTOR3 m_vStartPos;
 
-	ShotState m_ShotState;
+	BulletState m_ShotState;
 };
 
 #endif //#ifndef _SHOT_H_

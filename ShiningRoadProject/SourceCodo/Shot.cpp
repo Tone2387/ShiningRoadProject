@@ -14,13 +14,13 @@ clsShot::~clsShot()
 {
 }
 
-HRESULT clsShot::Init(LPSTR strWeaponFolderName)
+HRESULT clsShot::Init(BulletState BState)
 {
 	//strWeaponFileNameから情報を受け取る.
 	//球の大きさ.
 	//音量.
 	//エフェクト.
-
+	m_ShotState = BState;
 
 	//当たり判定の大きさを決める.
 	m_ppColSpheres = new clsObject::SPHERE * [g_iColNum];
@@ -52,6 +52,7 @@ bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
 				if (Collision(*m_ppColSpheres[i], ppTargetSphere[j]))
 				{
 					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
+					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
 					m_bShotExistFlg = false;
 					return true;
 				}
@@ -104,12 +105,10 @@ void clsShot::Move()
 {
 	if (!m_bShotExistFlg)
 	{
-		/*if (!//m_pEffect->PlayCheck(m_LineEfcH) && !//m_pEffect->PlayCheck(m_HitEfcH))
+		if (!m_wpEffect->isPlay(m_ShotEfcHandles[enEfcLine]) && !m_wpEffect->isPlay(m_ShotEfcHandles[enEfcHit]))
 		{
 			m_bExistFlg = false;
 		}
-
-		//m_pEffect->Stop(m_ShotEfcH);*/
 		return;
 	}
 

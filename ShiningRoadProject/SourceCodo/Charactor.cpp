@@ -356,12 +356,19 @@ void clsCharactor::Spin(float& NowYaw, const float TargetYaw, const float TurnSp
 
 void clsCharactor::Shot()
 {
-
+	
 }
 
-void clsCharactor::ShotInit()
+void clsCharactor::WeaponInit(WeaponState* pWeapon, const int iWeaponMax)
 {
-	
+	m_iWeaponNum = iWeaponMax;
+
+	m_ppWeapon = new clsWeapon *[m_iWeaponNum];
+
+	for (int i = 0; i < iWeaponMax; i++)
+	{
+		m_ppWeapon[i]->Create(pWeapon[i]);
+	}
 }
 
 clsCharactor::clsCharactor() :

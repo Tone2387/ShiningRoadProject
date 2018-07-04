@@ -10,6 +10,7 @@
 #include"DX9Mesh.h"
 
 const float g_fPercentage = 0.01f;
+const float g_fDistanceReference = 0.01f;
 
 const float g_fGravity = 0.01f;
 
