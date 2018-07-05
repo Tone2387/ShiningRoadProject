@@ -288,6 +288,18 @@ bool clsRobo::EnelgyConsumption(const int iConsumption)
 	return false;
 }
 
+void clsRobo::ShotLWeapon()
+{
+	ShotSwich(enWeaponLHand);
+	//if(m_pLHandWeapon->Shot()){}
+}
+
+void clsRobo::ShotRWeapon()
+{
+	ShotSwich(enWeaponRHand);
+	//if(m_pRHandWeapon->Shot()){}
+}
+
 clsRobo::clsRobo() :
 m_pMesh(NULL),
 m_bBoost(false),

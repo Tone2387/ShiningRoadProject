@@ -12,7 +12,8 @@ public:
 
 		m_pComLS = new clsCommandLS;
 		m_pComRS = new clsCommandRS;
-		m_pJump = new clsCommandJump;
+		m_pComJump = new clsCommandJump;
+		m_pComShot = new clsCommandShot;
 	}
 
 	virtual clsInputCharctor::~clsInputCharctor()
@@ -20,17 +21,18 @@ public:
 		delete m_pDxInput;
 		delete m_pComLS;
 		delete m_pComRS;
-		delete m_pJump;
+		delete m_pComJump;
+		delete m_pComShot;
 	}
 
 	clsDxInput* m_pDxInput;
 
-	clsCharactorCommand* PlressInput()
+	/*clsCharactorCommand* PlressInput()
 	{
 		m_pDxInput->UpdataInputState();
 
 		return nullptr;
-	}
+	}*/
 
 	clsCharactorCommand* LSInput(float& fPower, float& fAngle)
 	{
@@ -135,18 +137,19 @@ public:
 		if (m_pDxInput->IsPressKey(enPKey_03) ||
 			GetAsyncKeyState(VK_SPACE) & 0x8000)
 		{
-			return m_pJump;
+			return m_pComJump;
 		}
 
 		return nullptr;
 	}
 
 protected:
-	clsCharactorCommand * m_pJump;
+	clsCharactorCommand * m_pComJump;
 
 private:
 	clsCharactorCommand* m_pComLS;
 	clsCharactorCommand* m_pComRS;
 
+	clsCharactorCommand* m_pComShot;
 };
 

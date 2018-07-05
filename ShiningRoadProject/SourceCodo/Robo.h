@@ -28,6 +28,14 @@ const int g_iQuickTurnFrame = 1 * (int)g_fFPS;
 class clsRobo : public clsCharactor
 {
 public:
+	enum enWeaponType
+	{
+		enWeaponLHand,
+		enWeaponRHand,
+
+		enWeaponTypeSize
+	};
+
 	/*clsSkinMesh * m_pHead;
 	clsSkinMesh * m_pCore;
 	clsSkinMesh * m_pLeftArm;
@@ -109,6 +117,9 @@ public:
 	void SetDirQuickBoost(const float fAngle);
 	void QuickTurn();
 	void SetDirQuickTurn(const float fAngle);
+
+	void ShotLWeapon();
+	void ShotRWeapon();
 
 	void Updata();
 	void UpdataQuick();

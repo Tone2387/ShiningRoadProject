@@ -51,8 +51,9 @@ public:
 	void WeaponInit(WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
 	
 	clsWeapon** m_ppWeapon;
-	
 	int m_iWeaponNum;
+	int m_iWeaponNumMax;
+	clsObject* m_pTargetObj;
 
 	//移動関係.
 	void Move(const float fAngle, const float fPush);
@@ -121,9 +122,11 @@ public:
 		const D3DXVECTOR3 TargetPos, 
 		const float Range);//円の範囲判定.
 protected:
-
+	void ShotSwich(const int iWeaponNum);//複数ある武器から使用する武器を決める.
 private:
 	LPD3DXMESH m_pMeshForRay;//ﾚｲのためのﾒｯｼｭ用.
+
+	
 };
 
 #endif
