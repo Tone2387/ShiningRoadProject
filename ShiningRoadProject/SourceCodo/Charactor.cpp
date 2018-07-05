@@ -356,16 +356,29 @@ void clsCharactor::Spin(float& NowYaw, const float TargetYaw, const float TurnSp
 
 void clsCharactor::Shot()
 {
-	
+	m_pTargetObj = nullptr;
+
+	if (m_ppWeapon[m_iWeaponNum]->Shot(m_pTargetObj)){}
+}
+
+void clsCharactor::ShotSwich(const int iWeaponNum)
+{
+	m_iWeaponNum++;
+
+	if (m_iWeaponNum > m_iWeaponNumMax)
+	{
+		m_iWeaponNum = 0;
+	}
 }
 
 void clsCharactor::WeaponInit(WeaponState* pWeapon, const int iWeaponMax)
 {
-	m_iWeaponNum = iWeaponMax;
+	m_iWeaponNumMax = iWeaponMax;
+	m_iWeaponNum = 0;
 
-	m_ppWeapon = new clsWeapon *[m_iWeaponNum];
+	m_ppWeapon = new clsWeapon *[m_iWeaponNumMax];
 
-	for (int i = 0; i < iWeaponMax; i++)
+	for (int i = 0; i < m_iWeaponNumMax; i++)
 	{
 		m_ppWeapon[i]->Create(pWeapon[i]);
 	}
