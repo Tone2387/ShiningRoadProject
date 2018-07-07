@@ -292,8 +292,8 @@ void clsRENDER_AT_START_UP::Render()
 	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
 		m_vupRogo[i]->Render();
 	}
-#else//#ifdef _DEBUG
 
+#endif//#ifdef _DEBUG
 	m_upGageBox->Render();
 
 	for( unsigned int i=0; i<m_vupGage.size(); i++ ){
@@ -306,7 +306,6 @@ void clsRENDER_AT_START_UP::Render()
 
 	m_upLineBox->Render();
 
-#endif//#ifdef _DEBUG
 	m_upText->Render( m_sLodeMsg.c_str() );
 
 	m_upBlack->Render();
@@ -422,7 +421,7 @@ void clsRENDER_AT_START_UP::BiggerGageBoxV()
 			m_vupGage[i]->SetScale( {
 				m_upGageBox->GetSize().x / fGAGE_SIZE_RATE - fLINE_WIDTH, m_upGageBox->GetSize().y, 0.0f } );
 			m_vupGage[i]->SetPos( {
-				0.0f - ( m_vupGage[i]->GetScale().x * static_cast<float>( i ) ), 
+				WND_W - ( m_vupGage[i]->GetScale().x * static_cast<float>( i ) ), 
 				m_upGageBox->GetPos().y, 
 				0.0f } );
 		}
@@ -432,7 +431,7 @@ void clsRENDER_AT_START_UP::BiggerGageBoxV()
 //ゲージが動く.
 void clsRENDER_AT_START_UP::UpdateLoadMsg()
 {
-	if( m_iTimer >= iSTOP_TIME_SHORT ){ 
+//	if( m_iTimer >= iSTOP_TIME_SHORT ){ 
 		//ゲージの動き.
 		for( unsigned int i=0; i<m_vupGage.size(); i++ ){
 			m_vupGage[i]->AddPos( { m_vupGage[i]->GetScale().x, 0.0f, 0.0f } );
@@ -443,7 +442,7 @@ void clsRENDER_AT_START_UP::UpdateLoadMsg()
 					0.0f } );
 			}
 		}
-	}
+//	}
 
 	//メッセージ変更.
 	switch( m_iTimer )

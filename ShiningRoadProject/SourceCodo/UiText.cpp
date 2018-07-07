@@ -395,6 +395,7 @@ void clsUiText::Render( const char* text, float x, float y )
 
 	SetBlend( true );
 
+	//‚±‚ê‚ª‚È‚¢‚Æ•½sˆÚ“®‚Ì’l‚ªscale‚Éˆø‚Á’£‚ç‚ê‚é.
 	x /= m_fScale;
 	y /= m_fScale;
 
