@@ -49,6 +49,11 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 		else		tmpAlpha = 0.5f;
 		m_vupRogo[i]->SetAlpha( tmpAlpha );
 	}
+
+	if( !m_upLineBox ){
+		m_upLineBox = make_unique< clsLINE_BOX >();
+		m_upLineBox->Create( pDevice, pContext );
+	}
 }
 
 clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
@@ -61,6 +66,10 @@ clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 	}
 	m_vupRogo.clear();
 	m_vupRogo.shrink_to_fit();
+
+	if( m_upLineBox ){
+		m_upLineBox.reset( nullptr );
+	}
 
 	m_bEnd = false;
 
@@ -139,6 +148,7 @@ void clsRENDER_AT_START_UP::Render()
 		m_vupRogo[i]->Render();
 	}
 
+	m_upLineBox->Render();
 
 	SetDepth( true );	//ZƒeƒXƒg:ON.
 
