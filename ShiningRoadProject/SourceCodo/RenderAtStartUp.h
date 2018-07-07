@@ -2,6 +2,8 @@
 
 //#include "Global.h"
 #include "Sprite2DCenter.h"
+#include "LineBox.h"
+
 #include <vector>
 
 class clsRENDER_AT_START_UP
@@ -33,6 +35,9 @@ private:
 	void SetDepth( bool isOn );
 
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupRogo;
+
+	std::unique_ptr< clsLINE_BOX > m_upLineBox;
+
 
 	bool						m_bEnd;//trueÇ…Ç»Ç¡ÇΩÇÁèIóπ.
 

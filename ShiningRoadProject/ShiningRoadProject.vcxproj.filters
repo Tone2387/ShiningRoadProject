@@ -261,6 +261,9 @@
     <ClCompile Include="SourceCodo\Weapon.cpp">
       <Filter>Hiyosi</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\LineBox.cpp">
+      <Filter>Tahara\AssembleUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -484,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Weapon.h">
       <Filter>Hiyosi</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\LineBox.h">
+      <Filter>Tahara\AssembleUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
