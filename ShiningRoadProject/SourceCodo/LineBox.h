@@ -18,8 +18,12 @@ public:
 	void Render();
 
 	void SetPos( const D3DXVECTOR3 &vPos );
-	void SetSize( const D3DXVECTOR3 &vScale );
-	void SetSize( const float &fScale );
+	void AddPos( const D3DXVECTOR3 &vPos );
+	void SetSize( const D3DXVECTOR3 &vSize );
+	void SetSize( const float &fSize );
+	void AddSize( const D3DXVECTOR3 &vSize );
+	void AddScale( const D3DXVECTOR3 &vScale );
+	void AddScale( const float &fScale );
 
 	D3DXVECTOR3 GetPos() const;
 	D3DXVECTOR3 GetSize() const;
@@ -31,7 +35,10 @@ public:
 private:
 
 	//î†Çå`çÏÇÈ.
-	void SetUp();
+	void SetUpBox();
+
+	//äpÇÃscale.
+	void SetUpJointSize();
 
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upLineH[2];//êÖïΩ( â°ê¸ )( 0Ç™è„ ).
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upLineV[2];//êÇíº( ècê¸ )( 0Ç™ç∂ ).
