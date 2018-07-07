@@ -4,6 +4,7 @@ using namespace std;
 
 //シェーダファイル名(パスも含む).
 const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
+const char* sFILE_PATH = "Data\\Image\\Ui\\Font.png";
 
 //============================================================
 //	定数.
@@ -15,11 +16,14 @@ const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
 //文字同士の横の感覚.
 const float fWIDE_DIS = 6.5f;
 
+const float fERROR = -999.0f;
+
 
 //============================================================
 //	コンストラクタ.
 //============================================================
 clsUiText::clsUiText()
+	:m_vPos()
 {
 //	ZeroMemory( this, sizeof( clsUiText ) );	//初期化.
 	m_pDevice11 = nullptr;		//デバイスオブジェクト.
@@ -167,7 +171,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* pContext,
 	if( FAILED(
 		D3DX11CreateShaderResourceViewFromFile(
 			m_pDevice11,
-			"Data\\DebugText\\ascii.png",
+			sFILE_PATH,
 			NULL, NULL,
 			&m_pAsciiTexture, NULL ) ) )
 	{
@@ -330,6 +334,13 @@ void clsUiText::SetBlend( bool flg )
 //============================================================
 void clsUiText::Render( const char* text, float x, float y )
 {
+	if( x == fERROR ){
+		x = m_vPos.x;
+	}
+	if( y == fERROR ){
+		y = m_vPos.y;
+	}
+
 	//ビュートランスフォーム.
 	D3DXVECTOR3	vEye( 0.0f, 0.0f,-1.0f );
 	D3DXVECTOR3	vLook(0.0f, 0.0f, 0.0f );
@@ -384,6 +395,7 @@ void clsUiText::Render( const char* text, float x, float y )
 
 	SetBlend( true );
 
+	//これがないと平行移動の値がscaleに引っ張られる.
 	x /= m_fScale;
 	y /= m_fScale;
 
@@ -465,3 +477,12 @@ void clsUiText::RenderFont( int FontIndex, float x, float y, float z )
 
 }
 
+void clsUiText::SetPos( const D3DXVECTOR2 &vPos )
+{
+	m_vPos = vPos;
+}
+
+void clsUiText::AddPos( const D3DXVECTOR2 &vPos )
+{
+	m_vPos += vPos;
+}

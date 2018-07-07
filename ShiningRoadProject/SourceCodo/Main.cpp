@@ -240,7 +240,7 @@ void clsMain::Loop()
 	ReadMesh();
 
 	//•K—v‚È‚­‚È‚Á‚½‚Ì‚Å•Â‚¶‚é.
-	upRenderAtStartUp->Complete();
+	upRenderAtStartUp->FinishLoad();
 	thStartUpRender.join();
 	upRenderAtStartUp.reset();
 
