@@ -123,6 +123,9 @@ void clsRENDER_AT_START_UP::Update()
 	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
 		m_vupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
 	}
+
+	m_upLineBox->Update();
+
 	Render();
 
 }
