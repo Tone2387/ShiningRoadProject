@@ -323,7 +323,7 @@ void clsSprite2D::Render()
 		m_vPos.x, m_vPos.y, m_vPos.z);
 
 	//合成.
-	mWorld = mTrans * mScale;
+	mWorld = mScale * mTrans;
 
 	//使用するシェーダの登録.
 	m_pDeviceContext11->VSSetShader(m_pVertexShader, NULL, 0);
