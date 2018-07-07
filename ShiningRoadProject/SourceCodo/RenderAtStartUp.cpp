@@ -123,6 +123,20 @@ void clsRENDER_AT_START_UP::Update()
 	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
 		m_vupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
 	}
+
+	float tmp = 0.05f;
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 )	m_upLineBox->AddSize( { 5.0f, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_upLineBox->AddSize( { -5.0f, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( VK_UP ) & 0x8000 )	m_upLineBox->AddSize( { 0.0f, 5.0f, 0.0f } );
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_upLineBox->AddSize( { 0.0f, -5.0f, 0.0f } );
+//	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 )	m_upLineBox->AddPos( { 1.0f, 0.0f, 0.0f } );
+//	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_upLineBox->AddPos( {-1.0f, 0.0f, 0.0f } );
+//	if( GetAsyncKeyState( VK_UP ) & 0x8000 )	m_upLineBox->AddPos( { 0.0f,-1.0f, 0.0f } );
+//	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_upLineBox->AddPos( { 0.0f, 1.0f, 0.0f } );
+		 
+
+	m_upLineBox->Update();
+
 	Render();
 
 }
