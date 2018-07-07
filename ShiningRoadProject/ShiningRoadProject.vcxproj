@@ -112,6 +112,7 @@
     <ClCompile Include="SourceCodo\File.cpp" />
     <ClCompile Include="SourceCodo\Game.cpp" />
     <ClCompile Include="SourceCodo\GameObject.cpp" />
+    <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\Object.cpp" />
     <ClCompile Include="SourceCodo\OperationString.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="SourceCodo\Global.h" />
     <ClInclude Include="SourceCodo\InputCharactor.h" />
     <ClInclude Include="SourceCodo\InputRobo.h" />
+    <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
     <ClInclude Include="SourceCodo\MyMacro.h" />
     <ClInclude Include="SourceCodo\Object.h" />
