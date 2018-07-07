@@ -33,10 +33,27 @@ private:
 
 	//深度テスト(Zテスト)ON/OFF切替.
 	void SetDepth( bool isOn );
+	
+
+	enum class enMODE
+	{
+		LINE_V,		//外枠が縦に大きくなる.
+		LINE_H,		//外枠が横に大きくなる.
+
+		GAGE_H,		//ゲージの枠が横に大きくなる.
+		GAGE_V,		//ゲージの枠が縦に大きくなる.
+
+		GAGE_MOVE	//ゲージが動く.
+	}	m_enMode;
+
+	int m_iTimer;//モードの、待機時間.
 
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupRogo;
 
 	std::unique_ptr< clsLINE_BOX > m_upLineBox;
+	std::unique_ptr< clsLINE_BOX > m_upGageBox;
+
+	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupGage;
 
 
 	bool						m_bEnd;//trueになったら終了.

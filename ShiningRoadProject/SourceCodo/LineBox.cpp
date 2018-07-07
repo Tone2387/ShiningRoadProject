@@ -6,8 +6,8 @@ using namespace std;
 const char LINE_MAX = 2;
 const char JOINT_MAX = 4;
 
-const char* sLINE_PATH = "Data\\Image\\UiLineBody.png";
-const char* sJOINT_PATH = "Data\\Image\\UiLineJoint.png";
+const char* sLINE_PATH = "Data\\Image\\StartUp\\UiLineBody.png";
+const char* sJOINT_PATH = "Data\\Image\\StartUp\\UiLineJoint.png";
 
 const WHSIZE_FLOAT SS_DISP = { 1.0f, 1.0f };
 const WHSIZE_FLOAT SS_ANIM = { 1.0f, 1.0f };
@@ -19,9 +19,10 @@ const float fSCALE = 16.0f;
 
 clsLINE_BOX::clsLINE_BOX()
 	:m_vPos()
+	,m_vSize()
 {
 	m_vPos = { WND_W/2, WND_H/2, 0.0f };
-	m_vSize = { WND_W/2, WND_H/2, 0.0f };
+//	m_vSize = { WND_W/2, WND_H/2, 0.0f };
 }
 
 clsLINE_BOX::~clsLINE_BOX()
