@@ -264,6 +264,9 @@
     <ClCompile Include="SourceCodo\LineBox.cpp">
       <Filter>Tahara\AssembleUI</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\UiText.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -490,6 +493,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\LineBox.h">
       <Filter>Tahara\AssembleUI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\UiText.h">
+      <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\TextSpriteStruct.h">
+      <Filter>Tahara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

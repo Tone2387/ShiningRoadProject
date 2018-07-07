@@ -1,5 +1,4 @@
-#ifndef DEBUG_TEXT_H_
-#define DEBUG_TEXT_H_
+#pragma once
 
 //警告についてのコード分析を無効にする.4005:再定義.
 #pragma warning( disable:4005 )	
@@ -7,44 +6,37 @@
 //============================================================
 //	インクルード.
 //============================================================
-#include "MyMacro.h"
+#include	"MyMacro.h"
+
 #include "TextSpriteStruct.h"
 
 
 
-//============================================================
-//	定数.
-//============================================================
-#define DIMENSION		(12.0f)
-#define WDIMENSION		(10.0f)
-#define TEX_DIMENSION	(128.0f)
 
-
-
-
-//テキストクラス.
-class clsDebugText
+class clsUiText
 {
 public:
-	clsDebugText();	//コンストラクタ.
-	~clsDebugText();//デストラクタ.
+	clsUiText();
+	~clsUiText();
 
-	HRESULT Init( ID3D11DeviceContext* pContext,
+
+	HRESULT Create( ID3D11DeviceContext* pContext,
 		DWORD dwWidth, DWORD dwHeight,
-		float fSize, D3DXVECTOR4 vColor );
+		float fScale, D3DXVECTOR4 vColor = { 1.0f, 1.0f, 1.0f, 1.0f } );
 
 
+	//レンダリング関数.
+	void Render( const char* text, float x, float y );
+
+
+private:
+
+	//フォントレンダリング関数.
+	void RenderFont( int FontIndex, float x, float y, float z );
 
 	//透過(アルファブレンド)設定の切り替え.
 	void SetBlend( bool flg );
 
-	//レンダリング関数.
-	void Render( char* text, int x, int y );
-
-	//フォントレンダリング関数.
-	void RenderFont( int FontIndex, int x, int y );
-
-private:
 	//↓アプリに一つ.
 	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_pDeviceContext11;	//デバイスコンテキスト.
@@ -77,9 +69,4 @@ private:
 	
 
 
-
-
 };
-
-
-#endif//#define DEBUG_TEXT_H_

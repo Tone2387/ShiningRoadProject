@@ -39,18 +39,25 @@ const D3DXVECTOR3 vGAGE_BOX_SIZE = { 720.0f, 64.0f, 0.0f };
 //ゲージ本体のパス.
 const char* cGAGE_PATH = "Data\\Image\\StartUp\\LodeGage.png";
 //ゲージ本体の数.
-const char cGAGE_MAX = 8;
+const char cGAGE_MAX = 16;
 //ゲージ本体の透過率.
-const float fGAGE_ALPHA_OFFSET = 0.125f;
+const float fGAGE_ALPHA_OFFSET = 1.0f / static_cast<float>( cGAGE_MAX );
 //ゲージサイズ.
 const WHSIZE_FLOAT INIT_DISP_GAGE = { 1.0f, 1.0f };
 //ゲージは枠の何分割?.
 const float fGAGE_SIZE_RATE = 64.0f;
+//線の太さ( ゲージを少し細くする ).
+const float fLINE_WIDTH = 1.0f;
 
 //==============================================================.
 
+//ロード中.
+const float fTEXT_SIZE = 8.0f;
+const D3DXVECTOR2 vTEXT_POS = { 270.0f, WND_H * 0.5f + 30.0f };
+const string sTEXT_MESSAGE = "Now Loading...";
+const int iFLASH_RATE = 30;
 
-
+//==============================================================.
 
 
 clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(	
@@ -67,6 +74,7 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 ,m_wpBackBuffer_DSTexDSV( pBackBuffer_DSTexDSV )
 ,m_wpDepthStencilState( pDepthStencilState )
 ,m_bEnd( false )
+,m_bComplete( false )
 ,m_enMode( enMODE::LINE_V )
 ,m_iTimer( 0 )
 {
@@ -112,12 +120,19 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 		m_upLineBox = make_unique< clsLINE_BOX >();
 		m_upLineBox->Create( pDevice, pContext );
 		m_upLineBox->SetPos( vINIT_LINE_BOX_POS );
+		m_upLineBox->SetSize( { 0.0f, 0.0f, 0.0f } );
 	}
 
 	if( !m_upGageBox ){
 		m_upGageBox = make_unique< clsLINE_BOX >();
 		m_upGageBox->Create( pDevice, pContext );
 		m_upGageBox->SetPos( vINIT_GAGE_BOX_POS );
+		m_upGageBox->SetSize( { 0.0f, 0.0f, 0.0f } );
+	}
+
+	if( !m_uptext ){
+		m_uptext = make_unique< clsUiText >();
+		m_uptext->Create( pContext, WND_W, WND_H, fTEXT_SIZE );
 	}
 
 }
@@ -125,6 +140,11 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 {
 	End();
+
+	if( m_uptext ){
+		m_uptext.reset( nullptr );
+	}
+
 	for( unsigned int i=0; i<m_vupGage.size(); i++ ){
 		if( m_vupGage[i] ){
 			m_vupGage[i].reset( nullptr );
@@ -183,16 +203,17 @@ void clsRENDER_AT_START_UP::Loop()
 		if( sync_now - sync_old >= fRate ){
 			sync_old = sync_now;	//現在時間に置きかえ.
 
-			Update();
+			//まだロードが完了していないとき.
+			if( !m_bComplete ){
+				Update();
+			}
+			//ロードが完了したら.
+			else{
+				End();
+			}
 		}
 	}
 	timeEndPeriod( 1 );	//解除.
-}
-
-//終了処理.
-void clsRENDER_AT_START_UP::End()
-{
-	m_bEnd = true;
 }
 
 
@@ -206,72 +227,23 @@ void clsRENDER_AT_START_UP::Update()
 	switch( m_enMode )
 	{
 	case enMODE::LINE_V://外枠が縦に大きくなる.
-		if( m_iTimer < iSTOP_TIME_LONG ) break;
-		m_upLineBox->AddSize( { 0.0f, fLINE_BOX_ADD_SIZE, 0.0f } );
-
-		if( m_upLineBox->GetSize().y >= vLINE_BOX_SIZE.y ){
-			m_upLineBox->SetSize( { 0.0f, vLINE_BOX_SIZE.y, 1.0f } );
-			m_enMode = enMODE::LINE_H;
-			m_iTimer = 0;
-		}
+		BiggerLineBoxV();
 		break;
 	
 	case enMODE::LINE_H://外枠が横に大きくなる.
-		if( m_iTimer < iSTOP_TIME_SHORT ) break;
-		m_upLineBox->AddSize( { fLINE_BOX_ADD_SIZE, 0.0f, 0.0f } );
-
-
-		if( m_upLineBox->GetSize().x >= vLINE_BOX_SIZE.x ){
-			m_upLineBox->SetSize( { vLINE_BOX_SIZE.x, vLINE_BOX_SIZE.y, 1.0f } );
-			m_enMode = enMODE::GAGE_H;
-			m_iTimer = 0;
-		}
+		BiggerLineBoxH();
 		break;
 	
 	case enMODE::GAGE_H://ゲージの枠が横に大きくなる.
-		if( m_iTimer < iSTOP_TIME_LONG ) break;
-		m_upGageBox->AddSize( { fGAGE_BOX_ADD_SIZE, 0.0f, 0.0f } );
-
-		if( m_upGageBox->GetSize().x >= vGAGE_BOX_SIZE.x ){
-			m_upGageBox->SetSize( { vGAGE_BOX_SIZE.x, 0.0f, 1.0f } );
-			m_enMode = enMODE::GAGE_V;
-			m_iTimer = 0;
-		}
+		BiggerGageBoxH();
 		break;
 	
 	case enMODE::GAGE_V://ゲージの枠が縦に大きくなる.
-		if( m_iTimer < iSTOP_TIME_SHORT ) break;
-		m_upGageBox->AddSize( { 0.0f, fGAGE_BOX_ADD_SIZE, 0.0f } );
-
-		if( m_upGageBox->GetSize().y >= vGAGE_BOX_SIZE.y ){
-			m_upGageBox->SetSize( { vGAGE_BOX_SIZE.x, vGAGE_BOX_SIZE.y, 1.0f } );
-			m_enMode = enMODE::GAGE_MOVE;
-			m_iTimer = 0;
-
-			//ゲージの初期化.
-			for( char i=0; i<m_vupGage.size(); i++ ){
-				m_vupGage[i]->SetScale( {
-					m_upGageBox->GetSize().x / fGAGE_SIZE_RATE, m_upGageBox->GetSize().y, 0.0f } );
-				m_vupGage[i]->SetPos( {
-					0.0f - ( m_vupGage[i]->GetScale().x * static_cast<float>( i ) ), 
-					m_upGageBox->GetPos().y, 
-					0.0f } );
-			}
-		}
+		BiggerGageBoxV();
 		break;
 	
 	case enMODE::GAGE_MOVE://ゲージが動く.
-		if( m_iTimer < iSTOP_TIME_SHORT ) break;
-
-		for( char i=0; i<m_vupGage.size(); i++ ){
-			m_vupGage[i]->AddPos( { m_vupGage[i]->GetScale().x, 0.0f, 0.0f } );
-			if( m_vupGage[i]->GetPos().x > WND_W ){
-				m_vupGage[i]->SetPos( { 
-					m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ), 
-					m_upGageBox->GetPos().y,
-					0.0f } );
-			}
-		}
+		UpdateLoadMsg();
 		break;
 	}
 	m_iTimer ++;
@@ -299,10 +271,13 @@ void clsRENDER_AT_START_UP::Render()
 
 	SetDepth( false );	//Zテスト:OFF.
 
-
+#ifdef _DEBUG
 	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
-//		m_vupRogo[i]->Render();
+		m_vupRogo[i]->Render();
 	}
+#else//#ifdef _DEBUG
+
+	m_upGageBox->Render();
 
 	for( unsigned int i=0; i<m_vupGage.size(); i++ ){
 		//枠の中だけ描画する.
@@ -313,7 +288,9 @@ void clsRENDER_AT_START_UP::Render()
 	}
 
 	m_upLineBox->Render();
-	m_upGageBox->Render();
+
+#endif//#ifdef _DEBUG
+	m_uptext->Render( m_sLodeMsg.c_str(), vTEXT_POS.x, vTEXT_POS.y );
 
 	SetDepth( true );	//Zテスト:ON.
 
@@ -335,3 +312,201 @@ void clsRENDER_AT_START_UP::SetDepth( bool isOn )
 	m_wpContext->OMSetDepthStencilState(
 		m_wpDepthStencilState, 1 );
 }
+
+
+//仕事の終わり.
+void clsRENDER_AT_START_UP::Complete()
+{
+	m_bComplete = true;
+	m_iTimer = 0;
+}
+
+//終了させるための処理.
+void clsRENDER_AT_START_UP::End()
+{
+	m_bEnd = true;
+}
+
+
+
+//switch文の中身.
+//外枠が縦に大きくなる.
+void clsRENDER_AT_START_UP::BiggerLineBoxV()
+{
+	if( m_iTimer < iSTOP_TIME_LONG ) return;
+
+	m_upLineBox->AddSize( { 0.0f, fLINE_BOX_ADD_SIZE, 0.0f } );
+
+	if( m_upLineBox->GetSize().y >= vLINE_BOX_SIZE.y ){
+		m_upLineBox->SetSize( { 0.0f, vLINE_BOX_SIZE.y, 1.0f } );
+		m_enMode = enMODE::LINE_H;
+		m_iTimer = 0;
+	}
+}
+
+//外枠が横に大きくなる.
+void clsRENDER_AT_START_UP::BiggerLineBoxH()
+{
+	if( m_iTimer < iSTOP_TIME_SHORT ) return;
+
+	m_upLineBox->AddSize( { fLINE_BOX_ADD_SIZE, 0.0f, 0.0f } );
+
+	if( m_upLineBox->GetSize().x >= vLINE_BOX_SIZE.x ){
+		m_upLineBox->SetSize( { vLINE_BOX_SIZE.x, vLINE_BOX_SIZE.y, 1.0f } );
+		m_enMode = enMODE::GAGE_H;
+		m_iTimer = 0;
+	}
+}
+
+//ゲージの枠が横に大きくなる.
+void clsRENDER_AT_START_UP::BiggerGageBoxH()
+{
+	if( m_iTimer < iSTOP_TIME_LONG ) return;
+
+	m_upGageBox->AddSize( { fGAGE_BOX_ADD_SIZE, 0.0f, 0.0f } );
+
+	if( m_upGageBox->GetSize().x >= vGAGE_BOX_SIZE.x ){
+		m_upGageBox->SetSize( { vGAGE_BOX_SIZE.x, 0.0f, 1.0f } );
+		m_enMode = enMODE::GAGE_V;
+		m_iTimer = 0;
+	}
+}
+
+//ゲージの枠が縦に大きくなる.
+void clsRENDER_AT_START_UP::BiggerGageBoxV()
+{
+	if( m_iTimer < iSTOP_TIME_SHORT ) return;
+
+	m_upGageBox->AddSize( { 0.0f, fGAGE_BOX_ADD_SIZE, 0.0f } );
+
+	if( m_upGageBox->GetSize().y >= vGAGE_BOX_SIZE.y ){
+		m_upGageBox->SetSize( { vGAGE_BOX_SIZE.x, vGAGE_BOX_SIZE.y, 1.0f } );
+		m_enMode = enMODE::GAGE_MOVE;
+		m_iTimer = 0;
+
+		//ゲージの初期化.
+		for( unsigned int i=0; i<m_vupGage.size(); i++ ){
+			m_vupGage[i]->SetScale( {
+				m_upGageBox->GetSize().x / fGAGE_SIZE_RATE - fLINE_WIDTH, m_upGageBox->GetSize().y, 0.0f } );
+			m_vupGage[i]->SetPos( {
+				0.0f - ( m_vupGage[i]->GetScale().x * static_cast<float>( i ) ), 
+				m_upGageBox->GetPos().y, 
+				0.0f } );
+		}
+	}
+}
+
+//ゲージが動く.
+void clsRENDER_AT_START_UP::UpdateLoadMsg()
+{
+	if( m_iTimer >= iSTOP_TIME_SHORT ){ 
+		//ゲージの動き.
+		for( unsigned int i=0; i<m_vupGage.size(); i++ ){
+			m_vupGage[i]->AddPos( { m_vupGage[i]->GetScale().x, 0.0f, 0.0f } );
+			if( m_vupGage[i]->GetPos().x > WND_W ){
+				m_vupGage[i]->SetPos( { 
+					m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) + fLINE_WIDTH, 
+					m_upGageBox->GetPos().y,
+					0.0f } );
+			}
+		}
+	}
+
+	//メッセージ変更.
+	switch( m_iTimer )
+	{
+	case iSTOP_TIME_SHORT:
+		m_sLodeMsg = "";
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 2://N.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 1 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 3://No.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 2 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 4://Now.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 3 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 5://Now L.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 5 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 6://Now Lo.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 6 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 7://Now Loa.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 7 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 8://Now Load.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 8 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 9://Now Loadi.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 9 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 10://Now Loadin.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 10 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 11://Now Loading.
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 11 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 12://Now Loading..
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 12 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 13://Now Loading...
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 13 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 14://Now Loading....
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 14 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 15://.
+		m_sLodeMsg = "";
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 16://Now Loading....
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 14 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 17://.
+		m_sLodeMsg = "";
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 18://Now Loading....
+		m_sLodeMsg = "";
+		m_sLodeMsg = sTEXT_MESSAGE.substr( 0, 14 );
+		break;
+
+	case iSTOP_TIME_SHORT + iFLASH_RATE * 19:
+		m_sLodeMsg = "";
+		m_iTimer = iSTOP_TIME_SHORT;
+		break;
+	}
+
+}
+
