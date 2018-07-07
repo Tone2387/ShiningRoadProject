@@ -26,8 +26,10 @@ public:
 
 
 	//レンダリング関数.
-	void Render( const char* text, float x, float y );
+	void Render( const char* text, float x = -999.0f, float y = -999.0f );
 
+	void SetPos( const D3DXVECTOR2 &vPos );
+	void AddPos( const D3DXVECTOR2 &vPos );
 
 private:
 
@@ -59,9 +61,10 @@ private:
 	DWORD	m_dwWindowWidth;	//ウィンドウ幅.
 	DWORD	m_dwWindowHeight;	//ウィンドウ高さ.
 
-	float	m_fKerning[100];	//カーリング(100個分).
-	float	m_fScale;			//拡縮地(25pixelを基準 25pixel=1.0f).
-	float	m_fAlpha;			//透過値.
+	float		m_fKerning[100];	//カーリング(100個分).
+	D3DXVECTOR2 m_vPos;
+	float		m_fScale;			//拡縮地(25pixelを基準 25pixel=1.0f).
+	float		m_fAlpha;			//透過値.
 	D3DXVECTOR4	m_vColor;		//色.
 
 	D3DXMATRIX m_mView;	//ビュー行列.

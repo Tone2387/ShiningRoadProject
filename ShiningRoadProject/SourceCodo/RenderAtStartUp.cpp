@@ -51,11 +51,19 @@ const float fLINE_WIDTH = 1.0f;
 
 //==============================================================.
 
-//ロード中.
+//ロード中文字.
 const float fTEXT_SIZE = 8.0f;
 const D3DXVECTOR2 vTEXT_POS = { 270.0f, WND_H * 0.5f + 30.0f };
 const string sTEXT_MESSAGE = "Now Loading...";
-const int iFLASH_RATE = 30;
+const int iFLASH_RATE = 15;//点滅間隔.
+
+
+const string sCOMPLETE_MESSAGE = "Complete!";
+const float fTEXT_POS_X_COMPLETE = 386.0f;
+
+//==============================================================.
+
+const char* sBLACK_PATH = "Data\\Image\\BlackScreen.png";
 
 //==============================================================.
 
@@ -74,7 +82,6 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 ,m_wpBackBuffer_DSTexDSV( pBackBuffer_DSTexDSV )
 ,m_wpDepthStencilState( pDepthStencilState )
 ,m_bEnd( false )
-,m_bComplete( false )
 ,m_enMode( enMODE::LINE_V )
 ,m_iTimer( 0 )
 {
@@ -101,7 +108,7 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 		m_vupRogo[i]->SetAlpha( tmpAlpha );
 	}
 
-	m_vupGage.reserve( fGAGE_ALPHA_OFFSET );
+	m_vupGage.reserve( cGAGE_MAX );
 	ss.Disp = INIT_DISP_GAGE;
 	for( char i=0; i<cGAGE_MAX; i++ ){
 		m_vupGage.push_back( nullptr );
@@ -130,9 +137,18 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 		m_upGageBox->SetSize( { 0.0f, 0.0f, 0.0f } );
 	}
 
-	if( !m_uptext ){
-		m_uptext = make_unique< clsUiText >();
-		m_uptext->Create( pContext, WND_W, WND_H, fTEXT_SIZE );
+	if( !m_upBlack ){
+		m_upBlack = make_unique< clsBLACK_SCREEN >();
+		ss.Disp = { WND_W, WND_H };
+		m_upBlack->Create( pDevice, pContext, sBLACK_PATH, ss );
+		m_upBlack->SetPos( { 0.0f, 0.0f, 0.0f } );
+		m_upBlack->SetAlpha( 0.0f );
+	}
+
+	if( !m_upText ){
+		m_upText = make_unique< clsUiText >();
+		m_upText->Create( pContext, WND_W, WND_H, fTEXT_SIZE );
+		m_upText->SetPos( vTEXT_POS );
 	}
 
 }
@@ -141,8 +157,12 @@ clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 {
 	End();
 
-	if( m_uptext ){
-		m_uptext.reset( nullptr );
+	if( m_upBlack ){
+		m_upBlack.reset( nullptr );
+	}
+
+	if( m_upText ){
+		m_upText.reset( nullptr );
 	}
 
 	for( unsigned int i=0; i<m_vupGage.size(); i++ ){
@@ -203,14 +223,7 @@ void clsRENDER_AT_START_UP::Loop()
 		if( sync_now - sync_old >= fRate ){
 			sync_old = sync_now;	//現在時間に置きかえ.
 
-			//まだロードが完了していないとき.
-			if( !m_bComplete ){
-				Update();
-			}
-			//ロードが完了したら.
-			else{
-				End();
-			}
+			Update();
 		}
 	}
 	timeEndPeriod( 1 );	//解除.
@@ -244,6 +257,10 @@ void clsRENDER_AT_START_UP::Update()
 	
 	case enMODE::GAGE_MOVE://ゲージが動く.
 		UpdateLoadMsg();
+		break;
+	
+	case enMODE::COMPLETE://ゲージが動く.
+		Complete();
 		break;
 	}
 	m_iTimer ++;
@@ -290,7 +307,9 @@ void clsRENDER_AT_START_UP::Render()
 	m_upLineBox->Render();
 
 #endif//#ifdef _DEBUG
-	m_uptext->Render( m_sLodeMsg.c_str(), vTEXT_POS.x, vTEXT_POS.y );
+	m_upText->Render( m_sLodeMsg.c_str() );
+
+	m_upBlack->Render();
 
 	SetDepth( true );	//Zテスト:ON.
 
@@ -315,16 +334,30 @@ void clsRENDER_AT_START_UP::SetDepth( bool isOn )
 
 
 //仕事の終わり.
-void clsRENDER_AT_START_UP::Complete()
+void clsRENDER_AT_START_UP::FinishLoad()
 {
-	m_bComplete = true;
+	m_enMode = enMODE::COMPLETE;
 	m_iTimer = 0;
+	//暗転開始.
+	m_upBlack->GetDark();
+	//テキスト更新.
+	m_sLodeMsg = sCOMPLETE_MESSAGE;
+	m_upText->SetPos( { fTEXT_POS_X_COMPLETE, vTEXT_POS.y } );
+
+	//邪魔な奴は消す.
+	for( unsigned int i=0; i<m_vupGage.size(); i++ ){
+		m_vupGage[i]->SetAlpha( 0.0f );
+	}
+	//点滅させるのは一つで十分.
+	m_vupGage[0]->SetPos( { m_upGageBox->GetPos().x, m_upGageBox->GetPos().y, 0.0f } );
+	m_vupGage[0]->SetScale( { m_upGageBox->GetSize().x, m_upGageBox->GetSize().y, 0.0f } );
+
 }
 
 //終了させるための処理.
 void clsRENDER_AT_START_UP::End()
 {
-	m_bEnd = true;
+	m_bEnd = true;//このフラグがtrueになればこのクラスのループは終わる.
 }
 
 
@@ -510,3 +543,19 @@ void clsRENDER_AT_START_UP::UpdateLoadMsg()
 
 }
 
+//ロード完了後.
+void clsRENDER_AT_START_UP::Complete()
+{
+	//暗転.
+	m_upBlack->Update();
+
+	//ゲージ点滅.
+	if( m_vupGage[0]->GetAlpha() )	m_vupGage[0]->SetAlpha( 0.0f );
+	else							m_vupGage[0]->SetAlpha( 1.0f );
+	
+	//暗転が終われば終わる.
+	if( m_upBlack->isDarkEnd() ){
+		End();
+	}
+
+}

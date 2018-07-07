@@ -460,6 +460,10 @@ bool clsSprite2D::AddAlpha( const float fAlpha )
 
 	return isWithInRange;
 }
+float clsSprite2D::GetAlpha()
+{
+	return m_fAlpha;
+}
 
 
 D3DXVECTOR3 clsSprite2D::GetPos() const

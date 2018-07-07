@@ -65,6 +65,7 @@ public:
 	void SetAlpha( const float fAlpha );
 	//”ÍˆÍ‚ðover‚·‚é‚Æfalse‚ª•Ô‚Á‚Ä‚­‚é.
 	bool AddAlpha( const float fAlpha );
+	float GetAlpha();
 
 	D3DXVECTOR3 GetPos() const;
 	D3DXVECTOR3 GetScale() const;

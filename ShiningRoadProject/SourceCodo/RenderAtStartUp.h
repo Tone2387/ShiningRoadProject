@@ -4,7 +4,7 @@
 #include "Sprite2DCenter.h"
 #include "LineBox.h"
 #include "UiText.h"
-
+#include "BlackScreen.h"
 #include <vector>
 #include <string>
 
@@ -23,8 +23,8 @@ public:
 	//ループ処理.
 	void Loop();
 
-	//仕事の終わり.
-	void Complete();
+	//ロードが終わった時に使う.
+	void FinishLoad();
 
 private:
 
@@ -34,8 +34,6 @@ private:
 	void Render();
 
 
-	//終了させるための処理.
-	void End();
 
 	//深度テスト(Zテスト)ON/OFF切替.
 	void SetDepth( bool isOn );
@@ -49,7 +47,9 @@ private:
 		GAGE_H,		//ゲージの枠が横に大きくなる.
 		GAGE_V,		//ゲージの枠が縦に大きくなる.
 
-		GAGE_MOVE	//ゲージが動く.
+		GAGE_MOVE,	//ゲージが動く.
+
+		COMPLETE,	//ロード完了.
 	}	m_enMode;
 
 	//switch文の中身.
@@ -58,6 +58,11 @@ private:
 	void BiggerGageBoxH();//ゲージの枠が横に大きくなる.
 	void BiggerGageBoxV();//ゲージの枠が縦に大きくなる.
 	void UpdateLoadMsg();//ゲージが動く.
+	void Complete();	//ロード完了後.
+
+
+	//終了させるための処理.
+	void End();
 
 	int m_iTimer;//モードの、待機時間.
 
@@ -68,13 +73,13 @@ private:
 
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupGage;//ゲージ本体.
 
+	std::unique_ptr< clsBLACK_SCREEN > m_upBlack;
 
 	//ロード中メッセージ.
-	std::unique_ptr< clsUiText > m_uptext;
+	std::unique_ptr< clsUiText > m_upText;
 	std::string m_sLodeMsg;
 
 	bool						m_bEnd;//trueになったら終了.
-	bool						m_bComplete;//ロードが終わったらtrueにする.
 
 	ID3D11Device*				m_wpDevice;
 	ID3D11DeviceContext*		m_wpContext;			//デバイスコンテキスト.
