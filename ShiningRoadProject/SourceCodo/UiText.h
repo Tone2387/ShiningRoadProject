@@ -6,11 +6,11 @@
 //============================================================
 //	インクルード.
 //============================================================
-#include	"MyMacro.h"
+#include "MyMacro.h"
 
 #include "TextSpriteStruct.h"
 
-
+#include <string>
 
 
 class clsUiText
@@ -22,14 +22,21 @@ public:
 
 	HRESULT Create( ID3D11DeviceContext* pContext,
 		DWORD dwWidth, DWORD dwHeight,
-		float fScale, D3DXVECTOR4 vColor = { 1.0f, 1.0f, 1.0f, 1.0f } );
+		float fScale );
 
 
 	//レンダリング関数.
-	void Render( const char* text, float x = -999.0f, float y = -999.0f );
+	void Render(/*
+				const char* text, 
+				const D3DXVECTOR4 &vColor = 
+				{ 1.0f, 1.0f, 1.0f, 1.0f }*/ );
 
 	void SetPos( const D3DXVECTOR2 &vPos );
 	void AddPos( const D3DXVECTOR2 &vPos );
+
+	void SetText( const char* sText );
+
+	void SetColor( const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f, 1.0f } );
 
 private:
 
@@ -64,8 +71,10 @@ private:
 	float		m_fKerning[100];	//カーリング(100個分).
 	D3DXVECTOR2 m_vPos;
 	float		m_fScale;			//拡縮地(25pixelを基準 25pixel=1.0f).
-	float		m_fAlpha;			//透過値.
+//	float		m_fAlpha;			//透過値.
 	D3DXVECTOR4	m_vColor;		//色.
+
+	std::string m_sText;//描画文字.
 
 	D3DXMATRIX m_mView;	//ビュー行列.
 	D3DXMATRIX m_mProj;	//プロジェクション行列.
