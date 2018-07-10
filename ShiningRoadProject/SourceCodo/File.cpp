@@ -97,6 +97,8 @@ void clsFILE::Close()
 	}
 	m_vvsData.clear();
 	m_vvsData.shrink_to_fit();
+
+	m_sFileName = "";
 	
 	m_bUsing = false;
 }

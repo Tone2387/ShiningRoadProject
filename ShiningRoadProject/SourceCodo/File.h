@@ -7,7 +7,7 @@ namespace MyFile{
 	const int ERR_LINE = -1;
 }
 
-
+//CSVファイルの読み書きを行うクラス.
 class clsFILE
 {
 public:
