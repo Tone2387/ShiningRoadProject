@@ -67,7 +67,7 @@ private:
 
 	float		m_fKerning[100];	//カーリング(100個分).
 	D3DXVECTOR2 m_vPos;
-	float		m_fScale;			//拡縮地(25pixelを基準 25pixel=1.0f).
+	float		m_fScale;			//拡縮値.
 //	float		m_fAlpha;			//透過値.
 	D3DXVECTOR4	m_vColor;		//色.
 

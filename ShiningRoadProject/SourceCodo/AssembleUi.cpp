@@ -23,24 +23,27 @@ const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 21.75f, 95.0f, 0.0f };
 const float fOFFSET_POS_X_PARTS_TYPE = PARTS_TYPE_SIZE.w + 4.0f;
 
 //ステータスウィンドウ.
-const D3DXVECTOR3 vINIT_POS_STATUS_WINDOW = { 156.0f, 183.25f, 0.0f };
-const WHSIZE_FLOAT INIT_SIZE_STATUS_WINDOW  = { 300.0f, 468.0f };
+const D3DXVECTOR3 vINIT_POS_STATUS_WINDOW = { 98.0f, 183.25f, 0.0f };//179.5f;
+const WHSIZE_FLOAT INIT_SIZE_STATUS_WINDOW  = { 415.0f, 468.0f };//360.0f.
 const char* sPATH_STATUS_WINDOW = "Data\\Image\\AssembleUi\\StatusWindow.png";
 const int iSTATUS_NUM_MAX = 12;//ステータスの最大数.
 
 //パーツの姿のまどX座標.
+float fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW = 8.0f;//ステータスウィンドウとの隙間.
 //478.25f.
-const D3DXVECTOR3 vINIT_POS_PARTS_WINDOW = { 468.75f, 183.25f, 0.0f };
+const D3DXVECTOR3 vINIT_POS_PARTS_WINDOW = { vINIT_POS_STATUS_WINDOW.x + INIT_SIZE_STATUS_WINDOW.w + fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW, 183.25f, 0.0f };
+const WHSIZE_FLOAT INIT_SIZE_PARTS_WINDOW  = { 300.0f, 468.0f };
 const char* sPATH_PARTS_WINDOW = "Data\\Image\\PartsIcon\\NoData.png";
 
 
 //文字の大きさ.
-const float fTEXT_SCALE = 2.0f;
+const float fTEXT_SCALE = 1.5f;//2.0f.
 //文字の座標.
-const float fTEXT_POS_OFFSET_TO_STATUS_WINDOW = 5.1f;
+const float fTEXT_POS_OFFSET_TO_STATUS_WINDOW_X = 5.0f;
+const float fTEXT_POS_OFFSET_TO_STATUS_WINDOW_Y = 8.75f;
 const D3DXVECTOR2 vTEXT_POS = {
-	vINIT_POS_STATUS_WINDOW.x + fTEXT_POS_OFFSET_TO_STATUS_WINDOW,
-	vINIT_POS_STATUS_WINDOW.y + fTEXT_POS_OFFSET_TO_STATUS_WINDOW };
+	vINIT_POS_STATUS_WINDOW.x + fTEXT_POS_OFFSET_TO_STATUS_WINDOW_X,
+	vINIT_POS_STATUS_WINDOW.y + fTEXT_POS_OFFSET_TO_STATUS_WINDOW_Y };
 //二行目以降のずれ幅.
 const float fTEXT_OFFSET_Y = INIT_SIZE_STATUS_WINDOW.h / iSTATUS_NUM_MAX;
 
@@ -138,7 +141,7 @@ void clsASSEMBLE_UI::Create(
 
 	//パーツの単体モデル表示される.
 	assert( !m_upPartsWindow );
-	ss.Disp = INIT_SIZE_STATUS_WINDOW;
+	ss.Disp = INIT_SIZE_PARTS_WINDOW;
 	m_upPartsWindow = make_unique< clsSprite2D >();
 	m_upPartsWindow->Create( pDevice, pContext, sPATH_PARTS_WINDOW, ss );
 	m_upPartsWindow->SetPos( vINIT_POS_PARTS_WINDOW );
@@ -148,7 +151,7 @@ void clsASSEMBLE_UI::Create(
 	m_upText = make_unique< clsUiText >();
 	m_upText->Create( pContext, WND_W, WND_H, fTEXT_SCALE );
 	m_upText->SetPos( vTEXT_POS );
-	m_upText->SetText( "Magazine Load Time" );
+	m_upText->SetText( "Magazine Load Time  12345 >> 12345" );
 
 #if _DEBUG
 	ss.Disp = { WND_W, WND_H };

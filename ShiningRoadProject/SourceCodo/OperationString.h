@@ -24,11 +24,11 @@ public:
 
 	//マルチバイト文字列( char* )からワイドバイト文字列( wchat_t* )を作成.
 	//wchar_t型を内部でnewしているので、使用後は必ずdelete[]すること.
-	wchar_t* CreateWcharPtrFromCharPtr( const char *c );
+	wchar_t* CreateWcharPtrFromCharPtr( const char *c ) const;
 
 	//ワイドバイト文字列( wchat_t* )からマルチバイト文字列( char* )を作成.
 	//char型を内部でnewしているので、使用後は必ずdelete[]すること.
-	char* CreateCharPtrFromWcharPtr( const wchar_t *wc );
+	char* CreateCharPtrFromWcharPtr( const wchar_t *wc ) const;
 
 private:
 

@@ -51,7 +51,7 @@ string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const unsigned 
 
 //マルチバイト文字列( char* )からワイドバイト文字列( wchat_t* )を作成.
 //wchar_t型を内部でnewしているので、使用後は必ずdelete[]すること.
-wchar_t* clsOPERATION_STRING::CreateWcharPtrFromCharPtr( const char *c )
+wchar_t* clsOPERATION_STRING::CreateWcharPtrFromCharPtr( const char *c ) const
 {
 	//配列のサイズ確定.
 	size_t NewSize = strlen( c ) + 1;	//何文字ですか( null文字含む ).
@@ -67,7 +67,7 @@ wchar_t* clsOPERATION_STRING::CreateWcharPtrFromCharPtr( const char *c )
 
 //ワイドバイト文字列( wchat_t* )からマルチバイト文字列( char* )を作成.
 //char型を内部でnewしているので、使用後は必ずdelete[]すること.
-char* clsOPERATION_STRING::CreateCharPtrFromWcharPtr( const wchar_t *wc )
+char* clsOPERATION_STRING::CreateCharPtrFromWcharPtr( const wchar_t *wc ) const
 {
 	//配列のサイズ確定.
 	size_t NewSize = wcslen( wc );	//何文字ですか.

@@ -131,8 +131,13 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 		string sData;
 		//全文連結.
 		for( unsigned int i=0; i<m_vvsData.size(); i++ ){
+			//改行( 最初は無視 ).
+			if( i ){
+				sData += '\n';
+			}
 			for( unsigned int j=0; j<m_vvsData[i].size(); j++ ){
 				sData += m_vvsData[i][j];
+				sData += cDELIMITER;	//区切り文字.
 			}
 		}
 		return sData;
@@ -144,6 +149,7 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 		//一行連結.
 		for( unsigned int i=0; i<m_vvsData[iRow].size(); i++ ){
 			sData += m_vvsData[iRow][i];
+			sData += cDELIMITER;
 		}
 		return sData;
 	}
@@ -177,7 +183,7 @@ float clsFILE::GetDataFloat(
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
 	//「すべてが数字」ではない || エラーならば.
-	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+	if( /*!all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||*/
 		sBuff == sERROR )
 	{
 		//エラーを返す.
@@ -195,7 +201,7 @@ double clsFILE::GetDataDouble(
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
 	//「すべてが数字」ではない || エラーならば.
-	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+	if( /*!all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||*/
 		sBuff == sERROR )
 	{
 		//エラーを返す.
@@ -277,6 +283,7 @@ string clsFILE::ConcForOutPut( const FILE_DATA &data ) const
 			OutPut += "\n";//改行文字.
 		}
 
+		//このfor文はCSVファイル一行分を連結している.
 		for( int j=0; j<data[i].size(); j++ ){
 			OutPut += data[i][j];//連結.
 			OutPut += cDELIMITER;//区切り文字.
