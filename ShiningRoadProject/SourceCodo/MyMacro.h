@@ -25,7 +25,7 @@
 
 //----- Tahara 2018 04/18 11:38 -----.
 ////•Ï”–¼‚ğ•¶š—ñ‚É.
-//#define TO_STRING(VariableName) # VariableName
+#define TO_STRING(VariableName) # VariableName
 
 
 

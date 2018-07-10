@@ -10,21 +10,11 @@ clsTestObj::~clsTestObj()
 
 }
 
-void clsTestObj::Init(HWND hWnd,
-	ID3D11Device* pDevice11,
-	ID3D11DeviceContext* pContext11,
-	clsDxInput* pControll,
-	clsPOINTER_GROUP* const pPtrGroup )
+void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup )
 {
-	RoboInit(hWnd, pDevice11, pContext11, pPtrGroup);
+	RoboInit(pPtrGroup);
 
-	if (!pControll)
-	{
-		return;
-	}
-
-	m_pInput = new clsInputRobo;
-	m_pInput->m_pDxInput = pControll;
+	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
 
 	m_pMesh->SetAnimSpeed(0.01);
 }
@@ -35,9 +25,9 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
 
-	Updata();
+	float fPushMin = 0.5f;
 
-	m_pInput->PlressInput();
+	Updata();
 
 	pRoboCom = m_pInput->MoveSwitch();
 
@@ -53,33 +43,47 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 		pRoboCom->PushBotton(this);
 	}
 
-	pRoboCom = m_pInput->RSHorInput(fPush, fAngle);
-	pRoboCom->Trigger(this, abs(fPush), fAngle);
+	pRoboCom = m_pInput->LSInput(fPush, fAngle);
+	pRoboCom->Trigger(this, fPush, fAngle);
 
-	if (abs(fPush) > 0.0f)
+	if (abs(fPush) >= fPushMin)//LS押し込み.
 	{
-		pRoboCom = m_pInput->QuickTurn();
-
+		pRoboCom = m_pInput->QuickBoost();//クイックブースト.
 		if (pRoboCom)
 		{
 			pRoboCom->Trigger(this, fPush, fAngle);
 			pRoboCom->PushBotton(this);
 		}
+
+		pRoboCom = m_pInput->RSHorInput(fPush, fAngle);//旋回.
+		pRoboCom->Trigger(this, abs(fPush), fAngle);
 	}
 
-	pRoboCom = m_pInput->LSInput(fPush, fAngle);
-	pRoboCom->Trigger(this, fPush, fAngle);
-
-	pRoboCom = m_pInput->QuickBoost();
-	if (pRoboCom)
+	else
 	{
-		pRoboCom->Trigger(this, fPush, fAngle);
-		pRoboCom->PushBotton(this);
-	}
+		pRoboCom = m_pInput->RSHorInput(fPush, fAngle);//旋回.
+		pRoboCom->Trigger(this, abs(fPush), fAngle);
 
-	if (pWall)
-	{
-		WallJudge(pWall);
+		if (abs(fPush) >= fPushMin)//RS押し込み.
+		{
+			pRoboCom = m_pInput->QuickTurn();
+
+			if (pRoboCom)
+			{
+				pRoboCom->Trigger(this, fPush, fAngle);
+				pRoboCom->PushBotton(this);
+			}
+		}
+
+		else
+		{
+			pRoboCom = m_pInput->QuickBoost();
+
+			if (pRoboCom)
+			{
+				pRoboCom->PushBotton(this);
+			}
+		}
 	}
 }
 

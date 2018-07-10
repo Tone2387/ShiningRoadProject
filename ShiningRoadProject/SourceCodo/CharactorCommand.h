@@ -49,4 +49,11 @@ public:
 	}
 };
 
-
+class clsCommandShot : public clsCharactorCommand
+{
+public:
+	virtual void PushBotton(clsCharactor* pChara)
+	{
+		pChara->Shot();
+	}
+};

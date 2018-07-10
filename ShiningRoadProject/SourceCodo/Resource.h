@@ -4,11 +4,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 
-//シングルトンの時はつける.
+//シングルトンにするならばつける.
 //#define RESOURCE_CLASS_SINGLETON
 
 //テスト中はつける( パーツの読み込み数を固定化 ).
-#define RESOURCE_READ_PARTS_MODEL_LOCK
+//#define RESOURCE_READ_PARTS_MODEL_LOCK
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK
 const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数 : 4.
 #endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
@@ -29,10 +29,9 @@ const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数 : 4.
 #include "DX9Mesh.h"
 #include "CD3DXSKINMESH.h"
 
-#include "File.h"
 
 //スキンメッシュ列挙体の型.
-#define SKIN_ENUM_TYPE UCHAR
+using SKIN_ENUM_TYPE = UCHAR;
 
 
 //3Dモデルのもとデータを格納するクラス.
@@ -43,9 +42,9 @@ public:
 	//スタティックモデル種類.
 	enum enSTATIC_MODEL : UCHAR
 	{
-		enStaticModel_Ground = 0,
-		enStaticModel_Shpere,
-		enStaticModel_Enemy,
+		enStaticModel_StageBase = 0,//ステージの土台.
+		enStaticModel_Obstacle,		//ステージの障害物.
+		enStaticModel_Shpere,		//当たり判定チェック用.
 
 		enStaticModel_Max
 	};
@@ -159,26 +158,21 @@ private:
 //	SKIN_ENUM_TYPE m_ucLegNum;	//脚の数.
 //	SKIN_ENUM_TYPE m_ucCoreNum;	//コアの数.
 //	SKIN_ENUM_TYPE m_ucHeadNum;	//頭の数.
-//	SKIN_ENUM_TYPE m_ucArmsNum;	//腕の数( 左右共通なので一つでよい ).
+//	SKIN_ENUM_TYPE m_ucArmsNum;	//腕の数( 左右同数なので一つでよい ).
 //	SKIN_ENUM_TYPE m_ucWeaponNum;//武器の数.
 	SKIN_ENUM_TYPE m_PartsNum[enPARTS_READ_SIZE];
 	SKIN_ENUM_TYPE m_ucSkinModelMax;
 
 
 	HWND					m_hWnd;
-	ID3D11Device*			m_pDevice11;
-	ID3D11DeviceContext*	m_pCotext11;
+	ID3D11Device*			m_wpDevice11;
+	ID3D11DeviceContext*	m_wpCotext11;
 	CD3DXSKINMESH_INIT		m_Si;
 
 	clsDX9Mesh**			m_ppStaticModels;
 	clsD3DXSKINMESH**		m_ppSkinModels;
 
 
-	char m_FilePath[255];
-
-
-	//読み込むパーツ数を数えるため.
-	clsFILE* m_pFile;
 	//パーツの数を吐き出す.
 	SKIN_ENUM_TYPE GetPartsNum( const enPARTS_READ enPartsRead );
 };

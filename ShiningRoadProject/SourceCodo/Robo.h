@@ -28,6 +28,14 @@ const int g_iQuickTurnFrame = 1 * (int)g_fFPS;
 class clsRobo : public clsCharactor
 {
 public:
+	enum enWeaponType
+	{
+		enWeaponLHand,
+		enWeaponRHand,
+
+		enWeaponTypeSize
+	};
+
 	/*clsSkinMesh * m_pHead;
 	clsSkinMesh * m_pCore;
 	clsSkinMesh * m_pLeftArm;
@@ -35,10 +43,7 @@ public:
 	clsSkinMesh * m_pLeg;*/
 	clsSkinMesh* m_pMesh;
 
-	void RoboInit(HWND hWnd,
-		ID3D11Device* pDevice11,
-		ID3D11DeviceContext* pContext11,
-		clsPOINTER_GROUP* const pPtrGroup );
+	void RoboInit(clsPOINTER_GROUP* const pPtrGroup);
 
 	void ModelUpdate()
 	{
@@ -57,23 +62,52 @@ public:
 		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
 	}
 
-	virtual void tenshi()override{};
+	bool m_bBoost;//true:ブースター展開/false:非展開.
 
-	bool m_bBoost;
+	//Headパーツから数値を取得する変数と関連する変数//
 
-	float m_fWalktMoveSpeedMax;
-	int m_iWalkTopSpeedFrame;
+	//Coreパーツから数値を取得する変数と関連する変数//
+	int m_iEnelgyMax;//エネルギー最大容量.
+	int m_iEnelgy;//現在エネルギー残量.
+	int m_iEnelgyOutput;//エネルギー出力(回復量)
+	int m_iEnelgyRecoveryPoint;//現在のエネルギー回復量.
+	int m_iBoostFloatRecovery;//空中でブースト展開中のエネルギー使用量.
+
+	void EnelgyRecovery();
+	void SetEnelgyRecoveryAmount();
+	bool EnelgyConsumption(const int iConsumption);//エネルギー消費はここから.
 
 	float m_fBoostMoveSpeedMax;
-	int m_iBoostTopSpeedFrame;
+	int m_iBoostMoveCost;
 
-	float m_fBoostRisingSpeedMax;//スピードの最大値.
+	float m_fQuickBoostSpeedMax;
+	int m_iQuickBoostEnelgyCost;
+	int m_iQuickBoostTopSpeedTime;//最高速を保つフレーム値.
+	int m_iQuickBoostDecStartTime;//残クイック噴射時間.
+
+	float m_fQuickTrunSpeedMax;
+	int m_iQuickTrunEnelgyCost;
+	int m_iQuickTrunTopSpeedTime;//最高速を保つフレーム値.
+	int m_iQuickTrunDecStartTime;//残クイック噴射時間.
+
+	int m_iQuickInterbal;//クイックブーストの再噴射までのフレーム.
+
+	float m_fBoostRisingSpeedMax;//ブースター垂直移動の最高速.
 	int m_iBoostRisingTopSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fBoostRisingAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
+	int m_iBoostRisingyCost;
+	float m_fBoostFollRes;//ブースター展開時に落ちる速度.
 
-	float m_fBoostFollRes;
+	int m_iActivityLimitTime;//活動限界時間.
+	bool m_bTimeUp;
 
-	int m_iQuickInterbal;
+	//Armパーツから数値を取得する変数と関連する変数//
+
+	//Legパーツから数値を取得する変数と関連する変数//
+	float m_fWalktMoveSpeedMax;//Legパーツから取得する歩行速度.
+	int m_iWalkTopSpeedFrame;//安定性能から計算.
+	
+	int m_iBoostTopSpeedFrame;//安定性能から計算.
 
 	void Walk();
 	void Boost();
@@ -84,7 +118,13 @@ public:
 	void QuickTurn();
 	void SetDirQuickTurn(const float fAngle);
 
+	void ShotLWeapon();
+	void ShotRWeapon();
+
 	void Updata();
+	void UpdataQuick();
+	void UpdataLimitTime();
+	void UpdataBoost();
 
 	clsRobo();
 	~clsRobo();
@@ -97,7 +137,7 @@ private:
 	//消すときdeleteしないでnullしてね.
 	clsResource*		m_wpResource;
 	clsEffects*			m_wpEffects;
-	clsSOUND_MANAGER*	m_wpSound;
+	clsSOUND_MANAGER_BASE*	m_wpSound;
 #endif//#ifdef Tahara
 
 

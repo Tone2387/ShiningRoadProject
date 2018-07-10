@@ -18,6 +18,8 @@ public:
 		STABILITY,	//安定性能.
 		TURN,		//旋回性能.
 		JUMP_POWER,	//ジャンプ力.
+
+		COL_SIZE,	//当たり判定サイズ.
 						
 		size
 	};

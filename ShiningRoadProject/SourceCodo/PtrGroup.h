@@ -1,12 +1,13 @@
 #pragma once
 
 #include "DxInput.h"
+#include "CXInput.h"
 #include "Resource.h"
 #include "Effects.h"
-#include "SoundManager.h"
+#include "SoundManagerBase.h"
 #include "Camera.h"
 #include "RoboStatus.h"
-
+#include "BlackScreen.h"
 
 class clsPOINTER_GROUP
 {
@@ -17,13 +18,17 @@ public:
 		ID3D11DeviceContext* const pContext,
 		D3D10_VIEWPORT* const pViewPort,
 		ID3D11DepthStencilState* const pDepthState,
-		clsDxInput* const pInput,
+		clsDxInput* const pDxInput,
+		clsXInput* const pXInput,
 		clsResource* const pResource,
 		clsEffects* const pEffects,
-		clsSOUND_MANAGER* const pSound,
-		clsROBO_STATUS* const pRoboStatus );
+		clsSOUND_MANAGER_BASE* const pSound,
+		clsROBO_STATUS* const pRoboStatus,
+		clsBLACK_SCREEN* const pBlack );
 	~clsPOINTER_GROUP();
 
+	//サウンドのアドレス取得.
+	void UpdateSoundPtr( clsSOUND_MANAGER_BASE* const pSound );
 	//カメラのアドレス取得.
 	void UpdateCameraPtr( clsCAMERA_BASE* const pCamera );
 
@@ -33,11 +38,13 @@ public:
 	D3D10_VIEWPORT* GetViewPort() const;
 	ID3D11DepthStencilState* GetDepthState() const;
 	clsDxInput* GetDxInput() const;
+	clsXInput* GetXInput() const;
 	clsResource* GetResource() const;
 	clsEffects*	GetEffects() const;
-	clsSOUND_MANAGER*	GetSound() const;
+	clsSOUND_MANAGER_BASE*	GetSound() const;
 	clsCAMERA_BASE*	GetCamera() const;
 	clsROBO_STATUS* GetRoboStatus() const;
+	clsBLACK_SCREEN* GetBlackScreen() const;
 
 private:
 	//デバイスオブジェクト.
@@ -50,17 +57,21 @@ private:
 
 	//ジョイスティック.
 	clsDxInput*		m_wpDxInput;
+	clsXInput*		m_wpXInput;
 	//リソース.
 	clsResource* m_wpResource;
 	//エフェクトクラス.
 	clsEffects*	m_wpEffects;
 	//BGM,SE.
-	clsSOUND_MANAGER*	m_wpSound;
+	clsSOUND_MANAGER_BASE*	m_wpSound;
 
 	//カメラ( こいつだけシーン切り替えごとに変わる ).
 	clsCAMERA_BASE*		m_wpCamera;
 
 	//( シーンをまたぐ )ロボットのステータス.
 	clsROBO_STATUS*		m_wpRoboStatus;
+
+	//暗転用黒スプライト.
+	clsBLACK_SCREEN*	m_wpBlackScreen;
 };
 

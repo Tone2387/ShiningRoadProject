@@ -28,7 +28,7 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4 &vColor,
+		const D3DXVECTOR4& vColor,
 		const bool alphaFlg );
 
 	void AnimUpdate();
@@ -40,7 +40,7 @@ public:
 	//座標や回転の更新.
 	void ModelUpdate(TRANSFORM Transform);
 
-	D3DXVECTOR3 GetBonePos(char* sBoneName);
+	virtual D3DXVECTOR3 GetBonePos( const char* sBoneName, const bool isLocalPos = false );
 
 	//指定したボーン位置からvDiviation分移動した位置を取得する.
 	D3DXVECTOR3 GetBoneDiviaPos(char* sBoneName, D3DXVECTOR3 vDiviation);

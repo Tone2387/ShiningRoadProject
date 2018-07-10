@@ -2,9 +2,11 @@
 
 #include "File.h"
 
-#include "SceneClass.h"
+#include "SceneBase.h"
 #include "CameraAssemble.h"
 #include "AssembleModel.h"
+
+#include "AssembleUi.h"
 
 #include <vector>
 #include <string>
@@ -47,7 +49,7 @@ private:
 
 
 	void CreateProduct() final;
-	void UpdateProduct( enSCENE &nextScene ) final;
+	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 	//コントローラ操作.
@@ -79,12 +81,34 @@ private:
 	//お着換えするモデル.
 	clsASSEMBLE_MODEL*	m_pAsmModel;
 
+	//UI.
+	clsASSEMBLE_UI*		m_pUI;
+
 	clsFILE*	m_pFile[enPARTS_TYPES::ENUM_SIZE];
 
 //	clsSPRITE2D_CENTER* m_pSprite;
 //	clsCharaStatic* m_pTestChara;
 //	clsCharaStatic* m_pParts;
 
+
+
+	//エフェクト.
+	::Effekseer::Handle m_ehHibana;
+
+
+	//音の引数.
+	enum enBGM : int
+	{
+		ASSEMBLE = 0,
+	};
+
+	enum enSE : int
+	{
+		CURSOL_MOVE = 0,
+		ENTER,
+		EXIT,
+		MISSION_START,
+	};
 
 };
 

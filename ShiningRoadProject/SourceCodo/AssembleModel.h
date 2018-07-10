@@ -6,7 +6,8 @@
 
 #include "RoboStatus.h"
 
-
+//改名案.
+//clsROBO_MODEL_SET.
 
 //アセンブルシーンのモデルさん.
 class clsASSEMBLE_MODEL
@@ -24,7 +25,7 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
 		const bool isAlpha = false );
 
 	//モデルの初期セット.
@@ -40,6 +41,7 @@ public:
 
 	void SetRot( const D3DXVECTOR3 &vRot );
 	void AddRot( const D3DXVECTOR3 &vRot );
+	D3DXVECTOR3 GetRot() const;
 
 	void SetScale( const float fScale );
 
@@ -55,6 +57,12 @@ public:
 
 private:
 
+
+	//腕の角度を武器も模写する.
+	void FitJointModel( 
+		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
+		const char *RootBone, const char *EndBone );
+
 	//アニメーションリセット.
 	void AnimReSet();
 
@@ -67,16 +75,12 @@ private:
 
 	clsResource* m_wpResource;
 
-	clsFACTORY_PARTS*	m_pPartsFactory;
+	std::unique_ptr< clsFACTORY_PARTS >	m_upPartsFactory;
+
 	//パーツの数分のポインタ.
-	clsPARTS_BASE**	m_wppParts;
-	
+//	clsPARTS_BASE**	m_wppParts;
+	std::vector< clsPARTS_BASE* >	m_vpParts;
 
-
-	//腕の角度を武器も模写する.
-	void FitJointModel( 
-		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-		char *RootBone, char *EndBone );
 
 };
 

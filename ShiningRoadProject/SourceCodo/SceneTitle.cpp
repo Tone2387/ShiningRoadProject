@@ -19,6 +19,7 @@ clsSCENE_TITLE::~clsSCENE_TITLE()
 
 void clsSCENE_TITLE::CreateProduct()
 {
+
 	//モデルさん作成.
 	m_pRoboModel = new clsASSEMBLE_MODEL;
 	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus );
@@ -29,13 +30,28 @@ void clsSCENE_TITLE::CreateProduct()
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
 }
 
-void clsSCENE_TITLE::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 {
-//	//Update関数が機能しているかのテスト用回転.
-//	m_pRoboModel->AddRot( D3DXVECTOR3( 0.0f, 0.00f, 0.025f ) );
+	//エフェクトの使い方.
+	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
+		//						Excelの行番号	座標.
+		m_ehHibana = m_wpEffects->Play( 2, { 0.0f, 20.0f, 0.0f } );
+
+		//大きくする.
+		m_wpEffects->SetScale( m_ehHibana, 50.0f );
+		//座標.
+		m_wpEffects->SetPosition( m_ehHibana, { 0.0f, 10.0f, 0.0f } );
+		//回転.
+		static float fff = 0.0f;
+		m_wpEffects->SetRotation( m_ehHibana, { 0.0f, 0.0f, fff } );
+		fff += 0.1f;
+	}
 
 
-	DebugChangeScene( nextScene );
+	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
+		enNextScene = enSCENE::ASSEMBLE;
+		m_wpSound->PlaySE( 0 );
+	}
 }
 
 void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )

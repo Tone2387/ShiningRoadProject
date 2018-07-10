@@ -10,6 +10,7 @@
 #include"DX9Mesh.h"
 
 const float g_fPercentage = 0.01f;
+const float g_fDistanceReference = 0.01f;
 
 const float g_fGravity = 0.01f;
 
@@ -21,6 +22,7 @@ const D3DXVECTOR3 g_vDirUp		= D3DXVECTOR3(  0.0f,  1.0f,  0.0f);
 const D3DXVECTOR3 g_vDirDown	= D3DXVECTOR3(  0.0f, -1.0f,  0.0f);
 
 const float g_fGroundSpece = 0.01f;
+const float g_fRaySpace = 1.0f;
 
 //回転値調整.
 void ObjRollOverGuard(float* fRot);
@@ -51,6 +53,7 @@ public:
 
 	TRANSFORM m_Trans;
 	D3DXVECTOR3 m_vOldPos;
+	D3DXVECTOR3 m_vCenterPos;//オブジェクトの中心.
 
 	float m_fRaySpece;
 	float m_fFollPower;
@@ -58,18 +61,24 @@ public:
 	float m_fMoveSpeed;//最終的に加算されるスピード.
 	D3DXVECTOR3 m_vMoveDir;
 
-	void Updata(const clsDX9Mesh* pGround)
+	void Updata(const clsDX9Mesh* pGround = nullptr)
 	{
 		m_vOldPos = m_Trans.vPos;
 
-		tenshi();
+		ActionProduct();
 
-		WallJudge(pGround);
+		if (pGround&&m_NoFollObj)
+		{
+			FreeFoll();
+		}
 	}
 
-	virtual void tenshi(){};
+	virtual void ActionProduct(){};
+	virtual void Render(D3DXMATRIX& mView,D3DXMATRIX& mProj,D3DXVECTOR3 vLight,D3DXVECTOR3 vEye){};
 
 	bool m_bGround;
+
+	bool m_NoFollObj;
 
 	SPHERE** m_ppColSpheres;
 	int m_iColSpheresMax;
@@ -90,10 +99,13 @@ public:
 		ObjRollOverGuard(&m_Trans.fPitch);
 		ObjRollOverGuard(&m_Trans.fRoll);
 	}
+
+	//スフィア衝突判定関数.
+	bool Collision(SPHERE pAttacker, SPHERE pTarget);//Sphere対Sphereの当たり判定.
+	bool ObjectCollision(SPHERE* pTarget,const int iNumMax);
+
 	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
 	void SetScale(float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
-	
-	void WallJudge(const clsDX9Mesh* pWall, const bool bFoll = true);
 
 	bool WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir);
 	bool WallForward(const clsDX9Mesh* pWall, const bool bSlip = true);
@@ -101,7 +113,7 @@ public:
 	bool WallLeft(const clsDX9Mesh* pWall, const bool bSlip = true);
 	bool WallRight(const clsDX9Mesh* pWall, const bool bSlip = true);
 	bool WallUp(const clsDX9Mesh* pWall);
-	bool WallUnder(const clsDX9Mesh* pWall, const bool bFoll);
+	bool WallUnder(const clsDX9Mesh* pWall);
 
 	bool Intersect(
 		const RAYSTATE RayState,
@@ -116,10 +128,7 @@ private:
 		const DWORD dwPolyIndex,
 		D3DXVECTOR3* pVecVertices);
 
-	void FreeFoll()
-	{
-		m_fFollPower -= g_fGravity;
-	}
+	void FreeFoll();
 };
 
 #endif

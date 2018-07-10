@@ -46,9 +46,11 @@ public:
 	virtual ~clsSprite2D();	//デストラクタ.
 
 	//初期化.
-	HRESULT Create( ID3D11Device* const pDevice11,
+	HRESULT Create( 
+		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11,
-		LPSTR const fileName, const SPRITE_STATE ss );
+		const char* fileName, 
+		const SPRITE_STATE ss );
 
 
 	//描画(レンダリング)
@@ -60,7 +62,10 @@ public:
 	void SetScale( const float &fScale, 
 		const bool withZ = false );	//XとYを等しい倍率で書ける.
 									//第二引数をtrueにするとZにも影響する.		
-	void SetAlpha( const float &fAlpha );
+	void SetAlpha( const float fAlpha );
+	//範囲をoverするとfalseが返ってくる.
+	bool AddAlpha( const float fAlpha );
+	float GetAlpha();
 
 	D3DXVECTOR3 GetPos() const;
 	D3DXVECTOR3 GetScale() const;
@@ -70,6 +75,7 @@ public:
 	void AddScale( const D3DXVECTOR3 &vScale );	//引数倍にする.
 	void AddScale( const float &fScale, const bool withZ = false );
 
+	void SetAnim( const POINTFLOAT &anim );
 
 protected:
 
@@ -79,7 +85,7 @@ protected:
 	//モデル作成.
 	virtual HRESULT InitModel( SPRITE_STATE ss );
 	//テクスチャ作成.
-	HRESULT CreateTexture( LPSTR fileName,
+	HRESULT CreateTexture( const char* const fileName,
 		ID3D11ShaderResourceView** pTex );
 
 	void Release();

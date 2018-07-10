@@ -8,11 +8,12 @@
 #include "Object.h"
 
 
-#include <vector>
-#include <string>
 
-//ステータス列挙体の型( 継承クラスで定義している ).
-#define PARTS_STATUS_TYPE UCHAR
+
+
+//ステータス列挙体の型( 継承クラスで定義している列挙体の型 ).
+//#define PARTS_STATUS_TYPE UCHAR
+using PARTS_STATUS_TYPE = UCHAR;
 
 //========== パーツの基底クラス ==========//.
 class clsPARTS_BASE : public clsSkinMesh , public clsObject
@@ -31,11 +32,16 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4 &vColor,
+		const D3DXVECTOR4& vColor,
 		const bool isAlpha );
+
+	D3DXVECTOR3 GetBonePos( const char* sBoneName, const bool isLocalPos = false ) override;
 
 	//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
 	bool PartsAnimChange( const int iIndex );
+
+	//パーツの名前を覚える.
+	void SetPartsName( const std::string &sPartsName );
 
 protected:
 	//----- 各パーツごとの関数 -----//.
@@ -43,7 +49,8 @@ protected:
 	virtual void UpdateProduct() = 0;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 
-
+	//パーツの名前.
+	std::string m_sPartsName;
 
 private:
 

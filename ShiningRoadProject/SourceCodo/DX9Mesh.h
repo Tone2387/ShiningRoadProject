@@ -77,10 +77,13 @@ public:
 
 
 	//レンダリング用(※DX9MESH内とMain内で2つ存在するので注意).
-	void Render( const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
-				const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye,
-				const D3DXVECTOR4 &vColor = D3DXVECTOR4( 1.0f,1.0f,1.0f,1.0f ),
-				const bool alphaFlg = false );
+	void Render( 
+		const D3DXMATRIX& mView,
+		const D3DXMATRIX& mProj,
+		const D3DXVECTOR3& vLight, 
+		const D3DXVECTOR3& vEye,
+		const D3DXVECTOR4& vColor = D3DXVECTOR4( 1.0f,1.0f,1.0f,1.0f ),
+		const bool alphaFlg = false );
 
 	//透過(アルファブレンド)設定の切り替え.
 	void SetBlend( const bool flg );

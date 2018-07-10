@@ -1,12 +1,16 @@
 #pragma once
 
-#include"Object.h"
-#include"StaticMesh.h"
+//ステージのオブジェクト等に使う.
 
-class clsObjStaticMesh : public clsObject, public clsStaticMesh
+#include"Object.h"
+
+class clsObjStaticMesh : public clsObject
 {
 public:
-	void Update()
+	
+	clsDX9Mesh* GetStaticMesh() const;
+
+	void ModelTransUpdate()
 	{
 		if (m_pMesh == NULL)return;
 
@@ -14,14 +18,21 @@ public:
 		m_pMesh->m_Trans.fYaw = m_Trans.fYaw;
 		m_pMesh->m_Trans.fPitch = m_Trans.fPitch;
 		m_pMesh->m_Trans.fRoll = m_Trans.fRoll;
-		m_pMesh->m_Trans.fScale = m_Trans.vScale.x;
+		m_pMesh->m_Trans.vScale = m_Trans.vScale;
+	}
+
+	virtual void Render(D3DXMATRIX& const mView, D3DXMATRIX& const mProj, D3DXVECTOR3& const vLight, D3DXVECTOR3& const vEye)
+	{
+		ModelTransUpdate();
+
+		m_pMesh->Render(mView, mProj, vLight, vEye);
 	}
 
 	clsObjStaticMesh();
 	~clsObjStaticMesh();
 
 private:
-
+	clsDX9Mesh* m_pMesh;
 };
 
 clsObjStaticMesh::clsObjStaticMesh()

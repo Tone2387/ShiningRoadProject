@@ -1,5 +1,7 @@
 #include "Main.h"
 #include <stdio.h>
+#include <thread>
+#include "RenderAtStartUp.h"
 
 //Using宣言.
 using namespace std;
@@ -7,8 +9,8 @@ using namespace std;
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //グローバル変数.
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-clsMain* g_pClsMain = nullptr;
-
+//clsMain* g_pClsMain = nullptr;
+unique_ptr< clsMain >	g_upMain;
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //	定数.
@@ -30,28 +32,30 @@ INT WINAPI WinMain(
 	// メモリリーク検出
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	g_pClsMain = new clsMain;	//初期化&クラスの宣言.
+//	g_pClsMain = new clsMain;	//初期化&クラスの宣言.
+	g_upMain = make_unique< clsMain >();
 
 	//クラスが存在しているかチェック.
-	if( g_pClsMain != nullptr ){
+	if( g_upMain != nullptr ){
 		//ウィンドウ作成成功.
 		if( SUCCEEDED(
-			g_pClsMain->InitWindow(
+			g_upMain->InitWindow(
 				hInstance,
 				64, 64,
 				WND_W, WND_H,
 				WND_TITLE ) ) )
 		{
 			//Dx11用の初期化
-			if( SUCCEEDED( g_pClsMain->InitD3D() ) ){
+			if( SUCCEEDED( g_upMain->InitD3D() ) ){
 				//メッセージループ.
-				g_pClsMain->Loop();
+				g_upMain->Loop();
 			}
 		}
 		//終了.
-		g_pClsMain->DestroyD3D();//Direct3Dの解放.
+		g_upMain->DestroyD3D();//Direct3Dの解放.
 
-		delete g_pClsMain;		//クラスの破棄.
+//		delete g_upMain;		//クラスの破棄.
+		g_upMain.reset( nullptr );
 	}
 
 	return 0;
@@ -66,7 +70,7 @@ LRESULT CALLBACK WndProc(
 	WPARAM wParam, LPARAM lParam )
 {
 	//プロシージャ.
-	return g_pClsMain->MsgProc( hWnd, uMsg, wParam, lParam );
+	return g_upMain->MsgProc( hWnd, uMsg, wParam, lParam );
 }
 
 
@@ -86,11 +90,9 @@ clsMain::clsMain() :
 	m_pBackBuffer_DSTex( nullptr ),
 	m_pBackBuffer_DSTexDSV( nullptr ),
 	m_spDepthStencilState( nullptr ),
-	m_pGame( nullptr ),
+	m_upGame( nullptr ),
 	m_spViewPort( nullptr )
 {
-
-
 }
 
 //============================================================
@@ -98,7 +100,6 @@ clsMain::clsMain() :
 //============================================================
 clsMain::~clsMain()
 {
-
 }
 
 //============================================================
@@ -222,9 +223,26 @@ LRESULT clsMain::MsgProc(
 //============================================================
 void clsMain::Loop()
 {
+	//起動中の描画.
+	unique_ptr< clsRENDER_AT_START_UP > upRenderAtStartUp =
+		make_unique< clsRENDER_AT_START_UP >( 
+			m_pDevice,
+			m_pDeviceContext,
+			m_pSwapChain,
+			m_pBackBuffer_TexRTV,
+			m_pBackBuffer_DSTexDSV,
+			m_spDepthStencilState );
+	//別スレッドで描画.
+//	thread thStartUpRender( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
+	thread thStartUpRender( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
+
 	//メッシュ読み込み関数をまとめたもの.
 	ReadMesh();
 
+	//必要なくなったので閉じる.
+	upRenderAtStartUp->FinishLoad();
+	thStartUpRender.join();
+	upRenderAtStartUp.reset();
 
 	//----------------------------------------------------------
 	//	フレームレート.
@@ -235,7 +253,6 @@ void clsMain::Loop()
 	DWORD sync_now;
 	//時間処理の為、最小単位を1ミリ秒に変更.
 	timeBeginPeriod( 1 );
-
 
 	//メッセージループ.
 	MSG msg = { 0 };
@@ -269,13 +286,9 @@ void clsMain::Loop()
 //============================================================
 void clsMain::AppMain()
 {
-#if _DEBUG
-
-#endif //#if _DEBUG
-
 	//ゲームループ.
-	ASSERT_IF_NULL( m_pGame );
-	m_pGame->Update();
+	ASSERT_IF_NULL( m_upGame );
+	m_upGame->Update();
 
 	//レンダリング.
 	Render();
@@ -301,8 +314,8 @@ void clsMain::Render()
 
 
 	//このRender関数の前のAppMain関数でチェックしているのでアサートは省く.
-//	ASSERT_IF_NULL( m_pGame );
-	m_pGame->Render();
+//	ASSERT_IF_NULL( m_upGame );
+	m_upGame->Render();
 	
 	//2D?.
 //	SetDepth( false );	//Zテスト:OFF.
@@ -314,6 +327,7 @@ void clsMain::Render()
 	m_pSwapChain->Present( 0, 0 );
 
 }
+
 
 
 //============================================================
@@ -527,8 +541,10 @@ void clsMain::DestroyD3D()
 #ifdef Tahara
 
 
-	SAFE_DELETE( m_pGame );
-
+//	SAFE_DELETE( m_upGame );
+	if( m_upGame ){
+		m_upGame.reset( nullptr );
+	}
 
 #endif //#ifdef Tahara
 
@@ -546,9 +562,15 @@ void clsMain::DestroyD3D()
 ////============================================================
 HRESULT clsMain::ReadMesh()
 {
-	m_pGame = new clsGAME( 
-		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
-	m_pGame->Create();
+//	m_upGame = new clsGAME( 
+//		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
+	m_upGame = make_unique< clsGAME >( 
+		m_hWnd, 
+		m_pDevice, 
+		m_pDeviceContext, 
+		m_spViewPort, 
+		m_spDepthStencilState );
+	m_upGame->Create();
 
 
 
@@ -568,7 +590,6 @@ HRESULT clsMain::ReadMesh()
 	//レイ表示の初期化(左右).
 	if( m_pRayH == nullptr ){
 		m_pRayH = new clsRay;
-		int r = sizeof( clsRay );
 		m_pRayH->m_Ray.vPoint[0] = D3DXVECTOR3(-5.0f, 0.0f, 0.0f);
 		m_pRayH->m_Ray.vPoint[1] = D3DXVECTOR3( 5.0f, 0.0f, 0.0f);
 		m_pRayH->Init( m_pDevice, m_pDeviceContext );
@@ -580,38 +601,6 @@ HRESULT clsMain::ReadMesh()
 }
 
 
-//============================================================
-//	ボーンの座標をとる.
-//============================================================
-void clsMain::GetPosFromBone( clsD3DXSKINMESH* skinMesh, char BoneName[], D3DXVECTOR3& Pos )
-{
-	D3DXVECTOR3 vBonePos;
-	if( skinMesh->GetPosFromBone( BoneName, &vBonePos ) ){
-		Pos = vBonePos;
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//==========
-
-
-
-
-#ifdef Tahara
 //ConvDimPosの事前準備.
 void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
 {
@@ -619,22 +608,12 @@ void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
 		m_spViewPort = new D3D10_VIEWPORT;
 	}
 
-	m_spViewPort->TopLeftX = static_cast<INT>( Vp->TopLeftX );
-	m_spViewPort->TopLeftY = static_cast<INT>( Vp->TopLeftY );
-	m_spViewPort->MaxDepth = Vp->MaxDepth;
-	m_spViewPort->MinDepth = Vp->MinDepth;
-	m_spViewPort->Width	= static_cast<UINT>( Vp->Width );
+	m_spViewPort->TopLeftX	= static_cast<INT>( Vp->TopLeftX );
+	m_spViewPort->TopLeftY	= static_cast<INT>( Vp->TopLeftY );
+	m_spViewPort->MaxDepth	= Vp->MaxDepth;
+	m_spViewPort->MinDepth	= Vp->MinDepth;
+	m_spViewPort->Width		= static_cast<UINT>( Vp->Width );
 	m_spViewPort->Height	= static_cast<UINT>( Vp->Height );
 };
 
-////3D座標のスクリーン( 2D )座標変換.dimensions(次元) conversion(変換)
-//D3DXVECTOR3 clsMain::ConvDimPos( D3DXVECTOR3 &v2DPos, const D3DXVECTOR3 &v3DPos )
-//{
-//	D3DXMATRIX mWorld;
-//	D3DXMatrixIdentity( &mWorld );
-//	D3DXVec3Project( &v2DPos, &v3DPos, m_spViewPort, &m_mProj, &m_mView, &mWorld );
-//	return v2DPos;
-//}
 
-
-#endif//#ifdef Tahara

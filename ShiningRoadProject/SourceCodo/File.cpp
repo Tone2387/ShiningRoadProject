@@ -33,9 +33,12 @@ clsFILE::~clsFILE()
 }
 
 
-void clsFILE::Open( const string sFileName )
+
+//----- 読み込み関係 -----//.
+bool clsFILE::Open( const string &sFileName )
 {
 	assert( !m_bUsing );//使用中にopenするな.
+	if( m_bUsing ) return false;
 
 	m_sFileName = sFileName;
 
@@ -49,7 +52,7 @@ void clsFILE::Open( const string sFileName )
 		if( !ifs ){
 			cout << "ひらけなかったよ" << endl;
 			cin.get();
-			return;
+			return false;
 		}
 
 		string sBuff;//仮のデータ.
@@ -81,6 +84,8 @@ void clsFILE::Open( const string sFileName )
 	m_vvsData.shrink_to_fit();
 
 	m_bUsing = true;
+
+	return true;
 }
 
 
@@ -93,6 +98,8 @@ void clsFILE::Close()
 	m_vvsData.clear();
 	m_vvsData.shrink_to_fit();
 
+	m_sFileName = "";
+	
 	m_bUsing = false;
 }
 
@@ -126,8 +133,13 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 		string sData;
 		//全文連結.
 		for( unsigned int i=0; i<m_vvsData.size(); i++ ){
+			//改行( 最初は無視 ).
+			if( i ){
+				sData += '\n';
+			}
 			for( unsigned int j=0; j<m_vvsData[i].size(); j++ ){
 				sData += m_vvsData[i][j];
+				sData += cDELIMITER;	//区切り文字.
 			}
 		}
 		return sData;
@@ -139,6 +151,7 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 		//一行連結.
 		for( unsigned int i=0; i<m_vvsData[iRow].size(); i++ ){
 			sData += m_vvsData[iRow][i];
+			sData += cDELIMITER;
 		}
 		return sData;
 	}
@@ -172,7 +185,7 @@ float clsFILE::GetDataFloat(
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
 	//「すべてが数字」ではない || エラーならば.
-	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+	if( /*!all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||*/
 		sBuff == sERROR )
 	{
 		//エラーを返す.
@@ -190,7 +203,7 @@ double clsFILE::GetDataDouble(
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
 	//「すべてが数字」ではない || エラーならば.
-	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+	if( /*!all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||*/
 		sBuff == sERROR )
 	{
 		//エラーを返す.
@@ -203,13 +216,13 @@ double clsFILE::GetDataDouble(
 
 
 //何行あるか.
-unsigned int clsFILE::GetSizeRow()
+unsigned int clsFILE::GetSizeRow() const
 {
 	return m_vvsData.size();
 }
 
 //その行は何列あるか.
-unsigned int clsFILE::GetSizeCol( unsigned int uiRow )
+unsigned int clsFILE::GetSizeCol( unsigned int uiRow ) const
 {
 	//範囲外は許さない.
 	if( uiRow >= m_vvsData.size() ) return 0;
@@ -218,7 +231,7 @@ unsigned int clsFILE::GetSizeCol( unsigned int uiRow )
 
 
 //文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).
-vector< string > clsFILE::Split( const std::string &sStr, const char cSep ) const
+vector< string > clsFILE::Split( const string &sStr, const char cSep ) const
 {
 	vector< string > vsOut;
 	stringstream ss( sStr );
@@ -238,3 +251,77 @@ vector< string > clsFILE::Split( const std::string &sStr, const char cSep ) cons
 	return vsOut;
 }
 
+
+
+//----- 吐き出し関係 -----//.
+//CSVに吐き出し.
+bool clsFILE::OutPutCsv( const FILE_DATA &data ) const
+{
+	//開く.
+	ofstream ofs( m_sFileName );
+
+	//開けた?.
+	if( !ofs ){
+		cout << "ひらけなかったよ" << endl;
+		cin.get();
+		return false;
+	}
+
+	//出力用文字列作成.
+	string OutPut = ConcForOutPut( data );
+	ofs << OutPut;//endlを入れると、このファイルクラスの仕様上、読み込むときにおかしなことになる( 改行文字だけの行が出来てしまう ).
+
+	return true;
+}
+
+//出力用文字列作成.
+//連結.Concatenation : 連結
+string clsFILE::ConcForOutPut( const FILE_DATA &data ) const
+{
+	string OutPut;
+	for( int i=0; i<data.size(); i++ ){
+		//最初は無視.
+		if( i ){
+			OutPut += "\n";//改行文字.
+		}
+
+		//このfor文はCSVファイル一行分を連結している.
+		for( int j=0; j<data[i].size(); j++ ){
+			OutPut += data[i][j];//連結.
+			OutPut += cDELIMITER;//区切り文字.
+		}
+	}
+
+	return OutPut;
+}
+
+
+//OutPutCsvの引数の枠づくり.
+void clsFILE::CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol ) const
+{
+	//初期化.
+	for( unsigned int i=0; i<Outdata.size(); i++ ){
+		Outdata.clear();
+		Outdata.shrink_to_fit();
+	}
+	Outdata.clear();
+	Outdata.shrink_to_fit();
+
+	//push_back用.
+	FILE_DATA_ROW init_data;
+
+	Outdata.reserve( iRow );
+	for( int i=0; i<iRow; i++ ){
+
+		Outdata.push_back( init_data );
+		Outdata[i].reserve( iCol );
+
+		for( int j=0; j<iCol; j++ ){
+			Outdata[i].push_back( "" );
+		}
+
+		Outdata[i].shrink_to_fit();
+	}
+	Outdata.shrink_to_fit();
+
+}

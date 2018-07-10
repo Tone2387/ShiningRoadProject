@@ -31,7 +31,7 @@ clsSprite2D::~clsSprite2D()
 //初期化.
 HRESULT clsSprite2D::Create(
 	ID3D11Device* const pDevice11, ID3D11DeviceContext* const pContext11,
-	LPSTR const fileName, const SPRITE_STATE ss )
+	const char* fileName, const SPRITE_STATE ss )
 {
 	m_pDevice11 = pDevice11;
 	m_pDeviceContext11 = pContext11;
@@ -283,7 +283,7 @@ HRESULT clsSprite2D::InitModel( SPRITE_STATE ss )
 //	テクスチャ作成.
 //================================================
 HRESULT clsSprite2D::CreateTexture(
-	LPSTR fileName,
+	const char* const fileName,
 	ID3D11ShaderResourceView** pTex )
 {
 	//テクスチャ作成.
@@ -323,7 +323,7 @@ void clsSprite2D::Render()
 		m_vPos.x, m_vPos.y, m_vPos.z);
 
 	//合成.
-	mWorld = mTrans * mScale;
+	mWorld = mScale * mTrans;
 
 	//使用するシェーダの登録.
 	m_pDeviceContext11->VSSetShader(m_pVertexShader, NULL, 0);
@@ -409,14 +409,11 @@ void clsSprite2D::Release()
 	SAFE_RELEASE( m_pVertexLayout );
 	SAFE_RELEASE( m_pVertexShader );
 
-
-//	m_pVertexShader = nullptr;
-//	m_pVertexLayout = nullptr;
-//	m_pPixelShader = nullptr;	
-//	m_pConstantBuffer = nullptr;
-//	m_pVertexBuffer = nullptr;
-//	m_pTexture = nullptr;
-//	m_pSampleLinear = nullptr;
+	m_fAlpha = 0.0f;
+	m_vScale = m_vPos = { 0.0f, 0.0f, 0.0f };
+	m_fPatternNo = { 0.0f, 0.0f };
+	m_SState.Anim = { 0.0f, 0.0f };
+	m_SState.Disp = { 0.0f, 0.0f };
 }
 
 
@@ -440,10 +437,34 @@ void clsSprite2D::SetScale( const float &fScale, const bool withZ )
 	m_vScale.z = fScale;
 }
 
-void clsSprite2D::SetAlpha( const float &fAlpha )
+void clsSprite2D::SetAlpha( const float fAlpha )
 {
 	m_fAlpha = fAlpha;
 }
+bool clsSprite2D::AddAlpha( const float fAlpha )
+{
+	//範囲内.
+	bool isWithInRange = true;
+
+	m_fAlpha += fAlpha;
+
+	//範囲確認.
+	if( m_fAlpha < 0.0f ){
+		m_fAlpha = 0.0f;
+		isWithInRange = false;
+	}
+	else if( m_fAlpha > 1.0 ){
+		m_fAlpha = 1.0f;
+		isWithInRange = false;
+	}
+
+	return isWithInRange;
+}
+float clsSprite2D::GetAlpha()
+{
+	return m_fAlpha;
+}
+
 
 D3DXVECTOR3 clsSprite2D::GetPos() const
 {
@@ -475,4 +496,9 @@ void clsSprite2D::AddScale( const float &fScale, const bool withZ )
 
 	if( withZ ) return;
 	m_vScale.z *= fScale;
+}
+
+void clsSprite2D::SetAnim( const POINTFLOAT &anim )
+{
+	m_fPatternNo = anim;
 }

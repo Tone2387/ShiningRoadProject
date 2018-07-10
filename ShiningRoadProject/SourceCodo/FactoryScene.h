@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneClass.h"
+//#include "SceneBase.h"
 #include "SceneTitle.h"
 #include "SceneAssemble.h"
 #include "SceneMission.h"
@@ -8,7 +8,6 @@
 #include "SceneGameOver.h"
 
 
-class clsCAMERA_BASE;
 
 //Šî’êƒNƒ‰ƒX.
 class clsFACTORY

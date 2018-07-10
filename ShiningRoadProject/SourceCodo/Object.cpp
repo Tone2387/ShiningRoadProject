@@ -186,23 +186,12 @@ void ObjRollOverGuard(float* fRot)
 	}
 }
 
-void clsObject::WallJudge(const clsDX9Mesh* pWall, const bool bFoll)
-{
-	WallForward(pWall);
-	WallBack(pWall);
-	WallLeft(pWall);
-	WallRight(pWall);
-
-	m_bGround = WallUnder(pWall, bFoll);
-	WallUp(pWall);
-}
-
 bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir)
 {
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
-	float fRaySpece = 1.0f;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = vRayDir;
 	rs.vRayStart = m_Trans.vPos;
@@ -212,7 +201,7 @@ bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3
 	bool bResult = false;
 
 	//前が壁に接近.
-	if (fDis < fRaySpece && fDis > 0.01f)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 	}
@@ -224,7 +213,7 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
-	float fRaySpece = 1.0f;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirForward;
 	rs.vRayStart = m_Trans.vPos;
@@ -238,7 +227,7 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 	bool bResult = false;
 	
 	//前が壁に接近.
-	if (fDis < fRaySpece && fDis > 0.01f)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
@@ -302,7 +291,7 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
-	float fRaySpece = 1.0f;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirBack;
 	rs.vRayStart = m_Trans.vPos;
@@ -315,7 +304,7 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > 0.01f)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
@@ -379,7 +368,7 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
-	float fRaySpece = 1.0f;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirLeft;
 	rs.vRayStart = m_Trans.vPos;
@@ -392,7 +381,7 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > 0.01f)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
@@ -457,7 +446,7 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
-	float fRaySpece = 1.0f;
+	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirRight;
 	rs.vRayStart = m_Trans.vPos;
@@ -470,7 +459,7 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > 0.01f)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
@@ -557,7 +546,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 	return bResult;
 }
 
-bool clsObject::WallUnder(const clsDX9Mesh* pWall, const bool bFoll)
+bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 {
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
@@ -580,15 +569,48 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall, const bool bFoll)
 		m_fFollPower = 0.0f;
 	}
 
-	else
-	{
-		if (bFoll)
-		{
-			FreeFoll();
-			m_Trans.vPos.y += m_fFollPower;
-		}
-	}
-
 	return bResult;
 }
 
+bool clsObject::Collision(SPHERE pAttacker, SPHERE pTarget)
+{
+	//2つの物体の中心間の距離を求める.
+	D3DXVECTOR3 vLength = *pTarget.vCenter - *pAttacker.vCenter;
+	//長さに変換する.
+	float Length = D3DXVec3Length(&vLength);
+
+	//2物体間の距離が、2物体の半径を足したもの.
+	//小さいということは、ｽﾌｨｱ同士が重なっている.
+	//(衝突している)ということ.
+	if (Length <=
+		pAttacker.fRadius + pTarget.fRadius)
+	{
+		return true;//衝突.
+	}
+	return false;//衝突していない.
+}
+
+bool clsObject::ObjectCollision(SPHERE* pTarget, const int iNumMax)
+{
+	for (int i = 0; i < m_iColSpheresMax; i++)
+	{
+		for (int j = 0; j < iNumMax; j++)
+		{
+			if (Collision(*m_ppColSpheres[i], pTarget[j]))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void clsObject::FreeFoll()
+{
+	if (!m_bGround)
+	{
+		m_fFollPower -= g_fGravity;
+		m_Trans.vPos.y += m_fFollPower;
+	}
+}

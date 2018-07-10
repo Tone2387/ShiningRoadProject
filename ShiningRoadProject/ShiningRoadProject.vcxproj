@@ -83,6 +83,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\AssembleModel.cpp" />
+    <ClCompile Include="SourceCodo\AssembleUi.cpp" />
+    <ClCompile Include="SourceCodo\BlackScreen.cpp" />
     <ClCompile Include="SourceCodo\Camera.cpp" />
     <ClCompile Include="SourceCodo\CameraAssemble.cpp" />
     <ClCompile Include="SourceCodo\CameraEnding.cpp" />
@@ -94,8 +96,8 @@
     <ClCompile Include="SourceCodo\CharaStatic.cpp" />
     <ClCompile Include="SourceCodo\Common.cpp" />
     <ClCompile Include="SourceCodo\CXInput.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="SourceCodo\DebugText.cpp" />
     <ClCompile Include="SourceCodo\DX9Mesh.cpp" />
@@ -106,11 +108,14 @@
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
     <ClCompile Include="SourceCodo\FactoryScene.cpp" />
+    <ClCompile Include="SourceCodo\FactorySoundManager.cpp" />
     <ClCompile Include="SourceCodo\File.cpp" />
     <ClCompile Include="SourceCodo\Game.cpp" />
     <ClCompile Include="SourceCodo\GameObject.cpp" />
+    <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\Object.cpp" />
+    <ClCompile Include="SourceCodo\OperationString.cpp" />
     <ClCompile Include="SourceCodo\PartsArmBase.cpp" />
     <ClCompile Include="SourceCodo\PartsArmL.cpp" />
     <ClCompile Include="SourceCodo\PartsArmR.cpp" />
@@ -121,29 +126,40 @@
     <ClCompile Include="SourceCodo\PartsWeapon.cpp" />
     <ClCompile Include="SourceCodo\PtrGroup.cpp" />
     <ClCompile Include="SourceCodo\Ray.cpp" />
+    <ClCompile Include="SourceCodo\RenderAtStartUp.cpp" />
     <ClCompile Include="SourceCodo\Resource.cpp" />
     <ClCompile Include="SourceCodo\Robo.cpp" />
     <ClCompile Include="SourceCodo\RoboStatus.cpp" />
     <ClCompile Include="SourceCodo\SceneAssemble.cpp" />
-    <ClCompile Include="SourceCodo\SceneClass.cpp" />
+    <ClCompile Include="SourceCodo\SceneBase.cpp" />
     <ClCompile Include="SourceCodo\SceneEnding.cpp" />
     <ClCompile Include="SourceCodo\SceneGameOver.cpp" />
     <ClCompile Include="SourceCodo\SceneMission.cpp" />
     <ClCompile Include="SourceCodo\SceneTitle.cpp" />
     <ClCompile Include="SourceCodo\Shot.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="SourceCodo\SkinMesh.cpp" />
     <ClCompile Include="SourceCodo\Sound.cpp" />
-    <ClCompile Include="SourceCodo\SoundManager.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerAssemble.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerBase.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerEnding.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerMission.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerTitle.cpp" />
     <ClCompile Include="SourceCodo\Sprite.cpp" />
     <ClCompile Include="SourceCodo\Sprite2D.cpp" />
     <ClCompile Include="SourceCodo\Sprite2DCenter.cpp" />
+    <ClCompile Include="SourceCodo\Stage.cpp" />
     <ClCompile Include="SourceCodo\TestObj.cpp" />
+    <ClCompile Include="SourceCodo\UiText.cpp" />
+    <ClCompile Include="SourceCodo\Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\AssembleModel.h" />
+    <ClInclude Include="SourceCodo\AssembleUi.h" />
+    <ClInclude Include="SourceCodo\BlackScreen.h" />
     <ClInclude Include="SourceCodo\Camera.h" />
     <ClInclude Include="SourceCodo\CameraAssemble.h" />
     <ClInclude Include="SourceCodo\CameraEnding.h" />
@@ -157,8 +173,8 @@
     <ClInclude Include="SourceCodo\CharaStatic.h" />
     <ClInclude Include="SourceCodo\Common.h" />
     <ClInclude Include="SourceCodo\CXInput.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="SourceCodo\DebugText.h" />
     <ClInclude Include="SourceCodo\DX9Mesh.h" />
@@ -169,17 +185,20 @@
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
     <ClInclude Include="SourceCodo\FactoryScene.h" />
+    <ClInclude Include="SourceCodo\FactorySoundManager.h" />
     <ClInclude Include="SourceCodo\File.h" />
     <ClInclude Include="SourceCodo\Game.h" />
     <ClInclude Include="SourceCodo\GameObject.h" />
     <ClInclude Include="SourceCodo\Global.h" />
     <ClInclude Include="SourceCodo\InputCharactor.h" />
     <ClInclude Include="SourceCodo\InputRobo.h" />
+    <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
     <ClInclude Include="SourceCodo\MyMacro.h" />
     <ClInclude Include="SourceCodo\Object.h" />
     <ClInclude Include="SourceCodo\ObjSkinMesh.h" />
     <ClInclude Include="SourceCodo\ObjStaticMesh.h" />
+    <ClInclude Include="SourceCodo\OperationString.h" />
     <ClInclude Include="SourceCodo\PartsArmBase.h" />
     <ClInclude Include="SourceCodo\PartsArmL.h" />
     <ClInclude Include="SourceCodo\PartsArmR.h" />
@@ -190,27 +209,37 @@
     <ClInclude Include="SourceCodo\PartsWeapon.h" />
     <ClInclude Include="SourceCodo\PtrGroup.h" />
     <ClInclude Include="SourceCodo\Ray.h" />
+    <ClInclude Include="SourceCodo\RenderAtStartUp.h" />
     <ClInclude Include="SourceCodo\Resource.h" />
     <ClInclude Include="SourceCodo\Robo.h" />
     <ClInclude Include="SourceCodo\RoboCommand.h" />
     <ClInclude Include="SourceCodo\RoboStatus.h" />
     <ClInclude Include="SourceCodo\SceneAssemble.h" />
-    <ClInclude Include="SourceCodo\SceneClass.h" />
+    <ClInclude Include="SourceCodo\SceneBase.h" />
     <ClInclude Include="SourceCodo\SceneEnding.h" />
     <ClInclude Include="SourceCodo\SceneGameOver.h" />
     <ClInclude Include="SourceCodo\SceneMission.h" />
     <ClInclude Include="SourceCodo\SceneTitle.h" />
     <ClInclude Include="SourceCodo\Shot.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="SourceCodo\SkinMesh.h" />
     <ClInclude Include="SourceCodo\Sound.h" />
-    <ClInclude Include="SourceCodo\SoundManager.h" />
+    <ClInclude Include="SourceCodo\SoundManagerAssemble.h" />
+    <ClInclude Include="SourceCodo\SoundManagerBase.h" />
+    <ClInclude Include="SourceCodo\SoundManagerEnding.h" />
+    <ClInclude Include="SourceCodo\SoundManagerGameOver.h" />
+    <ClInclude Include="SourceCodo\SoundManagerMission.h" />
+    <ClInclude Include="SourceCodo\SoundManagerTitle.h" />
     <ClInclude Include="SourceCodo\Sprite.h" />
     <ClInclude Include="SourceCodo\Sprite2D.h" />
     <ClInclude Include="SourceCodo\Sprite2DCenter.h" />
+    <ClInclude Include="SourceCodo\Stage.h" />
     <ClInclude Include="SourceCodo\TestObject.h" />
+    <ClInclude Include="SourceCodo\TextSpriteStruct.h" />
+    <ClInclude Include="SourceCodo\UiText.h" />
+    <ClInclude Include="SourceCodo\Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\DebugText.hlsl">

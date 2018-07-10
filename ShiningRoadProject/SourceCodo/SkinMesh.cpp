@@ -16,11 +16,11 @@ clsSkinMesh::~clsSkinMesh()
 }
 
 void clsSkinMesh::ModelRender(
-	const D3DXMATRIX& const mView, 
-	const D3DXMATRIX& const mProj, 
-	const D3DXVECTOR3& const vLight, 
-	const D3DXVECTOR3& const vEye,
-	const D3DXVECTOR4 &vColor,
+	const D3DXMATRIX& mView, 
+	const D3DXMATRIX& mProj, 
+	const D3DXVECTOR3& vLight, 
+	const D3DXVECTOR3& vEye,
+	const D3DXVECTOR4& vColor,
 	const bool alphaFlg )
 {
 	if (m_pMesh == NULL || m_pAnimCtrl == NULL)return;
@@ -111,7 +111,7 @@ bool clsSkinMesh::SetAnimChange(int index, double dStartPos)
 	if (index < 0 || index >= GetAnimSetMax()){
 		//範囲外なら初期アニメーションを再生し,怒る.
 		m_pMesh->ChangeAnimSet_StartPos(0, dStartPos, m_pAnimCtrl);
-		assert( !"範囲外のアニメーションが指定されました" );
+//		assert( !"範囲外のアニメーションが指定されました" );
 		return false;
 	}
 	m_pMesh->ChangeAnimSet_StartPos(index, dStartPos, m_pAnimCtrl);
@@ -123,11 +123,15 @@ void clsSkinMesh::ModelUpdate(TRANSFORM Transform)
 	m_pMesh->m_Trans = Transform;
 }
 
-D3DXVECTOR3 clsSkinMesh::GetBonePos(char* sBoneName)
+D3DXVECTOR3 clsSkinMesh::GetBonePos( const char* sBoneName, const bool isLocalPos )
 {
 	D3DXVECTOR3 vBonePos;
 
-	m_pMesh->GetPosFromBone(sBoneName, &vBonePos);
+	//ボーンの座標を取る.
+	if( !m_pMesh->GetPosFromBone( sBoneName, &vBonePos, isLocalPos ) ){
+		//ボーンが見つからなければ.
+//		ERR_MSG( sBoneName, "その名前のボーンは存在しません" );
+	}
 
 	return vBonePos;
 }

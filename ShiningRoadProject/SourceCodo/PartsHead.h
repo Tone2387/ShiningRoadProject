@@ -15,6 +15,8 @@ public:
 		HP = 0,	//体力.
 		SEARCH,	//索敵性能.
 
+		COL_SIZE,	//当たり判定サイズ.
+
 		size
 	};
 

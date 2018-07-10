@@ -191,6 +191,23 @@ HRESULT MY_HIERARCHY::DestroyMeshContainer( LPD3DXMESHCONTAINER pMeshContainerBa
 *	以降、パーサークラス.
 *
 **/
+
+D3DXPARSER::D3DXPARSER()
+	:m_pHierarchy( NULL )
+	,m_pFrameRoot( NULL )
+	,m_pAnimController( NULL )
+//	,m_pAnimSet()
+{
+	ZeroMemory( &cHierarchy, sizeof( cHierarchy ) );
+	for( int i=0; i<MAX_ANIM_SET; i++ ){
+		m_pAnimSet[i] = NULL;
+	}
+}
+
+D3DXPARSER::~D3DXPARSER()
+{
+}
+
 // ボーン行列の領域確保.
 HRESULT D3DXPARSER::AllocateBoneMatrix( LPD3DXMESHCONTAINER pMeshContainerBase )
 {
@@ -693,7 +710,7 @@ int D3DXPARSER::GetAnimMax( LPD3DXANIMATIONCONTROLLER pAC )
 
 
 // 指定したボーン情報(行列)を取得する関数.
-bool D3DXPARSER::GetMatrixFromBone( char* sBoneName, D3DXMATRIX* pOutMat )
+bool D3DXPARSER::GetMatrixFromBone( const char* sBoneName, D3DXMATRIX* const  pOutMat ) const
 {
 	LPD3DXFRAME pFrame;
 	pFrame = (MYFRAME*)D3DXFrameFind( m_pFrameRoot, sBoneName );
@@ -711,7 +728,7 @@ bool D3DXPARSER::GetMatrixFromBone( char* sBoneName, D3DXMATRIX* pOutMat )
 
 
 // 指定したボーン情報(座標)を取得する関数.
-bool D3DXPARSER::GetPosFromBone( char* sBoneName, D3DXVECTOR3* pOutPos )
+bool D3DXPARSER::GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutPos ) const
 {
 	D3DXMATRIX mBone;
 	if( !GetMatrixFromBone( sBoneName, &mBone ) ){
@@ -827,6 +844,7 @@ clsD3DXSKINMESH::~clsD3DXSKINMESH()
 	// Dx11 デバイス関係.
 	m_pDeviceContext = NULL;
 	m_pDevice = NULL;
+	m_hWnd = NULL;
 }
 
 
@@ -1172,8 +1190,8 @@ HRESULT clsD3DXSKINMESH::CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buf
 void clsD3DXSKINMESH::Render(
 	const D3DXMATRIX& mView, const D3DXMATRIX& mProj,
 	const D3DXVECTOR3& vLight, const D3DXVECTOR3& vEye,
-	const D3DXVECTOR4 &vColor,
-	const bool alphaFlg, 
+	const D3DXVECTOR4& vColor,
+	const bool isAlpha, 
 	LPD3DXANIMATIONCONTROLLER pAC )
 {
 	m_mView		= mView;
@@ -1192,7 +1210,7 @@ void clsD3DXSKINMESH::Render(
 	D3DXMATRIX m;
 	D3DXMatrixIdentity( &m );
 	m_pD3dxMesh->UpdateFrameMatrices( m_pD3dxMesh->m_pFrameRoot, &m );
-	DrawFrame( m_pD3dxMesh->m_pFrameRoot, vColor, alphaFlg );
+	DrawFrame( m_pD3dxMesh->m_pFrameRoot, vColor, isAlpha );
 }
 
 
@@ -1443,7 +1461,7 @@ D3DXMATRIX clsD3DXSKINMESH::GetCurrentPoseMatrix( SKIN_PARTS_MESH* pParts, int i
 VOID clsD3DXSKINMESH::DrawFrame(
 	LPD3DXFRAME p,
 	const D3DXVECTOR4 &vColor, 
-	const bool alphaFlg )
+	const bool isAlpha )
 {
 	MYFRAME*			pFrame	= (MYFRAME*)p;
 	SKIN_PARTS_MESH*	pPartsMesh	= pFrame->pPartsMesh;
@@ -1455,19 +1473,19 @@ VOID clsD3DXSKINMESH::DrawFrame(
 			pPartsMesh, 
 			pFrame->CombinedTransformationMatrix,
 			pContainer,
-			vColor, alphaFlg );
+			vColor, isAlpha );
 	}
 
 	//再帰関数.
 	//(兄弟)
 	if( pFrame->pFrameSibling != NULL )
 	{
-		DrawFrame( pFrame->pFrameSibling, vColor, alphaFlg );
+		DrawFrame( pFrame->pFrameSibling, vColor, isAlpha );
 	}
 	//(親子)
 	if( pFrame->pFrameFirstChild != NULL )
 	{
-		DrawFrame( pFrame->pFrameFirstChild, vColor, alphaFlg );
+		DrawFrame( pFrame->pFrameFirstChild, vColor, isAlpha );
 	}
 }
 
@@ -1478,7 +1496,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	D3DXMATRIX World, 
 	MYMESHCONTAINER* const pContainer,
 	const D3DXVECTOR4 &vColor, 
-	const bool alphaFlg )
+	const bool isAlpha )
 {
 	D3D11_MAPPED_SUBRESOURCE pData;
 
@@ -1492,6 +1510,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	D3DXMATRIX	Scale, Yaw, Pitch, Roll, Tran;
 	// 拡縮.
 	D3DXMatrixScaling( &Scale, m_Trans.vScale.x, m_Trans.vScale.y, m_Trans.vScale.z );
+	//回転.
 	D3DXMatrixRotationY( &Yaw, m_Trans.fYaw );		// Y軸回転.
 	D3DXMatrixRotationX( &Pitch, m_Trans.fPitch );	// X軸回転.
 	D3DXMatrixRotationZ( &Roll, m_Trans.fRoll );		// Z軸回転.
@@ -1499,7 +1518,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	//=================================================================//
 
 	// 回転行列(合成)
-	m_mRotation = Yaw * Pitch * Roll;	
+	m_mRotation = Roll * Pitch * Yaw;	
 	// 平行移動.
 	D3DXMatrixTranslation( &Tran, m_Trans.vPos.x, m_Trans.vPos.y, m_Trans.vPos.z );
 	// ワールド行列.
@@ -1732,7 +1751,7 @@ bool clsD3DXSKINMESH::GetMatrixFromBone( char* sBoneName, D3DXMATRIX* pOutMat )
 	return false;
 }
 // 指定したボーン情報(座標)を取得する関数.
-bool clsD3DXSKINMESH::GetPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos)
+bool clsD3DXSKINMESH::GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutPos, bool isLocalPos ) const
 {
 	if( m_pD3dxMesh != NULL ){
 		D3DXVECTOR3 tmpPos;
@@ -1745,12 +1764,25 @@ bool clsD3DXSKINMESH::GetPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos)
 			D3DXMatrixRotationZ( &mRoll, m_Trans.fRoll);
 			D3DXMatrixTranslation(&mTran, tmpPos.x, tmpPos.y, tmpPos.z);
 
-			mRot = mYaw * mPitch * mRoll;
-			mWorld = mTran * mRot* mScale;
+			//ローカル座標を指定されたら.
+			if( isLocalPos ){
+				D3DXMatrixIdentity( &mRot );
+			}
+			//ワールド座標なら( 普通はこっち ).
+			else{
+				mRot = mRoll * mPitch * mYaw;
+			}
 
-			pOutPos->x = mWorld._41 + m_Trans.vPos.x;
-			pOutPos->y = mWorld._42 + m_Trans.vPos.y;
-			pOutPos->z = mWorld._43 + m_Trans.vPos.z;
+			mWorld = mTran * mRot * mScale;
+
+			pOutPos->x = mWorld._41;
+			pOutPos->y = mWorld._42;
+			pOutPos->z = mWorld._43;
+
+			//ワールド座標なら( 普通はこっち ).
+			if( !isLocalPos ){
+				*pOutPos += m_Trans.vPos;
+			}
 
 			return true;
 		}
@@ -1775,7 +1807,7 @@ bool clsD3DXSKINMESH::GetDeviaPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos,
 			D3DXMatrixRotationZ(&mRoll, m_Trans.fRoll);
 			D3DXMatrixTranslation(&mTran, tmpPos.x, tmpPos.y, tmpPos.z);
 
-			mRot = mYaw * mPitch * mRoll;
+			mRot = mRoll * mPitch * mYaw;
 			mWorld = mTran * mScale * mRot;
 
 			pOutPos->x = mWorld._41 + m_Trans.vPos.x;

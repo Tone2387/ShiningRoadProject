@@ -4,12 +4,11 @@
 #define CHARACTOR
 
 #include"Global.h"
-#include"DX9Mesh.h"
 #include"Object.h"
+#include"Weapon.h"
 
 class clsCharactor : public clsObject
 {
-
 public:
 	//共通ステータス.
 	int HP;//体力.
@@ -22,7 +21,6 @@ public:
 
 	//移動関係.
 	bool m_bMoving;
-
 	
 	float m_fMoveSpeedMax;//スピードの最大値.
 
@@ -32,7 +30,7 @@ public:
 	int m_iMoveStopFrame;//完全に停止するまでのフレーム値.
 	float m_fMoveDecele;// = m_fMoveSpeed / m_iStopFrame;
 
-	virtual void tenshi()override{};
+	int m_iMoveReverseDirInertia;
 
 	bool m_bRotation;
 
@@ -50,6 +48,12 @@ public:
 	float m_fJumpPower;
 
 	void Shot();
+	void WeaponInit(WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
+	
+	clsWeapon** m_ppWeapon;
+	int m_iWeaponNum;
+	int m_iWeaponNumMax;
+	clsObject* m_pTargetObj;
 
 	//移動関係.
 	void Move(const float fAngle, const float fPush);
@@ -117,9 +121,12 @@ public:
 		const D3DXVECTOR3 CenterPos, 
 		const D3DXVECTOR3 TargetPos, 
 		const float Range);//円の範囲判定.
-
+protected:
+	void ShotSwich(const int iWeaponNum);//複数ある武器から使用する武器を決める.
 private:
 	LPD3DXMESH m_pMeshForRay;//ﾚｲのためのﾒｯｼｭ用.
+
+	
 };
 
 #endif

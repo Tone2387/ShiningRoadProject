@@ -1,18 +1,42 @@
 #ifndef XINPUT_H_
 #define XINPUT_H_
 
+//アナログ入力を正規化する.
+#define NORMALIZE_ANALOG_INPUT
+
+//日吉君のDxInputとのすり合わせ( スティックの角度を[0～360]->[-180～180]にする ).
+#define HIYOSHI_DX_INPUT
+
+/*
+	//----- Sceneクラスでの使用例 -----//.
+
+	//ボタン.
+	if( m_wpXInput->isPressEnter( XINPUT_B ) ){}//ボタン.
+	if( m_wpXInput->isRTriggerEnter() ){}		//トリガーが押し込まれた瞬間.
+
+
+	//各スティックの倒し具合.
+	float fVar = m_wpXInput->GetLStickTheta(); 	//スティックの角度(方向)を返す( -180～180を弧度法の値で返す ).
+	if( m_wpXInput->GetLStickSlope() > 0.95f ){}//どれだけ深く倒しているか：0.0f～1.0fで返す.
+
+	//左のモーターの振動( この場合：最大の強さで160フレームの間振動し、1フレーム当たり5ずつ振動が弱くなる ).
+	m_wpXInput->SetVibPowerL( XINPUT_VIBRATION_MAX, 160, 5 );	
+
+*/
+
 #include <Windows.h>
 #include <Xinput.h>
 
 #pragma comment( lib, "xinput.lib" )
 
 //値.
-#define INPUT_TRIGGER_MIN	(0)
-#define INPUT_TRIGGER_MAX	(255)
-#define INPUT_THUMB_MIN		(-32768)
-#define INPUT_THUMB_MAX		(32767)
-#define INPUT_VIBRATION_MIN	(0)
-#define INPUT_VIBRATION_MAX	(65535)
+#define XINPUT_TRIGGER_MIN		(0)		//トリガー.
+#define XINPUT_TRIGGER_MAX		(255)
+#define XINPUT_THUMB_MIN		(-32768)//スティック.
+#define XINPUT_THUMB_MAX		(32767)
+#define XINPUT_VIBRATION_MIN	(0)		//振動.
+#define XINPUT_VIBRATION_MAX	(65535)
+
 
 
 
@@ -36,47 +60,46 @@
 class clsXInput
 {
 public:
-	//スティックの倒され具合による動作の変化.
-	enum class enSTICK_SLOPE : UCHAR
-	{
-		NOTHING = 0,
-		LOW,
-		HIGH
-	};
 
-	clsXInput(){
-		ZeroMemory( this, sizeof( clsXInput ) );
-	}
-	~clsXInput(){}
+	clsXInput();
+	~clsXInput();
 
 	//毎フレーム回す.
 	bool UpdateStatus();
-	bool UpdateKeyStatus();//使わないかも?.
+//	bool UpdateKeyStatus();//使わないかも?.
 
 	//ボタン入力.
-	bool IsPressEnter( const WORD _padKey ) const;
-	bool IsPressStay( const WORD _padKey ) const;
-	bool IsPressExit( const WORD _padKey ) const;
+	bool isPressEnter( const WORD _padKey ) const;	//押した瞬間.
+	bool isPressStay( const WORD _padKey ) const;	//押されてる間.
+	bool isPressExit( const WORD _padKey ) const;	//離した瞬間.
 
-	//トリガーボタン入力.
-	BYTE GetLTrigger() const {
-		return m_state.Gamepad.bLeftTrigger;
-	}
-	BYTE GetRTrigger() const {
-		return m_state.Gamepad.bRightTrigger;
-	}
-	SHORT GetLThumbX() const {
-		return m_state.Gamepad.sThumbLX;
-	}
-	SHORT GetLThumbY() const {
-		return m_state.Gamepad.sThumbLY;
-	}
-	SHORT GetRThumbX() const {
-		return m_state.Gamepad.sThumbRX;
-	}
-	SHORT GetRThumbY() const {
-		return m_state.Gamepad.sThumbRY;
-	}
+	//トリガー、スティック入力.
+#ifndef NORMALIZE_ANALOG_INPUT
+	BYTE GetLTrigger() const;
+	BYTE GetRTrigger() const;
+	SHORT GetLStickX() const;
+	SHORT GetLStickY() const;
+	SHORT GetRStickX() const;
+	SHORT GetRStickY() const;
+#else//##ifndef NORMALIZE_ANALOG_INPUT
+	float GetLTrigger() const;
+	float GetRTrigger() const;
+	float GetLStickX() const;
+	float GetLStickY() const;
+	float GetRStickX() const;
+	float GetRStickY() const;
+#endif//##ifndef NORMALIZE_ANALOG_INPUT
+	//関数名をスティックにする.
+
+	//LRトリガーをボタンのように扱おう.
+	//( 「NORMALIZE_ANALOG_INPUT」 が定義されているか次第で中身が変わる ).
+	bool isLTriggerEnter() const;
+	bool isLTriggerStay() const;
+	bool isLTriggerExit() const;
+	bool isRTriggerEnter() const;
+	bool isRTriggerStay() const;
+	bool isRTriggerExit() const;
+
 
 
 	//左スティックの角度.
@@ -84,20 +107,17 @@ public:
 	//右スティックの角度.
 	float GetRStickTheta() const;
 
-	//各スティックの倒し具合.
-	enSTICK_SLOPE GetLStickSlope() const;
-	enSTICK_SLOPE GetRStickSlope() const;
+	//各スティックの倒し具合( どれだけ深く倒しているか：0.0f～1.0fで返す ).
+	float GetLStickSlope() const;
+	float GetRStickSlope() const;
 
 
-	//振動を与えよう.
+	//振動を与えよう.//第一引数：振動の強さ, 第二引数：振動時間(何フレーム), 第三引数：減衰量(1フレームあたりの).
 	void SetVibPowerL( int iVibL, const int iTime, int iVibDecL = 0 );
 	void SetVibPowerR( int iVibR, const int iTime, int iVibDecR = 0 );
 
 	//終了処理.
-	void EndProc(){
-		SetVibration( 0, 0 );
-//		XInputEnable( false );
-	}
+	void EndProc();
 
 private:
 	//振動.
@@ -107,6 +127,16 @@ private:
 	float GetStickTheta( const SHORT lY, const SHORT lX ) const;
 	//スティックの傾き.
 	float GetStickSlope( const SHORT lY, const SHORT lX ) const;
+
+
+	//トリガー入力( isLTriggerとisRTriggerの為 ).
+	BYTE GetLTriggerInside() const;
+	BYTE GetRTriggerInside() const;
+	//スティック入力( GetStickSlope()とGetStickTheta()の為 ).
+	SHORT GetLThumbXInside() const;
+	SHORT GetLThumbYInside() const;
+	SHORT GetRThumbXInside() const;
+	SHORT GetRThumbYInside() const;
 
 
 	DWORD				m_padId;

@@ -16,13 +16,11 @@ public:
 	int m_iMoveCategoryNo;
 
 	void Init(LPSTR strEnemyFolderName);
+	//virtual void Update();
 
 	void SearchTarget(clsObject* pObj);
-
 	void SearchNear(clsObject* pObj);
-
 	void SetMoveDir();
-
 	bool IsShot();
 
 	clsEnemyBase();

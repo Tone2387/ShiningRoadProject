@@ -1,4 +1,9 @@
 #include "Resource.h"
+#include "File.h"
+
+#include "OperationString.h"
+
+
 
 using namespace std;
 //パーツディレクトリのパス.
@@ -7,8 +12,8 @@ const string sPARTS_PASS = "Data\\RoboParts\\";
 const string sLEG_PASS		= sPARTS_PASS + "Leg\\Leg";
 const string sCORE_PASS		= sPARTS_PASS + "Core\\Core";
 const string sHEAD_PASS		= sPARTS_PASS + "Head\\Head";
-const string sARML_PASS		= sPARTS_PASS + "Arms\\ArmL";
-const string sARMR_PASS		= sPARTS_PASS + "Arms\\ArmR";
+const string sARML_PASS		= sPARTS_PASS + "Arms\\Arms";//腕が左右同じなのに分けているのは仕様変更の可能性があるため.
+const string sARMR_PASS		= sPARTS_PASS + "Arms\\Arms";
 const string sWEAPON_PASS	= sPARTS_PASS + "Weapon\\Weapon";
 //上記に数字を挟んだうえでくっつけるモデル名.
 const string sLEG_NAME		= "\\Leg";
@@ -39,19 +44,16 @@ const string sDATA_PASS_END	 = "\\RoboPartsData.csv";
 
 clsResource::clsResource()
 	:m_hWnd( nullptr )
-	,m_pDevice11( nullptr )
-	,m_pCotext11( nullptr )
+	,m_wpDevice11( nullptr )
+	,m_wpCotext11( nullptr )
 	,m_ppStaticModels( nullptr )
 	,m_ppSkinModels( nullptr )
 	,m_ucSkinModelMax( 0 )
 	,m_PartsNum( )
-	,m_pFile( nullptr )
-	,m_FilePath()
 {
 	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
 		m_PartsNum[i] = 0;
 	}
-	ZeroMemory( m_FilePath, sizeof( m_FilePath ) );
 }
 
 clsResource::~clsResource()
@@ -79,10 +81,9 @@ clsResource::~clsResource()
 
 	m_ucSkinModelMax = 0;
 
-	m_pCotext11 = nullptr;
-	m_pDevice11 = nullptr;
+	m_wpCotext11 = nullptr;
+	m_wpDevice11 = nullptr;
 	m_hWnd = nullptr;
-	SAFE_DELETE( m_pFile );
 }
 
 //パーツの数を吐き出す.
@@ -92,13 +93,13 @@ SKIN_ENUM_TYPE clsResource::GetPartsNum( const enPARTS_READ enPartsRead )
 
 	string tmpPass =  sDATA_PASS_ROOT + sDATA_PASS_MID[enPartsRead] + sDATA_PASS_END;
 	
-	m_pFile = new clsFILE;
-	m_pFile->Open( tmpPass );
+	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
+	upFile->Open( tmpPass );
 
-	tmpNum = m_pFile->GetSizeRow();
+	tmpNum = upFile->GetSizeRow();
 
-	m_pFile->Close();
-	SAFE_DELETE( m_pFile );
+	upFile->Close();
+	upFile.reset( nullptr );
 	return tmpNum;
 }
 
@@ -130,16 +131,13 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 
 	CreateStaticModel( 
 		"Data\\Stage\\kami_map.x",
-//		"Data\\RoboParts\\Head\\Head1.X",
-//		"Data\\RoboParts\\Weapon\\Weapon1.X",
-//		"Data\\RoboParts\\Leg\\Leg0.X",
-//		"Data\\RoboParts\\ArmR\\ArmR1.X",
-//		"Data\\RoboParts\\ArmL\\ArmL1.X",
-//		"Data\\RoboParts\\Core\\Core1.X",
-		enSTATIC_MODEL::enStaticModel_Ground );
+		enSTATIC_MODEL::enStaticModel_StageBase );
 	CreateStaticModel(
 		"Data\\RoboParts\\Leg\\Leg1\\Leg1.x",
-		enSTATIC_MODEL::enStaticModel_Enemy );
+		enSTATIC_MODEL::enStaticModel_Obstacle );
+	CreateStaticModel(
+		"Data\\Collision\\Sphere.x",
+		enSTATIC_MODEL::enStaticModel_Shpere );
 
 	CreateSkinModel(
 		"Data\\RoboParts\\Leg\\Leg0\\Leg0.x",
@@ -165,32 +163,41 @@ void clsResource::CreatePartsGroup()
 }
 void clsResource::CreateParts( const enPARTS enParts )
 {
+	//そのパーツの始まりと終わりの番号が、それぞれスキンメッシュ全体の何番目にあたるか、の変数.
 	UCHAR ucStart, ucMax;
+	//Xファイルの名前.
 	string sModelName;
+	//DataディレクトリからXファイルまでのパス.
 	string sPass = SetVarToCreateParts( ucStart, ucMax, sModelName, enParts );
+	//パスとモデル名を切り離しているのは、ディレクトリ名とモデル名に番号を入れるため.
 	
-	//作成.
+	//作成.//そのパーツのモデル種類の数だけ繰り返す.
 	for( UCHAR i=0; i<ucMax - ucStart; i++ ){
+#if 0
 		//パーツファイル名連結.
 		ostringstream ss;
 		ss << static_cast<int>( i );		//数字を文字列に( intじゃないと事故が起こるさ ).
+		//ディレクトリ名、モデル名に数字を連結.
 		string tmpString = sPass + ss.str();//パーツのディレクトリ名.
 		tmpString += sModelName + ss.str();	//パーツのモデル名.
 		tmpString += sEXTENSION_X;			//拡張子連結.
+		//パーツファイル名連結完了.
+#else
+		//文字列操作クラス作成.
+		unique_ptr<clsOPERATION_STRING> upOprtStr = make_unique<clsOPERATION_STRING>();
+	
+		string tmpString = upOprtStr->ConsolidatedNumber( sPass, i );//パーツのディレクトリ名.
+		tmpString += upOprtStr->ConsolidatedNumber( sModelName, i );//パーツのモデル名.
+		tmpString += sEXTENSION_X;									//拡張子連結.
 
-		//メモリ確保.
-		char *tmpPass = new char[tmpString.size() + 1];
-
-		//stringからchar[]へコピー.
-		char_traits<char>::copy( 
-			tmpPass, tmpString.c_str(), tmpString.size() + 1 );
+		upOprtStr.reset( nullptr );
+#endif
 
 		//作る.
 		CreateSkinModel(
-			tmpPass, 
+			const_cast<LPSTR>( tmpString.c_str() ), //tmpPass.
 			static_cast<enSKIN_MODEL>( ucStart + i ) );
 
-		delete[] tmpPass;
 	}
 }
 
@@ -335,8 +342,8 @@ HRESULT clsResource::InitStaticModel(
 			ID3D11DeviceContext* const pContext)
 {
 	m_hWnd = hWnd;
-	m_pDevice11 = pDevice;
-	m_pCotext11 = pContext;
+	m_wpDevice11 = pDevice;
+	m_wpCotext11 = pContext;
 	//スタティックメッシュのポインタ領域を確保.
 	m_ppStaticModels = new clsDX9Mesh*[ enStaticModel_Max ];
 	for( UCHAR i=0; i<enStaticModel_Max; i++ ){
@@ -382,7 +389,7 @@ HRESULT clsResource::CreateStaticModel( LPSTR const fileName, const enSTATIC_MOD
 	//モデル読込.
 	m_ppStaticModels[ enModel ] = new clsDX9Mesh;
 	m_ppStaticModels[ enModel ]->Init(
-		m_hWnd, m_pDevice11, m_pCotext11, fileName );
+		m_hWnd, m_wpDevice11, m_wpCotext11, fileName );
 
 	return S_OK;
 }

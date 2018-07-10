@@ -2,20 +2,31 @@
 
 #include"RoboCommand.h"
 #include"DxInput.h"
+#include"CXInput.h"
+
+//ˆê‰žXInput‚ð—Dæ‚³‚¹‚Ü‚·.
 
 class clsInputRobo
 {
 public:
-	clsInputRobo::clsInputRobo()
+	clsInputRobo::clsInputRobo(clsDxInput* pDxInput,clsXInput* pXInput)
 	{
+		if (pXInput)
+		{
+			m_pXInput = pXInput;
+		}
+
+		if (pDxInput)
+		{
+			m_pDxInput = pDxInput;
+		}
+
 		m_bChangeSwitch = false;
 
 		m_pMoveSwitch = new clsCommandMoveSwitch;
 		m_pQuickBoost = new	clsCommandQuickBoost;
 		m_pQuickTurn = new clsCommandQuickTurn;
 		m_pBoostRising = new clsCommandBoostRising;
-
-		m_pDxInput = new clsDxInput;
 
 		m_pComLS = new clsCommandRoboMove;
 		m_pComLSHor = new clsCommandRoboMove;
@@ -30,6 +41,7 @@ public:
 	clsInputRobo::~clsInputRobo()
 	{
 		delete m_pDxInput;
+		delete m_pXInput;
 		delete m_pComLS;
 		delete m_pComRS;
 
@@ -38,22 +50,22 @@ public:
 		delete m_pBoostRising;
 	}
 
-	clsDxInput* m_pDxInput;
-
-	clsRoboCommand* PlressInput()
-	{
-		m_pDxInput->UpdataInputState();
-
-		return nullptr;
-	}
-
 	clsRoboCommand* LSInput(float& fPower, float& fAngle)
 	{
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		fPower = m_pDxInput->GetLSPush();
-		fAngle = m_pDxInput->GetLSDir();
+		if (m_pXInput)
+		{
+			fPower = m_pXInput->GetLStickSlope();
+			fAngle = m_pXInput->GetLStickTheta();
+		}
+
+		else if (m_pDxInput)
+		{
+			fPower = m_pDxInput->GetLSPush();
+			fAngle = m_pDxInput->GetLSDir();
+		}
 
 		bool bNaname = false;
 
@@ -131,8 +143,17 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		fPower = m_pDxInput->GetHorLSPush();
-		fAngle = m_pDxInput->GetLSDir();
+		if (m_pXInput)
+		{
+			fPower = m_pXInput->GetLStickX();
+			fAngle = m_pXInput->GetLStickTheta();
+		}
+
+		else if (m_pDxInput)
+		{
+			fPower = m_pDxInput->GetHorLSPush();
+			fAngle = m_pDxInput->GetLSDir();
+		}
 
 		return m_pComLSHor;
 	}
@@ -142,8 +163,17 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		fPower = m_pDxInput->GetVerLSPush();
-		fAngle = m_pDxInput->GetLSDir();
+		if (m_pXInput)
+		{
+			fPower = m_pXInput->GetLStickY();
+			fAngle = m_pXInput->GetLStickTheta();
+		}
+
+		else if (m_pDxInput)
+		{
+			fPower = m_pDxInput->GetVerLSPush();
+			fAngle = m_pDxInput->GetLSDir();
+		}
 
 		return m_pComLSVer;
 	}
@@ -153,20 +183,18 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		fPower = m_pDxInput->GetRSPush();
-		fAngle = m_pDxInput->GetRSDir();
-
-		/*if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		if (m_pXInput)
 		{
-			fPower = 1.0f;
-			fAngle = 0.1f;
+			fPower = m_pXInput->GetRStickSlope();
+			fAngle = m_pXInput->GetRStickTheta();
 		}
 
-		else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		else if (m_pDxInput)
 		{
-			fPower = 1.0f;
-			fAngle = -0.1f;
-		}*/
+
+			fPower = m_pDxInput->GetRSPush();
+			fAngle = m_pDxInput->GetRSDir();
+		}
 
 		return m_pComRS;
 	};
@@ -176,8 +204,17 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		fPower = m_pDxInput->GetHorRSPush();
-		fAngle = m_pDxInput->GetRSDir();
+		if (m_pXInput)
+		{
+			fPower = m_pXInput->GetRStickX();
+			fAngle = m_pXInput->GetRStickTheta();
+		}
+
+		else if (m_pDxInput)
+		{
+			fPower = m_pDxInput->GetHorRSPush();
+			fAngle = m_pDxInput->GetRSDir();
+		}
 
 		return m_pComRSHor;
 	}
@@ -187,16 +224,24 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		fPower = m_pDxInput->GetVerRSPush();
-		fAngle = m_pDxInput->GetRSDir();
+		if (m_pXInput)
+		{
+			fPower = m_pXInput->GetRStickSlope();
+			fAngle = m_pXInput->GetRStickTheta();
+		}
+
+		else if (m_pDxInput)
+		{
+			fPower = m_pDxInput->GetVerRSPush();
+			fAngle = m_pDxInput->GetRSDir();
+		}
 
 		return m_pComRSVer;
 	}
 
 	clsRoboCommand* MoveSwitch()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_03) ||
-			GetAsyncKeyState(VK_F1) & 0x1)
+		if (m_pDxInput->IsPressKey(enPKey_03))
 		{
 			if (!m_bChangeSwitch)
 			{
@@ -215,10 +260,20 @@ public:
 
 	clsRoboCommand* QuickBoost()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_02) ||
-			GetAsyncKeyState(VK_F2) & 0x8000)
+		if (m_pXInput)
 		{
-			return m_pQuickBoost;
+			if (m_pXInput->isLTriggerEnter())
+			{
+				return m_pQuickBoost;
+			}
+		}
+
+		else if (m_pDxInput)
+		{
+			if (m_pDxInput->IsPressKey(enPKey_02))
+			{
+				return m_pQuickBoost;
+			}
 		}
 
 		return nullptr;
@@ -226,10 +281,20 @@ public:
 
 	clsRoboCommand* QuickTurn()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_02) ||
-			GetAsyncKeyState(VK_F2) & 0x8000)
+		if (m_pXInput)
 		{
-			return m_pQuickTurn;
+			if (m_pXInput->isLTriggerEnter())
+			{
+				return m_pQuickTurn;
+			}
+		}
+
+		else if (m_pDxInput)
+		{
+			if (m_pDxInput->IsPressKey(enPKey_02))
+			{
+				return m_pQuickTurn;
+			}
 		}
 
 		return nullptr;
@@ -237,14 +302,27 @@ public:
 
 	clsRoboCommand* BoostRising()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_00) ||
-			GetAsyncKeyState(VK_SPACE) & 0x8000)
+		if (m_pXInput)
 		{
-			return m_pBoostRising;
+			if (m_pXInput->isRTriggerStay())
+			{
+				return m_pBoostRising;
+			}
+		}
+
+		else if (m_pDxInput)
+		{
+			if (m_pDxInput->IsPressKey(enPKey_00))
+			{
+				return m_pBoostRising;
+			}
 		}
 
 		return nullptr;
 	}
+
+	clsDxInput* m_pDxInput;
+	clsXInput* m_pXInput;
 
 private:
 	bool m_bChangeSwitch;

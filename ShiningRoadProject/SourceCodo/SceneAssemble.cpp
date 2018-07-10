@@ -14,6 +14,16 @@ const string sPARTS_STATUS_PASS[] =
 	"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
 };
 
+//モデルさんの初期位置.
+const D3DXVECTOR3 vINIT_ROBO_POS = { 52.0f, -35.0f, 17.0f };
+const D3DXVECTOR3 vINIT_ROBO_ROT = { 6.03318501f, 0.649538994f, 6.18318605f };
+const float fINIT_ROBO_SCALE = 0.5f;
+
+//カメラの初期位置.
+const D3DXVECTOR3 vINIT_CAMERA_POS = { 0.0f, 0.0f, -100.0f };
+const D3DXVECTOR3 vINIT_CAMERA_LOOK_POS = { 0.0f, 0.0f, 0.0f };
+
+
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -21,6 +31,7 @@ const string sPARTS_STATUS_PASS[] =
 clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pFile()//配列を0で初期化.
 	,m_pAsmModel( nullptr )
+	,m_pUI( nullptr )
 {
 	//念のため.
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
@@ -31,6 +42,7 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 {
 	SAFE_DELETE( m_pAsmModel );
+	SAFE_DELETE( m_pUI );
 
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
 		if( m_pFile[i] == nullptr ) continue;
@@ -57,37 +69,43 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 //	m_pParts->Init();
 //	m_pParts->SetPosition( D3DXVECTOR3( -2.0f, 1.0f, 0.0f ) );
 //
-//
-//	m_pSprite = new clsSPRITE2D_CENTER;
-//	SPRITE_STATE tmpSs;
-//	m_pSprite->Create( 
-//		m_wpDevice, m_wpContext, 
-//		TEST_TEX_PASS, tmpSs );
-//	m_pSprite->SetPos( { WND_W*0.5f, WND_H*0.5f, 0.0f } );
 
 	//パーツのステータス読み込み.
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
-		if( m_pFile[i] != nullptr ) continue;
+		if( m_pFile[i] != nullptr ){
+			assert( !"m_pFile[i]は作成済みです" );
+			continue;
+		}
 		m_pFile[i] = new clsFILE;
 		m_pFile[i]->Open( sPARTS_STATUS_PASS[i] );
 	}
 
+	//UI.
+	m_pUI = new clsASSEMBLE_UI;
+	m_pUI->Create( m_wpDevice, m_wpContext );
+
 	//モデルさん作成.
+	assert( m_pAsmModel == nullptr );
 	m_pAsmModel = new clsASSEMBLE_MODEL;
 	m_pAsmModel->Create( m_wpResource, m_wpRoboStatus );
+	m_pAsmModel->SetPos( vINIT_ROBO_POS );
+	m_pAsmModel->SetRot( vINIT_ROBO_ROT );
+	m_pAsmModel->SetScale( fINIT_ROBO_SCALE );
 
-	m_wpCamera->SetPos( { 0.0f, 0.0f, -100.0f } );
-	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
+	m_wpCamera->SetPos( vINIT_CAMERA_POS );
+	m_wpCamera->SetLookPos( vINIT_CAMERA_LOOK_POS );
 
 	//ミッションシーンに引き継ぐ情報の初期化.
 	m_wpRoboStatus->Clear();
 }
 
-void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
+void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 {
+#if _DEBUG
 	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK
+
 		static int tmpI = 0; 
 		tmpI ++;
 		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
@@ -100,14 +118,14 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, tmpI );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
 
-		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetScale( 0.5f );
-#else//#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
-		m_pAsmModel->SetPos( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetRot( { 0.0f, -50.0f, 0.0f } );
-		m_pAsmModel->SetScale( 0.5f );
 #endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
+		m_pAsmModel->SetPos( vINIT_ROBO_POS );
+		m_pAsmModel->SetRot( vINIT_ROBO_ROT );
+		m_pAsmModel->SetScale( fINIT_ROBO_SCALE );
+
+		m_pAsmModel->SetRot( { 0.0f, 0.0f, 0.0f } );
+
+		m_wpSound->StopAllSound();
 	}
 
 	//テストモデル移動.
@@ -127,6 +145,38 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 	if( GetAsyncKeyState( 'Y' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, 0.0f, -rrr } );
 
 
+	if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
+//		enNextScene = enSCENE::MISSION;
+		static int tmpLAnim = 0;
+		m_pAsmModel->PartsAnimChange( static_cast<enPARTS>( m_PartsSelect.Type ), tmpLAnim++ );
+		if( tmpLAnim >= 5 ) tmpLAnim = 0;
+	}
+	if( GetAsyncKeyState( VK_F7 ) & 0x1 ){
+		static int siCORE_ANIM_NO = 0;
+		m_pAsmModel->PartsAnimChange( enPARTS::LEG, siCORE_ANIM_NO++ );
+		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
+	}
+
+
+
+	if( GetAsyncKeyState( 'Z' ) & 0x1 )m_wpSound->PlaySE( 0 );
+	if( GetAsyncKeyState( 'X' ) & 0x1 )m_wpSound->PlaySE( 1 );
+	if( GetAsyncKeyState( 'C' ) & 0x1 )m_wpSound->PlaySE( 2 );
+	if( GetAsyncKeyState( 'V' ) & 0x1 )m_wpSound->PlaySE( 3 );
+	if( GetAsyncKeyState( 'B' ) & 0x1 )m_wpSound->PlaySE( 4 );
+	if( GetAsyncKeyState( 'N' ) & 0x1 ){
+		m_ehHibana = m_wpEffects->Play( 
+			2, { 0.0f, 20.0f, 0.0f } );
+	}
+
+
+
+#endif//#if _DEBUG
+
+
+
+
+
 	//選択肢.
 	if( GetAsyncKeyState( VK_RIGHT ) & 0x1 )MoveCursorRight();
 	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ) MoveCursorLeft();
@@ -134,19 +184,17 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &nextScene )
 	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ) MoveCursorDown();
 	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		Enter();
+		m_wpSound->PlaySE( enSE::ENTER );
 	}
 	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		Undo();
-		static int siCORE_ANIM_NO = 0;
-		m_pAsmModel->PartsAnimChange( enPARTS::CORE, siCORE_ANIM_NO++ );
-		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
+		m_wpSound->PlaySE( enSE::EXIT, true );
 	}
 
 
-
-
+	m_pUI->Input();
+	m_pUI->Update();
 	m_pAsmModel->UpDate();
-
 
 }
 
@@ -158,12 +206,12 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 //	m_pParts->Render( m_mView, m_mProj, m_vLight, vCamPos );
 //	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos, 
 //		D3DXVECTOR4(0.5f,2.0f,0.5f,0.75f), true );
-//
-//	m_pSprite->Render();
 
 	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
-//	m_pAsmModel->SetPos( m_pAsmModel->GetPos() );
-//	m_pAsmModel->UpDate();
+
+	SetDepth( false );
+	m_pUI->Render();
+	SetDepth( true );
 }
 
 
@@ -219,7 +267,7 @@ void clsSCENE_ASSEMBLE::Enter()
 	//引数用変数.
 	vector<int> tmpStatus;
 	tmpStatus.reserve( iStatusSize );
-	for( unsigned int i=0; i<iStatusSize; i++ ){
+	for( int i=0; i<iStatusSize; i++ ){
 		//m_pFile[]の添え字はどのパーツか、である.
 		tmpStatus.push_back( 
 			m_pFile[ m_PartsSelect.Type ]->
@@ -228,30 +276,33 @@ void clsSCENE_ASSEMBLE::Enter()
 		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
 	}
 
+	//何度もキャストをするのは嫌なので.
+	UCHAR tmpPartsNum = static_cast<UCHAR>( m_PartsSelect.Num );
+
 	switch( m_PartsSelect.Type )
 	{
 	case enPARTS_TYPES::LEG:
-		m_wpRoboStatus->ReceiveLeg( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::LEG, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveLeg( tmpStatus,	tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::LEG, tmpPartsNum );
 		break;
 	case enPARTS_TYPES::CORE:
-		m_wpRoboStatus->ReceiveCore( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::CORE, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveCore( tmpStatus,		tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::CORE,	tmpPartsNum );
 		break;
 	case enPARTS_TYPES::HEAD:
-		m_wpRoboStatus->ReceiveHead( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::HEAD, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveHead( tmpStatus,		tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::HEAD,	tmpPartsNum );
 		break;
 	case enPARTS_TYPES::ARMS:
-		m_wpRoboStatus->ReceiveArms( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::ARM_L, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::ARM_R, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveArms( tmpStatus,		tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::ARM_L,	tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::ARM_R,	tmpPartsNum );
 		break;
 	case enPARTS_TYPES::WEAPON:
-		m_wpRoboStatus->ReceiveWeaponL( tmpStatus, m_PartsSelect.Num );
-		m_wpRoboStatus->ReceiveWeaponR( tmpStatus, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, m_PartsSelect.Num );
-		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, m_PartsSelect.Num );
+		m_wpRoboStatus->ReceiveWeaponL( tmpStatus,	tmpPartsNum );
+		m_wpRoboStatus->ReceiveWeaponR( tmpStatus,	tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::WEAPON_L,tmpPartsNum );
+		m_pAsmModel->AttachModel( enPARTS::WEAPON_R,tmpPartsNum );
 		break;
 	default:
 		break;
@@ -261,7 +312,7 @@ void clsSCENE_ASSEMBLE::Enter()
 	tmpStatus.clear();
 	tmpStatus.shrink_to_fit();
 
-//	nextScene = enSCENE::MISSION;
+//	enNextScene = enSCENE::MISSION;
 }
 
 //戻る.
@@ -306,45 +357,58 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
 	
-	//モデルのpos.
-	sprintf_s( strDbgTxt, 
-		"ModelPos : x[%f], y[%f], z[%f]",
-		m_pAsmModel->GetPos().x, 
-		m_pAsmModel->GetPos().y, 
-		m_pAsmModel->GetPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	//モデルのpos.
+//	sprintf_s( strDbgTxt, 
+//		"ModelPos : x[%f], y[%f], z[%f]",
+//		m_pAsmModel->GetPos().x, 
+//		m_pAsmModel->GetPos().y, 
+//		m_pAsmModel->GetPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"ModelRot : x[%f], y[%f], z[%f]",
+//		m_pAsmModel->GetRot().x, 
+//		m_pAsmModel->GetRot().y, 
+//		m_pAsmModel->GetRot().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	//各パーツのpos.
+//	for( UCHAR ucNo=0; ucNo<static_cast<UCHAR>( enPARTS::MAX ); ucNo++ ){
+//		sprintf_s( strDbgTxt, 
+//			"PartsPos : x[%f], y[%f], z[%f]",
+//			m_pAsmModel->GetPartsPos( ucNo ).x, 
+//			m_pAsmModel->GetPartsPos( ucNo ).y, 
+//			m_pAsmModel->GetPartsPos( ucNo ).z );
+//		m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	}
+//
+//	//カメラ.
+//	sprintf_s( strDbgTxt, 
+//		"CameraPos : x[%f], y[%f], z[%f]",
+//		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"CamLokPos : x[%f], y[%f], z[%f]",
+//		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	//ライト.
+//	sprintf_s( strDbgTxt, 
+//		"Light : x[%f], y[%f], z[%f]",
+//		m_vLight.x, m_vLight.y, m_vLight.z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	//各パーツのpos.
-	for( UCHAR ucNo=0; ucNo<static_cast<UCHAR>( enPARTS::MAX ); ucNo++ ){
-		sprintf_s( strDbgTxt, 
-			"PartsPos : x[%f], y[%f], z[%f]",
-			m_pAsmModel->GetPartsPos( ucNo ).x, 
-			m_pAsmModel->GetPartsPos( ucNo ).y, 
-			m_pAsmModel->GetPartsPos( ucNo ).z );
-		m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-	}
-
-	//カメラ.
-	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	//ライト.
-	sprintf_s( strDbgTxt, 
-		"Light : x[%f], y[%f], z[%f]",
-		m_vLight.x, m_vLight.y, m_vLight.z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	//ライト.
+//	sprintf_s( strDbgTxt, 
+//		"Light : x[%f], y[%f], z[%f]",
+//		m_vLight.x, m_vLight.y, m_vLight.z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	//選択肢.
 	sprintf_s( strDbgTxt, 
-		"PartsSelect : Type[%f], Num[%f]",
-		static_cast<float>( m_PartsSelect.Type ), static_cast<float>( m_PartsSelect.Num ) );
+		"UiPos : x[%f], y[%f]",
+		m_pUI->GetUiPos().x, m_pUI->GetUiPos().y );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	//テスト用に数値を出す.
@@ -354,6 +418,8 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 	sprintf_s( strDbgTxt, 
 		tmpcString );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+
 
 }
 #endif //#if _DEBUG

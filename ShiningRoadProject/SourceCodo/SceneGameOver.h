@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneClass.h"
+#include "SceneBase.h"
 #include "CameraGameOver.h"
 
 
@@ -16,7 +16,7 @@ public:
 
 private:
 	void CreateProduct() final;
-	void UpdateProduct( enSCENE &nextScene ) final;
+	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 #if _DEBUG

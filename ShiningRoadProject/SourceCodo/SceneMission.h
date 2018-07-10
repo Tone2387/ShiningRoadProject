@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneClass.h"
+#include "SceneBase.h"
 #include "CameraMission.h"
 
 
@@ -23,7 +23,7 @@ public:
 //	//ループ内の処理( 引数のフラグをを関数内で変更すると今のシーンが破棄され、.
 //	//				  指定したシーンが生成される ).
 //	//このフラグの詳細は「SceneClass.h」の「enSCENE」を見てください.
-//	void Update( enSCENE &nextScene ) final;
+//	void Update( enSCENE &enNextScene ) final;
 //
 //	//シーン内のオブジェクトの描画関数のまとめ.
 //	void Render() final;
@@ -31,7 +31,7 @@ public:
 private:
 
 	void CreateProduct() final;
-	void UpdateProduct( enSCENE &nextScene ) final;
+	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 #if _DEBUG
@@ -39,9 +39,13 @@ private:
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
+	//m_pPlayer
+	//m_vpFrends
+	//m_vpEnemys
+
 	//テスト用モデル( これは消しても良いです、いらないです ).
 	clsTestObj* m_pTestRobo;
-	clsCharaStatic* m_pTestChara;
+	//clsCharaStatic* m_pTestChara;
 
 	clsDX9Mesh* m_pStage;
 
