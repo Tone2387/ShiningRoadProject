@@ -44,28 +44,30 @@ public:
 
 
 	//何行あるか.
-	unsigned int GetSizeRow();
+	unsigned int GetSizeRow() const;
 	//その行は何列あるか.
-	unsigned int GetSizeCol( unsigned int uiRow = 0 );
+	unsigned int GetSizeCol( unsigned int uiRow = 0 ) const;
 
 
 	//----- 吐き出し関係 -----//.
 	//CSVに吐き出し.
-	bool OutPutCsv( const FILE_DATA &data );
+	bool OutPutCsv( const FILE_DATA &data ) const;
 	//OutPutCsvの引数の枠づくり.
-	void CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol );
+	void CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol ) const;
 
 private:
 
 	//ファイルデータの型のpush_back用.
 	using FILE_DATA_ROW = std::vector< std::string >;
 
+	//ファイル読み込み時に使用.
 	//文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).
 	std::vector< std::string > Split( const std::string &sStr, const char cSep ) const;
 
+	//出力前に使う.
 	//出力用文字列作成.
 	//連結.Concatenation : 連結
-	std::string ConcForOutPut( const FILE_DATA &data );
+	std::string ConcForOutPut( const FILE_DATA &data ) const;
 
 	//ファイルパス.
 	std::string m_sFileName;

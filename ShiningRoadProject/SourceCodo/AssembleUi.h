@@ -3,6 +3,7 @@
 //#include "Global.h"
 
 #include "Sprite2DCenter.h"
+#include "UiText.h"
 #include <vector>
 
 class clsASSEMBLE_UI
@@ -44,6 +45,8 @@ private:
 	std::unique_ptr< clsSprite2D >					m_upPartsWindow;	//パーツの単体モデル表示される.
 
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_pArrow;//矢印.
+
+	std::unique_ptr< clsUiText > m_upText;//文字.
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;

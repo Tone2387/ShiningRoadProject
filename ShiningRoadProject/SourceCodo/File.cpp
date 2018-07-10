@@ -131,8 +131,13 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 		string sData;
 		//全文連結.
 		for( unsigned int i=0; i<m_vvsData.size(); i++ ){
+			//改行( 最初は無視 ).
+			if( i ){
+				sData += '\n';
+			}
 			for( unsigned int j=0; j<m_vvsData[i].size(); j++ ){
 				sData += m_vvsData[i][j];
+				sData += cDELIMITER;	//区切り文字.
 			}
 		}
 		return sData;
@@ -144,6 +149,7 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 		//一行連結.
 		for( unsigned int i=0; i<m_vvsData[iRow].size(); i++ ){
 			sData += m_vvsData[iRow][i];
+			sData += cDELIMITER;
 		}
 		return sData;
 	}
@@ -177,7 +183,7 @@ float clsFILE::GetDataFloat(
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
 	//「すべてが数字」ではない || エラーならば.
-	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+	if( /*!all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||*/
 		sBuff == sERROR )
 	{
 		//エラーを返す.
@@ -195,7 +201,7 @@ double clsFILE::GetDataDouble(
 	string sBuff = GetDataString( iRow, iCol );//文字列取得.	
 
 	//「すべてが数字」ではない || エラーならば.
-	if( !all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||
+	if( /*!all_of( sBuff.cbegin(), sBuff.cend(), isdigit ) ||*/
 		sBuff == sERROR )
 	{
 		//エラーを返す.
@@ -208,13 +214,13 @@ double clsFILE::GetDataDouble(
 
 
 //何行あるか.
-unsigned int clsFILE::GetSizeRow()
+unsigned int clsFILE::GetSizeRow() const
 {
 	return m_vvsData.size();
 }
 
 //その行は何列あるか.
-unsigned int clsFILE::GetSizeCol( unsigned int uiRow )
+unsigned int clsFILE::GetSizeCol( unsigned int uiRow ) const
 {
 	//範囲外は許さない.
 	if( uiRow >= m_vvsData.size() ) return 0;
@@ -247,7 +253,7 @@ vector< string > clsFILE::Split( const string &sStr, const char cSep ) const
 
 //----- 吐き出し関係 -----//.
 //CSVに吐き出し.
-bool clsFILE::OutPutCsv( const FILE_DATA &data )
+bool clsFILE::OutPutCsv( const FILE_DATA &data ) const
 {
 	//開く.
 	ofstream ofs( m_sFileName );
@@ -268,7 +274,7 @@ bool clsFILE::OutPutCsv( const FILE_DATA &data )
 
 //出力用文字列作成.
 //連結.Concatenation : 連結
-string clsFILE::ConcForOutPut( const FILE_DATA &data )
+string clsFILE::ConcForOutPut( const FILE_DATA &data ) const
 {
 	string OutPut;
 	for( int i=0; i<data.size(); i++ ){
@@ -277,6 +283,7 @@ string clsFILE::ConcForOutPut( const FILE_DATA &data )
 			OutPut += "\n";//改行文字.
 		}
 
+		//このfor文はCSVファイル一行分を連結している.
 		for( int j=0; j<data[i].size(); j++ ){
 			OutPut += data[i][j];//連結.
 			OutPut += cDELIMITER;//区切り文字.
@@ -288,7 +295,7 @@ string clsFILE::ConcForOutPut( const FILE_DATA &data )
 
 
 //OutPutCsvの引数の枠づくり.
-void clsFILE::CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol )
+void clsFILE::CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol ) const
 {
 	//初期化.
 	for( unsigned int i=0; i<Outdata.size(); i++ ){

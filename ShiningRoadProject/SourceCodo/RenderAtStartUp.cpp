@@ -306,7 +306,7 @@ void clsRENDER_AT_START_UP::Render()
 
 	m_upLineBox->Render();
 
-	m_upText->Render( m_sLodeMsg.c_str() );
+	m_upText->Render();
 
 	m_upBlack->Render();
 
@@ -341,6 +341,7 @@ void clsRENDER_AT_START_UP::FinishLoad()
 	m_upBlack->GetDark();
 	//テキスト更新.
 	m_sLodeMsg = sCOMPLETE_MESSAGE;
+	m_upText->SetText( m_sLodeMsg.c_str() );
 	m_upText->SetPos( { fTEXT_POS_X_COMPLETE, vTEXT_POS.y } );
 
 	//邪魔な奴は消す.
@@ -539,6 +540,7 @@ void clsRENDER_AT_START_UP::UpdateLoadMsg()
 		m_iTimer = iSTOP_TIME_SHORT;
 		break;
 	}
+	m_upText->SetText( m_sLodeMsg.c_str() );
 
 }
 

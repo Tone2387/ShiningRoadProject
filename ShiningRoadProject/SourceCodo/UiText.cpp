@@ -4,7 +4,7 @@ using namespace std;
 
 //シェーダファイル名(パスも含む).
 const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
-const char* sFILE_PATH = "Data\\Image\\Ui\\Font.png";
+const char* sFILE_PATH = "Data\\Image\\Font.png";
 
 //============================================================
 //	定数.
@@ -86,13 +86,13 @@ clsUiText::~clsUiText()
 //============================================================
 //	初期化関数.
 //============================================================
-HRESULT clsUiText::Create( ID3D11DeviceContext* pContext,
-							DWORD dwWidth, DWORD dwHeight,
-							float fSize, D3DXVECTOR4 vColor )
+HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
+							const DWORD &dwWidth, const DWORD &dwHeight,
+							const float fScale )
 {
-	m_fAlpha = vColor.w;
-	m_vColor = vColor;
-	m_fScale = fSize;
+	m_fScale = fScale;
+	m_vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 
 	//95文字分繰り返し.
 	for( int i=0; i<95; i++ ){
@@ -278,7 +278,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* pContext,
 //============================================================
 //	透過(アルファブレンド)設定の切り替え.
 //============================================================
-void clsUiText::SetBlend( bool flg )
+void clsUiText::SetBlend( const bool flg )
 {
 	//アルファブレンド用ブレンドステート構造体.
 	//pngファイル内にアルファ情報があるので、
@@ -332,14 +332,10 @@ void clsUiText::SetBlend( bool flg )
 //============================================================
 //	レンダリング関数.
 //============================================================
-void clsUiText::Render( const char* text, float x, float y )
+void clsUiText::Render()
 {
-	if( x == fERROR ){
-		x = m_vPos.x;
-	}
-	if( y == fERROR ){
-		y = m_vPos.y;
-	}
+	float x = m_vPos.x;
+	float y = m_vPos.y;
 
 	//ビュートランスフォーム.
 	D3DXVECTOR3	vEye( 0.0f, 0.0f,-1.0f );
@@ -360,9 +356,9 @@ void clsUiText::Render( const char* text, float x, float y )
 #else
 	D3DXMATRIX mOtho;
 	D3DXMatrixIdentity( &mOtho );//単位行列.
-	mOtho._11	= 2.0f / (float)( m_dwWindowWidth );
-	mOtho._22	= -2.0f / (float)( m_dwWindowHeight );
-	mOtho._41	= -1.0f;
+	mOtho._11	= 2.0f / static_cast<float>( m_dwWindowWidth );
+	mOtho._22	=-2.0f / static_cast<float>( m_dwWindowHeight );
+	mOtho._41	=-1.0f;
 	mOtho._42	= 1.0f;
 #endif
 	m_mProj = mOtho;
@@ -400,8 +396,9 @@ void clsUiText::Render( const char* text, float x, float y )
 	y /= m_fScale;
 
 	//文字数分ループ.
-	for( UINT i=0; i<strlen( text ); i++ ){
-		char font = text[i];
+	const char* tmpText = m_sText.c_str();
+	for( UINT i=0; i<strlen( tmpText ); i++ ){
+		char font = tmpText[i];
 		int index = font - 32;	//フォントインデックス作成.
 
 		//フォントレンダリング.
@@ -420,7 +417,7 @@ void clsUiText::Render( const char* text, float x, float y )
 //============================================================
 //フォントレンダリング関数.
 //============================================================
-void clsUiText::RenderFont( int FontIndex, float x, float y, float z )
+void clsUiText::RenderFont( const int FontIndex, const float x, const float y, const float z ) const
 {
 	//ワールド変換.
 	D3DXMATRIX mWorld, mTrans, mScale;
@@ -452,7 +449,7 @@ void clsUiText::RenderFont( int FontIndex, float x, float y, float z )
 		//カラーを渡す.
 		cb.vColor = m_vColor;
 		//透明度を渡す.
-		cb.fAlpha.x = m_fAlpha;
+		cb.fAlpha.x = m_vColor.w;
 
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)(&cb), sizeof(cb) );
@@ -485,4 +482,17 @@ void clsUiText::SetPos( const D3DXVECTOR2 &vPos )
 void clsUiText::AddPos( const D3DXVECTOR2 &vPos )
 {
 	m_vPos += vPos;
+}
+
+
+
+void clsUiText::SetText( const char* sText )
+{
+	m_sText = sText;
+}
+
+
+void clsUiText::SetColor( const D3DXVECTOR4 &vColor )
+{
+	m_vColor = vColor;
 }
