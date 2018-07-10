@@ -26,7 +26,8 @@ public:
 
 
 	//レンダリング関数.
-	void Render();
+	//デフォルト引数はtrueにすると右端が指定座標に来る.
+	void Render( const bool bRIght = false );
 
 	void SetPos( const D3DXVECTOR2 &vPos );
 	void AddPos( const D3DXVECTOR2 &vPos );

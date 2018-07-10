@@ -37,7 +37,7 @@ const char* sPATH_PARTS_WINDOW = "Data\\Image\\PartsIcon\\NoData.png";
 
 
 //•¶š‚Ì‘å‚«‚³.
-const float fTEXT_SCALE = 1.5f;//2.0f.
+const float fTEXT_SCALE = 1.5f;//1.5f.
 //•¶š‚ÌÀ•W.
 const float fTEXT_POS_OFFSET_TO_STATUS_WINDOW_X = 5.0f;
 const float fTEXT_POS_OFFSET_TO_STATUS_WINDOW_Y = 8.75f;
