@@ -20,16 +20,13 @@ public:
 	~clsUiText();
 
 
-	HRESULT Create( ID3D11DeviceContext* pContext,
-		DWORD dwWidth, DWORD dwHeight,
-		float fScale );
+	HRESULT Create( ID3D11DeviceContext* const pContext,
+		const DWORD &dwWidth, const DWORD &dwHeight,
+		const float fScale );
 
 
 	//レンダリング関数.
-	void Render(/*
-				const char* text, 
-				const D3DXVECTOR4 &vColor = 
-				{ 1.0f, 1.0f, 1.0f, 1.0f }*/ );
+	void Render();
 
 	void SetPos( const D3DXVECTOR2 &vPos );
 	void AddPos( const D3DXVECTOR2 &vPos );
@@ -41,10 +38,10 @@ public:
 private:
 
 	//フォントレンダリング関数.
-	void RenderFont( int FontIndex, float x, float y, float z );
+	void RenderFont( const int FontIndex, const float x, const float y, const float z ) const;
 
 	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( bool flg );
+	void SetBlend( const bool flg );
 
 	//↓アプリに一つ.
 	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.

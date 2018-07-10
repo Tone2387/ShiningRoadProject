@@ -208,13 +208,13 @@ double clsFILE::GetDataDouble(
 
 
 //何行あるか.
-unsigned int clsFILE::GetSizeRow()
+unsigned int clsFILE::GetSizeRow() const
 {
 	return m_vvsData.size();
 }
 
 //その行は何列あるか.
-unsigned int clsFILE::GetSizeCol( unsigned int uiRow )
+unsigned int clsFILE::GetSizeCol( unsigned int uiRow ) const
 {
 	//範囲外は許さない.
 	if( uiRow >= m_vvsData.size() ) return 0;
@@ -247,7 +247,7 @@ vector< string > clsFILE::Split( const string &sStr, const char cSep ) const
 
 //----- 吐き出し関係 -----//.
 //CSVに吐き出し.
-bool clsFILE::OutPutCsv( const FILE_DATA &data )
+bool clsFILE::OutPutCsv( const FILE_DATA &data ) const
 {
 	//開く.
 	ofstream ofs( m_sFileName );
@@ -268,7 +268,7 @@ bool clsFILE::OutPutCsv( const FILE_DATA &data )
 
 //出力用文字列作成.
 //連結.Concatenation : 連結
-string clsFILE::ConcForOutPut( const FILE_DATA &data )
+string clsFILE::ConcForOutPut( const FILE_DATA &data ) const
 {
 	string OutPut;
 	for( int i=0; i<data.size(); i++ ){
@@ -288,7 +288,7 @@ string clsFILE::ConcForOutPut( const FILE_DATA &data )
 
 
 //OutPutCsvの引数の枠づくり.
-void clsFILE::CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol )
+void clsFILE::CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const int iCol ) const
 {
 	//初期化.
 	for( unsigned int i=0; i<Outdata.size(); i++ ){

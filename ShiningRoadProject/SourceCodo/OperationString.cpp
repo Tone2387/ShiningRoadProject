@@ -2,12 +2,12 @@
 
 using namespace std;
 
-#define THIS_PROJECT_LOCAL "japanese"
+#define LOCAL_OF_THIS_PROJECT "japanese"
 
 clsOPERATION_STRING::clsOPERATION_STRING()
 {
 	//ロケールの指定.
-	setlocale( LC_ALL, THIS_PROJECT_LOCAL );
+	setlocale( LC_ALL, LOCAL_OF_THIS_PROJECT );
 }
 
 clsOPERATION_STRING::~clsOPERATION_STRING()
@@ -70,8 +70,9 @@ wchar_t* clsOPERATION_STRING::CreateWcharPtrFromCharPtr( const char *c )
 char* clsOPERATION_STRING::CreateCharPtrFromWcharPtr( const wchar_t *wc )
 {
 	//配列のサイズ確定.
-	size_t NewSize = wcslen( wc ) + 1;//何文字ですか( null文字含む ).
+	size_t NewSize = wcslen( wc );	//何文字ですか.
 	NewSize *= sizeof( wchar_t );	//これをしないと「何バイトか」の値にならない.
+	NewSize += 1;					//( null文字含める ).
 	char *c = new char[ NewSize ];
 
 	//charからwcharへ.

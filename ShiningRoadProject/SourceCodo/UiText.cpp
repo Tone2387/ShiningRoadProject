@@ -86,11 +86,11 @@ clsUiText::~clsUiText()
 //============================================================
 //	初期化関数.
 //============================================================
-HRESULT clsUiText::Create( ID3D11DeviceContext* pContext,
-							DWORD dwWidth, DWORD dwHeight,
-							float fSize )
+HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
+							const DWORD &dwWidth, const DWORD &dwHeight,
+							const float fScale )
 {
-	m_fScale = fSize;
+	m_fScale = fScale;
 	m_vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 
@@ -278,7 +278,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* pContext,
 //============================================================
 //	透過(アルファブレンド)設定の切り替え.
 //============================================================
-void clsUiText::SetBlend( bool flg )
+void clsUiText::SetBlend( const bool flg )
 {
 	//アルファブレンド用ブレンドステート構造体.
 	//pngファイル内にアルファ情報があるので、
@@ -332,7 +332,7 @@ void clsUiText::SetBlend( bool flg )
 //============================================================
 //	レンダリング関数.
 //============================================================
-void clsUiText::Render(/* const char* text, const D3DXVECTOR4 &vColor */)
+void clsUiText::Render()
 {
 	float x = m_vPos.x;
 	float y = m_vPos.y;
@@ -356,9 +356,9 @@ void clsUiText::Render(/* const char* text, const D3DXVECTOR4 &vColor */)
 #else
 	D3DXMATRIX mOtho;
 	D3DXMatrixIdentity( &mOtho );//単位行列.
-	mOtho._11	= 2.0f / (float)( m_dwWindowWidth );
-	mOtho._22	= -2.0f / (float)( m_dwWindowHeight );
-	mOtho._41	= -1.0f;
+	mOtho._11	= 2.0f / static_cast<float>( m_dwWindowWidth );
+	mOtho._22	=-2.0f / static_cast<float>( m_dwWindowHeight );
+	mOtho._41	=-1.0f;
 	mOtho._42	= 1.0f;
 #endif
 	m_mProj = mOtho;
@@ -417,7 +417,7 @@ void clsUiText::Render(/* const char* text, const D3DXVECTOR4 &vColor */)
 //============================================================
 //フォントレンダリング関数.
 //============================================================
-void clsUiText::RenderFont( int FontIndex, float x, float y, float z )
+void clsUiText::RenderFont( const int FontIndex, const float x, const float y, const float z ) const
 {
 	//ワールド変換.
 	D3DXMATRIX mWorld, mTrans, mScale;
