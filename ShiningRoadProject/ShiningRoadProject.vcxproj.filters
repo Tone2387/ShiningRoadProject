@@ -55,14 +55,14 @@
     <Filter Include="Hiyosi\Object">
       <UniqueIdentifier>{6f2b3950-f21d-4aea-8d69-161bff4a8f56}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Tahara\AssembleUI">
+    <Filter Include="Tahara\UI">
       <UniqueIdentifier>{d9f0ad52-5110-481d-9fb5-99933f2625a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Tahara\Sound">
-      <UniqueIdentifier>{fb495207-4f89-4f73-b144-5a168eaaa282}</UniqueIdentifier>
+    <Filter Include="Tahara\System">
+      <UniqueIdentifier>{fd64bc66-99df-4ebe-8ce9-358b4368a68c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Hiyosi\Sound">
-      <UniqueIdentifier>{39cef0fa-5af8-44d1-93e0-5e23832d5e43}</UniqueIdentifier>
+    <Filter Include="Tahara\SoundManager">
+      <UniqueIdentifier>{fb495207-4f89-4f73-b144-5a168eaaa282}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -141,9 +141,6 @@
     <ClCompile Include="SourceCodo\Sprite2D.cpp">
       <Filter>Classwork\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\Sprite2DCenter.cpp">
-      <Filter>Tahara</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\DebugText.cpp">
       <Filter>Classwork\System</Filter>
     </ClCompile>
@@ -213,59 +210,62 @@
     <ClCompile Include="SourceCodo\Object.cpp">
       <Filter>Hiyosi\Object</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\File.cpp">
-      <Filter>Tahara</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\RoboStatus.cpp">
       <Filter>Tahara\Parts</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\SceneBase.cpp">
       <Filter>Tahara\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\BlackScreen.cpp">
-      <Filter>Tahara</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\AssembleUi.cpp">
-      <Filter>Tahara\AssembleUI</Filter>
+      <Filter>Tahara\UI</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\SoundManagerBase.cpp">
-      <Filter>Tahara\Sound</Filter>
+      <Filter>Tahara\SoundManager</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\SoundManagerAssemble.cpp">
-      <Filter>Tahara\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SoundManagerTitle.cpp">
-      <Filter>Hiyosi\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SoundManagerMission.cpp">
-      <Filter>Hiyosi\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SoundManagerEnding.cpp">
-      <Filter>Hiyosi\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp">
-      <Filter>Hiyosi\Sound</Filter>
+      <Filter>Tahara\SoundManager</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\FactorySoundManager.cpp">
       <Filter>Tahara\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\OperationString.cpp">
-      <Filter>Tahara</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\Stage.cpp">
       <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\RenderAtStartUp.cpp">
-      <Filter>Tahara</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\Weapon.cpp">
       <Filter>Hiyosi</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\LineBox.cpp">
-      <Filter>Tahara\AssembleUI</Filter>
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\BlackScreen.cpp">
+      <Filter>Tahara\UI</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\UiText.cpp">
-      <Filter>Tahara</Filter>
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\File.cpp">
+      <Filter>Tahara\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\OperationString.cpp">
+      <Filter>Tahara\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerEnding.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerMission.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerTitle.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Sprite2DCenter.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RenderAtStartUp.cpp">
+      <Filter>Tahara\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,9 +362,6 @@
     <ClInclude Include="SourceCodo\Sprite2D.h">
       <Filter>Classwork\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\Sprite2DCenter.h">
-      <Filter>Tahara</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\DebugText.h">
       <Filter>Classwork\System</Filter>
     </ClInclude>
@@ -440,44 +437,23 @@
     <ClInclude Include="SourceCodo\Object.h">
       <Filter>Hiyosi\Object</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\File.h">
-      <Filter>Tahara</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\RoboStatus.h">
       <Filter>Tahara\Parts</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneBase.h">
       <Filter>Tahara\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\BlackScreen.h">
-      <Filter>Tahara</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\AssembleUi.h">
-      <Filter>Tahara\AssembleUI</Filter>
+      <Filter>Tahara\UI</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\SoundManagerBase.h">
-      <Filter>Tahara\Sound</Filter>
+      <Filter>Tahara\SoundManager</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\SoundManagerAssemble.h">
-      <Filter>Tahara\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SoundManagerTitle.h">
-      <Filter>Hiyosi\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SoundManagerMission.h">
-      <Filter>Hiyosi\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SoundManagerEnding.h">
-      <Filter>Hiyosi\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SoundManagerGameOver.h">
-      <Filter>Hiyosi\Sound</Filter>
+      <Filter>Tahara\SoundManager</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\FactorySoundManager.h">
       <Filter>Tahara\Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\OperationString.h">
-      <Filter>Tahara</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\Sound.h">
       <Filter>Classwork\System</Filter>
@@ -485,20 +461,44 @@
     <ClInclude Include="SourceCodo\Stage.h">
       <Filter>Hiyosi</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\RenderAtStartUp.h">
-      <Filter>Tahara</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\Weapon.h">
       <Filter>Hiyosi</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\LineBox.h">
-      <Filter>Tahara\AssembleUI</Filter>
+      <Filter>Tahara\UI</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\UiText.h">
-      <Filter>Tahara</Filter>
+    <ClInclude Include="SourceCodo\BlackScreen.h">
+      <Filter>Tahara\UI</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\TextSpriteStruct.h">
-      <Filter>Tahara</Filter>
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\UiText.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\File.h">
+      <Filter>Tahara\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\OperationString.h">
+      <Filter>Tahara\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerEnding.h">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerGameOver.h">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerMission.h">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerTitle.h">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Sprite2DCenter.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RenderAtStartUp.h">
+      <Filter>Tahara\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

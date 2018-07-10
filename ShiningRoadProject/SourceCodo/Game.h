@@ -62,11 +62,11 @@ private:
 
 
 	//消すときdeleteしないでnullしてね.
-	HWND m_hWnd;
+	HWND					m_hWnd;
 	ID3D11Device*			m_wpDevice;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_wpContext;	//デバイスコンテキスト.
 	//2DSp用.
-	D3D10_VIEWPORT* m_wpViewPort;
+	D3D10_VIEWPORT*			m_wpViewPort;
 	//深度(Z)テスト設定.
 	ID3D11DepthStencilState*	m_wpDepthStencilState;
 
@@ -85,7 +85,7 @@ private:
 	clsROBO_STATUS*		m_spRoboStatus;
 
 	//暗幕を作ろう.
-	clsBLACK_SCREEN* m_spBlackScreen;
+	clsBLACK_SCREEN*	m_spBlackScreen;
 
 };
 
