@@ -40,25 +40,33 @@ const char* sSTATUS_TITLE_TEXT = "Parts Status";
 
 //ステータス.
 //二行目以降のずれ幅.
-const float fTEXT_OFFSET_Y = INIT_SIZE_STATUS_WINDOW.h / ( iSTATUS_NUM_MAX + 1 );//この+1はステータスタイトルの為.
+const float fTEXT_POS_Y_OFFSET_STATUS = INIT_SIZE_STATUS_WINDOW.h / ( iSTATUS_NUM_MAX + 1 );//この+1はステータスタイトルの為.
 const float fTEXT_SCALE_STATUS = 1.5f;
 //項目文字の座標.
 const D3DXVECTOR2 vTEXT_POS_OFFSET_TO_STATUS_WINDOW = { 5.0f, 8.75f };//窓からのずれ.
 const D3DXVECTOR2 vTEXT_POS_STATUS = {
 	vINIT_POS_STATUS_WINDOW.x + vTEXT_POS_OFFSET_TO_STATUS_WINDOW.x,
-	vINIT_POS_STATUS_WINDOW.y + vTEXT_POS_OFFSET_TO_STATUS_WINDOW.y + fTEXT_OFFSET_Y };
+	vINIT_POS_STATUS_WINDOW.y + vTEXT_POS_OFFSET_TO_STATUS_WINDOW.y + fTEXT_POS_Y_OFFSET_STATUS };
 //値文字の座標.
 const D3DXVECTOR2 vTEXT_POS_STATUS_NUM = 
 	{ vTEXT_POS_STATUS.x + INIT_SIZE_STATUS_WINDOW.w - 12.0f, vTEXT_POS_STATUS.y };
 //----- ステータスウィンドウ終わり -----//.
 
 
+//----- パーツウィンドウ -----//.
 //パーツの姿のまどX座標.
-float fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW = 8.0f;//ステータスウィンドウとの隙間.
+const float fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW = 8.0f;//ステータスウィンドウとの隙間.
 //478.25f.
 const D3DXVECTOR3 vINIT_POS_PARTS_WINDOW = { vINIT_POS_STATUS_WINDOW.x + INIT_SIZE_STATUS_WINDOW.w + fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW, 183.25f, 0.0f };
 const WHSIZE_FLOAT INIT_SIZE_PARTS_WINDOW  = { 300.0f, 468.0f };
 const char* sPATH_PARTS_WINDOW = "Data\\Image\\PartsIcon\\NoData.png";
+
+//文字( ステータスウィンドウを基準にしている ).
+const float TEXT_SCALE_PARTS_NAME = TEXT_SCALE_STATUS_TITLE;
+const D3DXVECTOR2 vTEXT_POS_PARTS_NAME = 
+	{ vTEXT_POS_STATUS_TITLE.x + INIT_SIZE_STATUS_WINDOW.w + fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW, vTEXT_POS_STATUS_TITLE.y };
+
+//----- パーツウィンドウ終わり -----//.
 
 
 
@@ -110,16 +118,24 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 	}
 #endif//#if _DEBUG
 
+	if( m_upPartsNameText){
+		m_upPartsNameText.reset( nullptr );
+	}
+
 	if( m_upStatusTitleText ){
 		m_upStatusTitleText.reset( nullptr );
 	}
 
-	if( m_upStatusNumText){
-		m_upStatusNumText.reset( nullptr );
+	for( unsigned int i=0; i<m_vupStatusNumText.size(); i++ ){
+		if( m_vupStatusNumText[i] ){
+			m_vupStatusNumText[i].reset( nullptr );
+		}
 	}
 
-	if( m_upStatusText ){
-		m_upStatusText.reset( nullptr );
+	for( unsigned int i=0; i<m_vupStatusText.size(); i++ ){
+		if( m_vupStatusText[i] ){
+			m_vupStatusText[i].reset( nullptr );
+		}
 	}
 
 	if( m_upFooterText ){
@@ -250,18 +266,39 @@ void clsASSEMBLE_UI::Create(
 	m_upStatusTitleText->SetText( sSTATUS_TITLE_TEXT );
 
 	//ステータス項目.
-	assert( !m_upStatusText );
-	m_upStatusText = make_unique< clsUiText >();
-	m_upStatusText->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
-	m_upStatusText->SetPos( vTEXT_POS_STATUS );
-	m_upStatusText->SetText( "Magazine Load Time" );
+	assert( !m_vupStatusText.size() );
+	m_vupStatusText.reserve( iSTATUS_NUM_MAX );
+//	m_vupStatusText.resize( iSTATUS_NUM_MAX, nullptr );
+	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
+		m_vupStatusText.push_back( nullptr );
+		m_vupStatusText[i] = make_unique< clsUiText >();
+		m_vupStatusText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
+		m_vupStatusText[i]->SetPos( vTEXT_POS_STATUS );
+		m_vupStatusText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vupStatusText[i]->SetText( "Magazine Load Time" );
+	}
+	m_vupStatusText.shrink_to_fit();
 
 	//ステータス値.
-	assert( !m_upStatusNumText );
-	m_upStatusNumText = make_unique< clsUiText >();
-	m_upStatusNumText->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
-	m_upStatusNumText->SetPos( vTEXT_POS_STATUS_NUM );
-	m_upStatusNumText->SetText( "12345 >> 12345" );
+	assert( !m_vupStatusNumText.size() );
+	m_vupStatusNumText.reserve( iSTATUS_NUM_MAX );
+//	m_vupStatusNumText.resize( iSTATUS_NUM_MAX, nullptr );
+	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
+		m_vupStatusNumText.push_back( nullptr );
+		m_vupStatusNumText[i] = make_unique< clsUiText >();
+		m_vupStatusNumText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
+		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vupStatusNumText[i]->SetText( "12345 >> 12345" );
+	}
+	m_vupStatusNumText.shrink_to_fit();
+
+	//パーツ名.
+	assert( !m_upPartsNameText );
+	m_upPartsNameText = make_unique< clsUiText >();
+	m_upPartsNameText->Create( pContext, WND_W, WND_H, TEXT_SCALE_PARTS_NAME );
+	m_upPartsNameText->SetPos( vTEXT_POS_PARTS_NAME );
+	m_upPartsNameText->SetText( "PARTS_NAME" );
 
 
 
@@ -319,12 +356,16 @@ void clsASSEMBLE_UI::Render()
 	m_upHeaderText->Render();
 	m_upFooterText->Render();
 
+	m_upPartsNameText->Render();
+
 	m_upStatusTitleText->Render();
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-		m_upStatusText->Render();
-		m_upStatusText->SetPos( { vTEXT_POS_STATUS.x, vTEXT_POS_STATUS.y + fTEXT_OFFSET_Y*i } );
-		m_upStatusNumText->Render( true );
-		m_upStatusNumText->SetPos( { vTEXT_POS_STATUS_NUM.x, vTEXT_POS_STATUS_NUM.y + fTEXT_OFFSET_Y*i } );
+//		m_vupStatusText->Render();
+//		m_vupStatusText->SetPos( { vTEXT_POS_STATUS.x, vTEXT_POS_STATUS.y + fTEXT_OFFSET_Y*i } );
+//		m_vupStatusNumText->Render( true );
+//		m_vupStatusNumText->SetPos( { vTEXT_POS_STATUS_NUM.x, vTEXT_POS_STATUS_NUM.y + fTEXT_OFFSET_Y*i } );
+		m_vupStatusText[i]->Render();
+		m_vupStatusNumText[i]->Render( true );
 	}
 }
 

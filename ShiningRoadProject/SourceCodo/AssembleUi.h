@@ -52,9 +52,12 @@ private:
 	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
 	std::unique_ptr< clsUiText > m_upFooterText;//フッター文字.
 
-	std::unique_ptr< clsUiText > m_upStatusTitleText;//ステータスのタイトル.
-	std::unique_ptr< clsUiText > m_upStatusText;//ステータス文字( 項目 ).
-	std::unique_ptr< clsUiText > m_upStatusNumText;//ステータス値.
+	std::unique_ptr< clsUiText >				m_upStatusTitleText;//ステータスのタイトル.
+	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目 ).
+	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//ステータス値.
+
+
+	std::unique_ptr< clsUiText > m_upPartsNameText;//パーツ名.
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;
