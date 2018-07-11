@@ -17,7 +17,7 @@ public:
 		RANGE,				//射程距離.
 		COST,				//消費エネルギー.
 		LOAD_TIME,			//装填時間.
-		LOCK_SPD,			//ロック速度.
+		LOCK_TIME,			//ロック速度.
 		LOCK_RANGE,			//ロック距離.
 		STABILITY,			//射撃安定.
 		MAGAZINE_LOAD_TIME,	//マガジン装填時間.

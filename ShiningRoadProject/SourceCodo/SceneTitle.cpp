@@ -45,11 +45,15 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		static float fff = 0.0f;
 		m_wpEffects->SetRotation( m_ehHibana, { 0.0f, 0.0f, fff } );
 		fff += 0.1f;
+
+
 	}
 
-
+	//‰¹º‚ÆƒV[ƒ“ˆÚ“®.
 	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		enNextScene = enSCENE::ASSEMBLE;
+		//			Excel‚Ìs”Ô†.
+		m_wpSound->StopBGM( 0 );
 		m_wpSound->PlaySE( 0 );
 	}
 }
