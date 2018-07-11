@@ -24,18 +24,22 @@ const D3DXVECTOR3 vINIT_CAMERA_POS = { 0.0f, 0.0f, -100.0f };
 const D3DXVECTOR3 vINIT_CAMERA_LOOK_POS = { 0.0f, 0.0f, 0.0f };
 
 
+//ステータスの、CSVから削る行数.
+const int iSTATUS_CUT_NUM = 2;//番号と名前.
+
+
 
 //================================//
 //========== 組み換えクラス ==========//
 //================================//
 clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
-	,m_pFile()//配列を0で初期化.
+	,m_spFile()//配列を0で初期化.
 	,m_pAsmModel( nullptr )
 	,m_pUI( nullptr )
 {
 	//念のため.
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
-		m_pFile[i] = nullptr;
+		m_spFile[i] = nullptr;
 	}
 }
 
@@ -45,9 +49,9 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 	SAFE_DELETE( m_pUI );
 
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
-		if( m_pFile[i] == nullptr ) continue;
-		m_pFile[i]->Close();
-		SAFE_DELETE( m_pFile[i] );
+		if( m_spFile[i] == nullptr ) continue;
+		m_spFile[i]->Close();
+		m_spFile[i].reset();
 	}
 	
 }
@@ -72,12 +76,12 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//パーツのステータス読み込み.
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
-		if( m_pFile[i] != nullptr ){
-			assert( !"m_pFile[i]は作成済みです" );
+		if( m_spFile[i] != nullptr ){
+			assert( !"m_spFile[i]は作成済みです" );
 			continue;
 		}
-		m_pFile[i] = new clsFILE;
-		m_pFile[i]->Open( sPARTS_STATUS_PASS[i] );
+		m_spFile[i] = make_shared< clsFILE >();
+		m_spFile[i]->Open( sPARTS_STATUS_PASS[i] );
 	}
 
 	//UI.
@@ -193,7 +197,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 
 	m_pUI->Input();
-	m_pUI->Update();
+	m_pUI->Update( m_spFile[m_PartsSelect.Type], m_PartsSelect.Num, iSTATUS_CUT_NUM );
 	m_pAsmModel->UpDate();
 
 }
@@ -222,7 +226,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	m_PartsSelect.Num --;
 
 	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_spFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
@@ -230,7 +234,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	m_PartsSelect.Num ++;
 
 	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_spFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorRight()
@@ -241,7 +245,7 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 		KeepRange( m_PartsSelect.Type, 0, enPARTS_TYPES::ENUM_SIZE );
 	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
 	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_spFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorLeft()
@@ -252,25 +256,22 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 		KeepRange( m_PartsSelect.Type, 0, enPARTS_TYPES::ENUM_SIZE );
 	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
 	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_pFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_spFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 //決定.
 void clsSCENE_ASSEMBLE::Enter()
 {
-	//ステータスの、CSVから削る行数.
-	const int iSTATUS_CUT_NUM = 2;//番号と名前.
-
 	//ステータスが何項目あるのか.
-	const int iStatusSize = m_pFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
+	const int iStatusSize = m_spFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
 
 	//引数用変数.
 	vector<int> tmpStatus;
 	tmpStatus.reserve( iStatusSize );
 	for( int i=0; i<iStatusSize; i++ ){
-		//m_pFile[]の添え字はどのパーツか、である.
+		//m_spFile[]の添え字はどのパーツか、である.
 		tmpStatus.push_back( 
-			m_pFile[ m_PartsSelect.Type ]->
+			m_spFile[ m_PartsSelect.Type ]->
 				GetDataInt( m_PartsSelect.Num, i + iSTATUS_CUT_NUM ) );
 		//GetDataInt()の第一引数は、そのパーツ部位の何番目の行を参照すればよいのか.
 		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
@@ -413,7 +414,7 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 
 	//テスト用に数値を出す.
 	string tmpsString;
-	tmpsString = m_pFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num );
+	tmpsString = m_spFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num );
 	const char* tmpcString = tmpsString.c_str();
 	sprintf_s( strDbgTxt, 
 		tmpcString );

@@ -106,7 +106,14 @@ const float fINIT_SCALE_DESIGN = 0.1875f;
 
 
 
+//パーツ名が格納されているデータ番号.
+const int iSTATUS_PARTS_NAME_NUM = 1;//.
+
+
+
+
 clsASSEMBLE_UI::clsASSEMBLE_UI()
+	:m_iStatusNum( 0 )
 {
 }
 
@@ -187,6 +194,8 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 		m_upPartsWindow.reset( nullptr );
 	}
 
+
+	m_iStatusNum = 0;
 }
 
 
@@ -331,9 +340,23 @@ void clsASSEMBLE_UI::Input()
 }
 
 
-void clsASSEMBLE_UI::Update()
+void clsASSEMBLE_UI::Update( 
+	std::shared_ptr< clsFILE > const spFile, 
+	const int iPartsNum,
+	const int iCutNum )
 {
+	assert( spFile );
+	m_iStatusNum = spFile->GetSizeCol() - iCutNum;//ステータスが何行あるかを取得.
+	//飛び出さない.
+	if( m_iStatusNum >= m_vupStatusText.size() ||
+		m_iStatusNum >= m_vupStatusNumText.size() )
+	{
+		m_iStatusNum = 0;
+	}
 
+	//パーツ名セット.
+	m_upPartsNameText->SetText( 
+		spFile->GetDataString( iPartsNum, iSTATUS_PARTS_NAME_NUM ).c_str() );
 }
 
 
@@ -359,7 +382,7 @@ void clsASSEMBLE_UI::Render()
 	m_upPartsNameText->Render();
 
 	m_upStatusTitleText->Render();
-	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
+	for( int i=0; i<m_iStatusNum; i++ ){
 //		m_vupStatusText->Render();
 //		m_vupStatusText->SetPos( { vTEXT_POS_STATUS.x, vTEXT_POS_STATUS.y + fTEXT_OFFSET_Y*i } );
 //		m_vupStatusNumText->Render( true );

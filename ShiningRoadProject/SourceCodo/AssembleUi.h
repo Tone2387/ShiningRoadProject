@@ -4,6 +4,7 @@
 
 #include "Sprite2DCenter.h"
 #include "UiText.h"
+#include "File.h"
 #include <vector>
 
 class clsASSEMBLE_UI
@@ -16,7 +17,11 @@ public:
 		ID3D11Device* const pDevice, 
 		ID3D11DeviceContext* const pContext );
 	void Input();
-	void Update();
+	//第二引数はデータから、ステータス以外のデータの数。第三引数はパーツ名の番号.
+	void Update( 
+		std::shared_ptr< clsFILE > const spFile,
+		const int iPartsNum,
+		const int iCutNum );
 	void Render();
 
 #if _DEBUG
@@ -58,6 +63,10 @@ private:
 
 
 	std::unique_ptr< clsUiText > m_upPartsNameText;//パーツ名.
+
+
+	//ステータスの数( 行数 ).
+	int m_iStatusNum;
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;
