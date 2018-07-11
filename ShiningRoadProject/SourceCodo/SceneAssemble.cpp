@@ -41,6 +41,7 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
 		m_spFile[i] = nullptr;
 	}
+
 }
 
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
@@ -197,7 +198,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 
 	m_pUI->Input();
-	m_pUI->Update( m_spFile[m_PartsSelect.Type], m_PartsSelect.Num, iSTATUS_CUT_NUM );
+	m_pUI->Update( m_spFile[m_PartsSelect.Type], m_PartsSelect.Type, m_PartsSelect.Num, iSTATUS_CUT_NUM );
 	m_pAsmModel->UpDate();
 
 }

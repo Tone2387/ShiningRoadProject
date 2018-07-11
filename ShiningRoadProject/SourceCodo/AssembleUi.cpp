@@ -108,6 +108,22 @@ const float fINIT_SCALE_DESIGN = 0.1875f;
 
 //パーツ名が格納されているデータ番号.
 const int iSTATUS_PARTS_NAME_NUM = 1;//.
+//隠さないステータスの数.
+const int iOPEN_STATUS_NUM[] =
+{
+	5, 11, 2, 2, 10
+};
+//ステータスの名前.
+const string sSTATUS_NAME_LEG[] = 
+{ "HP", "Walk Speed", "Stability", "Turning", "Jump Power"  };
+const string sSTATUS_NAME_CORE[] = 
+{ "HP", "EN Capacity", "EN Output", "Boost Horizontal Thrust", "Boost Horizontal Cost", "Boost Vertical Thrust", "Boost Vertical Cost", "Boost Quick Thrust", "Boost Quick Cost", "Boost Quick Time", "Activity Time" };
+const string sSTATUS_NAME_HEAD[] = 
+{ "HP", "Search" };
+const string sSTATUS_NAME_ARMS[] = 
+{ "HP", "Aiming" };
+const string sSTATUS_NAME_WEAPON[] = 
+{ "Attack Power", "Bullet Speed", "Bullet Range", "Cost", "Load Time", "Lock Time", "Lock Range", "Stability", "Magazine Load Time", "Bullets Num" };
 
 
 
@@ -115,6 +131,22 @@ const int iSTATUS_PARTS_NAME_NUM = 1;//.
 clsASSEMBLE_UI::clsASSEMBLE_UI()
 	:m_iStatusNum( 0 )
 {
+	//次のfor文用.
+	const string* tmpStatusNamePtr[enPARTS_TYPE_SIZE] =
+		{ &sSTATUS_NAME_LEG[0], &sSTATUS_NAME_CORE[0], &sSTATUS_NAME_HEAD[0], &sSTATUS_NAME_ARMS[0], &sSTATUS_NAME_WEAPON[0] };
+
+	//表示する文字列のセット.
+	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
+		//表示ステータスの数をそろえる.
+		m_vsStatusNameBox[i].reserve( iOPEN_STATUS_NUM[i] );
+		m_vsStatusNameBox[i].resize( iOPEN_STATUS_NUM[i] );
+
+		//文字列をセット.
+		for( int j=0; j<iOPEN_STATUS_NUM[i]; j++ ){
+			m_vsStatusNameBox[i][j] = tmpStatusNamePtr[i][j];
+		}
+	}
+
 }
 
 clsASSEMBLE_UI::~clsASSEMBLE_UI()
@@ -194,6 +226,10 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 		m_upPartsWindow.reset( nullptr );
 	}
 
+	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
+		m_vsStatusNameBox[i].clear();
+		m_vsStatusNameBox[i].shrink_to_fit();
+	}
 
 	m_iStatusNum = 0;
 }
@@ -342,14 +378,15 @@ void clsASSEMBLE_UI::Input()
 
 void clsASSEMBLE_UI::Update( 
 	std::shared_ptr< clsFILE > const spFile, 
+	const int iPartsType,
 	const int iPartsNum,
-	const int iCutNum )
+	const int iStatusCutNum )
 {
 	assert( spFile );
-	m_iStatusNum = spFile->GetSizeCol() - iCutNum;//ステータスが何行あるかを取得.
+	m_iStatusNum = iOPEN_STATUS_NUM[ iPartsType ];//ステータスが何行あるかを取得.
 	//飛び出さない.
-	if( m_iStatusNum >= m_vupStatusText.size() ||
-		m_iStatusNum >= m_vupStatusNumText.size() )
+	if( m_iStatusNum > m_vupStatusText.size() ||
+		m_iStatusNum > m_vupStatusNumText.size() )
 	{
 		m_iStatusNum = 0;
 	}
@@ -357,6 +394,14 @@ void clsASSEMBLE_UI::Update(
 	//パーツ名セット.
 	m_upPartsNameText->SetText( 
 		spFile->GetDataString( iPartsNum, iSTATUS_PARTS_NAME_NUM ).c_str() );
+
+	//ステータスウィンドウの文字列.
+	for( int i=0; i<iOPEN_STATUS_NUM[iPartsType]; i++ ){
+		//ステータス名セット.
+		m_vupStatusText[i]->SetText( m_vsStatusNameBox[ iPartsType ][i].c_str() );
+		//ステータス数値セット.
+		m_vupStatusNumText[i]->SetText( spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
+	}
 }
 
 

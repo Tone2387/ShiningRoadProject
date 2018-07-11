@@ -49,8 +49,8 @@ public:
 		BOOST_COST_V,	//ブースター消費エネルギー( 水直 ).
 		QUICK_THRUST,	//クイック推力.
 		QUICK_COST,		//クイック消費エネルギー.
-		ACT_TIME,		//活動時間(ActivityTime).
 		QUICK_TIME,		//クイック噴射時間.
+		ACT_TIME,		//活動時間(ActivityTime).
 
 		SEARCH,	//索敵性能.
 

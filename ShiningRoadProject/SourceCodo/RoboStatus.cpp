@@ -121,8 +121,8 @@ void clsROBO_STATUS::ReceiveCore( const vector<int> &CoreDatas, const ASSEMBLE_S
 	m_iRoboState[enROBO_STATE::BOOST_COST_V]	= CoreDatas[clsPARTS_CORE::BOOST_COST_V];	//ブースター消費エネルギー( 水直 ).
 	m_iRoboState[enROBO_STATE::QUICK_THRUST]	= CoreDatas[clsPARTS_CORE::QUICK_THRUST];	//クイック推力.
 	m_iRoboState[enROBO_STATE::QUICK_COST]		= CoreDatas[clsPARTS_CORE::QUICK_COST];		//クイック消費エネルギー.
-	m_iRoboState[enROBO_STATE::ACT_TIME]		= CoreDatas[clsPARTS_CORE::ACT_TIME];		//活動時間(ActivityTime).
 	m_iRoboState[enROBO_STATE::QUICK_TIME]		= CoreDatas[clsPARTS_CORE::QUICK_TIME];		//クイック噴射時間.
+	m_iRoboState[enROBO_STATE::ACT_TIME]		= CoreDatas[clsPARTS_CORE::ACT_TIME];		//活動時間(ActivityTime).
 
 	m_iRoboState[enROBO_STATE::COL_SIZE_CORE]	= CoreDatas[clsPARTS_CORE::COL_SIZE];	//当たり判定サイズ.
 
@@ -169,7 +169,7 @@ void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas, const ASSE
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::RANGE]				= WeaponLDatas[clsPARTS_WEAPON::RANGE];				//射程距離.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::COST]				= WeaponLDatas[clsPARTS_WEAPON::COST];				//消費エネルギー.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::LOAD_TIME]			= WeaponLDatas[clsPARTS_WEAPON::LOAD_TIME];			//装填時間.
-	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::LOCK_SPD]			= WeaponLDatas[clsPARTS_WEAPON::LOCK_SPD];			//ロック速度.
+	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::LOCK_SPD]			= WeaponLDatas[clsPARTS_WEAPON::LOCK_TIME];			//ロック速度.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::LOCK_RANGE]			= WeaponLDatas[clsPARTS_WEAPON::LOCK_RANGE];		//ロック距離.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::SHOT_STABILITY]		= WeaponLDatas[clsPARTS_WEAPON::STABILITY];			//射撃安定.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::MAGAZINE_LOAD_TIME]	= WeaponLDatas[clsPARTS_WEAPON::MAGAZINE_LOAD_TIME];//マガジン装填時間.
@@ -196,7 +196,7 @@ void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSE
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::RANGE]				= WeaponRDatas[clsPARTS_WEAPON::RANGE];				//射程距離.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::COST]				= WeaponRDatas[clsPARTS_WEAPON::COST];				//消費エネルギー.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::LOAD_TIME]			= WeaponRDatas[clsPARTS_WEAPON::LOAD_TIME];			//装填時間.
-	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::LOCK_SPD]			= WeaponRDatas[clsPARTS_WEAPON::LOCK_SPD];			//ロック速度.
+	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::LOCK_SPD]			= WeaponRDatas[clsPARTS_WEAPON::LOCK_TIME];			//ロック速度.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::LOCK_RANGE]			= WeaponRDatas[clsPARTS_WEAPON::LOCK_RANGE];		//ロック距離.								 
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::SHOT_STABILITY]		= WeaponRDatas[clsPARTS_WEAPON::STABILITY];			//射撃安定.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::MAGAZINE_LOAD_TIME]	= WeaponRDatas[clsPARTS_WEAPON::MAGAZINE_LOAD_TIME];//マガジン装填時間.

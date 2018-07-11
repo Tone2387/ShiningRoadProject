@@ -20,8 +20,9 @@ public:
 	//第二引数はデータから、ステータス以外のデータの数。第三引数はパーツ名の番号.
 	void Update( 
 		std::shared_ptr< clsFILE > const spFile,
-		const int iPartsNum,
-		const int iCutNum );
+		const int iPartsType,	//パーツ種類.
+		const int iPartsNum,	//パーツ番号.
+		const int iStatusCutNum );//ステータスじゃないデータの数.	
 	void Render();
 
 #if _DEBUG
@@ -31,7 +32,7 @@ public:
 
 private:
 
-	enum enPARTS_TYPE
+	enum enPARTS_TYPE : int
 	{
 		LEG = 0,
 		CORE,
@@ -58,7 +59,7 @@ private:
 	std::unique_ptr< clsUiText > m_upFooterText;//フッター文字.
 
 	std::unique_ptr< clsUiText >				m_upStatusTitleText;//ステータスのタイトル.
-	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目 ).
+	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目名 ).
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//ステータス値.
 
 
@@ -67,6 +68,8 @@ private:
 
 	//ステータスの数( 行数 ).
 	int m_iStatusNum;
+	//ステータスの名前を格納している.
+	std::vector< std::string > m_vsStatusNameBox[enPARTS_TYPE_SIZE];
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;
