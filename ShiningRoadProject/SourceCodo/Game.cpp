@@ -151,8 +151,22 @@ void clsGAME::Update()
 }
 
 //毎フレーム使う.
-void clsGAME::Render()
+void clsGAME::Render(		
+	ID3D11RenderTargetView *pBackBuffer_TexRTV,
+	ID3D11DepthStencilView *pBackBuffer_DSTexDSV )
 { 
+	//画面のクリア.
+	float ClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+	//カラーバックバッファ.
+	m_wpContext->ClearRenderTargetView(
+		pBackBuffer_TexRTV, ClearColor );
+	//デプスステンシルビューバックバッファ.
+	m_wpContext->ClearDepthStencilView(
+		pBackBuffer_DSTexDSV,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0f, 0 );
+
+	//シーンの描画.
 	ASSERT_IF_NULL( m_upScene );
 	m_upScene->Render(); 
 }
