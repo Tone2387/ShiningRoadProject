@@ -71,9 +71,9 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 
 void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus )
 {
-	ASSERT_IF_NOT_NULL( m_upPartsFactory );
+	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
-	ASSERT_IF_NOT_NULL( m_wpResource );
+	assert( !m_wpResource );
 
 	m_wpResource = pResource;
 
@@ -327,7 +327,7 @@ void clsASSEMBLE_MODEL::AnimReSet()
 //各パーツのpos.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
 {
-	ASSERT_IF_NULL( m_vpParts[ucParts] );
+	assert( m_vpParts[ucParts] );
 	return m_vpParts[ucParts]->GetPosition();
 }
 #endif//#if _DEBUG

@@ -50,7 +50,7 @@ void clsSCENE_MISSION::CreateProduct()
 void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 {
 	//nullならassert.
-	ASSERT_IF_NULL( m_pTestRobo );
+	assert( m_pTestRobo );
 	m_pTestRobo->Action(m_pStage);
 
 	D3DXVECTOR3 vLookPosTmp = m_pTestRobo->m_Trans.vPos;
@@ -86,7 +86,7 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 void clsSCENE_MISSION::RenderDebugText()
 {
 	//NULLチェック.
-	ASSERT_IF_NULL( m_upText );
+	assert( m_upText );
 
 	char strDbgTxt[256];
 	int iTxtY = 0;

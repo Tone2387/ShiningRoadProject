@@ -287,7 +287,7 @@ void clsMain::Loop()
 void clsMain::AppMain()
 {
 	//ゲームループ.
-	ASSERT_IF_NULL( m_upGame );
+	assert( m_upGame );
 	m_upGame->Update();
 
 	//レンダリング.
@@ -301,21 +301,8 @@ void clsMain::AppMain()
 //============================================================
 void clsMain::Render()
 {
-	//画面のクリア.
-	float ClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
-	//カラーバックバッファ.
-	m_pDeviceContext->ClearRenderTargetView(
-		m_pBackBuffer_TexRTV, ClearColor );
-	//デプスステンシルビューバックバッファ.
-	m_pDeviceContext->ClearDepthStencilView(
-		m_pBackBuffer_DSTexDSV,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0f, 0 );
-
-
 	//このRender関数の前のAppMain関数でチェックしているのでアサートは省く.
-//	ASSERT_IF_NULL( m_upGame );
-	m_upGame->Render();
+	m_upGame->Render( m_pBackBuffer_TexRTV, m_pBackBuffer_DSTexDSV );
 	
 	//2D?.
 //	SetDepth( false );	//Zテスト:OFF.
