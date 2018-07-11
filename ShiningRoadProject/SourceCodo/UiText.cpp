@@ -16,6 +16,9 @@ const char* sFILE_PATH = "Data\\Image\\Font.png";
 //文字同士の横の感覚.
 const float fWIDE_DIS = 6.5f;
 
+//右寄せ時の係数.
+const float fRIGHT_RATE = 6.75f;
+
 const float fERROR = -999.0f;
 
 
@@ -332,7 +335,8 @@ void clsUiText::SetBlend( const bool flg )
 //============================================================
 //	レンダリング関数.
 //============================================================
-void clsUiText::Render()
+//デフォルト引数はtrueにすると右端が指定座標に来る.
+void clsUiText::Render( const bool bRIght )
 {
 	float x = m_vPos.x;
 	float y = m_vPos.y;
@@ -395,9 +399,17 @@ void clsUiText::Render()
 	x /= m_fScale;
 	y /= m_fScale;
 
-	//文字数分ループ.
+	//文字数分ループの準備.
 	const char* tmpText = m_sText.c_str();
-	for( UINT i=0; i<strlen( tmpText ); i++ ){
+	UINT textSize = strlen( tmpText );	//文字数.
+
+	//右寄せなら左にずらす.
+	if( bRIght ){
+		x -= static_cast<float>( textSize ) * fRIGHT_RATE;
+	}
+
+	//文字数分ループ.
+	for( UINT i=0; i<textSize; i++ ){
 		char font = tmpText[i];
 		int index = font - 32;	//フォントインデックス作成.
 

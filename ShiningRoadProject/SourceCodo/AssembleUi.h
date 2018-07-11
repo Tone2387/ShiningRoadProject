@@ -38,15 +38,23 @@ private:
 	};
 
 	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsType;		//パーツカテゴリ.
-	std::unique_ptr< clsSprite2D >					m_upPartsTypeSelect;	//選択中( 半透明 ).
-	std::vector<clsSprite2D*>	m_vpPartsNum;		//.
-	std::unique_ptr< clsSprite2D >					m_upPartsNumSelect;	//.
+	std::unique_ptr< clsSprite2D >					m_upPartsTypeSelect;//選択中( 半透明 ).
+	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsNum[ enPARTS_TYPE_SIZE ];	//各パーツのUI.
+	std::unique_ptr< clsSprite2D >					m_upPartsNumSelect;	//選択中( 半透明 ).
 	std::unique_ptr< clsSprite2D >					m_upStatusWindow;	//ステータスが表示される.
 	std::unique_ptr< clsSprite2D >					m_upPartsWindow;	//パーツの単体モデル表示される.
 
+	std::unique_ptr< clsSprite2D > m_upHeader;//画面上部の帯.
+	std::unique_ptr< clsSprite2D > m_upFooter;//画面下部の帯.
+
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_pArrow;//矢印.
 
-	std::unique_ptr< clsUiText > m_upText;//文字.
+	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
+	std::unique_ptr< clsUiText > m_upFooterText;//フッター文字.
+
+	std::unique_ptr< clsUiText > m_upStatusTitleText;//ステータスのタイトル.
+	std::unique_ptr< clsUiText > m_upStatusText;//ステータス文字( 項目 ).
+	std::unique_ptr< clsUiText > m_upStatusNumText;//ステータス値.
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;
