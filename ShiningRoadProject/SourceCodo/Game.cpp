@@ -77,34 +77,41 @@ clsGAME::~clsGAME()
 //new直後に使う.
 void clsGAME::Create()
 { 
-	ASSERT_IF_NOT_NULL( m_spDxInput );
+	assert( !m_spDxInput );
 	m_spDxInput = new clsDxInput;
 	m_spDxInput->initDI(m_hWnd);
 
-	ASSERT_IF_NOT_NULL( m_spXInput );
+	assert( !m_spXInput );
 	m_spXInput = new clsXInput;
 
+	assert( !m_upSoundFactory );
 	m_upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
 
+	assert( !m_spSound );
 	m_spSound = m_upSoundFactory->Create( START_UP_SCENE, m_hWnd );
 	m_spSound->Create();
 	m_spSound->PlayBGM( cSTART_UP_MUSIC_NO );//起動音再生.
 
+	assert( !m_spResource );
 	m_spResource = new clsResource;
 	m_spResource->Create( m_hWnd, m_wpDevice, m_wpContext );
 
+	assert( !m_spEffect );
 	m_spEffect = new clsEffects;
 	m_spEffect->Create( m_wpDevice, m_wpContext );
 
+	assert( !m_spRoboStatus );
 	m_spRoboStatus = new clsROBO_STATUS;
 
 	//暗転.
 	SPRITE_STATE ss;
+	assert( !m_spBlackScreen );
 	m_spBlackScreen = new clsBLACK_SCREEN;
 	m_spBlackScreen->Create( m_wpDevice, m_wpContext,
 		cBLACK_FILE_NAME, ss );
 
 	//引数のポインタの集合体.
+	assert( !m_spPtrGroup );
 	m_spPtrGroup = new clsPOINTER_GROUP( 
 		m_wpDevice, m_wpContext, 
 		m_wpViewPort, m_wpDepthStencilState,
@@ -114,10 +121,10 @@ void clsGAME::Create()
 
 
 	//ファクトリの作成.
-	ASSERT_IF_NOT_NULL( m_upSceneFactory );
+	assert( !m_upSceneFactory );
 //	m_pSceneFactory = new clsSCENE_FACTORY( m_spPtrGroup );
 	m_upSceneFactory = make_unique< clsSCENE_FACTORY >( m_spPtrGroup );
-	ASSERT_IF_NOT_NULL( m_upCameraFactory );
+	assert( !m_upCameraFactory );
 //	m_pCameraFactory = new clsFACTORY_CAMERA;
 	m_upCameraFactory = make_unique< clsFACTORY_CAMERA >();
 
@@ -130,14 +137,14 @@ void clsGAME::Create()
 void clsGAME::Update()
 { 
 	//コントローラ入力情報更新.
-	ASSERT_IF_NULL( m_spDxInput );
+	assert( m_spDxInput );
 	m_spDxInput->UpdataInputState();
 
-	ASSERT_IF_NULL( m_spXInput );
+	assert( m_spXInput );
 	m_spXInput->UpdateStatus();
 
 	//シーンが作られているなら.
-	ASSERT_IF_NULL( m_upScene );
+	assert( m_upScene );
 
 	//次のシーンは何?フラグ.
 	enSCENE enNextScene = enSCENE::NOTHING;
@@ -157,6 +164,7 @@ void clsGAME::Render(
 { 
 	//画面のクリア.
 	float ClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+	assert( m_wpContext );
 	//カラーバックバッファ.
 	m_wpContext->ClearRenderTargetView(
 		pBackBuffer_TexRTV, ClearColor );
@@ -167,7 +175,7 @@ void clsGAME::Render(
 		1.0f, 0 );
 
 	//シーンの描画.
-	ASSERT_IF_NULL( m_upScene );
+	assert( m_upScene );
 	m_upScene->Render(); 
 }
 

@@ -175,12 +175,12 @@ void clsSCENE_BASE::SetDepth( const bool isOn )
 
 D3DXVECTOR3 clsSCENE_BASE::GetCameraPos() const
 {
-	ASSERT_IF_NULL( m_wpCamera );
+	assert( m_wpCamera );
 	return m_wpCamera->GetPos();
 }
 D3DXVECTOR3 clsSCENE_BASE::GetCameraLookPos() const
 {
-	ASSERT_IF_NULL( m_wpCamera );
+	assert( m_wpCamera );
 	return m_wpCamera->GetLookPos();
 }
 
@@ -201,7 +201,7 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 void clsSCENE_BASE::RenderDebugText()
 {
 	//NULLチェック.
-	ASSERT_IF_NULL( m_upText );
+	assert( m_upText );
 
 	char strDbgTxt[256];
 	int iTxtY = 0;

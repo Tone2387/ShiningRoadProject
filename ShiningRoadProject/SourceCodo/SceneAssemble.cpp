@@ -351,7 +351,7 @@ T clsSCENE_ASSEMBLE::KeepRange( T t, const MIN min, const MAX max ) const
 void clsSCENE_ASSEMBLE::RenderDebugText()
 {
 	//NULLチェック.
-	ASSERT_IF_NULL( m_upText );
+	assert( m_upText );
 
 	char strDbgTxt[256];
 	int iTxtY = 0;

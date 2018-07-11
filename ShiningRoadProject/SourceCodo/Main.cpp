@@ -287,7 +287,7 @@ void clsMain::Loop()
 void clsMain::AppMain()
 {
 	//ゲームループ.
-	ASSERT_IF_NULL( m_upGame );
+	assert( m_upGame );
 	m_upGame->Update();
 
 	//レンダリング.
