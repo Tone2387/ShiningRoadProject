@@ -188,6 +188,7 @@ clsASSEMBLE_UI::clsASSEMBLE_UI()
 		}
 	}
 
+
 }
 
 clsASSEMBLE_UI::~clsASSEMBLE_UI()
@@ -197,14 +198,6 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 		m_upDegine.reset( nullptr );
 	}
 #endif//#if _DEBUG
-
-	if( m_upPartsNameText){
-		m_upPartsNameText.reset( nullptr );
-	}
-
-	if( m_upStatusTitleText ){
-		m_upStatusTitleText.reset( nullptr );
-	}
 
 	for( unsigned int i=0; i<m_vupStatusNumText.size(); i++ ){
 		if( m_vupStatusNumText[i] ){
@@ -218,54 +211,21 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 		}
 	}
 
-	if( m_upFooterText ){
-		m_upFooterText.reset( nullptr );
-	}
 
-	if( m_upHeaderText ){
-		m_upHeaderText.reset( nullptr );
-	}
+	m_vupStatusNumText.clear();
+	m_vupStatusNumText.shrink_to_fit();
 
-	for( unsigned int i=0; i<m_pArrow.size(); i++ ){
-		if( m_pArrow[i] ){
-			m_pArrow[i].reset( nullptr );
-		}
-	}
+	m_vupStatusText.clear();
+	m_vupStatusText.shrink_to_fit();
+
 	m_pArrow.clear();
 	m_pArrow.shrink_to_fit();
 
-	if( m_upFooter ){
-		m_upFooter.reset( nullptr );
-	}
-	if( m_upHeader ){
-		m_upHeader.reset( nullptr );
-	}
 
-
-	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
-		if( m_vupPartsType[i] ){
-			m_vupPartsType[i].reset( nullptr );
-		}
-	}
 	m_vupPartsType.clear();
 	m_vupPartsType.shrink_to_fit();
 
 
-	if( m_upPartsNumSelect ){
-		m_upPartsNumSelect.reset( nullptr );
-	}
-
-	if( m_upPartsTypeSelect ){
-		m_upPartsTypeSelect.reset( nullptr );
-	}
-
-	if( m_upStatusWindow ){
-		m_upStatusWindow.reset( nullptr );
-	}
-
-	if( m_upPartsWindow ){
-		m_upPartsWindow.reset( nullptr );
-	}
 
 	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
 		m_vsStatusNameBox[i].clear();
@@ -287,6 +247,10 @@ void clsASSEMBLE_UI::Create(
 		ID3D11DeviceContext* const pContext,
 		PARTS_NUM_DATA data  )
 {
+	//どっちの腕に武器持たせるの?の窓.
+	assert( !m_upWndBox );
+	m_upWndBox = make_unique< clsWINDOW_BOX >( pDevice, pContext );
+
 	string tmpString;
 
 	//パーツ項目初期化.
@@ -492,6 +456,11 @@ void clsASSEMBLE_UI::Update(
 		//ステータス数値セット.
 		m_vupStatusNumText[i]->SetText( spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
 	}
+
+
+
+	//どっちのうで？.
+	m_upWndBox->Update();
 }
 
 
@@ -534,6 +503,9 @@ void clsASSEMBLE_UI::Render( const int iPartsType, const int iPartsNum )
 		m_vupStatusText[i]->Render();
 		m_vupStatusNumText[i]->Render( true );
 	}
+
+
+	m_upWndBox->Render();
 }
 
 

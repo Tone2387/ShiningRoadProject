@@ -52,6 +52,14 @@ protected:
 	D3DXVECTOR3 ConvDimPos( const D3DXVECTOR3 &v3DPos );
 
 
+	//メニュー操作に使ってね.
+	bool isPressRight();
+	bool isPressLeft();
+	bool isPressUp();
+	bool isPressDown();
+	bool isPressEnter();
+	bool isPressExit();
+
 	//----- Render用 -----//.
 	//深度テスト(Zテスト)　ON/OFF切替.
 	void SetDepth( const bool isOn );

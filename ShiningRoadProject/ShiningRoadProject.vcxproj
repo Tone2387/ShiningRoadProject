@@ -155,6 +155,7 @@
     <ClCompile Include="SourceCodo\TestObj.cpp" />
     <ClCompile Include="SourceCodo\UiText.cpp" />
     <ClCompile Include="SourceCodo\Weapon.cpp" />
+    <ClCompile Include="SourceCodo\WindowBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\AssembleModel.h" />
@@ -240,6 +241,7 @@
     <ClInclude Include="SourceCodo\TextSpriteStruct.h" />
     <ClInclude Include="SourceCodo\UiText.h" />
     <ClInclude Include="SourceCodo\Weapon.h" />
+    <ClInclude Include="SourceCodo\WindowBox.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\DebugText.hlsl">

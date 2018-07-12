@@ -4,6 +4,7 @@
 
 #include "Sprite2DCenter.h"
 #include "UiText.h"
+#include "WindowBox.h"
 #include "File.h"
 #include <vector>
 
@@ -71,6 +72,10 @@ private:
 
 
 	std::unique_ptr< clsUiText > m_upPartsNameText;//パーツ名.
+
+	//「その武器は右腕?それとも左腕?」.
+	std::unique_ptr< clsWINDOW_BOX > m_upWndBox;//左右どっちか聞いてくる箱.
+
 
 
 	//ステータスの数( 行数 ).

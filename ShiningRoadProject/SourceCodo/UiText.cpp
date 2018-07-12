@@ -23,7 +23,7 @@ const float fERROR = -999.0f;
 
 
 //============================================================
-//	コンストラクタ.
+//	UIとして文字を扱う.
 //============================================================
 clsUiText::clsUiText()
 	:m_vPos()
@@ -496,6 +496,10 @@ void clsUiText::AddPos( const D3DXVECTOR2 &vPos )
 	m_vPos += vPos;
 }
 
+void clsUiText::SetScale( const float fScale )
+{
+	m_fScale = fScale;
+}
 
 
 void clsUiText::SetText( const char* sText )

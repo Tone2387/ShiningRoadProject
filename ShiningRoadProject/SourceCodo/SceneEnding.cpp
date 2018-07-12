@@ -19,6 +19,9 @@ void clsSCENE_ENDING::CreateProduct()
 void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 {
 
+	if( isPressEnter() ){
+		enNextScene = enSCENE::TITLE;
+	}
 }
 
 void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
