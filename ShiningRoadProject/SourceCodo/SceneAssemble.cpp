@@ -75,6 +75,11 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 //	m_pParts->SetPosition( D3DXVECTOR3( -2.0f, 1.0f, 0.0f ) );
 //
 
+
+	//UIの数用変数.
+	clsASSEMBLE_UI::PARTS_NUM_DATA partsData;
+	partsData.resize( enPARTS_TYPES::ENUM_SIZE );
+
 	//パーツのステータス読み込み.
 	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
 		if( m_spFile[i] != nullptr ){
@@ -83,11 +88,14 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 		}
 		m_spFile[i] = make_shared< clsFILE >();
 		m_spFile[i]->Open( sPARTS_STATUS_PASS[i] );
+
+		partsData[i] = m_spFile[i]->GetSizeRow();
 	}
 
 	//UI.
+	assert( !m_pUI );
 	m_pUI = new clsASSEMBLE_UI;
-	m_pUI->Create( m_wpDevice, m_wpContext );
+	m_pUI->Create( m_wpDevice, m_wpContext, partsData );
 
 	//モデルさん作成.
 	assert( m_pAsmModel == nullptr );
@@ -215,7 +223,7 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 	SetDepth( false );
-	m_pUI->Render();
+	m_pUI->Render( m_PartsSelect.Type, m_PartsSelect.Num );
 	SetDepth( true );
 }
 
