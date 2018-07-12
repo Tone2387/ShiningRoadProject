@@ -2,29 +2,72 @@
 
 #include <string>
 
+
+//ファイルがあるか調べる機構を作る.
+
+
 using namespace std;
 
-//パーツアイコンサイズ.
-const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 120.0f, 60.0f };
-
-//パス( パーツアイコンにつなげるために必要 ).
+//パス( エラーにつなげるために必要 ).
 const char* sIMAGE_PASS = "Data\\Image\\PartsIcon\\";
-//エラー画像.
-const string sNO_DATA_FILE_NAME = "NoData.png";
-const string sNO_DATA_FILE_NAME_ = sIMAGE_PASS + sNO_DATA_FILE_NAME;//まだデータがないから必要なだけ ： 完成版ではなくなる.
-//パーツ種類の画像.
-const string sPARTS_FILE_NAME[] =
-{
-	"Leg", "Core", "Head", "Arms", "Weapon"
-};
 
+
+//----- パーツカテゴリ -----//.
+//パーツカテゴリサイズ.
+const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 120.0f, 60.0f };
 //パーツカテゴリUIの基準位置.
 const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 21.75f, 95.0f, 0.0f };
 //パーツカテゴリの座標の差.
 const float fOFFSET_POS_X_PARTS_TYPE = PARTS_TYPE_SIZE.w + 4.0f;
+//パーツカテゴリへのパス.
+const char* sPATH_PARTS_TYPE = "Data\\Image\\AssembleUi\\";
+//パーツカテゴリ画像パス( sIMAGE_PASSにくっつける ).
+const string sPATH_PARTS_TYPE_CHILDREN[] =
+{
+	"LegType.png", "CoreType.png", "HeadType.png", "ArmsType.png", "WeaponType.png" 
+};
+//----- パーツカテゴリ 終わり -----//.
+
+//選択中パーツカテゴリパス.
+const char* sPATH_SELECT_PARTS_TYPE = "Data\\Image\\AssembleUi\\SelectPartsType.png";
+const float fALPHA_SELECT_PARTS_TYPE = 0.5f;
+
+
+//----- 各パーツUI -----//.
+//エラー画像.
+const string sNO_DATA_FILE_NAME = "NoData.png";
+//サイズ.
+const WHSIZE_FLOAT PARTS_ICON_SIZE = { 60.0f, 60.0f };
+//UI同士の隙間.
+const float fPARTS_ICON_OFFSET = 2.0f;
+//カテゴリからの隙間.
+const float fPARTS_ICON_OFFSET_FROM_PARTS_TYPE = 6.0f;
+//基準位置.
+const D3DXVECTOR3 vINIT_POS_PARTS_ICON = { vINIT_POS_PARTS_TYPE.x, vINIT_POS_PARTS_TYPE.y + PARTS_TYPE_SIZE.h + fPARTS_ICON_OFFSET_FROM_PARTS_TYPE, 0.0f };
+
+//各パーツへのアイコンパスへの道筋.
+const string sPATH_PARTS_ICON_ROOT = "Data\\RoboParts\\";
+//各パーツへのアイコンパスへの道筋( 各パーツ ).
+const string sPATH_PARTS_ICON_PARTS[] = {
+	"Leg", "Core", "Head", "Arms", "Weapon"
+};
+//アイコンのファイル名.
+const char* sPATH_PARTS_ICON_END = "\\Icon.png";
+
+
+
+const string sNO_DATA_FILE_NAME_ = sIMAGE_PASS + sNO_DATA_FILE_NAME;//まだデータがないから必要なだけ ： 完成版ではなくなる.
+//----- 各パーツUI 終わり -----//.
+
+//選択中各パーツUIパス.
+const char* sPATH_SELECT_PARTS_NUM = "Data\\Image\\AssembleUi\\SelectPartsNum.png";
+const float fALPHA_SELECT_PARTS_NUM = fALPHA_SELECT_PARTS_TYPE;
+
+
+
 
 //----- ステータスウィンドウ -----//.
-const D3DXVECTOR3 vINIT_POS_STATUS_WINDOW = { 98.0f, 183.25f, 0.0f };//179.5f;
+const D3DXVECTOR3 vINIT_POS_STATUS_WINDOW = { 98.0f, vINIT_POS_PARTS_ICON.y, 0.0f };//179.5f;
 const WHSIZE_FLOAT INIT_SIZE_STATUS_WINDOW  = { 415.0f, 468.0f };//360.0f.
 const char* sPATH_STATUS_WINDOW = "Data\\Image\\AssembleUi\\StatusWindow.png";
 const int iSTATUS_NUM_MAX = 11;//ステータスの最大数.
@@ -57,7 +100,10 @@ const D3DXVECTOR2 vTEXT_POS_STATUS_NUM =
 //パーツの姿のまどX座標.
 const float fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW = 8.0f;//ステータスウィンドウとの隙間.
 //478.25f.
-const D3DXVECTOR3 vINIT_POS_PARTS_WINDOW = { vINIT_POS_STATUS_WINDOW.x + INIT_SIZE_STATUS_WINDOW.w + fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW, 183.25f, 0.0f };
+const D3DXVECTOR3 vINIT_POS_PARTS_WINDOW = { 
+	vINIT_POS_STATUS_WINDOW.x + INIT_SIZE_STATUS_WINDOW.w + fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW, 
+	vINIT_POS_STATUS_WINDOW.y, 
+	0.0f };
 const WHSIZE_FLOAT INIT_SIZE_PARTS_WINDOW  = { 300.0f, 468.0f };
 const char* sPATH_PARTS_WINDOW = "Data\\Image\\PartsIcon\\NoData.png";
 
@@ -110,20 +156,18 @@ const float fINIT_SCALE_DESIGN = 0.1875f;
 const int iSTATUS_PARTS_NAME_NUM = 1;//.
 //隠さないステータスの数.
 const int iOPEN_STATUS_NUM[] =
-{
-	5, 11, 2, 2, 10
-};
+{ 5, 11, 2, 2, 10 };
 //ステータスの名前.
 const string sSTATUS_NAME_LEG[] = 
-{ "HP", "Walk Speed", "Stability", "Turning", "Jump Power"  };
+	{ "HP", "Walk Speed", "Stability", "Turning", "Jump Power"  };
 const string sSTATUS_NAME_CORE[] = 
-{ "HP", "EN Capacity", "EN Output", "Boost Horizontal Thrust", "Boost Horizontal Cost", "Boost Vertical Thrust", "Boost Vertical Cost", "Boost Quick Thrust", "Boost Quick Cost", "Boost Quick Time", "Activity Time" };
+	{ "HP", "EN Capacity", "EN Output", "Boost Horizontal Power", "Boost Horizontal Cost", "Boost Vertical Power", "Boost Vertical Cost", "Boost Quick Power", "Boost Quick Cost", "Boost Quick Time", "Activity Time" };
 const string sSTATUS_NAME_HEAD[] = 
-{ "HP", "Search" };
+	{ "HP", "Search" };
 const string sSTATUS_NAME_ARMS[] = 
-{ "HP", "Aiming" };
+	{ "HP", "Aiming" };
 const string sSTATUS_NAME_WEAPON[] = 
-{ "Attack Power", "Bullet Speed", "Bullet Range", "Cost", "Load Time", "Lock Time", "Lock Range", "Stability", "Magazine Load Time", "Bullets Num" };
+	{ "Attack Power", "Bullet Speed", "Bullet Range", "Cost", "Load Time", "Lock Time", "Lock Range", "Stability", "Magazine Load Time", "Bullets Num" };
 
 
 
@@ -231,6 +275,11 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 		m_vsStatusNameBox[i].shrink_to_fit();
 	}
 
+	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
+		m_vupPartsIcon[i].clear();
+		m_vupPartsIcon[i].shrink_to_fit();
+	}
+
 	m_iStatusNum = 0;
 }
 
@@ -238,7 +287,8 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 
 void clsASSEMBLE_UI::Create(
 		ID3D11Device* const pDevice, 
-		ID3D11DeviceContext* const pContext )
+		ID3D11DeviceContext* const pContext,
+		PARTS_NUM_DATA data  )
 {
 	string tmpString = sIMAGE_PASS;
 
@@ -251,12 +301,43 @@ void clsASSEMBLE_UI::Create(
 		m_vupPartsType.push_back( nullptr );
 		m_vupPartsType[i] = make_unique< clsSprite2D >();
 
-		tmpString = sIMAGE_PASS + sNO_DATA_FILE_NAME;
+		tmpString = sPATH_PARTS_TYPE + sPATH_PARTS_TYPE_CHILDREN[i];
 		m_vupPartsType[i]->Create( pDevice, pContext, tmpString.c_str(), ss );
 
-		m_vupPartsType[i]->SetPos( vINIT_POS_PARTS_TYPE );//148.25f.
+		m_vupPartsType[i]->SetPos( vINIT_POS_PARTS_TYPE );
 		m_vupPartsType[i]->AddPos( { fOFFSET_POS_X_PARTS_TYPE * static_cast<float>( i ), 0.0f, 0.0f } );
 	}
+
+	//選択中パーツ項目.
+	assert( !m_upPartsTypeSelect );
+	m_upPartsTypeSelect = make_unique< clsSprite2D >();
+	m_upPartsTypeSelect->Create( pDevice, pContext, sPATH_SELECT_PARTS_TYPE, ss );
+	m_upPartsTypeSelect->SetAlpha( fALPHA_SELECT_PARTS_TYPE );
+
+	//各パーツUI.
+	ss.Disp = PARTS_ICON_SIZE;
+	for( unsigned int i=0; i<enPARTS_TYPE_SIZE; i++ ){
+		assert( m_vupPartsIcon[i].size() == 0 );
+		m_vupPartsIcon[i].reserve( data[i] );
+
+		for( unsigned int j=0; j<data[i]; j++ ){
+			m_vupPartsIcon[i].push_back( nullptr );
+			m_vupPartsIcon[i][j] = make_unique< clsSprite2D >();
+
+			tmpString = sPATH_PARTS_TYPE + sPATH_PARTS_TYPE_CHILDREN[i];
+			m_vupPartsIcon[i][j]->Create( pDevice, pContext, tmpString.c_str(), ss );
+
+			m_vupPartsIcon[i][j]->SetPos( vINIT_POS_PARTS_ICON );
+			m_vupPartsIcon[i][j]->AddPos( { 0.0f, ( fPARTS_ICON_OFFSET + PARTS_ICON_SIZE.h ) * static_cast<float>( j ), 0.0f } );
+		}
+	}
+	//選択中各パーツアイコン.
+	assert( !m_upPartsNumSelect );
+	m_upPartsNumSelect = make_unique< clsSprite2D >();
+	m_upPartsNumSelect->Create( pDevice, pContext, sPATH_SELECT_PARTS_NUM, ss );
+	m_upPartsNumSelect->SetAlpha( fALPHA_SELECT_PARTS_NUM );
+
+
 
 	//ステータスが表示される窓.
 	assert( !m_upStatusWindow );
@@ -313,9 +394,9 @@ void clsASSEMBLE_UI::Create(
 	//ステータス項目.
 	assert( !m_vupStatusText.size() );
 	m_vupStatusText.reserve( iSTATUS_NUM_MAX );
-//	m_vupStatusText.resize( iSTATUS_NUM_MAX, nullptr );
+	m_vupStatusText.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-		m_vupStatusText.push_back( nullptr );
+//		m_vupStatusText.push_back( nullptr );
 		m_vupStatusText[i] = make_unique< clsUiText >();
 		m_vupStatusText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
 		m_vupStatusText[i]->SetPos( vTEXT_POS_STATUS );
@@ -327,9 +408,9 @@ void clsASSEMBLE_UI::Create(
 	//ステータス値.
 	assert( !m_vupStatusNumText.size() );
 	m_vupStatusNumText.reserve( iSTATUS_NUM_MAX );
-//	m_vupStatusNumText.resize( iSTATUS_NUM_MAX, nullptr );
+	m_vupStatusNumText.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-		m_vupStatusNumText.push_back( nullptr );
+//		m_vupStatusNumText.push_back( nullptr );
 		m_vupStatusNumText[i] = make_unique< clsUiText >();
 		m_vupStatusNumText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
 		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
@@ -377,11 +458,16 @@ void clsASSEMBLE_UI::Input()
 
 
 void clsASSEMBLE_UI::Update( 
-	std::shared_ptr< clsFILE > const spFile, 
+	shared_ptr< clsFILE > const spFile, 
 	const int iPartsType,
 	const int iPartsNum,
 	const int iStatusCutNum )
 {
+	//選択中表示.
+	m_upPartsTypeSelect->SetPos( m_vupPartsType[ iPartsType ]->GetPos() );
+	m_upPartsNumSelect->SetPos( m_vupPartsIcon[ iPartsType ][ iPartsNum ]->GetPos() );
+
+	//文字列.
 	assert( spFile );
 	m_iStatusNum = iOPEN_STATUS_NUM[ iPartsType ];//ステータスが何行あるかを取得.
 	//飛び出さない.
@@ -405,15 +491,24 @@ void clsASSEMBLE_UI::Update(
 }
 
 
-void clsASSEMBLE_UI::Render()
+void clsASSEMBLE_UI::Render( const int iPartsType, const int iPartsNum )
 {
 #if _DEBUG
 	m_upDegine->Render();
 #endif//#if _DEBUG
 
-	for( unsigned int i=0; i<enPARTS_TYPE_SIZE; i++ ){
+	//パーツカテゴリ.
+	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
 		m_vupPartsType[i]->Render();
 	}
+	//選択中カテゴリ.
+	m_upPartsTypeSelect->Render();
+
+	//パーツアイコン.
+	for( unsigned int j=0; j<m_vupPartsIcon[ iPartsType ].size(); j++ ){
+		m_vupPartsIcon[ iPartsType ][j]->Render();
+	}
+	m_upPartsNumSelect->Render();
 
 	m_upHeader->Render();
 	m_upFooter->Render();

@@ -13,17 +13,24 @@ public:
 	clsASSEMBLE_UI();
 	~clsASSEMBLE_UI();
 
+	//各パーツUI数受け取り用.
+	using PARTS_NUM_DATA = std::vector< int >; 
+
 	void Create( 
 		ID3D11Device* const pDevice, 
-		ID3D11DeviceContext* const pContext );
+		ID3D11DeviceContext* const pContext,
+		PARTS_NUM_DATA data );//各パーツUIの数確定用.
+
 	void Input();
+
 	//第二引数はデータから、ステータス以外のデータの数。第三引数はパーツ名の番号.
 	void Update( 
 		std::shared_ptr< clsFILE > const spFile,
 		const int iPartsType,	//パーツ種類.
 		const int iPartsNum,	//パーツ番号.
 		const int iStatusCutNum );//ステータスじゃないデータの数.	
-	void Render();
+
+	void Render( const int iPartsType, const int iPartsNum );//選択中パーツ番号.
 
 #if _DEBUG
 	//デバッグテキスト用.
@@ -45,7 +52,7 @@ private:
 
 	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsType;		//パーツカテゴリ.
 	std::unique_ptr< clsSprite2D >					m_upPartsTypeSelect;//選択中( 半透明 ).
-	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsNum[ enPARTS_TYPE_SIZE ];	//各パーツのUI.
+	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsIcon[ enPARTS_TYPE_SIZE ];	//各パーツのUI.
 	std::unique_ptr< clsSprite2D >					m_upPartsNumSelect;	//選択中( 半透明 ).
 	std::unique_ptr< clsSprite2D >					m_upStatusWindow;	//ステータスが表示される.
 	std::unique_ptr< clsSprite2D >					m_upPartsWindow;	//パーツの単体モデル表示される.
