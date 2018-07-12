@@ -12,7 +12,7 @@
 
 #include <string>
 
-
+//UI‚Æ‚µ‚Ä•¶Žš‚ðˆµ‚¤.
 class clsUiText
 {
 public:
@@ -31,6 +31,8 @@ public:
 
 	void SetPos( const D3DXVECTOR2 &vPos );
 	void AddPos( const D3DXVECTOR2 &vPos );
+
+	void SetScale( const float fScale );
 
 	void SetText( const char* sText );
 

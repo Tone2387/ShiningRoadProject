@@ -3,6 +3,8 @@
 #include "SceneBase.h"
 #include "CameraEnding.h"
 
+#include "Stage.h"
+
 
 //================================//
 //========== エンディングクラス ==========//
@@ -18,6 +20,9 @@ private:
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
+
+
+	std::unique_ptr< clsStage >	m_upStage;
 
 #if _DEBUG
 	//デバック゛テキストの表示.

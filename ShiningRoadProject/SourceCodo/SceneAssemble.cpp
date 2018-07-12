@@ -191,15 +191,15 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 
 	//‘I‘ðŽˆ.
-	if( GetAsyncKeyState( VK_RIGHT ) & 0x1 )MoveCursorRight();
-	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ) MoveCursorLeft();
-	if( GetAsyncKeyState( VK_UP ) & 0x1 )	MoveCursorUp();
-	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ) MoveCursorDown();
-	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
+	if( isPressRight() )MoveCursorRight();
+	if( isPressLeft() )	MoveCursorLeft();
+	if( isPressUp() )	MoveCursorUp();
+	if( isPressDown() )	MoveCursorDown();
+	if( isPressEnter() ){
 		Enter();
 		m_wpSound->PlaySE( enSE::ENTER );
 	}
-	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
+	if( isPressExit() ){
 		Undo();
 		m_wpSound->PlaySE( enSE::EXIT, true );
 	}

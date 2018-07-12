@@ -20,6 +20,9 @@ void clsSCENE_GAME_OVER::CreateProduct()
 void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 {
 
+	if( isPressEnter() ){
+		enNextScene = enSCENE::TITLE;
+	}
 }
 
 void clsSCENE_GAME_OVER::RenderProduct( const D3DXVECTOR3 &vCamPos )

@@ -267,6 +267,9 @@
     <ClCompile Include="SourceCodo\RenderAtStartUp.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\WindowBox.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\Charactor.h">
@@ -498,6 +501,9 @@
       <Filter>Tahara\UI</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\RenderAtStartUp.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\WindowBox.h">
       <Filter>Tahara\UI</Filter>
     </ClInclude>
   </ItemGroup>

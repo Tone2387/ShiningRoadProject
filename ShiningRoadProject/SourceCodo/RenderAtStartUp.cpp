@@ -124,14 +124,14 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 
 
 	if( !m_upLineBox ){
-		m_upLineBox = make_unique< clsLINE_BOX >();
+		m_upLineBox = make_unique< clsLINE_BOX >( pDevice, pContext );
 		m_upLineBox->Create( pDevice, pContext );
 		m_upLineBox->SetPos( vINIT_LINE_BOX_POS );
 		m_upLineBox->SetSize( { 0.0f, 0.0f, 0.0f } );
 	}
 
 	if( !m_upGageBox ){
-		m_upGageBox = make_unique< clsLINE_BOX >();
+		m_upGageBox = make_unique< clsLINE_BOX >( pDevice, pContext );
 		m_upGageBox->Create( pDevice, pContext );
 		m_upGageBox->SetPos( vINIT_GAGE_BOX_POS );
 		m_upGageBox->SetSize( { 0.0f, 0.0f, 0.0f } );

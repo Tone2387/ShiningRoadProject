@@ -1,6 +1,7 @@
 #include "AssembleUi.h"
 
-#include <string>
+#include "OperationString.h"
+//#include <string>
 
 
 //ファイルがあるか調べる機構を作る.
@@ -8,8 +9,6 @@
 
 using namespace std;
 
-//パス( エラーにつなげるために必要 ).
-const char* sIMAGE_PASS = "Data\\Image\\PartsIcon\\";
 
 
 //----- パーツカテゴリ -----//.
@@ -21,7 +20,7 @@ const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 21.75f, 95.0f, 0.0f };
 const float fOFFSET_POS_X_PARTS_TYPE = PARTS_TYPE_SIZE.w + 4.0f;
 //パーツカテゴリへのパス.
 const char* sPATH_PARTS_TYPE = "Data\\Image\\AssembleUi\\";
-//パーツカテゴリ画像パス( sIMAGE_PASSにくっつける ).
+//パーツカテゴリ画像パス( sPATH_PARTS_TYPEにくっつける ).
 const string sPATH_PARTS_TYPE_CHILDREN[] =
 {
 	"LegType.png", "CoreType.png", "HeadType.png", "ArmsType.png", "WeaponType.png" 
@@ -34,8 +33,6 @@ const float fALPHA_SELECT_PARTS_TYPE = 0.5f;
 
 
 //----- 各パーツUI -----//.
-//エラー画像.
-const string sNO_DATA_FILE_NAME = "NoData.png";
 //サイズ.
 const WHSIZE_FLOAT PARTS_ICON_SIZE = { 60.0f, 60.0f };
 //UI同士の隙間.
@@ -55,8 +52,8 @@ const string sPATH_PARTS_ICON_PARTS[] = {
 const char* sPATH_PARTS_ICON_END = "\\Icon.png";
 
 
-
-const string sNO_DATA_FILE_NAME_ = sIMAGE_PASS + sNO_DATA_FILE_NAME;//まだデータがないから必要なだけ ： 完成版ではなくなる.
+//エラー画像.
+const string sNO_DATA_FILE_NAME = "Data\\Image\\PartsIcon\\NoData.png";
 //----- 各パーツUI 終わり -----//.
 
 //選択中各パーツUIパス.
@@ -191,6 +188,7 @@ clsASSEMBLE_UI::clsASSEMBLE_UI()
 		}
 	}
 
+
 }
 
 clsASSEMBLE_UI::~clsASSEMBLE_UI()
@@ -200,14 +198,6 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 		m_upDegine.reset( nullptr );
 	}
 #endif//#if _DEBUG
-
-	if( m_upPartsNameText){
-		m_upPartsNameText.reset( nullptr );
-	}
-
-	if( m_upStatusTitleText ){
-		m_upStatusTitleText.reset( nullptr );
-	}
 
 	for( unsigned int i=0; i<m_vupStatusNumText.size(); i++ ){
 		if( m_vupStatusNumText[i] ){
@@ -221,54 +211,21 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 		}
 	}
 
-	if( m_upFooterText ){
-		m_upFooterText.reset( nullptr );
-	}
 
-	if( m_upHeaderText ){
-		m_upHeaderText.reset( nullptr );
-	}
+	m_vupStatusNumText.clear();
+	m_vupStatusNumText.shrink_to_fit();
 
-	for( unsigned int i=0; i<m_pArrow.size(); i++ ){
-		if( m_pArrow[i] ){
-			m_pArrow[i].reset( nullptr );
-		}
-	}
+	m_vupStatusText.clear();
+	m_vupStatusText.shrink_to_fit();
+
 	m_pArrow.clear();
 	m_pArrow.shrink_to_fit();
 
-	if( m_upFooter ){
-		m_upFooter.reset( nullptr );
-	}
-	if( m_upHeader ){
-		m_upHeader.reset( nullptr );
-	}
 
-
-	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
-		if( m_vupPartsType[i] ){
-			m_vupPartsType[i].reset( nullptr );
-		}
-	}
 	m_vupPartsType.clear();
 	m_vupPartsType.shrink_to_fit();
 
 
-	if( m_upPartsNumSelect ){
-		m_upPartsNumSelect.reset( nullptr );
-	}
-
-	if( m_upPartsTypeSelect ){
-		m_upPartsTypeSelect.reset( nullptr );
-	}
-
-	if( m_upStatusWindow ){
-		m_upStatusWindow.reset( nullptr );
-	}
-
-	if( m_upPartsWindow ){
-		m_upPartsWindow.reset( nullptr );
-	}
 
 	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
 		m_vsStatusNameBox[i].clear();
@@ -290,7 +247,11 @@ void clsASSEMBLE_UI::Create(
 		ID3D11DeviceContext* const pContext,
 		PARTS_NUM_DATA data  )
 {
-	string tmpString = sIMAGE_PASS;
+	//どっちの腕に武器持たせるの?の窓.
+	assert( !m_upWndBox );
+	m_upWndBox = make_unique< clsWINDOW_BOX >( pDevice, pContext );
+
+	string tmpString;
 
 	//パーツ項目初期化.
 	assert( m_vupPartsType.size() == 0 );
@@ -315,17 +276,24 @@ void clsASSEMBLE_UI::Create(
 	m_upPartsTypeSelect->SetAlpha( fALPHA_SELECT_PARTS_TYPE );
 
 	//各パーツUI.
+	clsOPERATION_STRING OprtStr;
 	ss.Disp = PARTS_ICON_SIZE;
-	for( unsigned int i=0; i<enPARTS_TYPE_SIZE; i++ ){
+	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
 		assert( m_vupPartsIcon[i].size() == 0 );
 		m_vupPartsIcon[i].reserve( data[i] );
 
-		for( unsigned int j=0; j<data[i]; j++ ){
+		for( int j=0; j<data[i]; j++ ){
 			m_vupPartsIcon[i].push_back( nullptr );
 			m_vupPartsIcon[i][j] = make_unique< clsSprite2D >();
 
-			tmpString = sPATH_PARTS_TYPE + sPATH_PARTS_TYPE_CHILDREN[i];
-			m_vupPartsIcon[i][j]->Create( pDevice, pContext, tmpString.c_str(), ss );
+			tmpString = sPATH_PARTS_ICON_ROOT + sPATH_PARTS_ICON_PARTS[i] + "\\" + sPATH_PARTS_ICON_PARTS[i];
+			tmpString = OprtStr.ConsolidatedNumber( tmpString, j );//ディレクトリ番号番号連結.
+			tmpString += sPATH_PARTS_ICON_END;//ファイル名.
+
+			//アイコン画像が見つからなければNODATA画像を読み込む.
+			if( FAILED( m_vupPartsIcon[i][j]->Create( pDevice, pContext, tmpString.c_str(), ss ) ) ){
+				m_vupPartsIcon[i][j]->Create( pDevice, pContext, sNO_DATA_FILE_NAME.c_str(), ss );
+			}
 
 			m_vupPartsIcon[i][j]->SetPos( vINIT_POS_PARTS_ICON );
 			m_vupPartsIcon[i][j]->AddPos( { 0.0f, ( fPARTS_ICON_OFFSET + PARTS_ICON_SIZE.h ) * static_cast<float>( j ), 0.0f } );
@@ -357,14 +325,14 @@ void clsASSEMBLE_UI::Create(
 	assert( !m_upHeader );
 	ss.Disp = INIT_SIZE_HEADER;
 	m_upHeader = make_unique< clsSprite2D >();
-	m_upHeader->Create( pDevice, pContext, sNO_DATA_FILE_NAME_.c_str(), ss );
+	m_upHeader->Create( pDevice, pContext, sNO_DATA_FILE_NAME.c_str(), ss );
 	m_upHeader->SetPos( INIT_POS_HEADER );
 
 	//フッター.
 	assert( !m_upFooter );
 	ss.Disp = INIT_SIZE_FOOTER;
 	m_upFooter = make_unique< clsSprite2D >();
-	m_upFooter->Create( pDevice, pContext, sNO_DATA_FILE_NAME_.c_str(), ss );
+	m_upFooter->Create( pDevice, pContext, sNO_DATA_FILE_NAME.c_str(), ss );
 	m_upFooter->SetPos( INIT_POS_FOOTER );
 
 
@@ -471,8 +439,8 @@ void clsASSEMBLE_UI::Update(
 	assert( spFile );
 	m_iStatusNum = iOPEN_STATUS_NUM[ iPartsType ];//ステータスが何行あるかを取得.
 	//飛び出さない.
-	if( m_iStatusNum > m_vupStatusText.size() ||
-		m_iStatusNum > m_vupStatusNumText.size() )
+	if( static_cast< unsigned int >( m_iStatusNum ) > m_vupStatusText.size() ||
+		static_cast< unsigned int >( m_iStatusNum ) > m_vupStatusNumText.size() )
 	{
 		m_iStatusNum = 0;
 	}
@@ -488,6 +456,11 @@ void clsASSEMBLE_UI::Update(
 		//ステータス数値セット.
 		m_vupStatusNumText[i]->SetText( spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
 	}
+
+
+
+	//どっちのうで？.
+	m_upWndBox->Update();
 }
 
 
@@ -530,6 +503,9 @@ void clsASSEMBLE_UI::Render( const int iPartsType, const int iPartsNum )
 		m_vupStatusText[i]->Render();
 		m_vupStatusNumText[i]->Render( true );
 	}
+
+
+	m_upWndBox->Render();
 }
 
 

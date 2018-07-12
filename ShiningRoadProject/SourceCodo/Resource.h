@@ -43,7 +43,7 @@ public:
 	enum enSTATIC_MODEL : UCHAR
 	{
 		enStaticModel_StageBase = 0,//ステージの土台.
-		enStaticModel_Obstacle,		//ステージの障害物.
+		enStaticModel_Building,		//ステージの障害物.
 		enStaticModel_Shpere,		//当たり判定チェック用.
 
 		enStaticModel_Max

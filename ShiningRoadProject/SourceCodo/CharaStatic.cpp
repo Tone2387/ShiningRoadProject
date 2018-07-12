@@ -18,7 +18,7 @@ clsCharaStatic::~clsCharaStatic()
 void clsCharaStatic::Render(
 	const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
 	const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye,
-	const D3DXVECTOR4 vColor , const bool bAlpha )
+	const D3DXVECTOR4 &vColor , const bool bAlpha )
 {
 	if( m_pModel == nullptr ) return;
 
@@ -57,7 +57,7 @@ void clsCharaStatic::UpDateModel()
 	m_pModel->m_Trans.fYaw	= m_vRot.y;
 	m_pModel->m_Trans.fPitch= m_vRot.x;
 	m_pModel->m_Trans.fRoll	= m_vRot.z;
-	m_pModel->m_Trans.vScale.x = m_fScale;
+	m_pModel->m_Trans.vScale = m_vScale;
 }
 
 
@@ -97,6 +97,10 @@ void clsCharaStatic::UpdatePos()
 
 
 
+clsDX9Mesh* clsCharaStatic::GetModelPtr()
+{
+	return m_pModel;
+}
 
 
 

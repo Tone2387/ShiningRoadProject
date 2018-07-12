@@ -17,36 +17,14 @@ const float fROT_ROLL = static_cast< float >( 3.14 * 0.5 );
 
 const float fSCALE = 16.0f;
 
-clsLINE_BOX::clsLINE_BOX()
+clsLINE_BOX::clsLINE_BOX(		
+	ID3D11Device* const pDevice11,
+	ID3D11DeviceContext* const pContext11 )
 	:m_vPos()
 	,m_vSize()
 {
 	m_vPos = { WND_W/2, WND_H/2, 0.0f };
-//	m_vSize = { WND_W/2, WND_H/2, 0.0f };
-}
 
-clsLINE_BOX::~clsLINE_BOX()
-{
-	for( char i=0; i<JOINT_MAX; i++ ){
-		if( !m_upLineJoint[i] ) continue;
-		m_upLineJoint[i].reset( nullptr );
-	}
-
-	for( char i=0; i<LINE_MAX; i++ ){
-		if( !m_upLineV[i] ) continue;
-		m_upLineV[i].reset( nullptr );
-	}
-
-	for( char i=0; i<LINE_MAX; i++ ){
-		if( !m_upLineH[i] ) continue;
-		m_upLineH[i].reset( nullptr );
-	}
-}
-
-void clsLINE_BOX::Create(		
-	ID3D11Device* const pDevice11,
-	ID3D11DeviceContext* const pContext11 )
-{
 	SPRITE_STATE ss;
 	ss.Disp = SS_DISP;
 	ss.Anim = SS_ANIM;
@@ -74,6 +52,31 @@ void clsLINE_BOX::Create(
 		m_upLineJoint[i]->SetScale( fSCALE );
 		m_upLineJoint[i]->SetRot( { 0.0f, 0.0f, ( static_cast<float>( i ) * fROT_ROLL ) } );
 	}
+
+}
+
+clsLINE_BOX::~clsLINE_BOX()
+{
+	for( char i=0; i<JOINT_MAX; i++ ){
+		if( !m_upLineJoint[i] ) continue;
+		m_upLineJoint[i].reset( nullptr );
+	}
+
+	for( char i=0; i<LINE_MAX; i++ ){
+		if( !m_upLineV[i] ) continue;
+		m_upLineV[i].reset( nullptr );
+	}
+
+	for( char i=0; i<LINE_MAX; i++ ){
+		if( !m_upLineH[i] ) continue;
+		m_upLineH[i].reset( nullptr );
+	}
+}
+
+void clsLINE_BOX::Create(		
+	ID3D11Device* const pDevice11,
+	ID3D11DeviceContext* const pContext11 )
+{
 
 }
 
@@ -153,9 +156,6 @@ void clsLINE_BOX::Render()
 {
 	for( char i=0; i<LINE_MAX; i++ ){
 		m_upLineH[i]->Render();
-	}
-
-	for( char i=0; i<LINE_MAX; i++ ){
 		m_upLineV[i]->Render();
 	}
 
