@@ -279,14 +279,14 @@ bool clsFILE::OutPutCsv( const FILE_DATA &data ) const
 string clsFILE::ConcForOutPut( const FILE_DATA &data ) const
 {
 	string OutPut;
-	for( int i=0; i<data.size(); i++ ){
+	for( unsigned int i=0; i<data.size(); i++ ){
 		//最初は無視.
 		if( i ){
 			OutPut += "\n";//改行文字.
 		}
 
 		//このfor文はCSVファイル一行分を連結している.
-		for( int j=0; j<data[i].size(); j++ ){
+		for( unsigned int j=0; j<data[i].size(); j++ ){
 			OutPut += data[i][j];//連結.
 			OutPut += cDELIMITER;//区切り文字.
 		}
