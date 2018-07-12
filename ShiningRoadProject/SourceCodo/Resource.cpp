@@ -133,8 +133,8 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 		"Data\\Stage\\kami_map.x",
 		enSTATIC_MODEL::enStaticModel_StageBase );
 	CreateStaticModel(
-		"Data\\RoboParts\\Leg\\Leg1\\Leg1.x",
-		enSTATIC_MODEL::enStaticModel_Obstacle );
+		"Data\\Stage\\Building.X",
+		enSTATIC_MODEL::enStaticModel_Building );
 	CreateStaticModel(
 		"Data\\Collision\\Sphere.x",
 		enSTATIC_MODEL::enStaticModel_Shpere );

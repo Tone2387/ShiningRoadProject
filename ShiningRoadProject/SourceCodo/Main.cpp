@@ -487,7 +487,7 @@ HRESULT clsMain::InitD3D()
 	D3D11_RASTERIZER_DESC rdc;
 	ZeroMemory( &rdc, sizeof( rdc ) );
 	rdc.FillMode = D3D11_FILL_SOLID;	//塗りつぶし(ソリッド).
-	rdc.CullMode = D3D11_CULL_NONE;
+	rdc.CullMode = D3D11_CULL_BACK;
 					//D3D11_CULL_NONE :カリングを切る(正背面を描画する).
 					//D3D11_CULL_BACK :背面を描画しない.
 					//D3D11_CULL_FRONT:正面を描画しない.
