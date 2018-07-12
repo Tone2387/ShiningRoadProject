@@ -22,7 +22,7 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
 
-	std::unique_ptr< clsStage >	m_upStage;
+	std::unique_ptr< clsStage >	m_upStage;//テスト用.
 
 #if _DEBUG
 	//デバック゛テキストの表示.
