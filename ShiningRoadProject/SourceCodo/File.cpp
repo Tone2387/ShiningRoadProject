@@ -12,7 +12,7 @@
 using namespace std;
 
 const unsigned int uiRESERVE_SIZE_ROW = 64;//ベクターの初期最大サイズ( 行 ).
-const unsigned int uiRESERVE_SIZE_COL = 16;//ベクターの初期最大サイズ( 行のカンマ区切りの数 ).
+const unsigned int uiRESERVE_SIZE_COL = 32;//ベクターの初期最大サイズ( 行のカンマ区切りの数 ).
 
 const char cDELIMITER = ',';//区切り文字.
 	

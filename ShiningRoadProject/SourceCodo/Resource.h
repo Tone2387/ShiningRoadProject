@@ -10,7 +10,7 @@
 //テスト中はつける( パーツの読み込み数を固定化 ).
 //#define RESOURCE_READ_PARTS_MODEL_LOCK
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK
-const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数 : 4.
+const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数.
 #endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
 
 

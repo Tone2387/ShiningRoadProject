@@ -6,6 +6,20 @@ using namespace std;
 const char* sSTAGE_BASE_DATA_PATH = "Data\\Stage\\StageBase.csv";
 const char* sBUILDING_DATA_PATH = "Data\\Stage\\Building.csv";
 
+//ƒtƒ@ƒCƒ‹“Ç‚ÝŽæ‚èŽž‚Ì“Y‚¦Žš.
+const char cINDEX_POS_X = 0;
+const char cINDEX_POS_Y = 1;
+const char cINDEX_POS_Z = 2;
+
+const char cINDEX_ROT_X = 3;
+const char cINDEX_ROT_Y = 4;
+const char cINDEX_ROT_Z = 5;
+
+const char cINDEX_SCALE_X = 6;
+const char cINDEX_SCALE_Y = 7;
+const char cINDEX_SCALE_Z = 8;
+
+
 clsStage::clsStage( clsResource* const pResource )
 {
 	clsFILE file;
@@ -16,22 +30,21 @@ clsStage::clsStage( clsResource* const pResource )
 		pResource->GetStaticModels( clsResource::enStaticModel_StageBase ) );
 
 	//ƒXƒe[ƒ^ƒXŽó‚¯Žæ‚è.
-	int tmpI = 0;
 	//À•W.
 	m_pStageGround->SetPosition( {
-		file.GetDataFloat( 0, tmpI++ ),
-		file.GetDataFloat( 0, tmpI++ ),
-		file.GetDataFloat( 0, tmpI++ ) } );
+		file.GetDataFloat( 0, cINDEX_POS_X ),
+		file.GetDataFloat( 0, cINDEX_POS_Y ),
+		file.GetDataFloat( 0, cINDEX_POS_Z ) } );
 	//‰ñ“].
 	m_pStageGround->SetRotation( {
-		file.GetDataFloat( 0, tmpI++ ),
-		file.GetDataFloat( 0, tmpI++ ),
-		file.GetDataFloat( 0, tmpI++ ) } );
+		file.GetDataFloat( 0, cINDEX_ROT_X ),
+		file.GetDataFloat( 0, cINDEX_ROT_Y ),
+		file.GetDataFloat( 0, cINDEX_ROT_Z ) } );
 	//kŽÚ.
 	m_pStageGround->SetScale( {
-		file.GetDataFloat( 0, tmpI++ ),
-		file.GetDataFloat( 0, tmpI++ ),
-		file.GetDataFloat( 0, tmpI++ ) } );
+		file.GetDataFloat( 0, cINDEX_SCALE_X ),
+		file.GetDataFloat( 0, cINDEX_SCALE_Y ),
+		file.GetDataFloat( 0, cINDEX_SCALE_Z ) } );
 	file.Close();
 
 	//áŠQ•¨.
@@ -42,22 +55,21 @@ clsStage::clsStage( clsResource* const pResource )
 		m_vpStageObject[i]->AttachModel( 
 			pResource->GetStaticModels( clsResource::enStaticModel_Building ) );
 
-		tmpI = 0;
 		//À•W.
 		m_vpStageObject[i]->SetPosition( {
-			file.GetDataFloat( i, tmpI++ ),
-			file.GetDataFloat( i, tmpI++ ),
-			file.GetDataFloat( i, tmpI++ ) } );
+			file.GetDataFloat( i, cINDEX_POS_X ),
+			file.GetDataFloat( i, cINDEX_POS_Y ),
+			file.GetDataFloat( i, cINDEX_POS_Z ) } );
 		//‰ñ“].
 		m_vpStageObject[i]->SetRotation( {
-			file.GetDataFloat( i, tmpI++ ),
-			file.GetDataFloat( i, tmpI++ ),
-			file.GetDataFloat( i, tmpI++ ) } );
+			file.GetDataFloat( i, cINDEX_ROT_X ),
+			file.GetDataFloat( i, cINDEX_ROT_Y ),
+			file.GetDataFloat( i, cINDEX_ROT_Z ) } );
 		//kŽÚ.
 		m_vpStageObject[i]->SetScale( {
-			file.GetDataFloat( i, tmpI++ ),
-			file.GetDataFloat( i, tmpI++ ),
-			file.GetDataFloat( i, tmpI++ ) } );
+			file.GetDataFloat( i, cINDEX_SCALE_X ),
+			file.GetDataFloat( i, cINDEX_SCALE_Y ),
+			file.GetDataFloat( i, cINDEX_SCALE_Z ) } );
 	}
 	file.Close();
 }
