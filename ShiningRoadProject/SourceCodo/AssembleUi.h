@@ -40,13 +40,15 @@ public:
 
 private:
 
+	//ÉpÅ[ÉcçÄñ⁄êî.
 	enum enPARTS_TYPE : int
 	{
 		LEG = 0,
 		CORE,
 		HEAD,
 		ARMS,
-		WEAPON,
+		WEAPON_L,
+		WEAPON_R,
 	
 		enPARTS_TYPE_SIZE
 	};

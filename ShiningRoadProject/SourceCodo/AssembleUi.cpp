@@ -13,7 +13,7 @@ using namespace std;
 
 //----- パーツカテゴリ -----//.
 //パーツカテゴリサイズ.
-const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 120.0f, 60.0f };
+const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 100.0f, 40.0f };
 //パーツカテゴリUIの基準位置.
 const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 21.75f, 95.0f, 0.0f };
 //パーツカテゴリの座標の差.
@@ -23,7 +23,7 @@ const char* sPATH_PARTS_TYPE = "Data\\Image\\AssembleUi\\";
 //パーツカテゴリ画像パス( sPATH_PARTS_TYPEにくっつける ).
 const string sPATH_PARTS_TYPE_CHILDREN[] =
 {
-	"LegType.png", "CoreType.png", "HeadType.png", "ArmsType.png", "WeaponType.png" 
+	"LegType.png", "CoreType.png", "HeadType.png", "ArmsType.png", "WeaponLeftType.png" ,"WeaponRightType.png" 
 };
 //----- パーツカテゴリ 終わり -----//.
 
@@ -46,7 +46,7 @@ const D3DXVECTOR3 vINIT_POS_PARTS_ICON = { vINIT_POS_PARTS_TYPE.x, vINIT_POS_PAR
 const string sPATH_PARTS_ICON_ROOT = "Data\\RoboParts\\";
 //各パーツへのアイコンパスへの道筋( 各パーツ ).
 const string sPATH_PARTS_ICON_PARTS[] = {
-	"Leg", "Core", "Head", "Arms", "Weapon"
+	"Leg", "Core", "Head", "Arms", "Weapon", "Weapon"
 };
 //アイコンのファイル名.
 const char* sPATH_PARTS_ICON_END = "\\Icon.png";
@@ -153,7 +153,7 @@ const float fINIT_SCALE_DESIGN = 0.1875f;
 const int iSTATUS_PARTS_NAME_NUM = 1;//.
 //隠さないステータスの数.
 const int iOPEN_STATUS_NUM[] =
-{ 5, 11, 2, 2, 10 };
+{ 5, 11, 2, 2, 10, 10 };
 //ステータスの名前.
 const string sSTATUS_NAME_LEG[] = 
 	{ "HP", "Walk Speed", "Stability", "Turning", "Jump Power"  };
@@ -174,12 +174,11 @@ clsASSEMBLE_UI::clsASSEMBLE_UI()
 {
 	//次のfor文用.
 	const string* tmpStatusNamePtr[enPARTS_TYPE_SIZE] =
-		{ &sSTATUS_NAME_LEG[0], &sSTATUS_NAME_CORE[0], &sSTATUS_NAME_HEAD[0], &sSTATUS_NAME_ARMS[0], &sSTATUS_NAME_WEAPON[0] };
+		{ &sSTATUS_NAME_LEG[0], &sSTATUS_NAME_CORE[0], &sSTATUS_NAME_HEAD[0], &sSTATUS_NAME_ARMS[0], &sSTATUS_NAME_WEAPON[0], &sSTATUS_NAME_WEAPON[0] };
 
 	//表示する文字列のセット.
 	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
 		//表示ステータスの数をそろえる.
-		m_vsStatusNameBox[i].reserve( iOPEN_STATUS_NUM[i] );
 		m_vsStatusNameBox[i].resize( iOPEN_STATUS_NUM[i] );
 
 		//文字列をセット.
@@ -204,16 +203,14 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 			m_vupStatusNumText[i].reset( nullptr );
 		}
 	}
+	m_vupStatusNumText.clear();
+	m_vupStatusNumText.shrink_to_fit();
 
 	for( unsigned int i=0; i<m_vupStatusText.size(); i++ ){
 		if( m_vupStatusText[i] ){
 			m_vupStatusText[i].reset( nullptr );
 		}
 	}
-
-
-	m_vupStatusNumText.clear();
-	m_vupStatusNumText.shrink_to_fit();
 
 	m_vupStatusText.clear();
 	m_vupStatusText.shrink_to_fit();
@@ -361,7 +358,6 @@ void clsASSEMBLE_UI::Create(
 
 	//ステータス項目.
 	assert( !m_vupStatusText.size() );
-	m_vupStatusText.reserve( iSTATUS_NUM_MAX );
 	m_vupStatusText.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
 //		m_vupStatusText.push_back( nullptr );
@@ -496,10 +492,6 @@ void clsASSEMBLE_UI::Render( const int iPartsType, const int iPartsNum )
 
 	m_upStatusTitleText->Render();
 	for( int i=0; i<m_iStatusNum; i++ ){
-//		m_vupStatusText->Render();
-//		m_vupStatusText->SetPos( { vTEXT_POS_STATUS.x, vTEXT_POS_STATUS.y + fTEXT_OFFSET_Y*i } );
-//		m_vupStatusNumText->Render( true );
-//		m_vupStatusNumText->SetPos( { vTEXT_POS_STATUS_NUM.x, vTEXT_POS_STATUS_NUM.y + fTEXT_OFFSET_Y*i } );
 		m_vupStatusText[i]->Render();
 		m_vupStatusNumText[i]->Render( true );
 	}
