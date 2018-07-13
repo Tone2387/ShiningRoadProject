@@ -206,7 +206,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 
 	m_pUI->Input();
-	m_pUI->Update( m_vspFile[m_PartsSelect.Type], m_PartsSelect.Type, m_PartsSelect.Num, iSTATUS_CUT_NUM );
+	m_pUI->Update( m_vspFile[m_PartsSelect.Type], m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type], iSTATUS_CUT_NUM );
 	m_pAsmModel->UpDate();
 
 }
@@ -223,7 +223,7 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 	SetDepth( false );
-	m_pUI->Render( m_PartsSelect.Type, m_PartsSelect.Num );
+	m_pUI->Render( m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
 	SetDepth( true );
 }
 
@@ -232,18 +232,18 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 //カーソル移動.
 void clsSCENE_ASSEMBLE::MoveCursorUp()
 {
-	m_PartsSelect.Num --;
+	m_PartsSelect.Num[m_PartsSelect.Type] --;
 
-	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+	m_PartsSelect.Num[m_PartsSelect.Type] = 
+		KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
 {
-	m_PartsSelect.Num ++;
+	m_PartsSelect.Num[m_PartsSelect.Type] ++;
 
-	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+	m_PartsSelect.Num[m_PartsSelect.Type] = 
+		KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorRight()
@@ -252,9 +252,6 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 
 	m_PartsSelect.Type = 
 		KeepRange( m_PartsSelect.Type, 0, enPARTS_TYPES::ENUM_SIZE );
-	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
-	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorLeft()
@@ -263,9 +260,6 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 
 	m_PartsSelect.Type = 
 		KeepRange( m_PartsSelect.Type, 0, enPARTS_TYPES::ENUM_SIZE );
-	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
-	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 //決定.
@@ -281,13 +275,13 @@ void clsSCENE_ASSEMBLE::Enter()
 		//m_vspFile[]の添え字はどのパーツか、である.
 		tmpStatus.push_back( 
 			m_vspFile[ m_PartsSelect.Type ]->
-				GetDataInt( m_PartsSelect.Num, i + iSTATUS_CUT_NUM ) );
+				GetDataInt( m_PartsSelect.Num[m_PartsSelect.Type], i + iSTATUS_CUT_NUM ) );
 		//GetDataInt()の第一引数は、そのパーツ部位の何番目の行を参照すればよいのか.
 		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
 	}
 
 	//何度もキャストをするのは嫌なので.
-	UCHAR tmpPartsNum = static_cast<UCHAR>( m_PartsSelect.Num );
+	UCHAR tmpPartsNum = static_cast<UCHAR>( m_PartsSelect.Num[m_PartsSelect.Type] );
 
 	switch( m_PartsSelect.Type )
 	{
@@ -425,7 +419,7 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 
 	//テスト用に数値を出す.
 	string tmpsString;
-	tmpsString = m_vspFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num );
+	tmpsString = m_vspFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num[m_PartsSelect.Type] );
 	const char* tmpcString = tmpsString.c_str();
 	sprintf_s( strDbgTxt, 
 		tmpcString );

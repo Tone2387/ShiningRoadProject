@@ -41,10 +41,12 @@ private:
 	struct PARTS_SELECT
 	{
 		short Type;	//パーツの種類( 脚、コア等 ).
-		short Num;	//パーツ番号.
+		short Num[ENUM_SIZE];	//パーツ番号.
 
-		PARTS_SELECT(){
-			Type = Num = 0;
+		PARTS_SELECT()
+		:Num()
+		{
+			Type = 0;
 		}
 	}m_PartsSelect;
 

@@ -13,9 +13,9 @@ using namespace std;
 
 //----- パーツカテゴリ -----//.
 //パーツカテゴリサイズ.
-const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 100.0f, 40.0f };
+const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 120.0f, 40.0f };
 //パーツカテゴリUIの基準位置.
-const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 21.75f, 95.0f, 0.0f };
+const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 16.0f, 95.0f, 0.0f };
 //パーツカテゴリの座標の差.
 const float fOFFSET_POS_X_PARTS_TYPE = PARTS_TYPE_SIZE.w + 4.0f;
 //パーツカテゴリへのパス.
