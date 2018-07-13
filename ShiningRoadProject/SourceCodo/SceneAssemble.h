@@ -31,7 +31,8 @@ private:
 		CORE,
 		HEAD,
 		ARMS,
-		WEAPON,
+		WEAPON_L,
+		WEAPON_R,
 
 		ENUM_SIZE
 	};
@@ -84,7 +85,8 @@ private:
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
 
-	std::shared_ptr< clsFILE >	m_spFile[enPARTS_TYPES::ENUM_SIZE];
+	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
+	UCHAR										m_cuFileMax;
 
 //	clsSPRITE2D_CENTER* m_pSprite;
 //	clsCharaStatic* m_pTestChara;

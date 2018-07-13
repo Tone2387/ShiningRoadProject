@@ -12,6 +12,7 @@ const string sPARTS_STATUS_PASS[] =
 	"Data\\RoboParts\\Head\\RoboPartsData.csv",
 	"Data\\RoboParts\\Arms\\RoboPartsData.csv",
 	"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
+	"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
 };
 
 //モデルさんの初期位置.
@@ -33,14 +34,10 @@ const int iSTATUS_CUT_NUM = 2;//番号と名前.
 //========== 組み換えクラス ==========//
 //================================//
 clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
-	,m_spFile()//配列を0で初期化.
 	,m_pAsmModel( nullptr )
 	,m_pUI( nullptr )
+	,m_cuFileMax( 0 )
 {
-	//念のため.
-	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
-		m_spFile[i] = nullptr;
-	}
 
 }
 
@@ -49,12 +46,13 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 	SAFE_DELETE( m_pAsmModel );
 	SAFE_DELETE( m_pUI );
 
-	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
-		if( m_spFile[i] == nullptr ) continue;
-		m_spFile[i]->Close();
-		m_spFile[i].reset();
+	for( unsigned int i=0; i<m_vspFile.size(); i++ ){
+		if( m_vspFile[i] == nullptr ) continue;
+		m_vspFile[i]->Close();
+		m_vspFile[i].reset();
 	}
 	
+	m_cuFileMax = 0;
 }
 
 void clsSCENE_ASSEMBLE::CreateProduct()
@@ -81,15 +79,17 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	partsData.resize( enPARTS_TYPES::ENUM_SIZE );
 
 	//パーツのステータス読み込み.
-	for( UCHAR i=0; i<enPARTS_TYPES::ENUM_SIZE; i++ ){
-		if( m_spFile[i] != nullptr ){
+	m_cuFileMax = enPARTS_TYPES::ENUM_SIZE;
+	m_vspFile.resize( m_cuFileMax ); 
+	for( UCHAR i=0; i<m_vspFile.size(); i++ ){
+		if( m_vspFile[i] != nullptr ){
 			assert( !"m_spFile[i]は作成済みです" );
 			continue;
 		}
-		m_spFile[i] = make_shared< clsFILE >();
-		m_spFile[i]->Open( sPARTS_STATUS_PASS[i] );
+		m_vspFile[i] = make_shared< clsFILE >();
+		m_vspFile[i]->Open( sPARTS_STATUS_PASS[i] );
 
-		partsData[i] = m_spFile[i]->GetSizeRow();
+		partsData[i] = m_vspFile[i]->GetSizeRow();
 	}
 
 	//UI.
@@ -206,7 +206,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 
 	m_pUI->Input();
-	m_pUI->Update( m_spFile[m_PartsSelect.Type], m_PartsSelect.Type, m_PartsSelect.Num, iSTATUS_CUT_NUM );
+	m_pUI->Update( m_vspFile[m_PartsSelect.Type], m_PartsSelect.Type, m_PartsSelect.Num, iSTATUS_CUT_NUM );
 	m_pAsmModel->UpDate();
 
 }
@@ -235,7 +235,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	m_PartsSelect.Num --;
 
 	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_spFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
@@ -243,7 +243,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	m_PartsSelect.Num ++;
 
 	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_spFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorRight()
@@ -254,7 +254,7 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 		KeepRange( m_PartsSelect.Type, 0, enPARTS_TYPES::ENUM_SIZE );
 	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
 	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_spFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorLeft()
@@ -265,22 +265,22 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 		KeepRange( m_PartsSelect.Type, 0, enPARTS_TYPES::ENUM_SIZE );
 	//パーツ種類を入れ替えたときにパーツ数が違うと困るので.
 	m_PartsSelect.Num = 
-		KeepRange( m_PartsSelect.Num, 0, m_spFile[m_PartsSelect.Type]->GetSizeRow() );
+		KeepRange( m_PartsSelect.Num, 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 //決定.
 void clsSCENE_ASSEMBLE::Enter()
 {
 	//ステータスが何項目あるのか.
-	const int iStatusSize = m_spFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
+	const int iStatusSize = m_vspFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
 
 	//引数用変数.
 	vector<int> tmpStatus;
 	tmpStatus.reserve( iStatusSize );
 	for( int i=0; i<iStatusSize; i++ ){
-		//m_spFile[]の添え字はどのパーツか、である.
+		//m_vspFile[]の添え字はどのパーツか、である.
 		tmpStatus.push_back( 
-			m_spFile[ m_PartsSelect.Type ]->
+			m_vspFile[ m_PartsSelect.Type ]->
 				GetDataInt( m_PartsSelect.Num, i + iSTATUS_CUT_NUM ) );
 		//GetDataInt()の第一引数は、そのパーツ部位の何番目の行を参照すればよいのか.
 		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
@@ -308,10 +308,12 @@ void clsSCENE_ASSEMBLE::Enter()
 		m_pAsmModel->AttachModel( enPARTS::ARM_L,	tmpPartsNum );
 		m_pAsmModel->AttachModel( enPARTS::ARM_R,	tmpPartsNum );
 		break;
-	case enPARTS_TYPES::WEAPON:
+	case enPARTS_TYPES::WEAPON_L:
 		m_wpRoboStatus->ReceiveWeaponL( tmpStatus,	tmpPartsNum );
-		m_wpRoboStatus->ReceiveWeaponR( tmpStatus,	tmpPartsNum );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_L,tmpPartsNum );
+		break;
+	case enPARTS_TYPES::WEAPON_R:
+		m_wpRoboStatus->ReceiveWeaponR( tmpStatus,	tmpPartsNum );
 		m_pAsmModel->AttachModel( enPARTS::WEAPON_R,tmpPartsNum );
 		break;
 	default:
@@ -423,7 +425,7 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 
 	//テスト用に数値を出す.
 	string tmpsString;
-	tmpsString = m_spFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num );
+	tmpsString = m_vspFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num );
 	const char* tmpcString = tmpsString.c_str();
 	sprintf_s( strDbgTxt, 
 		tmpcString );
