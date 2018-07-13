@@ -36,6 +36,11 @@ const string sPARTS_NAME[ucPARTS_MAX] =
 const double dANIM_SPD = 0.016;
 
 
+//パーツ透過値.
+const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
+const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.25f };
+
+
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
@@ -121,15 +126,67 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
+	const enPARTS_TYPES AlphaParts/*,
 	const D3DXVECTOR4& vColor,
-	const bool isAlpha )
+	const bool isAlpha*/ )
 {
+	D3DXVECTOR4 vTmpColor;
+
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
+		vTmpColor = CreateColor( AlphaParts, i );
 		SetPos( GetPos() );
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
-		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, vTmpColor, true );
 	}
+}
+
+
+//色を吐き出す.
+D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex )
+{
+	D3DXVECTOR4 vReturn = vCOLOR_NORMAL;
+
+	switch( AlphaParts )
+	{
+	case LEG:
+		if( uiIndex == static_cast<UINT>( enPARTS::LEG ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case CORE:
+		if( uiIndex == static_cast<UINT>( enPARTS::CORE ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case HEAD:
+		if( uiIndex == static_cast<UINT>( enPARTS::HEAD ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case ARMS:
+		if( uiIndex == static_cast<UINT>( enPARTS::ARM_L ) ||
+			uiIndex == static_cast<UINT>( enPARTS::ARM_R ) )
+		{
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case WEAPON_L:
+		if( uiIndex == static_cast<UINT>( enPARTS::WEAPON_L ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case WEAPON_R:
+		if( uiIndex == static_cast<UINT>( enPARTS::WEAPON_R ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case enPARTS_TYPES::ENUM_SIZE:
+	default:
+		break;
+	}
+
+	return vReturn;
 }
 
 

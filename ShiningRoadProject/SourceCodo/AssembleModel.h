@@ -16,6 +16,18 @@ public:
 	clsASSEMBLE_MODEL();
 	~clsASSEMBLE_MODEL();
 
+	//選択肢のあるパーツの種類( 配列の添え字になる ).
+	enum enPARTS_TYPES : UCHAR
+	{
+		LEG = 0,
+		CORE,
+		HEAD,
+		ARMS,
+		WEAPON_L,
+		WEAPON_R,
+
+		ENUM_SIZE
+	};
 
 	//アセンブルシーンの各関数内で使います.
 	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus );
@@ -25,8 +37,9 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
+		const enPARTS_TYPES AlphaParts = enPARTS_TYPES::ENUM_SIZE/*,
 		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
-		const bool isAlpha = false );
+		const bool isAlpha = false*/ );
 
 	//モデルの初期セット.
 	void Init( clsROBO_STATUS* const pStatus );
@@ -47,6 +60,7 @@ public:
 
 	void SetAnimSpd( const double &dSpd );
 
+
 	//パーツのアニメーション変更.
 	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
 
@@ -62,6 +76,9 @@ private:
 	void FitJointModel( 
 		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
 		const char *RootBone, const char *EndBone );
+
+	//色を吐き出す.
+	D3DXVECTOR4 CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
 
 	//アニメーションリセット.
 	void AnimReSet();
