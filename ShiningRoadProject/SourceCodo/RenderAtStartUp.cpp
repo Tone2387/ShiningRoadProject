@@ -85,6 +85,9 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 ,m_enMode( enMODE::LINE_V )
 ,m_iTimer( 0 )
 {
+	//このクラスの初期化時に灰色画面が出るのを防ぐ.
+	Render( false );
+
 	SPRITE_STATE ss;
 	ss.Disp = INIT_DISP;
 	ss.Anim = INIT_ANIM;
@@ -273,7 +276,7 @@ void clsRENDER_AT_START_UP::Update()
 }
 
 //起動中の描画.
-void clsRENDER_AT_START_UP::Render()
+void clsRENDER_AT_START_UP::Render( bool isLoop )
 {
 	//画面のクリア.
 	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
@@ -288,28 +291,30 @@ void clsRENDER_AT_START_UP::Render()
 
 	SetDepth( false );	//Zテスト:OFF.
 
+	if( isLoop ){
 #ifdef _DEBUG
-	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
-		m_vupRogo[i]->Render();
-	}
+		for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
+			m_vupRogo[i]->Render();
+		}
 
 #endif//#ifdef _DEBUG
-	m_upGageBox->Render();
+		m_upGageBox->Render();
 
-	for( unsigned int i=0; i<m_vupGage.size(); i++ ){
-		//枠の中だけ描画する.
-		if( m_vupGage[i]->GetPos().x < m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) ||
-			m_vupGage[i]->GetPos().x > m_upGageBox->GetPos().x + ( m_upGageBox->GetSize().x * 0.5f ) )
-		{ continue; }
-		m_vupGage[i]->Render();
+		for( unsigned int i=0; i<m_vupGage.size(); i++ ){
+			//枠の中だけ描画する.
+			if( m_vupGage[i]->GetPos().x < m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) ||
+				m_vupGage[i]->GetPos().x > m_upGageBox->GetPos().x + ( m_upGageBox->GetSize().x * 0.5f ) )
+			{ continue; }
+			m_vupGage[i]->Render();
+		}
+
+		m_upLineBox->Render();
+
+		m_upText->Render();
+
+		m_upBlack->Render();
+
 	}
-
-	m_upLineBox->Render();
-
-	m_upText->Render();
-
-	m_upBlack->Render();
-
 	SetDepth( true );	//Zテスト:ON.
 
 	//レンダリングされたイメージを表示.

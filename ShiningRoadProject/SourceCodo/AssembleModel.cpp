@@ -38,7 +38,7 @@ const double dANIM_SPD = 0.016;
 
 //パーツ透過値.
 const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
-const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.25f };
+const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
 
 
 
@@ -165,6 +165,7 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( const enPARTS_TYPES AlphaParts, cons
 		}
 		break;
 	case ARMS:
+		//両腕とも.
 		if( uiIndex == static_cast<UINT>( enPARTS::ARM_L ) ||
 			uiIndex == static_cast<UINT>( enPARTS::ARM_R ) )
 		{
