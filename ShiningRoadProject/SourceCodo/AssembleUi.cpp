@@ -13,9 +13,9 @@ using namespace std;
 
 //----- パーツカテゴリ -----//.
 //パーツカテゴリサイズ.
-const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 100.0f, 40.0f };
+const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 120.0f, 40.0f };
 //パーツカテゴリUIの基準位置.
-const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 21.75f, 95.0f, 0.0f };
+const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 16.0f, 95.0f, 0.0f };
 //パーツカテゴリの座標の差.
 const float fOFFSET_POS_X_PARTS_TYPE = PARTS_TYPE_SIZE.w + 4.0f;
 //パーツカテゴリへのパス.
@@ -164,7 +164,7 @@ const string sSTATUS_NAME_HEAD[] =
 const string sSTATUS_NAME_ARMS[] = 
 	{ "HP", "Aiming" };
 const string sSTATUS_NAME_WEAPON[] = 
-	{ "Attack Power", "Bullet Speed", "Bullet Range", "Cost", "Load Time", "Lock Time", "Lock Range", "Stability", "Magazine Load Time", "Bullets Num" };
+	{ "Attack Power", "Bullet Speed", "Bullet Range", "Cost", "Load Time", "Lock on Time", "Lock on Range", "Stability", "Magazine Load Time", "Bullets Num" };
 
 
 
@@ -181,7 +181,7 @@ clsASSEMBLE_UI::clsASSEMBLE_UI()
 		//表示ステータスの数をそろえる.
 		m_vsStatusNameBox[i].resize( iOPEN_STATUS_NUM[i] );
 
-		//文字列をセット.
+		//ステータス名文字列をセット.
 		for( int j=0; j<iOPEN_STATUS_NUM[i]; j++ ){
 			m_vsStatusNameBox[i][j] = tmpStatusNamePtr[i][j];
 		}

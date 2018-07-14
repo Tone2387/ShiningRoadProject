@@ -24,27 +24,17 @@ public:
 
 private:
 
-	//選択肢のあるパーツの種類( 配列の添え字になる ).
-	enum enPARTS_TYPES : UCHAR
-	{
-		LEG = 0,
-		CORE,
-		HEAD,
-		ARMS,
-		WEAPON_L,
-		WEAPON_R,
-
-		ENUM_SIZE
-	};
 
 	//どのパーツを選んでるの?.
 	struct PARTS_SELECT
 	{
 		short Type;	//パーツの種類( 脚、コア等 ).
-		short Num;	//パーツ番号.
+		short Num[clsASSEMBLE_MODEL::ENUM_SIZE];	//パーツ番号.
 
-		PARTS_SELECT(){
-			Type = Num = 0;
+		PARTS_SELECT()
+		:Num()
+		{
+			Type = 0;
 		}
 	}m_PartsSelect;
 

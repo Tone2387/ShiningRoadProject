@@ -428,6 +428,11 @@ private:
 	// 全てのメッシュを削除.
 	void DestroyAllMesh( D3DXFRAME* pFrame );
 	HRESULT DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p );
+
+	//透過(アルファブレンド)設定の切り替え.
+	void SetBlend( const bool isAlpha );
+	ID3D11BlendState*	m_pBlendState;	//ブレンドステート.
+
 };
 
 #endif//#ifndef C_D3DXSKINMESH_H_

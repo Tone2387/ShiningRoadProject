@@ -31,7 +31,7 @@ private:
 	void Update();
 
 	//•`‰æ.
-	void Render();
+	void Render( bool isLoop = true );
 
 
 

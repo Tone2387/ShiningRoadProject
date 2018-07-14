@@ -584,7 +584,7 @@ HRESULT clsDX9Mesh::InitShader()
 //レンダリング用(※DX9MESH内とMain内の二つに存在するので注意)
 void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 						 const D3DXVECTOR3& vLight,	const D3DXVECTOR3& vEye,
-						 const D3DXVECTOR4& vColor,	const bool alphaFlg )
+						 const D3DXVECTOR4& vColor,	const bool isAlpha )
 {
 	D3DXMATRIX mWorld, mScale, mYaw, mPitch, mRoll,mTrans;
 
@@ -723,7 +723,7 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 		&stride, &offset);
 
 	//アルファブレンド用ブレンドステート作成.
-	SetBlend( alphaFlg );
+	SetBlend( isAlpha );
 	
 	//属性の数だけ、それぞれの属性のインデックスバッファを描画.
 	for (DWORD i = 0; i < m_NumAttr; i++)
@@ -784,7 +784,7 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 }
 
 //透過(アルファブレンド)設定の切り替え.
-void clsDX9Mesh::SetBlend(bool flg)
+void clsDX9Mesh::SetBlend( bool isAlpha )
 {
 	//アルファブレンド用ブレンドステート構造体.
 	//pngファイル内にアルファ情報があるので、
@@ -799,7 +799,7 @@ void clsDX9Mesh::SetBlend(bool flg)
 	blendDesc.AlphaToCoverageEnable
 		= false;//true :アルファトゥカバレッジを使用する.
 	blendDesc.RenderTarget[0].BlendEnable
-		= flg;	//true :アルファブレンドを使用する.
+		= isAlpha;	//true :アルファブレンドを使用する.
 	blendDesc.RenderTarget[0].SrcBlend	//元素材に対する設定.
 		= D3D11_BLEND_SRC_ALPHA;		//	アルファブレンドを指定.
 	blendDesc.RenderTarget[0].DestBlend	//重ねる素材に対する設定.
@@ -831,6 +831,7 @@ void clsDX9Mesh::SetBlend(bool flg)
 	UINT mask = 0xffffffff;	//マスク値.
 	m_pDeviceContext11->OMSetBlendState(
 		m_pBlendState, NULL, mask);
+
 }
 
 

@@ -12,6 +12,10 @@ const int iINIT_SCENE_BGM_NO = 0;
 
 const unsigned char cSTART_UP_MUSIC_NO = 0;
 
+//画面の初期化色.
+const float g_fClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+
+
 clsGAME::clsGAME( 
 	const HWND hWnd, 
 	ID3D11Device* const pDevice, 
@@ -143,12 +147,11 @@ void clsGAME::Update()
 	assert( m_spXInput );
 	m_spXInput->UpdateStatus();
 
-	//シーンが作られているなら.
-	assert( m_upScene );
-
-	//次のシーンは何?フラグ.
+	//次のシーンは何?のフラグ.
 	enSCENE enNextScene = enSCENE::NOTHING;
 
+	//シーンが作られているなら.
+	assert( m_upScene );
 	m_upScene->Update( enNextScene );
 
 	//フラグに変更があればシーン変更.
@@ -163,11 +166,10 @@ void clsGAME::Render(
 	ID3D11DepthStencilView *pBackBuffer_DSTexDSV )
 { 
 	//画面のクリア.
-	float ClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
 	assert( m_wpContext );
 	//カラーバックバッファ.
 	m_wpContext->ClearRenderTargetView(
-		pBackBuffer_TexRTV, ClearColor );
+		pBackBuffer_TexRTV, g_fClearColor );
 	//デプスステンシルビューバックバッファ.
 	m_wpContext->ClearDepthStencilView(
 		pBackBuffer_DSTexDSV,
