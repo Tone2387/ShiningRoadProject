@@ -2,6 +2,7 @@
 
 #include "SceneBase.h"
 #include "CameraTitle.h"
+#include "Sprite2DCenter.h"
 
 #include "AssembleModel.h"
 
@@ -30,8 +31,9 @@ private:
 	//タイトルでズンとただずむロボット君.
 	clsASSEMBLE_MODEL*	m_pRoboModel;
 
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
 
-	//エフェクト.
+	//テスト用エフェクト.
 	::Effekseer::Handle m_ehHibana;
 
 };
