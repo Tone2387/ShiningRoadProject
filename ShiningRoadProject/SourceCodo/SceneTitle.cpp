@@ -41,10 +41,19 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upLogo->Create( m_wpDevice, m_wpContext, sFILE_PATH_LOGO, ss );
 	m_upLogo->SetPos( vINIT_LOGO_POS );
 
+	//îwåi.
+	assert( !m_upBack );
+	m_upBack  = make_unique< clsCharaStatic >();
+	m_upBack->AttachModel( 
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_StageBase ) );
+	m_upBack->SetPosition( m_pRoboModel->GetPos() );
+	m_upBack->SetScale( 16.0f );
+
 	//ÉJÉÅÉâ.
 	assert( m_wpCamera );
 	m_wpCamera->SetPos( { 0.0f, 100.0f, -80.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 45.0f, 0.0f } );
+
 }
 
 void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
@@ -72,12 +81,25 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpSound->StopBGM( 0 );
 		m_wpSound->PlaySE( 0 );
 	}
+
+
+	clsCAMERA_TITLE pct;
+	pct.SetPos( m_wpCamera->GetPos() );
+	pct.SetLookPos( m_wpCamera->GetLookPos() );
+	pct.SetRot( m_wpCamera->GetRot() );
+	pct.Update();
+	*m_wpCamera = pct;
+
+
 }
 
 void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 	assert( m_pRoboModel );
 	m_pRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
+
+	assert( m_upBack );
+	m_upBack->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 
 	SetDepth( false );
@@ -108,6 +130,11 @@ void clsSCENE_TITLE::RenderDebugText()
 	sprintf_s( strDbgTxt, 
 		"CamLokPos : x[%f], y[%f], z[%f]",
 		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	sprintf_s( strDbgTxt, 
+		"CamRot : x[%f], y[%f], z[%f]",
+		m_wpCamera->GetRot().x, m_wpCamera->GetRot().y, m_wpCamera->GetRot().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 

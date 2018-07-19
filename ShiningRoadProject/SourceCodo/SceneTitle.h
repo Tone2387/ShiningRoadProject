@@ -23,6 +23,7 @@ private:
 	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
+
 #if _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
@@ -30,6 +31,9 @@ private:
 
 	//タイトルでズンとただずむロボット君.
 	clsASSEMBLE_MODEL*	m_pRoboModel;
+
+	//背景.
+	std::unique_ptr< clsCharaStatic > m_upBack;
 
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
 
