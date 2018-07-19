@@ -66,7 +66,9 @@ private:
 
 	int m_iTimer;//モードの、待機時間.
 
+#ifdef _DEBUG
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupRogo;
+#endif//#ifdef _DEBUG
 
 	std::unique_ptr< clsLINE_BOX > m_upLineBox;
 	std::unique_ptr< clsLINE_BOX > m_upGageBox;

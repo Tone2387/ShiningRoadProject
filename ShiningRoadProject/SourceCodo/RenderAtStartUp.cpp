@@ -3,6 +3,7 @@
 using namespace std;
 
 //==============================================================.
+#ifdef _DEBUG
 const WHSIZE_FLOAT INIT_DISP = { 256, 256 };
 const WHSIZE_FLOAT INIT_ANIM = { 3, 2 };
 
@@ -10,9 +11,9 @@ const D3DXVECTOR3 vINIT_POS = { WND_W * 0.5f, WND_H * 0.5f, 0.0f };
 const D3DXVECTOR3 vUPDATE_ROT = { 0.0f, 0.0f, 0.0625f };
 
 const char* cIMAGE_PATH = "Data\\Image\\StartUp\\Gear.png";
-
 //éïé‘êî.
 const char cSPRITE_MAX = 16;
+#endif//#ifdef _DEBUG
 //==============================================================.
 
 
@@ -89,27 +90,6 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 	Render( false );
 
 	SPRITE_STATE ss;
-	ss.Disp = INIT_DISP;
-	ss.Anim = INIT_ANIM;
-
-	m_vupRogo.reserve( cSPRITE_MAX );
-	for( char i=0; i<cSPRITE_MAX; i++ ){
-		m_vupRogo.push_back( nullptr );
-		m_vupRogo[i] = make_unique< clsSPRITE2D_CENTER >();
-		m_vupRogo[i]->Create( m_wpDevice, m_wpContext, cIMAGE_PATH, ss );
-
-	//	m_upRogo->SetPos( vINIT_POS );
-		float tmpY;
-		if( i%2 )	tmpY = -128.0f;
-		else		tmpY = WND_H * 0.5f;
-		m_vupRogo[i]->SetPos( { -128.0f, tmpY, 0.0f } );//256size.
-		m_vupRogo[i]->AddPos( { 96.0f*i, 32.0f*i, 0.0f } );
-		m_vupRogo[i]->SetAnim( { ( i % 3 ), ( i % 2 ) } );
-		float tmpAlpha;
-		if( i%2 )	tmpAlpha = 0.75f;
-		else		tmpAlpha = 0.5f;
-		m_vupRogo[i]->SetAlpha( tmpAlpha );
-	}
 
 	m_vupGage.reserve( cGAGE_MAX );
 	ss.Disp = INIT_DISP_GAGE;
@@ -154,6 +134,29 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 		m_upText->SetPos( vTEXT_POS );
 	}
 
+#ifdef _DEBUG
+	ss.Disp = INIT_DISP;
+	ss.Anim = INIT_ANIM;
+	m_vupRogo.reserve( cSPRITE_MAX );
+	for( char i=0; i<cSPRITE_MAX; i++ ){
+		m_vupRogo.push_back( nullptr );
+		m_vupRogo[i] = make_unique< clsSPRITE2D_CENTER >();
+		m_vupRogo[i]->Create( m_wpDevice, m_wpContext, cIMAGE_PATH, ss );
+
+	//	m_upRogo->SetPos( vINIT_POS );
+		float tmpY;
+		if( i%2 )	tmpY = -128.0f;
+		else		tmpY = WND_H * 0.5f;
+		m_vupRogo[i]->SetPos( { -128.0f, tmpY, 0.0f } );//256size.
+		m_vupRogo[i]->AddPos( { 96.0f*i, 32.0f*i, 0.0f } );
+		m_vupRogo[i]->SetAnim( { ( i % 3 ), ( i % 2 ) } );
+		float tmpAlpha;
+		if( i%2 )	tmpAlpha = 0.75f;
+		else		tmpAlpha = 0.5f;
+		m_vupRogo[i]->SetAlpha( tmpAlpha );
+	}
+#endif//#ifdef _DEBUG
+
 }
 
 clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
@@ -176,6 +179,7 @@ clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 	m_vupGage.clear();
 	m_vupGage.shrink_to_fit();
 
+#ifdef _DEBUG
 	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
 		if( m_vupRogo[i] ){
 			m_vupRogo[i].reset( nullptr );
@@ -183,6 +187,7 @@ clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 	}
 	m_vupRogo.clear();
 	m_vupRogo.shrink_to_fit();
+#endif//#ifdef _DEBUG
 
 	if( m_upLineBox ){
 		m_upLineBox.reset( nullptr );
@@ -235,9 +240,11 @@ void clsRENDER_AT_START_UP::Loop()
 
 void clsRENDER_AT_START_UP::Update()
 {
+#ifdef _DEBUG
 	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
 		m_vupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
 	}
+#endif//#ifdef _DEBUG
 
 
 	switch( m_enMode )

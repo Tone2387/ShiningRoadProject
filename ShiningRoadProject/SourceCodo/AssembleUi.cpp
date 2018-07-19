@@ -443,12 +443,18 @@ void clsASSEMBLE_UI::Input()
 
 
 void clsASSEMBLE_UI::Update( 
+	enSELECT_MODE enSelect,
 	shared_ptr< clsFILE > const spFile, 
 	const int iPartsType,
 	const int iPartsNum,
 	const int iStatusCutNum )
 {
-	//選択中表示.
+	//パーツ選択中しかやらないよ.
+	if( enSelect != enSELECT_MODE::PARTS ){
+		return;
+	}
+
+	//選択中を示す半透明の板表示.
 	assert( m_upPartsTypeSelect );
 	m_upPartsTypeSelect->SetPos( m_vupPartsType[ iPartsType ]->GetPos() );
 	assert( m_upPartsNumSelect );
@@ -487,7 +493,10 @@ void clsASSEMBLE_UI::Update(
 }
 
 
-void clsASSEMBLE_UI::Render( const int iPartsType, const int iPartsNum )
+void clsASSEMBLE_UI::Render( 
+	enSELECT_MODE enSelect,
+	const int iPartsType, 
+	const int iPartsNum )
 {
 #if _DEBUG
 	m_upDegine->Render();
@@ -498,17 +507,12 @@ void clsASSEMBLE_UI::Render( const int iPartsType, const int iPartsNum )
 		assert( m_vupPartsType[i] );
 		m_vupPartsType[i]->Render();
 	}
-	//選択中カテゴリ.
-	assert( m_upPartsTypeSelect );
-	m_upPartsTypeSelect->Render();
 
 	//パーツアイコン.
 	for( unsigned int j=0; j<m_vupPartsIcon[ iPartsType ].size(); j++ ){
 		assert( m_vupPartsIcon[ iPartsType ][j] );
 		m_vupPartsIcon[ iPartsType ][j]->Render();
 	}
-	assert( m_upPartsNumSelect );
-	m_upPartsNumSelect->Render();
 
 	assert( m_upHeader );
 	m_upHeader->Render();
@@ -528,18 +532,28 @@ void clsASSEMBLE_UI::Render( const int iPartsType, const int iPartsNum )
 	assert( m_upFooterText );
 	m_upFooterText->Render();
 
-	assert( m_upPartsNameText );
-	m_upPartsNameText->Render();
-
 	assert( m_upStatusTitleText );
 	m_upStatusTitleText->Render();
-	for( int i=0; i<m_iStatusNum; i++ ){
-	assert( m_vupStatusText[i] );
-		m_vupStatusText[i]->Render();
-	assert( m_vupStatusNumText[i] );
-		m_vupStatusNumText[i]->Render( true );
-	}
 
+
+	//パーツ選択中のみ描画.
+	if( enSelect == enSELECT_MODE::PARTS ){
+		//選択中カテゴリ.
+		assert( m_upPartsTypeSelect );
+		m_upPartsTypeSelect->Render();
+		assert( m_upPartsNumSelect );
+		m_upPartsNumSelect->Render();
+
+		assert( m_upPartsNameText );
+		m_upPartsNameText->Render();
+
+		for( int i=0; i<m_iStatusNum; i++ ){
+		assert( m_vupStatusText[i] );
+			m_vupStatusText[i]->Render();
+		assert( m_vupStatusNumText[i] );
+			m_vupStatusNumText[i]->Render( true );
+		}
+	}
 
 	assert( m_upWndBox );
 	m_upWndBox->Render();

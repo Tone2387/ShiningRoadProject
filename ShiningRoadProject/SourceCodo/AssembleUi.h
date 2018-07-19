@@ -17,6 +17,13 @@ public:
 	//各パーツUI数受け取り用.
 	using PARTS_NUM_DATA = std::vector< int >; 
 
+	//パーツ選択中かそれ以外か.
+	enum class enSELECT_MODE : UCHAR
+	{
+		PARTS = 0,
+		MISSION_START
+	}m_enSelectMode;
+
 	void Create( 
 		ID3D11Device* const pDevice, 
 		ID3D11DeviceContext* const pContext,
@@ -26,12 +33,16 @@ public:
 
 	//第二引数はデータから、ステータス以外のデータの数。第三引数はパーツ名の番号.
 	void Update( 
-		std::shared_ptr< clsFILE > const spFile,
-		const int iPartsType,	//パーツ種類.
-		const int iPartsNum,	//パーツ番号.
-		const int iStatusCutNum );//ステータスじゃないデータの数.	
+		enSELECT_MODE enSelect,
+		std::shared_ptr< clsFILE > const spFile = nullptr,
+		const int iPartsType = 0,	//パーツ種類.
+		const int iPartsNum = 0,	//パーツ番号.
+		const int iStatusCutNum = 0 );//ステータスじゃないデータの数.	
 
-	void Render( const int iPartsType, const int iPartsNum );//選択中パーツ番号.
+	void Render( 
+		enSELECT_MODE enSelect, 
+		const int iPartsType, 
+		const int iPartsNum );//選択中パーツ番号.
 
 #if _DEBUG
 	//デバッグテキスト用.
