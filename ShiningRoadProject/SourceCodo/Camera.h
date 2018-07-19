@@ -24,6 +24,13 @@ public:
 	void AddLookPos( const D3DXVECTOR3& vVec );
 	D3DXVECTOR3 GetLookPos();
 
+	D3DXVECTOR3 GetRot(){
+		return m_vRot;
+	};
+	void SetRot( D3DXVECTOR3 f ){
+		m_vRot = f;
+	}
+
 protected:
 
 	D3DXVECTOR3 m_vPos;	//ÉJÉÅÉâà íu.
