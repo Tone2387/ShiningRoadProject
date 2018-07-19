@@ -38,6 +38,9 @@ private:
 		}
 	}m_PartsSelect;
 
+	//パーツ選択中かそれ以外か.
+	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
+
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
@@ -50,9 +53,13 @@ private:
 	void MoveCursorRight();
 	void MoveCursorLeft();
 	//決定.
-	void Enter();
+	void Enter( enSCENE &enNextScene );
+	//出撃.
+	void MissionStart( enSCENE &enNextScene );
+	//パーツ変更.
+	void AssembleParts();
 	//戻る.
-	void Undo();
+	void Undo( enSCENE &enNextScene );
 	PARTS_SELECT m_OldSelect;//Undo()のために必要( のちに配列化する ).
 
 
