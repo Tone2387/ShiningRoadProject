@@ -1,7 +1,14 @@
 #include "SceneTitle.h"
 
+using namespace std;
 
 const float fROBO_SCALE = 0.5f;
+
+//ロゴ.
+const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
+const WHSIZE_FLOAT INIT_LOGO_SIZE = { 512.0f, 128.0f };
+const D3DXVECTOR3 vINIT_LOGO_POS = { WND_W*0.5f, 150.0f, 0.0f };
+
 
 //================================//
 //========== タイトルクラス ==========//
@@ -21,13 +28,23 @@ void clsSCENE_TITLE::CreateProduct()
 {
 
 	//モデルさん作成.
+	assert( !m_pRoboModel );
 	m_pRoboModel = new clsASSEMBLE_MODEL;
 	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus );
 	m_pRoboModel->SetScale( fROBO_SCALE );
 
+	//ロゴ.
+	assert( !m_upLogo );
+	m_upLogo = make_unique< clsSPRITE2D_CENTER >();
+	SPRITE_STATE ss;
+	ss.Disp = INIT_LOGO_SIZE;
+	m_upLogo->Create( m_wpDevice, m_wpContext, sFILE_PATH_LOGO, ss );
+	m_upLogo->SetPos( vINIT_LOGO_POS );
+
 	//カメラ.
-	m_wpCamera->SetPos( { 0.0f, 0.0f, -100.0f } );
-	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
+	assert( m_wpCamera );
+	m_wpCamera->SetPos( { 0.0f, 100.0f, -80.0f } );
+	m_wpCamera->SetLookPos( { 0.0f, 45.0f, 0.0f } );
 }
 
 void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
@@ -51,6 +68,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressEnter() ){
 		enNextScene = enSCENE::ASSEMBLE;
 		//			Excelの行番号.
+		assert( m_wpSound );
 		m_wpSound->StopBGM( 0 );
 		m_wpSound->PlaySE( 0 );
 	}
@@ -58,8 +76,16 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 
 void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
+	assert( m_pRoboModel );
 	m_pRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
+
+	SetDepth( false );
+
+	assert( m_upLogo );
+	m_upLogo->Render();
+
+	SetDepth( true );
 }
 
 
