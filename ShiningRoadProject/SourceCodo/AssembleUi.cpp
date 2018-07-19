@@ -13,15 +13,17 @@ using namespace std;
 
 //----- パーツカテゴリ -----//.
 //パーツカテゴリサイズ.
-const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 120.0f, 40.0f };
+const WHSIZE_FLOAT PARTS_TYPE_SIZE = { 110.0f, 40.0f };
 //パーツカテゴリUIの基準位置.
 const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 16.0f, 95.0f, 0.0f };
 //パーツカテゴリの座標の差.
 const float fOFFSET_POS_X_PARTS_TYPE = PARTS_TYPE_SIZE.w + 4.0f;
 //パーツカテゴリへのパス.
 const char* sPATH_PARTS_TYPE = "Data\\Image\\AssembleUi\\";
+//カテゴリの数.
+const char cPARTS_TYPE_NUM = 6;
 //パーツカテゴリ画像パス( sPATH_PARTS_TYPEにくっつける ).
-const string sPATH_PARTS_TYPE_CHILDREN[] =
+const string sPATH_PARTS_TYPE_CHILDREN[ cPARTS_TYPE_NUM ] =
 {
 	"LegType.png", "CoreType.png", "HeadType.png", "ArmsType.png", "WeaponLeftType.png" ,"WeaponRightType.png" 
 };
@@ -32,6 +34,18 @@ const char* sPATH_SELECT_PARTS_TYPE = "Data\\Image\\AssembleUi\\SelectPartsType.
 const float fALPHA_SELECT_PARTS_TYPE = 0.5f;
 
 
+//----- 出撃ボタン -----//.
+const char* sPATH_MISSION_START_BUTTON = "Data\\Image\\AssembleUi\\MissionStart.png";
+const WHSIZE_FLOAT SIZE_MISSION_START_BUTTON = { 120.0f, 80.0f };
+const D3DXVECTOR3 vINIT_POS_MISSION_START_BUTTON = 
+	{ vINIT_POS_PARTS_TYPE.x + fOFFSET_POS_X_PARTS_TYPE * cPARTS_TYPE_NUM, //700.75f.<=760.0f
+	vINIT_POS_PARTS_TYPE.y, 0.0f };
+
+
+//----- 出撃ボタン 終わり -----//.
+
+
+
 //----- 各パーツUI -----//.
 //サイズ.
 const WHSIZE_FLOAT PARTS_ICON_SIZE = { 60.0f, 60.0f };
@@ -40,7 +54,7 @@ const float fPARTS_ICON_OFFSET = 2.0f;
 //カテゴリからの隙間.
 const float fPARTS_ICON_OFFSET_FROM_PARTS_TYPE = 6.0f;
 //基準位置.
-const D3DXVECTOR3 vINIT_POS_PARTS_ICON = { vINIT_POS_PARTS_TYPE.x, vINIT_POS_PARTS_TYPE.y + PARTS_TYPE_SIZE.h + fPARTS_ICON_OFFSET_FROM_PARTS_TYPE, 0.0f };
+const D3DXVECTOR3 vINIT_POS_PARTS_ICON = { vINIT_POS_PARTS_TYPE.x, vINIT_POS_MISSION_START_BUTTON.y + SIZE_MISSION_START_BUTTON.h + fPARTS_ICON_OFFSET_FROM_PARTS_TYPE, 0.0f };
 
 //各パーツへのアイコンパスへの道筋.
 const string sPATH_PARTS_ICON_ROOT = "Data\\RoboParts\\";
@@ -318,6 +332,13 @@ void clsASSEMBLE_UI::Create(
 	m_upPartsWindow->Create( pDevice, pContext, sPATH_PARTS_WINDOW, ss );
 	m_upPartsWindow->SetPos( vINIT_POS_PARTS_WINDOW );
 
+	//出撃ボタン.
+	assert( !m_upMissionStart );
+	ss.Disp = SIZE_MISSION_START_BUTTON;
+	m_upMissionStart = make_unique< clsSprite2D >();
+	m_upMissionStart->Create( pDevice, pContext, sPATH_MISSION_START_BUTTON, ss );
+	m_upMissionStart->SetPos( vINIT_POS_MISSION_START_BUTTON );
+
 	//ヘッダー.
 	assert( !m_upHeader );
 	ss.Disp = INIT_SIZE_HEADER;
@@ -365,7 +386,7 @@ void clsASSEMBLE_UI::Create(
 		m_vupStatusText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
 		m_vupStatusText[i]->SetPos( vTEXT_POS_STATUS );
 		m_vupStatusText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-		m_vupStatusText[i]->SetText( "Magazine Load Time" );
+//		m_vupStatusText[i]->SetText( "Magazine Load Time" );
 	}
 	m_vupStatusText.shrink_to_fit();
 
@@ -379,7 +400,7 @@ void clsASSEMBLE_UI::Create(
 		m_vupStatusNumText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
 		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
 		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-		m_vupStatusNumText[i]->SetText( "12345 >> 12345" );
+//		m_vupStatusNumText[i]->SetText( "12345 >> 12345" );
 	}
 	m_vupStatusNumText.shrink_to_fit();
 
@@ -388,7 +409,7 @@ void clsASSEMBLE_UI::Create(
 	m_upPartsNameText = make_unique< clsUiText >();
 	m_upPartsNameText->Create( pContext, WND_W, WND_H, TEXT_SCALE_PARTS_NAME );
 	m_upPartsNameText->SetPos( vTEXT_POS_PARTS_NAME );
-	m_upPartsNameText->SetText( "PARTS_NAME" );
+//	m_upPartsNameText->SetText( "PARTS_NAME" );
 
 
 
@@ -406,17 +427,17 @@ void clsASSEMBLE_UI::Input()
 {
 #if _DEBUG
 	float move = 0.25f;
-	if( GetAsyncKeyState( VK_RIGHT )& 0x8000 )	m_upFooter->AddPos( { move, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_upFooter->AddPos( {-move, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( VK_UP )	& 0x8000 )	m_upFooter->AddPos( { 0.0f,-move, 0.0f } );
-	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_upFooter->AddPos( { 0.0f, move, 0.0f } );
+	if( GetAsyncKeyState( VK_RIGHT )& 0x8000 )	m_upMissionStart->AddPos( { move, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_upMissionStart->AddPos( {-move, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( VK_UP )	& 0x8000 )	m_upMissionStart->AddPos( { 0.0f,-move, 0.0f } );
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_upMissionStart->AddPos( { 0.0f, move, 0.0f } );
 	float scale = 0.01f;
-	if( GetAsyncKeyState( 'D' ) & 0x8000 )	m_upFooter->AddScale( { 1+scale, 1.0f, 0.0f } );
-	if( GetAsyncKeyState( 'A' ) & 0x8000 )	m_upFooter->AddScale( { 1-scale, 1.0f, 0.0f } );
-	if( GetAsyncKeyState( 'W' ) & 0x8000 )	m_upFooter->AddScale( { 1.0f, 1-scale, 0.0f } );
-	if( GetAsyncKeyState( 'S' ) & 0x8000 )	m_upFooter->AddScale( { 1.0f, 1+scale, 0.0f } );
-	if( GetAsyncKeyState( 'E' ) & 0x8000 )	m_upFooter->AddScale( 1+scale );
-	if( GetAsyncKeyState( 'Q' ) & 0x8000 )	m_upFooter->AddScale( 1-scale );
+	if( GetAsyncKeyState( 'D' ) & 0x8000 )	m_upMissionStart->AddScale( { 1+scale, 1.0f, 0.0f } );
+	if( GetAsyncKeyState( 'A' ) & 0x8000 )	m_upMissionStart->AddScale( { 1-scale, 1.0f, 0.0f } );
+	if( GetAsyncKeyState( 'W' ) & 0x8000 )	m_upMissionStart->AddScale( { 1.0f, 1-scale, 0.0f } );
+	if( GetAsyncKeyState( 'S' ) & 0x8000 )	m_upMissionStart->AddScale( { 1.0f, 1+scale, 0.0f } );
+	if( GetAsyncKeyState( 'E' ) & 0x8000 )	m_upMissionStart->AddScale( 1+scale );
+	if( GetAsyncKeyState( 'Q' ) & 0x8000 )	m_upMissionStart->AddScale( 1-scale );
 #endif//#if _DEBUG
 }
 
@@ -428,7 +449,9 @@ void clsASSEMBLE_UI::Update(
 	const int iStatusCutNum )
 {
 	//選択中表示.
+	assert( m_upPartsTypeSelect );
 	m_upPartsTypeSelect->SetPos( m_vupPartsType[ iPartsType ]->GetPos() );
+	assert( m_upPartsNumSelect );
 	m_upPartsNumSelect->SetPos( m_vupPartsIcon[ iPartsType ][ iPartsNum ]->GetPos() );
 
 	//文字列.
@@ -442,20 +465,24 @@ void clsASSEMBLE_UI::Update(
 	}
 
 	//パーツ名セット.
+	assert( m_upPartsNameText );
 	m_upPartsNameText->SetText( 
 		spFile->GetDataString( iPartsNum, iSTATUS_PARTS_NAME_NUM ).c_str() );
 
 	//ステータスウィンドウの文字列.
 	for( int i=0; i<iOPEN_STATUS_NUM[iPartsType]; i++ ){
 		//ステータス名セット.
+		assert( m_vupStatusText[i] );
 		m_vupStatusText[i]->SetText( m_vsStatusNameBox[ iPartsType ][i].c_str() );
 		//ステータス数値セット.
+		assert( m_vupStatusNumText[i] );
 		m_vupStatusNumText[i]->SetText( spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
 	}
 
 
 
 	//どっちのうで？.
+	assert( m_upWndBox );
 	m_upWndBox->Update();
 }
 
@@ -468,35 +495,53 @@ void clsASSEMBLE_UI::Render( const int iPartsType, const int iPartsNum )
 
 	//パーツカテゴリ.
 	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
+		assert( m_vupPartsType[i] );
 		m_vupPartsType[i]->Render();
 	}
 	//選択中カテゴリ.
+	assert( m_upPartsTypeSelect );
 	m_upPartsTypeSelect->Render();
 
 	//パーツアイコン.
 	for( unsigned int j=0; j<m_vupPartsIcon[ iPartsType ].size(); j++ ){
+		assert( m_vupPartsIcon[ iPartsType ][j] );
 		m_vupPartsIcon[ iPartsType ][j]->Render();
 	}
+	assert( m_upPartsNumSelect );
 	m_upPartsNumSelect->Render();
 
+	assert( m_upHeader );
 	m_upHeader->Render();
+	assert( m_upFooter );
 	m_upFooter->Render();
 
+	assert( m_upStatusWindow );
 	m_upStatusWindow->Render();
+	assert( m_upPartsWindow );
 	m_upPartsWindow->Render();
 
+	assert( m_upMissionStart );
+	m_upMissionStart->Render();
+
+	assert( m_upHeaderText );
 	m_upHeaderText->Render();
+	assert( m_upFooterText );
 	m_upFooterText->Render();
 
+	assert( m_upPartsNameText );
 	m_upPartsNameText->Render();
 
+	assert( m_upStatusTitleText );
 	m_upStatusTitleText->Render();
 	for( int i=0; i<m_iStatusNum; i++ ){
+	assert( m_vupStatusText[i] );
 		m_vupStatusText[i]->Render();
+	assert( m_vupStatusNumText[i] );
 		m_vupStatusNumText[i]->Render( true );
 	}
 
 
+	assert( m_upWndBox );
 	m_upWndBox->Render();
 }
 

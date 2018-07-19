@@ -55,10 +55,15 @@ private:
 
 	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsType;		//パーツカテゴリ.
 	std::unique_ptr< clsSprite2D >					m_upPartsTypeSelect;//選択中( 半透明 ).
+
 	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsIcon[ enPARTS_TYPE_SIZE ];	//各パーツのUI.
 	std::unique_ptr< clsSprite2D >					m_upPartsNumSelect;	//選択中( 半透明 ).
+
 	std::unique_ptr< clsSprite2D >					m_upStatusWindow;	//ステータスが表示される.
+
 	std::unique_ptr< clsSprite2D >					m_upPartsWindow;	//パーツの単体モデル表示される.
+
+	std::unique_ptr< clsSprite2D >					m_upMissionStart;	//出撃ボタン.
 
 	std::unique_ptr< clsSprite2D > m_upHeader;//画面上部の帯.
 	std::unique_ptr< clsSprite2D > m_upFooter;//画面下部の帯.
