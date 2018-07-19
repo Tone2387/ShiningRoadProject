@@ -253,8 +253,17 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 
 //カーソル移動.
+//カーソル移動の共通動作.
+void clsSCENE_ASSEMBLE::MoveCursor()
+{
+	m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+}
+
+
 void clsSCENE_ASSEMBLE::MoveCursorUp()
 {
+	MoveCursor();
+
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
 	if( m_enSelectMode != clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		return;
@@ -268,6 +277,8 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
 {
+	MoveCursor();
+
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
 	if( m_enSelectMode != clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		return;
@@ -281,6 +292,8 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 
 void clsSCENE_ASSEMBLE::MoveCursorRight()
 {
+	MoveCursor();
+
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		m_PartsSelect.Type ++;
 
@@ -299,6 +312,8 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 
 void clsSCENE_ASSEMBLE::MoveCursorLeft()
 {
+	MoveCursor();
+
 	//パーツを選ぶ.
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		m_PartsSelect.Type --;
@@ -316,7 +331,6 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 void clsSCENE_ASSEMBLE::Enter( enSCENE &enNextScene )
 {
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		m_wpSound->PlaySE( enSE::ENTER );
 		AssembleParts();
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
@@ -327,12 +341,14 @@ void clsSCENE_ASSEMBLE::Enter( enSCENE &enNextScene )
 //出撃.
 void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 {
+	m_wpSound->PlaySE( enSE::MISSION_START );
 	enNextScene = enSCENE::MISSION;
 }
 
 //パーツ変更.
 void clsSCENE_ASSEMBLE::AssembleParts()
 {
+	m_wpSound->PlaySE( enSE::ENTER );
 
 	//ステータスが何項目あるのか.
 	const int iStatusSize = m_vspFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
@@ -392,7 +408,7 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 //戻る.
 void clsSCENE_ASSEMBLE::Undo( enSCENE &enNextScene )
 {
-	m_wpSound->PlaySE( enSE::EXIT, true );
+	m_wpSound->PlaySE( enSE::EXIT );
 	enNextScene = enSCENE::TITLE;
 }
 

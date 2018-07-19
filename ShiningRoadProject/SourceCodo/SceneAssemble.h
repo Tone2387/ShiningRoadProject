@@ -48,6 +48,7 @@ private:
 
 	//コントローラ操作.
 	//カーソル移動.
+	void MoveCursor();//カーソル移動の共通動作.
 	void MoveCursorUp();
 	void MoveCursorDown();
 	void MoveCursorRight();
