@@ -42,5 +42,8 @@ private:
 
 	float m_fDistance;//カメラと視点の距離( x&z軸だけの二次元上での ).
 
+	D3DXVECTOR3 m_vMoveSpd;	//速度.
+	D3DXVECTOR3 m_vMoveAcc;	//加速度.
+
 };
 
