@@ -7,7 +7,7 @@ const float fROBO_SCALE = 0.5f;
 //ƒƒS.
 const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
 const WHSIZE_FLOAT INIT_LOGO_SIZE = { 512.0f, 128.0f };
-const D3DXVECTOR3 vINIT_LOGO_POS = { WND_W*0.5f, 150.0f, 0.0f };
+const D3DXVECTOR3 vINIT_LOGO_POS = { WND_W*0.5f, 75.0f, 0.0f };
 
 
 //================================//
@@ -49,10 +49,10 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upBack->SetPosition( m_pRoboModel->GetPos() );
 	m_upBack->SetScale( 16.0f );
 
-	//ƒJƒƒ‰.
-	assert( m_wpCamera );
-	m_wpCamera->SetPos( { 0.0f, 100.0f, -80.0f } );
-	m_wpCamera->SetLookPos( { 0.0f, 45.0f, 0.0f } );
+//	//ƒJƒƒ‰.
+//	assert( m_wpCamera );
+//	m_wpCamera->SetPos( { 0.0f, 100.0f, -80.0f } );
+//	m_wpCamera->SetLookPos( { 0.0f, 45.0f, 0.0f } );
 
 }
 
@@ -83,13 +83,13 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	}
 
 
-	clsCAMERA_TITLE pct;
-	pct.SetPos( m_wpCamera->GetPos() );
-	pct.SetLookPos( m_wpCamera->GetLookPos() );
-	pct.SetRot( m_wpCamera->GetRot() );
-	pct.Update();
-	*m_wpCamera = pct;
-
+//	clsCAMERA_TITLE pct;
+//	pct.SetPos( m_wpCamera->GetPos() );
+//	pct.SetLookPos( m_wpCamera->GetLookPos() );
+//	pct.SetRot( m_wpCamera->GetRot() );
+//	pct.Update();
+//	*m_wpCamera = pct;
+	m_wpCamera->Update();
 
 }
 

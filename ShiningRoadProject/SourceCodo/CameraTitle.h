@@ -11,31 +11,31 @@ public:
 
 	void Create() final;
 
-	void Update();
+	void Update() final;
 
 
 private:
 
+
 	enum class enMODE : UCHAR
 	{
-		START = 0,
+		START = 0,	//タイトル画面開始時.
+		IDLE,		//待機.
+
 		UP_1,
 
 		SPN_L,
-		SPN_R
+		SPN_R,
 	}m_enMode;
 
 	//各モードの初期化.
-	void Init();
+	void Init( const enMODE enMode );
 
 	//監視対象を中心に旋回する.
 	void Spn( const float fSpn );
 
 	//カメラ位置を中心にして見回す.
 	void Turn( const float fTurn );
-
-	//上下を見る.
-	void UpDown( const float fRot );
 
 	//今のカメラ向きに前進.advancing
 	void Advancing( const float fMove );

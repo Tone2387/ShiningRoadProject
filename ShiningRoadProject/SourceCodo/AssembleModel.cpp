@@ -22,16 +22,6 @@ const string sPARTS_NAME[ucPARTS_MAX] =
 };
 
 
-//連結部分のボーン名.
-#define BONE_NAME_LEG_TO_CORE		"JunctionCore"
-#define BONE_NAME_CORE_TO_HEAD		"JunctionHead"
-#define BONE_NAME_CORE_TO_ARM_L	 	"JunctionArmL"
-#define BONE_NAME_CORE_TO_ARM_R	 	"JunctionArmR"
-#define BONE_NAME_ARM_TO_WEAPON		"JunctionWeapon"
-
-
-#define BONE_NAME_WEAPON_VEC_ROOT "WeaponVecRoot"
-#define BONE_NAME_WEAPON_VEC_END "WeaponVecEnd"
 
 const double dANIM_SPD = 0.016;
 
@@ -225,27 +215,27 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
 
 	m_vpParts[ucCORE]->SetPosition( 
- 		m_vpParts[ucLEG]->GetBonePos( BONE_NAME_LEG_TO_CORE ) );
+ 		m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_TO_CORE ) );
 
 	m_vpParts[ucHEAD]->SetPosition( 
-		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_HEAD ) );
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_HEAD ) );
 
 	m_vpParts[ucARM_L]->SetPosition( 
-		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_L ) );
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_ARM_L ) );
 
 	m_vpParts[ucARM_R]->SetPosition( 
-		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_R ) );
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_ARM_R ) );
 
 	m_vpParts[ucWEAPON_L]->SetPosition( 
-		m_vpParts[ucARM_L]->GetBonePos( BONE_NAME_ARM_TO_WEAPON ) );
+		m_vpParts[ucARM_L]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
 										   
 	m_vpParts[ucWEAPON_R]->SetPosition( 
-		m_vpParts[ucARM_R]->GetBonePos( BONE_NAME_ARM_TO_WEAPON ) );
+		m_vpParts[ucARM_R]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
 
 	FitJointModel( m_vpParts[ucWEAPON_L], m_vpParts[ucARM_L],
-		BONE_NAME_WEAPON_VEC_ROOT, BONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
+		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
 	FitJointModel( m_vpParts[ucWEAPON_R], m_vpParts[ucARM_R],
-		BONE_NAME_WEAPON_VEC_ROOT, BONE_NAME_WEAPON_VEC_END );
+		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
@@ -313,6 +303,19 @@ bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex
 	char cPartsIndex = static_cast<char>( enParts );
 	assert( m_vpParts[ cPartsIndex ] );
 	return m_vpParts[ cPartsIndex ]->PartsAnimChange( iIndex );
+}
+
+
+//パーツのボーンの座標を取得.
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( const enPARTS enParts, const char* sBoneName )
+{
+	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
+	char cTmpNum = static_cast<char>( enParts );
+
+	assert( m_vpParts[ cTmpNum ] );
+	vReturn = m_vpParts[ cTmpNum ]->GetBonePos( sBoneName );
+
+	return vReturn;
 }
 
 

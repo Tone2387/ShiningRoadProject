@@ -18,3 +18,11 @@ void clsCAMERA_MISSION::Update(const D3DXVECTOR3 vCamPos, const D3DXVECTOR3 vLoo
 	m_vPos = vCamPos;
 	m_vLook = vLookPos;
 }
+
+
+
+#ifdef Tahara
+void clsCAMERA_MISSION::Update()
+{
+}
+#endif//#ifdef Tahara

@@ -6,6 +6,19 @@
 
 #include "RoboStatus.h"
 
+
+//連結部分のボーン名.
+#define sBONE_NAME_LEG_TO_CORE		"JunctionCore"
+#define sBONE_NAME_CORE_TO_HEAD		"JunctionHead"
+#define sBONE_NAME_CORE_TO_ARM_L	"JunctionArmL"
+#define sBONE_NAME_CORE_TO_ARM_R	"JunctionArmR"
+#define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
+
+//武器の回転情報確定に使う.
+#define  sBONE_NAME_WEAPON_VEC_ROOT	 "WeaponVecRoot"
+#define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVecEnd"
+
+
 //改名案.
 //clsROBO_MODEL_SET.
 
@@ -63,6 +76,11 @@ public:
 
 	//パーツのアニメーション変更.
 	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
+
+
+	//パーツのボーンの座標を取得.
+	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName );
+
 
 #if _DEBUG
 	//各パーツのpos.
