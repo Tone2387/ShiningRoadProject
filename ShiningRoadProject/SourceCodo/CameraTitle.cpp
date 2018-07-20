@@ -12,16 +12,15 @@ struct INIT_DATA
 //----- ç≈èâ -----//.
 const INIT_DATA START_INIT_DATA = 
 {
-	{ -120.0f, 5.0f, -400.0f },
-	{ -120.0f, 30.0f, 0.0f },
+	{ 8.963961f, 26.0f, 32.168831f },
+	{ 8.963961f, 27.0f, 50.0f },
 	{ 0.0f, 0.0f, 0.0f }
 };
-const float fSTART_MOVE_SPD = 1.5f;
-const float fSTART_END_POS_Z = 70.0f;
+const float fSTART_MOVE_SPD_INIT = -7.5f;
+const float fSTART_MOVE_ACC_INIT = 0.5f + 0.25f + 0.125f + 0.0625f;//0.5 0.25 0.125 0.0625 0.03125
 const float fSTART_ROT_Y = -0.29f;
 
-const float fSTART_END_POS_Y = 47.0f;
-const float fSTART_END_LOOK_Y = -53.0f;
+const float fSTART_END_SPD = 0.03125f;
 
 //----- ç≈èâ -----//.
 
@@ -61,10 +60,11 @@ void clsCAMERA_TITLE::Update()
 	switch( m_enMode )
 	{
 	case enMODE::START:
-		Advancing( fSTART_MOVE_SPD );
-		if( abs( m_vPos.z ) < abs( fSTART_END_POS_Z )){
+		Advancing( m_vMoveSpd.z );
+		if( abs( m_vMoveSpd.z ) < abs( fSTART_END_SPD )){
 			Init( enMODE::IDLE );
 		}
+		m_vMoveSpd.z *= m_vMoveAcc.z;
 		break;
 	case enMODE::IDLE:
 		break;
@@ -117,6 +117,8 @@ void clsCAMERA_TITLE::Init( const enMODE enMode )
 	case enMODE::START:
 		InitData = START_INIT_DATA;
 		fRotY = fSTART_ROT_Y;
+		m_vMoveSpd = { 0.0f, 0.0f, fSTART_MOVE_SPD_INIT };
+		m_vMoveAcc = { 0.0f, 0.0f, fSTART_MOVE_ACC_INIT };
 		break;
 	case enMODE::UP_1:
 		break;
