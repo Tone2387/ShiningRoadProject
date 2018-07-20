@@ -13,6 +13,14 @@ public:
 
 	void Update() final;
 
+	D3DXVECTOR3 GetSpd(){
+		return m_vMoveSpd;
+	};
+
+	D3DXVECTOR3 GetAcc(){
+		return m_vMoveAcc;
+	};
+
 
 private:
 
@@ -22,9 +30,9 @@ private:
 		START = 0,	//タイトル画面開始時.
 		IDLE,		//待機.
 
-		SPN_L,		//左回りで回転しながらズームでもするかい?.
-
-		SPN_L_2,	//少し軸をずらす.
+		SPN_L,		//左回りで回転.
+		SPN_L_2,	//ズームもどきを加える.
+		SPN_L_3,	//少し軸をずらす.
 	}m_enMode;
 
 	//各モードの初期化.
@@ -41,6 +49,11 @@ private:
 
 	//視点との距離を変更.
 	void AddDistance( const float fAdd, const bool isCamMove );
+
+	//くるくる.
+	void CameraSpnFunction();
+	//ズーム.
+	void CameraFakeZoomFunction();
 
 	float m_fDistance;//カメラと視点の距離( x&z軸だけの二次元上での ).
 
