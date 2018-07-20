@@ -137,6 +137,20 @@ void clsSCENE_TITLE::RenderDebugText()
 		m_wpCamera->GetRot().x, m_wpCamera->GetRot().y, m_wpCamera->GetRot().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
+	//ˆÚ“®—Í.
+	clsCAMERA_TITLE* pct;
+	pct = (clsCAMERA_TITLE*)m_wpCamera;
+	sprintf_s( strDbgTxt, 
+		"CamSpd : x[%f], y[%f], z[%f]",
+		pct->GetSpd().x, pct->GetSpd().y, pct->GetSpd().z );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	sprintf_s( strDbgTxt, 
+		"CamAcc : x[%f], y[%f], z[%f]",
+		pct->GetAcc().x, pct->GetAcc().y, pct->GetAcc().z );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	pct = nullptr;
 
 	//dbgtxty += 10;
 	//if( m_pBgm[0]->IsStopped() ){

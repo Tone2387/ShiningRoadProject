@@ -28,12 +28,12 @@ const float fSTART_END_SPD = 0.03125f;
 //----- 回転 -----//.
 const D3DXVECTOR3 vSPN_INIT_LOOK = { 0.0f, 30.875f, 0.0f };
 const D3DXVECTOR3 vSPN_MOVE_SPD = { 0.0f, 0.0f, 0.0f };
-const D3DXVECTOR3 vSPN_MOVE_ACC = { 0.000001f, 0.0f, 0.0005f };
+const D3DXVECTOR3 vSPN_MOVE_ACC = { 0.000001f, 0.0f, 0.0005f };//0.0005.
 const float fSPN_SPN_SPD_LIMIT = 0.0008f;
 //----- 回転 -----//.
 
 //----- 回転中ズームもどき -----//.
-const float fSPN_ZOOM_CHANGE_SPD = 0.1f;
+const float fSPN_ZOOM_CHANGE_SPD = 0.1f;//0.1
 //----- 回転中ズームもどき -----//.
 
 
@@ -83,27 +83,22 @@ void clsCAMERA_TITLE::Update()
 		Init( enMODE::SPN_L );
 		break;
 	case enMODE::SPN_L:
-		Spn( -m_vMoveSpd.x );
-		m_vMoveSpd.x += m_vMoveAcc.x;
-		if( m_vMoveSpd.x > fSPN_SPN_SPD_LIMIT ){
-			m_vMoveSpd.x = fSPN_SPN_SPD_LIMIT;
+		//くるくる.
+		CameraSpnFunction();
+		if(m_vRot.y >= static_cast<float>( M_PI ) ){
+			Init( enMODE::SPN_L_2 );
 		}
-
-		//ズームっぽい動き.
-		if( m_MoveFlg.z ){
-			m_vMoveSpd.z += m_vMoveAcc.z;
-			if( m_vMoveSpd.z > fSPN_ZOOM_CHANGE_SPD ) m_MoveFlg.z = false;
-		}
-		else{
-			m_vMoveSpd.z -= m_vMoveAcc.z;
-			if( m_vMoveSpd.z < -fSPN_ZOOM_CHANGE_SPD ) m_MoveFlg.z = true;
-		}
-		AddDistance( m_vMoveSpd.z, true );
 		break;
 	case enMODE::SPN_L_2:
+		CameraSpnFunction();
+		CameraFakeZoomFunction();
+		if( m_vRot.y >= static_cast<float>( M_PI ) * 2.0f ){
+			Init( enMODE::SPN_L_3 );
+		}
 		break;
-	default:
-		m_vPos.x += 0.1f;
+	case enMODE::SPN_L_3:
+		CameraSpnFunction();
+		CameraFakeZoomFunction();
 		break;
 	}
 
@@ -157,9 +152,11 @@ void clsCAMERA_TITLE::Init( const enMODE enMode )
 		InitData.vLook = vSPN_INIT_LOOK;
 		m_vMoveSpd = vSPN_MOVE_SPD;
 		m_vMoveAcc = vSPN_MOVE_ACC;
-		m_MoveFlg.z = true;
 		break;
 	case enMODE::SPN_L_2:
+		m_MoveFlg.z = true;
+		break;
+	case enMODE::SPN_L_3:
 		break;
 	}
 
@@ -248,4 +245,35 @@ void clsCAMERA_TITLE::AddDistance( const float fAdd, const bool isCamMove )
 		m_vLook.z += vAxisZ.z * -fAdd;
 		m_vLook.x -= vAxisZ.x * -fAdd;
 	}
+}
+
+
+//くるくる.
+void clsCAMERA_TITLE::CameraSpnFunction()
+{
+	Spn( -m_vMoveSpd.x );
+	m_vMoveSpd.x += m_vMoveAcc.x;
+	if( m_vMoveSpd.x > fSPN_SPN_SPD_LIMIT ){
+		m_vMoveSpd.x = fSPN_SPN_SPD_LIMIT;
+	}
+	if( m_vRot.y >= static_cast<float>( M_PI ) * 2.0f ){
+		m_vRot.y -= static_cast<float>( M_PI ) * 2.0f;
+	}
+}
+
+//ズーム.
+void clsCAMERA_TITLE::CameraFakeZoomFunction()
+{
+	//ズームっぽい動き.
+	if( m_MoveFlg.z ){
+		m_vMoveSpd.z += m_vMoveAcc.z;
+		if( m_vMoveSpd.z > fSPN_ZOOM_CHANGE_SPD )
+			m_MoveFlg.z = false;
+	}
+	else{
+		m_vMoveSpd.z -= m_vMoveAcc.z;
+		if( m_vMoveSpd.z < -fSPN_ZOOM_CHANGE_SPD ) 
+			m_MoveFlg.z = true;
+	}
+	AddDistance( m_vMoveSpd.z, true );
 }
