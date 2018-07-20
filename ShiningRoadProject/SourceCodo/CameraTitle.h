@@ -22,10 +22,9 @@ private:
 		START = 0,	//タイトル画面開始時.
 		IDLE,		//待機.
 
-		UP_1,
+		SPN_L,		//左回りで回転しながらズームでもするかい?.
 
-		SPN_L,
-		SPN_R,
+		SPN_L_2,	//少し軸をずらす.
 	}m_enMode;
 
 	//各モードの初期化.
@@ -40,10 +39,24 @@ private:
 	//今のカメラ向きに前進.advancing
 	void Advancing( const float fMove );
 
+	//視点との距離を変更.
+	void AddDistance( const float fAdd, const bool isCamMove );
+
 	float m_fDistance;//カメラと視点の距離( x&z軸だけの二次元上での ).
 
 	D3DXVECTOR3 m_vMoveSpd;	//速度.
 	D3DXVECTOR3 m_vMoveAcc;	//加速度.
+
+	//どちらへ動くかのフラグ.
+	struct BOOL3
+	{
+		bool x;
+		bool y;
+		bool z;
+		BOOL3(){
+			x = y = z = false;
+		}
+	}m_MoveFlg;
 
 };
 
