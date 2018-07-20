@@ -53,3 +53,12 @@ D3DXVECTOR3 clsCAMERA_BASE::GetLookPos()
 {
 	return m_vLook;
 }
+
+D3DXVECTOR3 clsCAMERA_BASE::GetRot()
+{
+	return m_vRot;
+};
+void clsCAMERA_BASE::SetRot( const D3DXVECTOR3 &vRot )
+{
+	m_vRot = vRot;
+}
