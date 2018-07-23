@@ -95,6 +95,9 @@
     <ClCompile Include="SourceCodo\CameraTitle.cpp" />
     <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp" />
     <ClCompile Include="SourceCodo\Charactor.cpp" />
+    <ClCompile Include="SourceCodo\CharactorCommand.cpp" />
+    <ClCompile Include="SourceCodo\CharactorStaticMesh.cpp" />
+    <ClCompile Include="SourceCodo\CharaSkinMesh.cpp" />
     <ClCompile Include="SourceCodo\CharaStatic.cpp" />
     <ClCompile Include="SourceCodo\Common.cpp" />
     <ClCompile Include="SourceCodo\CXInput.cpp">
@@ -106,6 +109,7 @@
     <ClCompile Include="SourceCodo\DxInput.cpp" />
     <ClCompile Include="SourceCodo\Effects.cpp" />
     <ClCompile Include="SourceCodo\Enemy.cpp" />
+    <ClCompile Include="SourceCodo\EnemyCharactor.cpp" />
     <ClCompile Include="SourceCodo\EnemyRobo.cpp" />
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
@@ -114,9 +118,14 @@
     <ClCompile Include="SourceCodo\File.cpp" />
     <ClCompile Include="SourceCodo\Game.cpp" />
     <ClCompile Include="SourceCodo\GameObject.cpp" />
+    <ClCompile Include="SourceCodo\InputCharactor.cpp" />
+    <ClCompile Include="SourceCodo\InputRobo.cpp" />
     <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
+    <ClCompile Include="SourceCodo\MissionModel.cpp" />
     <ClCompile Include="SourceCodo\Object.cpp" />
+    <ClCompile Include="SourceCodo\ObjSkinMesh.cpp" />
+    <ClCompile Include="SourceCodo\ObjStaticMesh.cpp" />
     <ClCompile Include="SourceCodo\OperationString.cpp" />
     <ClCompile Include="SourceCodo\PartsArmBase.cpp" />
     <ClCompile Include="SourceCodo\PartsArmL.cpp" />
@@ -126,11 +135,13 @@
     <ClCompile Include="SourceCodo\PartsHead.cpp" />
     <ClCompile Include="SourceCodo\PartsLeg.cpp" />
     <ClCompile Include="SourceCodo\PartsWeapon.cpp" />
+    <ClCompile Include="SourceCodo\Player.cpp" />
     <ClCompile Include="SourceCodo\PtrGroup.cpp" />
     <ClCompile Include="SourceCodo\Ray.cpp" />
     <ClCompile Include="SourceCodo\RenderAtStartUp.cpp" />
     <ClCompile Include="SourceCodo\Resource.cpp" />
     <ClCompile Include="SourceCodo\Robo.cpp" />
+    <ClCompile Include="SourceCodo\RoboCommand.cpp" />
     <ClCompile Include="SourceCodo\RoboStatus.cpp" />
     <ClCompile Include="SourceCodo\SceneAssemble.cpp" />
     <ClCompile Include="SourceCodo\SceneBase.cpp" />
@@ -172,6 +183,7 @@
     <ClInclude Include="SourceCodo\CD3DXSKINMESH.h" />
     <ClInclude Include="SourceCodo\Charactor.h" />
     <ClInclude Include="SourceCodo\CharactorCommand.h" />
+    <ClInclude Include="SourceCodo\CharactorStaticMesh.h" />
     <ClInclude Include="SourceCodo\CharaSkinMesh.h" />
     <ClInclude Include="SourceCodo\CharaStatic.h" />
     <ClInclude Include="SourceCodo\Common.h" />
@@ -184,6 +196,7 @@
     <ClInclude Include="SourceCodo\DxInput.h" />
     <ClInclude Include="SourceCodo\Effects.h" />
     <ClInclude Include="SourceCodo\Enemy.h" />
+    <ClInclude Include="SourceCodo\EnemyCharactor.h" />
     <ClInclude Include="SourceCodo\EnemyRobo.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
@@ -197,6 +210,7 @@
     <ClInclude Include="SourceCodo\InputRobo.h" />
     <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
+    <ClInclude Include="SourceCodo\MissionModel.h" />
     <ClInclude Include="SourceCodo\MyMacro.h" />
     <ClInclude Include="SourceCodo\Object.h" />
     <ClInclude Include="SourceCodo\ObjSkinMesh.h" />
@@ -210,6 +224,7 @@
     <ClInclude Include="SourceCodo\PartsHead.h" />
     <ClInclude Include="SourceCodo\PartsLeg.h" />
     <ClInclude Include="SourceCodo\PartsWeapon.h" />
+    <ClInclude Include="SourceCodo\Player.h" />
     <ClInclude Include="SourceCodo\PtrGroup.h" />
     <ClInclude Include="SourceCodo\Ray.h" />
     <ClInclude Include="SourceCodo\RenderAtStartUp.h" />

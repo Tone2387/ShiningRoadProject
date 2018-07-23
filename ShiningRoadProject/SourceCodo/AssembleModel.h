@@ -87,7 +87,7 @@ public:
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
 #endif//#if _DEBUG
 
-private:
+protected:
 
 
 	//˜r‚ÌŠp“x‚ğ•Ší‚à–ÍÊ‚·‚é.

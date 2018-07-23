@@ -52,9 +52,6 @@
     <Filter Include="Hiyosi\Enemy">
       <UniqueIdentifier>{fa11f2f1-fb32-4caa-b1f7-b22f8b14f6b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Hiyosi\Object">
-      <UniqueIdentifier>{6f2b3950-f21d-4aea-8d69-161bff4a8f56}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Tahara\UI">
       <UniqueIdentifier>{d9f0ad52-5110-481d-9fb5-99933f2625a4}</UniqueIdentifier>
     </Filter>
@@ -64,39 +61,36 @@
     <Filter Include="Tahara\SoundManager">
       <UniqueIdentifier>{fb495207-4f89-4f73-b144-5a168eaaa282}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hiyosi\Mesh">
+      <UniqueIdentifier>{95f74cc1-58a6-4ca4-b8c8-893d97af0c61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Player">
+      <UniqueIdentifier>{332461ed-6c0e-4754-9f99-9c13b607fe71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Player\Input">
+      <UniqueIdentifier>{0899a7c2-227a-4bc5-9b4f-abf074107ffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Object">
+      <UniqueIdentifier>{6f2b3950-f21d-4aea-8d69-161bff4a8f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Object\Charactor">
+      <UniqueIdentifier>{e97221a5-89ac-4e6b-ad25-369f9c90279b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Object\Shot">
+      <UniqueIdentifier>{087af5d4-b5d7-46ba-9393-764c04a36d68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Object\Stage">
+      <UniqueIdentifier>{bb3b883e-030c-4f4b-beb9-fe11d034a910}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Object\Charactor\Robot">
+      <UniqueIdentifier>{b10da82e-75d3-4a62-836c-dd4b42b2c5e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SourceCodo\Charactor.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\Robo.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\Shot.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SkinMesh.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\TestObj.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\CameraEnding.cpp">
-      <Filter>Hiyosi\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\CameraMission.cpp">
       <Filter>Hiyosi\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\CameraTitle.cpp">
-      <Filter>Hiyosi\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SceneEnding.cpp">
-      <Filter>Hiyosi\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\SceneMission.cpp">
-      <Filter>Hiyosi\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SceneTitle.cpp">
       <Filter>Hiyosi\Scene</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\Camera.cpp">
@@ -159,15 +153,6 @@
     <ClCompile Include="SourceCodo\Main.cpp">
       <Filter>Classwork\System</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\DxInput.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\SceneGameOver.cpp">
-      <Filter>Hiyosi\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\CameraGameOver.cpp">
-      <Filter>Hiyosi\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp">
       <Filter>Classwork\Model</Filter>
     </ClCompile>
@@ -228,12 +213,6 @@
     <ClCompile Include="SourceCodo\FactorySoundManager.cpp">
       <Filter>Tahara\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\Stage.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\Weapon.cpp">
-      <Filter>Hiyosi</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\LineBox.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
@@ -270,57 +249,87 @@
     <ClCompile Include="SourceCodo\WindowBox.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\SceneTitle.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SceneEnding.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SceneGameOver.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CameraTitle.cpp">
+      <Filter>Tahara\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CameraGameOver.cpp">
+      <Filter>Tahara\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CameraEnding.cpp">
+      <Filter>Tahara\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SkinMesh.cpp">
+      <Filter>Hiyosi\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\DxInput.cpp">
+      <Filter>Hiyosi\Player\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\TestObj.cpp">
+      <Filter>Hiyosi\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Player.cpp">
+      <Filter>Hiyosi\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Charactor.cpp">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Robo.cpp">
+      <Filter>Hiyosi\Object\Charactor\Robot</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Shot.cpp">
+      <Filter>Hiyosi\Object\Shot</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Stage.cpp">
+      <Filter>Hiyosi\Object\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Weapon.cpp">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MissionModel.cpp">
+      <Filter>Hiyosi\Object\Charactor\Robot</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CharactorCommand.cpp">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CharaSkinMesh.cpp">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboCommand.cpp">
+      <Filter>Hiyosi\Object\Charactor\Robot</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CharactorStaticMesh.cpp">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\ObjSkinMesh.cpp">
+      <Filter>Hiyosi\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\ObjStaticMesh.cpp">
+      <Filter>Hiyosi\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\InputCharactor.cpp">
+      <Filter>Hiyosi\Player\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\InputRobo.cpp">
+      <Filter>Hiyosi\Player\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\EnemyCharactor.cpp">
+      <Filter>Hiyosi\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SourceCodo\Charactor.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\CharactorCommand.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\CharaSkinMesh.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\InputCharactor.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\InputRobo.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\ObjSkinMesh.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\ObjStaticMesh.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\Robo.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\Shot.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SkinMesh.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\TestObject.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\CameraEnding.h">
-      <Filter>Hiyosi\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\CameraMission.h">
       <Filter>Hiyosi\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\CameraTitle.h">
-      <Filter>Hiyosi\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SceneEnding.h">
-      <Filter>Hiyosi\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\SceneMission.h">
-      <Filter>Hiyosi\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SceneTitle.h">
       <Filter>Hiyosi\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\Camera.h">
@@ -386,18 +395,6 @@
     <ClInclude Include="SourceCodo\Main.h">
       <Filter>Classwork\System</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\DxInput.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\SceneGameOver.h">
-      <Filter>Hiyosi\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\CameraGameOver.h">
-      <Filter>Hiyosi\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\RoboCommand.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\CD3DXSKINMESH.h">
       <Filter>Classwork\Model</Filter>
     </ClInclude>
@@ -461,12 +458,6 @@
     <ClInclude Include="SourceCodo\Sound.h">
       <Filter>Classwork\System</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\Stage.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\Weapon.h">
-      <Filter>Hiyosi</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\LineBox.h">
       <Filter>Tahara\UI</Filter>
     </ClInclude>
@@ -505,6 +496,81 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\WindowBox.h">
       <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneTitle.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneEnding.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneGameOver.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\ObjSkinMesh.h">
+      <Filter>Hiyosi\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\ObjStaticMesh.h">
+      <Filter>Hiyosi\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CameraTitle.h">
+      <Filter>Tahara\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CameraGameOver.h">
+      <Filter>Tahara\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CameraEnding.h">
+      <Filter>Tahara\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SkinMesh.h">
+      <Filter>Hiyosi\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\DxInput.h">
+      <Filter>Hiyosi\Player\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\InputCharactor.h">
+      <Filter>Hiyosi\Player\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\InputRobo.h">
+      <Filter>Hiyosi\Player\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\TestObject.h">
+      <Filter>Hiyosi\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Player.h">
+      <Filter>Hiyosi\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Charactor.h">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CharactorCommand.h">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CharaSkinMesh.h">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Robo.h">
+      <Filter>Hiyosi\Object\Charactor\Robot</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboCommand.h">
+      <Filter>Hiyosi\Object\Charactor\Robot</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Shot.h">
+      <Filter>Hiyosi\Object\Shot</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Stage.h">
+      <Filter>Hiyosi\Object\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Weapon.h">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MissionModel.h">
+      <Filter>Hiyosi\Object\Charactor\Robot</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CharactorStaticMesh.h">
+      <Filter>Hiyosi\Object\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\EnemyCharactor.h">
+      <Filter>Hiyosi\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
