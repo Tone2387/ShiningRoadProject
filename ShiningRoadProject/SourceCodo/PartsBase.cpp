@@ -64,6 +64,12 @@ D3DXVECTOR3 clsPARTS_BASE::GetBonePos( const char* sBoneName, const bool isLocal
 	return vBonePos;
 }
 
+//ボーンが存在するか.
+bool clsPARTS_BASE::ExistsBone( const char* sBoneName )
+{
+	return ExistsBone( sBoneName );
+}
+
 
 //アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
 bool clsPARTS_BASE::PartsAnimChange( const int iIndex )

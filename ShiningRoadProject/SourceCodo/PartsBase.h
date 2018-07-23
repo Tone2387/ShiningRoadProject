@@ -43,6 +43,10 @@ public:
 	//パーツの名前を覚える.
 	void SetPartsName( const std::string &sPartsName );
 
+	//ボーンが存在するか.
+	bool ExistsBone( const char* sBoneName );
+
+
 protected:
 	//----- 各パーツごとの関数 -----//.
 	virtual void CreateProduct() = 0;//各シーンのCreate.

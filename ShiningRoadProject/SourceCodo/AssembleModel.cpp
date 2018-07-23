@@ -306,6 +306,8 @@ bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex
 }
 
 
+
+
 //パーツのボーンの座標を取得.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( const enPARTS enParts, const char* sBoneName )
 {
@@ -318,6 +320,13 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( const enPARTS enParts, const char* sB
 	return vReturn;
 }
 
+
+//ボーンが存在するか.
+bool clsASSEMBLE_MODEL::ExistsBone( const enPARTS enParts, const char* sBoneName )
+{
+	char cTmpNum = static_cast<char>( enParts );
+	return m_vpParts[ cTmpNum ]->m_pMesh->ExistsBone( sBoneName );
+}
 
 
 //回転値抑制.

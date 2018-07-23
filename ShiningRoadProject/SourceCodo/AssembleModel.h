@@ -19,8 +19,6 @@
 #define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVecEnd"
 
 
-//改名案.
-//clsROBO_MODEL_SET.
 
 //アセンブルシーンのモデルさん.
 class clsASSEMBLE_MODEL
@@ -77,9 +75,11 @@ public:
 	//パーツのアニメーション変更.
 	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
 
-
 	//パーツのボーンの座標を取得.
 	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName );
+
+	//ボーンが存在するか.
+	bool ExistsBone( const enPARTS enParts, const char* sBoneName );
 
 
 #if _DEBUG
