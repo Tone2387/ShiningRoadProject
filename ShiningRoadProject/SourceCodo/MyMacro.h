@@ -29,32 +29,8 @@
 
 
 
-//nullにアサートを出す.
-#define ASSERT_IF_NULL(p){ \
-	if( p == nullptr ){ \
-		assert( p ||! "はnullですよ" "( ||! は気にしないでください)");\
-	}\
-}
-//	{ assert( !( p == nullptr ) ); }//nullの時に引っかかる.
-
-//nullじゃない場合にアサートを出す.
-#define ASSERT_IF_NOT_NULL(p){ \
-	if( p != nullptr ){ \
-		assert( p ||! "はnullじゃないですよ" "( ||! は気にしないでください)");\
-	}\
-}
-//	{ assert( !( p != nullptr ) ); }//nullじゃない時に引っかかる.
 
 
-
-//nullチェック.
-#define RETURN_IF_NULL(p) \
-	{ ASSERT_IF_NULL( p ); return; }//nullならアサート出してリターン.
-
-//nullじゃないかチェック.
-#define RETURN_IF_NOT_NULL(p) \
-	{ ASSERT_IF_NOT_NULL( p ); return; }//nullじゃないならアサート出してリターン.
-//----- end -----.
 
 
 

@@ -30,7 +30,9 @@ public:
 	//毎フレーム使う.
 	void Update();
 	//毎フレーム使う.
-	void Render();
+	void Render( 
+		ID3D11RenderTargetView *pBackBuffer_TexRTV,
+		ID3D11DepthStencilView *pBackBuffer_DSTexDSV );
 
 
 	//ラップ関数.

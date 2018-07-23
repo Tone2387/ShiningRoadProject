@@ -13,6 +13,8 @@ public:
 
 	//最初( シーンのはじめ )の初期化.
 	virtual void Create() = 0;
+	//毎フレームの処理.
+	virtual void Update() = 0;
 
 	//第二引数がtrue->m_vLookもついてくる.
 	//第二引数がfalse->m_vLookはそのままの位置.
@@ -23,6 +25,9 @@ public:
 	void SetLookPos( const D3DXVECTOR3& vPos );
 	void AddLookPos( const D3DXVECTOR3& vVec );
 	D3DXVECTOR3 GetLookPos();
+
+	D3DXVECTOR3 GetRot();
+	void SetRot( const D3DXVECTOR3 &vRot );
 
 protected:
 

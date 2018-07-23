@@ -6,6 +6,19 @@
 
 #include "RoboStatus.h"
 
+
+//連結部分のボーン名.
+#define sBONE_NAME_LEG_TO_CORE		"JunctionCore"
+#define sBONE_NAME_CORE_TO_HEAD		"JunctionHead"
+#define sBONE_NAME_CORE_TO_ARM_L	"JunctionArmL"
+#define sBONE_NAME_CORE_TO_ARM_R	"JunctionArmR"
+#define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
+
+//武器の回転情報確定に使う.
+#define  sBONE_NAME_WEAPON_VEC_ROOT	 "WeaponVecRoot"
+#define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVecEnd"
+
+
 //改名案.
 //clsROBO_MODEL_SET.
 
@@ -16,6 +29,18 @@ public:
 	clsASSEMBLE_MODEL();
 	~clsASSEMBLE_MODEL();
 
+	//選択肢のあるパーツの種類( 配列の添え字になる ).
+	enum enPARTS_TYPES : UCHAR
+	{
+		LEG = 0,
+		CORE,
+		HEAD,
+		ARMS,
+		WEAPON_L,
+		WEAPON_R,
+
+		ENUM_SIZE
+	};
 
 	//アセンブルシーンの各関数内で使います.
 	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus );
@@ -25,8 +50,9 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
+		const enPARTS_TYPES AlphaParts = enPARTS_TYPES::ENUM_SIZE/*,
 		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
-		const bool isAlpha = false );
+		const bool isAlpha = false*/ );
 
 	//モデルの初期セット.
 	void Init( clsROBO_STATUS* const pStatus );
@@ -47,21 +73,30 @@ public:
 
 	void SetAnimSpd( const double &dSpd );
 
+
 	//パーツのアニメーション変更.
 	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
+
+
+	//パーツのボーンの座標を取得.
+	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName );
+
 
 #if _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
 #endif//#if _DEBUG
 
-private:
+protected:
 
 
 	//腕の角度を武器も模写する.
 	void FitJointModel( 
 		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
 		const char *RootBone, const char *EndBone );
+
+	//色を吐き出す.
+	D3DXVECTOR4 CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
 
 	//アニメーションリセット.
 	void AnimReSet();

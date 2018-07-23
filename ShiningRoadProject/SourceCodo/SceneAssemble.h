@@ -24,28 +24,22 @@ public:
 
 private:
 
-	//選択肢のあるパーツの種類( 配列の添え字になる ).
-	enum enPARTS_TYPES : UCHAR
-	{
-		LEG = 0,
-		CORE,
-		HEAD,
-		ARMS,
-		WEAPON,
-
-		ENUM_SIZE
-	};
 
 	//どのパーツを選んでるの?.
 	struct PARTS_SELECT
 	{
 		short Type;	//パーツの種類( 脚、コア等 ).
-		short Num;	//パーツ番号.
+		short Num[clsASSEMBLE_MODEL::ENUM_SIZE];	//パーツ番号.
 
-		PARTS_SELECT(){
-			Type = Num = 0;
+		PARTS_SELECT()
+		:Num()
+		{
+			Type = 0;
 		}
 	}m_PartsSelect;
+
+	//パーツ選択中かそれ以外か.
+	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
 
 
 	void CreateProduct() final;
@@ -54,14 +48,19 @@ private:
 
 	//コントローラ操作.
 	//カーソル移動.
+	void MoveCursor();//カーソル移動の共通動作.
 	void MoveCursorUp();
 	void MoveCursorDown();
 	void MoveCursorRight();
 	void MoveCursorLeft();
 	//決定.
-	void Enter();
+	void Enter( enSCENE &enNextScene );
+	//出撃.
+	void MissionStart( enSCENE &enNextScene );
+	//パーツ変更.
+	void AssembleParts();
 	//戻る.
-	void Undo();
+	void Undo( enSCENE &enNextScene );
 	PARTS_SELECT m_OldSelect;//Undo()のために必要( のちに配列化する ).
 
 
@@ -84,7 +83,8 @@ private:
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
 
-	clsFILE*	m_pFile[enPARTS_TYPES::ENUM_SIZE];
+	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
+	UCHAR										m_cuFileMax;
 
 //	clsSPRITE2D_CENTER* m_pSprite;
 //	clsCharaStatic* m_pTestChara;

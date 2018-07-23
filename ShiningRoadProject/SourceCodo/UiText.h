@@ -12,7 +12,7 @@
 
 #include <string>
 
-
+//UIとして文字を扱う.
 class clsUiText
 {
 public:
@@ -26,10 +26,13 @@ public:
 
 
 	//レンダリング関数.
-	void Render();
+	//デフォルト引数はtrueにすると右端が指定座標に来る.
+	void Render( const bool bRIght = false );
 
 	void SetPos( const D3DXVECTOR2 &vPos );
 	void AddPos( const D3DXVECTOR2 &vPos );
+
+	void SetScale( const float fScale );
 
 	void SetText( const char* sText );
 

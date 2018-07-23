@@ -783,20 +783,21 @@ HRESULT D3DXPARSER::Release()
 *
 **/
 // コンストラクタ.
-clsD3DXSKINMESH::clsD3DXSKINMESH() :
-	m_hWnd( NULL ),
-	m_pD3d9( NULL ),
-	m_pDevice9( NULL ),
-	m_pDevice( NULL ),
-	m_pDeviceContext( NULL ),
-	m_pSampleLinear( NULL ),
-	m_pVertexShader( NULL ),
-	m_pPixelShader( NULL ),
-	m_pVertexLayout( NULL ),
-	m_pConstantBuffer0( NULL ),
-	m_pConstantBuffer1( NULL ),
-	m_pConstantBufferBone( NULL ),
-	m_pD3dxMesh( NULL )
+clsD3DXSKINMESH::clsD3DXSKINMESH()
+	:m_hWnd( NULL )
+	,m_pD3d9( NULL )
+	,m_pDevice9( NULL )
+	,m_pDevice( NULL )
+	,m_pDeviceContext( NULL )
+	,m_pSampleLinear( NULL )
+	,m_pVertexShader( NULL )
+	,m_pPixelShader( NULL )
+	,m_pVertexLayout( NULL )
+	,m_pConstantBuffer0( NULL )
+	,m_pConstantBuffer1( NULL )
+	,m_pConstantBufferBone( NULL )
+	,m_pD3dxMesh( NULL )
+	,m_pBlendState()
 {
 //	ZeroMemory( this, sizeof( clsD3DXSKINMESH ) );
 	m_Trans.vPos = vecAxisX = vecAxisZ = m_vLight = m_vEye = { 0.0f, 0.0f, 0.0f };
@@ -825,6 +826,8 @@ clsD3DXSKINMESH::~clsD3DXSKINMESH()
 {
 	// 解放処理.
 	Release();
+
+	SAFE_RELEASE( m_pBlendState );
 
 	// シェーダやサンプラ関係.
 	SAFE_RELEASE( m_pSampleLinear );
@@ -1582,6 +1585,9 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	m_pDeviceContext->VSSetConstantBuffers(	0, 1, &m_pConstantBuffer0 );
 	m_pDeviceContext->PSSetConstantBuffers(	0, 1, &m_pConstantBuffer0 );
 
+	//透過.
+	SetBlend( isAlpha );
+	
 	// マテリアルの数だけ、
 	// それぞれのマテリアルのインデックスバッファを描画.
 	for( DWORD i=0; i<pMesh->dwNumMaterial; i++ )
@@ -1639,6 +1645,56 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 }
 
 
+//透過(アルファブレンド)設定の切り替え.
+void clsD3DXSKINMESH::SetBlend( bool isAlpha )
+{
+	//アルファブレンド用ブレンドステート構造体.
+	//pngファイル内にアルファ情報があるので、
+	//透過するようにブレンドステートを設定する.
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));//初期化.
+
+	blendDesc.IndependentBlendEnable
+		= false;//false:RenderTarget[0]のメンバーのみが使用する.
+	//true :RenderTarget[0～7]が使用できる.
+	//      (レンダーターゲット毎に独立したブレンド処理)
+	blendDesc.AlphaToCoverageEnable
+		= false;//true :アルファトゥカバレッジを使用する.
+	blendDesc.RenderTarget[0].BlendEnable
+		= isAlpha;	//true :アルファブレンドを使用する.
+	blendDesc.RenderTarget[0].SrcBlend	//元素材に対する設定.
+		= D3D11_BLEND_SRC_ALPHA;		//	アルファブレンドを指定.
+	blendDesc.RenderTarget[0].DestBlend	//重ねる素材に対する設定.
+		= D3D11_BLEND_INV_SRC_ALPHA;	//	アルファブレンドの反転を指定.
+
+	blendDesc.RenderTarget[0].BlendOp	//ブレンドオプション.
+		= D3D11_BLEND_OP_ADD;			//	ADD:加算合成.
+
+	blendDesc.RenderTarget[0].SrcBlendAlpha	//元素材のアルファに対する設定.
+		= D3D11_BLEND_ONE;					//	そのまま使用.
+	blendDesc.RenderTarget[0].DestBlendAlpha//重ねる素材のアルファに対する設定.
+		= D3D11_BLEND_ZERO;					//	何もしない.
+
+	blendDesc.RenderTarget[0].BlendOpAlpha	//アルファのブレンドオプション.
+		= D3D11_BLEND_OP_ADD;				//	ADD:加算合成.
+
+	blendDesc.RenderTarget[0].RenderTargetWriteMask	//ピクセル毎の書き込みマスク.
+		= D3D11_COLOR_WRITE_ENABLE_ALL;				//	全ての成分(RGBA)へのデータの格納を許可する.
+
+	//ブレンドステート作成.
+	if (FAILED(
+		m_pDevice->CreateBlendState(
+		&blendDesc, &m_pBlendState)))
+	{
+		MessageBox(NULL, "ブレンドステート作成失敗", "エラー", MB_OK);
+	}
+
+	//ブレンドステートの設定.
+	UINT mask = 0xffffffff;	//マスク値.
+	m_pDeviceContext->OMSetBlendState(
+		m_pBlendState, NULL, mask);
+
+}
 
 // 解放関数.
 HRESULT clsD3DXSKINMESH::Release()

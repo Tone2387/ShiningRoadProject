@@ -6,16 +6,19 @@
 class clsLINE_BOX
 {
 public:
-	clsLINE_BOX();
-	~clsLINE_BOX();
+	clsLINE_BOX(		
+		ID3D11Device* const pDevice11,
+		ID3D11DeviceContext* const pContext11 );
+
+	virtual ~clsLINE_BOX();
 
 	void Create(	
 		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11 );
 
-	void Update();
+	virtual void Update();
 
-	void Render();
+	virtual void Render();
 
 	void SetPos( const D3DXVECTOR3 &vPos );
 	void AddPos( const D3DXVECTOR3 &vPos );
@@ -32,7 +35,8 @@ public:
 	//îÕàÕÇoverÇ∑ÇÈÇ∆falseÇ™ï‘Ç¡ÇƒÇ≠ÇÈ.
 	bool AddAlpha( const float fAlpha );
 
-private:
+protected:
+
 
 	//î†Çå`çÏÇÈ.
 	void SetUpBox();

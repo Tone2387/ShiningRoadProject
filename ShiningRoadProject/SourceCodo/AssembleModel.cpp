@@ -22,19 +22,13 @@ const string sPARTS_NAME[ucPARTS_MAX] =
 };
 
 
-//連結部分のボーン名.
-#define BONE_NAME_LEG_TO_CORE		"LegJunctionCore"
-#define BONE_NAME_CORE_TO_HEAD		"CoreJunctionHead"
-#define BONE_NAME_CORE_TO_ARM_L	 	"CoreJunctionArmL"
-#define BONE_NAME_CORE_TO_ARM_R	 	"CoreJunctionArmR"
-#define BONE_NAME_ARM_L_TO_WEAPON_L "ArmLJunctionWeapon"
-#define BONE_NAME_ARM_R_TO_WEAPON_R /*"ArmRJunctionWeapon"*/"JunctionWeapon"
-
-
-#define BONE_NAME_WEAPON_VEC_ROOT /*"WeaponVecRoot"*/"JunctionWeapon"
-#define BONE_NAME_WEAPON_VEC_END "WeaponVecEnd"
 
 const double dANIM_SPD = 0.016;
+
+
+//パーツ透過値.
+const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
+const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
 
 
 
@@ -71,9 +65,9 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 
 void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus )
 {
-	ASSERT_IF_NOT_NULL( m_upPartsFactory );
+	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
-	ASSERT_IF_NOT_NULL( m_wpResource );
+	assert( !m_wpResource );
 
 	m_wpResource = pResource;
 
@@ -122,15 +116,68 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
+	const enPARTS_TYPES AlphaParts/*,
 	const D3DXVECTOR4& vColor,
-	const bool isAlpha )
+	const bool isAlpha*/ )
 {
+	D3DXVECTOR4 vTmpColor;
+
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
+		vTmpColor = CreateColor( AlphaParts, i );
 		SetPos( GetPos() );
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
-		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, vTmpColor, true );
 	}
+}
+
+
+//色を吐き出す.
+D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex )
+{
+	D3DXVECTOR4 vReturn = vCOLOR_NORMAL;
+
+	switch( AlphaParts )
+	{
+	case LEG:
+		if( uiIndex == static_cast<UINT>( enPARTS::LEG ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case CORE:
+		if( uiIndex == static_cast<UINT>( enPARTS::CORE ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case HEAD:
+		if( uiIndex == static_cast<UINT>( enPARTS::HEAD ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case ARMS:
+		//両腕とも.
+		if( uiIndex == static_cast<UINT>( enPARTS::ARM_L ) ||
+			uiIndex == static_cast<UINT>( enPARTS::ARM_R ) )
+		{
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case WEAPON_L:
+		if( uiIndex == static_cast<UINT>( enPARTS::WEAPON_L ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case WEAPON_R:
+		if( uiIndex == static_cast<UINT>( enPARTS::WEAPON_R ) ){
+			vReturn = vCOLOR_ALPHA;
+		}
+		break;
+	case enPARTS_TYPES::ENUM_SIZE:
+	default:
+		break;
+	}
+
+	return vReturn;
 }
 
 
@@ -168,27 +215,27 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
 
 	m_vpParts[ucCORE]->SetPosition( 
- 		m_vpParts[ucLEG]->GetBonePos( BONE_NAME_LEG_TO_CORE ) );
+ 		m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_TO_CORE ) );
 
 	m_vpParts[ucHEAD]->SetPosition( 
-		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_HEAD ) );
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_HEAD ) );
 
 	m_vpParts[ucARM_L]->SetPosition( 
-		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_L ) );
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_ARM_L ) );
 
 	m_vpParts[ucARM_R]->SetPosition( 
-		m_vpParts[ucCORE]->GetBonePos( BONE_NAME_CORE_TO_ARM_R ) );
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_ARM_R ) );
 
 	m_vpParts[ucWEAPON_L]->SetPosition( 
-		m_vpParts[ucARM_L]->GetBonePos( BONE_NAME_ARM_L_TO_WEAPON_L ) );
+		m_vpParts[ucARM_L]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
 										   
 	m_vpParts[ucWEAPON_R]->SetPosition( 
-		m_vpParts[ucARM_R]->GetBonePos( BONE_NAME_ARM_R_TO_WEAPON_R ) );
+		m_vpParts[ucARM_R]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
 
 	FitJointModel( m_vpParts[ucWEAPON_L], m_vpParts[ucARM_L],
-		BONE_NAME_WEAPON_VEC_ROOT, BONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
+		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
 	FitJointModel( m_vpParts[ucWEAPON_R], m_vpParts[ucARM_R],
-		BONE_NAME_WEAPON_VEC_ROOT, BONE_NAME_WEAPON_VEC_END );
+		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {
@@ -256,6 +303,19 @@ bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex
 	char cPartsIndex = static_cast<char>( enParts );
 	assert( m_vpParts[ cPartsIndex ] );
 	return m_vpParts[ cPartsIndex ]->PartsAnimChange( iIndex );
+}
+
+
+//パーツのボーンの座標を取得.
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( const enPARTS enParts, const char* sBoneName )
+{
+	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
+	char cTmpNum = static_cast<char>( enParts );
+
+	assert( m_vpParts[ cTmpNum ] );
+	vReturn = m_vpParts[ cTmpNum ]->GetBonePos( sBoneName );
+
+	return vReturn;
 }
 
 
@@ -327,7 +387,7 @@ void clsASSEMBLE_MODEL::AnimReSet()
 //各パーツのpos.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
 {
-	ASSERT_IF_NULL( m_vpParts[ucParts] );
+	assert( m_vpParts[ucParts] );
 	return m_vpParts[ucParts]->GetPosition();
 }
 #endif//#if _DEBUG

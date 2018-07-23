@@ -26,7 +26,7 @@ public:
 	virtual void Render( 
 				const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
 				const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye,
-				const D3DXVECTOR4 vColor = D3DXVECTOR4( 1.0f,1.0f,1.0f,1.0f ),
+				const D3DXVECTOR4 &vColor = D3DXVECTOR4( 1.0f,1.0f,1.0f,1.0f ),
 				const bool bAlpha = false );
 
 	//位置更新関数.
@@ -35,22 +35,21 @@ public:
 	float			m_fSpd;
 
 
-	clsDX9Mesh*		m_pModel;
 
 //	LPD3DXMESH	m_pMeshForRay;	//レイとメッシュ用.
 
 
-
+	clsDX9Mesh* GetModelPtr();
 
 
 
 protected:
 
 
-
-
 	//座標や回転値を更新する.
 	virtual void UpDateModel();
+
+	clsDX9Mesh*		m_pModel;
 
 };
 

@@ -12,6 +12,11 @@ public:
 	//Å‰( ƒV[ƒ“‚Ì‚Í‚¶‚ß )‚Ì‰Šú‰».
 	void Create() final;
 	void Update(const D3DXVECTOR3 vCamPos, const D3DXVECTOR3 vLookPos);
+
+#ifdef Tahara
+	void Update() final;
+#endif//#ifdef Tahara
+
 private:
 
 };

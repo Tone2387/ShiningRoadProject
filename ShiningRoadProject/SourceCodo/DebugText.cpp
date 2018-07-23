@@ -3,6 +3,8 @@
 //シェーダファイル名(パスも含む).
 const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
 
+const char* FILE_PATH = "Data\\DebugText\\ascii0.png";
+
 //============================================================
 //	コンストラクタ.
 //============================================================
@@ -153,7 +155,7 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	if( FAILED(
 		D3DX11CreateShaderResourceViewFromFile(
 			m_pDevice11,
-			"Data\\DebugText\\ascii.png",
+			FILE_PATH,
 			NULL, NULL,
 			&m_pAsciiTexture, NULL ) ) )
 	{

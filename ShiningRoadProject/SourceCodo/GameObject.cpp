@@ -7,7 +7,7 @@
 clsGameObject::clsGameObject()
 		: m_vPos( 0.0f, 0.0f, 0.0f )
 		, m_vRot( 0.0f, 0.0f, 0.0f )
-		, m_fScale( 1.0f )
+		, m_vScale( 1.0f, 1.0f, 1.0f )
 {
 //	m_vPos = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
 //	m_vRot = D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
@@ -25,7 +25,7 @@ clsGameObject::~clsGameObject()
 //à íuê›íË.
 //============================================================
 //ê›íË.
-void clsGameObject::SetPosition( const D3DXVECTOR3 vPos )
+void clsGameObject::SetPosition( const D3DXVECTOR3 &vPos )
 {	
 	m_vPos = vPos;
 }
@@ -59,7 +59,7 @@ float clsGameObject::GetPositionZ() const
 	return m_vPos.z;
 }
 //ë´ÇµÇ±Ç›.
-void clsGameObject::AddPosition( const D3DXVECTOR3 vMove )
+void clsGameObject::AddPosition( const D3DXVECTOR3 &vMove )
 {
 	SetPosition( GetPosition() + vMove );
 }
@@ -81,7 +81,7 @@ void clsGameObject::AddPositionZ( const float fMoveZ )
 //âÒì]ê›íË.
 //============================================================
 //ê›íË.
-void clsGameObject::SetRotation( const D3DXVECTOR3 vRot )
+void clsGameObject::SetRotation( const D3DXVECTOR3 &vRot )
 { 
 	m_vRot = vRot;
 }
@@ -111,7 +111,7 @@ float clsGameObject::GetRotationZ() const
 	return m_vRot.z;
 }
 //ë´ÇµÇ±Ç›.
-void clsGameObject::AddRotation( const D3DXVECTOR3 vMove )
+void clsGameObject::AddRotation( const D3DXVECTOR3 &vMove )
 {
 	D3DXVECTOR3 theta = GetRotation() + vMove;
 	ThetaOverGuard( theta.x );
@@ -137,11 +137,17 @@ void clsGameObject::AddRotationZ( const float fMoveZ )
 //============================================================
 void clsGameObject::SetScale( const float fScale )
 {
-	m_fScale = fScale;
+	m_vScale.x = fScale;
+	m_vScale.y = fScale;
+	m_vScale.z = fScale;
 }
-float clsGameObject::GetScale() const
+void clsGameObject::SetScale( const D3DXVECTOR3 &vScale )
 {
-	return m_fScale;
+	m_vScale = vScale;
+}
+D3DXVECTOR3 clsGameObject::GetScale() const
+{
+	return m_vScale;
 }
 
 

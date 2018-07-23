@@ -27,7 +27,7 @@ public:
 
 
 	//à íuê›íË.
-	virtual void SetPosition( const D3DXVECTOR3 vPos );
+	virtual void SetPosition( const D3DXVECTOR3 &vPos );
 	void SetPositionX( const float fPosX );
 	void SetPositionY( const float fPosY );
 	void SetPositionZ( const float fPosZ );
@@ -37,7 +37,7 @@ public:
 	float GetPositionY() const;
 	float GetPositionZ() const;
 	//ë´ÇµÇ±Ç›.
-	void AddPosition( const D3DXVECTOR3 vMove );
+	void AddPosition( const D3DXVECTOR3 &vMove );
 	void AddPositionX( const float fMoveX );
 	void AddPositionY( const float fMoveY );
 	void AddPositionZ( const float fMoveZ );
@@ -45,7 +45,7 @@ public:
 
 	//âÒì]ê›íË.
 	//ê›íË.
-	void SetRotation( const D3DXVECTOR3 vRot );
+	void SetRotation( const D3DXVECTOR3 &vRot );
 	void SetRotationY( const float fRotY );
 	void SetRotationZ( const float fRotZ );
 	//éÊìæ.
@@ -54,14 +54,15 @@ public:
 	float GetRotationY() const;
 	float GetRotationZ() const;
 	//ë´ÇµÇ±Ç›.
-	void AddRotation( const D3DXVECTOR3 vMove );
+	void AddRotation( const D3DXVECTOR3 &vMove );
 	void AddRotationY( const float fMoveY );
 	void AddRotationZ( const float fMoveZ );
 
 
 	//ägèkê›íË.
 	void SetScale( const float fScale );
-	float GetScale() const;
+	void SetScale( const D3DXVECTOR3 &vScale );
+	D3DXVECTOR3 GetScale() const;
 
 
 	//ãóó£Ç≈âπó ÇïœÇ¶ÇÈ.
@@ -78,7 +79,7 @@ protected:
 
 	D3DXVECTOR3		m_vPos;		//à íu.
 	D3DXVECTOR3		m_vRot;		//âÒì].
-	float			m_fScale;	//ägèk.
+	D3DXVECTOR3		m_vScale;	//ägèk.
 
 
 

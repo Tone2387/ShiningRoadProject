@@ -1,5 +1,7 @@
 #include "SceneEnding.h"
 
+using namespace std;
+
 //================================//
 //========== エンディングクラス ==========//
 //================================//
@@ -13,17 +15,45 @@ clsSCENE_ENDING::~clsSCENE_ENDING()
 
 void clsSCENE_ENDING::CreateProduct()
 {
+	m_upStage = make_unique< clsStage >( m_wpPtrGroup->GetResource() );
+
+	m_wpCamera->SetPos( { 0.0f, 500.0f, -1.0f } );
+	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
 }
 
 
 void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 {
+	float fff = 50.0f;
+	if( isPressRight() ){
+		m_wpCamera->AddPos( { fff, 0.0f, 0.0f } );
+	}
+	if( isPressLeft() ){
+		m_wpCamera->AddPos( { -fff, 0.0f, 0.0f } );
+	}
+	if( isPressUp() ){
+		m_wpCamera->AddPos( { 0.0f, 0.0f, fff } );
+	}
+	if( isPressDown() ){
+		m_wpCamera->AddPos( { 0.0f, 0.0f, -fff } );
+	}
+	if( isPressEnter() ){
+		m_wpCamera->AddPos( { 0.0f, fff, -0.0f } );
+	}
+	if( isPressExit() ){
+		m_wpCamera->AddPos( { 0.0f, -fff, -0.0f } );
+	}
 
+
+
+	if( isPressEnter() ){
+		enNextScene = enSCENE::TITLE;
+	}
 }
 
 void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-
+	m_upStage->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }
 
 
@@ -32,7 +62,7 @@ void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 void clsSCENE_ENDING::RenderDebugText()
 {
 	//NULLチェック.
-	ASSERT_IF_NULL( m_upText );
+	assert( m_upText );
 
 	char strDbgTxt[256];
 	int iTxtY = 0;

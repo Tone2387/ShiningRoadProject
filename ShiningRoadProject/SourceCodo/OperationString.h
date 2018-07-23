@@ -14,6 +14,7 @@ public:
 
 	//数字と連結.
 	//連結 : consolidated.
+	//テンプレートの受け取る型を固定する.
 	std::string ConsolidatedNumber( const std::string& s, const int				num ) const;
 	std::string ConsolidatedNumber( const std::string& s, const unsigned int	num ) const;
 	std::string ConsolidatedNumber( const std::string& s, const short			num	) const;

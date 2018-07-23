@@ -83,10 +83,10 @@ public:
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
 		const D3DXVECTOR4& vColor = D3DXVECTOR4( 1.0f,1.0f,1.0f,1.0f ),
-		const bool alphaFlg = false );
+		const bool isAlpha = false );
 
 	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool flg );
+	void SetBlend( const bool isAlpha );
 
 	//解放.
 	HRESULT Release();
@@ -143,7 +143,6 @@ private:
 
 	bool			m_bTexture;		//テクスチャの有無.
 
-	float			m_fSpd;
 
 
 	ID3D11BlendState*	m_pBlendState;	//ブレンドステート.

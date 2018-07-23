@@ -12,7 +12,7 @@
 using namespace std;
 
 const unsigned int uiRESERVE_SIZE_ROW = 64;//ベクターの初期最大サイズ( 行 ).
-const unsigned int uiRESERVE_SIZE_COL = 16;//ベクターの初期最大サイズ( 行のカンマ区切りの数 ).
+const unsigned int uiRESERVE_SIZE_COL = 32;//ベクターの初期最大サイズ( 行のカンマ区切りの数 ).
 
 const char cDELIMITER = ',';//区切り文字.
 	
@@ -279,14 +279,14 @@ bool clsFILE::OutPutCsv( const FILE_DATA &data ) const
 string clsFILE::ConcForOutPut( const FILE_DATA &data ) const
 {
 	string OutPut;
-	for( int i=0; i<data.size(); i++ ){
+	for( unsigned int i=0; i<data.size(); i++ ){
 		//最初は無視.
 		if( i ){
 			OutPut += "\n";//改行文字.
 		}
 
 		//このfor文はCSVファイル一行分を連結している.
-		for( int j=0; j<data[i].size(); j++ ){
+		for( unsigned int j=0; j<data[i].size(); j++ ){
 			OutPut += data[i][j];//連結.
 			OutPut += cDELIMITER;//区切り文字.
 		}

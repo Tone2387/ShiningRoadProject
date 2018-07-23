@@ -11,6 +11,10 @@ const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );
 const float fRENDER_LIMIT = 640.0f;//150.0f.
 
 
+#define XINPUT_ENTER  ( XINPUT_START | XINPUT_B )
+#define XINPUT_EXIT  ( XINPUT_A )
+
+
 //================================//
 //========== 基底クラス ==========//
 //================================//
@@ -156,6 +160,85 @@ void clsSCENE_BASE::Render()
 
 }
 
+//メニュー操作に使ってね.
+bool clsSCENE_BASE::isPressRight()
+{
+	if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
+		return true;
+	}
+	else if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
+		return true;
+	}
+	return false;
+}
+
+bool clsSCENE_BASE::isPressLeft()
+{
+	if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
+		return true;
+	}
+	else if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
+		return true;
+	}
+	return false;
+}
+
+bool clsSCENE_BASE::isPressUp()
+{
+	if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
+		return true;
+	}
+	else if( GetAsyncKeyState( VK_UP ) & 0x1 ){
+		return true;
+	}
+	return false;
+}
+
+bool clsSCENE_BASE::isPressDown()
+{
+	if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
+		return true;
+	}
+	else if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
+		return true;
+	}
+	return false;
+}
+
+bool clsSCENE_BASE::isPressEnter()
+{
+	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
+		return true;
+	}
+	else if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
+		return true;
+	}
+	return false;
+}
+
+bool clsSCENE_BASE::isPressExit()
+{
+	if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
+		return true;
+	}
+	else if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
+		return true;
+	}
+	return false;
+}
+
+
+
+//3D座標をスクリーン( 2D )座標へと変換する.dimensions(次元) conversion(変換)
+D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
+{
+	D3DXVECTOR3 v2DPos;
+	D3DXMATRIX mWorld;
+	D3DXMatrixIdentity( &mWorld );
+	D3DXVec3Project( &v2DPos, &v3DPos, m_wpViewPort, &m_mProj, &m_mView, &mWorld );
+	return v2DPos;
+}
+
 
 //深度テスト(Zテスト)ON/OFF切替.
 void clsSCENE_BASE::SetDepth( const bool isOn )
@@ -175,25 +258,15 @@ void clsSCENE_BASE::SetDepth( const bool isOn )
 
 D3DXVECTOR3 clsSCENE_BASE::GetCameraPos() const
 {
-	ASSERT_IF_NULL( m_wpCamera );
+	assert( m_wpCamera );
 	return m_wpCamera->GetPos();
 }
 D3DXVECTOR3 clsSCENE_BASE::GetCameraLookPos() const
 {
-	ASSERT_IF_NULL( m_wpCamera );
+	assert( m_wpCamera );
 	return m_wpCamera->GetLookPos();
 }
 
-
-//3D座標をスクリーン( 2D )座標へと変換する.dimensions(次元) conversion(変換)
-D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
-{
-	D3DXVECTOR3 v2DPos;
-	D3DXMATRIX mWorld;
-	D3DXMatrixIdentity( &mWorld );
-	D3DXVec3Project( &v2DPos, &v3DPos, m_wpViewPort, &m_mProj, &m_mView, &mWorld );
-	return v2DPos;
-}
 
 
 
@@ -201,7 +274,7 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 void clsSCENE_BASE::RenderDebugText()
 {
 	//NULLチェック.
-	ASSERT_IF_NULL( m_upText );
+	assert( m_upText );
 
 	char strDbgTxt[256];
 	int iTxtY = 0;
