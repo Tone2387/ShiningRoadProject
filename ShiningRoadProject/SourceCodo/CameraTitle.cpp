@@ -105,31 +105,31 @@ void clsCAMERA_TITLE::Update()
 	float fRotSpd = 1.0f / 360.0f * M_PI;
 	float fMove = 1.0f;
 
-	if( GetAsyncKeyState( 'D' ) & 0x8000 )	Turn(-fRotSpd );
-	if( GetAsyncKeyState( 'A' ) & 0x8000 )	Turn( fRotSpd );
-	if( GetAsyncKeyState( 'W' ) & 0x8000 )	Advancing( fMove );
-	if( GetAsyncKeyState( 'S' ) & 0x8000 )	Advancing(-fMove );
-	if( GetAsyncKeyState( 'E' ) & 0x8000 )	Spn(-fRotSpd );
-	if( GetAsyncKeyState( 'Q' ) & 0x8000 )	Spn( fRotSpd );
-
-	if( GetAsyncKeyState( 'H' ) & 0x8000 )	AddPos( { fMove, 0.0F, 0.0F } );
-	if( GetAsyncKeyState( 'F' ) & 0x8000 )	AddPos( {-fMove, 0.0F, 0.0F } );
-	if( GetAsyncKeyState( 'T' ) & 0x8000 )	AddPos( { 0.0F, fMove, 0.0F } );
-	if( GetAsyncKeyState( 'G' ) & 0x8000 )	AddPos( { 0.0F,-fMove, 0.0F } );
-	if( GetAsyncKeyState( 'R' ) & 0x8000 )	AddPos( { 0.0F, 0.0F, fMove } );
-	if( GetAsyncKeyState( 'Y' ) & 0x8000 )	AddPos( { 0.0F, 0.0F,-fMove } );
-
-	if( GetAsyncKeyState( 'L' ) & 0x8000 )	AddLookPos( { fMove, 0.0F, 0.0F } );
-	if( GetAsyncKeyState( 'J' ) & 0x8000 )	AddLookPos( {-fMove, 0.0F, 0.0F } );
-	if( GetAsyncKeyState( 'I' ) & 0x8000 )	AddLookPos( { 0.0F, fMove, 0.0F } );
-	if( GetAsyncKeyState( 'K' ) & 0x8000 )	AddLookPos( { 0.0F,-fMove, 0.0F } );
-	if( GetAsyncKeyState( 'U' ) & 0x8000 )	AddLookPos( { 0.0F, 0.0F, fMove } );
-	if( GetAsyncKeyState( 'O' ) & 0x8000 )	AddLookPos( { 0.0F, 0.0F,-fMove } );
-
-	if( GetAsyncKeyState( 'V' ) & 0x8000 )	AddDistance(-fMove, true );
-	if( GetAsyncKeyState( 'B' ) & 0x8000 )	AddDistance( fMove, true );
-	if( GetAsyncKeyState( 'N' ) & 0x8000 )	AddDistance(-fMove, false );
-	if( GetAsyncKeyState( 'M' ) & 0x8000 )	AddDistance( fMove, false );
+//	if( GetAsyncKeyState( 'D' ) & 0x8000 )	Turn(-fRotSpd );
+//	if( GetAsyncKeyState( 'A' ) & 0x8000 )	Turn( fRotSpd );
+//	if( GetAsyncKeyState( 'W' ) & 0x8000 )	Advancing( fMove );
+//	if( GetAsyncKeyState( 'S' ) & 0x8000 )	Advancing(-fMove );
+//	if( GetAsyncKeyState( 'E' ) & 0x8000 )	Spn(-fRotSpd );
+//	if( GetAsyncKeyState( 'Q' ) & 0x8000 )	Spn( fRotSpd );
+//
+//	if( GetAsyncKeyState( 'H' ) & 0x8000 )	AddPos( { fMove, 0.0F, 0.0F } );
+//	if( GetAsyncKeyState( 'F' ) & 0x8000 )	AddPos( {-fMove, 0.0F, 0.0F } );
+//	if( GetAsyncKeyState( 'T' ) & 0x8000 )	AddPos( { 0.0F, fMove, 0.0F } );
+//	if( GetAsyncKeyState( 'G' ) & 0x8000 )	AddPos( { 0.0F,-fMove, 0.0F } );
+//	if( GetAsyncKeyState( 'R' ) & 0x8000 )	AddPos( { 0.0F, 0.0F, fMove } );
+//	if( GetAsyncKeyState( 'Y' ) & 0x8000 )	AddPos( { 0.0F, 0.0F,-fMove } );
+//
+//	if( GetAsyncKeyState( 'L' ) & 0x8000 )	AddLookPos( { fMove, 0.0F, 0.0F } );
+//	if( GetAsyncKeyState( 'J' ) & 0x8000 )	AddLookPos( {-fMove, 0.0F, 0.0F } );
+//	if( GetAsyncKeyState( 'I' ) & 0x8000 )	AddLookPos( { 0.0F, fMove, 0.0F } );
+//	if( GetAsyncKeyState( 'K' ) & 0x8000 )	AddLookPos( { 0.0F,-fMove, 0.0F } );
+//	if( GetAsyncKeyState( 'U' ) & 0x8000 )	AddLookPos( { 0.0F, 0.0F, fMove } );
+//	if( GetAsyncKeyState( 'O' ) & 0x8000 )	AddLookPos( { 0.0F, 0.0F,-fMove } );
+//
+//	if( GetAsyncKeyState( 'V' ) & 0x8000 )	AddDistance(-fMove, true );
+//	if( GetAsyncKeyState( 'B' ) & 0x8000 )	AddDistance( fMove, true );
+//	if( GetAsyncKeyState( 'N' ) & 0x8000 )	AddDistance(-fMove, false );
+//	if( GetAsyncKeyState( 'M' ) & 0x8000 )	AddDistance( fMove, false );
 
 }
 
