@@ -58,8 +58,6 @@ private:
 
 		return s;
 	};
-
-		
 };
 
 #endif//#ifndef OPERATION_STRING_H_
