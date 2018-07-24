@@ -67,7 +67,7 @@ D3DXVECTOR3 clsPARTS_BASE::GetBonePos( const char* sBoneName, const bool isLocal
 //ƒ{[ƒ“‚ª‘¶Ý‚·‚é‚©.
 bool clsPARTS_BASE::ExistsBone( const char* sBoneName )
 {
-	return ExistsBone( sBoneName );
+	return m_pMesh->ExistsBone( sBoneName );
 }
 
 

@@ -2,7 +2,7 @@
 
 #include "SceneBase.h"
 #include "CameraGameOver.h"
-
+#include "MissionModel.h"
 
 //================================//
 //========== ゲームオーバークラス ==========//
@@ -19,9 +19,19 @@ private:
 	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 
+
+
+
+
+
+	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
+
+
 #if _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
 #endif//#if _DEBUG
+
+	
 
 };
