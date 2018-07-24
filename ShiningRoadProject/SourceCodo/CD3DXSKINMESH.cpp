@@ -709,6 +709,8 @@ int D3DXPARSER::GetAnimMax( LPD3DXANIMATIONCONTROLLER pAC )
 }
 
 
+
+
 // 指定したボーン情報(行列)を取得する関数.
 bool D3DXPARSER::GetMatrixFromBone( const char* sBoneName, D3DXMATRIX* const  pOutMat ) const
 {
@@ -738,6 +740,18 @@ bool D3DXPARSER::GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutP
 	pOutPos->y = mBone._42;
 	pOutPos->z = mBone._43;
 
+	return true;
+}
+
+//ボーンがあるか無いかを調べる関数.
+bool D3DXPARSER::ExistsBone( const char* sBoneName )
+{
+	LPD3DXFRAME pFrame;
+	pFrame = (MYFRAME*)D3DXFrameFind( m_pFrameRoot, sBoneName );
+
+	if( pFrame == NULL ){
+		return false;
+	}
 	return true;
 }
 
@@ -1874,4 +1888,10 @@ bool clsD3DXSKINMESH::GetDeviaPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos,
 		}
 	}
 	return false;
+}
+
+//ボーンがあるか無いかを調べる関数.
+bool clsD3DXSKINMESH::ExistsBone( const char* sBoneName )
+{
+	return m_pD3dxMesh->ExistsBone( sBoneName );
 }
