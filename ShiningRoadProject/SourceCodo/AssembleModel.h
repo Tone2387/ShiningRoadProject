@@ -15,8 +15,8 @@
 #define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
 
 //武器の回転情報確定に使う.
-#define  sBONE_NAME_WEAPON_VEC_ROOT	 "WeaponVecRoot"
-#define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVecEnd"
+#define  sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
+#define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
 
 
 
@@ -25,7 +25,7 @@ class clsASSEMBLE_MODEL
 {
 public:
 	clsASSEMBLE_MODEL();
-	~clsASSEMBLE_MODEL();
+	virtual ~clsASSEMBLE_MODEL();
 
 	//選択肢のあるパーツの種類( 配列の添え字になる ).
 	enum enPARTS_TYPES : UCHAR
@@ -103,6 +103,10 @@ protected:
 
 	//回転値抑制.
 	float GuardDirOver( float &outTheta ) const;
+
+
+	//継承先で使ってね.
+	virtual void CreateProduct();
 
 	double m_dAnimSpd;
 
