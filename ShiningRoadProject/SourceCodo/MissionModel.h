@@ -36,18 +36,31 @@ public:
 		enCOL_PARTS_size
 	};
 
-	//そのパーツの当たり判定の数を返す.
-	int GetColNum( const enCOL_PARTS enColParts );
 
-	//ボーンの数を確定する( GetColNum関数の後に使う ).
+	//引数のパーツの当たり判定の情報作成.
+	//戻り値全パーツの当たり判定の数.
+	int CreateColStateBones();
+
+	//ボーンの数を確定する( CreateColStateBones関数の後に使う ).
 	void FixBoneStates();
+
+	//各パーツの当たり判定の数を返す.
+	int GetColNum( const enCOL_PARTS enColParts );
 
 	//当たり判定の座標の配列をすべて返す.
 	std::vector< D3DXVECTOR3 > GetColPosArr();
 
 private:
 
+	//.
+	//戻り値そのパーツの当たり判定の数.
+	int CreateColStateBone( const enCOL_PARTS enColParts );
+
+	void CreateProduct() final;
+
+	//ボーン情報.
 	std::vector< BONE_SET > m_vColStates;
+	int						m_iColStateIndex;
 
 	int m_iColNum[enCOL_PARTS_size];//各パーツの当たり判定の数.
 
