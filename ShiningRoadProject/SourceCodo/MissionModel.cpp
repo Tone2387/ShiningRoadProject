@@ -44,28 +44,27 @@ int clsMISSION_MODEL::CreateColStateBones()
 //そのパーツの当たり判定の数を返す.
 int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 {
-	int iReturn = 0;
-	clsOPERATION_STRING OprtStr;
-	int i = 0;
-	int tmpIndex;
-	const BONE_SET INIT_BONE_SET;
+	int iReturn = 0;			//戻り値.
+	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
+	int iColNum = 0;			//m_iColNumに格納する当たり判定の数.
+	int tmpIndex;				//m_vpPartsの添え字.
+	const BONE_SET INIT_BONE_SET;//初期化用.
 	 
-
 	switch( enColParts )
 	{
 	case enCOL_PARTS_LEG:
 		tmpIndex = static_cast< int >( enPARTS::LEG );
 		//ボーンがあるだけ繰り返し.
-		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, i, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
+		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
-			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, i, cBONE_NAME_NUM_DIGIT_JOINT );
+			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT );
 
 			m_iColStateIndex ++;	
-			i ++;
+			iColNum ++;
 		}
-		m_iColNum[ enColParts ] = iReturn = i;
+		m_iColNum[ enColParts ] = iReturn = iColNum;
 		break;
 	case enCOL_PARTS_CORE:
 		tmpIndex = static_cast< int >( enPARTS::CORE );
@@ -92,30 +91,30 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 	case enCOL_PARTS_ARMS:
 		//左腕.
 		tmpIndex = static_cast< int >( enPARTS::ARM_L );
-		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, i, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
+		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
-			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, i, cBONE_NAME_NUM_DIGIT_JOINT );
+			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT );
 
 			m_iColStateIndex ++;	
-			i ++;
+			iColNum ++;
 		}
-		m_iColNum[ enColParts ] = iReturn = i;
+		m_iColNum[ enColParts ] = iReturn = iColNum;
 
 		//右腕.
 		tmpIndex = static_cast< int >( enPARTS::ARM_R );
-		i = 0;
-		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, i, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
+		iColNum = 0;
+		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
-			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, i, cBONE_NAME_NUM_DIGIT_JOINT );
+			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT );
 
 			m_iColStateIndex ++;	
-			i ++;
+			iColNum ++;
 		}
-		m_iColNum[ enColParts ] = iReturn += i;
+		m_iColNum[ enColParts ] = iReturn += iColNum;
 		break;
 	default:
 		return -1;
@@ -133,6 +132,8 @@ void clsMISSION_MODEL::FixBoneStates()
 	for( UCHAR i=0; i<enCOL_PARTS_size; i++ ){
 		m_iColMax += m_iColNum[i];
 	}
+
+	m_vvColPos.resize( m_iColMax );
 }
 
 //各パーツの当たり判定の数を返す.
@@ -152,12 +153,22 @@ int clsMISSION_MODEL::GetColNum( const enCOL_PARTS enColParts )
 
 
 //当たり判定の座標の配列をすべて返す.
-vector< D3DXVECTOR3 > clsMISSION_MODEL::GetColPosArr()
+shared_ptr< vector< D3DXVECTOR3 > > clsMISSION_MODEL::GetColPosPtr()
 {
-	vector< D3DXVECTOR3 > vvReturn;
+//	vector< D3DXVECTOR3 > vvReturn;
+//	vvReturn.resize( m_iColMax );
 
-	vvReturn.resize( m_iColMax );
+	for( int i=0; i<m_iColMax; i++ ){
+		//ボーンの座標を取得.
+		m_vColStates[i].vPos = GetBonePos( 
+			static_cast<enPARTS>( m_vColStates[i].iParts ), 
+			m_vColStates[i].sName.c_str() );
+		
+		m_vvColPos[i] = m_vColStates[i].vPos;
+	}
 
-	return vvReturn;
+	shared_ptr< vector< D3DXVECTOR3 > > spvvReturn( &m_vvColPos );
+
+	return spvvReturn;
 }
 

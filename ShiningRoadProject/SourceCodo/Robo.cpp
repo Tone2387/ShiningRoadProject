@@ -311,7 +311,6 @@ m_fBoostRisingSpeedMax(0.0f),
 m_iBoostRisingTopSpeedFrame(0),
 m_fBoostRisingAccele(0.0f),
 m_iQuickInterbal(0),
-
 m_wpResource(nullptr),
 m_wpEffects(nullptr),
 m_wpSound(nullptr)

@@ -6,6 +6,7 @@
 //太原の書き足した分.
 #ifdef Tahara
 #include "PtrGroup.h"
+#include "MissionModel.h"
 
 //2018/05/16( 水 ).
 	//関数「RoboInit」に「clsPOINTER_GROUP」型の引数を追加し、.
@@ -55,11 +56,11 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f ,1.0f },
-		const bool alphaFlg = false )
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f ,1.0f },
+		const bool isAlpha = false )
 	{
 		ModelUpdate();
-		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
+		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, isAlpha );
 	}
 
 	bool m_bBoost;//true:ブースター展開/false:非展開.
@@ -138,6 +139,13 @@ private:
 	clsResource*		m_wpResource;
 	clsEffects*			m_wpEffects;
 	clsSOUND_MANAGER_BASE*	m_wpSound;
+
+	//当たり判定のポインタ.
+	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
+
+	//ロボモデル.
+	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
+
 #endif//#ifdef Tahara
 
 

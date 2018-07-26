@@ -11,7 +11,7 @@
 
 
 
-
+//ミッション中にロボクラスが使う、パーツの集合体.
 class clsMISSION_MODEL : public clsASSEMBLE_MODEL
 {
 public:
@@ -48,7 +48,7 @@ public:
 	int GetColNum( const enCOL_PARTS enColParts );
 
 	//当たり判定の座標の配列をすべて返す.
-	std::vector< D3DXVECTOR3 > GetColPosArr();
+	std::shared_ptr< std::vector< D3DXVECTOR3 > > GetColPosPtr();
 
 private:
 
@@ -56,13 +56,15 @@ private:
 	//戻り値そのパーツの当たり判定の数.
 	int CreateColStateBone( const enCOL_PARTS enColParts );
 
-	void CreateProduct() final;
+	//Create関数の中にある.
+	void CreateProduct() override;
 
 	//ボーン情報.
 	std::vector< BONE_SET > m_vColStates;
 	int						m_iColStateIndex;
+	std::vector< D3DXVECTOR3 > m_vvColPos;//関数で渡す用の変数.
 
-	int m_iColNum[enCOL_PARTS_size];//各パーツの当たり判定の数.
+	int m_iColNum[ enCOL_PARTS_size ];//各パーツの当たり判定の数.
 
 	int m_iColMax;//当たり判定の合計数.
 
