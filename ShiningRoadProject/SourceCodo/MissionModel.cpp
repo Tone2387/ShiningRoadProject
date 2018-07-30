@@ -25,6 +25,7 @@ clsMISSION_MODEL::~clsMISSION_MODEL()
 void clsMISSION_MODEL::CreateProduct()
 {
 	CreateColStateBones();
+	FixBoneStates();
 }
 
 
@@ -155,16 +156,11 @@ int clsMISSION_MODEL::GetColNum( const enCOL_PARTS enColParts )
 //当たり判定の座標の配列をすべて返す.
 shared_ptr< vector< D3DXVECTOR3 > > clsMISSION_MODEL::GetColPosPtr()
 {
-//	vector< D3DXVECTOR3 > vvReturn;
-//	vvReturn.resize( m_iColMax );
-
 	for( int i=0; i<m_iColMax; i++ ){
 		//ボーンの座標を取得.
-		m_vColStates[i].vPos = GetBonePos( 
-			static_cast<enPARTS>( m_vColStates[i].iParts ), 
+		m_vvColPos[i] = GetBonePos( 
+			static_cast< enPARTS >( m_vColStates[i].iParts ), 
 			m_vColStates[i].sName.c_str() );
-		
-		m_vvColPos[i] = m_vColStates[i].vPos;
 	}
 
 	shared_ptr< vector< D3DXVECTOR3 > > spvvReturn( &m_vvColPos );

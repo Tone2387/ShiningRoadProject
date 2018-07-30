@@ -15,6 +15,7 @@
 class clsMISSION_MODEL : public clsASSEMBLE_MODEL
 {
 public:
+
 	clsMISSION_MODEL();
 	~clsMISSION_MODEL();
 
@@ -22,7 +23,6 @@ public:
 	struct BONE_SET
 	{
 		std::string sName;
-		D3DXVECTOR3 vPos;
 		int			iParts;//何のパーツか(enPARTSをキャストしてこの変数に入れる).
 	};
 
@@ -37,12 +37,6 @@ public:
 	};
 
 
-	//引数のパーツの当たり判定の情報作成.
-	//戻り値全パーツの当たり判定の数.
-	int CreateColStateBones();
-
-	//ボーンの数を確定する( CreateColStateBones関数の後に使う ).
-	void FixBoneStates();
 
 	//各パーツの当たり判定の数を返す.
 	int GetColNum( const enCOL_PARTS enColParts );
@@ -52,6 +46,12 @@ public:
 
 private:
 
+	//引数のパーツの当たり判定の情報作成.
+	//戻り値全パーツの当たり判定の数.
+	int CreateColStateBones();
+
+	//ボーンの数を確定する( CreateColStateBones関数の後に使う ).
+	void FixBoneStates();
 	//.
 	//戻り値そのパーツの当たり判定の数.
 	int CreateColStateBone( const enCOL_PARTS enColParts );
