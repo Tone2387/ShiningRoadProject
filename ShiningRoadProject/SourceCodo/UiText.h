@@ -19,6 +19,13 @@ public:
 	clsUiText();
 	~clsUiText();
 
+	//テキストの左よせ、右寄せ.
+	enum class enPOS : UINT
+	{
+		LEFT,
+		RIGHT,
+		MIDDLE,
+	};
 
 	HRESULT Create( ID3D11DeviceContext* const pContext,
 		const DWORD &dwWidth, const DWORD &dwHeight,
@@ -27,7 +34,7 @@ public:
 
 	//レンダリング関数.
 	//デフォルト引数はtrueにすると右端が指定座標に来る.
-	void Render( const bool bRIght = false );
+	void Render( const enPOS enPos = enPOS::LEFT );
 
 	void SetPos( const D3DXVECTOR2 &vPos );
 	void AddPos( const D3DXVECTOR2 &vPos );

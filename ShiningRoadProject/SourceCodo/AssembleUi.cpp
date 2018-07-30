@@ -550,7 +550,7 @@ void clsASSEMBLE_UI::Render(
 		assert( m_vupStatusText[i] );
 			m_vupStatusText[i]->Render();
 		assert( m_vupStatusNumText[i] );
-			m_vupStatusNumText[i]->Render( true );
+			m_vupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
 		}
 	}
 

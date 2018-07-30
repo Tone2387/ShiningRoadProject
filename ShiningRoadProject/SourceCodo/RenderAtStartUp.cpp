@@ -311,7 +311,9 @@ void clsRENDER_AT_START_UP::Render( bool isLoop )
 			//˜g‚Ì’†‚¾‚¯•`‰æ‚·‚é.
 			if( m_vupGage[i]->GetPos().x < m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) ||
 				m_vupGage[i]->GetPos().x > m_upGageBox->GetPos().x + ( m_upGageBox->GetSize().x * 0.5f ) )
-			{ continue; }
+			{
+				continue;
+			}
 			m_vupGage[i]->Render();
 		}
 
