@@ -92,7 +92,6 @@ const D3DXVECTOR2 vTEXT_POS_STATUS_TITLE = {
 	vINIT_POS_STATUS_WINDOW.y + vTEXT_POS_STATUS_TITLE_OFFSET_TO_STATUS_WINDOW.y };
 const char* sSTATUS_TITLE_TEXT = "Parts Status";
 
-//ステータス.
 //二行目以降のずれ幅.
 const float fTEXT_POS_Y_OFFSET_STATUS = INIT_SIZE_STATUS_WINDOW.h / ( iSTATUS_NUM_MAX + 1 );//この+1はステータスタイトルの為.
 const float fTEXT_SCALE_STATUS = 1.5f;
