@@ -77,14 +77,12 @@ private:
 	std::unique_ptr< clsSprite2D >					m_upMissionStart;	//出撃ボタン.
 
 	std::unique_ptr< clsSprite2D > m_upHeader;//画面上部の帯.
-	std::unique_ptr< clsSprite2D > m_upFooter;//画面下部の帯.
 
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_pArrow;//矢印.
 
 	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
 	std::unique_ptr< clsUiText > m_upFooterText;//フッター文字.
 
-	std::unique_ptr< clsUiText >				m_upStatusTitleText;//ステータスのタイトル.
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目名 ).
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//ステータス値.
 
