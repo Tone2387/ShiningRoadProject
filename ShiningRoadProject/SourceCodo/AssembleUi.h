@@ -64,6 +64,9 @@ private:
 		enPARTS_TYPE_SIZE
 	};
 
+	//パーツ表示用のウィンドウ.
+	D3D11_VIEWPORT m_ViewPortPartsWindow;
+
 	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsType;		//パーツカテゴリ.
 	std::unique_ptr< clsSprite2D >					m_upPartsTypeSelect;//選択中( 半透明 ).
 

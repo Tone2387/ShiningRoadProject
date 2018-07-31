@@ -16,7 +16,8 @@ public:
 	clsPOINTER_GROUP( 
 		ID3D11Device* const pDevice,
 		ID3D11DeviceContext* const pContext,
-		D3D10_VIEWPORT* const pViewPort,
+		D3D10_VIEWPORT* const pViewPort10,
+		D3D11_VIEWPORT* const pViewPort11,
 		ID3D11DepthStencilState* const pDepthState,
 		clsDxInput* const pDxInput,
 		clsXInput* const pXInput,
@@ -35,7 +36,8 @@ public:
 	//----- ポインターを渡す -----//.
 	ID3D11Device* GetDevice() const;
 	ID3D11DeviceContext* GetContext() const;
-	D3D10_VIEWPORT* GetViewPort() const;
+	D3D10_VIEWPORT* GetViewPort10() const;
+	D3D11_VIEWPORT* GetViewPort11() const;
 	ID3D11DepthStencilState* GetDepthState() const;
 	clsDxInput* GetDxInput() const;
 	clsXInput* GetXInput() const;
@@ -51,7 +53,9 @@ private:
 	ID3D11Device*			m_wpDevice;
 	ID3D11DeviceContext*	m_wpContext;
 	//2DSp用.
-	D3D10_VIEWPORT* m_wpViewPort;
+	D3D10_VIEWPORT* m_wpViewPort10;
+	//分割用.
+	D3D11_VIEWPORT* m_wpViewPort11;
 	//深度(Z)テスト設定.
 	ID3D11DepthStencilState* m_wpDepthStencilState;
 

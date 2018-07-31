@@ -37,6 +37,7 @@ const int iSTATUS_CUT_NUM = 2;//番号と名前.
 clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pAsmModel( nullptr )
 	,m_pUI( nullptr )
+	,m_pViewPortSub( nullptr )
 	,m_cuFileMax( 0 )
 //	,m_enSelectMode()
 {
@@ -114,6 +115,15 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	//ミッションシーンに引き継ぐ情報の初期化.
 	assert( m_wpRoboStatus );
 	m_wpRoboStatus->Clear();
+
+	assert( !m_pViewPortSub );
+	m_pViewPortSub = new D3D11_VIEWPORT;
+	m_pViewPortSub->Width	 = 728.0f;
+	m_pViewPortSub->Height	 = 500.0f;
+	m_pViewPortSub->TopLeftX = 98.0f;
+	m_pViewPortSub->TopLeftY = 95.0f;
+	m_pViewPortSub->MinDepth = 0.0f;
+	m_pViewPortSub->MaxDepth = 1.0f;
 }
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
@@ -248,6 +258,12 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	assert( m_pUI );
 	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
 	SetDepth( true );
+
+	D3DXVECTOR3 vSubCam( vCamPos );
+	D3DXVECTOR3 vSubLook( 0.0f, 0.0f, 0.0f );
+	SetSubRender( m_pViewPortSub, vSubCam, vSubLook );
+
+	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }
 
 

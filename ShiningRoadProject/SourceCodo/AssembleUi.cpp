@@ -198,7 +198,12 @@ clsASSEMBLE_UI::clsASSEMBLE_UI()
 		}
 	}
 
-
+	m_ViewPortPartsWindow.Width		= INIT_SIZE_PARTS_WINDOW.w;
+	m_ViewPortPartsWindow.Height	= INIT_SIZE_PARTS_WINDOW.h;
+	m_ViewPortPartsWindow.MinDepth	= 0.0f;
+	m_ViewPortPartsWindow.MaxDepth	= 1.0f;
+	m_ViewPortPartsWindow.TopLeftX	= vINIT_POS_PARTS_WINDOW.x;
+	m_ViewPortPartsWindow.TopLeftY	= vINIT_POS_PARTS_WINDOW.y;
 }
 
 clsASSEMBLE_UI::~clsASSEMBLE_UI()
@@ -545,6 +550,6 @@ void clsASSEMBLE_UI::Render(
 //デバッグテキスト用.
 D3DXVECTOR3 clsASSEMBLE_UI::GetUiPos()
 {
-	return m_upFooter->GetPos();
+	return m_upStatusWindow->GetPos();
 }
 #endif//#if _DEBUG

@@ -66,6 +66,9 @@ protected:
 	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
 	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
+
+	//継承先のRenderProductで使用する.
+	void SetSubRender( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos );
 	//----- Render用 -----//.
 
 
@@ -97,7 +100,6 @@ protected:
 
 
 private:
-
 	//----- Render用 -----//.
 	//カメラ関数.
 	void Camera();
@@ -111,7 +113,15 @@ private:
 	//暗転中に待ってくれるために必要.
 	enSCENE m_enNextScene;
 
-	D3D10_VIEWPORT*				m_wpViewPort;//2DSp用.
+	//2DSp用.
+	D3D10_VIEWPORT* m_wpViewPort10;
+	//分割用.
+	D3D11_VIEWPORT* m_wpViewPort11;
+	
+	//診断用.
+	D3D11_VIEWPORT* m_wpViewPortMain;
+
+
 	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
 
 

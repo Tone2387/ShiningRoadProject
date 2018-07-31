@@ -81,17 +81,18 @@ LRESULT CALLBACK WndProc(
 //============================================================
 //	コンストラクタ.
 //============================================================
-clsMain::clsMain() :
-	m_hWnd( nullptr ),
-	m_pDevice( nullptr ),
-	m_pDeviceContext( nullptr ),
-	m_pSwapChain( nullptr ),
-	m_pBackBuffer_TexRTV( nullptr ),
-	m_pBackBuffer_DSTex( nullptr ),
-	m_pBackBuffer_DSTexDSV( nullptr ),
-	m_spDepthStencilState( nullptr ),
-	m_upGame( nullptr ),
-	m_spViewPort( nullptr )
+clsMain::clsMain()
+	:m_hWnd( nullptr )
+	,m_pDevice( nullptr )
+	,m_pDeviceContext( nullptr )
+	,m_pSwapChain( nullptr )
+	,m_pBackBuffer_TexRTV( nullptr )
+	,m_pBackBuffer_DSTex( nullptr )
+	,m_pBackBuffer_DSTexDSV( nullptr )
+	,m_spDepthStencilState( nullptr )
+	,m_upGame( nullptr )
+	,m_spViewPort10( nullptr )
+	,m_spViewPort11( nullptr )
 {
 }
 
@@ -304,12 +305,6 @@ void clsMain::Render()
 	//このRender関数の前のAppMain関数でチェックしているのでアサートは省く.
 	m_upGame->Render( m_pBackBuffer_TexRTV, m_pBackBuffer_DSTexDSV );
 	
-	//2D?.
-//	SetDepth( false );	//Zテスト:OFF.
-//	SetDepth( true );	//Zテスト:ON.
-
-
-
 	//レンダリングされたイメージを表示.
 	m_pSwapChain->Present( 0, 0 );
 
@@ -471,17 +466,19 @@ HRESULT clsMain::InitD3D()
 	}
 
 	//ビューポートの設定.
-	D3D11_VIEWPORT vp;
-	vp.Width	= WND_W;//幅.
-	vp.Height	= WND_H;//高さ.
-	vp.MinDepth	= 0.0f;	//最小深度(手前).
-	vp.MaxDepth	= 1.0f;	//最大深度(奥).
-	vp.TopLeftX	= 0.0f;	//左上位置x.
-	vp.TopLeftY	= 0.0f;	//左上位置y.
-	m_pDeviceContext->RSSetViewports( 1, &vp );
+	if( !m_spViewPort11 ){
+		m_spViewPort11 = new D3D11_VIEWPORT;
+	}
+	m_spViewPort11->Width	= WND_W;//幅.
+	m_spViewPort11->Height	= WND_H;//高さ.
+	m_spViewPort11->MinDepth	= 0.0f;	//最小深度(手前).
+	m_spViewPort11->MaxDepth	= 1.0f;	//最大深度(奥).
+	m_spViewPort11->TopLeftX	= 0.0f;	//左上位置x.
+	m_spViewPort11->TopLeftY	= 0.0f;	//左上位置y.
+	m_pDeviceContext->RSSetViewports( 1, m_spViewPort11 );
 
 	//Sp2D用.
-	SetViewPort10( &vp );
+	SetViewPort10( m_spViewPort11 );
 
 	//ラスタライズ(面の塗りつぶし方)設定.
 	D3D11_RASTERIZER_DESC rdc;
@@ -535,7 +532,7 @@ void clsMain::DestroyD3D()
 
 #endif //#ifdef Tahara
 
-	SAFE_DELETE( m_spViewPort );
+	SAFE_DELETE( m_spViewPort10 );
 	SAFE_RELEASE( m_pBackBuffer_DSTexDSV );
 	SAFE_RELEASE( m_pBackBuffer_DSTex );
 	SAFE_RELEASE( m_pBackBuffer_TexRTV );
@@ -555,7 +552,8 @@ HRESULT clsMain::ReadMesh()
 		m_hWnd, 
 		m_pDevice, 
 		m_pDeviceContext, 
-		m_spViewPort, 
+		m_spViewPort10, 
+		m_spViewPort11,
 		m_spDepthStencilState );
 	m_upGame->Create();
 
@@ -591,16 +589,16 @@ HRESULT clsMain::ReadMesh()
 //ConvDimPosの事前準備.
 void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
 {
-	if( m_spViewPort == nullptr ){
-		m_spViewPort = new D3D10_VIEWPORT;
+	if( m_spViewPort10 == nullptr ){
+		m_spViewPort10 = new D3D10_VIEWPORT;
 	}
 
-	m_spViewPort->TopLeftX	= static_cast<INT>( Vp->TopLeftX );
-	m_spViewPort->TopLeftY	= static_cast<INT>( Vp->TopLeftY );
-	m_spViewPort->MaxDepth	= Vp->MaxDepth;
-	m_spViewPort->MinDepth	= Vp->MinDepth;
-	m_spViewPort->Width		= static_cast<UINT>( Vp->Width );
-	m_spViewPort->Height	= static_cast<UINT>( Vp->Height );
+	m_spViewPort10->TopLeftX	= static_cast<INT>( Vp->TopLeftX );
+	m_spViewPort10->TopLeftY	= static_cast<INT>( Vp->TopLeftY );
+	m_spViewPort10->MaxDepth	= Vp->MaxDepth;
+	m_spViewPort10->MinDepth	= Vp->MinDepth;
+	m_spViewPort10->Width		= static_cast<UINT>( Vp->Width );
+	m_spViewPort10->Height	= static_cast<UINT>( Vp->Height );
 };
 
 

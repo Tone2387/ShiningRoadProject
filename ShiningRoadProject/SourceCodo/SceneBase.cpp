@@ -22,7 +22,8 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	:m_wpPtrGroup( ptrGroup )
 	,m_wpDevice(		m_wpPtrGroup->GetDevice() )
 	,m_wpContext(		m_wpPtrGroup->GetContext() )
-	,m_wpViewPort(		m_wpPtrGroup->GetViewPort() )
+	,m_wpViewPort10(	m_wpPtrGroup->GetViewPort10() )
+	,m_wpViewPort11(	m_wpPtrGroup->GetViewPort11() )
 	,m_wpDxInput(		m_wpPtrGroup->GetDxInput() )
 	,m_wpXInput(		m_wpPtrGroup->GetXInput() )
 	,m_wpResource(		m_wpPtrGroup->GetResource() )
@@ -36,6 +37,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 #endif//#if _DEBUG
 	,m_enNextScene( enSCENE::NOTHING )
 {
+	m_wpViewPortMain = m_wpViewPort11;
 }
 
 clsSCENE_BASE::~clsSCENE_BASE()
@@ -62,7 +64,9 @@ clsSCENE_BASE::~clsSCENE_BASE()
 	m_wpResource = nullptr;
 	m_wpDxInput = nullptr;
 	m_wpPtrGroup = nullptr;
-	m_wpViewPort = nullptr;
+	m_wpViewPortMain = nullptr;
+	m_wpViewPort11 = nullptr;
+	m_wpViewPort10 = nullptr;
 	m_wpContext = nullptr;
 	m_wpDevice = nullptr;
 }
@@ -137,6 +141,12 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 //シーン内のオブジェクトの描画関数のまとめ.
 void clsSCENE_BASE::Render()
 {
+	//元通りのビューポート.
+	if( m_wpViewPortMain != m_wpViewPort11 ){
+		m_wpViewPortMain = m_wpViewPort11;
+		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
+	}
+
 	//カメラ関数.
 	Camera();
 	//プロジェクション関数.
@@ -235,7 +245,7 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 	D3DXVECTOR3 v2DPos;
 	D3DXMATRIX mWorld;
 	D3DXMatrixIdentity( &mWorld );
-	D3DXVec3Project( &v2DPos, &v3DPos, m_wpViewPort, &m_mProj, &m_mView, &mWorld );
+	D3DXVec3Project( &v2DPos, &v3DPos, m_wpViewPort10, &m_mProj, &m_mView, &mWorld );
 	return v2DPos;
 }
 
@@ -351,3 +361,21 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 		enNextScene = enSCENE::GAMEOVER;
 	}
 }
+
+void clsSCENE_BASE::SetSubRender( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos )
+{
+	if( !pVp ) return;
+	if( m_wpViewPort11 == pVp ) return;
+
+	m_wpViewPortMain = pVp;
+
+	//ビュー(カメラ)変換.
+	D3DXVECTOR3 vUpVec	( 0.0f, 1.0f, 0.0f );	//上方位置.
+	D3DXMatrixLookAtLH(
+		&m_mView,	//(out)ビュー計算結果.
+		&vCamPos, &vCamLookPos, &vUpVec );
+
+	m_wpContext->RSSetViewports( 1, m_wpViewPortMain );
+}
+
+
