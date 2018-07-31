@@ -134,7 +134,11 @@ private:
 	//ConvDimPos‚Ì–‘O€”õ.
 	void SetViewPort10( D3D11_VIEWPORT* const Vp );
 	//2DSp—p.
-	D3D10_VIEWPORT* m_spViewPort;
+	D3D10_VIEWPORT* m_spViewPort10;
+	
+	
+	//•ªŠ„—p.
+	D3D11_VIEWPORT* m_spViewPort11;
 
 
 };

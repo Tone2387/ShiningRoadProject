@@ -77,6 +77,9 @@ private:
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
+	D3D11_VIEWPORT* m_pViewPortSub;
+
+
 	//‚¨’…Š·‚¦‚·‚éƒ‚ƒfƒ‹.
 	clsASSEMBLE_MODEL*	m_pAsmModel;
 

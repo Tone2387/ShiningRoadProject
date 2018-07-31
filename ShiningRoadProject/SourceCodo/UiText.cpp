@@ -4,6 +4,7 @@ using namespace std;
 
 //シェーダファイル名(パスも含む).
 const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
+
 const char* sFILE_PATH = "Data\\Image\\Font.png";
 
 //============================================================
@@ -336,7 +337,7 @@ void clsUiText::SetBlend( const bool flg )
 //	レンダリング関数.
 //============================================================
 //デフォルト引数はtrueにすると右端が指定座標に来る.
-void clsUiText::Render( const bool bRIght )
+void clsUiText::Render( const enPOS enPos )
 {
 	float x = m_vPos.x;
 	float y = m_vPos.y;
@@ -404,8 +405,15 @@ void clsUiText::Render( const bool bRIght )
 	UINT textSize = strlen( tmpText );	//文字数.
 
 	//右寄せなら左にずらす.
-	if( bRIght ){
+	switch( enPos )
+	{
+	case enPOS::RIGHT:
 		x -= static_cast<float>( textSize ) * fRIGHT_RATE;
+		break;
+	case enPOS::MIDDLE:
+		const float fHARH = 0.5f;
+		x -= static_cast<float>( textSize ) * fRIGHT_RATE * fHARH;
+		break;
 	}
 
 	//文字数分ループ.

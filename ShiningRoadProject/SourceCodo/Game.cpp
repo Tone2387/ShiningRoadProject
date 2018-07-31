@@ -20,12 +20,14 @@ clsGAME::clsGAME(
 	const HWND hWnd, 
 	ID3D11Device* const pDevice, 
 	ID3D11DeviceContext* const pContext,
-	D3D10_VIEWPORT* const pViewPort,
+	D3D10_VIEWPORT* const pViewPort10,
+	D3D11_VIEWPORT* const pViewPort11,
 	ID3D11DepthStencilState* const pDepthState  )
 		:m_hWnd( hWnd )
 		,m_wpDevice( pDevice )
 		,m_wpContext( pContext )
-		,m_wpViewPort( pViewPort )
+		,m_wpViewPort10( pViewPort10 )
+		,m_wpViewPort11( pViewPort11 )
 		,m_wpDepthStencilState( pDepthState )
 		,m_spPtrGroup( nullptr )
 		,m_spDxInput( nullptr )
@@ -72,7 +74,8 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_spDxInput );
 
 	m_wpDepthStencilState = nullptr;
-	m_wpViewPort = nullptr;
+	m_wpViewPort11 = nullptr;
+	m_wpViewPort10 = nullptr;
 	m_wpContext = nullptr;
 	m_wpDevice = nullptr;
 	m_hWnd = nullptr;
@@ -118,7 +121,8 @@ void clsGAME::Create()
 	assert( !m_spPtrGroup );
 	m_spPtrGroup = new clsPOINTER_GROUP( 
 		m_wpDevice, m_wpContext, 
-		m_wpViewPort, m_wpDepthStencilState,
+		m_wpViewPort10, m_wpViewPort11,
+		m_wpDepthStencilState,
 		m_spDxInput, m_spXInput,
 		m_spResource, m_spEffect, m_spSound,
 		m_spRoboStatus, m_spBlackScreen );
@@ -165,9 +169,8 @@ void clsGAME::Render(
 	ID3D11RenderTargetView *pBackBuffer_TexRTV,
 	ID3D11DepthStencilView *pBackBuffer_DSTexDSV )
 { 
-	//画面のクリア.
 	assert( m_wpContext );
-	//カラーバックバッファ.
+	//画面のクリア.
 	m_wpContext->ClearRenderTargetView(
 		pBackBuffer_TexRTV, g_fClearColor );
 	//デプスステンシルビューバックバッファ.

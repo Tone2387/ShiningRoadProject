@@ -107,20 +107,18 @@ const D3DXVECTOR2 vTEXT_POS_STATUS_NUM =
 
 
 //----- パーツウィンドウ -----//.
-//パーツの姿のまどX座標.
-const float fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW = 8.0f;//ステータスウィンドウとの隙間.
 //478.25f.
-const D3DXVECTOR3 vINIT_POS_PARTS_WINDOW = { 
-	vINIT_POS_STATUS_WINDOW.x + INIT_SIZE_STATUS_WINDOW.w + fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW, 
-	vINIT_POS_STATUS_WINDOW.y, 
-	0.0f };
-const WHSIZE_FLOAT INIT_SIZE_PARTS_WINDOW  = { 300.0f, 468.0f };
+const D3DXVECTOR3 vINIT_POS_PARTS_WINDOW = 
+	{ 98.0f, vINIT_POS_PARTS_ICON.y, 0.0f };
+ const WHSIZE_FLOAT INIT_SIZE_PARTS_WINDOW  = { 728.0f, 500.0f };
 const char* sPATH_PARTS_WINDOW = "Data\\Image\\PartsIcon\\NoData.png";
 
 //文字( ステータスウィンドウを基準にしている ).
 const float TEXT_SCALE_PARTS_NAME = TEXT_SCALE_STATUS_TITLE;
-const D3DXVECTOR2 vTEXT_POS_PARTS_NAME = 
-	{ vTEXT_POS_STATUS_TITLE.x + INIT_SIZE_STATUS_WINDOW.w + fOFFSET_PARTS_WINDOW_TO_STATUS_WINDOW, vTEXT_POS_STATUS_TITLE.y };
+const D3DXVECTOR2 vTEXT_POS_PARTS_NAME = {
+	vINIT_POS_PARTS_WINDOW.x + 4.5f,
+	vINIT_POS_PARTS_WINDOW.y + 8.25f 
+};
 
 //----- パーツウィンドウ終わり -----//.
 
@@ -200,7 +198,12 @@ clsASSEMBLE_UI::clsASSEMBLE_UI()
 		}
 	}
 
-
+	m_ViewPortPartsWindow.Width		= INIT_SIZE_PARTS_WINDOW.w;
+	m_ViewPortPartsWindow.Height	= INIT_SIZE_PARTS_WINDOW.h;
+	m_ViewPortPartsWindow.MinDepth	= 0.0f;
+	m_ViewPortPartsWindow.MaxDepth	= 1.0f;
+	m_ViewPortPartsWindow.TopLeftX	= vINIT_POS_PARTS_WINDOW.x;
+	m_ViewPortPartsWindow.TopLeftY	= vINIT_POS_PARTS_WINDOW.y;
 }
 
 clsASSEMBLE_UI::~clsASSEMBLE_UI()
@@ -345,13 +348,6 @@ void clsASSEMBLE_UI::Create(
 	m_upHeader->Create( pDevice, pContext, sNO_DATA_FILE_NAME.c_str(), ss );
 	m_upHeader->SetPos( INIT_POS_HEADER );
 
-	//フッター.
-	assert( !m_upFooter );
-	ss.Disp = INIT_SIZE_FOOTER;
-	m_upFooter = make_unique< clsSprite2D >();
-	m_upFooter->Create( pDevice, pContext, sNO_DATA_FILE_NAME.c_str(), ss );
-	m_upFooter->SetPos( INIT_POS_FOOTER );
-
 
 	//ヘッダー文字.
 	assert( !m_upHeaderText );
@@ -368,13 +364,6 @@ void clsASSEMBLE_UI::Create(
 	m_upFooterText->SetText( sFOOTER_TEXT );
 
 
-
-	//ステータスタイトル.
-	assert( !m_upStatusTitleText );
-	m_upStatusTitleText = make_unique< clsUiText >();
-	m_upStatusTitleText->Create( pContext, WND_W, WND_H, TEXT_SCALE_STATUS_TITLE );
-	m_upStatusTitleText->SetPos( vTEXT_POS_STATUS_TITLE );
-	m_upStatusTitleText->SetText( sSTATUS_TITLE_TEXT );
 
 	//ステータス項目.
 	assert( !m_vupStatusText.size() );
@@ -515,8 +504,6 @@ void clsASSEMBLE_UI::Render(
 
 	assert( m_upHeader );
 	m_upHeader->Render();
-	assert( m_upFooter );
-	m_upFooter->Render();
 
 	assert( m_upStatusWindow );
 	m_upStatusWindow->Render();
@@ -531,8 +518,6 @@ void clsASSEMBLE_UI::Render(
 	assert( m_upFooterText );
 	m_upFooterText->Render();
 
-	assert( m_upStatusTitleText );
-	m_upStatusTitleText->Render();
 
 
 	//パーツ選択中のみ描画.
@@ -550,7 +535,7 @@ void clsASSEMBLE_UI::Render(
 		assert( m_vupStatusText[i] );
 			m_vupStatusText[i]->Render();
 		assert( m_vupStatusNumText[i] );
-			m_vupStatusNumText[i]->Render( true );
+			m_vupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
 		}
 	}
 
@@ -565,6 +550,6 @@ void clsASSEMBLE_UI::Render(
 //デバッグテキスト用.
 D3DXVECTOR3 clsASSEMBLE_UI::GetUiPos()
 {
-	return m_upFooter->GetPos();
+	return m_upStatusWindow->GetPos();
 }
 #endif//#if _DEBUG
