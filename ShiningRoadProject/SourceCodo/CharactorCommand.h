@@ -21,22 +21,31 @@ public:
 	};
 };
 
-class clsCommandRS : public clsCharactorCommand
+class clsCommandRotation : public clsCharactorCommand
 {
 public:
 	virtual void Trigger(clsCharactor* pChara, const float fS, const float fAngle)
 	{
-		pChara->Rotate(fAngle, fS);
+		pChara->AddRotAccele(fAngle, fS);
 	}
 
 };
 
-class clsCommandLS : public clsCharactorCommand
+class clsCommandMove : public clsCharactorCommand
 {
 public:
 	virtual void Trigger(clsCharactor* pChara, const float fS, const float fAngle)
 	{
-		pChara->Move(fAngle, fS);
+		pChara->AddMoveAccele(fAngle, fS);
+	}
+};
+
+class clsCommandLookUp : public clsCharactorCommand
+{
+public:
+	virtual void Trigger(clsCharactor* pChara, const float fS, const float fAngle)
+	{
+		pChara->LookUp(fAngle, fS);
 	}
 };
 

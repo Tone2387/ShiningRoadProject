@@ -48,7 +48,7 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 
 	if (abs(fPush) >= fPushMin)//LS押し込み.
 	{
-		pRoboCom = m_pInput->QuickBoost();//クイックブースト.
+		pRoboCom = m_pInput->QuickBoost(fPush);//クイックブースト.
 		if (pRoboCom)
 		{
 			pRoboCom->Trigger(this, fPush, fAngle);
@@ -66,7 +66,7 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 
 		if (abs(fPush) >= fPushMin)//RS押し込み.
 		{
-			pRoboCom = m_pInput->QuickTurn();
+			pRoboCom = m_pInput->QuickTurn(fPush);
 
 			if (pRoboCom)
 			{
@@ -77,7 +77,7 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 
 		else
 		{
-			pRoboCom = m_pInput->QuickBoost();
+			pRoboCom = m_pInput->QuickBoost(fPush);
 
 			if (pRoboCom)
 			{

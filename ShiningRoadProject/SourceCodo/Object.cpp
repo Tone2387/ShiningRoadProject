@@ -523,7 +523,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
-	float fRaySpece = 1.0f;
+	float fRaySpece = g_fRaySpace + m_fFollPower;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirUp;
 	rs.vRayStart = m_Trans.vPos;
@@ -551,7 +551,7 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
-	float fRaySpece = 0.5f;
+	float fRaySpece = g_fRaySpace + m_fFollPower;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirDown;
 	rs.vRayStart = m_Trans.vPos;

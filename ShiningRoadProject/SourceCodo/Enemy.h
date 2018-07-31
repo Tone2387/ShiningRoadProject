@@ -1,9 +1,11 @@
 #pragma once
 
 #include<random>
+#include<vector>
+#include<string>
 
 #include"Global.h"
-#include"Object.h"
+#include"Charactor.h"
 
 const float g_fDisStandard = 0.1f;
 
@@ -16,10 +18,9 @@ public:
 	int m_iMoveCategoryNo;
 
 	void Init(LPSTR strEnemyFolderName);
-	//virtual void Update();
 
-	void SearchTarget(clsObject* pObj);
-	void SearchNear(clsObject* pObj);
+	void SearchTarget(clsCharactor* pChara);
+	void SearchNear(clsCharactor* pChara);
 	void SetMoveDir();
 	bool IsShot();
 
@@ -27,7 +28,7 @@ public:
 	~clsEnemyBase();
 
 private:
-	clsObject* m_pTarget;
+	clsCharactor* m_pTarget;
 
 public:
 	struct EnemyBaseState

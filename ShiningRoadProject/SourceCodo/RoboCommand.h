@@ -3,7 +3,6 @@
 #define ROBOCOMMAND
 
 #include"Robo.h"
-#include"CharactorCommand.h"
 
 class clsRoboCommand
 {
@@ -70,22 +69,31 @@ public:
 	}
 };
 
-class clsCommandRoboRotate : public clsRoboCommand
+class clsCommandRotate : public clsRoboCommand
 {
 public:
 	virtual void Trigger(clsRobo* pRobo, const float fS, const float fAngle)
 	{
-		pRobo->Rotate(fAngle, fS);
+		pRobo->AddRotAccele(fAngle, fS);
 	}
 
 };
 
-class clsCommandRoboMove : public clsRoboCommand
+class clsCommandMove : public clsRoboCommand
 {
 public:
 	virtual void Trigger(clsRobo* pRobo, const float fS, const float fAngle)
 	{
-		pRobo->Move(fAngle, fS);
+		pRobo->AddMoveAccele(fAngle, fS);
+	}
+};
+
+class clsCommandLookVerMove : public clsRoboCommand
+{
+public:
+	virtual void Trigger(clsRobo* pRobo, const float fS, const float fAngle)
+	{
+		pRobo->LookUp(fAngle, fS);
 	}
 };
 

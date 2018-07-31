@@ -41,7 +41,7 @@ HRESULT clsShot::Init(BulletState BState)
 	return S_OK;
 }
 
-bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
+bool clsShot::Hit(SPHERE** ppTargetSphere,int iSphereMax)
 {
 	if (m_bShotExistFlg)
 	{
@@ -49,7 +49,7 @@ bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
 		{
 			for (int j = 0; j < iSphereMax; i++)
 			{
-				if (Collision(*m_ppColSpheres[i], ppTargetSphere[j]))
+				if (Collision(*m_ppColSpheres[i], *ppTargetSphere[j]))
 				{
 					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
@@ -103,6 +103,11 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vTarget)
 
 void clsShot::Move()
 {
+	if (!m_bExistFlg)
+	{
+		return;
+	}
+
 	if (!m_bShotExistFlg)
 	{
 		if (!m_wpEffect->isPlay(m_ShotEfcHandles[enEfcLine]) && !m_wpEffect->isPlay(m_ShotEfcHandles[enEfcHit]))
