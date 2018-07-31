@@ -14,7 +14,6 @@ clsSCENE_MISSION::~clsSCENE_MISSION()
 {
 	//SAFE_DELETE( m_pTestChara );
 	SAFE_DELETE( m_pTestRobo );
-	SAFE_DELETE( m_pCam );
 }
 
 //生成時に一度だけ通る処理.
@@ -43,7 +42,7 @@ void clsSCENE_MISSION::CreateProduct()
 	m_pStage->m_Trans.fPitch = 0.0f;
 	m_pStage->m_Trans.vPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	m_pCam = new clsCAMERA_MISSION;
+	m_fCamMoveSpeed = 0.01f;
 }
 
 //毎フレーム通る処理.
@@ -60,10 +59,8 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	D3DXVECTOR3 vCamPosTmp = m_pTestRobo->m_Trans.vPos + (GetVec3Dir(m_pTestRobo->m_Trans.fYaw, g_vDirBack) * 2);
 	vCamPosTmp.y += 0.5f;
 
-	m_pCam->Update(vCamPosTmp, vLookPosTmp);
-
-	m_wpCamera = m_pCam;
-	//m_wpCamera->SetPos(vTmp, false);
+	m_wpCamera->SetPos(vCamPosTmp,false);
+	m_wpCamera->SetLookPos(vLookPosTmp);
 
 	//エンディングに行く場合は以下のようにする.
 	if( !"クリア条件を満たすとここを通る" ){

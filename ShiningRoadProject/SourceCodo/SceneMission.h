@@ -49,7 +49,7 @@ private:
 
 	clsDX9Mesh* m_pStage;
 
-	clsCAMERA_MISSION* m_pCam;
+	float m_fCamMoveSpeed;
 
 	//Šî’êƒNƒ‰ƒX‚ÉˆÈ‰º‚ª‚ ‚è‚Ü‚·.
 	//ƒJƒƒ‰.

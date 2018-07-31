@@ -27,8 +27,11 @@ public:
 
 	void Create(WeaponState State);
 	void Updata();
-	bool Shot(clsObject* pTargetObj = nullptr);//true : 射撃成功,false : 弾がないのでリロード.
+	bool Shot(clsObject* pTargetObj = nullptr);
+	int Hit(clsObject::SPHERE** const ppTargetBodyCol, const int iTargetColNumMax);
 	void Reload();
+
+	bool IsNeedReload();//残弾があるかで射撃かリロードかを判定.
 
 	clsObject** GetBulletObjs(int& iBulletNumMax) const;
 
@@ -37,6 +40,8 @@ private:
 
 	clsShot** m_ppBullet;
 	int m_iRemainingBullet;
+
+	int m_iReloadCnt;
 
 	clsPOINTER_GROUP* m_pPtrGroup;
 };

@@ -16,33 +16,30 @@ void clsCharactor::SetMoveDeceleSpeed(const int iMoveStopFrame)//減速.
 	m_fMoveDecele = abs(m_fMoveSpeed) / m_iMoveStopFrame;
 }
 
-void clsCharactor::Move(const float fAngle, const float fPush)
+void clsCharactor::AddMoveAccele(const float fAngle, const float fPush)
 {
-	fPushMin = 0.5f;
-	float fPushPower = abs(fPush);
-
 	if (!IsMoveControl())
 	{
-		MoveControl();
-		MoveDecele();
-		return;
+		return;//最高速を超えている.
 	}
 
-	else
+	SetMoveDir(fAngle);//移動方向決定.
+	MoveAccele(fPush);//加速.
+
+	m_bMoveAcceleOlder = true;//加速を行った.
+}
+
+void clsCharactor::Move()
+{
+	if (!IsMoveControl() || !m_bMoveAcceleOlder)
 	{
-		if (fPushPower < fPushMin)
-		{
-			MoveDecele();
-		}
-
-		else
-		{
-			SetMoveDir(fAngle);
-			MoveAccele(fPush);
-		}
-
-		MoveControl();
+		//移動速度が最大を超えているか、加速がされていない.
+		MoveDecele();//減速.
 	}
+
+	MoveControl();//移動.
+
+	m_bMoveAcceleOlder = false;//リセット.
 }
 
 bool clsCharactor::IsMoveing()
@@ -125,10 +122,6 @@ void clsCharactor::MoveDecele()
 }
 
 //回転.
-void clsCharactor::SetRotationSpeed(const float fSpd)
-{
-	m_fRotSpeed = fSpd;
-}
 
 bool clsCharactor::IsRotate()
 {
@@ -194,35 +187,46 @@ void clsCharactor::SetRotDir(float fAngle)
 	m_fRotDir = m_Trans.fYaw + fAngle;
 }
 
-void clsCharactor::Rotate(const float fAngle, const float fPush)
+void clsCharactor::AddRotAccele(const float fAngle, const float fPush)
 {
-	fPushMin = 0.5f;
-	float fPushPower = abs(fPush);
-
 	if (!IsRotControl())
 	{
-		Spin(m_Trans.fYaw, m_fRotDir, m_fRotSpeed, m_fRotSpeed);
-		RotDecele();
-		return;
+		return;//最高速を超えている.
 	}
 
-	else
+	float fPushPower = abs(fPush);
+
+	SetRotDir(fAngle);
+	RotAccele(fPush);
+
+	m_bRotAcceleOlder = true;
+
+}
+
+void clsCharactor::Rotate()
+{
+	if (!IsRotControl() || !m_bRotAcceleOlder)
 	{
-		if (fPushPower < fPushMin)
-		{
-			RotDecele();
-		}
+		//最高速を超えているか、加速が行われていない.m_bRotAcceleOlder
+		RotDecele();//減速.
+	}
 
-		else
-		{
-			SetRotDir(fAngle);
-			RotAccele(fPush);
-		}
+	Spin(m_Trans.fYaw, m_fRotDir, m_fRotSpeed);//回転.
 
-		if (IsRotate())
-		{
-			Spin(m_Trans.fYaw, m_fRotDir, m_fRotSpeed, m_fRotSpeed);
-		}
+	m_bRotAcceleOlder = false;//リセット.
+}
+
+void clsCharactor::LookUp(const float fAngle, const float fPush)
+{
+	float fLookDir = m_fLookUpDir + fPush;
+
+	Spin(m_fLookUpDir, fLookDir, m_fRotSpeedMax);
+
+	const float fPitchMax = static_cast<float>D3DXToRadian(89);//90°になると視界がおかしくなるため防止.
+
+	if (abs(m_fLookUpDir) > fPitchMax)
+	{
+		m_fLookUpDir = fPitchMax * (m_fLookUpDir / abs(m_fLookUpDir));
 	}
 }
 
@@ -312,52 +316,53 @@ bool clsCharactor::RecoLange(D3DXVECTOR3 CenterPos, D3DXVECTOR3 TargetPos, float
 	return false;
 }
 
-void clsCharactor::Spin(float& NowYaw, const float TargetYaw, const float TurnSpd, const float TurnStop)
+void clsCharactor::Spin(float& fNowRot, const float fTargetRot, const float fTurnSpd)
 {
-	float fTarget = TargetYaw;
+	const int iDegHulf = 180;
+	const int iDegFull = 360;
 
-	if (fTarget - NowYaw > D3DXToRadian(180))
+	float fTarget = fTargetRot;
+
+	if (fTarget - fNowRot > static_cast<float>D3DXToRadian(iDegHulf))
 	{
-		fTarget -= D3DXToRadian(360);
+		fTarget -= static_cast<float>D3DXToRadian(iDegFull);
 	}
-	else if (fTarget - NowYaw < -D3DXToRadian(180))
+	else if (fTarget - fNowRot < -static_cast<float>D3DXToRadian(iDegHulf))
 	{
-		fTarget += D3DXToRadian(360);
+		fTarget += static_cast<float>D3DXToRadian(iDegFull);
 	}
 
-	if (NowYaw > D3DXToRadian(180))
+	if (fNowRot > static_cast<float>D3DXToRadian(iDegHulf))
 	{
-		NowYaw -= D3DXToRadian(360);
+		fNowRot -= static_cast<float>D3DXToRadian(iDegFull);
 	}
-	else if (NowYaw < -D3DXToRadian(180))
+	else if (fNowRot < -static_cast<float>D3DXToRadian(iDegHulf))
 	{
-		NowYaw += D3DXToRadian(360);
+		fNowRot += static_cast<float>D3DXToRadian(iDegFull);
 	}
 
 	//角度が近づく.
-	if (abs(fTarget - NowYaw) > TurnStop)
+	if (abs(fTarget - fNowRot) > fTurnSpd)
 	{
-		if (NowYaw < fTarget)
+		if (fNowRot < fTarget)
 		{
-			NowYaw += TurnSpd;
+			fNowRot += fTurnSpd;
 		}
-		else if (NowYaw > fTarget)
+		else if (fNowRot > fTarget)
 		{
-			NowYaw -= TurnSpd;
+			fNowRot -= fTurnSpd;
 		}
 	}
 	else
 	{
-		NowYaw = fTarget;
+		fNowRot = fTarget;
 	}
 
-	ObjRollOverGuard(&NowYaw);
+	ObjRollOverGuard(&fNowRot);
 }
 
 void clsCharactor::Shot()
 {
-	m_pTargetObj = nullptr;
-
 	if (m_ppWeapon[m_iWeaponNum]->Shot(m_pTargetObj)){}
 }
 
@@ -384,26 +389,63 @@ void clsCharactor::WeaponInit(WeaponState* pWeapon, const int iWeaponMax)
 	}
 }
 
+void  clsCharactor::WeaponUpdate()
+{
+	for (int i = 0; i < m_iWeaponNumMax; i++)
+	{
+		m_ppWeapon[i]->Updata();
+	}
+}
+
+int  clsCharactor::BulletHit(SPHERE** pTargrtBodyCols, int iTargetColNumMax)
+{
+	int iResult = 0;
+
+	for (int i = 0; i < m_iWeaponNumMax; i++)
+	{
+		iResult += m_ppWeapon[i]->Hit(pTargrtBodyCols, iTargetColNumMax);
+	}
+
+	return iResult;
+}
+
+bool clsCharactor::Damage(const int iDamage)
+{
+	if (iDamage > 0)
+	{
+		if (m_HP < iDamage)
+		{
+			m_HP = 0;
+		}
+
+		else
+		{
+			m_HP -= iDamage;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 clsCharactor::clsCharactor() :
-	HP( 0 ),
+	m_HP( 0 ),
 	m_MaxHP( 0 ),
 	m_bDeadFlg( false ),
 	m_bMoving( false ),
-	fPushMin( 0.0f ),
 	m_fMoveSpeedMax( 0.0f ),
 	m_iTopMoveSpeedFrame( 0 ),
 	m_fMoveAccele( 0.0f ),
 	m_iMoveStopFrame( 0 ),
 	m_fMoveDecele( 0.0f ),
 	m_fRotSpeed( 0.0f ),
-	m_fJumpPower( 0.0f ),
-	RaySpece( 0.0f ),
-	m_pMeshForRay( NULL )
+	m_fJumpPower( 0.0f )
 {
 //	ZeroMemory(this, sizeof(clsCharactor));
 }
 
 clsCharactor::~clsCharactor()
 {
-	SAFE_RELEASE( m_pMeshForRay );
+	
 }

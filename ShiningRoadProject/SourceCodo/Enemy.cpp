@@ -13,13 +13,14 @@ void clsEnemyBase::Init(LPSTR strEnemyFolderName)
 
 }
 
-void clsEnemyBase::SearchTarget(clsObject* pObj)
+void clsEnemyBase::SearchTarget(clsCharactor* pChara)
 {
 	m_pTarget = nullptr;
 
 	for (int i = 0; i < m_visAreaData.iCategory; i++)
 	{
-		float fDis = D3DXVec3Length(&(pObj->GetPosition() - m_pTrans->vPos));
+		D3DXVECTOR3 vDisTmp = pChara->GetPosition() - m_pTrans->vPos;
+		float fDis = D3DXVec3Length(&vDisTmp);
 
 		if (m_visAreaData.VisAreaState[i]->iVisDistance > fDis)
 		{
@@ -29,14 +30,14 @@ void clsEnemyBase::SearchTarget(clsObject* pObj)
 				{
 					if (true)
 					{
-						m_pTarget = pObj;
+						m_pTarget = pChara;
 						break;
 					}
 				}
 
 				else
 				{
-					m_pTarget = pObj;
+					m_pTarget = pChara;
 					break;
 				}
 			}
@@ -49,14 +50,14 @@ void clsEnemyBase::SearchTarget(clsObject* pObj)
 					{
 						if (true)
 						{
-							m_pTarget = pObj;
+							m_pTarget = pChara;
 							break;
 						}
 					}
 
 					else
 					{
-						m_pTarget = pObj;
+						m_pTarget = pChara;
 						break;
 					}
 				}
@@ -134,8 +135,6 @@ void clsEnemyBase::SetMoveDir()
 
 bool clsEnemyBase::IsShot()
 {
-	m_ShotData.ShotState[0]->iShotDisMax;
-	m_ShotData.ShotState[0]->iShotDisMin;
 
 	float fDis;
 	fDis = D3DXVec3Length(&(m_pTarget->GetPosition() - m_pTrans->vPos));
@@ -143,7 +142,7 @@ bool clsEnemyBase::IsShot()
 	for (int i = 0; i < m_ShotData.iCategory; i++)
 	{
 		if (fDis <= m_ShotData.ShotState[i]->iShotDisMax ||
-			fDis >= m_ShotData.ShotState[0]->iShotDisMin)
+			fDis >= m_ShotData.ShotState[i]->iShotDisMin)
 		{
 			return true;
 		}

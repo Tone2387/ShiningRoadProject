@@ -61,19 +61,6 @@ public:
 	float m_fMoveSpeed;//最終的に加算されるスピード.
 	D3DXVECTOR3 m_vMoveDir;
 
-	void Updata(const clsDX9Mesh* pGround = nullptr)
-	{
-		m_vOldPos = m_Trans.vPos;
-
-		ActionProduct();
-
-		if (pGround&&m_NoFollObj)
-		{
-			FreeFoll();
-		}
-	}
-
-	virtual void ActionProduct(){};
 	virtual void Render(D3DXMATRIX& mView,D3DXMATRIX& mProj,D3DXVECTOR3 vLight,D3DXVECTOR3 vEye){};
 
 	bool m_bGround;

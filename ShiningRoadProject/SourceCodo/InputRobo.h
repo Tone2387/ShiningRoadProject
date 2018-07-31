@@ -4,6 +4,8 @@
 #include"DxInput.h"
 #include"CXInput.h"
 
+const float g_fStickPushMin = 0.5f;
+
 //àÍâûXInputÇóDêÊÇ≥ÇπÇ‹Ç∑.
 
 class clsInputRobo
@@ -28,13 +30,13 @@ public:
 		m_pQuickTurn = new clsCommandQuickTurn;
 		m_pBoostRising = new clsCommandBoostRising;
 
-		m_pComLS = new clsCommandRoboMove;
-		m_pComLSHor = new clsCommandRoboMove;
-		m_pComLSVer = new clsCommandRoboMove;
+		m_pComLS = new clsCommandMove;
+		m_pComLSHor = new clsCommandMove;
+		m_pComLSVer = new clsCommandMove;
 
-		m_pComRS = new clsCommandRoboRotate;
-		m_pComRSHor = new clsCommandRoboRotate;
-		m_pComRSVer = new clsCommandRoboRotate;
+		m_pComRS = new clsCommandRotate;
+		m_pComRSHor = new clsCommandRotate;
+		m_pComRSVer = new clsCommandLookVerMove;
 
 	}
 
@@ -135,6 +137,11 @@ public:
 
 		}*/
 
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
 		return m_pComLS;
 	};
 
@@ -155,6 +162,11 @@ public:
 			fAngle = m_pDxInput->GetLSDir();
 		}
 
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
 		return m_pComLSHor;
 	}
 
@@ -173,6 +185,11 @@ public:
 		{
 			fPower = m_pDxInput->GetVerLSPush();
 			fAngle = m_pDxInput->GetLSDir();
+		}
+
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
 		}
 
 		return m_pComLSVer;
@@ -196,6 +213,11 @@ public:
 			fAngle = m_pDxInput->GetRSDir();
 		}
 
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
 		return m_pComRS;
 	};
 
@@ -216,6 +238,11 @@ public:
 			fAngle = m_pDxInput->GetRSDir();
 		}
 
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
 		return m_pComRSHor;
 	}
 
@@ -234,6 +261,11 @@ public:
 		{
 			fPower = m_pDxInput->GetVerRSPush();
 			fAngle = m_pDxInput->GetRSDir();
+		}
+
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
 		}
 
 		return m_pComRSVer;
@@ -258,42 +290,48 @@ public:
 		return nullptr;
 	}
 
-	clsRoboCommand* QuickBoost()
+	clsRoboCommand* QuickBoost(float& fPower)
 	{
-		if (m_pXInput)
+		if (fPower < g_fStickPushMin)
 		{
-			if (m_pXInput->isLTriggerEnter())
+			if (m_pXInput)
 			{
-				return m_pQuickBoost;
+				if (m_pXInput->isLTriggerEnter())
+				{
+					return m_pQuickBoost;
+				}
 			}
-		}
 
-		else if (m_pDxInput)
-		{
-			if (m_pDxInput->IsPressKey(enPKey_02))
+			else if (m_pDxInput)
 			{
-				return m_pQuickBoost;
+				if (m_pDxInput->IsPressKey(enPKey_02))
+				{
+					return m_pQuickBoost;
+				}
 			}
 		}
 
 		return nullptr;
 	}
 
-	clsRoboCommand* QuickTurn()
+	clsRoboCommand* QuickTurn(float& fPower)
 	{
-		if (m_pXInput)
+		if (fPower < g_fStickPushMin)
 		{
-			if (m_pXInput->isLTriggerEnter())
+			if (m_pXInput)
 			{
-				return m_pQuickTurn;
+				if (m_pXInput->isLTriggerEnter())
+				{
+					return m_pQuickTurn;
+				}
 			}
-		}
 
-		else if (m_pDxInput)
-		{
-			if (m_pDxInput->IsPressKey(enPKey_02))
+			else if (m_pDxInput)
 			{
-				return m_pQuickTurn;
+				if (m_pDxInput->IsPressKey(enPKey_02))
+				{
+					return m_pQuickTurn;
+				}
 			}
 		}
 

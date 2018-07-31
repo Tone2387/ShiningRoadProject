@@ -63,7 +63,7 @@ public:
 	void SEInit(HWND hWnd);
 
 	void Move();
-	bool Hit(SPHERE* ppTargetSphere,int iSphereMax);
+	bool Hit(SPHERE** ppTargetSphere,int iSphereMax);
 	bool Form(D3DXVECTOR3 vShotPos,D3DXVECTOR3 vTarget);
 	void ReStart();
 

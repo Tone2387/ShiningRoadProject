@@ -24,9 +24,25 @@ void clsWeapon::Updata()
 	}
 }
 
+int clsWeapon::Hit(clsObject::SPHERE** const ppTargetBodyCol,const int iTargetColNumMax)
+{
+	int iResult = 0;
+
+	for (int i = 0; i < m_State.iBulletNumMax; i++)
+	{
+		if (m_ppBullet[i]->Hit(ppTargetBodyCol,iTargetColNumMax))
+		{
+			iResult += m_State.BState.iAtk;
+		}
+	}
+	
+	return iResult;
+}
+
 bool clsWeapon::Shot(clsObject* pTargetObj)
 {
-	if (m_iRemainingBullet > 0)
+	if (m_iRemainingBullet > 0 || 
+		m_iReloadCnt < 0)
 	{
 		D3DXVECTOR3 vPos = *m_State.SState.vShotStartPos;
 		D3DXVECTOR3 vDir = *m_State.SState.vShotMoveDir;
@@ -67,14 +83,26 @@ bool clsWeapon::Shot(clsObject* pTargetObj)
 		{
 			if (m_ppBullet[i]->Form(vPos, vDir))
 			{
+				m_iReloadCnt = m_State.iReloadTime;
 				return true;
 			}
 		}
 	}
 
-	Reload();
+	m_iReloadCnt--;
 
 	return false;
+}
+
+bool clsWeapon::IsNeedReload()
+{
+	if (m_iRemainingBullet > 0)
+	{
+		//ŽËŒ‚‰Â”\.
+		return false;
+	}
+
+	Reload();
 }
 
 void clsWeapon::Reload()
