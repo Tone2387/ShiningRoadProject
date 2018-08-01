@@ -141,11 +141,11 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 //シーン内のオブジェクトの描画関数のまとめ.
 void clsSCENE_BASE::Render()
 {
-	//元通りのビューポート.
-	if( m_wpViewPortMain != m_wpViewPort11 ){
-		m_wpViewPortMain = m_wpViewPort11;
-		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
-	}
+//	//元通りのビューポート.
+//	if( m_wpViewPortMain != m_wpViewPort11 ){
+//		m_wpViewPortMain = m_wpViewPort11;
+//		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
+//	}
 
 	//カメラ関数.
 	Camera();
@@ -154,6 +154,12 @@ void clsSCENE_BASE::Render()
 
 	//各シーンの描画.
 	RenderProduct( m_wpCamera->GetPos() );
+
+	//元通りのビューポート.
+	if( m_wpViewPortMain != m_wpViewPort11 ){
+		m_wpViewPortMain = m_wpViewPort11;
+		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
+	}
 
 	//エフェクト描画.
 	m_wpEffects->Render( m_mView, m_mProj, m_wpCamera->GetPos() );
@@ -375,7 +381,13 @@ void clsSCENE_BASE::SetSubRender( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &
 		&m_mView,	//(out)ビュー計算結果.
 		&vCamPos, &vCamLookPos, &vUpVec );
 
+	assert( m_wpContext );
 	m_wpContext->RSSetViewports( 1, m_wpViewPortMain );
+
+//	//画面のクリア.
+//	m_wpContext->ClearRenderTargetView(
+//		pBackBuffer_TexRTV, g_fClearColor );
+
 }
 
 

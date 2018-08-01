@@ -39,6 +39,7 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_pUI( nullptr )
 	,m_pViewPortSub( nullptr )
 	,m_cuFileMax( 0 )
+	,m_pSelectParts( nullptr )
 //	,m_enSelectMode()
 {
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
@@ -46,6 +47,8 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 {
+
+	SAFE_DELETE( m_pViewPortSub );
 	SAFE_DELETE( m_pAsmModel );
 	SAFE_DELETE( m_pUI );
 
@@ -54,8 +57,11 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 		m_vspFile[i]->Close();
 		m_vspFile[i].reset();
 	}
-	
+	m_vspFile.clear();
+	m_vspFile.shrink_to_fit();
+
 	m_cuFileMax = 0;
+	m_pSelectParts = nullptr;
 }
 
 void clsSCENE_ASSEMBLE::CreateProduct()
@@ -121,9 +127,16 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_pViewPortSub->Width	 = 728.0f;
 	m_pViewPortSub->Height	 = 500.0f;
 	m_pViewPortSub->TopLeftX = 98.0f;
-	m_pViewPortSub->TopLeftY = 95.0f;
+	m_pViewPortSub->TopLeftY = 95.0f + 86.0f;
 	m_pViewPortSub->MinDepth = 0.0f;
 	m_pViewPortSub->MaxDepth = 1.0f;
+
+	assert( !m_pSelectParts );
+	m_pSelectParts = new clsSkinMesh;
+	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
+		static_cast< enPARTS >( m_PartsSelect.Type ),
+		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
+
 }
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
@@ -230,8 +243,15 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
 		m_pUI->Update( m_enSelectMode );
 	}
+
 	assert( m_pAsmModel );
 	m_pAsmModel->UpDate();
+
+	m_pSelectParts->DetatchModel();
+	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
+		static_cast< enPARTS >( m_PartsSelect.Type ),
+		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
+
 
 }
 
@@ -259,11 +279,12 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
 	SetDepth( true );
 
+	//パーツ描画用.
 	D3DXVECTOR3 vSubCam( vCamPos );
 	D3DXVECTOR3 vSubLook( 0.0f, 0.0f, 0.0f );
 	SetSubRender( m_pViewPortSub, vSubCam, vSubLook );
-
-	m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
+	assert( m_pSelectParts );
+	m_pSelectParts->ModelRender( m_mView, m_mProj, m_vLight, vCamPos );
 }
 
 

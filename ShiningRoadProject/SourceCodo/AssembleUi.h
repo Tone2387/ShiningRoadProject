@@ -8,6 +8,7 @@
 #include "File.h"
 #include <vector>
 
+
 class clsASSEMBLE_UI
 {
 public:
@@ -43,6 +44,7 @@ public:
 		enSELECT_MODE enSelect, 
 		const int iPartsType, 
 		const int iPartsNum );//選択中パーツ番号.
+
 
 #if _DEBUG
 	//デバッグテキスト用.
@@ -94,7 +96,6 @@ private:
 
 	//「その武器は右腕?それとも左腕?」.
 	std::unique_ptr< clsWINDOW_BOX > m_upWndBox;//左右どっちか聞いてくる箱.
-
 
 
 	//ステータスの数( 行数 ).

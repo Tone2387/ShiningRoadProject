@@ -8,8 +8,7 @@
 
 #include "AssembleUi.h"
 
-#include <vector>
-#include <string>
+
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -17,9 +16,9 @@
 class clsSCENE_ASSEMBLE : public clsSCENE_BASE
 {
 public:
+
 	clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup );
 	~clsSCENE_ASSEMBLE();
-
 
 
 private:
@@ -82,6 +81,9 @@ private:
 
 	//お着換えするモデル.
 	clsASSEMBLE_MODEL*	m_pAsmModel;
+
+	//選択中パーツ.
+	clsSkinMesh* m_pSelectParts;
 
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;

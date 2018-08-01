@@ -28,8 +28,8 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4& vColor,
-		const bool alphaFlg );
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
+		const bool alphaFlg = false );
 
 	void AnimUpdate();
 	//±ÆÒ°¼®İÅ‘å”‚ğæ“¾.
