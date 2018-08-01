@@ -3,9 +3,8 @@
 #include "SceneBase.h"
 #include "CameraMission.h"
 
-
-#include"TestObject.h"
-
+#include"Player.h"
+#include"Stage.h"
 
 //================================//
 //========== ミッション中クラス ==========//
@@ -44,10 +43,10 @@ private:
 	//m_vpEnemys
 
 	//テスト用モデル( これは消しても良いです、いらないです ).
-	clsTestObj* m_pTestRobo;
+	clsPlayer* m_pPlayer;
 	//clsCharaStatic* m_pTestChara;
 
-	clsDX9Mesh* m_pStage;
+	clsStage* m_pStage;
 
 	float m_fCamMoveSpeed;
 

@@ -9,6 +9,8 @@
 #include"Global.h"
 #include"DX9Mesh.h"
 
+#include"Stage.h"
+
 const float g_fPercentage = 0.01f;
 const float g_fDistanceReference = 0.01f;
 
@@ -93,6 +95,8 @@ public:
 
 	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
 	void SetScale(float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
+
+	bool WallJudge(clsStage* const pStage);
 
 	bool WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir);
 	bool WallForward(const clsDX9Mesh* pWall, const bool bSlip = true);

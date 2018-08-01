@@ -16,7 +16,7 @@ public:
 
 	void Init(clsPOINTER_GROUP* const pPtrGroup);
 
-	void Action(const clsDX9Mesh* pWall);
+	void Action(clsStage* const pWall);
 
 	void InhUpdate();//Inheritance
 

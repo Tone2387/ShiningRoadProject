@@ -614,3 +614,48 @@ void clsObject::FreeFoll()
 		m_Trans.vPos.y += m_fFollPower;
 	}
 }
+
+bool clsObject::WallJudge(clsStage* const pStage)
+{
+	if (!pStage)return false;
+
+	std::vector<clsDX9Mesh*> vvpMeshTmp;
+	vvpMeshTmp = pStage->GetStageMeshArray();
+
+	bool bResult = false;
+
+	for (int i = 0; i < vvpMeshTmp.size(); i++)
+	{
+		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
+
+		if (!pObjMesh)continue;
+
+		bool bHit = false;
+
+		//StageObject‚Æ‚Ì“–‚½‚è”»’è.
+		if (WallForward(pObjMesh))if (!bHit)bHit = true;
+		if (WallBack(pObjMesh))if (!bHit)bHit = true;
+		if (WallLeft(pObjMesh))if (!bHit)bHit = true;
+		if (WallRight(pObjMesh))if (!bHit)bHit = true;
+		if (WallUp(pObjMesh))if (!bHit)bHit = true;
+
+		if (WallUnder(pObjMesh))
+		{
+			m_bGround = true;
+			if (!bHit)bHit = true;
+
+			D3DXVECTOR3 vMovePos = GetPosition();
+			D3DXVECTOR3 vMoveDir = { 0.0f, 0.0f, 0.0f };
+
+			vMovePos += vMoveDir;
+			SetPosition(vMovePos);
+		}
+
+		if (!bResult)
+		{
+			bResult = bHit;
+		}
+	}
+
+	return bResult;
+}
