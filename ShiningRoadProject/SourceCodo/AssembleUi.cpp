@@ -39,7 +39,8 @@ const char* sPATH_MISSION_START_BUTTON = "Data\\Image\\AssembleUi\\MissionStart.
 const WHSIZE_FLOAT SIZE_MISSION_START_BUTTON = { 120.0f, 80.0f };
 const D3DXVECTOR3 vINIT_POS_MISSION_START_BUTTON = 
 	{ vINIT_POS_PARTS_TYPE.x + fOFFSET_POS_X_PARTS_TYPE * cPARTS_TYPE_NUM, //700.75f.<=760.0f
-	vINIT_POS_PARTS_TYPE.y, 0.0f };
+	vINIT_POS_PARTS_TYPE.y,
+	0.0f };
 
 
 //----- 出撃ボタン 終わり -----//.
@@ -541,6 +542,7 @@ void clsASSEMBLE_UI::Render(
 
 	assert( m_upWndBox );
 	m_upWndBox->Render();
+
 }
 
 
