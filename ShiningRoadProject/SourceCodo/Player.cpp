@@ -19,7 +19,7 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 	m_pMesh->SetAnimSpeed(0.01);
 }
 
-void clsPlayer::Action(const clsDX9Mesh* pWall)
+void clsPlayer::Action(clsStage* const pWall)
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
@@ -88,9 +88,7 @@ void clsPlayer::Action(const clsDX9Mesh* pWall)
 		}
 	}
 
-	
-
-	
+	WallJudge(pWall);
 }
 
 void clsPlayer::InhUpdate()

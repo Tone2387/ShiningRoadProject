@@ -94,51 +94,21 @@ void clsStage::Render(
 	}
 }
 
-
-bool clsStage::WallJudge( clsObject* const pObj )
+vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 {
-	bool bHit = false;
+	vector<clsDX9Mesh*> vvpMeshArrayTmp;
 
-	//StageGround‚Æ‚Ì“–‚½‚è”»’è.
-	clsDX9Mesh* pGround = m_pStageGround->GetModelPtr();
+	vvpMeshArrayTmp.push_back(m_pStageGround->GetModelPtr());
 
-	if (pObj->WallForward(pGround))if (!bHit)bHit = true;
-	if (pObj->WallBack(pGround))if (!bHit)bHit = true;
-	if (pObj->WallLeft(pGround))if (!bHit)bHit = true;
-	if (pObj->WallRight(pGround))if (!bHit)bHit = true;
-
-	pObj->m_bGround = pObj->WallUnder(pGround);
-	if (pObj->m_bGround)if (!bHit)bHit = true;
-	if (pObj->WallUp(pGround))if (!bHit)bHit = true;
-
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < m_vpStageObject.size(); i++)
 	{
-		clsDX9Mesh* pObjMesh = m_vpStageObject[i]->GetModelPtr();
-
-		//StageObject‚Æ‚Ì“–‚½‚è”»’è.
-		if (pObj->WallForward(pObjMesh))if (!bHit)bHit = true;
-		if (pObj->WallBack(pObjMesh))if (!bHit)bHit = true;
-		if (pObj->WallLeft(pObjMesh))if (!bHit)bHit = true;
-		if (pObj->WallRight(pObjMesh))if (!bHit)bHit = true;
-
-		if (pObj->WallUnder(pObjMesh))
-		{
-			pObj->m_bGround = true;
-			if (!bHit)bHit = true;
-
-			D3DXVECTOR3 vMoveDir = pObj->GetPosition();
-
-			vMoveDir += {0.0f, 0.0f, 0.0f};
-
-			pObj->SetPosition(vMoveDir);
-		}
-
-		if (pObj->WallUp(pObjMesh))if (!bHit)bHit = true;
+		vvpMeshArrayTmp.push_back(m_vpStageObject[i]->GetModelPtr());
 	}
 
-		
+	int iSize = m_vpStageObject.size() + 1;
 
-	return bHit;
+	vvpMeshArrayTmp.resize(iSize);
+
+	return vvpMeshArrayTmp;
 }
-
 
