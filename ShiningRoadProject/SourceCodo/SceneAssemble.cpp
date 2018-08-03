@@ -27,7 +27,18 @@ const D3DXVECTOR3 vINIT_CAMERA_LOOK_POS = { 0.0f, 0.0f, 0.0f };
 //ステータスの、CSVから削る行数.
 const int iSTATUS_CUT_NUM = 2;//番号と名前.
 
-
+//----- パーツウィンドウ用 -----//.
+//ビューポート.
+const FLOAT INIT_VP_PARTS_W = 728.0f;
+const FLOAT INIT_VP_PARTS_H = 500.0f;
+const FLOAT INIT_VP_PARTS_X = 98.0f;
+const FLOAT INIT_VP_PARTS_Y = 95.0f + 86.0f;
+const FLOAT INIT_VP_PARTS_MIN =	0.0f;
+const FLOAT INIT_VP_PARTS_MAX =	1.0f;
+//カメラ.
+const D3DXVECTOR3 vPARTS_VIEW_CAM_POS  = { 0.0f, 0.0f, -100.0f };
+const D3DXVECTOR3 vPARTS_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
+//----- パーツウィンドウ用 -----//.
 
 
 
@@ -124,18 +135,18 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	assert( !m_pViewPortSub );
 	m_pViewPortSub = new D3D11_VIEWPORT;
-	m_pViewPortSub->Width	 = 728.0f;
-	m_pViewPortSub->Height	 = 500.0f;
-	m_pViewPortSub->TopLeftX = 98.0f;
-	m_pViewPortSub->TopLeftY = 95.0f + 86.0f;
-	m_pViewPortSub->MinDepth = 0.0f;
-	m_pViewPortSub->MaxDepth = 1.0f;
+	m_pViewPortSub->Width	 = INIT_VP_PARTS_W;
+	m_pViewPortSub->Height	 = INIT_VP_PARTS_H;
+	m_pViewPortSub->TopLeftX = INIT_VP_PARTS_X;
+	m_pViewPortSub->TopLeftY = INIT_VP_PARTS_Y;
+	m_pViewPortSub->MinDepth = INIT_VP_PARTS_MIN;
+	m_pViewPortSub->MaxDepth = INIT_VP_PARTS_MAX;
 
 	assert( !m_pSelectParts );
-	m_pSelectParts = new clsSkinMesh;
-	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
-		static_cast< enPARTS >( m_PartsSelect.Type ),
-		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
+	m_pSelectParts = new clsPARTS_WINDOW_MODEL( m_wpResource, m_wpRoboStatus );
+//	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
+//		static_cast< enPARTS >( m_PartsSelect.Type ),
+//		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
 
 }
 
@@ -247,11 +258,12 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	assert( m_pAsmModel );
 	m_pAsmModel->UpDate();
 
-	m_pSelectParts->DetatchModel();
-	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
-		static_cast< enPARTS >( m_PartsSelect.Type ),
-		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
-
+//	m_pSelectParts->DetatchModel();
+//	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
+//		static_cast< enPARTS >( m_PartsSelect.Type ),
+//		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
+	assert( m_pSelectParts );
+	m_pSelectParts->Update( m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
 
 }
 
@@ -280,11 +292,14 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	SetDepth( true );
 
 	//パーツ描画用.
-	D3DXVECTOR3 vSubCam( vCamPos );
-	D3DXVECTOR3 vSubLook( 0.0f, 0.0f, 0.0f );
-	SetSubRender( m_pViewPortSub, vSubCam, vSubLook );
+	clsCAMERA_ASSEMBLE PartsViewCam;
+	PartsViewCam.Create();
+	PartsViewCam.SetPos( vPARTS_VIEW_CAM_POS );
+	PartsViewCam.SetLookPos( vPARTS_VIEW_CAM_LOOK );
+	PartsViewCam.AddPos( m_pSelectParts->GetSelectPartsHeight() );
+	SetSubRender( m_pViewPortSub, PartsViewCam.GetPos(), PartsViewCam.GetLookPos() );
 	assert( m_pSelectParts );
-	m_pSelectParts->ModelRender( m_mView, m_mProj, m_vLight, vCamPos );
+	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos() );
 }
 
 
