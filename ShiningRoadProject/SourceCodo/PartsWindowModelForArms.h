@@ -23,7 +23,7 @@ public:
 		const bool isAlpha = false*/ ) final;
 
 private:
-	//F‚ğ“f‚«o‚·.
-	D3DXVECTOR4 CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex ) final;
+	//•`‰æ‚·‚é‚©”Û‚©‚ğ“f‚«o‚·.
+	bool isRender( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
 
 };

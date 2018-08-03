@@ -97,7 +97,7 @@ protected:
 		const char *RootBone, const char *EndBone );
 
 	//色を吐き出す.
-	virtual D3DXVECTOR4 CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
+	D3DXVECTOR4 CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
 
 	//アニメーションリセット.
 	void AnimReSet();

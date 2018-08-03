@@ -19,10 +19,11 @@ const string sBOPNE_NAME_PARTS_CENTER[] =
 	"JunctionCore",
 	"Jenerator",
 	"Center",
-	"Joint01",
+	"null",
 	"null",
 	"null"
 };
+const string sBOPNE_NAME_PARTS_ARM_HAND = "JunctionWeapon";
 
 //ÉJÉÅÉâÇ…ìnÇ∑vec3ÇÃï‚ê≥( ìYÇ¶éöÇÕè„ãLÅuéÛÇØéÊÇÈëIëéàÅv{ ÅuSELECT_TYPE_WEP_LÅvÇ‹Ç≈ } ).
 const D3DXVECTOR3 vCAM_OFFSET[4] =
@@ -146,6 +147,13 @@ D3DXVECTOR3 clsPARTS_WINDOW_MODEL::GetSelectPartsHeight()
 	if( tmpIndex == SELECT_TYPE_LEG ){
 		const float fHARH = 0.5f;
 		vReturn.y *= fHARH;
+	}
+	//òrÇ‡ì¡éÍ.
+	else if( tmpIndex == SELECT_TYPE_ARMS ){
+		float fHandY = m_upSelectParts->GetBonePos( 
+			m_SelectType, sBOPNE_NAME_PARTS_ARM_HAND.c_str() ).y;
+		const float fHARH = 0.5f;
+		vReturn.y = fHARH * ( vReturn.y + fHandY );
 	}
 
 	//ägèkìIÇ».
