@@ -269,7 +269,14 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-//	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
+	//パーツ描画用.
+	clsCAMERA_ASSEMBLE PartsViewCam;
+	PartsViewCam.Create();
+	PartsViewCam.SetPos( vPARTS_VIEW_CAM_POS );
+	PartsViewCam.SetLookPos( vPARTS_VIEW_CAM_LOOK );
+	PartsViewCam.AddPos( m_pSelectParts->GetSelectPartsHeight() );
+
+	//	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
 ////	ConvDimPos( m_pSprite->GetPos(), m_pParts->GetPosition() );
 //
 //	m_pParts->Render( m_mView, m_mProj, m_vLight, vCamPos );
@@ -291,12 +298,7 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
 	SetDepth( true );
 
-	//パーツ描画用.
-	clsCAMERA_ASSEMBLE PartsViewCam;
-	PartsViewCam.Create();
-	PartsViewCam.SetPos( vPARTS_VIEW_CAM_POS );
-	PartsViewCam.SetLookPos( vPARTS_VIEW_CAM_LOOK );
-	PartsViewCam.AddPos( m_pSelectParts->GetSelectPartsHeight() );
+	//パーツ描画.
 	SetSubRender( m_pViewPortSub, PartsViewCam.GetPos(), PartsViewCam.GetLookPos() );
 	assert( m_pSelectParts );
 	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos() );

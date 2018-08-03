@@ -19,18 +19,28 @@ const string sBOPNE_NAME_PARTS_CENTER[] =
 	"JunctionCore",
 	"Jenerator",
 	"Center",
-	"Joint02",
+	"null",
 	"null",
 	"null"
 };
+const string sBOPNE_NAME_PARTS_ARM_HAND = "JunctionWeapon";
 
+//カメラに渡すvec3の補正( 添え字は上記「受け取る選択肢」{ 「SELECT_TYPE_WEP_L」まで } ).
+const D3DXVECTOR3 vCAM_OFFSET[4] =
+{
+	D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
+	D3DXVECTOR3( 0.0f, 0.0f, 30.0f ),
+	D3DXVECTOR3( 0.0f, 0.0f, 50.0f ),
+	D3DXVECTOR3( 0.0f, 0.0f, 0.0f )
+};
 
 
 clsPARTS_WINDOW_MODEL::clsPARTS_WINDOW_MODEL( clsResource* const pResource, clsROBO_STATUS* const pStatus )
 	:m_wpResource( pResource )
 {
-	m_upSelectParts = make_unique< clsASSEMBLE_MODEL >();
+	m_upSelectParts = make_unique< clsPARTS_WINDOW_MODEL_FOR_ARMS >();
 	m_upSelectParts->Create( pResource, pStatus );
+	m_upSelectParts->SetPos( { 0.0f, 0.0f, 0.0f } );
 }
 
 clsPARTS_WINDOW_MODEL::~clsPARTS_WINDOW_MODEL()
@@ -94,7 +104,8 @@ void clsPARTS_WINDOW_MODEL::Render(
 	assert( m_upSelectParts );
 //	m_upSelectParts->ModelUpdate();
 
-	m_upSelectParts->Render( mView, mProj, vLight, vEye );
+	m_upSelectParts->Render( mView, mProj, vLight, vEye, 
+		static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_SelectType ) );
 }
 
 
@@ -128,8 +139,25 @@ D3DXVECTOR3 clsPARTS_WINDOW_MODEL::GetSelectPartsHeight()
 	}
 
 	//高さだけ.
+	m_upSelectParts->UpdateProduct();
 	vReturn.y = m_upSelectParts->GetBonePos( 
 		m_SelectType, sBOPNE_NAME_PARTS_CENTER[ tmpIndex ].c_str() ).y;
+
+	//脚は特殊.
+	if( tmpIndex == SELECT_TYPE_LEG ){
+		const float fHARH = 0.5f;
+		vReturn.y *= fHARH;
+	}
+	//腕も特殊.
+	else if( tmpIndex == SELECT_TYPE_ARMS ){
+		float fHandY = m_upSelectParts->GetBonePos( 
+			m_SelectType, sBOPNE_NAME_PARTS_ARM_HAND.c_str() ).y;
+		const float fHARH = 0.5f;
+		vReturn.y = fHARH * ( vReturn.y + fHandY );
+	}
+
+	//拡縮的な.
+	vReturn += vCAM_OFFSET[ tmpIndex ];
 
 	return vReturn;
 }

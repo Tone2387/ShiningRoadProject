@@ -327,6 +327,9 @@
     <ClCompile Include="SourceCodo\PartsWindowModel.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\PartsWindowModelForArms.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -576,6 +579,9 @@
       <Filter>Hiyosi\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\PartsWindowModel.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsWindowModelForArms.h">
       <Filter>Tahara\UI</Filter>
     </ClInclude>
   </ItemGroup>

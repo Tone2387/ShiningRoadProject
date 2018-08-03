@@ -2,6 +2,7 @@
 
 
 #include "AssembleModel.h"
+#include "PartsWindowModelForArms.h"
 class clsROBO_STATUS;
 
 class clsPARTS_WINDOW_MODEL
@@ -24,7 +25,7 @@ public:
 private:
 
 	//選択中パーツ.
-	std::unique_ptr< clsASSEMBLE_MODEL > m_upSelectParts;
+	std::unique_ptr< clsPARTS_WINDOW_MODEL_FOR_ARMS > m_upSelectParts;
 
 	enPARTS			m_SelectType;
 	SKIN_ENUM_TYPE	m_SelectNum;
