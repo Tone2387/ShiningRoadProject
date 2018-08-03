@@ -314,7 +314,8 @@ bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex
 
 
 //パーツのボーンの座標を取得.
-D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( const enPARTS enParts, const char* sBoneName )
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( 
+	const enPARTS enParts, const char* sBoneName )
 {
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
 	char cTmpNum = static_cast<char>( enParts );

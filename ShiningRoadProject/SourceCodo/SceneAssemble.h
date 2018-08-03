@@ -8,6 +8,7 @@
 
 #include "AssembleUi.h"
 
+#include "PartsWindowModel.h"
 
 
 //================================//
@@ -83,7 +84,7 @@ private:
 	clsASSEMBLE_MODEL*	m_pAsmModel;
 
 	//選択中パーツ.
-	clsSkinMesh* m_pSelectParts;
+	clsPARTS_WINDOW_MODEL* m_pSelectParts;
 
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
