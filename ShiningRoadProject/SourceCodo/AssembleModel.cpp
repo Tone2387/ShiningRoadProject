@@ -114,6 +114,10 @@ void clsASSEMBLE_MODEL::UpDate()
 		assert( m_vpParts[i] );
 		m_vpParts[i]->Update();
 	}
+	UpdateProduct();
+}
+void clsASSEMBLE_MODEL::UpdateProduct()
+{
 }
 
 void clsASSEMBLE_MODEL::Render(
@@ -397,6 +401,13 @@ void clsASSEMBLE_MODEL::AnimReSet()
 }
 
 
+void clsASSEMBLE_MODEL::ModelUpdate()
+{
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
+	}
+}
 
 #if _DEBUG
 //各パーツのpos.

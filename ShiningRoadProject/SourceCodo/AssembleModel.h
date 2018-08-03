@@ -43,7 +43,7 @@ public:
 	//アセンブルシーンの各関数内で使います.
 	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus );
 	void UpDate();
-	void Render(
+	virtual void Render(
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
@@ -89,6 +89,7 @@ public:
 
 protected:
 
+	virtual void UpdateProduct();
 
 	//腕の角度を武器も模写する.
 	void FitJointModel( 
@@ -96,7 +97,7 @@ protected:
 		const char *RootBone, const char *EndBone );
 
 	//色を吐き出す.
-	D3DXVECTOR4 CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
+	virtual D3DXVECTOR4 CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
 
 	//アニメーションリセット.
 	void AnimReSet();
@@ -107,6 +108,8 @@ protected:
 
 	//継承先で使ってね.
 	virtual void CreateProduct();
+
+	void ModelUpdate();
 
 	double m_dAnimSpd;
 

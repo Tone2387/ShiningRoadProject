@@ -136,6 +136,7 @@
     <ClCompile Include="SourceCodo\PartsLeg.cpp" />
     <ClCompile Include="SourceCodo\PartsWeapon.cpp" />
     <ClCompile Include="SourceCodo\PartsWindowModel.cpp" />
+    <ClCompile Include="SourceCodo\PartsWindowModelForArms.cpp" />
     <ClCompile Include="SourceCodo\Player.cpp" />
     <ClCompile Include="SourceCodo\PtrGroup.cpp" />
     <ClCompile Include="SourceCodo\Ray.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="SourceCodo\PartsLeg.h" />
     <ClInclude Include="SourceCodo\PartsWeapon.h" />
     <ClInclude Include="SourceCodo\PartsWindowModel.h" />
+    <ClInclude Include="SourceCodo\PartsWindowModelForArms.h" />
     <ClInclude Include="SourceCodo\Player.h" />
     <ClInclude Include="SourceCodo\PtrGroup.h" />
     <ClInclude Include="SourceCodo\Ray.h" />
