@@ -1,5 +1,11 @@
 #include"Charactor.h"
 
+void clsCharactor::CharactorUpdate()
+{
+	Move();
+	Rotate();
+}
+
 void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//‰Á‘¬.
 {
 	m_fMoveSpeedMax = fMoveSpeedMax;

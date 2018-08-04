@@ -532,7 +532,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece + m_fFollPower && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
@@ -551,7 +551,7 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 	FLOAT fDistance;//ãóó£.
 	D3DXVECTOR3 vIntersect;//åì_ç¿ïW.
 	float fDis;//ãóó£Ç∆âÒì].
-	float fRaySpece = g_fRaySpace + m_fFollPower;
+	float fRaySpece = g_fRaySpace - m_fFollPower;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirDown;
 	rs.vRayStart = m_Trans.vPos;
@@ -560,11 +560,12 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece - m_fFollPower && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
+		m_bGround = true;
 		bResult = true;
 
-		m_Trans.vPos.y = vIntersect.y + (fRaySpece - g_fGravity);
+		m_Trans.vPos.y = vIntersect.y + (fRaySpece + m_fFollPower);
 
 		m_fFollPower = 0.0f;
 	}
@@ -611,12 +612,15 @@ void clsObject::FreeFoll()
 	if (!m_bGround)
 	{
 		m_fFollPower -= g_fGravity;
-		m_Trans.vPos.y += m_fFollPower;
 	}
+
+	m_Trans.vPos.y += m_fFollPower;
 }
 
 bool clsObject::WallJudge(clsStage* const pStage)
 {
+	m_bGround = false;
+
 	if (!pStage)return false;
 
 	std::vector<clsDX9Mesh*> vvpMeshTmp;
@@ -641,21 +645,22 @@ bool clsObject::WallJudge(clsStage* const pStage)
 
 		if (WallUnder(pObjMesh))
 		{
-			m_bGround = true;
 			if (!bHit)bHit = true;
 
-			D3DXVECTOR3 vMovePos = GetPosition();
-			D3DXVECTOR3 vMoveDir = { 0.0f, 0.0f, 0.0f };
+			//D3DXVECTOR3 vMovePos = GetPosition();
+			//D3DXVECTOR3 vMoveDir = { 0.0f, 0.0f, 0.0f };
 
-			vMovePos += vMoveDir;
-			SetPosition(vMovePos);
+			//vMovePos += vMoveDir;
+			//SetPosition(vMovePos);
 		}
 
 		if (!bResult)
 		{
-			bResult = bHit;
+			bResult = bHit; 
 		}
 	}
+
+	FreeFoll();
 
 	return bResult;
 }

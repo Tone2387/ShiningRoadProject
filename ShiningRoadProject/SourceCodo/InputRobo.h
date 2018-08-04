@@ -137,7 +137,7 @@ public:
 
 		}*/
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -162,7 +162,7 @@ public:
 			fAngle = m_pDxInput->GetLSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -187,7 +187,7 @@ public:
 			fAngle = m_pDxInput->GetLSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -213,7 +213,7 @@ public:
 			fAngle = m_pDxInput->GetRSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -238,7 +238,7 @@ public:
 			fAngle = m_pDxInput->GetRSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -263,7 +263,7 @@ public:
 			fAngle = m_pDxInput->GetRSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -292,7 +292,7 @@ public:
 
 	clsRoboCommand* QuickBoost(float& fPower)
 	{
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) > g_fStickPushMin)
 		{
 			if (m_pXInput)
 			{
@@ -316,7 +316,7 @@ public:
 
 	clsRoboCommand* QuickTurn(float& fPower)
 	{
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) > g_fStickPushMin)
 		{
 			if (m_pXInput)
 			{
