@@ -25,10 +25,6 @@ void clsPlayer::Action(clsStage* const pWall)
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
 
-	float fPushMin = 0.5f;
-
-	Updata();
-
 	pRoboCom = m_pInput->MoveSwitch();
 
 	if (pRoboCom)
@@ -55,6 +51,13 @@ void clsPlayer::Action(clsStage* const pWall)
 	{
 		pRoboCom->Trigger(this, fPush, fAngle);
 		pRoboCom->PushBotton(this);
+
+		pRoboCom = m_pInput->RSHorInput(fPush, fAngle);//ù‰ñ.
+
+		if (pRoboCom)
+		{
+			pRoboCom->Trigger(this, abs(fPush), fAngle);
+		}
 	}
 
 	else
@@ -87,6 +90,8 @@ void clsPlayer::Action(clsStage* const pWall)
 			}
 		}
 	}
+
+	Updata();
 
 	WallJudge(pWall);
 }

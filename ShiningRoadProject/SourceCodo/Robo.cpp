@@ -184,6 +184,8 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
+	CharactorUpdate();
+
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
 		m_fMoveSpeed = m_fQuickBoostSpeedMax;
@@ -237,11 +239,14 @@ void clsRobo::Updata()
 
 void clsRobo::UpdataLimitTime()
 {
-	m_iActivityLimitTime--;
-
 	if (m_iActivityLimitTime < 0)
 	{
 		m_bTimeUp = true;
+	}
+
+	else
+	{
+		m_iActivityLimitTime--;
 	}
 }
 

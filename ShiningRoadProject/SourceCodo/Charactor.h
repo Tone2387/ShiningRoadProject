@@ -60,6 +60,8 @@ public:
 	int m_iWeaponNumMax;
 	clsObject* m_pTargetObj;
 
+	void CharactorUpdate();
+
 	//ˆÚ“®ŠÖŒW.
 	void Move();
 
