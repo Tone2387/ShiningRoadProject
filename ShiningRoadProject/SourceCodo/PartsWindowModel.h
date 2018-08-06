@@ -17,7 +17,8 @@ public:
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
-		const D3DXVECTOR3& vEye );
+		const D3DXVECTOR3& vEye,
+		const bool isRender );
 
 	//アセンブルシーンのパーツウィンドウのカメラの高さの基準にする.
 	D3DXVECTOR3 GetSelectPartsHeight();
@@ -27,6 +28,10 @@ private:
 	//選択中パーツ.
 	std::unique_ptr< clsPARTS_WINDOW_MODEL_FOR_ARMS > m_upSelectParts;
 
+	//武器.
+	std::unique_ptr< clsPARTS_WEAPON >	m_upWeapon;
+
+	//パーツ選択用変数.
 	enPARTS			m_SelectType;
 	SKIN_ENUM_TYPE	m_SelectNum;
 
