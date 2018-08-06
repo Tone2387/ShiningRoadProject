@@ -31,9 +31,12 @@ void clsPARTS_WINDOW_MODEL_FOR_ARMS::Render(
 
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
+		//•`‰æ‚·‚é‚©‚µ‚È‚¢‚©‚ðŒˆ‚ß‚é.
 		bRender = isRender( RenderParts, i );
+		//ƒ‚ƒfƒ‹˜AŒ‹.
 		SetPos( GetPos() );
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
+		//•`‰æ.
 		if( !bRender ) continue;
 		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye );
 	}
