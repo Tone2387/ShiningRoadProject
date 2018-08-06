@@ -26,7 +26,7 @@ public:
 private:
 
 	//選択中パーツ.
-	std::unique_ptr< clsPARTS_WINDOW_MODEL_FOR_ARMS > m_upSelectParts;
+	std::unique_ptr< clsPARTS_WINDOW_MODEL_FOR_ARMS > m_upRoboModel;
 
 	//武器.
 	std::unique_ptr< clsPARTS_WEAPON >	m_upWeapon;

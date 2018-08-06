@@ -43,9 +43,9 @@ const D3DXVECTOR3 vCAM_OFFSET[4] =
 clsPARTS_WINDOW_MODEL::clsPARTS_WINDOW_MODEL( clsResource* const pResource, clsROBO_STATUS* const pStatus )
 	:m_wpResource( pResource )
 {
-	m_upSelectParts = make_unique< clsPARTS_WINDOW_MODEL_FOR_ARMS >();
-	m_upSelectParts->Create( pResource, pStatus );
-	m_upSelectParts->SetPos( { 0.0f, 0.0f, 0.0f } );
+	m_upRoboModel = make_unique< clsPARTS_WINDOW_MODEL_FOR_ARMS >();
+	m_upRoboModel->Create( pResource, pStatus );
+	m_upRoboModel->SetPos( { 0.0f, 0.0f, 0.0f } );
 
 	m_upWeapon = make_unique< clsPARTS_WEAPON >();
 	m_upWeapon->Create();
@@ -62,11 +62,13 @@ clsPARTS_WINDOW_MODEL::~clsPARTS_WINDOW_MODEL()
 void clsPARTS_WINDOW_MODEL::Update( const short Type, const short Num )
 {
 	//回転.
-	m_upSelectParts->AddRot( { 0.0f, fSPN_SPD, 0.0f } );
+	m_upRoboModel->AddRot( { 0.0f, fSPN_SPD, 0.0f } );
 	m_upWeapon->SetRotation( m_upWeapon->GetRotation() + D3DXVECTOR3( 0.0f, fSPN_SPD, 0.0f ) );
 
+	//添え字.
 	m_SelectNum = static_cast< SKIN_ENUM_TYPE >( Num );
 
+	//どのパーツ?.
 	switch( Type )
 	{
 	case SELECT_TYPE_LEG:
@@ -85,7 +87,7 @@ void clsPARTS_WINDOW_MODEL::Update( const short Type, const short Num )
 		m_SelectType = enPARTS::WEAPON_R;
 		break;
 
-	case SELECT_TYPE_ARMS:
+	case SELECT_TYPE_ARMS://右腕は後でやる.
 		m_SelectType = enPARTS::ARM_L;
 		break;
 
@@ -93,13 +95,14 @@ void clsPARTS_WINDOW_MODEL::Update( const short Type, const short Num )
 		return;
 	}
 
-	m_upSelectParts->AttachModel(
+	//前進.
+	m_upRoboModel->AttachModel(
 		m_SelectType, m_SelectNum );
 
 	//右腕も変更する.
 	if( Type == SELECT_TYPE_ARMS ){
 		m_SelectType = enPARTS::ARM_R;
-		m_upSelectParts->AttachModel(
+		m_upRoboModel->AttachModel(
 			m_SelectType, m_SelectNum );
 		m_SelectType = enPARTS::ARM_L;
 	}
@@ -126,8 +129,8 @@ void clsPARTS_WINDOW_MODEL::Render(
 	case enPARTS::HEAD:
 	case enPARTS::ARM_L:
 	case enPARTS::ARM_R:
-		assert( m_upSelectParts );
-		m_upSelectParts->Render( mView, mProj, vLight, vEye, 
+		assert( m_upRoboModel );
+		m_upRoboModel->Render( mView, mProj, vLight, vEye, 
 			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_SelectType ) );
 		break;
 	case enPARTS::WEAPON_L:
@@ -135,10 +138,6 @@ void clsPARTS_WINDOW_MODEL::Render(
 		assert( m_upWeapon );
 		m_upWeapon->ModelUpdate( m_upWeapon->m_Trans );
 		m_upWeapon->Render( mView, mProj, vLight, vEye );
-		break;
-	case enPARTS::MAX:
-		break;
-	default:
 		break;
 	}
 
@@ -150,8 +149,10 @@ D3DXVECTOR3 clsPARTS_WINDOW_MODEL::GetSelectPartsHeight()
 {
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
 
-	short tmpIndex = static_cast<short>( m_SelectType );
+	//ボーン名の配列の添え字.
+	short tmpIndex = static_cast< short >( m_SelectType );
 
+	//武器は全て左とする( わざわざswitch文にしているのは、他のパーツも何かする可能性もあったから ).
 	switch( tmpIndex )
 	{
 	case SELECT_TYPE_LEG:
@@ -182,8 +183,8 @@ D3DXVECTOR3 clsPARTS_WINDOW_MODEL::GetSelectPartsHeight()
 	}
 	//それ以外.
 	else{
-		m_upSelectParts->UpdateProduct();
-		vReturn.y = m_upSelectParts->GetBonePos( 
+		m_upRoboModel->UpdateProduct();
+		vReturn.y = m_upRoboModel->GetBonePos( 
 			m_SelectType, sBONE_NAME_PARTS_CENTER[ tmpIndex ].c_str() ).y;
 	}
 
@@ -194,24 +195,24 @@ D3DXVECTOR3 clsPARTS_WINDOW_MODEL::GetSelectPartsHeight()
 	}
 	//腕も特殊.
 	else if( tmpIndex == SELECT_TYPE_ARMS ){
-		float fHandY = m_upSelectParts->GetBonePos( 
+		float fHandY = m_upRoboModel->GetBonePos( 
 			m_SelectType, sBONE_NAME_PARTS_ARM_HAND.c_str() ).y;
 		const float fHARH = 0.5f;
 		vReturn.y = fHARH * ( vReturn.y + fHandY );
 	}
 	//武器も特殊.
 	else if( tmpIndex == SELECT_TYPE_WEP_L ){
+		const float fHARH = 0.5f;
 		D3DXVECTOR3 vWepCenter;
 		vWepCenter = 
 			m_upWeapon->GetBonePos( sBONE_NAME_PARTS_WEP_ROOT ) + 
 			m_upWeapon->GetBonePos( sBONE_NAME_PARTS_WEP_END );
-		vWepCenter *= 0.5f;
+		vWepCenter *= fHARH;
 		vReturn = vWepCenter;
 	}
 
 	//拡縮的な.
 	vReturn += vCAM_OFFSET[ tmpIndex ];
 
-//	return { 0.0f, 0.0f, 0.0f };
 	return vReturn;
 }
