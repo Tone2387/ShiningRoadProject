@@ -38,9 +38,6 @@ private:
 		}
 	}m_PartsSelect;
 
-	//パーツ選択中かそれ以外か.
-	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
-
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
@@ -69,14 +66,20 @@ private:
 	//minはその数値より小さくならない、maxはそれ以上にはならない.
 	// min <= t < max.
 	template< class T, class MIN, class MAX >
-	T KeepRange( T t, const MIN min, const MAX max ) const;	
+	T KeepRange( T t, const MIN min, const MAX max ) const;
 
+	//カーソルを出撃に合わせているならtrue.
+	bool isMissionStart();
 
 #if _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
+	//パーツ選択中かそれ以外か.
+	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
+
+	//パーツウィンドウ用.
 	D3D11_VIEWPORT* m_pViewPortSub;
 
 

@@ -20,7 +20,7 @@ const float fSTART_MOVE_SPD_INIT = -7.5f;
 const float fSTART_MOVE_ACC_INIT = 0.5f + 0.25f + 0.125f + 0.0625f;//0.5 0.25 0.125 0.0625 0.03125
 const float fSTART_ROT_Y = -0.29f;
 
-const float fSTART_END_SPD = 0.03125f;
+const float fSTART_END_SPD = 0.03125f * 2.0f;
 
 //----- ç≈èâ -----//.
 

@@ -7,6 +7,8 @@ using namespace std;
 
 clsPARTS_BASE::clsPARTS_BASE()
 {	
+	D3DXVECTOR3 vINIT_SCALE = { 1.0f, 1.0f, 1.0f };
+	m_Trans.vScale = vINIT_SCALE;
 }
 
 clsPARTS_BASE::~clsPARTS_BASE()

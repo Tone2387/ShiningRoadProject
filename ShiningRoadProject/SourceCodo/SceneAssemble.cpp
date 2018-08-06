@@ -301,7 +301,7 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	//パーツ描画.
 	SetSubRender( m_pViewPortSub, PartsViewCam.GetPos(), PartsViewCam.GetLookPos() );
 	assert( m_pSelectParts );
-	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos() );
+	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos(), isMissionStart() );
 }
 
 
@@ -489,6 +489,17 @@ T clsSCENE_ASSEMBLE::KeepRange( T t, const MIN min, const MAX max ) const
 
 	return static_cast<T>( num );
 }
+
+//カーソルを出撃に合わせているならtrue.
+bool clsSCENE_ASSEMBLE::isMissionStart()
+{
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
+		return false;
+	}
+
+	return true;
+}
+
 
 
 //============================ デバッグテキスト ===========================//
