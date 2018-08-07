@@ -45,6 +45,11 @@ public:
 		const int iPartsType, 
 		const int iPartsNum );//選択中パーツ番号.
 
+	void RenderPartsState( 
+		enSELECT_MODE enSelect, 
+		const int iPartsType, 
+		const int iPartsNum );//選択中パーツ番号.
+
 
 #if _DEBUG
 	//デバッグテキスト用.

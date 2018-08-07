@@ -82,6 +82,8 @@ private:
 	//パーツウィンドウ用.
 	D3D11_VIEWPORT* m_pViewPortSub;
 
+	//背景.
+	std::unique_ptr< clsSprite2D > m_upBack;
 
 	//お着換えするモデル.
 	clsASSEMBLE_MODEL*	m_pAsmModel;

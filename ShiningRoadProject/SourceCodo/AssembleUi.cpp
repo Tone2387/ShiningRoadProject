@@ -531,6 +531,36 @@ void clsASSEMBLE_UI::Render(
 
 		assert( m_upPartsNameText );
 		m_upPartsNameText->Render();
+//
+//		for( int i=0; i<m_iStatusNum; i++ ){
+//		assert( m_vupStatusText[i] );
+//			m_vupStatusText[i]->Render();
+//		assert( m_vupStatusNumText[i] );
+//			m_vupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
+//		}
+	}
+
+	assert( m_upWndBox );
+	m_upWndBox->Render();
+
+}
+
+void clsASSEMBLE_UI::RenderPartsState( 
+	enSELECT_MODE enSelect, 
+	const int iPartsType, 
+	const int iPartsNum )//選択中パーツ番号.
+{
+
+	//パーツ選択中のみ描画.
+	if( enSelect == enSELECT_MODE::PARTS ){
+//		//選択中カテゴリ.
+//		assert( m_upPartsTypeSelect );
+//		m_upPartsTypeSelect->Render();
+//		assert( m_upPartsNumSelect );
+//		m_upPartsNumSelect->Render();
+//
+//		assert( m_upPartsNameText );
+//		m_upPartsNameText->Render();
 
 		for( int i=0; i<m_iStatusNum; i++ ){
 		assert( m_vupStatusText[i] );
@@ -540,11 +570,7 @@ void clsASSEMBLE_UI::Render(
 		}
 	}
 
-	assert( m_upWndBox );
-	m_upWndBox->Render();
-
 }
-
 
 
 
