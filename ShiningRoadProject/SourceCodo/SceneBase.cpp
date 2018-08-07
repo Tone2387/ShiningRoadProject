@@ -37,7 +37,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 #endif//#if _DEBUG
 	,m_enNextScene( enSCENE::NOTHING )
 {
-	m_wpViewPortMain = m_wpViewPort11;
+	m_wpViewPortUsing = m_wpViewPort11;
 }
 
 clsSCENE_BASE::~clsSCENE_BASE()
@@ -64,7 +64,7 @@ clsSCENE_BASE::~clsSCENE_BASE()
 	m_wpResource = nullptr;
 	m_wpDxInput = nullptr;
 	m_wpPtrGroup = nullptr;
-	m_wpViewPortMain = nullptr;
+	m_wpViewPortUsing = nullptr;
 	m_wpViewPort11 = nullptr;
 	m_wpViewPort10 = nullptr;
 	m_wpContext = nullptr;
@@ -141,12 +141,6 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 //シーン内のオブジェクトの描画関数のまとめ.
 void clsSCENE_BASE::Render()
 {
-//	//元通りのビューポート.
-//	if( m_wpViewPortMain != m_wpViewPort11 ){
-//		m_wpViewPortMain = m_wpViewPort11;
-//		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
-//	}
-
 	//カメラ関数.
 	Camera();
 	//プロジェクション関数.
@@ -156,8 +150,8 @@ void clsSCENE_BASE::Render()
 	RenderProduct( m_wpCamera->GetPos() );
 
 	//元通りのビューポート.
-	if( m_wpViewPortMain != m_wpViewPort11 ){
-		m_wpViewPortMain = m_wpViewPort11;
+	if( m_wpViewPortUsing != m_wpViewPort11 ){
+		m_wpViewPortUsing = m_wpViewPort11;
 		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
 	}
 
@@ -368,12 +362,12 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 	}
 }
 
-void clsSCENE_BASE::SetSubRender( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos )
+void clsSCENE_BASE::SetViewPort( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos )
 {
 	if( !pVp ) return;
-	if( m_wpViewPort11 == pVp ) return;
+//	if( m_wpViewPort11 == pVp ) return;
 
-	m_wpViewPortMain = pVp;
+	m_wpViewPortUsing = pVp;
 
 	//ビュー(カメラ)変換.
 	D3DXVECTOR3 vUpVec	( 0.0f, 1.0f, 0.0f );	//上方位置.
@@ -382,7 +376,7 @@ void clsSCENE_BASE::SetSubRender( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &
 		&vCamPos, &vCamLookPos, &vUpVec );
 
 	assert( m_wpContext );
-	m_wpContext->RSSetViewports( 1, m_wpViewPortMain );
+	m_wpContext->RSSetViewports( 1, m_wpViewPortUsing );
 
 //	//画面のクリア.
 //	m_wpContext->ClearRenderTargetView(
@@ -391,3 +385,8 @@ void clsSCENE_BASE::SetSubRender( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &
 }
 
 
+D3D11_VIEWPORT* clsSCENE_BASE::GetViewPortMainPtr()
+{
+	assert( m_wpViewPort11 );
+	return m_wpViewPort11;
+}

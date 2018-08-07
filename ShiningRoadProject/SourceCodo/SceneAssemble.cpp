@@ -40,6 +40,11 @@ const D3DXVECTOR3 vPARTS_VIEW_CAM_POS  = { 0.0f, 0.0f, -100.0f };
 const D3DXVECTOR3 vPARTS_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
 //----- パーツウィンドウ用 -----//.
 
+//----- 背景 -----//.
+const char* sBACK_SPRITE_PATH = "Data\\Image\\PartsIcon\\NoData.png";
+const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
+
+//----- 背景 -----//.
 
 
 //================================//
@@ -92,6 +97,13 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 //	m_pParts->Init();
 //	m_pParts->SetPosition( D3DXVECTOR3( -2.0f, 1.0f, 0.0f ) );
 //
+
+	//背景.
+	SPRITE_STATE ss;
+	ss.Disp = { WND_W, WND_H };
+	m_upBack = make_unique< clsSprite2D >();
+	m_upBack->Create( m_wpDevice, m_wpContext, sBACK_SPRITE_PATH, ss );
+	m_upBack->SetPos( vBACK_POS );
 
 
 	//UIの数用変数.
@@ -222,6 +234,8 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			2, { 0.0f, 20.0f, 0.0f } );
 	}
 
+	if( GetAsyncKeyState( VK_UP )	& 0x8000 )	m_upBack->AddPos( { 0.0f, 0.0f, 0.05f } );
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_upBack->AddPos( { 0.0f, 0.0f,-0.05f } );
 
 
 #endif//#if _DEBUG
@@ -276,12 +290,13 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	PartsViewCam.SetLookPos( vPARTS_VIEW_CAM_LOOK );
 	PartsViewCam.AddPos( m_pSelectParts->GetSelectPartsHeight() );
 
-	//	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
-////	ConvDimPos( m_pSprite->GetPos(), m_pParts->GetPosition() );
-//
-//	m_pParts->Render( m_mView, m_mProj, m_vLight, vCamPos );
-//	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos, 
-//		D3DXVECTOR4(0.5f,2.0f,0.5f,0.75f), true );
+
+	//背景.
+	assert( m_upBack );
+	SetDepth( false );
+	m_upBack->Render();
+	SetDepth( true );
+
 
 	assert( m_pAsmModel );
 	//パーツ選択中は選択しているパーツを光らせる.
@@ -293,15 +308,24 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 	}
 
-	SetDepth( false );
 	assert( m_pUI );
+	SetDepth( false );
 	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
 	SetDepth( true );
 
 	//パーツ描画.
-	SetSubRender( m_pViewPortSub, PartsViewCam.GetPos(), PartsViewCam.GetLookPos() );
+	SetViewPort( m_pViewPortSub, PartsViewCam.GetPos(), PartsViewCam.GetLookPos() );
 	assert( m_pSelectParts );
 	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos(), isMissionStart() );
+
+	//パーツのステータス.
+	SetViewPort( GetViewPortMainPtr(), m_wpCamera->GetPos(), m_wpCamera->GetLookPos() );
+	assert( m_pUI );
+	SetDepth( false );
+	m_pUI->RenderPartsState( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
+	SetDepth( true );
+
+
 }
 
 
@@ -563,8 +587,8 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 
 	//選択肢.
 	sprintf_s( strDbgTxt, 
-		"UiPos : x[%f], y[%f]",
-		m_pUI->GetUiPos().x, m_pUI->GetUiPos().y );
+		"BackZ : z[%f]",
+		m_upBack->GetPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 //	//テスト用に数値を出す.

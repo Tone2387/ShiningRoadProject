@@ -67,8 +67,10 @@ protected:
 	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
 
-	//継承先のRenderProductで使用する.
-	void SetSubRender( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos );
+	//---継承先のRenderProductで使用する---.
+	void SetViewPort( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos );
+	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
+	D3D11_VIEWPORT* GetViewPortMainPtr();
 	//----- Render用 -----//.
 
 
@@ -115,11 +117,11 @@ private:
 
 	//2DSp用.
 	D3D10_VIEWPORT* m_wpViewPort10;
-	//分割用.
+	//分割用( メインのビューポート ).
 	D3D11_VIEWPORT* m_wpViewPort11;
 	
-	//診断用.
-	D3D11_VIEWPORT* m_wpViewPortMain;
+	//診断用( 今現在使っているビューポート ).
+	D3D11_VIEWPORT* m_wpViewPortUsing;
 
 
 	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
