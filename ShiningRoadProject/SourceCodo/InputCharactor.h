@@ -212,13 +212,12 @@ public:
 		return nullptr;
 	}
 
-protected:
-	clsCharactorCommand * m_pComJump;
-
 private:
 	clsCharactorCommand* m_pComLS;
 	clsCharactorCommand* m_pComRSHor;
 	clsCharactorCommand* m_pComRSVer;
+
+	clsCharactorCommand * m_pComJump;
 
 	clsCharactorCommand* m_pComShot;
 };

@@ -9,6 +9,7 @@ struct WeaponState
 	BulletState  BState;
 	ShootingState SState;
 
+	int iAtk;
 	int iReloadTime;
 	int iLockSpeed;
 	float iLockRange;
@@ -26,14 +27,15 @@ public:
 	~clsWeapon();
 
 	void Create(WeaponState State);
-	void Updata();
+	void Update();
 	bool Shot(clsObject* pTargetObj = nullptr);
-	int Hit(clsObject::SPHERE** const ppTargetBodyCol, const int iTargetColNumMax);
+
+	int Hit(
+		std::vector<clsObject::SPHERE> const v_TargetSphere);
+	
 	void Reload();
 
 	bool IsNeedReload();//c’e‚ª‚ ‚é‚©‚ÅËŒ‚‚©ƒŠƒ[ƒh‚©‚ğ”»’è.
-
-	clsObject** GetBulletObjs(int& iBulletNumMax) const;
 
 private:
 	WeaponState m_State;

@@ -98,16 +98,16 @@ vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 {
 	vector<clsDX9Mesh*> vvpMeshArrayTmp;
 
+	int iSize = m_vpStageObject.size() + 1;
+
+	vvpMeshArrayTmp.resize(iSize);
+
 	vvpMeshArrayTmp.push_back(m_pStageGround->GetModelPtr());
 
 	for (int i = 0; i < m_vpStageObject.size(); i++)
 	{
 		vvpMeshArrayTmp.push_back(m_vpStageObject[i]->GetModelPtr());
 	}
-
-	int iSize = m_vpStageObject.size() + 1;
-
-	vvpMeshArrayTmp.resize(iSize);
 
 	return vvpMeshArrayTmp;
 }

@@ -532,7 +532,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece + m_fFollPower && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
@@ -551,7 +551,7 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 	FLOAT fDistance;//ãóó£.
 	D3DXVECTOR3 vIntersect;//åì_ç¿ïW.
 	float fDis;//ãóó£Ç∆âÒì].
-	float fRaySpece = g_fRaySpace + m_fFollPower;
+	float fRaySpece = g_fRaySpace - m_fFollPower;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirDown;
 	rs.vRayStart = m_Trans.vPos;
@@ -564,7 +564,7 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 	{
 		bResult = true;
 
-		m_Trans.vPos.y = vIntersect.y + (fRaySpece - g_fGravity);
+		m_Trans.vPos.y = vIntersect.y + (fRaySpece - g_fGroundSpece);
 
 		m_fFollPower = 0.0f;
 	}
@@ -590,13 +590,13 @@ bool clsObject::Collision(SPHERE pAttacker, SPHERE pTarget)
 	return false;//è’ìÀÇµÇƒÇ¢Ç»Ç¢.
 }
 
-bool clsObject::ObjectCollision(SPHERE* pTarget, const int iNumMax)
+bool clsObject::ObjectCollision(std::vector<SPHERE> pTarget, const int iNumMax)
 {
 	for (int i = 0; i < m_iColSpheresMax; i++)
 	{
 		for (int j = 0; j < iNumMax; j++)
 		{
-			if (Collision(*m_ppColSpheres[i], pTarget[j]))
+			if (Collision(m_v_pSpheres[i], pTarget[j]))
 			{
 				return true;
 			}
@@ -621,6 +621,8 @@ bool clsObject::WallJudge(clsStage* const pStage)
 
 	std::vector<clsDX9Mesh*> vvpMeshTmp;
 	vvpMeshTmp = pStage->GetStageMeshArray();
+
+	m_bGround = false;
 
 	bool bResult = false;
 
@@ -656,6 +658,8 @@ bool clsObject::WallJudge(clsStage* const pStage)
 			bResult = bHit;
 		}
 	}
+
+	FreeFoll();
 
 	return bResult;
 }

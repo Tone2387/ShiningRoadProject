@@ -12,11 +12,11 @@ void clsWeapon::Create(WeaponState State)
 		m_ppBullet[i]->Init(m_State.BState);
 	}
 
-	m_iRemainingBullet = m_State.iBulletNumMax;
+	Reload();
 }
 
 
-void clsWeapon::Updata()
+void clsWeapon::Update()
 {
 	for (int i = 0; i < m_State.iBulletNumMax; i++)
 	{
@@ -24,15 +24,15 @@ void clsWeapon::Updata()
 	}
 }
 
-int clsWeapon::Hit(clsObject::SPHERE** const ppTargetBodyCol,const int iTargetColNumMax)
+int clsWeapon::Hit(const std::vector<clsObject::SPHERE> p_v_TargetSphere)
 {
 	int iResult = 0;
 
 	for (int i = 0; i < m_State.iBulletNumMax; i++)
 	{
-		if (m_ppBullet[i]->Hit(ppTargetBodyCol,iTargetColNumMax))
+		if (m_ppBullet[i]->Hit(p_v_TargetSphere))
 		{
-			iResult += m_State.BState.iAtk;
+			iResult += m_State.iAtk;
 		}
 	}
 	
@@ -56,7 +56,7 @@ bool clsWeapon::Shot(clsObject* pTargetObj)
 			D3DXVECTOR3 vHorDevia, vPrediction;
 
 			fDis = D3DXVec3Length(&(vPos - pTargetObj->GetPosition()));//ターゲットとの現在距離.
-			iTime = (int)(fDis / m_State.BState.fMoveSpeed);//到達までの時間(だと思いたい)
+			iTime = (int)(fDis / m_State.BState.fSpeed);//到達までの時間(だと思いたい)
 
 			fVerDevia = pTargetObj->m_fFollPower * iTime;//垂直方向の予測距離.
 
@@ -103,6 +103,8 @@ bool clsWeapon::IsNeedReload()
 	}
 
 	Reload();
+
+	return true;
 }
 
 void clsWeapon::Reload()

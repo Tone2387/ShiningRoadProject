@@ -20,8 +20,16 @@ public:
 
 	void InhUpdate();//Inheritance
 
+	D3DXVECTOR3 GetCamTargetPos();
+	D3DXVECTOR3 GetLookTargetPos();
+
 private:
+	bool m_bCamPosXSwitch;//false:‰E.
+
 	clsInputRobo* m_pInput;
 
-	D3DXVECTOR3 m_vCamPos;
+	void UpdateCamTargetPos();
+
+	D3DXVECTOR3 m_vCamTargetPos;
+	D3DXVECTOR3 m_vLookTargetPos;
 };

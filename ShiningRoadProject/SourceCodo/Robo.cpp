@@ -8,15 +8,9 @@ void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup)
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
-	m_pMesh = new clsSkinMesh;
+	m_pMesh = new clsMISSION_MODEL;
 
-	m_pMesh->AttachModel(
-		m_wpResource->GetSkinModels(
-				clsResource::enSkinModel_Leg ) );
-	//m_wpResource->GetPartsModels( enPARTS::LEG, 3 ));
-	m_pMesh->SetAnimSpeed(0.1);
-
-	SetScale(0.005f);
+	m_pMesh->Create(m_wpResource, pPtrGroup->GetRoboStatus());
 
 	m_Trans.vPos.y = 10.0f;
 
@@ -51,6 +45,32 @@ void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup)
 
 	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
+
+	WeaponState WS[enWeaponTypeSize];
+
+	for (int i = 0; i < enWeaponTypeSize; i++)
+	{
+		//float型はintで入ってきたステータスにあれこれして計算する.
+
+		WS[i].iAtk = 5;
+		WS[i].iBulletNumMax = 10;
+		WS[i].iLockRange = 10;
+		WS[i].iLockSpeed = 10;
+		WS[i].iReloadTime = 20;
+		WS[i].iStablity = 10;
+		WS[i].MagazineReloadTime = 10;
+
+		WS[i].BState.fRangeMax = 1.5f;
+		WS[i].BState.fScale = 0.5f;
+		WS[i].BState.fSpeed = 0.001f;
+		WS[i].BState.iHitEfcNum = 0;
+		WS[i].BState.iLineEfcNum = 0;
+		WS[i].BState.iSEHitNum = 0;
+		WS[i].BState.iSEShotNum = 0;
+		WS[i].BState.iShotEfcNum = 0;
+	}
+
+	WeaponInit(pPtrGroup, WS, enWeaponTypeSize);
 }
 
 void clsRobo::Walk()
@@ -232,7 +252,11 @@ void clsRobo::Updata()
 		m_iQuickInterbal--;
 	}
 
+	WeaponUpdate();
+
 	EnelgyRecovery();
+
+	UpdatePosfromBone();
 }
 
 void clsRobo::UpdataLimitTime()
@@ -288,16 +312,52 @@ bool clsRobo::EnelgyConsumption(const int iConsumption)
 	return false;
 }
 
+void clsRobo::UpdatePosfromBone()
+{
+	m_vCenterPos = m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
+
+	for (int i = 0; i < enWeaponTypeSize; i++)
+	{
+		m_v_vMuzzlePos[i] = m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleEnd");
+		m_v_vShotDir[i] = m_v_vMuzzlePos[i] - m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleRoot");
+		
+		D3DXVec3Normalize(&m_v_vShotDir[i], &m_v_vShotDir[i]);
+	}
+	
+}
+
 void clsRobo::ShotLWeapon()
 {
 	ShotSwich(enWeaponLHand);
-	//if(m_pLHandWeapon->Shot()){}
+	if (Shot())
+	{
+		//射撃アニメ処理.
+	}
+
+	else
+	{
+		if (Reload())
+		{
+			//リロードアニメ処理.
+		}
+	}
 }
 
 void clsRobo::ShotRWeapon()
 {
 	ShotSwich(enWeaponRHand);
-	//if(m_pRHandWeapon->Shot()){}
+	if (Shot())
+	{
+		//射撃アニメ処理.
+	}
+
+	else
+	{
+		if (Reload())
+		{
+			//リロードアニメ処理.
+		}
+	}
 }
 
 clsRobo::clsRobo() :

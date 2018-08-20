@@ -30,6 +30,9 @@ public:
 		m_pQuickTurn = new clsCommandQuickTurn;
 		m_pBoostRising = new clsCommandBoostRising;
 
+		m_pComLShot = new clsCommandLShot;
+		m_pComRShot = new clsCommandRShot;
+
 		m_pComLS = new clsCommandMove;
 		m_pComLSHor = new clsCommandMove;
 		m_pComLSVer = new clsCommandMove;
@@ -137,7 +140,7 @@ public:
 
 		}*/
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -162,7 +165,7 @@ public:
 			fAngle = m_pDxInput->GetLSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -187,7 +190,7 @@ public:
 			fAngle = m_pDxInput->GetLSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -213,7 +216,7 @@ public:
 			fAngle = m_pDxInput->GetRSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -238,7 +241,7 @@ public:
 			fAngle = m_pDxInput->GetRSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -253,7 +256,7 @@ public:
 
 		if (m_pXInput)
 		{
-			fPower = m_pXInput->GetRStickSlope();
+			fPower = m_pXInput->GetRStickY();
 			fAngle = m_pXInput->GetRStickTheta();
 		}
 
@@ -263,7 +266,7 @@ public:
 			fAngle = m_pDxInput->GetRSDir();
 		}
 
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) < g_fStickPushMin)
 		{
 			return nullptr;
 		}
@@ -290,9 +293,9 @@ public:
 		return nullptr;
 	}
 
-	clsRoboCommand* QuickBoost(float& fPower)
+	clsRoboCommand* QuickBoost(float fPower)
 	{
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) > g_fStickPushMin)
 		{
 			if (m_pXInput)
 			{
@@ -314,9 +317,9 @@ public:
 		return nullptr;
 	}
 
-	clsRoboCommand* QuickTurn(float& fPower)
+	clsRoboCommand* QuickTurn(float fPower)
 	{
-		if (fPower < g_fStickPushMin)
+		if (abs(fPower) > g_fStickPushMin)
 		{
 			if (m_pXInput)
 			{
@@ -359,6 +362,48 @@ public:
 		return nullptr;
 	}
 
+	clsRoboCommand* LWeaponShot()
+	{
+		if (m_pXInput)
+		{
+			if (m_pXInput->isPressExit(XINPUT_LB))
+			{
+				return m_pComLShot;
+			}
+		}
+
+		else if(m_pDxInput)
+		{
+			if (m_pDxInput->IsPressKey(enPKey_05))
+			{
+				return m_pComLShot;
+			}
+		}
+
+		return nullptr;
+	}
+
+	clsRoboCommand* RWeaponShot()
+	{
+		if (m_pXInput)
+		{
+			if (m_pXInput->isPressExit(XINPUT_RB))
+			{
+				return m_pComRShot;
+			}
+		}
+
+		else if (m_pDxInput)
+		{
+			if (m_pDxInput->IsPressKey(enPKey_06))
+			{
+				return m_pComRShot;
+			}
+		}
+
+		return nullptr;
+	}
+
 	clsDxInput* m_pDxInput;
 	clsXInput* m_pXInput;
 
@@ -369,6 +414,9 @@ private:
 	clsRoboCommand* m_pQuickBoost;
 	clsRoboCommand* m_pQuickTurn;
 	clsRoboCommand* m_pBoostRising;
+
+	clsRoboCommand* m_pComLShot;
+	clsRoboCommand* m_pComRShot;
 
 	clsRoboCommand* m_pComLS;
 	clsRoboCommand* m_pComLSHor;

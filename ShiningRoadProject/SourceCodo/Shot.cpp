@@ -23,12 +23,13 @@ HRESULT clsShot::Init(BulletState BState)
 	m_ShotState = BState;
 
 	//“–‚½‚è”»’è‚Ì‘å‚«‚³‚ðŒˆ‚ß‚é.
-	m_ppColSpheres = new clsObject::SPHERE * [g_iColNum];
+
+	m_v_pSpheres.resize(g_iColNum);
 
 	for (int i = 0; i < g_iColNum; i++)
 	{
-		m_ppColSpheres[i]->vCenter = &m_Trans.vPos;
-		m_ppColSpheres[i]->fRadius = 1.0f;
+		m_v_pSpheres[i].vCenter = &m_Trans.vPos;
+		m_v_pSpheres[i].fRadius = m_ShotState.fScale;
 	}
 	
 	//Šm”F—p‚Ì½Ì¨±‚ðÚÝÀÞØÝ¸Þ‚·‚é.
@@ -41,15 +42,15 @@ HRESULT clsShot::Init(BulletState BState)
 	return S_OK;
 }
 
-bool clsShot::Hit(SPHERE** ppTargetSphere,int iSphereMax)
+bool clsShot::Hit(std::vector<clsObject::SPHERE> p_v_TargetSphere)
 {
 	if (m_bShotExistFlg)
 	{
 		for (int i = 0; i < g_iColNum; i++)
 		{
-			for (int j = 0; j < iSphereMax; i++)
+			for (int j = 0; j < p_v_TargetSphere.size(); i++)
 			{
-				if (Collision(*m_ppColSpheres[i], *ppTargetSphere[j]))
+				if (Collision(m_v_pSpheres[i], p_v_TargetSphere[j]))
 				{
 					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
@@ -63,33 +64,16 @@ bool clsShot::Hit(SPHERE** ppTargetSphere,int iSphereMax)
 	return false;
 }
 
-bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vTarget)
+bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vDir)
 {
 	if (m_bExistFlg)
 	{
 		return false;
-	}
+	}	
 
-	D3DXMATRIX mInv;
+	m_vMoveDir = vDir;
 
-	D3DXMatrixTranslation(
-		&mInv,
-		vTarget.x,
-		vTarget.y,
-		vTarget.z
-		);
-
-	D3DXMatrixInverse(&mInv, NULL, &mInv);
-
-	D3DXVECTOR3 vStart,vTar;
-
-	D3DXVec3TransformCoord(&vStart, &vShotPos, &mInv);
-	D3DXVec3TransformCoord(&vTar, &vTarget, &mInv);
-
-	m_vMoveDir = vTar - vStart;
-	D3DXVec3Normalize(&m_vMoveDir, &m_vMoveDir);
-
-	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveDir * m_fMoveSpeed;
+	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveDir * m_ShotState.fSpeed;
 
 	m_bShotExistFlg = true;
 	m_bExistFlg = true;

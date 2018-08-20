@@ -361,14 +361,19 @@ void clsCharactor::Spin(float& fNowRot, const float fTargetRot, const float fTur
 	ObjRollOverGuard(&fNowRot);
 }
 
-void clsCharactor::Shot()
+bool clsCharactor::Shot()
 {
-	if (m_ppWeapon[m_iWeaponNum]->Shot(m_pTargetObj)){}
+	return m_v_pWeapons[m_iWeaponNum]->Shot(m_pTargetObj);
+}
+
+bool clsCharactor::Reload()
+{
+	return m_v_pWeapons[m_iWeaponNum]->IsNeedReload();
 }
 
 void clsCharactor::ShotSwich(const int iWeaponNum)
 {
-	m_iWeaponNum++;
+	m_iWeaponNum = iWeaponNum;
 
 	if (m_iWeaponNum > m_iWeaponNumMax)
 	{
@@ -376,51 +381,63 @@ void clsCharactor::ShotSwich(const int iWeaponNum)
 	}
 }
 
-void clsCharactor::WeaponInit(WeaponState* pWeapon, const int iWeaponMax)
+void clsCharactor::WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon, const int iWeaponMax)
 {
 	m_iWeaponNumMax = iWeaponMax;
 	m_iWeaponNum = 0;
 
-	m_ppWeapon = new clsWeapon *[m_iWeaponNumMax];
+	m_v_pWeapons.resize(iWeaponMax);
+	m_v_vMuzzlePos.resize(iWeaponMax);
+	m_v_vShotDir.resize(iWeaponMax);
 
 	for (int i = 0; i < m_iWeaponNumMax; i++)
 	{
-		m_ppWeapon[i]->Create(pWeapon[i]);
+		pWeapon[i].SState.vShotStartPos = &m_v_vMuzzlePos[i];
+		pWeapon[i].SState.vShotMoveDir = &m_v_vShotDir[i];
+
+		m_v_pWeapons[i] = new clsWeapon(pPrt);
+		m_v_pWeapons[i]->Create(pWeapon[i]);
 	}
 }
 
 void  clsCharactor::WeaponUpdate()
 {
-	for (int i = 0; i < m_iWeaponNumMax; i++)
+	for (int i = 0; i < m_v_pWeapons.size(); i++)
 	{
-		m_ppWeapon[i]->Updata();
+		m_v_pWeapons[i]->Update();
 	}
 }
 
-int  clsCharactor::BulletHit(SPHERE** pTargrtBodyCols, int iTargetColNumMax)
+HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE> const v_TargetSphere)
 {
-	int iResult = 0;
+	HitState HitS;
+	HitS.Clear();
 
-	for (int i = 0; i < m_iWeaponNumMax; i++)
+	for (int i = 0; i < m_v_pWeapons.size(); i++)
 	{
-		iResult += m_ppWeapon[i]->Hit(pTargrtBodyCols, iTargetColNumMax);
+		HitS.iDamage += m_v_pWeapons[i]->Hit(v_TargetSphere);
 	}
 
-	return iResult;
+	if (HitS.iDamage > 0)
+	{
+		HitS.bHit = true;
+	}
+
+	return HitS;
 }
 
-bool clsCharactor::Damage(const int iDamage)
+bool clsCharactor::Damage(HitState HitS)
 {
-	if (iDamage > 0)
+	if (HitS.bHit)
 	{
-		if (m_HP < iDamage)
+		if (m_HP < HitS.iDamage)
 		{
 			m_HP = 0;
 		}
 
 		else
 		{
-			m_HP -= iDamage;
+			m_HP -= HitS.iDamage;
 		}
 
 		return true;
@@ -448,4 +465,12 @@ clsCharactor::clsCharactor() :
 clsCharactor::~clsCharactor()
 {
 	
+}
+
+void HitState::Clear()
+{
+	bHit = false;
+	iDamage = 0;
+	fInpuct = 0.0f;
+	vInpuctDir = { 0.0f, 0.0f, 0.0f };
 }
