@@ -563,9 +563,9 @@ void clsASSEMBLE_UI::RenderPartsState(
 //		m_upPartsNameText->Render();
 
 		for( int i=0; i<m_iStatusNum; i++ ){
-		assert( m_vupStatusText[i] );
+			assert( m_vupStatusText[i] );
 			m_vupStatusText[i]->Render();
-		assert( m_vupStatusNumText[i] );
+			assert( m_vupStatusNumText[i] );
 			m_vupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
 		}
 	}

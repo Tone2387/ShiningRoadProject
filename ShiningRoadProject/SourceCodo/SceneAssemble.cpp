@@ -141,10 +141,19 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_wpCamera->SetPos( vINIT_CAMERA_POS );
 	m_wpCamera->SetLookPos( vINIT_CAMERA_LOOK_POS );
 
+	//装備中のパーツを今の選択肢に適応する.
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::LEG ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::LEG );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::CORE ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::CORE );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::HEAD ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::HEAD );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::ARMS ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::HEAD );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::WEAPON_L ) ]	= m_wpRoboStatus->GetPartsNum( enPARTS::WEAPON_L );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::WEAPON_R ) ]	= m_wpRoboStatus->GetPartsNum( enPARTS::WEAPON_R );
+
 	//ミッションシーンに引き継ぐ情報の初期化.
 	assert( m_wpRoboStatus );
 	m_wpRoboStatus->Clear();
 
+	//パーツビュー.
 	assert( !m_pViewPortSub );
 	m_pViewPortSub = new D3D11_VIEWPORT;
 	m_pViewPortSub->Width	 = INIT_VP_PARTS_W;
@@ -154,6 +163,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_pViewPortSub->MinDepth = INIT_VP_PARTS_MIN;
 	m_pViewPortSub->MaxDepth = INIT_VP_PARTS_MAX;
 
+	//パーツビューに置くパーツ.
 	assert( !m_pSelectParts );
 	m_pSelectParts = new clsPARTS_WINDOW_MODEL( m_wpResource, m_wpRoboStatus );
 //	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
