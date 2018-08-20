@@ -19,7 +19,12 @@ clsSCENE_MISSION::~clsSCENE_MISSION()
 //生成時に一度だけ通る処理.
 void clsSCENE_MISSION::CreateProduct()
 {
-	
+	m_pPlayer = new clsPlayer;
+	m_pPlayer->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
+
+	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
+	m_pPlayer->SetPosition(tmpVec3);
+	m_pPlayer->SetScale(0.01f);
 
 	//テストモデルの初期化.
 	/*m_pTestChara = new clsCharaStatic;
