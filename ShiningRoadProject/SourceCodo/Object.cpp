@@ -564,7 +564,7 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 	{
 		bResult = true;
 
-		m_Trans.vPos.y = vIntersect.y + (fRaySpece - g_fGroundSpece);
+		m_Trans.vPos.y = vIntersect.y + (fRaySpece + m_fFollPower);
 
 		m_fFollPower = 0.0f;
 	}
