@@ -97,4 +97,22 @@ public:
 	}
 };
 
+class clsCommandLShot : public clsRoboCommand
+{
+public:
+	virtual void PushBotton(clsRobo* pRobo)
+	{
+		pRobo->ShotLWeapon();
+	}
+};
+
+class clsCommandRShot : public clsRoboCommand
+{
+public:
+	virtual void PushBotton(clsRobo* pRobo)
+	{
+		pRobo->ShotRWeapon();
+	}
+};
+
 #endif//#ifndef ROBOCOMMAND

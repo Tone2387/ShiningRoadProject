@@ -7,6 +7,16 @@
 #include"Object.h"
 #include"Weapon.h"
 
+struct HitState//弾が当たった時に相手側に送る情報のまとめ.
+{
+	bool bHit;
+	int iDamage;
+	float fInpuct;
+	D3DXVECTOR3 vInpuctDir;
+
+	void Clear();
+};
+
 class clsCharactor : public clsObject
 {
 public:
@@ -49,13 +59,20 @@ public:
 
 	float m_fJumpPower;
 
-	void Shot();
-	void WeaponInit(WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
+	bool Shot();
+	bool Reload();
+
+	HitState BulletHit(std::vector<clsObject::SPHERE> const v_TargetSphere);
+	bool Damage(HitState);//ダメージと衝撃力.
+
+	void WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
 	
 	void WeaponUpdate();
-	int BulletHit(SPHERE** pTargrtBodyCols, int iTargetColNumMax = 1);
-
-	clsWeapon** m_ppWeapon;
+	
+	std::vector<clsWeapon*> m_v_pWeapons;
+	std::vector<D3DXVECTOR3> m_v_vMuzzlePos;
+	std::vector<D3DXVECTOR3> m_v_vShotDir;
+	//clsWeapon** m_ppWeapon;
 	int m_iWeaponNum;
 	int m_iWeaponNumMax;
 	clsObject* m_pTargetObj;
@@ -127,8 +144,6 @@ public:
 		const D3DXVECTOR3 CenterPos, 
 		const D3DXVECTOR3 TargetPos, 
 		const float Range);//円の範囲判定.
-
-	bool Damage(const int iDamage);
 
 protected:
 	void ShotSwich(const int iWeaponNum);//複数ある武器から使用する武器を決める.

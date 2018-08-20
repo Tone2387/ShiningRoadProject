@@ -38,12 +38,27 @@ private:
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
-	//m_pPlayer
-	//m_vpFrends
-	//m_vpEnemys
+	clsPlayer* m_pPlayer;
+
+
+
+	std::vector<clsCharactor*> m_v_pFriends;
+	std::vector<clsCharactor*> m_v_pEnemys;
+
+	void CreateFriends();
+	void CreateEnemys();
+
+	void Collison();
+	
+	//同キャラのShotが同キャラのBodyに当たる判定を入れるかは処理の兼ね合いで入れる.
+	void ColFShottoFBody();
+	void ColFShottoEBody();
+
+	void ColEShottoFBody();
+	void ColEShottoEBody();
 
 	//テスト用モデル( これは消しても良いです、いらないです ).
-	clsPlayer* m_pPlayer;
+	
 	//clsCharaStatic* m_pTestChara;
 
 	clsStage* m_pStage;

@@ -19,12 +19,7 @@ clsSCENE_MISSION::~clsSCENE_MISSION()
 //生成時に一度だけ通る処理.
 void clsSCENE_MISSION::CreateProduct()
 {
-	m_pPlayer = new clsPlayer;
-	m_pPlayer->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
-
-	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
-	m_pPlayer->SetPosition(tmpVec3);
-	m_pPlayer->SetScale(0.01f);
+	
 
 	//テストモデルの初期化.
 	/*m_pTestChara = new clsCharaStatic;
@@ -47,12 +42,11 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	assert(m_pPlayer);
 	m_pPlayer->Action(m_pStage);
 
-	D3DXVECTOR3 vLookPosTmp = m_pPlayer->m_Trans.vPos;
-	vLookPosTmp.y += 0.5f;
-	//m_wpCamera->SetPos(vTmp);
+	D3DXVECTOR3 vCamPosTmp = m_pPlayer->GetCamTargetPos();
 
-	D3DXVECTOR3 vCamPosTmp = m_pPlayer->m_Trans.vPos + (GetVec3Dir(m_pPlayer->m_Trans.fYaw, g_vDirBack) * 2);
-	vCamPosTmp.y += 0.5f;
+	D3DXVECTOR3 vLookPosTmp = m_pPlayer->GetLookTargetPos();
+	//vLookPosTmp.y += 0.5f;
+	//m_wpCamera->SetPos(vTmp);
 
 	m_wpCamera->SetPos(vCamPosTmp,false);
 	m_wpCamera->SetLookPos(vLookPosTmp);
@@ -72,6 +66,82 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
 }
 
+void clsSCENE_MISSION::CreateFriends()
+{
+	m_pPlayer = new clsPlayer;
+	m_pPlayer->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
+
+	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
+	m_pPlayer->SetPosition(tmpVec3);
+	m_pPlayer->SetScale(0.01f);
+
+	m_v_pFriends.push_back(m_pPlayer);
+
+	m_v_pFriends.shrink_to_fit();
+}
+
+void clsSCENE_MISSION::CreateEnemys()
+{
+
+}
+
+void clsSCENE_MISSION::Collison()
+{
+
+}
+
+//同キャラのShotが同キャラのBodyに当たる判定を入れるかは処理の兼ね合いで入れる.
+void clsSCENE_MISSION::ColFShottoFBody()
+{
+	for (int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		for (int j = 0; j < m_v_pFriends.size(); j++)
+		{
+			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->m_v_pSpheres);
+			Tmp.iDamage = 0;
+			m_v_pFriends[j]->Damage(Tmp);
+		}
+	}
+}
+
+void clsSCENE_MISSION::ColFShottoEBody()
+{
+	for (int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		for (int j = 0; j < m_v_pEnemys.size(); j++)
+		{
+			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->m_v_pSpheres);
+			m_v_pEnemys[j]->Damage(Tmp);
+		}
+	}
+}
+
+void clsSCENE_MISSION::ColEShottoFBody()
+{
+	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		for (int j = 0; j < m_v_pFriends.size(); j++)
+		{
+			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->m_v_pSpheres);
+			m_v_pFriends[j]->Damage(Tmp);
+		}
+	}
+}
+
+void clsSCENE_MISSION::ColEShottoEBody()
+{
+	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		for (int j = 0; j < m_v_pEnemys.size(); j++)
+		{
+			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->m_v_pSpheres);
+			Tmp.iDamage = 0;
+			m_v_pEnemys[j]->Damage(Tmp);
+		}
+	}
+}
+
+
 
 //============================ デバッグテキスト ===========================//
 #if _DEBUG
@@ -85,8 +155,10 @@ void clsSCENE_MISSION::RenderDebugText()
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
 
 	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+		"PlayerPos : x[%f], y[%f], z[%f]",
+		m_pPlayer->GetPosition().x,
+		m_pPlayer->GetPosition().y, 
+		m_pPlayer->GetPosition().z);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	sprintf_s( strDbgTxt, 
@@ -94,10 +166,8 @@ void clsSCENE_MISSION::RenderDebugText()
 		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	D3DXVECTOR3 vTmp = m_pPlayer->m_pMesh->GetBonePos("");
-
 	sprintf_s(strDbgTxt,
-		"BonePos : x[%f], y[%f], z[%f]",
+		"CamPos : x[%f], y[%f], z[%f]",
 		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z);
 	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
 
@@ -105,7 +175,7 @@ void clsSCENE_MISSION::RenderDebugText()
 		"Enelgy : [%d]",
 		m_pPlayer->m_iEnelgy);
 	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-
+	
 	if (m_pPlayer->m_bBoost)
 	{
 		sprintf_s(strDbgTxt,"ON");

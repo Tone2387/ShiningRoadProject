@@ -16,7 +16,7 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup )
 
 	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
 
-	m_pMesh->SetAnimSpeed(0.01);
+	//m_pMesh->SetAnimSpeed(0.01);
 }
 
 void clsTestObj::Action(const clsDX9Mesh* pWall)
@@ -89,5 +89,5 @@ void clsTestObj::Action(const clsDX9Mesh* pWall)
 
 void clsTestObj::InhUpdate()
 {
-	m_pMesh->SetAnimSpeed(0.01);
+	//m_pMesh->SetAnimSpeed(0.01);
 }

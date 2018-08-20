@@ -37,18 +37,28 @@ public:
 		enWeaponTypeSize
 	};
 
-	/*clsSkinMesh * m_pHead;
-	clsSkinMesh * m_pCore;
-	clsSkinMesh * m_pLeftArm;
-	clsSkinMesh * m_pRightArm;
-	clsSkinMesh * m_pLeg;*/
-	clsSkinMesh* m_pMesh;
+	clsMISSION_MODEL* m_pMesh;
 
 	void RoboInit(clsPOINTER_GROUP* const pPtrGroup);
 
 	void ModelUpdate()
 	{
-		m_pMesh->ModelUpdate(m_Trans);
+		D3DXVECTOR3 vTmp;
+
+		vTmp = GetPosition();
+		m_pMesh->SetPos(vTmp);
+
+		vTmp = GetRotation();
+		vTmp.y += D3DX_PI;
+
+		ObjRollOverGuard(&vTmp.y);
+
+		m_pMesh->SetRot(vTmp);
+
+		m_pMesh->SetScale(m_Trans.vScale.x);
+
+		m_pMesh->UpDate();
+		//UpdateCollsion();
 	}
 
 	void Render( 
@@ -60,8 +70,10 @@ public:
 		const bool isAlpha = false )
 	{
 		ModelUpdate();
-		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, isAlpha );
+		m_pMesh->Render(mView, mProj, vLight, vEye);
 	}
+
+	void UpdateCollsion();
 
 	bool m_bBoost;//true:ブースター展開/false:非展開.
 
@@ -126,6 +138,8 @@ public:
 	void UpdataQuick();
 	void UpdataLimitTime();
 	void UpdataBoost();
+
+	void UpdatePosfromBone();
 
 	clsRobo();
 	~clsRobo();

@@ -591,13 +591,13 @@ bool clsObject::Collision(SPHERE pAttacker, SPHERE pTarget)
 	return false;//è’ìÀÇµÇƒÇ¢Ç»Ç¢.
 }
 
-bool clsObject::ObjectCollision(SPHERE* pTarget, const int iNumMax)
+bool clsObject::ObjectCollision(std::vector<SPHERE> pTarget, const int iNumMax)
 {
 	for (int i = 0; i < m_iColSpheresMax; i++)
 	{
 		for (int j = 0; j < iNumMax; j++)
 		{
-			if (Collision(*m_ppColSpheres[i], pTarget[j]))
+			if (Collision(m_v_pSpheres[i], pTarget[j]))
 			{
 				return true;
 			}
@@ -625,6 +625,8 @@ bool clsObject::WallJudge(clsStage* const pStage)
 
 	std::vector<clsDX9Mesh*> vvpMeshTmp;
 	vvpMeshTmp = pStage->GetStageMeshArray();
+
+	m_bGround = false;
 
 	bool bResult = false;
 
