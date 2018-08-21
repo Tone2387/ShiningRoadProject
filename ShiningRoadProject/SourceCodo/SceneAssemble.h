@@ -80,7 +80,9 @@ private:
 	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
 
 	//パーツウィンドウ用.
-	D3D11_VIEWPORT* m_pViewPortSub;
+	D3D11_VIEWPORT* m_pViewPortPartsWindow;
+	//ロボウィンドウ用.
+	D3D11_VIEWPORT* m_pViewPortRoboWindow;
 
 	//背景.
 	std::unique_ptr< clsSprite2D > m_upBack;

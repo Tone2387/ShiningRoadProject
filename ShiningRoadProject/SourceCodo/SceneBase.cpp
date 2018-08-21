@@ -362,7 +362,10 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 	}
 }
 
-void clsSCENE_BASE::SetViewPort( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos )
+void clsSCENE_BASE::SetViewPort( 
+	D3D11_VIEWPORT* const pVp, const 
+	D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos,
+	const float fWndW, const float fWndH )
 {
 	if( !pVp ) return;
 //	if( m_wpViewPort11 == pVp ) return;
@@ -374,6 +377,14 @@ void clsSCENE_BASE::SetViewPort( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &v
 	D3DXMatrixLookAtLH(
 		&m_mView,	//(out)ビュー計算結果.
 		&vCamPos, &vCamLookPos, &vUpVec );
+
+	//プロジェクション(射影行列)変換.
+	D3DXMatrixPerspectiveFovLH(
+		&m_mProj,			//(out)プロジェクション計算結果.
+		fZOOM,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が狭くなる.
+		fWndW / fWndH,//アスペクト比(幅/高さ).
+		0.1f,				//近いビュー平面のz値.
+		fRENDER_LIMIT );	//遠いビュー平面のz値.
 
 	assert( m_wpContext );
 	m_wpContext->RSSetViewports( 1, m_wpViewPortUsing );

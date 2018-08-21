@@ -15,9 +15,11 @@ const string sPARTS_STATUS_PASS[] =
 };
 
 //モデルさんの初期位置.
-const D3DXVECTOR3 vINIT_ROBO_POS = { 52.0f, -35.0f, 17.0f };
-const D3DXVECTOR3 vINIT_ROBO_ROT = { 6.03318501f, 0.649538994f, 6.18318605f };
-const float fINIT_ROBO_SCALE = 0.5f;
+//const D3DXVECTOR3 vINIT_ROBO_POS = { 52.0f, -35.0f, 17.0f };
+//const D3DXVECTOR3 vINIT_ROBO_ROT = { 6.03318501f, 0.649538994f, 6.18318605f };
+const D3DXVECTOR3 vINIT_ROBO_POS = { 0.0f, 0.0f, 0.0f };
+const D3DXVECTOR3 vINIT_ROBO_ROT = { 0.0f, static_cast<float>( M_PI_4 ) * 0.5f, 0.0f };
+const float fINIT_ROBO_SCALE = 0.75f;
 
 //カメラの初期位置.
 const D3DXVECTOR3 vINIT_CAMERA_POS = { 0.0f, 0.0f, -100.0f };
@@ -40,6 +42,19 @@ const D3DXVECTOR3 vPARTS_VIEW_CAM_POS  = { 0.0f, 0.0f, -100.0f };
 const D3DXVECTOR3 vPARTS_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
 //----- パーツウィンドウ用 -----//.
 
+//----- ロボウィンドウ用 -----//.
+//ビューポート.
+const FLOAT INIT_VP_ROBO_W = 360.0f;
+const FLOAT INIT_VP_ROBO_H = INIT_VP_PARTS_H + 80.0f;
+const FLOAT INIT_VP_ROBO_X = INIT_VP_PARTS_W + INIT_VP_PARTS_X + 16.0f;
+const FLOAT INIT_VP_ROBO_Y = 16.0f;
+const FLOAT INIT_VP_ROBO_MIN =	0.0f;
+const FLOAT INIT_VP_ROBO_MAX =	1.0f;
+//カメラ.
+const D3DXVECTOR3 vROBO_VIEW_CAM_POS  = { 0.0f, 20.0f, -100.0f };
+const D3DXVECTOR3 vROBO_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
+//----- ロボウィンドウ用 -----//.
+
 //----- 背景 -----//.
 const char* sBACK_SPRITE_PATH = "Data\\Image\\PartsIcon\\NoData.png";
 const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
@@ -53,7 +68,8 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pAsmModel( nullptr )
 	,m_pUI( nullptr )
-	,m_pViewPortSub( nullptr )
+	,m_pViewPortPartsWindow( nullptr )
+	,m_pViewPortRoboWindow( nullptr )
 	,m_cuFileMax( 0 )
 	,m_pSelectParts( nullptr )
 //	,m_enSelectMode()
@@ -64,7 +80,8 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 {
 
-	SAFE_DELETE( m_pViewPortSub );
+	SAFE_DELETE( m_pViewPortRoboWindow );
+	SAFE_DELETE( m_pViewPortPartsWindow );
 	SAFE_DELETE( m_pAsmModel );
 	SAFE_DELETE( m_pUI );
 
@@ -154,14 +171,24 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_wpRoboStatus->Clear();
 
 	//パーツビュー.
-	assert( !m_pViewPortSub );
-	m_pViewPortSub = new D3D11_VIEWPORT;
-	m_pViewPortSub->Width	 = INIT_VP_PARTS_W;
-	m_pViewPortSub->Height	 = INIT_VP_PARTS_H;
-	m_pViewPortSub->TopLeftX = INIT_VP_PARTS_X;
-	m_pViewPortSub->TopLeftY = INIT_VP_PARTS_Y;
-	m_pViewPortSub->MinDepth = INIT_VP_PARTS_MIN;
-	m_pViewPortSub->MaxDepth = INIT_VP_PARTS_MAX;
+	assert( !m_pViewPortPartsWindow );
+	m_pViewPortPartsWindow = new D3D11_VIEWPORT;
+	m_pViewPortPartsWindow->Width	 = INIT_VP_PARTS_W;
+	m_pViewPortPartsWindow->Height	 = INIT_VP_PARTS_H;
+	m_pViewPortPartsWindow->TopLeftX = INIT_VP_PARTS_X;
+	m_pViewPortPartsWindow->TopLeftY = INIT_VP_PARTS_Y;
+	m_pViewPortPartsWindow->MinDepth = INIT_VP_PARTS_MIN;
+	m_pViewPortPartsWindow->MaxDepth = INIT_VP_PARTS_MAX;
+
+	//ロボビュー.
+	assert( !m_pViewPortRoboWindow );
+	m_pViewPortRoboWindow = new D3D11_VIEWPORT;
+	m_pViewPortRoboWindow->Width	= INIT_VP_ROBO_W;
+	m_pViewPortRoboWindow->Height	= INIT_VP_ROBO_H;
+	m_pViewPortRoboWindow->TopLeftX = INIT_VP_ROBO_X;
+	m_pViewPortRoboWindow->TopLeftY = INIT_VP_ROBO_Y;
+	m_pViewPortRoboWindow->MinDepth = INIT_VP_ROBO_MIN;
+	m_pViewPortRoboWindow->MaxDepth = INIT_VP_ROBO_MAX;
 
 	//パーツビューに置くパーツ.
 	assert( !m_pSelectParts );
@@ -300,6 +327,13 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	PartsViewCam.SetLookPos( vPARTS_VIEW_CAM_LOOK );
 	PartsViewCam.AddPos( m_pSelectParts->GetSelectPartsHeight() );
 
+	//ロボ描画用.
+	clsCAMERA_ASSEMBLE RoboViewCam;
+	RoboViewCam.Create();
+	RoboViewCam.SetPos( vROBO_VIEW_CAM_POS );
+	RoboViewCam.SetLookPos( vROBO_VIEW_CAM_LOOK );
+	RoboViewCam.AddPos( m_pAsmModel->GetBonePos( enPARTS::LEG, sBONE_NAME_LEG_TO_CORE ) );
+
 
 	//背景.
 	assert( m_upBack );
@@ -308,33 +342,55 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	SetDepth( true );
 
 
-	assert( m_pAsmModel );
-	//パーツ選択中は選択しているパーツを光らせる.
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos, 
-			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
-	}
-	else{
-		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
-	}
-
 	assert( m_pUI );
 	SetDepth( false );
 	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
 	SetDepth( true );
 
 	//パーツ描画.
-	SetViewPort( m_pViewPortSub, PartsViewCam.GetPos(), PartsViewCam.GetLookPos() );
+	SetViewPort( 
+		m_pViewPortPartsWindow, 
+		PartsViewCam.GetPos(), PartsViewCam.GetLookPos(),
+		m_pViewPortPartsWindow->Width, m_pViewPortPartsWindow->Height );
 	assert( m_pSelectParts );
 	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos(), isMissionStart() );
 
 	//パーツのステータス.
-	SetViewPort( GetViewPortMainPtr(), m_wpCamera->GetPos(), m_wpCamera->GetLookPos() );
+	SetViewPort( 
+		GetViewPortMainPtr(), 
+		m_wpCamera->GetPos(), m_wpCamera->GetLookPos(),
+		WND_W, WND_H );
 	assert( m_pUI );
 	SetDepth( false );
 	m_pUI->RenderPartsState( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
 	SetDepth( true );
 
+
+	//ロボ描画.
+	SetViewPort( 
+		m_pViewPortRoboWindow, 
+		RoboViewCam.GetPos(), RoboViewCam.GetLookPos(),
+		m_pViewPortRoboWindow->Width, m_pViewPortRoboWindow->Height );
+	assert( m_pAsmModel );
+	//パーツ選択中は選択しているパーツを光らせる.
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos(), 
+			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
+	}
+	else{
+		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos() );
+	}
+
+//	//ロボ全身.
+//	assert( m_pAsmModel );
+//	//パーツ選択中は選択しているパーツを光らせる.
+//	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+//		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos, 
+//			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
+//	}
+//	else{
+//		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
+//	}
 
 }
 
