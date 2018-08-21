@@ -149,14 +149,18 @@ void clsSCENE_BASE::Render()
 	//各シーンの描画.
 	RenderProduct( m_wpCamera->GetPos() );
 
+	//エフェクト描画.
+	m_wpEffects->Render( m_mView, m_mProj, m_wpCamera->GetPos() );
+
+	//各シーンのUIの描画.
+	RenderUi();
+
 	//元通りのビューポート.
 	if( m_wpViewPortUsing != m_wpViewPort11 ){
 		m_wpViewPortUsing = m_wpViewPort11;
 		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
 	}
 
-	//エフェクト描画.
-	m_wpEffects->Render( m_mView, m_mProj, m_wpCamera->GetPos() );
 
 	//暗転描画.
 	m_wpBlackScreen->Render();

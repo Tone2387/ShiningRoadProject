@@ -394,7 +394,9 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 }
 
-
+void clsSCENE_ASSEMBLE::RenderUi()
+{
+}
 
 //カーソル移動.
 //カーソル移動の共通動作.

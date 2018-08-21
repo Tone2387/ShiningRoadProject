@@ -55,6 +55,9 @@ void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 	m_upStage->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }
+void clsSCENE_ENDING::RenderUi()
+{
+}
 
 
 //============================ デバッグテキスト ===========================//

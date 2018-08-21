@@ -12,6 +12,8 @@
 
 #include "Sprite2DCenter.h"
 
+#include "UiText.h"
+
 
 //================================//
 //========== 基底クラス ==========//
@@ -44,6 +46,7 @@ protected:
 	virtual void CreateProduct() = 0;//各シーンのCreate.
 	virtual void UpdateProduct( enSCENE &enNextScene ) = 0;//各シーンのUpdate.
 	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) = 0;//各シーンのRender.
+	virtual void RenderUi() = 0;//各シーンの「 UIの 」Render.
 	//----- 各シーンごとの関数 -----//.
 
 	//3D座標をスクリーン( 2D )座標へと変換する.

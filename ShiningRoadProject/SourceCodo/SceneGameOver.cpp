@@ -44,6 +44,9 @@ void clsSCENE_GAME_OVER::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	assert( m_upMissModel );
 	m_upMissModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }
+void clsSCENE_GAME_OVER::RenderUi()
+{
+}
 
 
 //============================ デバッグテキスト ===========================//

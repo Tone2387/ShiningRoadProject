@@ -5,10 +5,10 @@
 
 using namespace std;
 
-//最大描画スプライト数.(やばいならint型にする)
-const /*int32_t*/ int g_RenderSpriteMax = 4096;
 //エフェクト管理用インスタンス最大数.
-const int g_EffectInstanceMax = 4096;
+//最大描画スプライト数.(やばいならint型にする)
+const /*int32_t*/ int g_RenderSpriteMax = 1024 * 4;
+const int g_EffectInstanceMax = g_RenderSpriteMax;
 
 const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
 
@@ -183,9 +183,8 @@ HRESULT clsEffects::LoadData()
 	clsOPERATION_STRING OprtStr;
 
 	//エフェクトの読込.
-	for( unsigned int i=0; i<upFile->GetSizeRow(); i++ ){
-		m_vpEffect.push_back( nullptr );
-
+	m_vpEffect.resize( upFile->GetSizeRow() );
+	for( unsigned int i=0; i<m_vpEffect.size(); i++ ){
 		//パスを作る.
 		tmpString = sFILE_PATH + upFile->GetDataString( i, uiEFFECT_FILE_NAME_INDEX );
 
@@ -201,6 +200,7 @@ HRESULT clsEffects::LoadData()
 		//作ったものは消す.
 		delete[] tmpPath;
 
+		assert( m_vpEffect[i] );
 //		//エラー.
 //		if( m_vpEffect[i] == nullptr ){
 //			char strMsg[128];
@@ -210,9 +210,8 @@ HRESULT clsEffects::LoadData()
 //			ERR_MSG( strMsg, "エフェクトファイル読込失敗" );
 //			return E_FAIL;
 //		}
-		assert( m_vpEffect[i] );
 	}
-	m_vpEffect.shrink_to_fit();
+//	m_vpEffect.shrink_to_fit();
 
 	upFile->Close();
 	upFile.reset( nullptr );
