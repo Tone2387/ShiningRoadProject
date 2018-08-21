@@ -102,7 +102,7 @@ void clsSCENE_MISSION::ColFShottoFBody()
 	{
 		for (int j = 0; j < m_v_pFriends.size(); j++)
 		{
-			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->m_v_pSpheres);
+			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
 			Tmp.iDamage = 0;
 			m_v_pFriends[j]->Damage(Tmp);
 		}
@@ -115,7 +115,7 @@ void clsSCENE_MISSION::ColFShottoEBody()
 	{
 		for (int j = 0; j < m_v_pEnemys.size(); j++)
 		{
-			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->m_v_pSpheres);
+			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
 			m_v_pEnemys[j]->Damage(Tmp);
 		}
 	}
@@ -127,7 +127,7 @@ void clsSCENE_MISSION::ColEShottoFBody()
 	{
 		for (int j = 0; j < m_v_pFriends.size(); j++)
 		{
-			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->m_v_pSpheres);
+			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
 			m_v_pFriends[j]->Damage(Tmp);
 		}
 	}
@@ -139,7 +139,7 @@ void clsSCENE_MISSION::ColEShottoEBody()
 	{
 		for (int j = 0; j < m_v_pEnemys.size(); j++)
 		{
-			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->m_v_pSpheres);
+			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
 			Tmp.iDamage = 0;
 			m_v_pEnemys[j]->Damage(Tmp);
 		}

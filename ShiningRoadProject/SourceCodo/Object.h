@@ -34,10 +34,23 @@ D3DXVECTOR3 GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis);
 class clsObject
 {
 public:
-	clsObject():
+	clsObject() :
 		m_fMoveSpeed(0.0f),
-		m_vMoveDir({ 0.0f, 0.0f, 0.0f })
-		{ ZeroMemory(this, sizeof(clsObject)); };
+		m_vMoveDir({ 0.0f, 0.0f, 0.0f }),
+		m_fRaySpece(0.0f),
+		m_fFollPower(0.0f),
+		m_bGround(false),
+		m_NoFollObj(false)
+		{ 
+			m_Trans.fPitch = 0.0f;
+			m_Trans.fYaw = 0.0f;
+			m_Trans.fRoll = 0.0f;
+
+			m_Trans.vPos = { 0.0f, 0.0f, 0.0f };
+			m_Trans.vScale = { 0.0f, 0.0f, 0.0f };
+		};
+	//ZeroMemory(this, sizeof(clsObject));
+
 	virtual ~clsObject(){};
 
 	struct RAYSTATE
@@ -63,20 +76,20 @@ public:
 	float m_fMoveSpeed;//最終的に加算されるスピード.
 	D3DXVECTOR3 m_vMoveDir;
 
-	/*virtual void Render(
+	bool m_bGround;
+	bool m_NoFollObj;
+
+	std::vector<SPHERE> m_v_Spheres;
+
+	void Action(clsStage* pStage);
+
+	virtual void ActionProduct();
+
+	virtual void Render(
 		D3DXMATRIX& mView,
 		D3DXMATRIX& mProj,
 		D3DXVECTOR3 vLight,
-		D3DXVECTOR3 vEye){};*/
-
-	bool m_bGround;
-
-	bool m_NoFollObj;
-
-	std::vector<SPHERE> m_v_pSpheres;
-
-	//SPHERE** m_ppColSpheres;
-	int m_iColSpheresMax;
+		D3DXVECTOR3 vEye){};
 
 	//位置関係関数.
 	void SetPosition(const D3DXVECTOR3& vPos){ 
@@ -97,7 +110,7 @@ public:
 
 	//スフィア衝突判定関数.
 	bool Collision(SPHERE pAttacker, SPHERE pTarget);//Sphere対Sphereの当たり判定.
-	bool ObjectCollision(std::vector<SPHERE> pTarget, const int iNumMax);
+	bool ObjectCollision(std::vector<SPHERE> pTarget);
 
 	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
 	void SetScale(float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }

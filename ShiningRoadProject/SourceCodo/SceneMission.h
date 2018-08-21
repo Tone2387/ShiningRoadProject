@@ -40,8 +40,6 @@ private:
 
 	clsPlayer* m_pPlayer;
 
-
-
 	std::vector<clsCharactor*> m_v_pFriends;
 	std::vector<clsCharactor*> m_v_pEnemys;
 
@@ -64,6 +62,12 @@ private:
 	clsStage* m_pStage;
 
 	float m_fCamMoveSpeed;
+
+
+	std::vector<clsSPRITE2D_CENTER*> m_v_pRader;
+	std::vector<clsSPRITE2D_CENTER*> m_v_pLockOn;
+	std::vector<clsUiText*> m_v_pBulletNum;
+
 
 	//Šî’êƒNƒ‰ƒX‚ÉˆÈ‰º‚ª‚ ‚è‚Ü‚·.
 	//ƒJƒƒ‰.

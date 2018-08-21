@@ -37,6 +37,9 @@ public:
 
 	bool IsNeedReload();//c’e‚ª‚ ‚é‚©‚ÅËŒ‚‚©ƒŠƒ[ƒh‚©‚ğ”»’è.
 
+	bool IsRock();
+	bool IsRockRange();
+
 private:
 	WeaponState m_State;
 
