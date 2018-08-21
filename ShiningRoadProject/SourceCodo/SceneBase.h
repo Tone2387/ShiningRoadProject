@@ -68,7 +68,11 @@ protected:
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
 
 	//---継承先のRenderProductで使用する---.
-	void SetViewPort( D3D11_VIEWPORT* const pVp, const D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos );
+	void SetViewPort( 
+		D3D11_VIEWPORT* const pVp, 
+		const D3DXVECTOR3 &vCamPos, 
+		const D3DXVECTOR3 &vCamLookPos,
+		const float fWndW, const float fWndH );
 	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
 	D3D11_VIEWPORT* GetViewPortMainPtr();
 	//----- Render用 -----//.

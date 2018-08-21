@@ -127,6 +127,8 @@ D3DXVECTOR3 clsSkinMesh::GetBonePos( const char* sBoneName, const bool isLocalPo
 {
 	D3DXVECTOR3 vBonePos;
 
+//	ModelUpdate( m_Trans );
+
 	//ボーンの座標を取る.
 	if( !m_pMesh->GetPosFromBone( sBoneName, &vBonePos, isLocalPos ) ){
 		//ボーンが見つからなければ.
