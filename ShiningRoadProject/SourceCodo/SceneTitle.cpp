@@ -109,6 +109,9 @@ void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 	SetDepth( true );
 }
+void clsSCENE_TITLE::RenderUi()
+{
+}
 
 
 //============================ デバッグテキスト ===========================//

@@ -32,6 +32,7 @@ private:
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
+	void RenderUi() final;//「 UIの 」Render.
 
 #if _DEBUG
 	//デバック゛テキストの表示.

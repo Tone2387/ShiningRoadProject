@@ -71,6 +71,11 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
 }
 
+void clsSCENE_MISSION::RenderUi()
+{
+}
+
+
 void clsSCENE_MISSION::CreateFriends()
 {
 	m_pPlayer = new clsPlayer;
