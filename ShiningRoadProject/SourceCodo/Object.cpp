@@ -591,13 +591,13 @@ bool clsObject::Collision(SPHERE pAttacker, SPHERE pTarget)
 	return false;//è’ìÀÇµÇƒÇ¢Ç»Ç¢.
 }
 
-bool clsObject::ObjectCollision(std::vector<SPHERE> pTarget, const int iNumMax)
+bool clsObject::ObjectCollision(std::vector<SPHERE> pTarget)
 {
-	for (int i = 0; i < m_iColSpheresMax; i++)
+	for (int i = 0; i < m_v_Spheres.size(); i++)
 	{
-		for (int j = 0; j < iNumMax; j++)
+		for (int j = 0; j < pTarget.size(); j++)
 		{
-			if (Collision(m_v_pSpheres[i], pTarget[j]))
+			if (Collision(m_v_Spheres[i], pTarget[j]))
 			{
 				return true;
 			}
@@ -665,4 +665,18 @@ bool clsObject::WallJudge(clsStage* const pStage)
 	FreeFoll();
 
 	return bResult;
+}
+
+void clsObject::Action(clsStage* pStage)
+{
+	m_vOldPos = m_Trans.vPos;
+
+	ActionProduct();
+
+	WallJudge(pStage);
+}
+
+void clsObject::ActionProduct()
+{
+
 }

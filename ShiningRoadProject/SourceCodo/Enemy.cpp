@@ -232,9 +232,9 @@ bool clsEnemyBase::IsJump()
 			iVerDestDis += (rand() % (iRandMax * 2)) - iRandMax;
 		}
 
-		float fVerDestDis = iVerDestDis * g_fDistanceReference;
+		m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
 
-		if (m_pTarget->GetPosition().y > fVerDestDis)
+		if (m_pTarget->GetPosition().y > m_UpdateState.fVerDis)
 		{
 			float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 

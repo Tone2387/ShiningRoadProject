@@ -17,6 +17,9 @@ public:
 		LPSTR strEnemyFolderName,
 		clsCharactor* pChara,
 		std::vector<clsCharactor*> v_pEnemys);
+
+	bool IsBoostOn();
+	bool IsBoostOff();
 	
 	bool IsQuickTurn();//ターゲット位置の方向が正面から一定以上離れてた場合、クイックターンを使用.
 	bool IsQuickBoostApproach();//クイックブーストを使用し、ターゲットとの距離を詰める.
@@ -57,4 +60,12 @@ private:
 
 	clsRoboCommand* LShotOperation();
 	clsRoboCommand* RShotOperation();
+
+	ShotData m_LShotData;
+	ShotData m_RShotData;
+
+	struct QuickTrun
+	{
+
+	};
 };

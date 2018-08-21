@@ -1,6 +1,6 @@
 #include"Robo.h"
 
-void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup)
+void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup,clsROBO_STATUS* const pRobo)
 {
 #ifdef Tahara
 	m_wpResource = pPtrGroup->GetResource();
@@ -10,7 +10,7 @@ void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup)
 
 	m_pMesh = new clsMISSION_MODEL;
 
-	m_pMesh->Create(m_wpResource, pPtrGroup->GetRoboStatus());
+	m_pMesh->Create(m_wpResource, pRobo);
 
 	m_Trans.vPos.y = 10.0f;
 
@@ -321,14 +321,16 @@ void clsRobo::UpdatePosfromBone()
 {
 	m_vCenterPos = m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
 
+	m_v_vMuzzlePos[enWeaponLHand] = m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleEnd");
+	m_v_vShotDir[enWeaponLHand] = m_v_vMuzzlePos[enWeaponRHand] - m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleRoot");
+
+	m_v_vMuzzlePos[enWeaponRHand] = m_pMesh->GetBonePos(enPARTS::WEAPON_R, "MuzzleEnd");
+	m_v_vShotDir[enWeaponRHand] = m_v_vMuzzlePos[enWeaponRHand] - m_pMesh->GetBonePos(enPARTS::WEAPON_R, "MuzzleRoot");
+
 	for (int i = 0; i < enWeaponTypeSize; i++)
 	{
-		m_v_vMuzzlePos[i] = m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleEnd");
-		m_v_vShotDir[i] = m_v_vMuzzlePos[i] - m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleRoot");
-		
 		D3DXVec3Normalize(&m_v_vShotDir[i], &m_v_vShotDir[i]);
 	}
-	
 }
 
 void clsRobo::ShotLWeapon()

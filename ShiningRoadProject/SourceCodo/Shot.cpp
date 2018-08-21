@@ -24,12 +24,12 @@ HRESULT clsShot::Init(BulletState BState)
 
 	//“–‚½‚è”»’è‚Ì‘å‚«‚³‚ðŒˆ‚ß‚é.
 
-	m_v_pSpheres.resize(g_iColNum);
+	m_v_Spheres.resize(g_iColNum);
 
 	for (int i = 0; i < g_iColNum; i++)
 	{
-		m_v_pSpheres[i].vCenter = &m_Trans.vPos;
-		m_v_pSpheres[i].fRadius = m_ShotState.fScale;
+		m_v_Spheres[i].vCenter = &m_Trans.vPos;
+		m_v_Spheres[i].fRadius = m_ShotState.fScale;
 	}
 	
 	//Šm”F—p‚Ì½Ì¨±‚ðÚÝÀÞØÝ¸Þ‚·‚é.
@@ -50,7 +50,7 @@ bool clsShot::Hit(std::vector<clsObject::SPHERE> p_v_TargetSphere)
 		{
 			for (int j = 0; j < p_v_TargetSphere.size(); i++)
 			{
-				if (Collision(m_v_pSpheres[i], p_v_TargetSphere[j]))
+				if (Collision(m_v_Spheres[i], p_v_TargetSphere[j]))
 				{
 					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);

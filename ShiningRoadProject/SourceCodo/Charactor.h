@@ -75,7 +75,9 @@ public:
 	//clsWeapon** m_ppWeapon;
 	int m_iWeaponNum;
 	int m_iWeaponNumMax;
+
 	clsObject* m_pTargetObj;
+	int m_iTargetNo;
 
 	void CharactorUpdate();
 
@@ -133,9 +135,7 @@ public:
 		const D3DXVECTOR3 EndPos,		//•W“I‚ÌˆÊ’u.
 		const clsDX9Mesh* pTarget		//áŠQ•¨‚Ì•¨‘Ì.
 		);
-	
-	//Ú²‚ÌË¯Ä”»’è‚Ì’·‚³.
-	float RaySpece;
+
 
 	clsCharactor();
 	virtual ~clsCharactor();

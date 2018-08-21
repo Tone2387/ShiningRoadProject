@@ -16,7 +16,9 @@ public:
 
 	void Init(clsPOINTER_GROUP* const pPtrGroup);
 
-	void Action(clsStage* const pWall);
+	//void Action(clsStage* const pWall);
+
+	void ActionProduct() override;
 
 	void InhUpdate();//Inheritance
 

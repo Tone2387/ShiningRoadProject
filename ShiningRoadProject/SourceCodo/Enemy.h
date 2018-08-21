@@ -39,8 +39,6 @@ protected:
 	bool IsJump();
 	bool IsShot();
 
-private:
-
 	struct BaseState
 	{
 		char strName[STR_BUFF_MAX];
