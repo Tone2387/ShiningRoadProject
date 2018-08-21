@@ -62,7 +62,7 @@ void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup,clsROBO_STATUS* const p
 
 		WS[i].BState.fRangeMax = 1.5f;
 		WS[i].BState.fScale = 0.5f;
-		WS[i].BState.fSpeed = 0.001f;
+		WS[i].BState.fSpeed = 1.0F;
 		WS[i].BState.iHitEfcNum = 0;
 		WS[i].BState.iLineEfcNum = 0;
 		WS[i].BState.iSEHitNum = 0;
@@ -322,7 +322,7 @@ void clsRobo::UpdatePosfromBone()
 	m_vCenterPos = m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
 
 	m_v_vMuzzlePos[enWeaponLHand] = m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleEnd");
-	m_v_vShotDir[enWeaponLHand] = m_v_vMuzzlePos[enWeaponRHand] - m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleRoot");
+	m_v_vShotDir[enWeaponLHand] = m_v_vMuzzlePos[enWeaponLHand] - m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleRoot");
 
 	m_v_vMuzzlePos[enWeaponRHand] = m_pMesh->GetBonePos(enPARTS::WEAPON_R, "MuzzleEnd");
 	m_v_vShotDir[enWeaponRHand] = m_v_vMuzzlePos[enWeaponRHand] - m_pMesh->GetBonePos(enPARTS::WEAPON_R, "MuzzleRoot");

@@ -73,7 +73,7 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vDir)
 
 	m_vMoveDir = vDir;
 
-	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveDir * m_ShotState.fSpeed;
+	m_Trans.vPos = m_vStartPos = vShotPos;
 
 	m_bShotExistFlg = true;
 	m_bExistFlg = true;
@@ -105,13 +105,11 @@ void clsShot::Move()
 	{
 		m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
 		m_bShotExistFlg = false;
+		return;
 	}
 
-	if (!m_bShotExistFlg)
-	{
-		m_Trans.vPos += m_vMoveDir  * m_fMoveSpeed;
-	}
-
+	m_Trans.vPos += m_vMoveDir * m_ShotState.fSpeed;
+	
 	//À•W.
 	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcShot], m_Trans.vPos);
 	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcLine], m_Trans.vPos);
