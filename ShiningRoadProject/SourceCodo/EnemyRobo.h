@@ -66,6 +66,16 @@ private:
 
 	struct QuickTrun
 	{
+		int iRangeDir;
+	};
+
+	struct QuickBoostApproach
+	{
+
+	};
+	
+	struct QuickBoostAvoid
+	{
 
 	};
 };

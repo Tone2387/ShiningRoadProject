@@ -28,12 +28,9 @@ public:
 
 	void Init( clsPOINTER_GROUP* const pPtrGroup );
 
-	void Action(const clsDX9Mesh* pWall);
+	void ActionProduct() override;
 
 	void InhUpdate();//Inheritance
-
-private:
-	clsInputRobo* m_pInput;
 };
 
 //#endif

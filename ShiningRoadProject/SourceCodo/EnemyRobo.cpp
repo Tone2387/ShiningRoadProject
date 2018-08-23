@@ -1,5 +1,7 @@
 #include"EnemyRobo.h"
 
+
+
 void clsEnemyRobo::Init(
 	LPSTR strEnemyFolderName,
 	clsCharactor* pChara,
@@ -23,7 +25,10 @@ bool clsEnemyRobo::IsBoostOn()
 
 	if (fVerDis > 0.0f)
 	{
-		return true;
+		if (m_pBody->m_iEnelgy > m_pBody->m_iEnelgyMax / iHulf)
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -31,7 +36,21 @@ bool clsEnemyRobo::IsBoostOn()
 
 bool clsEnemyRobo::IsBoostOff()
 {
+	float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
 
+	const int iHulf = 2;
+
+	float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
+
+	if (fVerDis > fVerDestDis)
+	{
+		return true;
+	}
+
+	if (m_pBody->m_iEnelgy < m_pBody->m_iEnelgyMax / iHulf)
+	{
+		return true;
+	}
 
 	return false;
 }
@@ -102,44 +121,59 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoDamage()
 	return false;
 }
 
-bool clsEnemyRobo::IsShotR()
-{
-
-
-	return false;
-}
-
 bool clsEnemyRobo::IsShotL()
 {
+	m_ShotData = m_LShotData;
 
-
-	return false;
+	return IsShot();
 }
 
-clsRoboCommand* clsEnemyRobo::MoveOperation(float& fPower, float& fAngle)
+bool clsEnemyRobo::IsShotR()
 {
+	m_ShotData = m_RShotData;
 
+	return IsShot();
+}
+
+clsRoboCommand* clsEnemyRobo::MoveOperation(float& fPush, float& fAngle)
+{
+	SetMoveDir(fPush, fAngle);
+
+	if (fPush > g_fPushHulf)
+	{
+		return m_pComMove;
+	}
 
 	return nullptr;
 }
 
 clsRoboCommand* clsEnemyRobo::MoveSwitchOperation()
 {
-
-
-	return nullptr;
-}
-
-clsRoboCommand* clsEnemyRobo::RotateOperation(float& fPower, float& fAngle)
-{
-
+	
 
 	return nullptr;
 }
 
-clsRoboCommand* clsEnemyRobo::LookOperation(float& fPower, float& fAngle)
+clsRoboCommand* clsEnemyRobo::RotateOperation(float& fPush, float& fAngle)
 {
+	SetRotate(fPush, fAngle);
 
+	if (fPush > g_fPushHulf)
+	{
+		return m_pComRotate;
+	}
+
+	return nullptr;
+}
+
+clsRoboCommand* clsEnemyRobo::LookOperation(float& fPush, float& fAngle)
+{
+	SetLook(fPush, fAngle);
+
+	if (fPush > g_fPushHulf)
+	{
+		return m_pComLook;
+	}
 
 	return nullptr;
 }
@@ -160,21 +194,30 @@ clsRoboCommand* clsEnemyRobo::QuickBoostOperation()
 
 clsRoboCommand* clsEnemyRobo::BoostOperation()
 {
-
+	if (IsJump())
+	{
+		return m_pComBoost;
+	}
 
 	return nullptr;
 }
 
 clsRoboCommand* clsEnemyRobo::LShotOperation()
 {
-
+	if (IsShotL())
+	{
+		return m_pComLShot;
+	}
 
 	return nullptr;
 }
 
 clsRoboCommand* clsEnemyRobo::RShotOperation()
 {
-
+	if (IsShotR())
+	{
+		return m_pComRShot;
+	}
 
 	return nullptr;
 }

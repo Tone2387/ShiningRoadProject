@@ -62,7 +62,7 @@ public:
 	bool Shot();
 	bool Reload();
 
-	HitState BulletHit(std::vector<clsObject::SPHERE> const v_TargetSphere);
+	HitState BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere);
 	bool Damage(HitState);//ダメージと衝撃力.
 
 	void WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.

@@ -24,13 +24,13 @@ void clsWeapon::Update()
 	}
 }
 
-int clsWeapon::Hit(const std::vector<clsObject::SPHERE> p_v_TargetSphere)
+int clsWeapon::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 {
 	int iResult = 0;
 
 	for (int i = 0; i < m_State.iBulletNumMax; i++)
 	{
-		if (m_ppBullet[i]->Hit(p_v_TargetSphere))
+		if (m_ppBullet[i]->Hit(v_TargetSphere))
 		{
 			iResult += m_State.iAtk;
 		}

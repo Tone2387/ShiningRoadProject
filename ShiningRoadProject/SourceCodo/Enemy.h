@@ -8,6 +8,7 @@
 #include"Charactor.h"
 
 const float g_fDisStandard = 0.1f;
+const float g_fPushHulf = 0.5f;
 
 class clsEnemyBase
 {

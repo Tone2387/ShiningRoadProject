@@ -1,7 +1,5 @@
 #include"EnemyCharactor.h"
 
-float g_fPushHulf = 0.5f;
-
 clsCharactorCommand* clsCharactorEnemy::MoveOperation(float& fPush, float& fAngle)
 {
 	SetMoveDir(fPush, fAngle);

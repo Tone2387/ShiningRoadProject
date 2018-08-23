@@ -34,24 +34,10 @@ D3DXVECTOR3 GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis);
 class clsObject
 {
 public:
-	clsObject() :
-		m_fMoveSpeed(0.0f),
-		m_vMoveDir({ 0.0f, 0.0f, 0.0f }),
-		m_fRaySpece(0.0f),
-		m_fFollPower(0.0f),
-		m_bGround(false),
-		m_NoFollObj(false)
-		{ 
-			m_Trans.fPitch = 0.0f;
-			m_Trans.fYaw = 0.0f;
-			m_Trans.fRoll = 0.0f;
-
-			m_Trans.vPos = { 0.0f, 0.0f, 0.0f };
-			m_Trans.vScale = { 0.0f, 0.0f, 0.0f };
-		};
+	clsObject();
 	//ZeroMemory(this, sizeof(clsObject));
 
-	virtual ~clsObject(){};
+	virtual ~clsObject();
 
 	struct RAYSTATE
 	{
@@ -86,10 +72,13 @@ public:
 	virtual void ActionProduct();
 
 	virtual void Render(
-		D3DXMATRIX& mView,
-		D3DXMATRIX& mProj,
-		D3DXVECTOR3 vLight,
-		D3DXVECTOR3 vEye){};
+		const D3DXMATRIX& mView,
+		const D3DXMATRIX& mProj,
+		const D3DXVECTOR3& vLight,
+		const D3DXVECTOR3& vEye)
+	{
+
+	}
 
 	//à íuä÷åWä÷êî.
 	void SetPosition(const D3DXVECTOR3& vPos){ 

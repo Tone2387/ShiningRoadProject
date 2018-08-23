@@ -18,9 +18,13 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 
 	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
 
-	m_v_Spheres.resize(1);
-	m_v_Spheres[0].vCenter = &m_vCenterPos;
-	m_v_Spheres[0].fRadius = 0.1f;
+	clsObject::SPHERE Tmp;
+
+	Tmp.vCenter = &m_vCenterPos;
+	Tmp.fRadius = 0.1f;
+
+	m_v_Spheres.push_back(Tmp);
+	m_v_Spheres.shrink_to_fit();
 
 	//m_pMesh->SetAnimSpeed(0.01);
 }
