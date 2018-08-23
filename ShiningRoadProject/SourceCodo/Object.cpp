@@ -680,3 +680,23 @@ void clsObject::ActionProduct()
 {
 
 }
+
+clsObject::clsObject() :
+m_vOldPos({0.0f,0.0f,0.0f}),
+m_vCenterPos({ 0.0f, 0.0f, 0.0f }),//オブジェクトの中心.
+m_fMoveSpeed(0.0f),
+m_vMoveDir({ 0.0f, 0.0f, 0.0f }),
+m_fRaySpece(0.0f),
+m_fFollPower(0.0f),
+m_bGround(false),
+m_NoFollObj(false)
+{
+	m_Trans.fPitch = 0.0f;
+	m_Trans.fYaw = 0.0f;
+	m_Trans.fRoll = 0.0f;
+
+	m_Trans.vPos = { 0.0f, 0.0f, 0.0f };
+	m_Trans.vScale = { 0.0f, 0.0f, 0.0f };
+};
+
+clsObject::~clsObject(){};

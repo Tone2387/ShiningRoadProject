@@ -24,13 +24,14 @@ HRESULT clsShot::Init(BulletState BState)
 
 	//当たり判定の大きさを決める.
 
-	m_v_Spheres.resize(g_iColNum);
+	//m_v_Spheres.resize(g_iColNum);
 
-	for (int i = 0; i < g_iColNum; i++)
-	{
-		m_v_Spheres[i].vCenter = &m_Trans.vPos;
-		m_v_Spheres[i].fRadius = m_ShotState.fScale;
-	}
+	clsObject::SPHERE Tmp;
+	Tmp.vCenter = &m_Trans.vPos;
+	Tmp.fRadius = m_ShotState.fScale;
+
+	m_v_Spheres.push_back(Tmp);
+	m_v_Spheres.shrink_to_fit();
 	
 	//確認用のｽﾌｨｱをﾚﾝﾀﾞﾘﾝｸﾞする.
 	//当たり判定としては、ここ以降は不要.
@@ -42,15 +43,15 @@ HRESULT clsShot::Init(BulletState BState)
 	return S_OK;
 }
 
-bool clsShot::Hit(std::vector<clsObject::SPHERE> p_v_TargetSphere)
+bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 {
 	if (m_bShotExistFlg)
 	{
 		for (int i = 0; i < g_iColNum; i++)
 		{
-			for (int j = 0; j < p_v_TargetSphere.size(); i++)
+			for (int j = 0; j < v_TargetSphere.size(); j++)
 			{
-				if (Collision(m_v_Spheres[i], p_v_TargetSphere[j]))
+				if (Collision(m_v_Spheres[i], v_TargetSphere[j]))
 				{
 					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);

@@ -30,8 +30,7 @@ public:
 	void Update();
 	bool Shot(clsObject* pTargetObj = nullptr);
 
-	int Hit(
-		std::vector<clsObject::SPHERE> const v_TargetSphere);
+	int Hit(std::vector<clsObject::SPHERE> v_TargetSphere);
 	
 	void Reload();
 

@@ -404,6 +404,8 @@ void clsCharactor::WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon, cons
 		m_v_pWeapons[i] = new clsWeapon(pPrt);
 		m_v_pWeapons[i]->Create(pWeapon[i]);
 	}
+
+	m_v_pWeapons.shrink_to_fit();
 }
 
 void  clsCharactor::WeaponUpdate()
@@ -414,12 +416,12 @@ void  clsCharactor::WeaponUpdate()
 	}
 }
 
-HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE> const v_TargetSphere)
+HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere)
 {
 	HitState HitS;
 	HitS.Clear();
 
-	for (int i = 0; i < m_v_pWeapons.size(); i++)
+	for (int i = 0; i < m_iWeaponNumMax; i++)
 	{
 		HitS.iDamage += m_v_pWeapons[i]->Hit(v_TargetSphere);
 	}
@@ -439,6 +441,7 @@ bool clsCharactor::Damage(HitState HitS)
 		if (m_HP < HitS.iDamage)
 		{
 			m_HP = 0;
+			m_bDeadFlg = true;//‰¼.
 		}
 
 		else

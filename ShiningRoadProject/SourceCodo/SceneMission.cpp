@@ -19,21 +19,10 @@ clsSCENE_MISSION::~clsSCENE_MISSION()
 //生成時に一度だけ通る処理.
 void clsSCENE_MISSION::CreateProduct()
 {
-	m_pPlayer = new clsPlayer;
-	m_pPlayer->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
-
-	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
-	m_pPlayer->SetPosition(tmpVec3);
-	m_pPlayer->SetScale(0.01f);
+	CreateFriends();
+	CreateEnemys();
 
 	//テストモデルの初期化.
-	/*m_pTestChara = new clsCharaStatic;
-	m_pTestChara->AttachModel( 
-		m_wpResource->GetStaticModels( 
-			clsResource::enSTATIC_MODEL::enStaticModel_Enemy ) );
-	m_pTestChara->Init();
-	m_pTestChara->SetPosition( D3DXVECTOR3( -2.0f, 0.0f, 0.0f ) );
-	m_pTestChara->SetRotation( D3DXVECTOR3( 0.0f, 0.0f, (float)D3DX_PI*0.5 ) );*/
 
 	m_pStage = new clsStage(m_wpResource);
 
@@ -45,19 +34,30 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 {
 	//nullならassert.
 	assert(m_pPlayer);
-	m_pPlayer->Action(m_pStage);
+	//m_pPlayer->Action(m_pStage);
+
+	for (int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		m_v_pFriends[i]->Action(m_pStage);
+	}
+
+	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		m_v_pEnemys[i]->Action(m_pStage);
+	}
 
 	D3DXVECTOR3 vCamPosTmp = m_pPlayer->GetCamTargetPos();
-
 	D3DXVECTOR3 vLookPosTmp = m_pPlayer->GetLookTargetPos();
-	//vLookPosTmp.y += 0.5f;
-	//m_wpCamera->SetPos(vTmp);
 
-	m_wpCamera->SetPos(vCamPosTmp,false);
+	m_wpCamera->SetPos(vCamPosTmp, false);
 	m_wpCamera->SetLookPos(vLookPosTmp);
 
 	//エンディングに行く場合は以下のようにする.
-	if( !"クリア条件を満たすとここを通る" ){
+	if (AllEnemyDead()){
+		enNextScene = enSCENE::ENDING;
+	}
+
+	if (m_pPlayer->m_bDeadFlg){
 		enNextScene = enSCENE::ENDING;
 	}
 }
@@ -67,7 +67,19 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 
 	//m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
-	m_pPlayer->Render(m_mView, m_mProj, m_vLight, vCamPos);
+
+	for (int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		m_v_pFriends[i]->Render(m_mView, m_mProj, m_vLight, vCamPos);
+	}
+
+	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		m_v_pEnemys[i]->Render(m_mView, m_mProj, m_vLight, vCamPos);
+	}
+
+	Collison();
+
 	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
 }
 
@@ -75,16 +87,22 @@ void clsSCENE_MISSION::RenderUi()
 {
 }
 
+bool clsSCENE_MISSION::AllEnemyDead()
+{
+	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		if (!m_v_pEnemys[i]->m_bDeadFlg)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
 
 void clsSCENE_MISSION::CreateFriends()
 {
-	m_pPlayer = new clsPlayer;
-	m_pPlayer->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
-
-	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
-	m_pPlayer->SetPosition(tmpVec3);
-	m_pPlayer->SetScale(0.01f);
-
+	m_pPlayer = CreatePlayer();
 	m_v_pFriends.push_back(m_pPlayer);
 
 	m_v_pFriends.shrink_to_fit();
@@ -92,12 +110,22 @@ void clsSCENE_MISSION::CreateFriends()
 
 void clsSCENE_MISSION::CreateEnemys()
 {
+	for (int i = 0; i < 1; i++)
+	{
+		clsCharactor* pChara;
+		
+		pChara = CreateEnemy();
 
+		m_v_pEnemys.push_back(pChara);
+	}
+
+	m_v_pEnemys.shrink_to_fit();
 }
 
 void clsSCENE_MISSION::Collison()
 {
-
+	ColFShottoEBody();
+	ColEShottoFBody();
 }
 
 //同キャラのShotが同キャラのBodyに当たる判定を入れるかは処理の兼ね合いで入れる.
@@ -151,7 +179,29 @@ void clsSCENE_MISSION::ColEShottoEBody()
 	}
 }
 
+clsPlayer* clsSCENE_MISSION::CreatePlayer()
+{
+	clsPlayer* pPlayer = new clsPlayer;
+	pPlayer->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
 
+	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
+	pPlayer->SetPosition(tmpVec3);
+	pPlayer->SetScale(0.01f);
+
+	return pPlayer;
+}
+
+clsTestObj* clsSCENE_MISSION::CreateEnemy()
+{
+	clsTestObj* pEnemy = new clsTestObj;
+	pEnemy->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
+
+	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
+	pEnemy->SetPosition(tmpVec3);
+	pEnemy->SetScale(0.01f);
+
+	return pEnemy;
+}
 
 //============================ デバッグテキスト ===========================//
 #if _DEBUG

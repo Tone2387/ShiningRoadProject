@@ -4,6 +4,7 @@
 #include "CameraMission.h"
 
 #include"Player.h"
+#include"TestObject.h"
 #include"Stage.h"
 
 //================================//
@@ -56,6 +57,8 @@ private:
 	void ColEShottoFBody();
 	void ColEShottoEBody();
 
+	bool AllEnemyDead();
+
 	//テスト用モデル( これは消しても良いです、いらないです ).
 	
 	//clsCharaStatic* m_pTestChara;
@@ -68,7 +71,10 @@ private:
 	std::vector<clsSPRITE2D_CENTER*> m_v_pRader;
 	std::vector<clsSPRITE2D_CENTER*> m_v_pLockOn;
 	std::vector<clsUiText*> m_v_pBulletNum;
+	std::vector<clsUiText*> m_v_pLimitTime;
 
+	clsPlayer* CreatePlayer();
+	clsTestObj* CreateEnemy();
 
 	//基底クラスに以下があります.
 	//カメラ.
