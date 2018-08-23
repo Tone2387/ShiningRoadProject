@@ -18,11 +18,6 @@ public:
 	D3DXVECTOR3 m_vMovePlansDir;
 	int m_iMoveCategoryNo;
 
-	virtual void Init(
-		LPSTR strEnemyFolderName, 
-		clsCharactor* pChara, 
-		std::vector<clsCharactor*> v_pEnemys);
-
 	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
@@ -34,9 +29,11 @@ protected:
 
 	void SearchTarget();
 	void SearchNear();
-	void SetMoveDir(float& fPush, float& fAngle);
-	void SetRotate(float& fPush, float& fAngle);
-	void SetLook(float& fPush, float& fAngle);
+
+	bool SetMoveDir(float& fPush, float& fAngle);
+	bool SetRotate(float& fPush, float& fAngle);
+	bool SetLook(float& fPush, float& fAngle);
+
 	bool IsJump();
 	bool IsShot();
 

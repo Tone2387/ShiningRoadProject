@@ -9,6 +9,11 @@ public:
 	clsCharactorEnemy();
 	~clsCharactorEnemy();
 
+	void Init(
+		LPSTR strEnemyFolderName,
+		clsCharactor* pChara,
+		std::vector<clsCharactor*> v_pEnemys);
+
 	clsCharactorCommand* MoveOperation(float& fPower, float& fAngle);
 	clsCharactorCommand* RotateOperation(float& fPower, float& fAngle);
 	clsCharactorCommand* LookOperation(float& fPower, float& fAngle);

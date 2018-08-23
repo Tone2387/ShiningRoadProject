@@ -1,5 +1,20 @@
 #include"EnemyCharactor.h"
 
+void clsCharactorEnemy::Init(
+	LPSTR strEnemyFolderName,
+	clsCharactor* pChara,
+	std::vector<clsCharactor*> v_pEnemys)
+{
+	m_pChara = pChara;
+
+	m_v_pEnemys = v_pEnemys;
+
+	m_UpdateState.iHorDirResult = 0;
+	m_UpdateState.vHorMoveDir = { 0.0f, 0.0f, 0.0f };
+	//m_UpdateState.fVerDis = 0.0f;
+}
+
+
 clsCharactorCommand* clsCharactorEnemy::MoveOperation(float& fPush, float& fAngle)
 {
 	SetMoveDir(fPush, fAngle);

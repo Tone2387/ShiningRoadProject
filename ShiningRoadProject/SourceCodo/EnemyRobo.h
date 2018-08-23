@@ -11,27 +11,23 @@ public:
 	clsEnemyRobo();
 	virtual ~clsEnemyRobo();
 
-	void Action();
-
-	virtual void Init(
+	void Init(
 		LPSTR strEnemyFolderName,
-		clsCharactor* pChara,
+		clsRobo* pRobo,
 		std::vector<clsCharactor*> v_pEnemys);
 
-	bool IsBoostOn();
-	bool IsBoostOff();
+	clsRoboCommand* MoveOperation(float& fPower, float& fAngle);
+	clsRoboCommand* MoveSwitchOperation();
+	clsRoboCommand* RotateOperation(float& fPower, float& fAngle);
+	clsRoboCommand* LookOperation(float& fPower, float& fAngle);
+
+	clsRoboCommand* QuickTurnOperation();
+	clsRoboCommand* QuickBoostOperation();
+	clsRoboCommand* BoostOperation();
+
+	clsRoboCommand* LShotOperation();
+	clsRoboCommand* RShotOperation();
 	
-	bool IsQuickTurn();//ターゲット位置の方向が正面から一定以上離れてた場合、クイックターンを使用.
-	bool IsQuickBoostApproach();//クイックブーストを使用し、ターゲットとの距離を詰める.
-	
-	bool IsQuickBoostAvoid();//クイックブーストによる回避.
-
-	bool IsQuickBoostAvoidtoRockTime();
-	bool IsQuickBoostAvoidtoDamage();
-
-	bool IsShotR();
-	bool IsShotL();
-
 private:
 	clsRobo* m_pBody;
 
@@ -47,34 +43,24 @@ private:
 	clsRoboCommand* m_pComLShot;
 	clsRoboCommand* m_pComRShot;
 
-	void RoboAIOperation();
+	bool IsBoostOn();
+	bool IsBoostOff();
 
-	clsRoboCommand* MoveOperation(float& fPower, float& fAngle);
-	clsRoboCommand* MoveSwitchOperation();
-	clsRoboCommand* RotateOperation(float& fPower, float& fAngle);
-	clsRoboCommand* LookOperation(float& fPower, float& fAngle);
+	bool IsQuickTurn();//ターゲット位置の方向が正面から一定以上離れてた場合、クイックターンを使用.
+	bool IsQuickBoostApproach();//クイックブーストを使用し、ターゲットとの距離を詰める.
 
-	clsRoboCommand* QuickTurnOperation();
-	clsRoboCommand* QuickBoostOperation();
-	clsRoboCommand* BoostOperation();
+	bool IsQuickBoostAvoid();//クイックブーストによる回避.
 
-	clsRoboCommand* LShotOperation();
-	clsRoboCommand* RShotOperation();
+	bool IsQuickBoostAvoidtoRockTime();
+	bool IsQuickBoostAvoidtoDamage();
+
+	bool IsShotR();
+	bool IsShotL();
 
 	ShotData m_LShotData;
 	ShotData m_RShotData;
 
 	struct QuickTrun
-	{
-		int iRangeDir;
-	};
-
-	struct QuickBoostApproach
-	{
-
-	};
-	
-	struct QuickBoostAvoid
 	{
 
 	};

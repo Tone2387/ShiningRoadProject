@@ -8,25 +8,19 @@ clsEnemyBase::~clsEnemyBase()
 {
 }
 
-void clsEnemyBase::Init(
-	LPSTR strEnemyFolderName,
-	clsCharactor* pChara,
-	std::vector<clsCharactor*> v_pEnemys)
-{
-	m_pChara = pChara;
-
-	m_v_pEnemys = v_pEnemys;
-
-	m_UpdateState.iHorDirResult = 0;
-	m_UpdateState.vHorMoveDir = { 0.0f, 0.0f, 0.0f };
-	//m_UpdateState.fVerDis = 0.0f;
-}
-
 void clsEnemyBase::SearchTarget()
 {
 	m_pTarget = nullptr;
 
-	for (int i = 0; i < m_visAreaData.iCategory; i++)
+	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		if (m_v_pEnemys[i]->m_bDeadFlg)
+		{
+			m_pTarget = m_v_pEnemys[i];
+		}
+	}
+
+/*	for (int i = 0; i < m_visAreaData.iCategory; i++)
 	{
 		D3DXVECTOR3 vDisTmp = m_pTarget->GetPosition() - m_pTrans->vPos;
 		float fDis = D3DXVec3Length(&vDisTmp);
@@ -72,15 +66,15 @@ void clsEnemyBase::SearchTarget()
 				}
 			}
 		}
-	}
+	}*/
 }
 
-void clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
+bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 {
 	fPush = 0.0f;
 	fAngle = 0.0f;
 
-	switch (m_BaseData.iMoveCategoryVisType)
+	/*switch (m_BaseData.iMoveCategoryVisType)
 	{
 	case 0:
 
@@ -101,9 +95,9 @@ void clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 
 	default:
 		break;
-	}
+	}*/
 
-	if (m_pTarget)
+	if (!m_pTarget)
 	{
 		fPush = 1.0f;
 
@@ -144,6 +138,11 @@ void clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 		//_MoveState.iNowUpdateCnt = m_MoveState.iUpdateInterval;
 	}
 
+	else
+	{
+		return false;
+	}
+
 	D3DXVECTOR3 vTarPosDir;
 	D3DXVec3Normalize(&vTarPosDir, &m_UpdateState.vHorMoveDir);//目的地への方向ベクトル.
 
@@ -156,9 +155,11 @@ void clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 	fTmp += static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
 
 	fAngle = fTmp;
+
+	return true;
 }
 
-void clsEnemyBase::SetRotate(float& fPush, float& fAngle)
+bool clsEnemyBase::SetRotate(float& fPush, float& fAngle)
 {
 	fPush = 0.0f;
 	fAngle = 0.0f;
@@ -185,10 +186,14 @@ void clsEnemyBase::SetRotate(float& fPush, float& fAngle)
 		}
 
 		fAngle = fRot;
+
+		return true;
 	}
+
+	return false;
 }
 
-void clsEnemyBase::SetLook(float& fPush, float& fAngle)
+bool clsEnemyBase::SetLook(float& fPush, float& fAngle)
 {
 	fPush = 0.0f;
 	fAngle = 0.0f;
@@ -214,8 +219,11 @@ void clsEnemyBase::SetLook(float& fPush, float& fAngle)
 		}
 
 		fAngle = fRot;
+
+		return true;
 	}
 	
+	return false;
 }
 
 bool clsEnemyBase::IsJump()
