@@ -14,7 +14,7 @@
 
 #include"CharaSkinMesh.h"
 #include"Robo.h"
-#include"InputRobo.h"
+#include"EnemyRobo.h"
 
 //#ifdef Tahara
 //#include "PtrGroup.h"
@@ -27,10 +27,17 @@ public:
 	~clsTestObj();
 
 	void Init( clsPOINTER_GROUP* const pPtrGroup );
+	
+	void Init(clsPOINTER_GROUP* const pPtrGroup,
+		LPSTR strEnemyFolderName,
+		std::vector<clsCharactor*> v_pEnemys);
 
 	void ActionProduct() override;
 
 	void InhUpdate();//Inheritance
+
+private:
+	clsEnemyRobo* m_pAI;
 };
 
 //#endif

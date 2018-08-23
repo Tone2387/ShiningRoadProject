@@ -1,18 +1,39 @@
 #include"EnemyRobo.h"
 
-
-
 void clsEnemyRobo::Init(
 	LPSTR strEnemyFolderName,
-	clsCharactor* pChara,
+	clsRobo* pRobo,
 	std::vector<clsCharactor*> v_pEnemys)
 {
+	m_pBody = pRobo;
+	m_pChara = m_pBody;
 
-}
+	m_v_pEnemys = v_pEnemys;
 
-void clsEnemyRobo::Action()
-{
+	m_UpdateState.iHorDirResult = 0;
+	m_UpdateState.vHorMoveDir = { 0.0f, 0.0f, 0.0f };
 
+	ShotState SSTmp;
+	SSTmp.iShotDisMax = 50.0f;
+	SSTmp.iShotDisMin = 1.0f;
+
+	MoveState MSTmp;
+	MSTmp.iHorDisRandMax = 500;
+	MSTmp.iHorDistance = 100;
+	MSTmp.iMoveDir = 30;
+	MSTmp.iMoveDirRandMax = 10;
+	MSTmp.iVerDistance = 100;
+	MSTmp.iVerDistRandMax = 200;
+	MSTmp.iVerMoveENLimitParcent = 50;
+
+	m_LShotData.iCategory = 1;
+	m_LShotData.v_ShotState.push_back(SSTmp);
+
+	m_RShotData.iCategory = 1;
+	m_RShotData.v_ShotState.push_back(SSTmp);
+
+	m_MoveData.iCategory = 1;
+	m_MoveData.v_MoveState.push_back(MSTmp);
 }
 
 bool clsEnemyRobo::IsBoostOn()
@@ -25,10 +46,12 @@ bool clsEnemyRobo::IsBoostOn()
 
 	if (fVerDis > 0.0f)
 	{
-		if (m_pBody->m_iEnelgy > m_pBody->m_iEnelgyMax / iHulf)
-		{
-			return true;
-		}
+		return true;
+	}
+
+	if (m_pBody->m_iEnelgy > (m_pBody->m_iEnelgyMax / iHulf))
+	{
+		return true;
 	}
 
 	return false;
@@ -42,12 +65,15 @@ bool clsEnemyRobo::IsBoostOff()
 
 	float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
 
-	if (fVerDis > fVerDestDis)
+	if (fVerDis < 0.0f)
 	{
-		return true;
+		if (fVerDis < fVerDestDis)
+		{
+			return true;
+		}
 	}
 
-	if (m_pBody->m_iEnelgy < m_pBody->m_iEnelgyMax / iHulf)
+	if (m_pBody->m_iEnelgy < (m_pBody->m_iEnelgyMax / iHulf))
 	{
 		return true;
 	}
@@ -121,25 +147,33 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoDamage()
 	return false;
 }
 
-bool clsEnemyRobo::IsShotL()
-{
-	m_ShotData = m_LShotData;
-
-	return IsShot();
-}
-
 bool clsEnemyRobo::IsShotR()
 {
 	m_ShotData = m_RShotData;
 
-	return IsShot();
+	if (IsShot())
+	{
+		return true;
+	}
+
+	return false;
 }
 
-clsRoboCommand* clsEnemyRobo::MoveOperation(float& fPush, float& fAngle)
+bool clsEnemyRobo::IsShotL()
 {
-	SetMoveDir(fPush, fAngle);
+	m_ShotData = m_LShotData;
 
-	if (fPush > g_fPushHulf)
+	if (IsShot())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+clsRoboCommand* clsEnemyRobo::MoveOperation(float& fPower, float& fAngle)
+{
+	if (SetMoveDir(fPower, fAngle))
 	{
 		return m_pComMove;
 	}
@@ -149,16 +183,28 @@ clsRoboCommand* clsEnemyRobo::MoveOperation(float& fPush, float& fAngle)
 
 clsRoboCommand* clsEnemyRobo::MoveSwitchOperation()
 {
-	
+	if (m_pBody->m_bBoost)
+	{
+		if (IsBoostOff())
+		{
+			return m_pComBoost;
+		}
+	}
+
+	else
+	{
+		if (IsBoostOn())
+		{
+			return m_pComBoost;
+		}
+	}
 
 	return nullptr;
 }
 
-clsRoboCommand* clsEnemyRobo::RotateOperation(float& fPush, float& fAngle)
+clsRoboCommand* clsEnemyRobo::RotateOperation(float& fPower, float& fAngle)
 {
-	SetRotate(fPush, fAngle);
-
-	if (fPush > g_fPushHulf)
+	if (SetRotate(fPower,fAngle))
 	{
 		return m_pComRotate;
 	}
@@ -166,11 +212,9 @@ clsRoboCommand* clsEnemyRobo::RotateOperation(float& fPush, float& fAngle)
 	return nullptr;
 }
 
-clsRoboCommand* clsEnemyRobo::LookOperation(float& fPush, float& fAngle)
+clsRoboCommand* clsEnemyRobo::LookOperation(float& fPower, float& fAngle)
 {
-	SetLook(fPush, fAngle);
-
-	if (fPush > g_fPushHulf)
+	if (SetLook(fPower, fAngle))
 	{
 		return m_pComLook;
 	}
@@ -224,10 +268,30 @@ clsRoboCommand* clsEnemyRobo::RShotOperation()
 
 clsEnemyRobo::clsEnemyRobo()
 {
+	m_pComMove = new clsCommandMove;
+	m_pComMoveSwitch = new clsCommandMoveSwitch;
+	m_pComRotate = new clsCommandRotate;
+	m_pComLook = new clsCommandLookVerMove;
 
+	m_pComQuickBoost = new clsCommandQuickBoost;
+	m_pComQuickTrun = new clsCommandQuickTurn;
+	m_pComBoost = new clsCommandBoostRising;
+
+	m_pComLShot = new clsCommandLShot;
+	m_pComRShot = new clsCommandRShot;
 }
 
 clsEnemyRobo::~clsEnemyRobo()
 {
-
+	delete m_pComMove;
+	delete m_pComMoveSwitch;
+	delete m_pComRotate;
+	delete m_pComLook;
+	
+	delete m_pComQuickBoost;
+	delete m_pComQuickTrun;
+	delete m_pComBoost;
+	
+	delete m_pComLShot;
+	delete m_pComRShot;
 }
