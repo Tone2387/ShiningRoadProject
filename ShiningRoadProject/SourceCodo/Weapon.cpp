@@ -83,6 +83,7 @@ bool clsWeapon::Shot(clsObject* pTargetObj)
 		{
 			if (m_ppBullet[i]->Form(vPos, vDir))
 			{
+				m_iRemainingBullet--;
 				m_iReloadCnt = m_State.iReloadTime;
 				return true;
 			}
@@ -110,6 +111,16 @@ bool clsWeapon::IsNeedReload()
 void clsWeapon::Reload()
 {
 	m_iRemainingBullet = m_State.iBulletNumMax;
+}
+
+int clsWeapon::GetNowBulletNum()
+{
+	return m_iRemainingBullet;
+}
+
+int clsWeapon::GetMaxBulletNum()
+{
+	return m_State.iBulletNumMax;
 }
 
 clsWeapon::clsWeapon(clsPOINTER_GROUP* pPtrGroup)
