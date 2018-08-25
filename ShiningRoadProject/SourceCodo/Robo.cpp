@@ -46,7 +46,9 @@ void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup,clsROBO_STATUS* const p
 	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
 
-	m_MaxHP = 2;
+	m_iActivityLimitTime = 300 * g_fFPS;
+
+	m_MaxHP = 5000;
 	m_HP = m_MaxHP;
 
 	WeaponState WS[enWeaponTypeSize];
@@ -260,6 +262,8 @@ void clsRobo::Updata()
 	WeaponUpdate();
 
 	EnelgyRecovery();
+
+	UpdataLimitTime();
 }
 
 void clsRobo::UpdataLimitTime()

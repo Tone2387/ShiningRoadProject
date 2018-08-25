@@ -1,8 +1,9 @@
 #include"TestObject.h"
 
 clsTestObj::clsTestObj()
+	: m_pAI(nullptr)
 {
-	ZeroMemory(this, sizeof(clsTestObj));
+	//ZeroMemory(this, sizeof(clsTestObj));
 }
 
 clsTestObj::~clsTestObj()
@@ -17,6 +18,8 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup )
 	m_v_Spheres.resize(1);
 	m_v_Spheres[0].vCenter = &m_vCenterPos;
 	m_v_Spheres[0].fRadius = 0.1f;
+
+	m_HP = m_MaxHP = 5;
 
 	//m_pMesh->SetAnimSpeed(0.01);
 }
@@ -39,6 +42,8 @@ void clsTestObj::ActionProduct()
 
 	float fPushMin = 0.5f;
 
+	m_pTargetObj = m_pAI->SearchTarget();
+
 	pRoboCom = m_pAI->MoveSwitchOperation();
 
 	if (pRoboCom)
@@ -53,12 +58,12 @@ void clsTestObj::ActionProduct()
 		pRoboCom->PushBotton(this);
 	}
 
-	pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
+	/*pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
 
 	if (pRoboCom)
 	{
 		pRoboCom->Trigger(this, fPush, fAngle);
-	}
+	}*/
 
 	pRoboCom = m_pAI->RotateOperation(fPush, fAngle);//ù‰ñ.
 

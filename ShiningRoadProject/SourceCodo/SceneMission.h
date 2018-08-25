@@ -41,6 +41,10 @@ private:
 #endif//#if _DEBUG
 
 	clsPlayer* m_pPlayer;
+	clsTestObj* m_pTestObj;
+	clsCharactor* m_pCamTar;
+
+	bool m_bCamTarChange;
 
 	std::vector<clsCharactor*> m_v_pFriends;
 	std::vector<clsCharactor*> m_v_pEnemys;
@@ -59,7 +63,14 @@ private:
 
 	bool AllEnemyDead();
 
+	bool m_bEnemyStop;
+
 	//テスト用モデル( これは消しても良いです、いらないです ).
+
+	void UpdateCamTargetPos(clsCharactor* pChara);
+
+	D3DXVECTOR3 m_vCamTargetPos;
+	D3DXVECTOR3 m_vLookTargetPos;
 	
 	//clsCharaStatic* m_pTestChara;
 
@@ -67,11 +78,15 @@ private:
 
 	float m_fCamMoveSpeed;
 
+	void CreateUI();
 
 	std::vector<clsSPRITE2D_CENTER*> m_v_pRader;
 	std::vector<clsSPRITE2D_CENTER*> m_v_pLockOn;
-	std::vector<clsUiText*> m_v_pBulletNum;
-	std::vector<clsUiText*> m_v_pLimitTime;
+	clsSPRITE2D_CENTER* m_pEnelgy;
+	clsUiText* m_pHP;
+	clsUiText* m_pLBulletNum;
+	clsUiText* m_pRBulletNum;
+	clsUiText* m_pLimitTime;
 
 	clsPlayer* CreatePlayer();
 	clsTestObj* CreateEnemy();

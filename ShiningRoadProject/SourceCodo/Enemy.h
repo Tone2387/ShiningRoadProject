@@ -21,13 +21,14 @@ public:
 	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
+	clsCharactor* SearchTarget();
+
 protected:
 	clsCharactor* m_pChara;
 	clsCharactor* m_pTarget;
 
 	std::vector<clsCharactor*> m_v_pEnemys;
-
-	void SearchTarget();
+	
 	void SearchNear();
 
 	bool SetMoveDir(float& fPush, float& fAngle);
@@ -47,6 +48,8 @@ protected:
 	{
 		int iHorDirResult;
 		D3DXVECTOR3 vHorMoveDir;
+		float fMoveDir;
+
 		float fVerDis;
 	};
 

@@ -8,17 +8,19 @@ clsEnemyBase::~clsEnemyBase()
 {
 }
 
-void clsEnemyBase::SearchTarget()
+clsCharactor* clsEnemyBase::SearchTarget()
 {
 	m_pTarget = nullptr;
 
 	for (int i = 0; i < m_v_pEnemys.size(); i++)
 	{
-		if (m_v_pEnemys[i]->m_bDeadFlg)
+		if (!m_v_pEnemys[i]->m_bDeadFlg)
 		{
 			m_pTarget = m_v_pEnemys[i];
 		}
 	}
+
+	return m_pTarget;
 
 /*	for (int i = 0; i < m_visAreaData.iCategory; i++)
 	{
@@ -97,7 +99,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 		break;
 	}*/
 
-	if (!m_pTarget)
+	if (m_pTarget)
 	{
 		fPush = 1.0f;
 
@@ -147,7 +149,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 	D3DXVec3Normalize(&vTarPosDir, &m_UpdateState.vHorMoveDir);//目的地への方向ベクトル.
 
 	D3DXVECTOR3 vForward;//現在の回転に合わせて進む方向を決める.
-	vForward = GetVec3Dir(m_pChara->GetPosition().y, g_vDirForward);//正面方向ベクトル.
+	vForward = GetVec3Dir(m_pChara->GetRotation().y, g_vDirForward);//正面方向ベクトル.
 
 	float fTmp = D3DXVec3Dot(&vTarPosDir, &vForward);
 	fTmp = cos(fTmp);
@@ -202,9 +204,11 @@ bool clsEnemyBase::SetLook(float& fPush, float& fAngle)
 	{
 		const float fPushFull = 1.0f;
 
+		const float fHulf = 2;
+
 		const float fVecY = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 
-		float fRot = atanf(fVecY) - m_pChara->m_fLookUpDir;
+		float fRot = (atanf(fVecY) / fHulf) - m_pChara->m_fLookUpDir;
 
 		ObjRollOverGuard(&fRot);
 
@@ -232,7 +236,7 @@ bool clsEnemyBase::IsJump()
 	{
 		int iVerDestDis = m_MoveData.v_MoveState[m_iMoveCategoryNo].iVerDistance;
 
-		int iRandMax = 0.0f;
+		int iRandMax = 0;
 		iRandMax = m_MoveData.v_MoveState[m_iMoveCategoryNo].iVerDistRandMax;
 
 		if (iRandMax != 0)//0だと止まるので防止.
@@ -242,11 +246,11 @@ bool clsEnemyBase::IsJump()
 
 		m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
 
-		if (m_pTarget->GetPosition().y > m_UpdateState.fVerDis)
+		if (m_pTarget->GetPosition().y < m_UpdateState.fVerDis)
 		{
 			float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
-
-			if (fDist > 0.0f)
+			
+			if (fDist < m_UpdateState.fVerDis)
 			{
 				return true;
 			}

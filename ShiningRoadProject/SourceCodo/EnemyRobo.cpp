@@ -20,8 +20,8 @@ void clsEnemyRobo::Init(
 	MoveState MSTmp;
 	MSTmp.iHorDisRandMax = 500;
 	MSTmp.iHorDistance = 100;
-	MSTmp.iMoveDir = 30;
-	MSTmp.iMoveDirRandMax = 10;
+	MSTmp.iMoveDir = 0;
+	MSTmp.iMoveDirRandMax = 0;
 	MSTmp.iVerDistance = 100;
 	MSTmp.iVerDistRandMax = 200;
 	MSTmp.iVerMoveENLimitParcent = 50;
@@ -38,20 +38,23 @@ void clsEnemyRobo::Init(
 
 bool clsEnemyRobo::IsBoostOn()
 {
-	float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
-
-	const int iHulf = 2;
-
-	float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
-
-	if (fVerDis > 0.0f)
+	if (m_pTarget)
 	{
-		return true;
-	}
+		float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
 
-	if (m_pBody->m_iEnelgy > (m_pBody->m_iEnelgyMax / iHulf))
-	{
-		return true;
+		const int iHulf = 2;
+
+		float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
+
+		if (fVerDis > 0.0f)
+		{
+			return true;
+		}
+
+		if (m_pBody->m_iEnelgy > (m_pBody->m_iEnelgyMax / iHulf))
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -59,23 +62,26 @@ bool clsEnemyRobo::IsBoostOn()
 
 bool clsEnemyRobo::IsBoostOff()
 {
-	float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
-
-	const int iHulf = 2;
-
-	float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
-
-	if (fVerDis < 0.0f)
+	if (m_pTarget)
 	{
-		if (fVerDis < fVerDestDis)
+		float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
+
+		const int iHulf = 2;
+
+		float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
+
+		if (fVerDis < 0.0f)
+		{
+			if (fVerDis < fVerDestDis)
+			{
+				return true;
+			}
+		}
+
+		if (m_pBody->m_iEnelgy < (m_pBody->m_iEnelgyMax / iHulf))
 		{
 			return true;
 		}
-	}
-
-	if (m_pBody->m_iEnelgy < (m_pBody->m_iEnelgyMax / iHulf))
-	{
-		return true;
 	}
 
 	return false;
@@ -90,17 +96,19 @@ bool clsEnemyRobo::IsQuickTurn()//ターゲット位置の方向が正面から一定以上離れてた
 	D3DXVec3Normalize(&vDirTarget, &vDirTarget);
 
 	float fDir = D3DXVec3Dot(&vForward, &vDirTarget);*/
-
-	const float fVecX = m_pTarget->GetPosition().x - m_pBody->GetPosition().x;
-	const float fVecZ = m_pTarget->GetPosition().z - m_pBody->GetPosition().z;
-
-	float fRot = atan2f(fVecX, fVecZ) - m_pBody->GetRotation().y;
-
-	ObjRollOverGuard(&fRot);
-
-	if (fRot > D3DXToRadian(90))
+	if (m_pTarget)
 	{
-		return true;
+		const float fVecX = m_pTarget->GetPosition().x - m_pBody->GetPosition().x;
+		const float fVecZ = m_pTarget->GetPosition().z - m_pBody->GetPosition().z;
+
+		float fRot = atan2f(fVecX, fVecZ) - m_pBody->GetRotation().y;
+
+		ObjRollOverGuard(&fRot);
+
+		if (abs(fRot) > D3DXToRadian(90))
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -108,11 +116,14 @@ bool clsEnemyRobo::IsQuickTurn()//ターゲット位置の方向が正面から一定以上離れてた
 
 bool clsEnemyRobo::IsQuickBoostApproach()//クイックブーストを使用し、ターゲットとの距離を詰める.
 {
-	float fDis = D3DXVec3Length(&(m_pTarget->GetPosition() - m_pBody->GetPosition()));
-
-	if (fDis > 100.0f)
+	if (m_pTarget)
 	{
-		return true;
+		float fDis = D3DXVec3Length(&(m_pTarget->GetPosition() - m_pBody->GetPosition()));
+
+		if (fDis > 100.0f)
+		{
+			return true;
+		}
 	}
 
 	return false;

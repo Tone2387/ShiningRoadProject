@@ -39,6 +39,9 @@ public:
 	bool IsRock();
 	bool IsRockRange();
 
+	int GetNowBulletNum();
+	int GetMaxBulletNum();
+
 private:
 	WeaponState m_State;
 
