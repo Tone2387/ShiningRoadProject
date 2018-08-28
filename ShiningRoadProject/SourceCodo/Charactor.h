@@ -59,6 +59,21 @@ public:
 
 	float m_fJumpPower;
 
+	D3DXVECTOR3 m_vLockRangePos;//ロックオン判定の開始座標.
+	D3DXVECTOR3 m_vLockRangeDir;//ロックオン判定が伸びる方向.
+	float m_fLockRange;//ロックオン距離.
+	float m_fLockCircleRadius;//ロックオン判定の半径.
+
+	std::vector<clsWeapon*> m_v_pWeapons;
+	std::vector<D3DXVECTOR3> m_v_vMuzzlePos;
+	std::vector<D3DXVECTOR3> m_v_vShotDir;
+	std::vector<clsCharactor*> m_v_pEnemys;
+
+	void SetEnemys(std::vector<clsCharactor*> v_pEnemys);//敵の認識.
+
+	int m_iWeaponNum;
+	int m_iWeaponNumMax;
+
 	bool Shot();
 	bool Reload();
 
@@ -68,15 +83,14 @@ public:
 	void WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
 	
 	void WeaponUpdate();
-	
-	std::vector<clsWeapon*> m_v_pWeapons;
-	std::vector<D3DXVECTOR3> m_v_vMuzzlePos;
-	std::vector<D3DXVECTOR3> m_v_vShotDir;
-	//clsWeapon** m_ppWeapon;
-	int m_iWeaponNum;
-	int m_iWeaponNumMax;
 
-	bool RockChara(std::vector<clsCharactor*> v_pEnemys);
+	void LockChara();
+	bool IsInLockRange();
+	void SetLockRangeDir();
+	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
+
+	void Lock();
+	void LockOut();
 
 	clsCharactor* m_pTargetChara;
 	int m_iTargetNo;

@@ -2,13 +2,10 @@
 
 void clsEnemyRobo::Init(
 	LPSTR strEnemyFolderName,
-	clsRobo* pRobo,
-	std::vector<clsCharactor*> v_pEnemys)
+	clsRobo* pRobo)
 {
 	m_pBody = pRobo;
 	m_pChara = m_pBody;
-
-	m_v_pEnemys = v_pEnemys;
 
 	m_UpdateState.iHorDirResult = 0;
 	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };

@@ -26,11 +26,10 @@ public:
 	clsTestObj();
 	~clsTestObj();
 
-	void Init( clsPOINTER_GROUP* const pPtrGroup );
+	void Init(clsPOINTER_GROUP* const pPtrGroup);
 	
 	void Init(clsPOINTER_GROUP* const pPtrGroup,
-		LPSTR strEnemyFolderName,
-		std::vector<clsCharactor*> v_pEnemys);
+		LPSTR strEnemyFolderName);
 
 	void ActionProduct() override;
 

@@ -39,7 +39,8 @@ public:
 
 	clsMISSION_MODEL* m_pMesh;
 
-	void RoboInit(clsPOINTER_GROUP* const pPtrGroup, clsROBO_STATUS* const pRobo);
+	void RoboInit(clsPOINTER_GROUP* const pPtrGroup, 
+		clsROBO_STATUS* const pRobo);
 
 	void ModelUpdate()
 	{
