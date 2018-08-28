@@ -40,6 +40,8 @@ void clsSCENE_MISSION::CreateUI()
 	char pText[STR_BUFF_MAX];
 	D3DXVECTOR2 vPos = { 0.0f, 0.0f };
 
+	//Šˆ“®ŒÀŠEŠÔ.
+
 	m_pLimitTime = new clsUiText;
 	m_pLimitTime->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
 	m_pLimitTime->SetPos(vPos);
@@ -48,6 +50,7 @@ void clsSCENE_MISSION::CreateUI()
 
 	m_pLimitTime->SetText(pText);
 
+	//c’e”.
 	assert(!m_pLBulletNum);
 	vPos = { 250.0f, 0.0f };
 
@@ -70,6 +73,8 @@ void clsSCENE_MISSION::CreateUI()
 
 	m_pRBulletNum->SetText(pText);
 
+	//HP.
+
 	assert(!m_pHP);
 	vPos = { WND_W / 2, 0.0f };
 
@@ -80,6 +85,57 @@ void clsSCENE_MISSION::CreateUI()
 	sprintf_s(pText, "");
 
 	m_pHP->SetText(pText);
+
+	//EN.
+
+	assert(!m_pEnelgy);
+	SPRITE_STATE ss;
+	ss.Disp = { 512.0f / 2, 64.0f / 4 };
+	ss.Anim = { 2.0f, 1.0f };
+
+	m_pEnelgy = new clsSPRITE2D_CENTER;
+
+	m_pEnelgy->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Gauge.png", ss);
+	m_pEnelgy->SetPos({ WND_W / 2, WND_H / 5, 0.0f });
+
+	assert(!m_pEnelgyFrame);
+
+	ss.Disp = { 512.0f / 2 + 5, 64.0f / 4  + 3};
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pEnelgyFrame = new clsSPRITE2D_CENTER;
+
+	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\GaugeWaku.png", ss);
+	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
+
+	assert(!m_pRaderWindow);
+	ss.Disp = { 960.0f / 8, 640.0f / 8 };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_fRaderSizeW = ss.Disp.w;
+	m_fRaderSizeH = ss.Disp.h;
+
+	m_pRaderWindow = new clsSPRITE2D_CENTER;
+
+	m_pRaderWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindow.png", ss);
+	m_pRaderWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	ss.Disp = { 44.0f / 8, 44.0f / 8 };
+
+	m_fRaderMarkSizeW = ss.Disp.w;
+	m_fRaderMarkSizeH = ss.Disp.h;
+
+	m_fRaderDis = 50.0f;
+
+	m_v_pRaderEnemyMark.resize(m_v_pEnemys.size());
+
+	for (int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
+	{
+		m_v_pRaderEnemyMark[i] = new clsSPRITE2D_CENTER;
+
+		m_v_pRaderEnemyMark[i]->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarEnemyMark.png", ss);
+		m_v_pRaderEnemyMark[i]->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	}
 }
 
 //–ˆƒtƒŒ[ƒ€’Ê‚éˆ—.
@@ -171,16 +227,19 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 void clsSCENE_MISSION::RenderUi()
 {
+	//Šˆ“®ŒÀŠEŠÔ.
 	int iTmp = m_pPlayer->m_iActivityLimitTime;
 	int iMin = iTmp / 3600;
 	int iSecond = (iTmp - (iMin * 3600)) / 60;
-	int iN = iTmp % 100;
+	int iN = iTmp % 60;
 
 	char pText[STR_BUFF_MAX];
 
 	sprintf_s(pText, "%d:%d:%d", iMin, iSecond, iN);
 	m_pLimitTime->SetText(pText);
 	m_pLimitTime->Render();
+
+	//•Šíc’e”.
 
 	int iNowNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponLHand]->GetNowBulletNum();
 	int iMaxNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponLHand]->GetMaxBulletNum();
@@ -196,11 +255,61 @@ void clsSCENE_MISSION::RenderUi()
 	m_pRBulletNum->SetText(pText);
 	m_pRBulletNum->Render();
 
+	//HP.
+
 	int iHP = m_pPlayer->m_HP;
 
 	sprintf_s(pText, "%d", iHP);
 	m_pHP->SetText(pText);
 	m_pHP->Render(clsUiText::enPOS::MIDDLE);
+
+	//EN.
+
+
+
+	float fNowEN = static_cast<float>(m_pPlayer->m_iEnelgy);
+	float fENMax = static_cast<float>(m_pPlayer->m_iEnelgyMax);
+
+	POINTFLOAT fEnelgyPar = { 1.0f - (fNowEN / fENMax), 1.0f };
+
+	m_pEnelgy->SetAnim(fEnelgyPar);
+	m_pEnelgy->Render();
+
+	m_pEnelgyFrame->Render();
+
+	//ƒŒ[ƒ_[.
+	
+	D3DXVECTOR3 vPlayerPos = m_pPlayer->GetPosition();
+
+	const float fRaderDis = 1.0f;//‘å‚«‚­‚·‚é‚ÆƒŒ[ƒ_[‚Ìõ“G”ÍˆÍ‚ªL‚ª‚é.
+
+	//float fWindowSizeW;
+
+	for (int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
+	{
+		if (!m_v_pEnemys[i])continue;
+
+		D3DXVECTOR3 vThisEnemyPos = m_v_pEnemys[i]->GetPosition();
+
+		float fW = (vThisEnemyPos.x - vPlayerPos.x) / fRaderDis;
+		float fH = (vThisEnemyPos.z - vPlayerPos.z) / fRaderDis;
+
+		float fPosX = fW;// *m_fRaderDis;
+		float fPosY = -fH;// *m_fRaderDis;//ã‚Æ‰º‚ª‹t“]‚µ‚Ä‚é.
+
+		if (abs(fPosX) + (m_fRaderMarkSizeW / 2) < m_fRaderSizeW / 2 &&
+			abs(fPosY) + (m_fRaderMarkSizeH / 2) < m_fRaderSizeH / 2)
+		{
+			fPosX = (fPosX) + m_pRaderWindow->GetPos().x;
+			fPosY = (fPosY) + m_pRaderWindow->GetPos().y;
+
+			m_v_pRaderEnemyMark[i]->SetPos({ fPosX, fPosY, 0.0f });
+			m_v_pRaderEnemyMark[i]->Render();
+		}
+		
+		
+	}
+	m_pRaderWindow->Render();
 }
 
 bool clsSCENE_MISSION::AllEnemyDead()

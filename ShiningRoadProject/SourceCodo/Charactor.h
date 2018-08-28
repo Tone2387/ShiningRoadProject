@@ -76,8 +76,12 @@ public:
 	int m_iWeaponNum;
 	int m_iWeaponNumMax;
 
-	clsObject* m_pTargetObj;
+	bool RockChara(std::vector<clsCharactor*> v_pEnemys);
+
+	clsCharactor* m_pTargetChara;
 	int m_iTargetNo;
+
+	bool m_bRadarWarning;//ƒƒbƒN‚³‚ê‚Ä‚é.
 
 	void CharactorUpdate();
 

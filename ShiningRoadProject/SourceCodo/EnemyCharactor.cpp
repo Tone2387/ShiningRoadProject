@@ -10,7 +10,7 @@ void clsCharactorEnemy::Init(
 	m_v_pEnemys = v_pEnemys;
 
 	m_UpdateState.iHorDirResult = 0;
-	m_UpdateState.vHorMoveDir = { 0.0f, 0.0f, 0.0f };
+	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 	//m_UpdateState.fVerDis = 0.0f;
 }
 

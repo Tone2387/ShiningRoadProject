@@ -21,8 +21,8 @@ public:
 	clsRoboCommand* RotateOperation(float& fPower, float& fAngle);
 	clsRoboCommand* LookOperation(float& fPower, float& fAngle);
 
-	clsRoboCommand* QuickTurnOperation();
-	clsRoboCommand* QuickBoostOperation();
+	clsRoboCommand* QuickTurnOperation(float& fPower, float& fAngle);
+	clsRoboCommand* QuickBoostOperation(float& fPower, float& fAngle);
 	clsRoboCommand* BoostOperation();
 
 	clsRoboCommand* LShotOperation();
@@ -46,13 +46,13 @@ private:
 	bool IsBoostOn();
 	bool IsBoostOff();
 
-	bool IsQuickTurn();//ターゲット位置の方向が正面から一定以上離れてた場合、クイックターンを使用.
-	bool IsQuickBoostApproach();//クイックブーストを使用し、ターゲットとの距離を詰める.
+	bool IsQuickTurn(float& fPush, float& fAngle);//ターゲット位置の方向が正面から一定以上離れてた場合、クイックターンを使用.
+	bool IsQuickBoostApproach(float& fPush, float& fAngle);//クイックブーストを使用し、ターゲットとの距離を詰める.
 
-	bool IsQuickBoostAvoid();//クイックブーストによる回避.
+	bool IsQuickBoostAvoid(float& fPush, float& fAngle);//クイックブーストによる回避.
 
-	bool IsQuickBoostAvoidtoRockTime();
-	bool IsQuickBoostAvoidtoDamage();
+	bool IsQuickBoostAvoidtoRockTime(float& fPush, float& fAngle);
+	bool IsQuickBoostAvoidtoDamage(float& fPush, float& fAngle);
 
 	bool IsShotR();
 	bool IsShotL();

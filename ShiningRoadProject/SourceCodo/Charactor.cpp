@@ -369,7 +369,7 @@ void clsCharactor::Spin(float& fNowRot, const float fTargetRot, const float fTur
 
 bool clsCharactor::Shot()
 {
-	return m_v_pWeapons[m_iWeaponNum]->Shot(m_pTargetObj);
+	return m_v_pWeapons[m_iWeaponNum]->Shot(m_pTargetChara);
 }
 
 bool clsCharactor::Reload()
@@ -451,6 +451,13 @@ bool clsCharactor::Damage(HitState HitS)
 
 		return true;
 	}
+
+	return false;
+}
+
+bool clsCharactor::RockChara(std::vector<clsCharactor*> v_pEnemys)
+{
+
 
 	return false;
 }
