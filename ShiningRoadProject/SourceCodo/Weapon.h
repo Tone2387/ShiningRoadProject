@@ -12,8 +12,7 @@ struct WeaponState
 	int iAtk;
 	int iReloadTime;
 	int iLockSpeed;
-	float iLockRange;
-
+	
 	int iStablity;//RoboはArmの照準精度との計算結果を入れてください.
 
 	int MagazineReloadTime;
@@ -28,7 +27,7 @@ public:
 
 	void Create(WeaponState State);
 	void Update();
-	bool Shot(clsObject* pTargetObj = nullptr);
+	bool Shot();
 
 	int Hit(std::vector<clsObject::SPHERE> v_TargetSphere);
 	
@@ -36,8 +35,10 @@ public:
 
 	bool IsNeedReload();//残弾があるかで射撃かリロードかを判定.
 
-	bool IsRock();
-	bool IsRockRange();
+	bool IsLock();
+
+	void Lock(clsObject* pTargetObj = nullptr);//ロック範囲に入っているか確認.
+	void LockOut();//ロック判定解除.
 
 	int GetNowBulletNum();
 	int GetMaxBulletNum();
@@ -45,10 +46,13 @@ public:
 private:
 	WeaponState m_State;
 
+	clsObject* m_pTargetObj;
+
 	clsShot** m_ppBullet;
 	int m_iRemainingBullet;
 
 	int m_iReloadCnt;
+	int m_iLockTime;
 
 	clsPOINTER_GROUP* m_pPtrGroup;
 };

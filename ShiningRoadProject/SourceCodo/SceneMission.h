@@ -52,6 +52,8 @@ private:
 	void CreateFriends();
 	void CreateEnemys();
 
+	void SetEnemys();//“G–¡•û‚Ìì¬‚ÌŒã‚É‚¨Œİ‚¢‚Ì“G‚ğ”F¯‚³‚¹‚é.
+
 	void Collison();
 	
 	//“¯ƒLƒƒƒ‰‚ÌShot‚ª“¯ƒLƒƒƒ‰‚ÌBody‚É“–‚½‚é”»’è‚ğ“ü‚ê‚é‚©‚Íˆ—‚ÌŒ“‚Ë‡‚¢‚Å“ü‚ê‚é.

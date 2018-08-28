@@ -21,13 +21,11 @@ public:
 	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
-	clsCharactor* SearchTarget();
+	void SearchTarget(std::vector<clsCharactor*>);
 
 protected:
 	clsCharactor* m_pChara;
 	clsCharactor* m_pTarget;
-
-	std::vector<clsCharactor*> m_v_pEnemys;
 	
 	void SearchNear();
 

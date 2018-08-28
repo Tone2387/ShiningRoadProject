@@ -11,8 +11,7 @@ public:
 
 	void Init(
 		LPSTR strEnemyFolderName,
-		clsCharactor* pChara,
-		std::vector<clsCharactor*> v_pEnemys);
+		clsCharactor* pChara);
 
 	clsCharactorCommand* MoveOperation(float& fPower, float& fAngle);
 	clsCharactorCommand* RotateOperation(float& fPower, float& fAngle);

@@ -2,12 +2,9 @@
 
 void clsCharactorEnemy::Init(
 	LPSTR strEnemyFolderName,
-	clsCharactor* pChara,
-	std::vector<clsCharactor*> v_pEnemys)
+	clsCharactor* pChara)
 {
 	m_pChara = pChara;
-
-	m_v_pEnemys = v_pEnemys;
 
 	m_UpdateState.iHorDirResult = 0;
 	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };

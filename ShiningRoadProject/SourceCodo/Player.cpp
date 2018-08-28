@@ -35,6 +35,8 @@ void clsPlayer::ActionProduct()
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
 
+	LockChara();
+
 	pRoboCom = m_pInput->MoveSwitch();
 
 	if (pRoboCom)

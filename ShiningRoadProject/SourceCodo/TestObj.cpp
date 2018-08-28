@@ -11,7 +11,7 @@ clsTestObj::~clsTestObj()
 
 }
 
-void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup )
+void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup)
 {
 	RoboInit(pPtrGroup, pPtrGroup->GetRoboStatus());
 
@@ -20,18 +20,15 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup )
 	m_v_Spheres[0].fRadius = 0.1f;
 
 	m_HP = m_MaxHP = 5;
-
-	//m_pMesh->SetAnimSpeed(0.01);
 }
 
 void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup,
-	LPSTR strEnemyFolderName,
-	std::vector<clsCharactor*> v_pEnemys)
+	LPSTR strEnemyFolderName)
 {
-	Init(pPtrGroup);
-
 	m_pAI = new clsEnemyRobo;
-	m_pAI->Init("", this, v_pEnemys);
+	m_pAI->Init("", this);
+
+	Init(pPtrGroup);
 }
 
 void clsTestObj::ActionProduct()
@@ -42,9 +39,7 @@ void clsTestObj::ActionProduct()
 
 	float fPushMin = 0.5f;
 
-	m_pTargetChara = m_pAI->SearchTarget();
-
-
+	m_pAI->SearchTarget(m_v_pEnemys);
 
 /*	pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
 

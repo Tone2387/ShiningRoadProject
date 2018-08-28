@@ -13,8 +13,7 @@ public:
 
 	void Init(
 		LPSTR strEnemyFolderName,
-		clsRobo* pRobo,
-		std::vector<clsCharactor*> v_pEnemys);
+		clsRobo* pRobo);
 
 	clsRoboCommand* MoveOperation(float& fPower, float& fAngle);
 	clsRoboCommand* MoveSwitchOperation();

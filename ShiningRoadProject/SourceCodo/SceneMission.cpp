@@ -23,6 +23,8 @@ void clsSCENE_MISSION::CreateProduct()
 	CreateFriends();
 	CreateEnemys();
 
+	SetEnemys();
+
 	CreateUI();
 
 	m_pCamTar = m_pPlayer;
@@ -199,8 +201,8 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 		enNextScene = enSCENE::ENDING;
 	}
 
-	if (m_pPlayer->m_bDeadFlg){
-		enNextScene = enSCENE::ENDING;
+	if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp){
+		enNextScene = enSCENE::GAMEOVER;
 	}
 }
 
@@ -419,7 +421,7 @@ clsPlayer* clsSCENE_MISSION::CreatePlayer()
 clsTestObj* clsSCENE_MISSION::CreateEnemy()
 {
 	clsTestObj* pEnemy = new clsTestObj;
-	pEnemy->Init(m_wpPtrGroup,"",m_v_pFriends);//4つ目の引数は効果音やエフェクトを出すために追加しました.
+	pEnemy->Init(m_wpPtrGroup, "");//4つ目の引数は効果音やエフェクトを出すために追加しました.
 
 	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
 	pEnemy->SetPosition(tmpVec3);
@@ -428,6 +430,19 @@ clsTestObj* clsSCENE_MISSION::CreateEnemy()
 	m_pTestObj = pEnemy;
 
 	return pEnemy;
+}
+
+void clsSCENE_MISSION::SetEnemys()
+{
+	for (int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		m_v_pFriends[i]->SetEnemys(m_v_pEnemys);
+	}
+
+	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		m_v_pEnemys[i]->SetEnemys(m_v_pFriends);
+	}
 }
 
 //============================ デバッグテキスト ===========================//

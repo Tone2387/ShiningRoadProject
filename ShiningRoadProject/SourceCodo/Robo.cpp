@@ -1,6 +1,8 @@
 #include"Robo.h"
 
-void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup,clsROBO_STATUS* const pRobo)
+void clsRobo::RoboInit(
+	clsPOINTER_GROUP* const pPtrGroup,
+	clsROBO_STATUS* const pRobo)
 {
 #ifdef Tahara
 	m_wpResource = pPtrGroup->GetResource();
@@ -59,10 +61,9 @@ void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup,clsROBO_STATUS* const p
 
 		WS[i].iAtk = 5;
 		WS[i].iBulletNumMax = 10;
-		WS[i].iLockRange = 10;
 		WS[i].iLockSpeed = 10;
 		WS[i].iReloadTime = 20;
-		WS[i].iStablity = 10;
+		WS[i].iStablity = 0;
 		WS[i].MagazineReloadTime = 10;
 
 		WS[i].BState.fRangeMax = 1.5f;
@@ -76,6 +77,9 @@ void clsRobo::RoboInit(clsPOINTER_GROUP* const pPtrGroup,clsROBO_STATUS* const p
 	}
 
 	WeaponInit(pPtrGroup, WS, enWeaponTypeSize);
+
+	m_fLockRange = 500.0f;//ロックオン距離.
+	m_fLockCircleRadius = 500.0f;//ロックオン判定の半径.
 }
 
 void clsRobo::Walk()
@@ -325,6 +329,8 @@ bool clsRobo::EnelgyConsumption(const int iConsumption)
 void clsRobo::UpdatePosfromBone()
 {
 	m_vCenterPos = m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
+
+	m_vLockRangePos = m_pMesh->GetBonePos(enPARTS::HEAD, "Center");
 
 	m_v_vMuzzlePos[enWeaponLHand] = m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleEnd");
 	m_v_vShotDir[enWeaponLHand] = m_v_vMuzzlePos[enWeaponLHand] - m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleRoot");

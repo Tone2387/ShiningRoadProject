@@ -369,7 +369,7 @@ void clsCharactor::Spin(float& fNowRot, const float fTargetRot, const float fTur
 
 bool clsCharactor::Shot()
 {
-	return m_v_pWeapons[m_iWeaponNum]->Shot(m_pTargetChara);
+	return m_v_pWeapons[m_iWeaponNum]->Shot();
 }
 
 bool clsCharactor::Reload()
@@ -455,11 +455,170 @@ bool clsCharactor::Damage(HitState HitS)
 	return false;
 }
 
-bool clsCharactor::RockChara(std::vector<clsCharactor*> v_pEnemys)
+void clsCharactor::LockChara()
 {
+	SetLockRangeDir();
 
+	if (m_pTargetChara)
+	{
+		if (m_pTargetChara->m_bDeadFlg)//ターゲットが死亡.
+		{
+			LockOut();
+			return;
+		}
 
-	return false;
+		if (IsInLockRange(m_pTargetChara->m_vCenterPos))
+		{
+			Lock();
+		}
+
+		else
+		{
+			LockOut();
+			return;
+		}
+	}
+
+	else
+	{
+		//新規にロックするターゲットを決定する.
+		clsCharactor* pCharaTmp = nullptr;
+
+		for (int i = 0; i < m_v_pEnemys.size(); i++)
+		{
+			if (m_v_pEnemys[i]->m_bDeadFlg)
+			{
+				continue;
+			}
+
+			if (IsInLockRange(m_v_pEnemys[i]->m_vCenterPos))
+			{
+				if (pCharaTmp)
+				{
+					float fPreviousDis = D3DXVec3Length(&(pCharaTmp->m_vCenterPos - m_vCenterPos));
+					float fNowDis = D3DXVec3Length(&(m_v_pEnemys[i]->m_vCenterPos - m_vCenterPos));
+				
+					if (fNowDis < fPreviousDis)
+					{
+						//ロックするターゲットを仮設定.
+						pCharaTmp = m_v_pEnemys[i];
+						//m_iTargetNo = i;
+					}
+				}
+
+				else
+				{
+					//ロックするターゲットを仮設定.
+					pCharaTmp = m_v_pEnemys[i];
+					//m_iTargetNo = i;
+				}
+			}
+		}
+
+		if (pCharaTmp)
+		{
+			//ロックするターゲットを確定.
+			m_pTargetChara = pCharaTmp;
+		}
+	}
+}
+
+bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
+{
+	//開始位置.底面の方向.ターゲットの位置.距離.半径
+
+	/*const float fhStantard = 50.0f;
+	const float frStantard = 50.0f;
+
+	float h = 1000.0f;//高さ.
+	float fScale = h / fhStantard;
+	float r = frStantard * fScale;*/
+
+	D3DXVECTOR3 vC = m_vLockRangeDir * m_fLockRange;
+
+	D3DXVECTOR3 H = vC - m_vLockRangePos;
+	float fteimenDis = D3DXVec3Length(&H);
+	D3DXVec3Normalize(&H, &H);
+
+	D3DXVECTOR3 QP = vTargetPos - m_vLockRangePos;
+
+	D3DXVECTOR3 A = { 0.0f, 0.0f, 0.0f };
+
+	D3DXVec3Cross(&A, &H, &QP);
+
+	float PA = D3DXVec3Length(&A);
+
+	float L = D3DXVec3Dot(&H, &QP);
+	float QA = abs(L);
+
+	float Ar = (QA) / m_fLockRange * m_fLockCircleRadius;
+
+	if ((m_fLockRange * PA) / (QA * m_fLockCircleRadius) > 1.0f)
+	{
+		return false;
+	}
+
+	if (0 > L &&
+		m_fLockRange < L)
+	{
+		return false;
+	}
+
+	if (PA > Ar)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void clsCharactor::Lock()
+{
+	if (m_pTargetChara)
+	{
+		for (int i = 0; i < m_v_pWeapons.size(); i++)
+		{
+			m_v_pWeapons[i]->Lock(m_pTargetChara);
+		}
+	}	
+}
+
+void clsCharactor::LockOut()
+{
+	//m_iTargetNo = -1;
+
+	if (m_pTargetChara)
+	{
+		m_pTargetChara = nullptr;
+	}
+
+	for (int i = 0; i < m_v_pWeapons.size(); i++)
+	{
+		m_v_pWeapons[i]->LockOut();
+	}
+}
+
+void clsCharactor::SetLockRangeDir()
+{
+	D3DXVECTOR3 vTmp = {0.0f,0.0f,0.0f};
+
+	D3DXMATRIX mRot;
+
+	//カメラ位置のための回転行列作成.
+	D3DXMatrixRotationYawPitchRoll(
+		&mRot,
+		m_Trans.fYaw,
+		-m_fLookUpDir,
+		m_Trans.fRoll);
+
+	D3DXVec3TransformCoord(&vTmp, &g_vDirForward, &mRot);
+
+	m_vLockRangeDir = vTmp;
+}
+
+void clsCharactor::SetEnemys(std::vector<clsCharactor*> v_pEnemys)
+{
+	m_v_pEnemys = v_pEnemys;
 }
 
 clsCharactor::clsCharactor() :
@@ -473,14 +632,18 @@ clsCharactor::clsCharactor() :
 	m_iMoveStopFrame( 0 ),
 	m_fMoveDecele( 0.0f ),
 	m_fRotSpeed( 0.0f ),
-	m_fJumpPower( 0.0f )
+	m_fJumpPower( 0.0f ),
+	m_fLockCircleRadius(0.0f)
 {
 //	ZeroMemory(this, sizeof(clsCharactor));
 }
 
 clsCharactor::~clsCharactor()
 {
-	
+	if (m_pTargetChara)
+	{
+		m_pTargetChara = nullptr;
+	}
 }
 
 void HitState::Clear()

@@ -6,21 +6,27 @@ clsEnemyBase::clsEnemyBase()
 
 clsEnemyBase::~clsEnemyBase()
 {
+	if (m_pTarget)
+	{
+		m_pTarget = nullptr;
+	}
+	//m_v_pEnemys->clear();
+	//m_v_pEnemys.reset();
 }
 
-clsCharactor* clsEnemyBase::SearchTarget()
+void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 {
 	m_pTarget = nullptr;
 
-	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	for (int i = 0; i < v_pEnemys.size(); i++)
 	{
-		if (!m_v_pEnemys[i]->m_bDeadFlg)
+		if (!v_pEnemys[i]->m_bDeadFlg)
 		{
-			m_pTarget = m_v_pEnemys[i];
+			m_pTarget = v_pEnemys[i];
 		}
 	}
 
-	return m_pTarget;
+	//return m_pTarget;
 
 /*	for (int i = 0; i < m_visAreaData.iCategory; i++)
 	{
@@ -35,14 +41,14 @@ clsCharactor* clsEnemyBase::SearchTarget()
 				{
 					if (true)
 					{
-						m_pTarget = m_v_pEnemys[0];
+						m_pTarget = v_pEnemys[0];
 						break;
 					}
 				}
 
 				else
 				{
-					m_pTarget = m_v_pEnemys[0];
+					m_pTarget = v_pEnemys[0];
 					break;
 				}
 			}
@@ -55,14 +61,14 @@ clsCharactor* clsEnemyBase::SearchTarget()
 					{
 						if (true)
 						{
-							m_pTarget = m_v_pEnemys[0];
+							m_pTarget = v_pEnemys[0];
 							break;
 						}
 					}
 
 					else
 					{
-						m_pTarget = m_v_pEnemys[0];
+						m_pTarget = v_pEnemys[0];
 						break;
 					}
 				}
