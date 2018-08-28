@@ -47,7 +47,7 @@ protected:
 	struct UpdateState
 	{
 		int iHorDirResult;
-		D3DXVECTOR3 vHorMoveDir;
+		D3DXVECTOR3 vHorMovePos;
 		float fMoveDir;
 
 		float fVerDis;

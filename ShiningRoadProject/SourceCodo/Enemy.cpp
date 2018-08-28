@@ -103,7 +103,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 	{
 		fPush = 1.0f;
 
-		m_UpdateState.vHorMoveDir = { 0.0f, 0.0f, 0.0f };
+		m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 		m_UpdateState.fVerDis = 0.0f;
 
 		D3DXVECTOR3 vTmp;
@@ -133,9 +133,9 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 		vTmp.y = 0.0f;//垂直方向は関係ないので0にする.
 		D3DXVec3Normalize(&vTmp, &vTmp);//ターゲットから自分への方向ベクトルを取得.
 
-		m_UpdateState.vHorMoveDir = m_pTarget->GetPosition() + vTmp * fHorDestDis;//目的地.
+		m_UpdateState.vHorMovePos = m_pTarget->GetPosition() + vTmp * fHorDestDis;//目的地.
 
-		m_UpdateState.vHorMoveDir.y = 0.0f;//垂直方向は関係ないので0にする.
+		m_UpdateState.vHorMovePos.y = 0.0f;//垂直方向は関係ないので0にする.
 
 		//_MoveState.iNowUpdateCnt = m_MoveState.iUpdateInterval;
 	}
@@ -145,7 +145,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 		return false;
 	}
 
-	D3DXVECTOR3 vTarPosDir;
+	/*D3DXVECTOR3 vTarPosDir;
 	D3DXVec3Normalize(&vTarPosDir, &m_UpdateState.vHorMoveDir);//目的地への方向ベクトル.
 
 	D3DXVECTOR3 vForward;//現在の回転に合わせて進む方向を決める.
@@ -156,7 +156,18 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 
 	fTmp += static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
 
-	fAngle = fTmp;
+	fAngle = fTmp;*/
+
+	const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
+	const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
+
+	float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+
+	fRot += static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
+
+	ObjRollOverGuard(&fRot);
+
+	fAngle = fRot;
 
 	return true;
 }
@@ -204,11 +215,13 @@ bool clsEnemyBase::SetLook(float& fPush, float& fAngle)
 	{
 		const float fPushFull = 1.0f;
 
-		const float fHulf = 2;
+		const int iDirHulf = 180;
+		const int iDirQuar = 90;
+		const int iDirOneEighth = 45;
 
 		const float fVecY = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 
-		float fRot = (atanf(fVecY) / fHulf) - m_pChara->m_fLookUpDir;
+		float fRot = (atanf(fVecY)) - m_pChara->m_fLookUpDir;
 
 		ObjRollOverGuard(&fRot);
 

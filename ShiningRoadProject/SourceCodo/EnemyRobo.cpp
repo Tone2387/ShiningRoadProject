@@ -11,7 +11,7 @@ void clsEnemyRobo::Init(
 	m_v_pEnemys = v_pEnemys;
 
 	m_UpdateState.iHorDirResult = 0;
-	m_UpdateState.vHorMoveDir = { 0.0f, 0.0f, 0.0f };
+	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 
 	ShotState SSTmp;
 	SSTmp.iShotDisMax = 50.0f;
@@ -40,18 +40,18 @@ bool clsEnemyRobo::IsBoostOn()
 {
 	if (m_pTarget)
 	{
-		float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
+		float fVerDis = m_pBody->GetPosition().y - m_pTarget->GetPosition().y;
 
 		const int iHulf = 2;
 
 		float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
 
-		if (fVerDis > 0.0f)
+		if (fVerDis > 0.0f)//“G‚ªã‚É‚¢‚é.
 		{
 			return true;
 		}
 
-		if (m_pBody->m_iEnelgy > (m_pBody->m_iEnelgyMax / iHulf))
+		if (m_pBody->m_iEnelgy > (m_pBody->m_iEnelgyMax / iHulf))//ENc—Ê‚ª\•ª‚É‚ ‚é.
 		{
 			return true;
 		}
@@ -64,21 +64,21 @@ bool clsEnemyRobo::IsBoostOff()
 {
 	if (m_pTarget)
 	{
-		float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
+		float fVerDis = m_pBody->GetPosition().y - m_pTarget->GetPosition().y;
 
 		const int iHulf = 2;
 
 		float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
 
-		if (fVerDis < 0.0f)
+		if (fVerDis < 0.0f)//“G‚ª‰º‚É‚¢‚é.
 		{
-			if (fVerDis < fVerDestDis)
+			if (abs(fVerDis) > fVerDestDis)//“G‚Æ‚Ì‚‚³‚Ì·‚ª‘å‚«‚·‚¬‚é.
 			{
 				return true;
 			}
 		}
 
-		if (m_pBody->m_iEnelgy < (m_pBody->m_iEnelgyMax / iHulf))
+		if (m_pBody->m_iEnelgy < (m_pBody->m_iEnelgyMax / iHulf))//ENc—Ê‚ª­‚È‚¢.
 		{
 			return true;
 		}
@@ -87,7 +87,7 @@ bool clsEnemyRobo::IsBoostOff()
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickTurn()//ƒ^[ƒQƒbƒgˆÊ’u‚Ì•ûŒü‚ª³–Ê‚©‚çˆê’èˆÈã—£‚ê‚Ä‚½ê‡AƒNƒCƒbƒNƒ^[ƒ“‚ğg—p.
+bool clsEnemyRobo::IsQuickTurn(float& fPush, float& fAngle)//ƒ^[ƒQƒbƒgˆÊ’u‚Ì•ûŒü‚ª³–Ê‚©‚çˆê’èˆÈã—£‚ê‚Ä‚½ê‡AƒNƒCƒbƒNƒ^[ƒ“‚ğg—p.
 {
 	/*D3DXVECTOR3 vForward = GetVec3Dir(m_pBody->GetRotation().y,g_vDirForward);
 
@@ -96,6 +96,10 @@ bool clsEnemyRobo::IsQuickTurn()//ƒ^[ƒQƒbƒgˆÊ’u‚Ì•ûŒü‚ª³–Ê‚©‚çˆê’èˆÈã—£‚ê‚Ä‚½
 	D3DXVec3Normalize(&vDirTarget, &vDirTarget);
 
 	float fDir = D3DXVec3Dot(&vForward, &vDirTarget);*/
+
+	fPush = 0.0f;
+	fAngle = 0.0f;
+
 	if (m_pTarget)
 	{
 		const float fVecX = m_pTarget->GetPosition().x - m_pBody->GetPosition().x;
@@ -103,10 +107,36 @@ bool clsEnemyRobo::IsQuickTurn()//ƒ^[ƒQƒbƒgˆÊ’u‚Ì•ûŒü‚ª³–Ê‚©‚çˆê’èˆÈã—£‚ê‚Ä‚½
 
 		float fRot = atan2f(fVecX, fVecZ) - m_pBody->GetRotation().y;
 
+		int iDirHulf = 180;
+		int iDirHFull = 360;
+
+		if (fRot > static_cast<float>D3DXToRadian(iDirHulf))
+		{
+			fRot -= static_cast<float>D3DXToRadian(iDirHFull);
+		}
+		else if (fRot < -static_cast<float>D3DXToRadian(iDirHulf))
+		{
+			fRot += static_cast<float>D3DXToRadian(iDirHFull);
+		}
+
 		ObjRollOverGuard(&fRot);
 
-		if (abs(fRot) > D3DXToRadian(90))
+		if (abs(fRot) > D3DXToRadian(150))
 		{
+			const float fPushFull = 1.0f;
+
+			if (fRot > 0.0f)
+			{
+				fPush = fPushFull;
+			}
+
+			else
+			{
+				fPush = -fPushFull;
+			}
+
+			fAngle = fRot;
+
 			return true;
 		}
 	}
@@ -114,7 +144,7 @@ bool clsEnemyRobo::IsQuickTurn()//ƒ^[ƒQƒbƒgˆÊ’u‚Ì•ûŒü‚ª³–Ê‚©‚çˆê’èˆÈã—£‚ê‚Ä‚½
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickBoostApproach()//ƒNƒCƒbƒNƒu[ƒXƒg‚ğg—p‚µAƒ^[ƒQƒbƒg‚Æ‚Ì‹——£‚ğ‹l‚ß‚é.
+bool clsEnemyRobo::IsQuickBoostApproach(float& fPush, float& fAngle)//ƒNƒCƒbƒNƒu[ƒXƒg‚ğg—p‚µAƒ^[ƒQƒbƒg‚Æ‚Ì‹——£‚ğ‹l‚ß‚é.
 {
 	if (m_pTarget)
 	{
@@ -129,14 +159,14 @@ bool clsEnemyRobo::IsQuickBoostApproach()//ƒNƒCƒbƒNƒu[ƒXƒg‚ğg—p‚µAƒ^[ƒQƒbƒg‚
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickBoostAvoid()//ƒNƒCƒbƒNƒu[ƒXƒg‚É‚æ‚é‰ñ”ğ.
+bool clsEnemyRobo::IsQuickBoostAvoid(float& fPush, float& fAngle)//ƒNƒCƒbƒNƒu[ƒXƒg‚É‚æ‚é‰ñ”ğ.
 {
-	if (IsQuickBoostAvoidtoDamage())
+	if (IsQuickBoostAvoidtoDamage(fPush,fAngle))
 	{
 		return true;
 	}
 
-	if (IsQuickBoostAvoidtoRockTime())
+	if (IsQuickBoostAvoidtoRockTime(fPush, fAngle))
 	{
 		return true;
 	}
@@ -144,14 +174,14 @@ bool clsEnemyRobo::IsQuickBoostAvoid()//ƒNƒCƒbƒNƒu[ƒXƒg‚É‚æ‚é‰ñ”ğ.
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickBoostAvoidtoRockTime()
+bool clsEnemyRobo::IsQuickBoostAvoidtoRockTime(float& fPush, float& fAngle)
 {
 
 
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickBoostAvoidtoDamage()
+bool clsEnemyRobo::IsQuickBoostAvoidtoDamage(float& fPush, float& fAngle)
 {
 
 
@@ -198,7 +228,7 @@ clsRoboCommand* clsEnemyRobo::MoveSwitchOperation()
 	{
 		if (IsBoostOff())
 		{
-			return m_pComBoost;
+			return m_pComMoveSwitch;
 		}
 	}
 
@@ -206,7 +236,7 @@ clsRoboCommand* clsEnemyRobo::MoveSwitchOperation()
 	{
 		if (IsBoostOn())
 		{
-			return m_pComBoost;
+			return m_pComMoveSwitch;
 		}
 	}
 
@@ -233,14 +263,17 @@ clsRoboCommand* clsEnemyRobo::LookOperation(float& fPower, float& fAngle)
 	return nullptr;
 }
 
-clsRoboCommand* clsEnemyRobo::QuickTurnOperation()
+clsRoboCommand* clsEnemyRobo::QuickTurnOperation(float& fPower, float& fAngle)
 {
-
+	if (IsQuickTurn(fPower, fAngle))
+	{
+		return m_pComQuickTrun;
+	}
 
 	return nullptr;
 }
 
-clsRoboCommand* clsEnemyRobo::QuickBoostOperation()
+clsRoboCommand* clsEnemyRobo::QuickBoostOperation(float& fPower, float& fAngle)
 {
 
 

@@ -80,12 +80,26 @@ private:
 
 	void CreateUI();
 
-	std::vector<clsSPRITE2D_CENTER*> m_v_pRader;
-	std::vector<clsSPRITE2D_CENTER*> m_v_pLockOn;
+	clsSPRITE2D_CENTER* m_pRaderWindow;
+	std::vector<clsSPRITE2D_CENTER*> m_v_pRaderEnemyMark;
+
+	float m_fRaderSizeW;
+	float m_fRaderSizeH;
+
+	float m_fRaderMarkSizeW;
+	float m_fRaderMarkSizeH;
+
+	float m_fRaderDis;
+
+
 	clsSPRITE2D_CENTER* m_pEnelgy;
+	clsSPRITE2D_CENTER* m_pEnelgyFrame;
+
 	clsUiText* m_pHP;
+
 	clsUiText* m_pLBulletNum;
 	clsUiText* m_pRBulletNum;
+
 	clsUiText* m_pLimitTime;
 
 	clsPlayer* CreatePlayer();

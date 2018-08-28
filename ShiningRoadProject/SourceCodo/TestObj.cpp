@@ -42,28 +42,17 @@ void clsTestObj::ActionProduct()
 
 	float fPushMin = 0.5f;
 
-	m_pTargetObj = m_pAI->SearchTarget();
+	m_pTargetChara = m_pAI->SearchTarget();
 
-	pRoboCom = m_pAI->MoveSwitchOperation();
 
-	if (pRoboCom)
-	{
-		pRoboCom->PushBotton(this);
-	}
 
-	pRoboCom = m_pAI->BoostOperation();
-
-	if (pRoboCom)
-	{
-		pRoboCom->PushBotton(this);
-	}
-
-	/*pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
+/*	pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
 
 	if (pRoboCom)
 	{
 		pRoboCom->Trigger(this, fPush, fAngle);
-	}*/
+	}
+	*/
 
 	pRoboCom = m_pAI->RotateOperation(fPush, fAngle);//旋回.
 
@@ -79,7 +68,7 @@ void clsTestObj::ActionProduct()
 		pRoboCom->Trigger(this, fPush, fAngle);
 	}
 
-	pRoboCom = m_pAI->LShotOperation();
+	/*pRoboCom = m_pAI->LShotOperation();
 
 	if (pRoboCom)
 	{
@@ -91,6 +80,36 @@ void clsTestObj::ActionProduct()
 	if (pRoboCom)
 	{
 		pRoboCom->PushBotton(this);
+	}*/
+
+	pRoboCom = m_pAI->QuickTurnOperation(fPush, fAngle);
+
+	if (pRoboCom)
+	{
+		if (m_bBoost)
+		{
+			MoveSwitch();//QuickTrunの為に強制的にブースターを切る.
+		}
+
+		pRoboCom->Trigger(this, fPush, fAngle);
+		pRoboCom->PushBotton(this);
+	}
+
+	else
+	{
+		pRoboCom = m_pAI->MoveSwitchOperation();
+
+		if (pRoboCom)
+		{
+			pRoboCom->PushBotton(this);
+		}
+
+		/*pRoboCom = m_pAI->BoostOperation();
+
+		if (pRoboCom)
+		{
+			pRoboCom->PushBotton(this);
+		}*/
 	}
 
 	Move();
