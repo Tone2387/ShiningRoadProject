@@ -10,8 +10,6 @@ clsEnemyBase::~clsEnemyBase()
 	{
 		m_pTarget = nullptr;
 	}
-	//m_v_pEnemys->clear();
-	//m_v_pEnemys.reset();
 }
 
 void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
@@ -25,8 +23,6 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 			m_pTarget = v_pEnemys[i];
 		}
 	}
-
-	//return m_pTarget;
 
 /*	for (int i = 0; i < m_visAreaData.iCategory; i++)
 	{
@@ -150,19 +146,6 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 	{
 		return false;
 	}
-
-	/*D3DXVECTOR3 vTarPosDir;
-	D3DXVec3Normalize(&vTarPosDir, &m_UpdateState.vHorMoveDir);//目的地への方向ベクトル.
-
-	D3DXVECTOR3 vForward;//現在の回転に合わせて進む方向を決める.
-	vForward = GetVec3Dir(m_pChara->GetRotation().y, g_vDirForward);//正面方向ベクトル.
-
-	float fTmp = D3DXVec3Dot(&vTarPosDir, &vForward);
-	fTmp = cos(fTmp);
-
-	fTmp += static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
-
-	fAngle = fTmp;*/
 
 	const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
 	const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;

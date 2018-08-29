@@ -308,9 +308,8 @@ void clsSCENE_MISSION::RenderUi()
 			m_v_pRaderEnemyMark[i]->SetPos({ fPosX, fPosY, 0.0f });
 			m_v_pRaderEnemyMark[i]->Render();
 		}
-		
-		
 	}
+
 	m_pRaderWindow->Render();
 }
 
