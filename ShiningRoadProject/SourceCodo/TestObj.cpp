@@ -41,13 +41,13 @@ void clsTestObj::ActionProduct()
 
 	m_pAI->SearchTarget(m_v_pEnemys);
 
-/*	pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
+	pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
 
 	if (pRoboCom)
 	{
 		pRoboCom->Trigger(this, fPush, fAngle);
 	}
-	*/
+	
 
 	pRoboCom = m_pAI->RotateOperation(fPush, fAngle);//ù‰ñ.
 
@@ -63,7 +63,7 @@ void clsTestObj::ActionProduct()
 		pRoboCom->Trigger(this, fPush, fAngle);
 	}
 
-	/*pRoboCom = m_pAI->LShotOperation();
+	pRoboCom = m_pAI->LShotOperation();
 
 	if (pRoboCom)
 	{
@@ -75,7 +75,7 @@ void clsTestObj::ActionProduct()
 	if (pRoboCom)
 	{
 		pRoboCom->PushBotton(this);
-	}*/
+	}
 
 	pRoboCom = m_pAI->QuickTurnOperation(fPush, fAngle);
 
@@ -99,12 +99,12 @@ void clsTestObj::ActionProduct()
 			pRoboCom->PushBotton(this);
 		}
 
-		/*pRoboCom = m_pAI->BoostOperation();
+		pRoboCom = m_pAI->BoostOperation();
 
 		if (pRoboCom)
 		{
 			pRoboCom->PushBotton(this);
-		}*/
+		}
 	}
 
 	Move();
