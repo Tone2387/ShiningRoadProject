@@ -28,7 +28,10 @@
 #include <D3D10.h>
 
 #include <memory>
+
 #include <string>
+#include <vector>
+
 #include <sstream>
 
 //============================================================
