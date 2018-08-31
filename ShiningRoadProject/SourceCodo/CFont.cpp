@@ -28,22 +28,23 @@ clsFont::clsFont(
 	,m_pVertexBuffer( nullptr )
 	,m_pSampleLinear( nullptr )
 	,m_pConstantBuffer( nullptr )
-	,m_pTex2D()
-	,m_pAsciiTexture()
+	,m_vpTex2D()
+	,m_vvpAsciiTexture()
 	,m_pBlendState( nullptr )
-	,m_cTextData()
+	,m_sTextData()
 	,m_fAlpha( 1.0f )
 	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 	,m_Design()
+	,m_iTextRow( 0 )
 {
-	for (int iTex = 0; iTex<TEXT_H; iTex++){
-		m_pTex2D[iTex] = nullptr;
-	}
-	for (int iTex = 0; iTex<TEXT_H; iTex++){
-		for (int i = 0; i < TEXT_W; i++){
-			m_pAsciiTexture[iTex][i] = nullptr;
-		}
-	}
+//	for (int iTex = 0; iTex<TEXT_H; iTex++){
+//		m_pTex2D[iTex] = nullptr;
+//	}
+//	for (int iTex = 0; iTex<TEXT_H; iTex++){
+//		for (int i = 0; i < TEXT_W; i++){
+//			m_pAsciiTexture[iTex][i] = nullptr;
+//		}
+//	}
 
 	if( !AddFontResourceEx(
 		cFontStyle,
@@ -66,6 +67,7 @@ clsFont::clsFont(
 
 	//外部情報受け渡し.
 	m_vPos = D3DXVECTOR3(0.0f, m_fFontSize, 0.01f);
+	m_vPos = D3DXVECTOR3(0.0f, 0.0f, 0.01f);
 	m_fScale = m_fFontSize;
 
 	if( FAILED( CreateShader() ) ){
@@ -87,30 +89,31 @@ clsFont::clsFont(
 
 clsFont::~clsFont()
 {
-	for (int iTex = 0; iTex<TEXT_H; iTex++){
-		for (int i = 0; i < TEXT_W; i++)
+	for( int iTex=0; iTex<m_vvpAsciiTexture.size(); iTex++ )
+	{
+		for( int i=0; i<m_vvpAsciiTexture[i].size(); i++ )
 		{
 //			SAFE_DELETE(m_pAsciiTexture[iTex][i]);
-			if( !m_pAsciiTexture[iTex][i] ) continue;
-			m_pAsciiTexture[iTex][i]->Release();
-			m_pAsciiTexture[iTex][i] = nullptr;
+			if( !m_vvpAsciiTexture[iTex][i] ) continue;
+			m_vvpAsciiTexture[iTex][i]->Release();
+			m_vvpAsciiTexture[iTex][i] = nullptr;
 		}
 	}
-	for (int iTex = 0; iTex<TEXT_H; iTex++){
+	for( int iTex=0; iTex<m_vpTex2D.size(); iTex++ ){
 //		SAFE_DELETE(m_pTex2D[iTex]);
-		if( !m_pTex2D[iTex] ) continue;
-		m_pTex2D[iTex]->Release();
-		m_pTex2D[iTex] = nullptr;
+		if( !m_vpTex2D[iTex] ) continue;
+		m_vpTex2D[iTex]->Release();
+		m_vpTex2D[iTex] = nullptr;
 	}
 
 	//板ﾎﾟﾘｺﾞﾝ解放.
-	SAFE_RELEASE(m_pBlendState);
-	SAFE_RELEASE(m_pConstantBuffer);
-	SAFE_RELEASE(m_pSampleLinear);
-	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pPixelShader);
-	SAFE_RELEASE(m_pVertexLayout);
-	SAFE_RELEASE(m_pVertexShader);
+	SAFE_RELEASE( m_pBlendState );
+	SAFE_RELEASE( m_pConstantBuffer );
+	SAFE_RELEASE( m_pSampleLinear );
+	SAFE_RELEASE( m_pVertexBuffer );
+	SAFE_RELEASE( m_pPixelShader ) ;
+	SAFE_RELEASE( m_pVertexLayout );
+	SAFE_RELEASE( m_pVertexShader );
 
 	m_pContext = nullptr;
 	m_pDevice = nullptr;
@@ -306,33 +309,40 @@ void clsFont::LoadTextFile( const char *FileName )
 
 	File.Open( FileName );
 
-//	error = fopen_s(&fp, FileName, "r");
 	//行数分繰り返し
 	int iLoad = 0;		//一行ずつ文字列として読み込み
 
 	//初期化.
-	for (int i = 0; i < TEXT_H; i++)
+	//行数.
+	m_iTextRow = File.GetSizeRow();
+	m_sTextData.resize( m_iTextRow );
+	m_vpTex2D.resize( m_iTextRow, nullptr );
+	m_vvpAsciiTexture.resize( m_iTextRow );
+
+	for( int i=0; i<File.GetSizeRow(); i++ )
 	{
-		for (int j = 0; j < TEXT_H; j++)
-		{
-			m_cTextData[i][j] = { '\0' };
-			m_pAsciiTexture[i][j] = { '\0' };
-		}
+		const int iCol = File.GetDataString( i, 0 ).size();//文字列の長さ.
+		const int iNullPlus = 1;//ヌル文字の分.
+		//その行の文字列の長さ.
+		m_sTextData[i].resize( iCol + iNullPlus, '\0' );
+		m_vvpAsciiTexture[i].resize( iCol + iNullPlus, '\0' );
+
+//		for( int j=0; j<File.GetDataString( i, 0 ).size(); j++ )
+//		{
+//			m_sTextData[i][j] = { '\0' };
+//			m_vvpAsciiTexture[i][j] = { '\0' };
+//		}
 	}
 
-//	while (!feof(fp))
-//	{
-//		fscanf(fp, "%[^,],%s",
-//				&m_cTextData[iLoad]);
-//		//行番号.
-//		iLoad++;							
-//	}
 
 	for( int i=0; i<File.GetSizeRow(); i++ ){
-		for( int j=0; j<File.GetDataString( i , 0 ).size(); j++ ){
-			//一文字づつコピー.
-			m_cTextData[i][j] = File.GetDataString( i )[j];
-		}
+		//一行ずつコピー.
+		m_sTextData[i] = File.GetDataString( i );
+
+//		for( int j=0; j<File.GetDataString( i , 0 ).size(); j++ ){
+//			//一文字づつコピー.
+//			m_cTextData[i][j] = File.GetDataString( i )[j];
+//		}
 		iLoad++;
 	}
 
@@ -342,7 +352,6 @@ void clsFont::LoadTextFile( const char *FileName )
 	iLoad = 0;
 
 	//ファイルのクローズ
-//	fclose(fp);
 	File.Close();
 
 }
@@ -362,7 +371,7 @@ HRESULT clsFont::CreateTexture()
 		TEXT( sFONT_NAME )
 	};
 
-	for (int iTex = 0; iTex < TEXT_H; iTex++)
+	for( int iTex=0; iTex<m_iTextRow; iTex++ )
 	{
 		HFONT hFont = CreateFontIndirect(&lf);
 		if (!(hFont))
@@ -375,11 +384,11 @@ HRESULT clsFont::CreateTexture()
 
 		HFONT oldFont = (HFONT)SelectObject(hdc, hFont);
 
-		int iByteMax = strlen(m_cTextData[iTex]);
+		int iByteMax = strlen( m_sTextData[iTex].c_str() );
 
-		for (int i = 0; i < iByteMax; i++)
+		for( int i=0; i<iByteMax; i++ )
 		{
-			if (IsDBCSLeadByte(m_cTextData[iTex][i])){
+			if( IsDBCSLeadByte( m_sTextData[iTex][i] ) ){
 				i++;
 			}
 		}
@@ -389,12 +398,12 @@ HRESULT clsFont::CreateTexture()
 		for (int i = 0; i < iByteMax; i++)
 		{
 			//文字コード取得.
-			if (IsDBCSLeadByte(m_cTextData[iTex][i]))
+			if( IsDBCSLeadByte( m_sTextData[iTex][i] ) )
 			{
-				code = (BYTE)m_cTextData[iTex][i] << 8 | (BYTE)m_cTextData[iTex][i + 1];
+				code = (BYTE)m_sTextData[iTex][i] << 8 | (BYTE)m_sTextData[iTex][i + 1];
 			}
 			else{
-				code = m_cTextData[iTex][i];
+				code = m_sTextData[iTex][i];
 			}
 			//ﾌｫﾝﾄﾋﾞｯﾄﾏｯﾌﾟ取得.
 			TEXTMETRIC TM;
@@ -423,7 +432,7 @@ HRESULT clsFont::CreateTexture()
 			desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-			if (FAILED(m_pDevice->CreateTexture2D(&desc, 0, &m_pTex2D[iTex])))
+			if( FAILED( m_pDevice->CreateTexture2D( &desc, 0, &m_vpTex2D[iTex] ) ) )
 			{
 				MessageBox(0, "ﾃｸｽﾁｬ作成失敗", "CreateTexture", MB_OK);
 				return E_FAIL;
@@ -432,7 +441,7 @@ HRESULT clsFont::CreateTexture()
 			D3D11_MAPPED_SUBRESOURCE hMappedResource;
 			if( FAILED
 				( m_pContext->Map(
-				m_pTex2D[iTex],
+				m_vpTex2D[iTex],
 				0,
 				D3D11_MAP_WRITE_DISCARD,
 				0,
@@ -469,11 +478,11 @@ HRESULT clsFont::CreateTexture()
 				}
 			}
 
-			m_pContext->Unmap(m_pTex2D[iTex], 0);
+			m_pContext->Unmap( m_vpTex2D[iTex], 0 );
 
 			//ﾃｸｽﾁｬ情報を取得する.
 			D3D11_TEXTURE2D_DESC texDesc;
-			m_pTex2D[iTex]->GetDesc(&texDesc);
+			m_vpTex2D[iTex]->GetDesc( &texDesc );
 
 			//ShaderResourceViewの情報を作成する.
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -485,14 +494,14 @@ HRESULT clsFont::CreateTexture()
 
 			if (FAILED(
 				m_pDevice->CreateShaderResourceView(
-				m_pTex2D[iTex], &srvDesc, &m_pAsciiTexture[iTex][iCharCnt])))
+				m_vpTex2D[iTex], &srvDesc, &m_vvpAsciiTexture[iTex][iCharCnt] ) ) )
 			{
 				assert( !"テクスチャ作成失敗" );
 				return E_FAIL;
 			}
 
 			//文字コード取得.
-			if( IsDBCSLeadByte(m_cTextData[iTex][i] ) )
+			if( IsDBCSLeadByte( m_sTextData[iTex][i] ) )
 			{
 				i++;
 			}
@@ -513,6 +522,10 @@ HRESULT clsFont::CreateTexture()
 //						↓段	　↓文字数
 void clsFont::Render( int iTex, int iCharNum )
 {
+	//文字列の左上を座標の位置に持ってくるために必要.
+	const D3DXVECTOR3 vOFFSET_POS = { -m_fScale, m_fScale * 0.5f, 0.0f };
+	D3DXVECTOR3 vPos = m_vPos + vOFFSET_POS;
+
 	if( iTex <= -1 ) return;
 	if( iCharNum <= -1 ) return;
 
@@ -526,14 +539,17 @@ void clsFont::Render( int iTex, int iCharNum )
 
 	for (int i = 0; i<iCharNum; i++)
 	{
-		if (m_vPos.x + m_fFontSize + 
-			(m_fScale + m_fFontMarginX)*iCnt <= m_Rect.right)
+		if( i >= m_sTextData[iTex].size() ){
+			break;
+		}
+
+		if( vPos.x + m_fFontSize +  (m_fScale + m_fFontMarginX ) * iCnt <= 
+			m_Rect.right)
 		{
 			//指定範囲の中
 			iCnt++;
 		}
-		else
-		{
+		else{
 			//範囲指定外、一段ずらす.
 			ii++;
 			iCnt = 1;
@@ -543,9 +559,9 @@ void clsFont::Render( int iTex, int iCharNum )
 		D3DXMATRIX mWorld, mScale, mTran;		//ワールド行列
 		D3DXMatrixIdentity( &mWorld );
 		D3DXMatrixTranslation( &mTran, 
-			m_vPos.x + (m_fScale + m_fFontMarginX)*iCnt,
-			m_vPos.y + (m_fScale + m_fFontMarginY)*ii * 2,
-			m_vPos.z );
+			vPos.x + (m_fScale + m_fFontMarginX)*iCnt,
+			vPos.y + (m_fScale + m_fFontMarginY)*ii * 2,
+			vPos.z );
 
 		D3DXMatrixScaling(&mScale, m_fScale, m_fScale, 1.0f );
 		mWorld = mScale * mTran;
@@ -569,7 +585,6 @@ void clsFont::Render( int iTex, int iCharNum )
 			cb.Uv = { 0.0f, 0.0f };
 
 			cb.Color = m_vColor;
-			cb.Color.w = 1.0f;
 			//透明度を渡す
 			cb.Alpha = m_fAlpha;
 
@@ -592,11 +607,11 @@ void clsFont::Render( int iTex, int iCharNum )
 		m_pContext->IASetInputLayout(m_pVertexLayout);
 
 		//ﾃｸｽﾁｬをｼｪｰﾀﾞｰに渡す
-		m_pContext->PSSetSamplers(0, 1, &m_pSampleLinear);
-		m_pContext->PSSetShaderResources(0, 1, &m_pAsciiTexture[iTex][i]);
+		m_pContext->PSSetSamplers( 0, 1, &m_pSampleLinear );
+		m_pContext->PSSetShaderResources( 0, 1, &m_vvpAsciiTexture[iTex][i] );
 
 		//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞ用ﾌﾞﾚﾝﾄﾞｽﾃｰﾄ作成
-		SetBlendSprite(true);
+		SetBlendSprite( true );
 
 		//描画
 		m_pContext->Draw(4, 0);
@@ -604,7 +619,40 @@ void clsFont::Render( int iTex, int iCharNum )
 }
 
 
-void clsFont::SetBlendSprite(bool alpha_flg)
+
+void clsFont::SetPos( const D3DXVECTOR3 &vPos )
+{
+	m_vPos = vPos;
+}
+
+D3DXVECTOR3 clsFont::GetPos()
+{
+	return m_vPos;
+}
+
+void clsFont::SetScale( const float fScale )
+{
+	m_fScale = fScale;
+}
+
+float clsFont::GetScale()
+{
+	return m_fScale;
+}
+	 
+void clsFont::SetColor( const D3DXVECTOR4 &vColor )
+{
+	const float fNOT_ALPHA = 1.0f;
+	m_vColor = vColor;
+	m_vColor.w = fNOT_ALPHA;
+}
+
+void clsFont::SetAlpha( const float fAlpha )
+{
+	m_fAlpha = fAlpha;
+}
+
+void clsFont::SetBlendSprite( const bool isAlpha )
 {
 	//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞ用ﾌﾞﾚﾝﾄﾞｽﾃｰﾄ作成
 	//pngﾌｧｲﾙ内にｱﾙﾌｧ情報があるので、透過するようにﾌﾞﾚﾝﾄﾞｽﾃｰﾄで設定する
@@ -614,7 +662,7 @@ void clsFont::SetBlendSprite(bool alpha_flg)
 	blendDesc.AlphaToCoverageEnable = false;						//true:ｱﾙﾌｧﾄｩｶﾊﾞﾚｯｼﾞを使用する
 
 	//表示ﾀｲﾌﾟ
-	blendDesc.RenderTarget[0].BlendEnable = alpha_flg;					//true:ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを使用する
+	blendDesc.RenderTarget[0].BlendEnable = isAlpha;					//true:ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを使用する
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを指定
 	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;	//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞの反転を指定
 	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成
@@ -623,14 +671,14 @@ void clsFont::SetBlendSprite(bool alpha_flg)
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;		//ADD：加算合成
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのﾃﾞｰﾀの格納を許可する
 
-	if (FAILED(m_pDevice->CreateBlendState(&blendDesc, &m_pBlendState)))
+	if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState ) ) )
 	{
 		MessageBox(0, "ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの作成に失敗", "error(InitPolygon)", MB_OK);
 	}
 
 	//ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの設定
 	UINT mask = 0xffffffff;	//ﾏｽｸ値白
-	m_pContext->OMSetBlendState(m_pBlendState, NULL, mask);
+	m_pContext->OMSetBlendState( m_pBlendState, NULL, mask );
 
 }
 

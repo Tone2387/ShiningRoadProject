@@ -169,12 +169,12 @@ void clsSCENE_BASE::Render()
 	}
 
 
-	static int xss = 0;
-	static int yss = 10;
-	if( GetAsyncKeyState( VK_UP )& 0x1  )		xss++;
-	if( GetAsyncKeyState( VK_DOWN) & 0x1  )		xss--;
-	if( GetAsyncKeyState( VK_RIGHT) & 0x1 	)	yss++;
-	if( GetAsyncKeyState( VK_LEFT) & 0x1  )		yss--;
+	static int xss = 1;
+	static int yss = 100;
+//	if( GetAsyncKeyState( VK_UP )& 0x1  )		xss++;
+//	if( GetAsyncKeyState( VK_DOWN) & 0x1  )		xss--;
+//	if( GetAsyncKeyState( VK_RIGHT) & 0x1 	)	yss++;
+//	if( GetAsyncKeyState( VK_LEFT) & 0x1  )		yss--;
 	m_wpFont->Render( xss, yss );
 
 	//ˆÃ“]•`‰æ.
