@@ -381,21 +381,13 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos() );
 	}
 
-//	//ロボ全身.
-//	assert( m_pAsmModel );
-//	//パーツ選択中は選択しているパーツを光らせる.
-//	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-//		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos, 
-//			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
-//	}
-//	else{
-//		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
-//	}
 
 }
 
 void clsSCENE_ASSEMBLE::RenderUi()
 {
+
+
 }
 
 //カーソル移動.

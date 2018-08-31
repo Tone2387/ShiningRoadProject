@@ -94,6 +94,7 @@
     <ClCompile Include="SourceCodo\CameraMission.cpp" />
     <ClCompile Include="SourceCodo\CameraTitle.cpp" />
     <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp" />
+    <ClCompile Include="SourceCodo\CFont.cpp" />
     <ClCompile Include="SourceCodo\Charactor.cpp" />
     <ClCompile Include="SourceCodo\CharactorCommand.cpp" />
     <ClCompile Include="SourceCodo\CharactorStaticMesh.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="SourceCodo\CameraMission.h" />
     <ClInclude Include="SourceCodo\CameraTitle.h" />
     <ClInclude Include="SourceCodo\CD3DXSKINMESH.h" />
+    <ClInclude Include="SourceCodo\CFont.h" />
     <ClInclude Include="SourceCodo\Charactor.h" />
     <ClInclude Include="SourceCodo\CharactorCommand.h" />
     <ClInclude Include="SourceCodo\CharactorStaticMesh.h" />
@@ -266,6 +268,14 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\DebugText.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\FontText.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>

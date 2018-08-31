@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "RoboStatus.h"
 #include "BlackScreen.h"
+#include "CFont.h"
 
 class clsPOINTER_GROUP
 {
@@ -25,7 +26,8 @@ public:
 		clsEffects* const pEffects,
 		clsSOUND_MANAGER_BASE* const pSound,
 		clsROBO_STATUS* const pRoboStatus,
-		clsBLACK_SCREEN* const pBlack );
+		clsBLACK_SCREEN* const pBlack,
+		clsFont* const pFont );
 	~clsPOINTER_GROUP();
 
 	//サウンドのアドレス取得.
@@ -47,6 +49,7 @@ public:
 	clsCAMERA_BASE*	GetCamera() const;
 	clsROBO_STATUS* GetRoboStatus() const;
 	clsBLACK_SCREEN* GetBlackScreen() const;
+	clsFont* GetFont() const;
 
 private:
 	//デバイスオブジェクト.
@@ -77,5 +80,8 @@ private:
 
 	//暗転用黒スプライト.
 	clsBLACK_SCREEN*	m_wpBlackScreen;
+
+	//フォント.
+	clsFont*			m_wpFont;
 };
 

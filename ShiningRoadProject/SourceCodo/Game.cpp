@@ -41,6 +41,7 @@ clsGAME::clsGAME(
 		,m_upCameraFactory( nullptr )
 		,m_spRoboStatus( nullptr )
 		,m_spBlackScreen( nullptr )
+		,m_spFont( nullptr )
 {
 
 }
@@ -58,6 +59,7 @@ clsGAME::~clsGAME()
 		m_upSceneFactory.reset( nullptr );
 	}
 	SAFE_DELETE( m_spPtrGroup );
+	SAFE_DELETE( m_spFont );
 	SAFE_DELETE( m_spBlackScreen );
 	SAFE_DELETE( m_spRoboStatus );
 	SAFE_DELETE( m_spEffect );
@@ -117,6 +119,11 @@ void clsGAME::Create()
 	m_spBlackScreen->Create( m_wpDevice, m_wpContext,
 		cBLACK_FILE_NAME, ss );
 
+	assert( !m_spFont );
+	m_spFont = new clsFont ( 
+		m_wpDevice, m_wpContext, 
+		"Data\\Font\\case01.csv" );
+
 	//引数のポインタの集合体.
 	assert( !m_spPtrGroup );
 	m_spPtrGroup = new clsPOINTER_GROUP( 
@@ -125,7 +132,8 @@ void clsGAME::Create()
 		m_wpDepthStencilState,
 		m_spDxInput, m_spXInput,
 		m_spResource, m_spEffect, m_spSound,
-		m_spRoboStatus, m_spBlackScreen );
+		m_spRoboStatus, m_spBlackScreen,
+		m_spFont );
 
 
 	//ファクトリの作成.
@@ -182,6 +190,8 @@ void clsGAME::Render(
 	//シーンの描画.
 	assert( m_upScene );
 	m_upScene->Render(); 
+
+
 }
 
 
