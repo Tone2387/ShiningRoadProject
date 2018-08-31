@@ -32,6 +32,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpCamera(		m_wpPtrGroup->GetCamera() )
 	,m_wpRoboStatus(	m_wpPtrGroup->GetRoboStatus() )
 	,m_wpBlackScreen(	m_wpPtrGroup->GetBlackScreen() )
+	,m_wpFont( m_wpPtrGroup->GetFont() )
 #if _DEBUG
 	,m_upText( nullptr )
 #endif//#if _DEBUG
@@ -56,6 +57,7 @@ clsSCENE_BASE::~clsSCENE_BASE()
 
 	m_enNextScene = enSCENE::NOTHING;
 
+	m_wpFont = nullptr;
 	m_wpBlackScreen = nullptr;
 	m_wpRoboStatus = nullptr;
 	m_wpCamera = nullptr;
@@ -100,6 +102,8 @@ void clsSCENE_BASE::Create()
 
 	//各シーンのCreate.
 	CreateProduct();
+
+
 }
 
 //ループ内の処理( 引数を関数内で変更すると今のシーンが破棄され、.
@@ -148,9 +152,12 @@ void clsSCENE_BASE::Render()
 
 	//各シーンの描画.
 	RenderProduct( m_wpCamera->GetPos() );
-
+	
 	//エフェクト描画.
 	m_wpEffects->Render( m_mView, m_mProj, m_wpCamera->GetPos() );
+
+	//元通りのビューポート.
+	SetViewPort( m_wpViewPort11, m_wpCamera->GetPos(), m_wpCamera->GetLookPos(), WND_W, WND_H );
 
 	//各シーンのUIの描画.
 	RenderUi();
@@ -161,6 +168,14 @@ void clsSCENE_BASE::Render()
 		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
 	}
 
+
+	static int xss = 0;
+	static int yss = 10;
+	if( GetAsyncKeyState( VK_UP )& 0x1  )		xss++;
+	if( GetAsyncKeyState( VK_DOWN) & 0x1  )		xss--;
+	if( GetAsyncKeyState( VK_RIGHT) & 0x1 	)	yss++;
+	if( GetAsyncKeyState( VK_LEFT) & 0x1  )		yss--;
+	m_wpFont->Render( xss, yss );
 
 	//暗転描画.
 	m_wpBlackScreen->Render();
@@ -372,7 +387,7 @@ void clsSCENE_BASE::SetViewPort(
 	const float fWndW, const float fWndH )
 {
 	if( !pVp ) return;
-//	if( m_wpViewPort11 == pVp ) return;
+	if( m_wpViewPortUsing == pVp ) return;
 
 	m_wpViewPortUsing = pVp;
 

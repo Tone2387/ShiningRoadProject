@@ -59,6 +59,9 @@ private:
 	//サウンドのファクトリ.
 	std::unique_ptr< clsFACTORY_SOUND_MANAGER > m_upSoundFactory;
 	
+	//フォント.
+	clsFont*			m_spFont;
+
 
 	//シーン初期化に必要なポインタのまとめ.
 	clsPOINTER_GROUP* m_spPtrGroup; 

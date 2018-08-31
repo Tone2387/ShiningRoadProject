@@ -12,7 +12,8 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 	clsEffects* const pEffects,
 	clsSOUND_MANAGER_BASE* const pSound,
 	clsROBO_STATUS* const pRoboStatus,
-	clsBLACK_SCREEN* const pBlack )
+	clsBLACK_SCREEN* const pBlack,
+	clsFont* const pFont )
 		:m_wpDevice( pDevice )
 		,m_wpContext( pContext )
 		,m_wpViewPort10( pViewPort10 )
@@ -26,6 +27,7 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 		,m_wpRoboStatus( pRoboStatus )
 		,m_wpBlackScreen( pBlack )
 		,m_wpCamera( nullptr )
+		,m_wpFont( pFont )
 {
 }
 
@@ -126,4 +128,9 @@ clsROBO_STATUS* clsPOINTER_GROUP::GetRoboStatus() const
 clsBLACK_SCREEN* clsPOINTER_GROUP::GetBlackScreen() const
 {
 	return m_wpBlackScreen;
+}
+
+clsFont* clsPOINTER_GROUP::GetFont() const
+{
+	return m_wpFont;
 }

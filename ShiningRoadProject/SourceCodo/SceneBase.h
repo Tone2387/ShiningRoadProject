@@ -106,7 +106,7 @@ protected:
 	clsCAMERA_BASE*			m_wpCamera;	
 	clsROBO_STATUS*			m_wpRoboStatus;
 	clsBLACK_SCREEN*		m_wpBlackScreen;
-
+	clsFont*				m_wpFont;
 
 private:
 	//----- Render—p -----//.
