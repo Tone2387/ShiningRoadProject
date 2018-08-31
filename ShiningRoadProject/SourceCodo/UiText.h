@@ -27,7 +27,8 @@ public:
 		MIDDLE,
 	};
 
-	HRESULT Create( ID3D11DeviceContext* const pContext,
+	HRESULT Create( 
+		ID3D11DeviceContext* const pContext,
 		const DWORD &dwWidth, const DWORD &dwHeight,
 		const float fScale );
 

@@ -18,13 +18,6 @@ class clsFont
 {
 public:
 
-	//ﾌｫﾝﾄ構造体.
-	struct strFont
-	{
-		int iFontDispSpeed;
-		int iFontAutoFlg;
-	};
-
 	clsFont( 
 		ID3D11Device* const pDevice, 
 		ID3D11DeviceContext* const pContext,
@@ -34,19 +27,26 @@ public:
 	void Render( int iTex, int iCharNum );
 
 
-	D3DXVECTOR3		m_vPos;			//位置
-	float			m_fScale;		//拡縮
-	float			m_fAlpha;
-		
 
+	void SetPos( const D3DXVECTOR3 &vPos );
+	D3DXVECTOR3 GetPos();
 
-	//
-	strFont			m_strFont;
+	void SetScale( const float fScale );
+	float GetScale();
 
-	int				m_iFontH;					//読み込んだ文章が何行あるか.
+	void SetColor( const D3DXVECTOR4 &vColor );
+	void SetAlpha( const float fAlpha );
 
 	
 private:
+
+	//ﾌｫﾝﾄ構造体.
+	struct strFont
+	{
+		int iFontDispSpeed;
+		int iFontAutoFlg;
+	}m_strFont;
+
 
 	//構造体
 	struct FONTSHADER_CONSTANT_BUFFER
@@ -78,8 +78,16 @@ private:
 	HRESULT	CreateTexture();
 	void SetBlendSprite(bool alpha_flg);
 
+	D3DXVECTOR3		m_vPos;			//位置
+	float			m_fScale;		//拡縮
+	D3DXVECTOR4		m_vColor;		//色
+	float			m_fAlpha;
+		
+
+
+	int				m_iFontH;					//読み込んだ文章が何行あるか.
+
 	DESIGNVECTOR		m_Design;
-	D3DXVECTOR4			m_vColor;		//色
 	RECT				m_Rect;			//指定幅設定.
 
 	char				m_cTextData[TEXT_H][TEXT_W];	//文章.

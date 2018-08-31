@@ -645,10 +645,16 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 //		m_vLight.x, m_vLight.y, m_vLight.z );
 //	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	//選択肢.
+	//UI.
 	sprintf_s( strDbgTxt, 
-		"BackZ : z[%f]",
-		m_upBack->GetPos().z );
+		"SpritePos : x[%f], y[%f]",
+		m_pUI->GetUiPos().x, m_pUI->GetUiPos().y );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	//日本語文字.[400:-400,200][200:-200,100][50:-50,25]
+	sprintf_s( strDbgTxt, 
+		"Font : x[%f], y[%f], Scale[%f]",
+		m_wpFont->GetPos().x, m_wpFont->GetPos().y, m_wpFont->GetScale() );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 //	//テスト用に数値を出す.

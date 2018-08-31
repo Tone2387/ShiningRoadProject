@@ -66,7 +66,10 @@ clsFont::clsFont(
 
 	//外部情報受け渡し.
 	m_vPos = D3DXVECTOR3(0.0f, m_fFontSize, 0.01f);
+	m_vPos = D3DXVECTOR3(0.0f, 0.0f, 0.01f);
 	m_fScale = m_fFontSize;
+//	m_fScale = 50.0f;
+
 
 	if( FAILED( CreateShader() ) ){
 		assert( !"Can't Create Shader" );
@@ -513,6 +516,10 @@ HRESULT clsFont::CreateTexture()
 //						↓段	　↓文字数
 void clsFont::Render( int iTex, int iCharNum )
 {
+	//文字列の左上を座標の位置に持ってくるために必要.
+	const D3DXVECTOR3 vOFFSET_POS = { -m_fScale, m_fScale * 0.5f, 0.0f };
+	D3DXVECTOR3 vPos = m_vPos + vOFFSET_POS;
+
 	if( iTex <= -1 ) return;
 	if( iCharNum <= -1 ) return;
 
@@ -526,14 +533,13 @@ void clsFont::Render( int iTex, int iCharNum )
 
 	for (int i = 0; i<iCharNum; i++)
 	{
-		if (m_vPos.x + m_fFontSize + 
-			(m_fScale + m_fFontMarginX)*iCnt <= m_Rect.right)
+		if( vPos.x + m_fFontSize +  (m_fScale + m_fFontMarginX ) * iCnt <= 
+			m_Rect.right)
 		{
 			//指定範囲の中
 			iCnt++;
 		}
-		else
-		{
+		else{
 			//範囲指定外、一段ずらす.
 			ii++;
 			iCnt = 1;
@@ -543,9 +549,9 @@ void clsFont::Render( int iTex, int iCharNum )
 		D3DXMATRIX mWorld, mScale, mTran;		//ワールド行列
 		D3DXMatrixIdentity( &mWorld );
 		D3DXMatrixTranslation( &mTran, 
-			m_vPos.x + (m_fScale + m_fFontMarginX)*iCnt,
-			m_vPos.y + (m_fScale + m_fFontMarginY)*ii * 2,
-			m_vPos.z );
+			vPos.x + (m_fScale + m_fFontMarginX)*iCnt,
+			vPos.y + (m_fScale + m_fFontMarginY)*ii * 2,
+			vPos.z );
 
 		D3DXMatrixScaling(&mScale, m_fScale, m_fScale, 1.0f );
 		mWorld = mScale * mTran;
@@ -569,7 +575,6 @@ void clsFont::Render( int iTex, int iCharNum )
 			cb.Uv = { 0.0f, 0.0f };
 
 			cb.Color = m_vColor;
-			cb.Color.w = 1.0f;
 			//透明度を渡す
 			cb.Alpha = m_fAlpha;
 
@@ -602,6 +607,43 @@ void clsFont::Render( int iTex, int iCharNum )
 		m_pContext->Draw(4, 0);
 	}
 }
+
+
+
+void clsFont::SetPos( const D3DXVECTOR3 &vPos )
+{
+	m_vPos = vPos;
+}
+
+D3DXVECTOR3 clsFont::GetPos()
+{
+	return m_vPos;
+}
+
+
+void clsFont::SetScale( const float fScale )
+{
+	m_fScale = fScale;
+}
+
+float clsFont::GetScale()
+{
+	return m_fScale;
+}
+
+	 
+void clsFont::SetColor( const D3DXVECTOR4 &vColor )
+{
+	const float fNOT_ALPHA = 1.0f;
+	m_vColor = vColor;
+	m_vColor.w = fNOT_ALPHA;
+}
+
+void clsFont::SetAlpha( const float fAlpha )
+{
+	m_fAlpha = fAlpha;
+}
+
 
 
 void clsFont::SetBlendSprite(bool alpha_flg)
