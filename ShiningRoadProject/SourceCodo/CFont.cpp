@@ -513,6 +513,9 @@ HRESULT clsFont::CreateTexture()
 //						↓段	　↓文字数
 void clsFont::Render( int iTex, int iCharNum )
 {
+	if( iTex <= -1 ) return;
+	if( iCharNum <= -1 ) return;
+
 	//使用するｼｪｰﾀﾞｰの登録
 	m_pContext->VSSetShader(m_pVertexShader, NULL, 0);
 	m_pContext->PSSetShader(m_pPixelShader, NULL, 0);
