@@ -1,3 +1,5 @@
+//#define CAN_CHECK_STRING_BYTE_TYPE//文字の英数字、日本語文字の1バイト目、2バイト目の判定ができるならつける.
+
 #include "CFont.h"
 
 #include "File.h"
@@ -89,22 +91,29 @@ clsFont::clsFont(
 
 clsFont::~clsFont()
 {
-	for( int iTex=0; iTex<m_vvpAsciiTexture.size(); iTex++ )
+	for( unsigned int iTex=0; iTex<m_vvpAsciiTexture.size(); iTex++ )
 	{
-		for( int i=0; i<m_vvpAsciiTexture[i].size(); i++ )
+		for( unsigned int i=0; i<m_vvpAsciiTexture[iTex].size(); i++ )
 		{
 //			SAFE_DELETE(m_pAsciiTexture[iTex][i]);
 			if( !m_vvpAsciiTexture[iTex][i] ) continue;
 			m_vvpAsciiTexture[iTex][i]->Release();
 			m_vvpAsciiTexture[iTex][i] = nullptr;
 		}
+		m_vvpAsciiTexture[iTex].clear();
+		m_vvpAsciiTexture[iTex].shrink_to_fit();
 	}
-	for( int iTex=0; iTex<m_vpTex2D.size(); iTex++ ){
+	m_vvpAsciiTexture.clear();
+	m_vvpAsciiTexture.shrink_to_fit();
+
+	for( unsigned int iTex=0; iTex<m_vpTex2D.size(); iTex++ ){
 //		SAFE_DELETE(m_pTex2D[iTex]);
 		if( !m_vpTex2D[iTex] ) continue;
 		m_vpTex2D[iTex]->Release();
 		m_vpTex2D[iTex] = nullptr;
 	}
+	m_vpTex2D.clear();
+	m_vpTex2D.shrink_to_fit();
 
 	//板ﾎﾟﾘｺﾞﾝ解放.
 	SAFE_RELEASE( m_pBlendState );
@@ -319,32 +328,30 @@ void clsFont::LoadTextFile( const char *FileName )
 	m_vpTex2D.resize( m_iTextRow, nullptr );
 	m_vvpAsciiTexture.resize( m_iTextRow );
 
-	for( int i=0; i<File.GetSizeRow(); i++ )
+	for( unsigned int i=0; i<File.GetSizeRow(); i++ )
 	{
 		const int iCol = File.GetDataString( i, 0 ).size();//文字列の長さ.
-		const int iNullPlus = 1;//ヌル文字の分.
-		//その行の文字列の長さ.
-		m_sTextData[i].resize( iCol + iNullPlus, '\0' );
-		m_vvpAsciiTexture[i].resize( iCol + iNullPlus, '\0' );
-
-//		for( int j=0; j<File.GetDataString( i, 0 ).size(); j++ )
-//		{
-//			m_sTextData[i][j] = { '\0' };
-//			m_vvpAsciiTexture[i][j] = { '\0' };
-//		}
-	}
-
-
-	for( int i=0; i<File.GetSizeRow(); i++ ){
 		//一行ずつコピー.
-		m_sTextData[i] = File.GetDataString( i );
+		m_sTextData[i] = File.GetDataString( i, 0 );
+#ifndef CAN_CHECK_STRING_BYTE_TYPE
+		m_vvpAsciiTexture[i].resize( iCol, nullptr );
+#else//#ifndef CAN_CHECK_STRING_BYTE_TYPE
+		m_vvpAsciiTexture[i].reserve( m_sTextData[i].size() );
 
-//		for( int j=0; j<File.GetDataString( i , 0 ).size(); j++ ){
-//			//一文字づつコピー.
-//			m_cTextData[i][j] = File.GetDataString( i )[j];
-//		}
+		const int iNullPlus = 1;//ヌル文字の分.
+		for( unsigned int j=0; j<m_sTextData[i].size()-iNullPlus; j++ )
+		{
+			if( IsDBCSLeadByte( m_sTextData[i][j] ) ){
+				m_vvpAsciiTexture[i].push_back( nullptr );
+			}
+		}
+		m_vvpAsciiTexture[i].shrink_to_fit();
+#endif//#ifndef CAN_CHECK_STRING_BYTE_TYPE
 		iLoad++;
 	}
+
+//			if( IsDBCSLeadByte( m_sTextData[iTex][i] ) )
+
 
 	//読込ﾌｫﾝﾄ行を渡す.
 	m_iFontH = iLoad;
@@ -527,6 +534,7 @@ void clsFont::Render( int iTex, int iCharNum )
 	D3DXVECTOR3 vPos = m_vPos + vOFFSET_POS;
 
 	if( iTex <= -1 ) return;
+	if( iTex > m_vvpAsciiTexture.size() ) return;
 	if( iCharNum <= -1 ) return;
 
 	//使用するｼｪｰﾀﾞｰの登録
@@ -537,9 +545,9 @@ void clsFont::Render( int iTex, int iCharNum )
 	int ii = 0;
 	int iCnt = 0;
 
-	for (int i = 0; i<iCharNum; i++)
+	for ( unsigned int i = 0; i<iCharNum; i++ )
 	{
-		if( i >= m_sTextData[iTex].size() ){
+		if( i >= m_vvpAsciiTexture[iTex].size() ){
 			break;
 		}
 
