@@ -1,3 +1,5 @@
+//#define CAN_CHECK_STRING_BYTE_TYPE//文字の英数字、日本語文字の1バイト目、2バイト目の判定ができるならつける.
+
 #include "CFont.h"
 
 #include "File.h"
@@ -329,14 +331,14 @@ void clsFont::LoadTextFile( const char *FileName )
 	for( unsigned int i=0; i<File.GetSizeRow(); i++ )
 	{
 		const int iCol = File.GetDataString( i, 0 ).size();//文字列の長さ.
-		const int iNullPlus = 1;//ヌル文字の分.
 		//一行ずつコピー.
 		m_sTextData[i] = File.GetDataString( i, 0 );
-#if 0
+#ifndef CAN_CHECK_STRING_BYTE_TYPE
 		m_vvpAsciiTexture[i].resize( iCol, nullptr );
-#else
+#else//#ifndef CAN_CHECK_STRING_BYTE_TYPE
 		m_vvpAsciiTexture[i].reserve( m_sTextData[i].size() );
 
+		const int iNullPlus = 1;//ヌル文字の分.
 		for( unsigned int j=0; j<m_sTextData[i].size()-iNullPlus; j++ )
 		{
 			if( IsDBCSLeadByte( m_sTextData[i][j] ) ){
@@ -344,7 +346,7 @@ void clsFont::LoadTextFile( const char *FileName )
 			}
 		}
 		m_vvpAsciiTexture[i].shrink_to_fit();
-#endif
+#endif//#ifndef CAN_CHECK_STRING_BYTE_TYPE
 		iLoad++;
 	}
 
@@ -532,6 +534,7 @@ void clsFont::Render( int iTex, int iCharNum )
 	D3DXVECTOR3 vPos = m_vPos + vOFFSET_POS;
 
 	if( iTex <= -1 ) return;
+	if( iTex > m_vvpAsciiTexture.size() ) return;
 	if( iCharNum <= -1 ) return;
 
 	//使用するｼｪｰﾀﾞｰの登録
