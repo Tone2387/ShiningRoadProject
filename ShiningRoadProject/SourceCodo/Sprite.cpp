@@ -218,7 +218,7 @@ HRESULT clsSprite::InitShader()
 //============================================================
 HRESULT clsSprite::InitModel()
 {
-	float itaW = 0.5f;
+	float itaW = 1.0f;
 	float w, h;
 	w = h = ( 1.0f / 8.0f );
 	w = h = 1.0f;
@@ -294,7 +294,7 @@ HRESULT clsSprite::InitModel()
 	if( FAILED(
 		D3DX11CreateShaderResourceViewFromFile(
 			m_pDevice11,		//リソースを使用するデバイスへのポインタ.
-			"Data\\Image\\CheckPointSet\\Chi.png",	//ファイル名(パスも必要).
+			"Data\\Image\\MissonUI\\Lockon.png",	//ファイル名(パスも必要).
 			NULL, NULL,
 			&m_pTexture,	//(out)テクスチャ.
 			NULL ) ) )

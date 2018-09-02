@@ -42,6 +42,10 @@ private:
 	clsRoboCommand* m_pComLShot;
 	clsRoboCommand* m_pComRShot;
 
+	int m_iAvoidDamageUpdateTime;
+	int m_iDamage;
+	int m_iLockTime;
+
 	bool IsBoostOn();
 	bool IsBoostOff();
 
@@ -52,6 +56,7 @@ private:
 
 	bool IsQuickBoostAvoidtoRockTime(float& fPush, float& fAngle);
 	bool IsQuickBoostAvoidtoDamage(float& fPush, float& fAngle);
+	void ResetAvoidtoDamage();
 
 	bool IsShotR();
 	bool IsShotL();
@@ -59,8 +64,21 @@ private:
 	ShotData m_LShotData;
 	ShotData m_RShotData;
 
+	struct QuickBoostApproach
+	{
+		int iDis;
+	};
+
 	struct QuickTrun
 	{
+		int iDir;
+	};
 
+	struct QuickBoostAvoid
+	{
+		int iAvoidNum;//回避条件カテゴリナンバー.
+		int iUpdateTime;
+		int iAvoidDir;
+		int iLockTimeorDamage;
 	};
 };

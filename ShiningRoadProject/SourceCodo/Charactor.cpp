@@ -558,7 +558,7 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 		return false;
 	}
 
-	if (0 > L &&
+	if (0.0f > L || 
 		m_fLockRange < L)
 	{
 		return false;
@@ -568,6 +568,26 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 	{
 		return false;
 	}
+
+	/*float QA = abs(L);
+
+	float Ar = (QA) / m_fLockRange * m_fLockCircleRadius;
+
+	if ((m_fLockRange * PA) / (QA * m_fLockCircleRadius) > 1.0f)
+	{
+		return false;
+	}
+
+	if (0.0f > L ||
+		m_fLockRange < L)
+	{
+		return false;
+	}
+
+	if (PA > m_fLockCircleRadius)
+	{
+		return false;
+	}*/
 
 	return true;
 }

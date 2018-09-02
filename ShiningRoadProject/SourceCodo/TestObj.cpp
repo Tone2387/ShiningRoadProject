@@ -19,7 +19,7 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup)
 	m_v_Spheres[0].vCenter = &m_vCenterPos;
 	m_v_Spheres[0].fRadius = 0.1f;
 
-	m_HP = m_MaxHP = 5;
+	//m_HP = m_MaxHP = 5;
 }
 
 void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup,
@@ -41,12 +41,12 @@ void clsTestObj::ActionProduct()
 
 	m_pAI->SearchTarget(m_v_pEnemys);
 
-	pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
+	/*pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
 
 	if (pRoboCom)
 	{
 		pRoboCom->Trigger(this, fPush, fAngle);
-	}
+	}*/
 	
 
 	pRoboCom = m_pAI->RotateOperation(fPush, fAngle);//ù‰ñ.
@@ -56,7 +56,7 @@ void clsTestObj::ActionProduct()
 		pRoboCom->Trigger(this, abs(fPush), fAngle);
 	}
 
-	pRoboCom = m_pAI->LookOperation(fPush, fAngle);
+	/*pRoboCom = m_pAI->LookOperation(fPush, fAngle);
 
 	if (pRoboCom)
 	{
@@ -105,7 +105,7 @@ void clsTestObj::ActionProduct()
 		{
 			pRoboCom->PushBotton(this);
 		}
-	}
+	}*/
 
 	Move();
 	Rotate();

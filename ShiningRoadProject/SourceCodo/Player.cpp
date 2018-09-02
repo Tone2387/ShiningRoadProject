@@ -131,11 +131,6 @@ void clsPlayer::ActionProduct()
 	UpdateCamTargetPos();
 }
 
-void clsPlayer::InhUpdate()
-{
-	//m_pMesh->SetAnimSpeed(0.01);
-}
-
 D3DXVECTOR3 clsPlayer::GetCamTargetPos()
 {
 	return m_vCamTargetPos;
@@ -147,13 +142,17 @@ D3DXVECTOR3 clsPlayer::GetLookTargetPos()
 	return m_vLookTargetPos;
 }
 
+D3DXVECTOR3 clsPlayer::GetLockCenterPos()
+{
+	return m_vLockCenterPos;
+}
+
 
 void clsPlayer::UpdateCamTargetPos()
 {
 	const float fCamMoveSpeed = 0.5f;
-	const float fLookPosSpace = 50.0f;
-	const float fCamSpaceTmp = 2.0f;
-	const float fCamPosX = 0.5f;
+	const float fCamSpaceTmp = 4.0f;
+	const float fCamPosX = 1.0f;
 
 	D3DXMATRIX mRot;
 
@@ -184,11 +183,9 @@ void clsPlayer::UpdateCamTargetPos()
 		fCamSpaceTmp
 	};
 
-	D3DXVECTOR3 vLookAxis;
+	D3DXVec3TransformCoord(&vCamAxis, &vCamAxis, &mRot);
 
 	//ﾍﾞｸﾄﾙそのものを回転状態により変換する.
-	D3DXVec3TransformCoord(&vCamAxis, &vCamAxis, &mRot);
-	D3DXVec3TransformCoord(&vLookAxis, &g_vDirForward, &mRot);
 
 	D3DXVECTOR3 vCamPosTmp;
 
@@ -197,13 +194,62 @@ void clsPlayer::UpdateCamTargetPos()
 	//====================================================
 	//カメラが少し遅れてついてくるように.
 	//カメラが現在目的としている位置を算出.
-	const D3DXVECTOR3 vCamTargetPos = m_vCenterPos - vCamAxis * fCamSpaceTmp;
+	const D3DXVECTOR3 vCamTargetPos = m_vCenterPos - vCamAxis;
 
 	//現在位置を取得し、現在位置と目的の位置の差から移動量を計算する.
 	vCamPosTmp = m_vCamTargetPos;//現在位置を取得
 	vCamPosTmp -= (vCamPosTmp - vCamTargetPos) * fCamMoveSpeed;
 
-	m_vLookTargetPos = vCamPosTmp + vLookAxis * fLookPosSpace;
+	m_vLookTargetPos = vCamPosTmp + m_vLockRangeDir * m_fLockRange;
+
+	D3DXVec3Normalize(&vCamAxis, &vCamAxis);
+
+	D3DXVECTOR3 vForward;
+
+	D3DXVec3TransformCoord(&vForward, &g_vDirForward, &mRot);
+
+	m_vLockCenterPos = m_vLockRangePos + m_vLockRangeDir * (m_fLockRange / 2);
 
 	m_vCamTargetPos = vCamPosTmp;
+}
+
+D3DXVECTOR3 clsPlayer::GetLockRangeTmp()
+{
+	SetLockRangeDir();
+	D3DXVECTOR3 vX = g_vDirRight *  m_fLockCircleRadius;
+	D3DXVECTOR3 vY = g_vDirDown *  m_fLockCircleRadius;
+	D3DXVECTOR3 vZ = m_vLockRangeDir * m_fLockRange;
+
+	D3DXVECTOR3 vTmp = vX + vY + vZ;
+	return vTmp;
+}
+
+float clsPlayer::GetLockCircleScale()
+{
+	float fDis = 1 / m_fLockRange;
+	float fTmp;
+
+	float fScale = 0.0f;
+	float fDiameter = 1.0f;
+
+	float siya = 1.0f + static_cast<float>(D3DX_PI / 4.0);
+
+
+	fScale = (2 * m_fLockRange) * tanf(siya / 2);
+	fScale = fDiameter / fScale;
+
+	fTmp = m_fLockCircleRadius * fScale;
+
+	return fTmp;
+}
+
+bool clsPlayer::GetTargetPos(D3DXVECTOR3& vTmpPos)
+{
+	if (m_pTargetChara)
+	{
+		vTmpPos = m_pTargetChara->m_vCenterPos;
+		return true;
+	}
+
+	return false;
 }
