@@ -6,6 +6,7 @@
 #include"Player.h"
 #include"TestObject.h"
 #include"Stage.h"
+#include"Sprite.h"
 
 //================================//
 //========== ミッション中クラス ==========//
@@ -96,6 +97,11 @@ private:
 
 	clsSPRITE2D_CENTER* m_pEnelgy;
 	clsSPRITE2D_CENTER* m_pEnelgyFrame;
+
+	clsSprite* m_pCursor;
+	float m_fCursorSize;
+
+	clsSPRITE2D_CENTER* m_pTarget;
 
 	clsUiText* m_pHP;
 

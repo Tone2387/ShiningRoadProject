@@ -59,6 +59,9 @@ public:
 
 	float m_fJumpPower;
 
+	bool m_bLockStartingPosXSwitch;
+	float m_bLockStartingPosX;
+
 	D3DXVECTOR3 m_vLockRangePos;//ロックオン判定の開始座標.
 	D3DXVECTOR3 m_vLockRangeDir;//ロックオン判定が伸びる方向.
 	float m_fLockRange;//ロックオン距離.

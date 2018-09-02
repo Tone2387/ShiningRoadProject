@@ -79,7 +79,7 @@ void clsRobo::RoboInit(
 	WeaponInit(pPtrGroup, WS, enWeaponTypeSize);
 
 	m_fLockRange = 500.0f;//ロックオン距離.
-	m_fLockCircleRadius = 500.0f;//ロックオン判定の半径.
+	m_fLockCircleRadius = 50.0f;//ロックオン判定の半径.
 }
 
 void clsRobo::Walk()

@@ -138,6 +138,29 @@ void clsSCENE_MISSION::CreateUI()
 		m_v_pRaderEnemyMark[i]->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarEnemyMark.png", ss);
 		m_v_pRaderEnemyMark[i]->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 	}
+
+	assert(!m_pCursor);
+
+	m_fCursorSize = m_pPlayer->m_fLockCircleRadius;
+
+	ss.Disp = { m_fCursorSize, m_fCursorSize };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pCursor = new clsSprite;
+
+	m_pCursor->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext());
+	m_pCursor->m_vPos = { WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f };	
+	m_pCursor->SetScale(m_fCursorSize);
+
+	assert(!m_pTarget);
+
+	ss.Disp = { 100.0f, 100.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pTarget = new clsSPRITE2D_CENTER;
+
+	m_pTarget->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
+	m_pTarget->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 }
 
 //毎フレーム通る処理.
@@ -188,20 +211,22 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 		}
 	}
 
-	//D3DXVECTOR3 vCamPosTmp = m_pPlayer->GetCamTargetPos();
-	//D3DXVECTOR3 vLookPosTmp = m_pPlayer->GetLookTargetPos();
+	//UpdateCamTargetPos(m_pCamTar);
 
-	UpdateCamTargetPos(m_pCamTar);
+	D3DXVECTOR3 vCamPosTmp = m_pPlayer->GetCamTargetPos();
+	D3DXVECTOR3 vLookPosTmp = m_pPlayer->GetLookTargetPos();
 
-	m_wpCamera->SetPos(m_vCamTargetPos, false);
-	m_wpCamera->SetLookPos(m_vLookTargetPos);
+	m_wpCamera->SetPos(vCamPosTmp, false);
+	m_wpCamera->SetLookPos(vLookPosTmp);
 
 	//エンディングに行く場合は以下のようにする.
-	if (AllEnemyDead()){
+	if (AllEnemyDead())
+	{
 		enNextScene = enSCENE::ENDING;
 	}
 
-	if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp){
+	if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp)
+	{
 		enNextScene = enSCENE::GAMEOVER;
 	}
 }
@@ -225,15 +250,22 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	Collison();
 
 	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
+
+	SetDepth(false);
+	m_pCursor->m_vPos = m_pPlayer->GetLockCenterPos();
+	m_pCursor->Render(m_mView, m_mProj, vCamPos);
+	SetDepth(true);
 }
 
 void clsSCENE_MISSION::RenderUi()
 {
+	SetDepth(false);	//Zテスト:OFF.
 	//活動限界時間.
 	int iTmp = m_pPlayer->m_iActivityLimitTime;
 	int iMin = iTmp / 3600;
 	int iSecond = (iTmp - (iMin * 3600)) / 60;
 	int iN = iTmp % 60;
+	D3DXVECTOR3 vPosTmp;
 
 	char pText[STR_BUFF_MAX];
 
@@ -267,17 +299,15 @@ void clsSCENE_MISSION::RenderUi()
 
 	//EN.
 
-
-
 	float fNowEN = static_cast<float>(m_pPlayer->m_iEnelgy);
 	float fENMax = static_cast<float>(m_pPlayer->m_iEnelgyMax);
 
 	POINTFLOAT fEnelgyPar = { 1.0f - (fNowEN / fENMax), 1.0f };
 
+	m_pEnelgyFrame->Render();
+
 	m_pEnelgy->SetAnim(fEnelgyPar);
 	m_pEnelgy->Render();
-
-	m_pEnelgyFrame->Render();
 
 	//レーダー.
 	
@@ -287,30 +317,47 @@ void clsSCENE_MISSION::RenderUi()
 
 	//float fWindowSizeW;
 
+	m_pRaderWindow->Render();
+
 	for (int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
 	{
 		if (!m_v_pEnemys[i])continue;
 
 		D3DXVECTOR3 vThisEnemyPos = m_v_pEnemys[i]->GetPosition();
 
+		D3DXVECTOR3 vPos = (vThisEnemyPos - vPlayerPos) / fRaderDis;
 		float fW = (vThisEnemyPos.x - vPlayerPos.x) / fRaderDis;
-		float fH = (vThisEnemyPos.z - vPlayerPos.z) / fRaderDis;
+		float fH = (vPlayerPos.z - vThisEnemyPos.z) / fRaderDis;
 
-		float fPosX = fW;// *m_fRaderDis;
-		float fPosY = -fH;// *m_fRaderDis;//上と下が逆転してる.
+		D3DXMATRIX mRot;
+		float fYaw = -m_pPlayer->GetRotation().y;//-だと回転値に合った動きする理由という英知を授けてください.
+
+		D3DXMatrixRotationY(&mRot, fYaw);
+
+		D3DXVec3TransformCoord(&vPos, &vPos, &mRot);
+
+		float fPosX = vPos.x;//fW; //+(fW * -abs(fXYaw));
+		float fPosY = -vPos.z;//fH; //+(fH * -abs(fYaw));
 
 		if (abs(fPosX) + (m_fRaderMarkSizeW / 2) < m_fRaderSizeW / 2 &&
 			abs(fPosY) + (m_fRaderMarkSizeH / 2) < m_fRaderSizeH / 2)
 		{
-			fPosX = (fPosX) + m_pRaderWindow->GetPos().x;
-			fPosY = (fPosY) + m_pRaderWindow->GetPos().y;
+			fPosX = m_pRaderWindow->GetPos().x + fPosX;
+			fPosY = m_pRaderWindow->GetPos().y + fPosY;
 
 			m_v_pRaderEnemyMark[i]->SetPos({ fPosX, fPosY, 0.0f });
 			m_v_pRaderEnemyMark[i]->Render();
 		}
 	}
 
-	m_pRaderWindow->Render();
+	if (m_pPlayer->GetTargetPos(vPosTmp))
+	{
+		vPosTmp = ConvDimPos(vPosTmp);
+		m_pTarget->SetPos(vPosTmp);
+		m_pTarget->Render();
+	}
+	
+	SetDepth(true);
 }
 
 bool clsSCENE_MISSION::AllEnemyDead()
