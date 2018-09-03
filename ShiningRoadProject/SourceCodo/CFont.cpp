@@ -18,10 +18,11 @@ const char cFontStyle[] = "Data\\Font\\Makinas-Scrap-5.otf";//Makinas-Scrap-5.ot
 #define FONT_SHADER		"Shader\\FontText.hlsl"
 
 
+const float fPOS_Z = 0.01f;
+
 clsFont::clsFont( 
 	ID3D11Device* const pDevice, 
-	ID3D11DeviceContext* const pContext,
-	const char *sTextFileName )
+	ID3D11DeviceContext* const pContext )
 	:m_pDevice( pDevice )
 	,m_pContext( pContext )
 	,m_pVertexShader( nullptr )
@@ -68,8 +69,8 @@ clsFont::clsFont(
 	LoadFont();
 
 	//外部情報受け渡し.
-	m_vPos = D3DXVECTOR3(0.0f, m_fFontSize, 0.01f);
-	m_vPos = D3DXVECTOR3(0.0f, 0.0f, 0.01f);
+	m_vPos = D3DXVECTOR3( 0.0f, m_fFontSize, 0.01f );
+	m_vPos = D3DXVECTOR3( 0.0f, 0.0f, fPOS_Z );
 	m_fScale = m_fFontSize;
 
 	if( FAILED( CreateShader() ) ){
@@ -82,38 +83,11 @@ clsFont::clsFont(
 		assert( !"Can't Create ConstantBuffer" );
 	}
 
-	LoadTextFile( sTextFileName );
-
-	if( FAILED( CreateTexture() ) ){
-		assert( !"Can't Create Texture" );
-	}
 }
 
 clsFont::~clsFont()
 {
-	for( unsigned int iTex=0; iTex<m_vvpAsciiTexture.size(); iTex++ )
-	{
-		for( unsigned int i=0; i<m_vvpAsciiTexture[iTex].size(); i++ )
-		{
-//			SAFE_DELETE(m_pAsciiTexture[iTex][i]);
-			if( !m_vvpAsciiTexture[iTex][i] ) continue;
-			m_vvpAsciiTexture[iTex][i]->Release();
-			m_vvpAsciiTexture[iTex][i] = nullptr;
-		}
-		m_vvpAsciiTexture[iTex].clear();
-		m_vvpAsciiTexture[iTex].shrink_to_fit();
-	}
-	m_vvpAsciiTexture.clear();
-	m_vvpAsciiTexture.shrink_to_fit();
-
-	for( unsigned int iTex=0; iTex<m_vpTex2D.size(); iTex++ ){
-//		SAFE_DELETE(m_pTex2D[iTex]);
-		if( !m_vpTex2D[iTex] ) continue;
-		m_vpTex2D[iTex]->Release();
-		m_vpTex2D[iTex] = nullptr;
-	}
-	m_vpTex2D.clear();
-	m_vpTex2D.shrink_to_fit();
+	Release();
 
 	//板ﾎﾟﾘｺﾞﾝ解放.
 	SAFE_RELEASE( m_pBlendState );
@@ -311,12 +285,12 @@ HRESULT clsFont::CreateConstantBuffer()
 }
 
 /* ﾌｧｲﾙ読み込み */
-void clsFont::LoadTextFile( const char *FileName )
+void clsFont::LoadTextFile( const char *sTextFileName )
 {
 	//ファイルポインタ.
 	clsFILE File;
 
-	File.Open( FileName );
+	File.Open( sTextFileName );
 
 	//行数分繰り返し
 	int iLoad = 0;		//一行ずつ文字列として読み込み
@@ -524,6 +498,47 @@ HRESULT clsFont::CreateTexture()
 	return S_OK;
 }
 
+void clsFont::Create( const char *sTextFileName )
+{
+	LoadTextFile( sTextFileName );
+
+	if( FAILED( CreateTexture() ) ){
+		assert( !"Can't Create Texture" );
+	}
+}
+
+void clsFont::Release()
+{
+//	for( unsigned int i=0; i<m_sTextData.size(); i++ ){
+//		m_sTextData[i] = "";	
+//	}
+	m_sTextData.clear();
+	m_sTextData.shrink_to_fit();
+
+	for( unsigned int iTex=0; iTex<m_vvpAsciiTexture.size(); iTex++ )
+	{
+		for( unsigned int i=0; i<m_vvpAsciiTexture[iTex].size(); i++ )
+		{
+//			SAFE_DELETE(m_pAsciiTexture[iTex][i]);
+			if( !m_vvpAsciiTexture[iTex][i] ) continue;
+			m_vvpAsciiTexture[iTex][i]->Release();
+			m_vvpAsciiTexture[iTex][i] = nullptr;
+		}
+		m_vvpAsciiTexture[iTex].clear();
+		m_vvpAsciiTexture[iTex].shrink_to_fit();
+	}
+	m_vvpAsciiTexture.clear();
+	m_vvpAsciiTexture.shrink_to_fit();
+
+	for( unsigned int iTex=0; iTex<m_vpTex2D.size(); iTex++ ){
+//		SAFE_DELETE(m_pTex2D[iTex]);
+		if( !m_vpTex2D[iTex] ) continue;
+		m_vpTex2D[iTex]->Release();
+		m_vpTex2D[iTex] = nullptr;
+	}
+	m_vpTex2D.clear();
+	m_vpTex2D.shrink_to_fit();
+}
 
 
 //						↓段	　↓文字数
@@ -631,6 +646,7 @@ void clsFont::Render( int iTex, int iCharNum )
 void clsFont::SetPos( const D3DXVECTOR3 &vPos )
 {
 	m_vPos = vPos;
+	m_vPos.z += fPOS_Z;
 }
 
 D3DXVECTOR3 clsFont::GetPos()

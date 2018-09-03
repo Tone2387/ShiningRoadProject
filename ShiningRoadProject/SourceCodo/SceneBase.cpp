@@ -32,7 +32,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpCamera(		m_wpPtrGroup->GetCamera() )
 	,m_wpRoboStatus(	m_wpPtrGroup->GetRoboStatus() )
 	,m_wpBlackScreen(	m_wpPtrGroup->GetBlackScreen() )
-	,m_wpFont( m_wpPtrGroup->GetFont() )
+	,m_wpFont(			m_wpPtrGroup->GetFont() )
 #if _DEBUG
 	,m_upText( nullptr )
 #endif//#if _DEBUG
@@ -43,17 +43,20 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
-//	//音を止める.
-//	m_wpSound->StopAllSound();
-	//次のシーンに余計なエフェクトを持ち込まない.
-	m_wpEffects->StopAll();
-
 #if _DEBUG
 //	SAFE_DELETE( m_upText );
 	if( m_upText ){
 		m_upText.reset();
 	}
 #endif//#if _DEBUG
+
+	m_wpFont->Release();
+
+//	//音を止める.
+//	m_wpSound->StopAllSound();
+	//次のシーンに余計なエフェクトを持ち込まない.
+	m_wpEffects->StopAll();
+
 
 	m_enNextScene = enSCENE::NOTHING;
 
@@ -86,6 +89,7 @@ void clsSCENE_BASE::Create()
 
 	m_enNextScene = enSCENE::NOTHING;
 
+
 #if _DEBUG
 	//デバッグテキストの初期化.
 //	m_upText = new clsDebugText;
@@ -99,6 +103,8 @@ void clsSCENE_BASE::Create()
 		MessageBox( NULL, "デバッグテキスト作成失敗", "clsMain::Loop", MB_OK );
 	}
 #endif//#if _DEBUG
+
+
 
 	//各シーンのCreate.
 	CreateProduct();
@@ -169,13 +175,6 @@ void clsSCENE_BASE::Render()
 	}
 
 
-	static int xss = 1;
-	static int yss = 100;
-	if( GetAsyncKeyState( VK_UP )& 0x1  )		xss++;
-	if( GetAsyncKeyState( VK_DOWN) & 0x1  )		xss--;
-//	if( GetAsyncKeyState( VK_RIGHT) & 0x1 	)	yss++;
-//	if( GetAsyncKeyState( VK_LEFT) & 0x1  )		yss--;
-	m_wpFont->Render( xss, yss );
 
 	//暗転描画.
 	m_wpBlackScreen->Render();

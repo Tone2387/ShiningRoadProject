@@ -20,9 +20,11 @@ public:
 
 	clsFont( 
 		ID3D11Device* const pDevice, 
-		ID3D11DeviceContext* const pContext,
-		const char *sTextFileName );
+		ID3D11DeviceContext* const pContext );
 	~clsFont();
+
+	void Create( const char *sTextFileName );//シーン開始時に使う.
+	void Release();							//シーン終了時に使う.
 
 	void Render( int iTex, int iCharNum );
 

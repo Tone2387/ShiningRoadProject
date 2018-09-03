@@ -10,6 +10,11 @@ const WHSIZE_FLOAT INIT_LOGO_SIZE = { 512.0f, 128.0f };
 const D3DXVECTOR3 vINIT_LOGO_POS = { WND_W*0.5f, 75.0f, 0.0f };
 
 
+
+//日本語UI.
+const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\TextTitle.csv";
+
+
 //================================//
 //========== タイトルクラス ==========//
 //================================//
@@ -26,6 +31,7 @@ clsSCENE_TITLE::~clsSCENE_TITLE()
 
 void clsSCENE_TITLE::CreateProduct()
 {
+	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 
 	//モデルさん作成.
 	assert( !m_pRoboModel );
@@ -111,6 +117,8 @@ void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 }
 void clsSCENE_TITLE::RenderUi()
 {
+	m_wpFont->Render( 0, 100 );
+
 }
 
 

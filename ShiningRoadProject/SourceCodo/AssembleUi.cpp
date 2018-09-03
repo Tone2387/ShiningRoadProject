@@ -145,9 +145,9 @@ const D3DXVECTOR2 vTEXT_POS_STATUS_NUM =
 const char* sHEADER_FILE_PATH = "Data\\Image\\AssembleUi\\Header.png";
 const char* sFOOTER_FILE_PATH = "Data\\Image\\AssembleUi\\Footer.png";
 const WHSIZE_FLOAT INIT_SIZE_HEADER  = { WND_W, 54.0f };
-const WHSIZE_FLOAT INIT_SIZE_FOOTER  = { WND_W, 24.0f };
+const WHSIZE_FLOAT INIT_SIZE_FOOTER  = { WND_W, 30.0f };
 const D3DXVECTOR3 INIT_POS_HEADER = { 0.0f, 14.0f, 0.0f };
-const D3DXVECTOR3 INIT_POS_FOOTER = { 0.0f, WND_H - INIT_SIZE_FOOTER.h - 14.0f, 0.0f };
+const D3DXVECTOR3 INIT_POS_FOOTER = { 0.0f, WND_H - INIT_SIZE_FOOTER.h - 15.0f, 0.0f };
 //•¶Žš.
 const float fTEXT_SCALE_HEADER = 4.0f;
 const float fTEXT_SCALE_FOOTER = 1.0f;

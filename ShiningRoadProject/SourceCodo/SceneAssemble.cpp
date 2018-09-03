@@ -62,6 +62,9 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 //----- ”wŒi -----//.
 
 
+//“ú–{ŒêUI.
+const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\TextAssemble.csv";
+
 //================================//
 //========== ‘g‚İŠ·‚¦ƒNƒ‰ƒX ==========//
 //================================//
@@ -99,6 +102,9 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
+	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
+	m_wpFont->SetPos( { 24.0f, WND_H - 40.0f, 0.0f } );
+	m_wpFont->SetScale( 16.0f );
 
 //	m_pTestChara = new clsCharaStatic;
 //	m_pTestChara->AttachModel( 
@@ -385,6 +391,7 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 void clsSCENE_ASSEMBLE::RenderUi()
 {
 
+	m_wpFont->Render( 0, 100 );
 
 }
 
