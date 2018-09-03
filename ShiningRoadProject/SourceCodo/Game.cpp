@@ -121,8 +121,7 @@ void clsGAME::Create()
 
 	assert( !m_spFont );
 	m_spFont = new clsFont ( 
-		m_wpDevice, m_wpContext, 
-		"Data\\Font\\case01.csv" );
+		m_wpDevice, m_wpContext );
 
 	//引数のポインタの集合体.
 	assert( !m_spPtrGroup );

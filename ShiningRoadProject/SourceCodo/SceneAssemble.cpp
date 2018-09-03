@@ -31,10 +31,10 @@ const int iSTATUS_CUT_NUM = 2;//番号と名前.
 
 //----- パーツウィンドウ用 -----//.
 //ビューポート.
-const FLOAT INIT_VP_PARTS_W = 728.0f;
-const FLOAT INIT_VP_PARTS_H = 500.0f;
-const FLOAT INIT_VP_PARTS_X = 98.0f;
-const FLOAT INIT_VP_PARTS_Y = 95.0f + 86.0f;
+const FLOAT INIT_VP_PARTS_W = 576.0f;
+const FLOAT INIT_VP_PARTS_H = 482.0f;
+const FLOAT INIT_VP_PARTS_X = 153.0f;
+const FLOAT INIT_VP_PARTS_Y = 176.0f;
 const FLOAT INIT_VP_PARTS_MIN =	0.0f;
 const FLOAT INIT_VP_PARTS_MAX =	1.0f;
 //カメラ.
@@ -44,10 +44,10 @@ const D3DXVECTOR3 vPARTS_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
 
 //----- ロボウィンドウ用 -----//.
 //ビューポート.
-const FLOAT INIT_VP_ROBO_W = 360.0f;
-const FLOAT INIT_VP_ROBO_H = INIT_VP_PARTS_H + 80.0f;
-const FLOAT INIT_VP_ROBO_X = INIT_VP_PARTS_W + INIT_VP_PARTS_X + 16.0f;
-const FLOAT INIT_VP_ROBO_Y = 16.0f;
+const FLOAT INIT_VP_ROBO_W = 490.0f;
+const FLOAT INIT_VP_ROBO_H = 570.0f;
+const FLOAT INIT_VP_ROBO_X = 753.0f;
+const FLOAT INIT_VP_ROBO_Y = 87.0f;
 const FLOAT INIT_VP_ROBO_MIN =	0.0f;
 const FLOAT INIT_VP_ROBO_MAX =	1.0f;
 //カメラ.
@@ -56,11 +56,14 @@ const D3DXVECTOR3 vROBO_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
 //----- ロボウィンドウ用 -----//.
 
 //----- 背景 -----//.
-const char* sBACK_SPRITE_PATH = "Data\\Image\\PartsIcon\\NoData.png";
+const char* sBACK_SPRITE_PATH = "Data\\Image\\AssembleUi\\AssembleBack.png";
 const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 
 //----- 背景 -----//.
 
+
+//日本語UI.
+const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\TextAssemble.csv";
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -99,6 +102,9 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
+	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
+	m_wpFont->SetPos( { 24.0f, WND_H - 40.0f, 0.0f } );
+	m_wpFont->SetScale( 16.0f );
 
 //	m_pTestChara = new clsCharaStatic;
 //	m_pTestChara->AttachModel( 
@@ -271,8 +277,6 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			2, { 0.0f, 20.0f, 0.0f } );
 	}
 
-	if( GetAsyncKeyState( VK_UP )	& 0x8000 )	m_upBack->AddPos( { 0.0f, 0.0f, 0.05f } );
-	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_upBack->AddPos( { 0.0f, 0.0f,-0.05f } );
 
 
 #endif//#if _DEBUG
@@ -289,10 +293,13 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressExit() ){
 		Undo( enNextScene );
 	}
+	if( m_wpXInput->isPressEnter( XINPUT_START ) ){
+		MissionStart( enNextScene );
+	}
 
 
 	assert( m_pUI );
-	m_pUI->Input();
+	m_pUI->Input( m_wpXInput, m_wpDxInput );
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		assert( m_vspFile[m_PartsSelect.Type] );
 		m_pUI->Update( 
@@ -387,6 +394,7 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 void clsSCENE_ASSEMBLE::RenderUi()
 {
 
+	m_wpFont->Render( 0, 100 );
 
 }
 

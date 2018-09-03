@@ -1,6 +1,8 @@
 #pragma once
 
 //#include "Global.h"
+#include "DxInput.h"
+#include "CXInput.h"
 
 #include "Sprite2DCenter.h"
 #include "UiText.h"
@@ -30,7 +32,9 @@ public:
 		ID3D11DeviceContext* const pContext,
 		PARTS_NUM_DATA data );//各パーツUIの数確定用.
 
-	void Input();
+	void Input(
+		const clsXInput* const pXInput,
+		const clsDxInput* const pDxInput );
 
 	//第二引数はデータから、ステータス以外のデータの数。第三引数はパーツ名の番号.
 	void Update( 
@@ -83,10 +87,12 @@ private:
 	std::unique_ptr< clsSprite2D >					m_upStatusWindow;	//ステータスが表示される.
 
 	std::unique_ptr< clsSprite2D >					m_upPartsWindow;	//パーツの単体モデル表示される.
+	std::unique_ptr< clsSprite2D >					m_upRoboWindow;		//ロボ全体が表示される.
 
 	std::unique_ptr< clsSprite2D >					m_upMissionStart;	//出撃ボタン.
 
 	std::unique_ptr< clsSprite2D > m_upHeader;//画面上部の帯.
+	std::unique_ptr< clsSprite2D > m_upFooter;//画面下部の帯.
 
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_pArrow;//矢印.
 
@@ -107,6 +113,9 @@ private:
 	int m_iStatusNum;
 	//ステータスの名前を格納している.
 	std::vector< std::string > m_vsStatusNameBox[enPARTS_TYPE_SIZE];
+
+	//ステータスの表示フラグ.
+	bool	m_isDispStatus;
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;
