@@ -40,6 +40,8 @@ public:
 	int m_iMoveStopFrame;//完全に停止するまでのフレーム値.
 	float m_fMoveDecele;// = m_fMoveSpeed / m_iStopFrame;
 
+	D3DXVECTOR3 m_vAcceleDir;
+
 	int m_iMoveReverseDirInertia;
 
 	bool m_bRotation;

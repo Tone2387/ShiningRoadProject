@@ -551,7 +551,7 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 	float L = D3DXVec3Dot(&H, &QP);
 	float QA = abs(L);
 
-	float Ar = (QA) / m_fLockRange * m_fLockCircleRadius;
+	float Ar = QA / m_fLockRange * m_fLockCircleRadius;
 
 	if ((m_fLockRange * PA) / (QA * m_fLockCircleRadius) > 1.0f)
 	{

@@ -12,6 +12,7 @@ struct WeaponState
 	int iAtk;
 	int iReloadTime;
 	int iLockSpeed;
+	int iShotEN;
 	
 	int iStablity;//Robo‚ÍArm‚ÌÆ€¸“x‚Æ‚ÌŒvZŒ‹‰Ê‚ğ“ü‚ê‚Ä‚­‚¾‚³‚¢.
 
@@ -42,6 +43,8 @@ public:
 
 	int GetNowBulletNum();
 	int GetMaxBulletNum();
+
+	int GetShotEN() const;
 
 private:
 	WeaponState m_State;

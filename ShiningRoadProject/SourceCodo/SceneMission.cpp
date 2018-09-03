@@ -499,17 +499,17 @@ void clsSCENE_MISSION::RenderDebugText()
 	assert( m_upText );
 
 	char strDbgTxt[256];
-	int iTxtY = 0;
+	int iTxtY = 300;
 	const int iOFFSET = 10;//ˆês–ˆ‚É‚Ç‚ê‚¾‚¯‰º‚É‚¸‚ç‚·‚©.
 
-	/*sprintf_s( strDbgTxt, 
+	sprintf_s( strDbgTxt, 
 		"PlayerPos : x[%f], y[%f], z[%f]",
-		m_pPlayer->GetPosition().x,
-		m_pPlayer->GetPosition().y, 
-		m_pPlayer->GetPosition().z);
+		m_pPlayer->m_vMoveDir.x,
+		m_pPlayer->m_vMoveDir.y,
+		m_pPlayer->m_vMoveDir.z);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	sprintf_s( strDbgTxt, 
+	/*sprintf_s( strDbgTxt, 
 		"CamLokPos : x[%f], y[%f], z[%f]",
 		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );

@@ -36,10 +36,16 @@ public:
 		enCOL_PARTS_size
 	};
 
-
+	//Similarity:相似、類似性.
+	//番号が違うだけの名前のボーンの数を返す.
+	int GetSimilarityNameBoneNum(enPARTS PartsNum,const char* strBoneName);
 
 	//各パーツの当たり判定の数を返す.
 	int GetColNum( const enCOL_PARTS enColParts );
+
+	D3DXVECTOR3 GetDirfromBone(enPARTS PartsNum, 
+		const char* strBoneRootName, 
+		const char* strBoneEndName);
 
 	//当たり判定の座標の配列をすべて返す.
 	std::shared_ptr< std::vector< D3DXVECTOR3 > > GetColPosPtr();
