@@ -1,7 +1,6 @@
 #include "MissionModel.h"
 #include "OperationString.h"
 
-
 using namespace std;
 
 //ジョイントボーンの数字の桁数.
@@ -168,3 +167,61 @@ shared_ptr< vector< D3DXVECTOR3 > > clsMISSION_MODEL::GetColPosPtr()
 	return spvvReturn;
 }
 
+int clsMISSION_MODEL::GetSimilarityNameBoneNum(enPARTS PartsNum,const char* strBoneName)
+{
+	int iResult = 0;
+	int iSearchNum = 0;
+
+	std::string strBoneNameTmp;
+
+	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
+
+	while (1)
+	{
+		strBoneNameTmp = strBoneName;
+		strBoneNameTmp = OprtStr.ConsolidatedNumber(strBoneNameTmp, iSearchNum, cBONE_NAME_NUM_DIGIT_JOINT);
+		if (!ExistsBone(PartsNum, strBoneNameTmp.c_str()))
+		{
+			break;
+		}
+
+		iResult++;
+		iSearchNum++;
+	}
+
+	return iResult;
+}
+
+//腕の角度を武器も模写する.
+D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(enPARTS PartsNum, const char* strBoneRootName, const char* strBoneEndName)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+	//return m_vpParts[cTmpNum]->m_pMesh->ExistsBone(sBoneName);
+
+	std::string strBoneRoot;
+	std::string strBoneEnd;
+
+	//ボーンのベクトルを出す( ローカル ).
+	D3DXVECTOR3 vVecLocal =
+		m_vpParts[cTmpNum]->GetBonePos(strBoneEndName, true) -
+		m_vpParts[cTmpNum]->GetBonePos(strBoneRootName, true);
+	D3DXVec3Normalize(&vVecLocal, &vVecLocal);
+
+	//ボーンのベクトルを出す( ワールド ).
+	D3DXVECTOR3 vVecWorld =
+		m_vpParts[cTmpNum]->GetBonePos(strBoneEndName) -
+		m_vpParts[cTmpNum]->GetBonePos(strBoneRootName);
+	D3DXVec3Normalize(&vVecWorld, &vVecWorld);
+
+	//ベクトルから回転値を求める.
+	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
+	//	vRot.x = atanf( vVec.y );//このゲームの仕様なら正解( 2018/06/19(火)現在 )( つまりゴリ押し ).
+	vRot.x = atan2f(vVecLocal.y, -vVecLocal.z);//.
+	vRot.y = atan2f(-vVecWorld.x, -vVecWorld.z);//( 何故、マイナスがかかっていたり、X,Zが入れ替わっているのかといえば、0度でモデルがこっちを向くから ).
+
+	vRot.x = GuardDirOver(vRot.x);
+	vRot.y = GuardDirOver(vRot.y);
+	//	vRot.z = GuardDirOver( vRot.z );
+
+	return vRot;
+}

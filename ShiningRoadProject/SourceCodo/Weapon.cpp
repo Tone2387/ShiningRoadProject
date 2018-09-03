@@ -129,6 +129,11 @@ int clsWeapon::GetMaxBulletNum()
 	return m_State.iBulletNumMax;
 }
 
+int clsWeapon::GetShotEN() const
+{
+	return m_State.iShotEN;
+}
+
 bool clsWeapon::IsLock()
 {
 	if (m_pTargetObj)

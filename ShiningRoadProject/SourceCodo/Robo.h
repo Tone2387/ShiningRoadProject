@@ -145,7 +145,41 @@ public:
 	~clsRobo();
 
 private:
+	//右腕ブースターエフェクト.
+	std::vector<::Effekseer::Handle> m_v_RHandFrontBoostEfc;
+	std::vector<::Effekseer::Handle> m_v_RHandSideBoostEfc;
+	std::vector<::Effekseer::Handle> m_v_RHandBackBoostEfc;
 
+	//左腕ブースターエフェクト.
+	std::vector<::Effekseer::Handle> m_v_LHandFrontBoostEfc;
+	std::vector<::Effekseer::Handle> m_v_LHandSideBoostEfc;
+	std::vector<::Effekseer::Handle> m_v_LHandBackBoostEfc;
+
+	//脚ブースターエフェクト.
+	std::vector<::Effekseer::Handle> m_v_LegBoostEfc;
+
+	void SetBoostEffect();
+	
+	void SetRHandFrontBoostEffect();
+	void SetRHandSideBoostEffect();
+	void SetRHandBackBoostEffect();
+
+	void SetLHandFrontBoostEffect();
+	void SetLHandSideBoostEffect();
+	void SetLHandBackBoostEffect();
+
+	void SetLegBoostEffect();
+
+	void PlayBoostEfc();
+	
+	void PlayFrontBoostEfc();
+	void PlayRightBoostEfc();
+	void PlayLeftBoostEfc();
+	void PlayBackBoostEfc();
+
+	void PlayLegBoostEfc();
+
+	int GetBoostEfcNum(enPARTS PartsNum,const char* strBoostPosition);
 
 //太原の書き足した分.
 #ifdef Tahara
