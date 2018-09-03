@@ -38,6 +38,13 @@ public:
 	void Render( const enPOS enPos = enPOS::LEFT );
 
 	void SetPos( const D3DXVECTOR2 &vPos );
+	D3DXVECTOR3 GetPos(){
+		D3DXVECTOR3 g;
+		g.x = m_vPos.x;
+		g.y = m_vPos.y;
+		g.z = 0.0f;
+		return g;
+	};
 	void AddPos( const D3DXVECTOR2 &vPos );
 
 	void SetScale( const float fScale );

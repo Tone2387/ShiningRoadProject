@@ -31,10 +31,10 @@ const int iSTATUS_CUT_NUM = 2;//番号と名前.
 
 //----- パーツウィンドウ用 -----//.
 //ビューポート.
-const FLOAT INIT_VP_PARTS_W = 728.0f;
-const FLOAT INIT_VP_PARTS_H = 500.0f;
-const FLOAT INIT_VP_PARTS_X = 98.0f;
-const FLOAT INIT_VP_PARTS_Y = 95.0f + 86.0f;
+const FLOAT INIT_VP_PARTS_W = 576.0f;
+const FLOAT INIT_VP_PARTS_H = 482.0f;
+const FLOAT INIT_VP_PARTS_X = 153.0f;
+const FLOAT INIT_VP_PARTS_Y = 176.0f;
 const FLOAT INIT_VP_PARTS_MIN =	0.0f;
 const FLOAT INIT_VP_PARTS_MAX =	1.0f;
 //カメラ.
@@ -44,10 +44,10 @@ const D3DXVECTOR3 vPARTS_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
 
 //----- ロボウィンドウ用 -----//.
 //ビューポート.
-const FLOAT INIT_VP_ROBO_W = 360.0f;
-const FLOAT INIT_VP_ROBO_H = INIT_VP_PARTS_H + 80.0f;
-const FLOAT INIT_VP_ROBO_X = INIT_VP_PARTS_W + INIT_VP_PARTS_X + 16.0f;
-const FLOAT INIT_VP_ROBO_Y = 16.0f;
+const FLOAT INIT_VP_ROBO_W = 490.0f;
+const FLOAT INIT_VP_ROBO_H = 570.0f;
+const FLOAT INIT_VP_ROBO_X = 753.0f;
+const FLOAT INIT_VP_ROBO_Y = 87.0f;
 const FLOAT INIT_VP_ROBO_MIN =	0.0f;
 const FLOAT INIT_VP_ROBO_MAX =	1.0f;
 //カメラ.
@@ -56,7 +56,7 @@ const D3DXVECTOR3 vROBO_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
 //----- ロボウィンドウ用 -----//.
 
 //----- 背景 -----//.
-const char* sBACK_SPRITE_PATH = "Data\\Image\\PartsIcon\\NoData.png";
+const char* sBACK_SPRITE_PATH = "Data\\Image\\AssembleUi\\AssembleBack.png";
 const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 
 //----- 背景 -----//.
@@ -271,8 +271,6 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			2, { 0.0f, 20.0f, 0.0f } );
 	}
 
-	if( GetAsyncKeyState( VK_UP )	& 0x8000 )	m_upBack->AddPos( { 0.0f, 0.0f, 0.05f } );
-	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_upBack->AddPos( { 0.0f, 0.0f,-0.05f } );
 
 
 #endif//#if _DEBUG

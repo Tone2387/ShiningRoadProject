@@ -83,10 +83,12 @@ private:
 	std::unique_ptr< clsSprite2D >					m_upStatusWindow;	//ステータスが表示される.
 
 	std::unique_ptr< clsSprite2D >					m_upPartsWindow;	//パーツの単体モデル表示される.
+	std::unique_ptr< clsSprite2D >					m_upRoboWindow;		//ロボ全体が表示される.
 
 	std::unique_ptr< clsSprite2D >					m_upMissionStart;	//出撃ボタン.
 
 	std::unique_ptr< clsSprite2D > m_upHeader;//画面上部の帯.
+	std::unique_ptr< clsSprite2D > m_upFooter;//画面下部の帯.
 
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_pArrow;//矢印.
 
