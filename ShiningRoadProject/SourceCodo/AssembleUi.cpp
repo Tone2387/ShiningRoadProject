@@ -198,6 +198,7 @@ const string sSTATUS_NAME_WEAPON[] =
 
 clsASSEMBLE_UI::clsASSEMBLE_UI()
 	:m_iStatusNum( 0 )
+	,m_isDispStatus( true )
 {
 	//次のfor文用.
 	const string* tmpStatusNamePtr[enPARTS_TYPE_SIZE] =
@@ -441,7 +442,9 @@ void clsASSEMBLE_UI::Create(
 }
 
 
-void clsASSEMBLE_UI::Input()
+void clsASSEMBLE_UI::Input(	
+		const clsXInput* const pXInput,
+		const clsDxInput* const pDxInput )
 {
 #if _DEBUG
 	float move = 1.0f;
@@ -460,6 +463,14 @@ void clsASSEMBLE_UI::Input()
 
 
 #endif//#if _DEBUG
+
+	if( pXInput->isPressEnter( XINPUT_Y ) )
+	{
+		if( m_isDispStatus )	m_isDispStatus = false;
+		else					m_isDispStatus = true;
+	}
+
+
 }
 
 
@@ -600,6 +611,8 @@ void clsASSEMBLE_UI::RenderPartsState(
 	const int iPartsType, 
 	const int iPartsNum )//選択中パーツ番号.
 {
+	//ステータスを表示しないなら飛ばす.
+	if( !m_isDispStatus ) return;
 
 	//パーツ選択中のみ描画.
 	if( enSelect == enSELECT_MODE::PARTS ){

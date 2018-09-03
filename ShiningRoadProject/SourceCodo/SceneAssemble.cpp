@@ -293,10 +293,13 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressExit() ){
 		Undo( enNextScene );
 	}
+	if( m_wpXInput->isPressEnter( XINPUT_START ) ){
+		MissionStart( enNextScene );
+	}
 
 
 	assert( m_pUI );
-	m_pUI->Input();
+	m_pUI->Input( m_wpXInput, m_wpDxInput );
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		assert( m_vspFile[m_PartsSelect.Type] );
 		m_pUI->Update( 
