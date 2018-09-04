@@ -81,9 +81,9 @@ void clsCharactor::SetMoveDir(const float fAngle)
 	vForward = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
 	//çsÇ´ÇΩÇ¢ï˚å¸.
-	D3DXVECTOR3 vAcceleDir = GetVec3Dir(fAngle, vForward);
+	m_vAcceleDir = GetVec3Dir(fAngle, vForward);
 
-	m_vMoveDir += (vAcceleDir - m_vMoveDir) / (m_iMoveReverseDirInertia);
+	m_vMoveDir += (m_vAcceleDir - m_vMoveDir) / (m_iMoveReverseDirInertia);
 }
 
 void clsCharactor::MoveControl()
