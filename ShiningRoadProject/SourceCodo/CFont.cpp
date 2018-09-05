@@ -606,7 +606,7 @@ void clsFont::Render( const int iTex, const int iCharNum )
 		if( i >= m_vvpAsciiTexture[ iTex ].size() ){
 			break;
 		}
-
+#if 0
 		if( vPos.x + m_fFontSize + ( m_fScale + m_fFontMarginX ) * iCnt <= 
 			m_Rect.right )
 		{
@@ -618,7 +618,10 @@ void clsFont::Render( const int iTex, const int iCharNum )
 			ii++;
 			iCnt = 1;
 		}
-
+#else
+		//勝手に改行しない.
+		iCnt++;
+#endif
 		//ワールド変換.
 		D3DXMATRIX mWorld, mScale, mTran;		//ワールド行列.
 		D3DXMatrixIdentity( &mWorld );

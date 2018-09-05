@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 //要素数は<clsSCENE_ASSEMBLE::ENUM_SIZE>.
 const string sPARTS_STATUS_PASS[] =
 {
@@ -103,8 +102,6 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
-	m_wpFont->SetPos( { 24.0f, WND_H - 40.0f, 0.0f } );
-	m_wpFont->SetScale( 16.0f );
 
 //	m_pTestChara = new clsCharaStatic;
 //	m_pTestChara->AttachModel( 
@@ -394,7 +391,20 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 void clsSCENE_ASSEMBLE::RenderUi()
 {
 
+	//ボタンの説明.
+	m_wpFont->SetPos( { 756.0f, 44.0f, 0.0f } );
+	m_wpFont->SetScale( 14.0f );
 	m_wpFont->Render( 0, 100 );
+
+	//ステータスの説明.
+	m_wpFont->SetPos( { 28.0f, 680.0f, 0.0f } );
+	m_wpFont->SetScale( 16.0f );
+	m_wpFont->Render( 1, 128 );
+
+//	//スの説明.
+//	m_wpFont->SetPos( { 0.0f,  WND_H*0.5f, 0.0f } );
+//	m_wpFont->SetScale( 64.0f );
+//	m_wpFont->Render( 0, 128 );
 
 }
 
@@ -659,11 +669,11 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 		m_pUI->GetUiPos().x, m_pUI->GetUiPos().y );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	//日本語文字.[400:-400,200][200:-200,100][50:-50,25]
-	sprintf_s( strDbgTxt, 
-		"Font : x[%f], y[%f], Scale[%f]",
-		m_wpFont->GetPos().x, m_wpFont->GetPos().y, m_wpFont->GetScale() );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	//日本語文字.[400:-400,200][200:-200,100][50:-50,25]
+//	sprintf_s( strDbgTxt, 
+//		"Font : x[%f], y[%f], Scale[%f]",
+//		setumeiX, setumeiY, m_wpFont->GetScale() );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 //	//テスト用に数値を出す.
 //	string tmpsString;
