@@ -504,9 +504,9 @@ void clsSCENE_MISSION::RenderDebugText()
 
 	sprintf_s( strDbgTxt, 
 		"PlayerPos : x[%f], y[%f], z[%f]",
-		m_pPlayer->m_vMoveDir.x,
-		m_pPlayer->m_vMoveDir.y,
-		m_pPlayer->m_vMoveDir.z);
+		m_pPlayer->m_vMoveDirforBoost.x,
+		m_pPlayer->m_vMoveDirforBoost.y,
+		m_pPlayer->m_vMoveDirforBoost.z);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	/*sprintf_s( strDbgTxt, 

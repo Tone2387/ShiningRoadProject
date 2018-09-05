@@ -107,9 +107,6 @@ void clsTestObj::ActionProduct()
 		}
 	}*/
 
-	Move();
-	Rotate();
-
 	Updata();
 }
 

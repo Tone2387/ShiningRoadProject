@@ -144,6 +144,8 @@ public:
 	clsRobo();
 	~clsRobo();
 
+	D3DXVECTOR3 m_vMoveDirforBoost;
+
 private:
 	//右腕ブースターエフェクト.
 	std::vector<::Effekseer::Handle> m_v_RHandFrontBoostEfc;

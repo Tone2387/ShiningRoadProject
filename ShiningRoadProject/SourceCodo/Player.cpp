@@ -124,9 +124,6 @@ void clsPlayer::ActionProduct()
 		pRoboCom->PushBotton(this);
 	}
 
-	Move();
-	Rotate();
-
 	Updata();
 	UpdateCamTargetPos();
 }
@@ -178,8 +175,8 @@ void clsPlayer::UpdateCamTargetPos()
 	
 	D3DXVECTOR3 vCamAxis =
 	{
-		fCamAxisXTmp,
 		0.0f,
+		m_vCenterPos.y - m_vLockRangePos.y,
 		fCamSpaceTmp
 	};
 
@@ -224,7 +221,7 @@ void clsPlayer::UpdateCamTargetPos()
 
 	m_vCamTargetPos = vCamPosTmp;
 
-	CenterPosTest();
+	//CenterPosTest();
 }
 
 void clsPlayer::CenterPosTest()
