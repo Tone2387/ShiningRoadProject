@@ -33,13 +33,17 @@ clsFont::clsFont(
 	,m_pConstantBuffer( nullptr )
 	,m_vpTex2D()
 	,m_vvpAsciiTexture()
-	,m_pBlendState( nullptr )
+//	,m_pBlendState()
 	,m_sTextData()
 	,m_fAlpha( 1.0f )
 	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 	,m_Design()
 	,m_iTextRow( 0 )
 {
+	for( unsigned char i=0; i<enBLEND_size; i++ ){
+		m_pBlendState[i] = nullptr;
+	}
+
 //	for (int iTex = 0; iTex<TEXT_H; iTex++){
 //		m_pTex2D[iTex] = nullptr;
 //	}
@@ -66,6 +70,11 @@ clsFont::clsFont(
 				WND_H / 4 + WND_H / 2 /*bottom*/
 	};    
 
+	if( FAILED( CreateBlendState() ) ){
+		assert( !"Can't Blend State" );
+	}
+
+
 	LoadFont();
 
 	//外部情報受け渡し.
@@ -89,8 +98,6 @@ clsFont::~clsFont()
 {
 	Release();
 
-	//板ﾎﾟﾘｺﾞﾝ解放.
-	SAFE_RELEASE( m_pBlendState );
 	SAFE_RELEASE( m_pConstantBuffer );
 	SAFE_RELEASE( m_pSampleLinear );
 	SAFE_RELEASE( m_pVertexBuffer );
@@ -98,8 +105,9 @@ clsFont::~clsFont()
 	SAFE_RELEASE( m_pVertexLayout );
 	SAFE_RELEASE( m_pVertexShader );
 
-	m_pContext = nullptr;
-	m_pDevice = nullptr;
+	for( unsigned char i=0; i<enBLEND_size; i++ ){
+		SAFE_RELEASE( m_pBlendState[i] );
+	}
 
 	//ﾘｿｰｽ削除.
 	if( !RemoveFontResourceEx(
@@ -109,6 +117,49 @@ clsFont::~clsFont()
 	{
 		assert( !"フォントリソース解放失敗" );
 	}
+
+	m_pContext = nullptr;
+	m_pDevice = nullptr;
+}
+
+//ブレンドステート作成.
+HRESULT clsFont::CreateBlendState()
+{
+	//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞ用ﾌﾞﾚﾝﾄﾞｽﾃｰﾄ作成
+	//pngﾌｧｲﾙ内にｱﾙﾌｧ情報があるので、透過するようにﾌﾞﾚﾝﾄﾞｽﾃｰﾄで設定する
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));				//初期化
+	blendDesc.IndependentBlendEnable = false;					//false:RenderTarget[0]のﾒﾝﾊﾞｰのみ使用する。true:RenderTarget[0～7]が使用できる(ﾚﾝﾀﾞｰﾀｰｹﾞｯﾄ毎に独立したﾌﾞﾚﾝﾄﾞ処理)
+	blendDesc.AlphaToCoverageEnable = false;						//true:ｱﾙﾌｧﾄｩｶﾊﾞﾚｯｼﾞを使用する
+
+	//表示ﾀｲﾌﾟ
+//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを使用する
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを指定
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;	//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞの反転を指定
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;			//そのまま使用
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;			//何もしない
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;		//ADD：加算合成
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのﾃﾞｰﾀの格納を許可する
+
+	bool tmpBlendEnable[ enBLEND_size ];
+	tmpBlendEnable[ enBLEND_ALPHA_ON ] = true;
+	tmpBlendEnable[ enBLEND_ALPHA_OFF ] = false;
+
+	for( unsigned char i=0; i<enBLEND_size; i++ )
+	{
+		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
+		if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
+			assert( !"ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの作成に失敗" );
+			return E_FAIL;
+		}
+
+		////ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの設定
+		//UINT mask = 0xffffffff;	//ﾏｽｸ値白
+		//m_pContext->OMSetBlendState( m_pBlendState[i], NULL, mask );
+	}
+
+	return S_OK;
 }
 
 //ﾌｫﾝﾄ情報読込.
@@ -541,13 +592,9 @@ void clsFont::Release()
 }
 
 
-//						↓段	　↓文字数
-void clsFont::Render( int iTex, int iCharNum )
+//							↓段( 何行目? )	　		↓文字数
+void clsFont::Render( const int iTex, const int iCharNum )
 {
-	//文字列の左上を座標の位置に持ってくるために必要.
-	const D3DXVECTOR3 vOFFSET_POS = { -m_fScale, m_fScale * 0.5f, 0.0f };
-	D3DXVECTOR3 vPos = m_vPos + vOFFSET_POS;
-
 	if( iTex <= -1 ) return;
 	if( iTex >= static_cast<int>( m_vvpAsciiTexture.size() ) ) return;
 	if( iCharNum <= -1 ) return;
@@ -556,6 +603,10 @@ void clsFont::Render( int iTex, int iCharNum )
 	m_pContext->VSSetShader(m_pVertexShader, NULL, 0);
 	m_pContext->PSSetShader(m_pPixelShader, NULL, 0);
 	m_pContext->GSSetShader(NULL, NULL, 0);
+
+	//文字列の左上を座標の位置に持ってくるために必要.
+	const D3DXVECTOR3 vOFFSET_POS = { -m_fScale, m_fScale * 0.5f, 0.0f };
+	D3DXVECTOR3 vPos = m_vPos + vOFFSET_POS;
 
 	int ii = 0;
 	int iCnt = 0;
@@ -678,31 +729,45 @@ void clsFont::SetAlpha( const float fAlpha )
 
 void clsFont::SetBlendSprite( const bool isAlpha )
 {
-	//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞ用ﾌﾞﾚﾝﾄﾞｽﾃｰﾄ作成
-	//pngﾌｧｲﾙ内にｱﾙﾌｧ情報があるので、透過するようにﾌﾞﾚﾝﾄﾞｽﾃｰﾄで設定する
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));				//初期化
-	blendDesc.IndependentBlendEnable = false;					//false:RenderTarget[0]のﾒﾝﾊﾞｰのみ使用する。true:RenderTarget[0～7]が使用できる(ﾚﾝﾀﾞｰﾀｰｹﾞｯﾄ毎に独立したﾌﾞﾚﾝﾄﾞ処理)
-	blendDesc.AlphaToCoverageEnable = false;						//true:ｱﾙﾌｧﾄｩｶﾊﾞﾚｯｼﾞを使用する
+	
+	UINT mask = 0xffffffff;	//ﾏｽｸ値白.
 
-	//表示ﾀｲﾌﾟ
-	blendDesc.RenderTarget[0].BlendEnable = isAlpha;					//true:ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを使用する
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを指定
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;	//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞの反転を指定
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;			//そのまま使用
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;			//何もしない
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;		//ADD：加算合成
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのﾃﾞｰﾀの格納を許可する
-
-	if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState ) ) )
-	{
-		MessageBox(0, "ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの作成に失敗", "error(InitPolygon)", MB_OK);
+	if( isAlpha ){		
+		//ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの設定.
+		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_ALPHA_ON ], NULL, mask );
+	}
+	else{
+		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_ALPHA_OFF ], NULL, mask );
 	}
 
-	//ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの設定
-	UINT mask = 0xffffffff;	//ﾏｽｸ値白
-	m_pContext->OMSetBlendState( m_pBlendState, NULL, mask );
 
+
+//	//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞ用ﾌﾞﾚﾝﾄﾞｽﾃｰﾄ作成
+//	//pngﾌｧｲﾙ内にｱﾙﾌｧ情報があるので、透過するようにﾌﾞﾚﾝﾄﾞｽﾃｰﾄで設定する
+//	D3D11_BLEND_DESC blendDesc;
+//	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));				//初期化
+//	blendDesc.IndependentBlendEnable = false;					//false:RenderTarget[0]のﾒﾝﾊﾞｰのみ使用する。true:RenderTarget[0～7]が使用できる(ﾚﾝﾀﾞｰﾀｰｹﾞｯﾄ毎に独立したﾌﾞﾚﾝﾄﾞ処理)
+//	blendDesc.AlphaToCoverageEnable = false;						//true:ｱﾙﾌｧﾄｩｶﾊﾞﾚｯｼﾞを使用する
+//
+//	//表示ﾀｲﾌﾟ
+//	blendDesc.RenderTarget[0].BlendEnable = isAlpha;					//true:ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを使用する
+//	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを指定
+//	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;	//ｱﾙﾌｧﾌﾞﾚﾝﾄﾞの反転を指定
+//	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成
+//	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;			//そのまま使用
+//	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;			//何もしない
+//	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;		//ADD：加算合成
+//	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのﾃﾞｰﾀの格納を許可する
+//
+//	if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState ) ) )
+//	{
+//		MessageBox(0, "ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの作成に失敗", "error(InitPolygon)", MB_OK);
+//	}
+//
+//	//ﾌﾞﾚﾝﾄﾞｽﾃｰﾄの設定
+//	UINT mask = 0xffffffff;	//ﾏｽｸ値白
+//	m_pContext->OMSetBlendState( m_pBlendState, NULL, mask );
+//
+//	SAFE_RELEASE( m_pBlendState );
 }
 

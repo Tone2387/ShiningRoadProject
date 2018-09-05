@@ -26,7 +26,7 @@ public:
 	void Create( const char *sTextFileName );//シーン開始時に使う.
 	void Release();							//シーン終了時に使う.
 
-	void Render( int iTex, int iCharNum );
+	void Render( const int iTex, const int iCharNum );
 
 
 
@@ -68,6 +68,8 @@ private:
 		D3DXVECTOR2 Tex;		//ﾃｸｽﾁｬ
 	};
 
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
 	//ﾌｫﾝﾄ情報読込.
 	bool LoadFont();
 	//ｼｪｰﾀﾞ作成.
@@ -101,7 +103,7 @@ private:
 
 
 	//テクスチャ関連
-	std::vector< ID3D11Texture2D* >		  m_vpTex2D;//[TEXT_H];//2Ｄテクスチャ
+	std::vector< ID3D11Texture2D* >							m_vpTex2D;//[TEXT_H];//2Ｄテクスチャ
 	std::vector< std::vector< ID3D11ShaderResourceView* > > m_vvpAsciiTexture;//[TEXT_H][TEXT_W]; //ﾃｸｽﾁｬｰ
 
 
@@ -115,7 +117,15 @@ private:
 	ID3D11Buffer*		m_pConstantBuffer;	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ
 	ID3D11Buffer*		m_pVertexBuffer;	//頂点バッファ	
 
-	ID3D11BlendState*	m_pBlendState;		//ﾌﾞﾚﾝﾄﾞｽﾃｰﾄ
+	//ブレンドステートの添え字用.
+	enum enBLEND : unsigned char
+	{
+		enBLEND_ALPHA_ON = 0,
+		enBLEND_ALPHA_OFF,
+
+		enBLEND_size
+	};
+	ID3D11BlendState*	m_pBlendState[ enBLEND_size ];		//ﾌﾞﾚﾝﾄﾞｽﾃｰﾄ
 	ID3D11SamplerState* m_pSampleLinear;	//ﾃｸｽﾁｬのｻﾝﾌﾟﾗｰ
 
 
