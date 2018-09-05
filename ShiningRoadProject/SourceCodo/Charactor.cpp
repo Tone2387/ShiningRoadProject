@@ -96,6 +96,8 @@ void clsCharactor::MoveControl()
 	
 	m_bMoving = true;
 	m_Trans.vPos += m_vMoveDir * abs(m_fMoveSpeed);
+
+	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };
 }
 
 void clsCharactor::MoveAccele(const float fPower)//‚¢‚ç‚ñ‚©‚à.
@@ -571,7 +573,7 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 
 	/*float QA = abs(L);
 
-	float Ar = (QA) / m_fLockRange * m_fLockCircleRadius;
+	float Ar = (QA) / m•Ší_fLockRange * m_fLockCircleRadius;
 
 	if ((m_fLockRange * PA) / (QA * m_fLockCircleRadius) > 1.0f)
 	{
