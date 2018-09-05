@@ -180,18 +180,19 @@ const float fINIT_SCALE_DESIGN = 0.1875f;
 const int iSTATUS_PARTS_NAME_NUM = 1;//.
 //隠さないステータスの数.
 const int iOPEN_STATUS_NUM[] =
-{ 5, 11, 2, 2, 10, 10 };
+{ 5, 8, 4, 5, 9, 9 };
 //ステータスの名前.
+const char* sHP_NAME = "Armor Point";
 const string sSTATUS_NAME_LEG[] = 
-	{ "HP", "Walk Speed", "Stability", "Turning", "Jump Power"  };
+	{ sHP_NAME, "Walk Speed", "Stability", "Turning", "Jump Power"  };
 const string sSTATUS_NAME_CORE[] = 
-	{ "HP", "EN Capacity", "EN Output", "Boost Horizontal Power", "Boost Horizontal Cost", "Boost Vertical Power", "Boost Vertical Cost", "Boost Quick Power", "Boost Quick Cost", "Boost Quick Time", "Activity Time" };
+	{ sHP_NAME, "EN Capacity", "EN Output", "Boost Horizontal Power", "Boost Horizontal Cost", "Boost Vertical Power", "Boost Vertical Cost", "Activity Time" };
 const string sSTATUS_NAME_HEAD[] = 
-	{ "HP", "Search" };
+	{ sHP_NAME, "Search", "Lock on Speed", "Lock on Range" };
 const string sSTATUS_NAME_ARMS[] = 
-	{ "HP", "Aiming" };
+	{ sHP_NAME, "Aiming", "Boost Quick Power", "Boost Quick Cost", "Boost Quick Time" };
 const string sSTATUS_NAME_WEAPON[] = 
-	{ "Attack Power", "Bullet Speed", "Bullet Range", "Cost", "Load Time", "Lock on Time", "Lock on Range", "Stability", "Magazine Load Time", "Bullets Num" };
+	{ "Attack Power", "Bullet Speed", "Bullet Range", "EN Cost", "Load Time", "Lock on Time", "Stability of Shooting", "Magazine Load Time", "Bullets Num" };
 
 
 

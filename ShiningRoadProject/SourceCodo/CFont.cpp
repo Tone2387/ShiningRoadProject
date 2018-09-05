@@ -549,7 +549,7 @@ void clsFont::Render( int iTex, int iCharNum )
 	D3DXVECTOR3 vPos = m_vPos + vOFFSET_POS;
 
 	if( iTex <= -1 ) return;
-	if( iTex >= m_vvpAsciiTexture.size() ) return;
+	if( iTex >= static_cast<int>( m_vvpAsciiTexture.size() ) ) return;
 	if( iCharNum <= -1 ) return;
 
 	//Žg—p‚·‚é¼ª°ÀÞ°‚Ì“o˜^
@@ -560,7 +560,7 @@ void clsFont::Render( int iTex, int iCharNum )
 	int ii = 0;
 	int iCnt = 0;
 
-	for ( unsigned int i = 0; i<iCharNum; i++ )
+	for ( int i = 0; i<iCharNum; i++ )
 	{
 		if( i >= m_vvpAsciiTexture[iTex].size() ){
 			break;
