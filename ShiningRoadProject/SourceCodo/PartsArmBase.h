@@ -16,7 +16,11 @@ public:
 	enum enSTATUS : PARTS_STATUS_TYPE
 	{
 		HP = 0,	//体力.
+
 		AIMING,	//照準精度( エイム ).
+		QUICK_THRUST,	//クイック推力.
+		QUICK_COST,		//クイック消費エネルギー.
+		QUICK_TIME,		//クイック噴射時間.
 						
 		COL_SIZE,	//当たり判定サイズ.
 

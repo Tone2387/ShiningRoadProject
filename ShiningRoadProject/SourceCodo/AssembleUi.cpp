@@ -92,7 +92,7 @@ const D3DXVECTOR2 vTEXT_POS_PARTS_NAME = {
 	vINIT_POS_PARTS_WINDOW.x + 4.5f,
 	vINIT_POS_PARTS_WINDOW.y + 16.25f 
 };
-
+const float fPARTS_WINDOW_ALPHA = 0.5f;
 //----- パーツウィンドウ終わり -----//.
 
 
@@ -100,6 +100,7 @@ const D3DXVECTOR2 vTEXT_POS_PARTS_NAME = {
 const char* sROBO_WINDOW_PATH = "Data\\Image\\AssembleUi\\RoboWindow.png";
 const WHSIZE_FLOAT INIT_SIZE_ROBO_WINDOW  = { 490.0f, 570.0f };
 const D3DXVECTOR3 INIT_POS_ROBO_WINDOW = { 753.0f, 87.0f, 0.0f };
+const float fROBO_WINDOW_ALPHA = 0.5f;
 //----- ロボウィンドウ 終わり -----//.
 
 
@@ -112,7 +113,7 @@ const D3DXVECTOR3 vINIT_POS_STATUS_WINDOW = {
 	vINIT_POS_PARTS_WINDOW.y + INIT_SIZE_PARTS_WINDOW.h - INIT_SIZE_STATUS_WINDOW.h, 
 	0.0f };//179.5f;
 const char* sPATH_STATUS_WINDOW = "Data\\Image\\AssembleUi\\StatusWindow.png";
-const float fSTATUS_WINDOW_ALPHA = 0.5f;
+const float fSTATUS_WINDOW_ALPHA = 0.75f;
 const int iSTATUS_NUM_MAX = 11;//ステータスの最大数.
 
 //ステータス文字.
@@ -157,6 +158,8 @@ const D3DXVECTOR2 vTEXT_POS_HEADER = { INIT_POS_HEADER.x + vTEXT_POS_OFFSET_HEAD
 const D3DXVECTOR2 vTEXT_POS_FOOTER = { INIT_POS_FOOTER.x + vTEXT_POS_OFFSET_FOOTER.x, INIT_POS_FOOTER.y + vTEXT_POS_OFFSET_FOOTER.y };
 const char* sHEADER_TEXT = "ASSEMBLE";
 const char* sFOOTER_TEXT = "Enter : B";
+const float fHEADER_ALPHA = 0.5f;
+const float fFOOTER_ALPHA = 0.5f;
 //----- ヘッダーとフッター 終わり -----//.
 
 
@@ -180,18 +183,19 @@ const float fINIT_SCALE_DESIGN = 0.1875f;
 const int iSTATUS_PARTS_NAME_NUM = 1;//.
 //隠さないステータスの数.
 const int iOPEN_STATUS_NUM[] =
-{ 5, 11, 2, 2, 10, 10 };
+{ 5, 8, 4, 5, 9, 9 };
 //ステータスの名前.
+const char* sHP_NAME = "Armor Point";
 const string sSTATUS_NAME_LEG[] = 
-	{ "HP", "Walk Speed", "Stability", "Turning", "Jump Power"  };
+	{ sHP_NAME, "Walk Speed", "Stability", "Turning", "Jump Power"  };
 const string sSTATUS_NAME_CORE[] = 
-	{ "HP", "EN Capacity", "EN Output", "Boost Horizontal Power", "Boost Horizontal Cost", "Boost Vertical Power", "Boost Vertical Cost", "Boost Quick Power", "Boost Quick Cost", "Boost Quick Time", "Activity Time" };
+	{ sHP_NAME, "EN Capacity", "EN Output", "Boost Horizontal Power", "Boost Horizontal Cost", "Boost Vertical Power", "Boost Vertical Cost", "Activity Time" };
 const string sSTATUS_NAME_HEAD[] = 
-	{ "HP", "Search" };
+	{ sHP_NAME, "Search", "Lock on Speed", "Lock on Range" };
 const string sSTATUS_NAME_ARMS[] = 
-	{ "HP", "Aiming" };
+	{ sHP_NAME, "Aiming", "Boost Quick Power", "Boost Quick Cost", "Boost Quick Time" };
 const string sSTATUS_NAME_WEAPON[] = 
-	{ "Attack Power", "Bullet Speed", "Bullet Range", "Cost", "Load Time", "Lock on Time", "Lock on Range", "Stability", "Magazine Load Time", "Bullets Num" };
+	{ "Attack Power", "Bullet Speed", "Bullet Range", "EN Cost", "Load Time", "Lock on Time", "Stability of Shooting", "Magazine Load Time", "Bullets Num" };
 
 
 
@@ -336,21 +340,13 @@ void clsASSEMBLE_UI::Create(
 	m_upPartsNumSelect->SetAlpha( fALPHA_SELECT_PARTS_NUM );
 
 
-
-	//ステータスが表示される窓.
-	assert( !m_upStatusWindow );
-	ss.Disp = INIT_SIZE_STATUS_WINDOW;
-	m_upStatusWindow = make_unique< clsSprite2D >();
-	m_upStatusWindow->Create( pDevice, pContext, sPATH_STATUS_WINDOW, ss );
-	m_upStatusWindow->SetPos( vINIT_POS_STATUS_WINDOW );
-	m_upStatusWindow->SetAlpha( fSTATUS_WINDOW_ALPHA );
-
 	//パーツの単体モデル表示される.
 	assert( !m_upPartsWindow );
 	ss.Disp = INIT_SIZE_PARTS_WINDOW;
 	m_upPartsWindow = make_unique< clsSprite2D >();
 	m_upPartsWindow->Create( pDevice, pContext, sPATH_PARTS_WINDOW, ss );
 	m_upPartsWindow->SetPos( vINIT_POS_PARTS_WINDOW );
+	m_upPartsWindow->SetAlpha( fPARTS_WINDOW_ALPHA );
 
 	//ロボウィンドウ.
 	assert( !m_upRoboWindow );
@@ -358,6 +354,7 @@ void clsASSEMBLE_UI::Create(
 	m_upRoboWindow = make_unique< clsSprite2D >();
 	m_upRoboWindow->Create( pDevice, pContext, sROBO_WINDOW_PATH, ss );
 	m_upRoboWindow->SetPos( INIT_POS_ROBO_WINDOW );
+	m_upRoboWindow->SetAlpha( fROBO_WINDOW_ALPHA );
 
 	//出撃ボタン.
 	assert( !m_upMissionStart );
@@ -372,6 +369,7 @@ void clsASSEMBLE_UI::Create(
 	m_upHeader = make_unique< clsSprite2D >();
 	m_upHeader->Create( pDevice, pContext, sHEADER_FILE_PATH, ss );
 	m_upHeader->SetPos( INIT_POS_HEADER );
+	m_upHeader->SetAlpha( fHEADER_ALPHA );
 
 	//フッター.
 	assert( !m_upFooter );
@@ -379,6 +377,7 @@ void clsASSEMBLE_UI::Create(
 	m_upFooter = make_unique< clsSprite2D >();
 	m_upFooter->Create( pDevice, pContext, sFOOTER_FILE_PATH, ss );
 	m_upFooter->SetPos( INIT_POS_FOOTER );
+	m_upFooter->SetAlpha( fFOOTER_ALPHA );
 
 	//ヘッダー文字.
 	assert( !m_upHeaderText );
@@ -394,6 +393,15 @@ void clsASSEMBLE_UI::Create(
 	m_upFooterText->SetPos( vTEXT_POS_FOOTER );
 	m_upFooterText->SetText( sFOOTER_TEXT );
 
+
+
+	//ステータスが表示される窓.
+	assert( !m_upStatusWindow );
+	ss.Disp = INIT_SIZE_STATUS_WINDOW;
+	m_upStatusWindow = make_unique< clsSprite2D >();
+	m_upStatusWindow->Create( pDevice, pContext, sPATH_STATUS_WINDOW, ss );
+	m_upStatusWindow->SetPos( vINIT_POS_STATUS_WINDOW );
+	m_upStatusWindow->SetAlpha( fSTATUS_WINDOW_ALPHA );
 
 
 	//ステータス項目.

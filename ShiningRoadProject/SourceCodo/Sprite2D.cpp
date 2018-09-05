@@ -38,6 +38,10 @@ HRESULT clsSprite2D::Create(
 
 	m_SState = ss;
 
+	if( FAILED( CreateBlendState() ))
+	{
+		return E_FAIL;
+	}
 	if( FAILED( InitShader() ))
 	{
 		return E_FAIL;

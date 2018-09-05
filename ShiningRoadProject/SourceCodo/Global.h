@@ -92,6 +92,15 @@ enum class enPARTS : UCHAR
 	MAX
 };
 
+//ブレンドステートの添え字用.
+enum enBLEND_STATE : unsigned char
+{
+	enBLEND_STATE_ALPHA_ON = 0,
+	enBLEND_STATE_ALPHA_OFF,
+
+	enBLEND_STATE_size
+};
+
 struct TRANSFORM
 {
 	D3DXVECTOR3 vScale;

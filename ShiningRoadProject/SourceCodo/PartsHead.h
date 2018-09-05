@@ -13,7 +13,10 @@ public:
 	enum enSTATUS : PARTS_STATUS_TYPE
 	{
 		HP = 0,	//体力.
-		SEARCH,	//索敵性能.
+
+		SEARCH,		//索敵性能.
+		LOCK_ON_SPEED,	//ロック速度.
+		LOCK_ON_RANGE,	//ロック距離.
 
 		COL_SIZE,	//当たり判定サイズ.
 

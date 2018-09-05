@@ -12,7 +12,7 @@ const D3DXVECTOR3 vINIT_LOGO_POS = { WND_W*0.5f, 75.0f, 0.0f };
 
 
 //“ú–{ŒêUI.
-const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\TextTitle.csv";
+const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
 
 
 //================================//

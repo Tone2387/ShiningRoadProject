@@ -6,25 +6,30 @@ const char SHADER_NAME[] = "Shader\\Mesh.hlsl";//const:å„Ç…èëÇ©ÇÍÇΩïœêîÇè„èëÇ´Ç
 //========================================================
 // ÉRÉìÉXÉgÉâÉNÉ^.
 //========================================================
-clsDX9Mesh::clsDX9Mesh() :
-	m_pMesh( nullptr ),
-	m_pMeshForRay( nullptr ),
-	m_hWnd( nullptr ),
-	m_pD3d( nullptr ),
-	m_pDevice9( nullptr ),
-	m_pDevice11( nullptr ),
-	m_pDeviceContext11( nullptr ),
-	m_pVertexShader( nullptr ),
-	m_pVertexLayout( nullptr ),
-	m_pPixelShader( nullptr ),
-	m_pConstantBuffer0( nullptr ),
-	m_pConstantBuffer1( nullptr ),
-	m_pVertexBuffer( nullptr ),
-	m_ppIndexBuffer( nullptr ),
-	m_pSampleLinear( nullptr ),
-	m_pBlendState( nullptr )
+clsDX9Mesh::clsDX9Mesh() 
+	:m_pMesh( nullptr )
+	,m_pMeshForRay( nullptr )
+	,m_hWnd( nullptr )
+	,m_pD3d( nullptr )
+	,m_pDevice9( nullptr )
+	,m_pDevice11( nullptr )
+	,m_pDeviceContext11( nullptr )
+	,m_pVertexShader( nullptr )
+	,m_pVertexLayout( nullptr )
+	,m_pPixelShader( nullptr )
+	,m_pConstantBuffer0( nullptr )
+	,m_pConstantBuffer1( nullptr )
+	,m_pVertexBuffer( nullptr )
+	,m_ppIndexBuffer( nullptr )
+	,m_pSampleLinear( nullptr )
+//	,m_pBlendState( nullptr )
 {
 //	ZeroMemory(this, sizeof(clsDX9Mesh));
+
+	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
+		m_pBlendState[i] = nullptr;
+	}
+
 	m_Trans.vScale = {1.0f,1.0f,1.0f};
 }
 
@@ -35,10 +40,50 @@ clsDX9Mesh::~clsDX9Mesh()
 {
 	Release();
 
+
 	//ÉIÉuÉWÉFÉNÉgÇÃÉäÉäÅ[ÉX.
 	SAFE_RELEASE(m_pDevice9);
 	SAFE_RELEASE(m_pD3d);
 }
+
+
+//============================================================
+//	âï˙.
+//============================================================
+HRESULT clsDX9Mesh::Release()
+{
+	SAFE_RELEASE( m_pSampleLinear );
+
+	SAFE_RELEASE( m_pConstantBuffer1 );
+	SAFE_RELEASE( m_pConstantBuffer0 );
+
+	SAFE_RELEASE( m_pPixelShader );
+	SAFE_RELEASE( m_pVertexLayout );
+	SAFE_RELEASE( m_pVertexBuffer );
+	SAFE_RELEASE( m_pVertexShader );
+
+
+	if( m_ppIndexBuffer ){
+		for( DWORD i=0; i<m_dwNumMaterials; i++ ){
+			SAFE_RELEASE( m_ppIndexBuffer[i] );	
+		}
+		SAFE_DELETE_ARRAY( m_ppIndexBuffer );
+	}
+
+	SAFE_RELEASE( m_pMaterials->pTexture );
+	SAFE_DELETE_ARRAY( m_pMaterials );
+
+	SAFE_RELEASE( m_pMesh );
+	SAFE_RELEASE( m_pMeshForRay );
+
+	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
+		SAFE_RELEASE( m_pBlendState[i] );
+	}
+
+
+	return S_OK;
+}
+
 
 //========================================================
 // èâä˙âª.
@@ -49,6 +94,10 @@ HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext
 	m_pDevice11 = pDevice11;
 	m_pDeviceContext11 = pContext11;
 
+	if( FAILED( CreateBlendState() ) )
+	{
+		return E_FAIL;
+	}
 	if (FAILED(InitDx9(m_hWnd)))
 	{
 		return E_FAIL;
@@ -783,87 +832,54 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 	}
 }
 
-//ìßâﬂ(ÉAÉãÉtÉ@ÉuÉåÉìÉh)ê›íËÇÃêÿÇËë÷Ç¶.
-void clsDX9Mesh::SetBlend( bool isAlpha )
+//ÉuÉåÉìÉhÉXÉeÅ[ÉgçÏê¨.
+HRESULT clsDX9Mesh::CreateBlendState()
 {
-	//ÉAÉãÉtÉ@ÉuÉåÉìÉhópÉuÉåÉìÉhÉXÉeÅ[Égç\ë¢ëÃ.
-	//pngÉtÉ@ÉCÉãì‡Ç…ÉAÉãÉtÉ@èÓïÒÇ™Ç†ÇÈÇÃÇ≈ÅA
-	//ìßâﬂÇ∑ÇÈÇÊÇ§Ç…ÉuÉåÉìÉhÉXÉeÅ[ÉgÇê›íËÇ∑ÇÈ.
+	//ÉAÉãÉtÉ@ÉuÉåÉìÉhópÉuÉåÉìÉhÉXÉeÅ[ÉgçÏê¨.
+	//pngÉtÉ@ÉCÉãì‡Ç…ÉAÉãÉtÉ@èÓïÒÇ™Ç†ÇÈÇÃÇ≈ÅAìßâﬂÇ∑ÇÈÇÊÇ§Ç…ÉuÉåÉìÉhÉXÉeÅ[ÉgÇ≈ê›íËÇ∑ÇÈ.
 	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));//èâä˙âª.
+	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );	//èâä˙âª.
+	blendDesc.IndependentBlendEnable = false;			//false:RenderTarget[0]ÇÃÉÅÉìÉoÅ[ÇÃÇ›égópÇ∑ÇÈÅBtrue:RenderTarget[0Å`7]Ç™égópÇ≈Ç´ÇÈ(ÉåÉìÉ_Å[É^Å[ÉQÉbÉgñàÇ…ì∆óßÇµÇΩÉuÉåÉìÉhèàóù).
+	blendDesc.AlphaToCoverageEnable = false;			//true:ÉAÉãÉtÉ@ÉgÉDÉJÉoÉåÉbÉWÇégópÇ∑ÇÈ.
 
-	blendDesc.IndependentBlendEnable
-		= false;//false:RenderTarget[0]ÇÃÉÅÉìÉoÅ[ÇÃÇ›Ç™égópÇ∑ÇÈ.
-	//true :RenderTarget[0Å`7]Ç™égópÇ≈Ç´ÇÈ.
-	//      (ÉåÉìÉ_Å[É^Å[ÉQÉbÉgñàÇ…ì∆óßÇµÇΩÉuÉåÉìÉhèàóù)
-	blendDesc.AlphaToCoverageEnable
-		= false;//true :ÉAÉãÉtÉ@ÉgÉDÉJÉoÉåÉbÉWÇégópÇ∑ÇÈ.
-	blendDesc.RenderTarget[0].BlendEnable
-		= isAlpha;	//true :ÉAÉãÉtÉ@ÉuÉåÉìÉhÇégópÇ∑ÇÈ.
-	blendDesc.RenderTarget[0].SrcBlend	//å≥ëfçﬁÇ…ëŒÇ∑ÇÈê›íË.
-		= D3D11_BLEND_SRC_ALPHA;		//	ÉAÉãÉtÉ@ÉuÉåÉìÉhÇéwíË.
-	blendDesc.RenderTarget[0].DestBlend	//èdÇÀÇÈëfçﬁÇ…ëŒÇ∑ÇÈê›íË.
-		= D3D11_BLEND_INV_SRC_ALPHA;	//	ÉAÉãÉtÉ@ÉuÉåÉìÉhÇÃîΩì]ÇéwíË.
+	//ï\é¶É^ÉCÉv
+//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:ÉAÉãÉtÉ@ÉuÉåÉìÉhÇégópÇ∑ÇÈ.
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//ÉAÉãÉtÉ@ÉuÉåÉìÉhÇéwíË.
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//ÉAÉãÉtÉ@ÉuÉåÉìÉhÇÃîΩì]ÇéwíË.
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADDÅFâ¡éZçáê¨.
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//ÇªÇÃÇ‹Ç‹égóp.
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;		//âΩÇ‡ÇµÇ»Ç¢.
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ADDÅFâ¡éZçáê¨.
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//ëSÇƒÇÃê¨ï™(RGBA)Ç÷ÇÃÉfÅ[É^ÇÃäiî[Çãñâ¬Ç∑ÇÈ.
 
-	blendDesc.RenderTarget[0].BlendOp	//ÉuÉåÉìÉhÉIÉvÉVÉáÉì.
-		= D3D11_BLEND_OP_ADD;			//	ADD:â¡éZçáê¨.
+	bool tmpBlendEnable[ enBLEND_STATE_size ];
+	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
+	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
 
-	blendDesc.RenderTarget[0].SrcBlendAlpha	//å≥ëfçﬁÇÃÉAÉãÉtÉ@Ç…ëŒÇ∑ÇÈê›íË.
-		= D3D11_BLEND_ONE;					//	ÇªÇÃÇ‹Ç‹égóp.
-	blendDesc.RenderTarget[0].DestBlendAlpha//èdÇÀÇÈëfçﬁÇÃÉAÉãÉtÉ@Ç…ëŒÇ∑ÇÈê›íË.
-		= D3D11_BLEND_ZERO;					//	âΩÇ‡ÇµÇ»Ç¢.
-
-	blendDesc.RenderTarget[0].BlendOpAlpha	//ÉAÉãÉtÉ@ÇÃÉuÉåÉìÉhÉIÉvÉVÉáÉì.
-		= D3D11_BLEND_OP_ADD;				//	ADD:â¡éZçáê¨.
-
-	blendDesc.RenderTarget[0].RenderTargetWriteMask	//ÉsÉNÉZÉãñàÇÃèëÇ´çûÇ›É}ÉXÉN.
-		= D3D11_COLOR_WRITE_ENABLE_ALL;				//	ëSÇƒÇÃê¨ï™(RGBA)Ç÷ÇÃÉfÅ[É^ÇÃäiî[Çãñâ¬Ç∑ÇÈ.
-
-	//ÉuÉåÉìÉhÉXÉeÅ[ÉgçÏê¨.
-	if (FAILED(
-		m_pDevice11->CreateBlendState(
-		&blendDesc, &m_pBlendState)))
+	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
 	{
-		MessageBox(NULL, "ÉuÉåÉìÉhÉXÉeÅ[ÉgçÏê¨é∏îs", "ÉGÉâÅ[", MB_OK);
-	}
-
-	//ÉuÉåÉìÉhÉXÉeÅ[ÉgÇÃê›íË.
-	UINT mask = 0xffffffff;	//É}ÉXÉNíl.
-	m_pDeviceContext11->OMSetBlendState(
-		m_pBlendState, NULL, mask);
-
-}
-
-
-//============================================================
-//	âï˙.
-//============================================================
-HRESULT clsDX9Mesh::Release()
-{
-	SAFE_RELEASE( m_pBlendState );
-	SAFE_RELEASE( m_pSampleLinear );
-
-	SAFE_RELEASE( m_pConstantBuffer1 );
-	SAFE_RELEASE( m_pConstantBuffer0 );
-
-	SAFE_RELEASE( m_pPixelShader );
-	SAFE_RELEASE( m_pVertexLayout );
-	SAFE_RELEASE( m_pVertexBuffer );
-	SAFE_RELEASE( m_pVertexShader );
-
-
-	if( m_ppIndexBuffer ){
-		for( DWORD i=0; i<m_dwNumMaterials; i++ ){
-			SAFE_RELEASE( m_ppIndexBuffer[i] );	
+		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
+		if( FAILED( m_pDevice11->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
+			assert( !"ÉuÉåÉìÉhÉXÉeÅ[ÉgÇÃçÏê¨Ç…é∏îs" );
+			return E_FAIL;
 		}
-		SAFE_DELETE_ARRAY( m_ppIndexBuffer );
 	}
-
-	SAFE_RELEASE( m_pMaterials->pTexture );
-	SAFE_DELETE_ARRAY( m_pMaterials );
-
-	SAFE_RELEASE( m_pMesh );
-	SAFE_RELEASE( m_pMeshForRay );
 
 	return S_OK;
 }
+
+
+//ìßâﬂ(ÉAÉãÉtÉ@ÉuÉåÉìÉh)ê›íËÇÃêÿÇËë÷Ç¶.
+void clsDX9Mesh::SetBlend( bool isAlpha )
+{
+	UINT mask = 0xffffffff;	//É}ÉXÉNílîí.
+
+	if( isAlpha ){		
+		//ÉuÉåÉìÉhÉXÉeÅ[ÉgÇÃê›íË.
+		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
+	}
+	else{
+		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
+	}
+}
+

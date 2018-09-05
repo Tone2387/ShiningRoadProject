@@ -1,32 +1,40 @@
-#include "Common.h"
+#include "BlendState.h"
 
-clsCommon::clsCommon()
+
+clsBLEND_STATE::clsBLEND_STATE(
+	ID3D11Device* const pDevice,
+	ID3D11DeviceContext* const pContext )
+	:m_pContext( pContext )
+	,m_isAlpha( false )
 {
-	m_pDevice11 = nullptr;
-	m_pDeviceContext11 = nullptr;
 	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 		m_pBlendState[i] = nullptr;
 	}
 
-//	if( FAILED( CreateBlendState() ) ){
-//		assert( !"Can't Create Blend State" );
-//	}
+	if( FAILED( CreateBlendState( pDevice ) ) ){
+		assert( !"Can't Create Blend State" );
+	}
 
-};
-clsCommon::~clsCommon()
+	SetBlend( !m_isAlpha );
+}
+
+clsBLEND_STATE::~clsBLEND_STATE()
 {
+	m_isAlpha = false;
+
 	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 		SAFE_RELEASE( m_pBlendState[i] );
 	}
 
-	//ここでは開放しない.
-	m_pDeviceContext11 = nullptr;
-	m_pDevice11 = nullptr;
-};
+	m_pContext = nullptr;
+}
+
 
 //ブレンドステート作成.
-HRESULT clsCommon::CreateBlendState()
+HRESULT clsBLEND_STATE::CreateBlendState( ID3D11Device* const pDevice )
 {
+	assert( pDevice );
+
 	//アルファブレンド用ブレンドステート作成.
 	//pngファイル内にアルファ情報があるので、透過するようにブレンドステートで設定する.
 	D3D11_BLEND_DESC blendDesc;
@@ -50,8 +58,9 @@ HRESULT clsCommon::CreateBlendState()
 
 	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
 	{
+		assert( !m_pBlendState[i] );
 		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice11->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
+		if( FAILED( pDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
 			assert( !"ブレンドステートの作成に失敗" );
 			return E_FAIL;
 		}
@@ -60,16 +69,23 @@ HRESULT clsCommon::CreateBlendState()
 	return S_OK;
 }
 
-void clsCommon::SetBlend( const bool isAlpha )
-{
-	UINT mask = 0xffffffff;	//マスク値白.
 
+void clsBLEND_STATE::SetBlend( const bool isAlpha )
+{
+	//今と同じならわざわざやらんでよい.
+	if( isAlpha == m_isAlpha ){
+		return;
+	}
+
+	const UINT mask = 0xffffffff;	//マスク値白.
+
+	assert( m_pContext );
+	//ブレンドステートの設定.
 	if( isAlpha ){		
-		//ブレンドステートの設定.
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
+		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
 	}
 	else{
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
+		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
 	}
 }
 

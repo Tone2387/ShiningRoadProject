@@ -373,6 +373,9 @@ public:
 	bool ExistsBone( const char* sBoneName );
 
 private:
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+
 	HWND m_hWnd;
 	// Dx9.
 	LPDIRECT3D9 m_pD3d9;
@@ -436,7 +439,7 @@ private:
 
 	//透過(アルファブレンド)設定の切り替え.
 	void SetBlend( const bool isAlpha );
-	ID3D11BlendState*	m_pBlendState;	//ブレンドステート.
+	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 };
 
