@@ -26,7 +26,9 @@ clsDebugText::clsDebugText()
 	m_pAsciiTexture = nullptr;//アスキーテクスチャ.
 	m_pSampleLinear = nullptr;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
 
-	m_pBlendState = nullptr;	//ブレンドステート.
+	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
+		m_pBlendState[i] = nullptr;
+	}
 
 	for( int i=0; i<100; i++ ){
 		m_fKerning[i] = 0.0f;
@@ -43,7 +45,6 @@ clsDebugText::clsDebugText()
 //============================================================
 clsDebugText::~clsDebugText()
 {
-	SAFE_RELEASE( m_pBlendState );
 	SAFE_RELEASE( m_pConstantBuffer );
 	SAFE_RELEASE( m_pPixelShader );
 	SAFE_RELEASE( m_pVertexLayout );
@@ -59,8 +60,13 @@ clsDebugText::~clsDebugText()
 	}
 	m_fScale = 1.0f;
 
-	D3DXMatrixIdentity( &m_mView );
-	D3DXMatrixIdentity( &m_mProj );
+//	D3DXMatrixIdentity( &m_mView );
+//	D3DXMatrixIdentity( &m_mProj );
+
+
+	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
+		SAFE_RELEASE( m_pBlendState[i] );
+	}
 
 	m_pDevice11 = nullptr;		//デバイスオブジェクト.
 	m_pDeviceContext11 = nullptr;	//デバイスコンテキスト.
@@ -86,6 +92,9 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	//デバイスコンテキストをコピー.
 	m_pDeviceContext11 = pContext;
 	m_pDeviceContext11->GetDevice( &m_pDevice11 );
+
+	//ブレンドステート作成.
+	CreateBlendState();
 
 	//windowサイズ.
 	m_dwWindowWidth = dwWidth;
@@ -259,57 +268,57 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 }
 
 
+//ブレンドステート作成.
+HRESULT clsDebugText::CreateBlendState()
+{
+	//アルファブレンド用ブレンドステート作成.
+	//pngファイル内にアルファ情報があるので、透過するようにブレンドステートで設定する.
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );	//初期化.
+	blendDesc.IndependentBlendEnable = false;			//false:RenderTarget[0]のメンバーのみ使用する。true:RenderTarget[0～7]が使用できる(レンダーターゲット毎に独立したブレンド処理).
+	blendDesc.AlphaToCoverageEnable = false;			//true:アルファトゥカバレッジを使用する.
+
+	//表示タイプ
+//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:アルファブレンドを使用する.
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//アルファブレンドを指定.
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//アルファブレンドの反転を指定.
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成.
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//そのまま使用.
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;		//何もしない.
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ADD：加算合成.
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのデータの格納を許可する.
+
+	bool tmpBlendEnable[ enBLEND_STATE_size ];
+	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
+	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
+
+	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
+	{
+		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
+		if( FAILED( m_pDevice11->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
+			assert( !"ブレンドステートの作成に失敗" );
+			return E_FAIL;
+		}
+	}
+
+	return S_OK;
+}
+
+
 //============================================================
 //	透過(アルファブレンド)設定の切り替え.
 //============================================================
-void clsDebugText::SetBlend( bool flg )
+void clsDebugText::SetBlend( bool isAlpha )
 {
-	//アルファブレンド用ブレンドステート構造体.
-	//pngファイル内にアルファ情報があるので、
-	//透過するようにブレンドステートを設定する.
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );//初期化.
+	UINT mask = 0xffffffff;	//マスク値白.
 
-	blendDesc.IndependentBlendEnable
-		= false;//false:RenderTarget[0]のメンバーのみが使用する.
-				//true :RenderTarget[0～7]が使用できる.
-				//      (レンダーターゲット毎に独立したブレンド処理)
-	blendDesc.AlphaToCoverageEnable
-		= false;//true :アルファトゥカバレッジを使用する.
-	blendDesc.RenderTarget[0].BlendEnable
-		= flg;	//true :アルファブレンドを使用する.
-	blendDesc.RenderTarget[0].SrcBlend	//元素材に対する設定.
-		= D3D11_BLEND_SRC_ALPHA;		//	アルファブレンドを指定.
-	blendDesc.RenderTarget[0].DestBlend	//重ねる素材に対する設定.
-		= D3D11_BLEND_INV_SRC_ALPHA;	//	アルファブレンドの反転を指定.
-
-	blendDesc.RenderTarget[0].BlendOp	//ブレンドオプション.
-		= D3D11_BLEND_OP_ADD;			//	ADD:加算合成.
-
-	blendDesc.RenderTarget[0].SrcBlendAlpha	//元素材のアルファに対する設定.
-		= D3D11_BLEND_ONE;					//	そのまま使用.
-	blendDesc.RenderTarget[0].DestBlendAlpha//重ねる素材のアルファに対する設定.
-		= D3D11_BLEND_ZERO;					//	何もしない.
-
-	blendDesc.RenderTarget[0].BlendOpAlpha	//アルファのブレンドオプション.
-		= D3D11_BLEND_OP_ADD;				//	ADD:加算合成.
-
-	blendDesc.RenderTarget[0].RenderTargetWriteMask	//ピクセル毎の書き込みマスク.
-		= D3D11_COLOR_WRITE_ENABLE_ALL;				//	全ての成分(RGBA)へのデータの格納を許可する.
-
-	//ブレンドステート作成.
-	if( FAILED(
-		m_pDevice11->CreateBlendState(
-			&blendDesc, &m_pBlendState ) ) )
-	{
-		MessageBox( NULL, "ブレンドステート作成失敗", "エラー", MB_OK );
+	if( isAlpha ){		
+		//ブレンドステートの設定.
+		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
 	}
-
-	//ブレンドステートの設定.
-	UINT mask = 0xffffffff;	//マスク値.
-	m_pDeviceContext11->OMSetBlendState(
-		m_pBlendState, NULL, mask );
-
+	else{
+		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
+	}
 }
 
 
@@ -429,12 +438,8 @@ void clsDebugText::RenderFont( int FontIndex, int x, int y )
 		&stride, &offset );
 
 	//描画.
-	UINT ColoKey = 0xffffffff;
-	m_pDeviceContext11->OMSetBlendState(
-		m_pBlendState, NULL, ColoKey );
+	SetBlend( true );
 	m_pDeviceContext11->Draw( 4, 0 );
-	m_pDeviceContext11->OMSetBlendState(
-		0, NULL, ColoKey );
 
 
 }

@@ -45,6 +45,10 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 	m_pDevice11 = pDevice11;
 	m_pDeviceContext11 = pContext11;
 
+	if( FAILED( CreateBlendState() ))
+	{
+		return E_FAIL;
+	}
 	//シェーダ作成.
 	if( FAILED( InitShader() ) ){
 		return E_FAIL;

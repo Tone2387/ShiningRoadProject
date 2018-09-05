@@ -99,6 +99,10 @@ public:
 	LPD3DXMESH	m_pMeshForRay;	//レイとメッシュ用.
 
 private:
+
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+
 	D3DXVECTOR3 vecAxisX;
 	//Z軸ﾍﾞｸﾄﾙを用意.
 	D3DXVECTOR3 vecAxisZ;
@@ -145,7 +149,7 @@ private:
 
 
 
-	ID3D11BlendState*	m_pBlendState;	//ブレンドステート.
+	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 };
 

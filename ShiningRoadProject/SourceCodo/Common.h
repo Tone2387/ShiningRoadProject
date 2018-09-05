@@ -34,11 +34,15 @@ public:
 
 
 protected:
+
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+
 	//↓アプリに一つ.
 	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_pDeviceContext11;	//デバイスコンテキスト.
 
-	ID3D11BlendState*		m_pBlendState;	//ブレンドステート.
+	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 };
 
