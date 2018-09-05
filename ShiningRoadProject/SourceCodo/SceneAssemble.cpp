@@ -63,7 +63,7 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 
 
 //日本語UI.
-const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\TextAssemble.csv";
+const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
 
 //================================//
 //========== 組み換えクラス ==========//

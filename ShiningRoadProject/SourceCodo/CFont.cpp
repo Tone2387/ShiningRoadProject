@@ -11,7 +11,7 @@
 using namespace std;
 
 //フォントのパス.
-const char* sFONT_STYLE_PATH = "Data\\Font\\Makinas-Scrap-5.otf";//Makinas-Scrap-5.otf.//aozora.ttf.
+const char* sFONT_STYLE_PATH = "Data\\Font\\FontType\\Makinas-Scrap-5.otf";//Makinas-Scrap-5.otf.//aozora.ttf.
 
 //#define sFONT_NAME "あおぞら明朝 Medium"
 #define sFONT_NAME "マキナス Scrap 5"
