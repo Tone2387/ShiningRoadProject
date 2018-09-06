@@ -8,8 +8,6 @@
 
 struct BulletState
 {
-	int iAtk;
-	float fMoveSpeed;
 	float fRangeMax;
 
 	float fSpeed;
@@ -63,7 +61,7 @@ public:
 	void SEInit(HWND hWnd);
 
 	void Move();
-	bool Hit(SPHERE* ppTargetSphere,int iSphereMax);
+	bool Hit(std::vector<clsObject::SPHERE> v_TargetSphere);
 	bool Form(D3DXVECTOR3 vShotPos,D3DXVECTOR3 vTarget);
 	void ReStart();
 

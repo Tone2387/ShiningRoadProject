@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 //要素数は<clsSCENE_ASSEMBLE::ENUM_SIZE>.
 const string sPARTS_STATUS_PASS[] =
 {
@@ -15,9 +14,11 @@ const string sPARTS_STATUS_PASS[] =
 };
 
 //モデルさんの初期位置.
-const D3DXVECTOR3 vINIT_ROBO_POS = { 52.0f, -35.0f, 17.0f };
-const D3DXVECTOR3 vINIT_ROBO_ROT = { 6.03318501f, 0.649538994f, 6.18318605f };
-const float fINIT_ROBO_SCALE = 0.5f;
+//const D3DXVECTOR3 vINIT_ROBO_POS = { 52.0f, -35.0f, 17.0f };
+//const D3DXVECTOR3 vINIT_ROBO_ROT = { 6.03318501f, 0.649538994f, 6.18318605f };
+const D3DXVECTOR3 vINIT_ROBO_POS = { 0.0f, 0.0f, 0.0f };
+const D3DXVECTOR3 vINIT_ROBO_ROT = { 0.0f, static_cast<float>( M_PI_4 ) * 0.5f, 0.0f };
+const float fINIT_ROBO_SCALE = 0.75f;
 
 //カメラの初期位置.
 const D3DXVECTOR3 vINIT_CAMERA_POS = { 0.0f, 0.0f, -100.0f };
@@ -27,9 +28,52 @@ const D3DXVECTOR3 vINIT_CAMERA_LOOK_POS = { 0.0f, 0.0f, 0.0f };
 //ステータスの、CSVから削る行数.
 const int iSTATUS_CUT_NUM = 2;//番号と名前.
 
+//----- パーツウィンドウ用 -----//.
+//ビューポート.
+const FLOAT INIT_VP_PARTS_W = 576.0f;
+const FLOAT INIT_VP_PARTS_H = 482.0f;
+const FLOAT INIT_VP_PARTS_X = 153.0f;
+const FLOAT INIT_VP_PARTS_Y = 176.0f;
+const FLOAT INIT_VP_PARTS_MIN =	0.0f;
+const FLOAT INIT_VP_PARTS_MAX =	1.0f;
+//カメラ.
+const D3DXVECTOR3 vPARTS_VIEW_CAM_POS  = { 0.0f, 0.0f, -100.0f };
+const D3DXVECTOR3 vPARTS_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
+//----- パーツウィンドウ用 -----//.
+
+//----- ロボウィンドウ用 -----//.
+//ビューポート.
+const FLOAT INIT_VP_ROBO_W = 490.0f;
+const FLOAT INIT_VP_ROBO_H = 570.0f;
+const FLOAT INIT_VP_ROBO_X = 753.0f;
+const FLOAT INIT_VP_ROBO_Y = 87.0f;
+const FLOAT INIT_VP_ROBO_MIN =	0.0f;
+const FLOAT INIT_VP_ROBO_MAX =	1.0f;
+//カメラ.
+const D3DXVECTOR3 vROBO_VIEW_CAM_POS  = { 0.0f, 20.0f, -100.0f };
+const D3DXVECTOR3 vROBO_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
+//----- ロボウィンドウ用 -----//.
+
+//----- 背景 -----//.
+const char* sBACK_SPRITE_PATH = "Data\\Image\\AssembleUi\\AssembleBack.png";
+const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
+
+//----- 背景 -----//.
 
 
+//日本語UI.
+const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
+//ボタン説明.
+const D3DXVECTOR3 vFONT_BUTTON_POS = { 756.0f, 44.0f, 0.0f };
+const float fFONT_BUTTON_SCALE = 14.0f;
+const int iFONT_BUTTON_LINE = 0;
+const int iFONT_BUTTON_TEXT_SIZE = 64;
 
+//パーツ、ステータス説明.
+const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
+const float fFONT_COMMENT_SCALE = 16.0f;
+const int iFONT_COMMENT_LINE = 1;
+const int iFONT_COMMENT_TEXT_SIZE = 128;
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -37,7 +81,10 @@ const int iSTATUS_CUT_NUM = 2;//番号と名前.
 clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pAsmModel( nullptr )
 	,m_pUI( nullptr )
+	,m_pViewPortPartsWindow( nullptr )
+	,m_pViewPortRoboWindow( nullptr )
 	,m_cuFileMax( 0 )
+	,m_pSelectParts( nullptr )
 //	,m_enSelectMode()
 {
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
@@ -45,6 +92,9 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 {
+
+	SAFE_DELETE( m_pViewPortRoboWindow );
+	SAFE_DELETE( m_pViewPortPartsWindow );
 	SAFE_DELETE( m_pAsmModel );
 	SAFE_DELETE( m_pUI );
 
@@ -53,12 +103,16 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 		m_vspFile[i]->Close();
 		m_vspFile[i].reset();
 	}
-	
+	m_vspFile.clear();
+	m_vspFile.shrink_to_fit();
+
 	m_cuFileMax = 0;
+	m_pSelectParts = nullptr;
 }
 
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
+	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
 
 //	m_pTestChara = new clsCharaStatic;
 //	m_pTestChara->AttachModel( 
@@ -74,6 +128,13 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 //	m_pParts->Init();
 //	m_pParts->SetPosition( D3DXVECTOR3( -2.0f, 1.0f, 0.0f ) );
 //
+
+	//背景.
+	SPRITE_STATE ss;
+	ss.Disp = { WND_W, WND_H };
+	m_upBack = make_unique< clsSprite2D >();
+	m_upBack->Create( m_wpDevice, m_wpContext, sBACK_SPRITE_PATH, ss );
+	m_upBack->SetPos( vBACK_POS );
 
 
 	//UIの数用変数.
@@ -96,7 +157,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//UI.
 	assert( !m_pUI );
-	m_pUI = new clsASSEMBLE_UI;
+	m_pUI = new clsASSEMBLE_UI( m_wpFont );
 	m_pUI->Create( m_wpDevice, m_wpContext, partsData );
 
 	//モデルさん作成.
@@ -111,9 +172,45 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_wpCamera->SetPos( vINIT_CAMERA_POS );
 	m_wpCamera->SetLookPos( vINIT_CAMERA_LOOK_POS );
 
+	//装備中のパーツを今の選択肢に適応する.
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::LEG ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::LEG );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::CORE ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::CORE );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::HEAD ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::HEAD );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::ARMS ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::HEAD );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::WEAPON_L ) ]	= m_wpRoboStatus->GetPartsNum( enPARTS::WEAPON_L );
+	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::WEAPON_R ) ]	= m_wpRoboStatus->GetPartsNum( enPARTS::WEAPON_R );
+
 	//ミッションシーンに引き継ぐ情報の初期化.
 	assert( m_wpRoboStatus );
 	m_wpRoboStatus->Clear();
+
+	//パーツビュー.
+	assert( !m_pViewPortPartsWindow );
+	m_pViewPortPartsWindow = new D3D11_VIEWPORT;
+	m_pViewPortPartsWindow->Width	 = INIT_VP_PARTS_W;
+	m_pViewPortPartsWindow->Height	 = INIT_VP_PARTS_H;
+	m_pViewPortPartsWindow->TopLeftX = INIT_VP_PARTS_X;
+	m_pViewPortPartsWindow->TopLeftY = INIT_VP_PARTS_Y;
+	m_pViewPortPartsWindow->MinDepth = INIT_VP_PARTS_MIN;
+	m_pViewPortPartsWindow->MaxDepth = INIT_VP_PARTS_MAX;
+
+	//ロボビュー.
+	assert( !m_pViewPortRoboWindow );
+	m_pViewPortRoboWindow = new D3D11_VIEWPORT;
+	m_pViewPortRoboWindow->Width	= INIT_VP_ROBO_W;
+	m_pViewPortRoboWindow->Height	= INIT_VP_ROBO_H;
+	m_pViewPortRoboWindow->TopLeftX = INIT_VP_ROBO_X;
+	m_pViewPortRoboWindow->TopLeftY = INIT_VP_ROBO_Y;
+	m_pViewPortRoboWindow->MinDepth = INIT_VP_ROBO_MIN;
+	m_pViewPortRoboWindow->MaxDepth = INIT_VP_ROBO_MAX;
+
+	//パーツビューに置くパーツ.
+	assert( !m_pSelectParts );
+	m_pSelectParts = new clsPARTS_WINDOW_MODEL( m_wpResource, m_wpRoboStatus );
+//	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
+//		static_cast< enPARTS >( m_PartsSelect.Type ),
+//		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
+
 }
 
 void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
@@ -204,11 +301,37 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressExit() ){
 		Undo( enNextScene );
 	}
+	//次のシーンへ.
+	if( m_wpXInput->isPressEnter( XINPUT_START ) ){
+		MissionStart( enNextScene );
+	}
+	//ステータスウィンドウを隠す.
+	if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
+		m_pUI->SwitchDispStatusComment();
+		m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+	}
+	//ステータスのcomment切替.
+	if( m_wpXInput->isPressEnter( XINPUT_X ) ){
+		if( m_pUI->isCanSwitchStatusComment() ){
+			if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+				m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+			{
+				m_pUI->SwitchStatusComment();
+				if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+					m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
+				}
+				else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+					m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+				}
+			}
+		}
+	}
 
 
 	assert( m_pUI );
-	m_pUI->Input();
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	m_pUI->Input( m_wpXInput, m_wpDxInput );
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		assert( m_vspFile[m_PartsSelect.Type] );
 		m_pUI->Update( 
 			m_enSelectMode,
@@ -220,37 +343,102 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
 		m_pUI->Update( m_enSelectMode );
 	}
+
 	assert( m_pAsmModel );
 	m_pAsmModel->UpDate();
+
+//	m_pSelectParts->DetatchModel();
+//	m_pSelectParts->AttachModel( m_wpResource->GetPartsModels(
+//		static_cast< enPARTS >( m_PartsSelect.Type ),
+//		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
+	assert( m_pSelectParts );
+	m_pSelectParts->Update( m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
 
 }
 
 void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-//	m_pSprite->SetPos( ConvDimPos( m_pParts->GetPosition() ) );
-////	ConvDimPos( m_pSprite->GetPos(), m_pParts->GetPosition() );
-//
-//	m_pParts->Render( m_mView, m_mProj, m_vLight, vCamPos );
-//	m_pTestChara->Render( m_mView, m_mProj, m_vLight, vCamPos, 
-//		D3DXVECTOR4(0.5f,2.0f,0.5f,0.75f), true );
+	//パーツ描画用.
+	clsCAMERA_ASSEMBLE PartsViewCam;
+	PartsViewCam.Create();
+	PartsViewCam.SetPos( vPARTS_VIEW_CAM_POS );
+	PartsViewCam.SetLookPos( vPARTS_VIEW_CAM_LOOK );
+	PartsViewCam.AddPos( m_pSelectParts->GetSelectPartsHeight() );
 
+	//ロボ描画用.
+	clsCAMERA_ASSEMBLE RoboViewCam;
+	RoboViewCam.Create();
+	RoboViewCam.SetPos( vROBO_VIEW_CAM_POS );
+	RoboViewCam.SetLookPos( vROBO_VIEW_CAM_LOOK );
+	RoboViewCam.AddPos( m_pAsmModel->GetBonePos( enPARTS::LEG, sBONE_NAME_LEG_TO_CORE ) );
+
+
+	//背景.
+	assert( m_upBack );
+	SetDepth( false );
+	m_upBack->Render();
+	SetDepth( true );
+
+
+	assert( m_pUI );
+	SetDepth( false );
+	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
+	SetDepth( true );
+
+	//パーツ描画.
+	SetViewPort( 
+		m_pViewPortPartsWindow, 
+		PartsViewCam.GetPos(), PartsViewCam.GetLookPos(),
+		m_pViewPortPartsWindow->Width, m_pViewPortPartsWindow->Height );
+	assert( m_pSelectParts );
+	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos(), isMissionStart() );
+
+	//パーツのステータス.
+	SetViewPort( 
+		GetViewPortMainPtr(), 
+		m_wpCamera->GetPos(), m_wpCamera->GetLookPos(),
+		WND_W, WND_H );
+	assert( m_pUI );
+	SetDepth( false );
+	m_pUI->RenderPartsState( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
+	SetDepth( true );
+
+
+	//ロボ描画.
+	SetViewPort( 
+		m_pViewPortRoboWindow, 
+		RoboViewCam.GetPos(), RoboViewCam.GetLookPos(),
+		m_pViewPortRoboWindow->Width, m_pViewPortRoboWindow->Height );
 	assert( m_pAsmModel );
 	//パーツ選択中は選択しているパーツを光らせる.
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos, 
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
+		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos(), 
 			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
 	}
 	else{
-		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
+		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos() );
 	}
 
-	SetDepth( false );
-	assert( m_pUI );
-	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
-	SetDepth( true );
+
 }
 
+void clsSCENE_ASSEMBLE::RenderUi()
+{
 
+	//ボタンの説明.
+	m_wpFont->SetPos( vFONT_BUTTON_POS );
+	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
+	m_wpFont->Render( iFONT_BUTTON_LINE, iFONT_BUTTON_TEXT_SIZE );
+
+
+//	//スの説明.
+//	m_wpFont->SetPos( { 0.0f,  WND_H*0.5f, 0.0f } );
+//	m_wpFont->SetScale( 64.0f );
+//	m_wpFont->Render( 0, 128 );
+
+}
 
 //カーソル移動.
 //カーソル移動の共通動作.
@@ -265,14 +453,15 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	MoveCursor();
 
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
-	if( m_enSelectMode != clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		return;
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+		m_PartsSelect.Num[m_PartsSelect.Type] --;
+
+		m_PartsSelect.Num[m_PartsSelect.Type] = 
+			KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
-
-	m_PartsSelect.Num[m_PartsSelect.Type] --;
-
-	m_PartsSelect.Num[m_PartsSelect.Type] = 
-		KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+		m_pUI->AddStatusCommentNo( false );
+	}
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
@@ -280,22 +469,27 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	MoveCursor();
 
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
-	if( m_enSelectMode != clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		return;
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+		m_PartsSelect.Num[m_PartsSelect.Type] ++;
+
+		m_PartsSelect.Num[m_PartsSelect.Type] = 
+			KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+	}
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+		m_pUI->AddStatusCommentNo( true );
 	}
 
-	m_PartsSelect.Num[m_PartsSelect.Type] ++;
-
-	m_PartsSelect.Num[m_PartsSelect.Type] = 
-		KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorRight()
 {
 	MoveCursor();
 
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
 		m_PartsSelect.Type ++;
+		m_pUI->AddCommentNoForChangePartsType();
 
 		//武器を超えたら.
 		if( m_PartsSelect.Type >= clsASSEMBLE_MODEL::ENUM_SIZE ){
@@ -315,8 +509,11 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 	MoveCursor();
 
 	//パーツを選ぶ.
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
 		m_PartsSelect.Type --;
+		m_pUI->AddCommentNoForChangePartsType();
 
 		m_PartsSelect.Type = 
 			KeepRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
@@ -436,6 +633,18 @@ T clsSCENE_ASSEMBLE::KeepRange( T t, const MIN min, const MAX max ) const
 	return static_cast<T>( num );
 }
 
+//カーソルを出撃に合わせているならtrue.
+bool clsSCENE_ASSEMBLE::isMissionStart()
+{
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
+		return false;
+	}
+
+	return true;
+}
+
+
+
 
 //============================ デバッグテキスト ===========================//
 #if _DEBUG
@@ -496,11 +705,17 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 //		m_vLight.x, m_vLight.y, m_vLight.z );
 //	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	//選択肢.
+	//UI.
 	sprintf_s( strDbgTxt, 
-		"UiPos : x[%f], y[%f]",
+		"SpritePos : x[%f], y[%f]",
 		m_pUI->GetUiPos().x, m_pUI->GetUiPos().y );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+//	//日本語文字.[400:-400,200][200:-200,100][50:-50,25]
+//	sprintf_s( strDbgTxt, 
+//		"Font : x[%f], y[%f], Scale[%f]",
+//		setumeiX, setumeiY, m_wpFont->GetScale() );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 //	//テスト用に数値を出す.
 //	string tmpsString;

@@ -22,7 +22,8 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	:m_wpPtrGroup( ptrGroup )
 	,m_wpDevice(		m_wpPtrGroup->GetDevice() )
 	,m_wpContext(		m_wpPtrGroup->GetContext() )
-	,m_wpViewPort(		m_wpPtrGroup->GetViewPort() )
+	,m_wpViewPort10(	m_wpPtrGroup->GetViewPort10() )
+	,m_wpViewPort11(	m_wpPtrGroup->GetViewPort11() )
 	,m_wpDxInput(		m_wpPtrGroup->GetDxInput() )
 	,m_wpXInput(		m_wpPtrGroup->GetXInput() )
 	,m_wpResource(		m_wpPtrGroup->GetResource() )
@@ -31,20 +32,17 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpCamera(		m_wpPtrGroup->GetCamera() )
 	,m_wpRoboStatus(	m_wpPtrGroup->GetRoboStatus() )
 	,m_wpBlackScreen(	m_wpPtrGroup->GetBlackScreen() )
+	,m_wpFont(			m_wpPtrGroup->GetFont() )
 #if _DEBUG
 	,m_upText( nullptr )
 #endif//#if _DEBUG
 	,m_enNextScene( enSCENE::NOTHING )
 {
+	m_wpViewPortUsing = m_wpViewPort11;
 }
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
-//	//音を止める.
-//	m_wpSound->StopAllSound();
-	//次のシーンに余計なエフェクトを持ち込まない.
-	m_wpEffects->StopAll();
-
 #if _DEBUG
 //	SAFE_DELETE( m_upText );
 	if( m_upText ){
@@ -52,8 +50,17 @@ clsSCENE_BASE::~clsSCENE_BASE()
 	}
 #endif//#if _DEBUG
 
+	m_wpFont->Release();
+
+//	//音を止める.
+//	m_wpSound->StopAllSound();
+	//次のシーンに余計なエフェクトを持ち込まない.
+	m_wpEffects->StopAll();
+
+
 	m_enNextScene = enSCENE::NOTHING;
 
+	m_wpFont = nullptr;
 	m_wpBlackScreen = nullptr;
 	m_wpRoboStatus = nullptr;
 	m_wpCamera = nullptr;
@@ -62,7 +69,9 @@ clsSCENE_BASE::~clsSCENE_BASE()
 	m_wpResource = nullptr;
 	m_wpDxInput = nullptr;
 	m_wpPtrGroup = nullptr;
-	m_wpViewPort = nullptr;
+	m_wpViewPortUsing = nullptr;
+	m_wpViewPort11 = nullptr;
+	m_wpViewPort10 = nullptr;
 	m_wpContext = nullptr;
 	m_wpDevice = nullptr;
 }
@@ -80,6 +89,7 @@ void clsSCENE_BASE::Create()
 
 	m_enNextScene = enSCENE::NOTHING;
 
+
 #if _DEBUG
 	//デバッグテキストの初期化.
 //	m_upText = new clsDebugText;
@@ -94,8 +104,12 @@ void clsSCENE_BASE::Create()
 	}
 #endif//#if _DEBUG
 
+
+
 	//各シーンのCreate.
 	CreateProduct();
+
+
 }
 
 //ループ内の処理( 引数を関数内で変更すると今のシーンが破棄され、.
@@ -144,9 +158,23 @@ void clsSCENE_BASE::Render()
 
 	//各シーンの描画.
 	RenderProduct( m_wpCamera->GetPos() );
-
+	
 	//エフェクト描画.
 	m_wpEffects->Render( m_mView, m_mProj, m_wpCamera->GetPos() );
+
+	//元通りのビューポート.
+	SetViewPort( m_wpViewPort11, m_wpCamera->GetPos(), m_wpCamera->GetLookPos(), WND_W, WND_H );
+
+	//各シーンのUIの描画.
+	RenderUi();
+
+	//元通りのビューポート.
+	if( m_wpViewPortUsing != m_wpViewPort11 ){
+		m_wpViewPortUsing = m_wpViewPort11;
+		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
+	}
+
+
 
 	//暗転描画.
 	m_wpBlackScreen->Render();
@@ -235,7 +263,7 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 	D3DXVECTOR3 v2DPos;
 	D3DXMATRIX mWorld;
 	D3DXMatrixIdentity( &mWorld );
-	D3DXVec3Project( &v2DPos, &v3DPos, m_wpViewPort, &m_mProj, &m_mView, &mWorld );
+	D3DXVec3Project( &v2DPos, &v3DPos, m_wpViewPort10, &m_mProj, &m_mView, &mWorld );
 	return v2DPos;
 }
 
@@ -350,4 +378,44 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 	else if( GetAsyncKeyState( 'P' ) & 0x1 ){
 		enNextScene = enSCENE::GAMEOVER;
 	}
+}
+
+void clsSCENE_BASE::SetViewPort( 
+	D3D11_VIEWPORT* const pVp, const 
+	D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos,
+	const float fWndW, const float fWndH )
+{
+	if( !pVp ) return;
+	if( m_wpViewPortUsing == pVp ) return;
+
+	m_wpViewPortUsing = pVp;
+
+	//ビュー(カメラ)変換.
+	D3DXVECTOR3 vUpVec	( 0.0f, 1.0f, 0.0f );	//上方位置.
+	D3DXMatrixLookAtLH(
+		&m_mView,	//(out)ビュー計算結果.
+		&vCamPos, &vCamLookPos, &vUpVec );
+
+	//プロジェクション(射影行列)変換.
+	D3DXMatrixPerspectiveFovLH(
+		&m_mProj,			//(out)プロジェクション計算結果.
+		fZOOM,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が狭くなる.
+		fWndW / fWndH,//アスペクト比(幅/高さ).
+		0.1f,				//近いビュー平面のz値.
+		fRENDER_LIMIT );	//遠いビュー平面のz値.
+
+	assert( m_wpContext );
+	m_wpContext->RSSetViewports( 1, m_wpViewPortUsing );
+
+//	//画面のクリア.
+//	m_wpContext->ClearRenderTargetView(
+//		pBackBuffer_TexRTV, g_fClearColor );
+
+}
+
+
+D3D11_VIEWPORT* clsSCENE_BASE::GetViewPortMainPtr()
+{
+	assert( m_wpViewPort11 );
+	return m_wpViewPort11;
 }

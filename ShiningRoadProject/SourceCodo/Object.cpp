@@ -523,7 +523,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
-	float fRaySpece = 1.0f;
+	float fRaySpece = g_fRaySpace + m_fFollPower;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirUp;
 	rs.vRayStart = m_Trans.vPos;
@@ -532,7 +532,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece + m_fFollPower && fDis > g_fGroundSpece)
 	{
 		bResult = true;
 
@@ -551,7 +551,7 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
-	float fRaySpece = 0.5f;
+	float fRaySpece = g_fRaySpace - m_fFollPower;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirDown;
 	rs.vRayStart = m_Trans.vPos;
@@ -560,11 +560,12 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece - m_fFollPower && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece && fDis > g_fGroundSpece)
 	{
+		m_bGround = true;
 		bResult = true;
 
-		m_Trans.vPos.y = vIntersect.y + (fRaySpece - g_fGravity);
+		m_Trans.vPos.y = vIntersect.y + (fRaySpece + m_fFollPower);
 
 		m_fFollPower = 0.0f;
 	}
@@ -590,13 +591,13 @@ bool clsObject::Collision(SPHERE pAttacker, SPHERE pTarget)
 	return false;//衝突していない.
 }
 
-bool clsObject::ObjectCollision(SPHERE* pTarget, const int iNumMax)
+bool clsObject::ObjectCollision(std::vector<SPHERE> pTarget)
 {
-	for (int i = 0; i < m_iColSpheresMax; i++)
+	for (int i = 0; i < m_v_Spheres.size(); i++)
 	{
-		for (int j = 0; j < iNumMax; j++)
+		for (int j = 0; j < pTarget.size(); j++)
 		{
-			if (Collision(*m_ppColSpheres[i], pTarget[j]))
+			if (Collision(m_v_Spheres[i], pTarget[j]))
 			{
 				return true;
 			}
@@ -611,6 +612,91 @@ void clsObject::FreeFoll()
 	if (!m_bGround)
 	{
 		m_fFollPower -= g_fGravity;
-		m_Trans.vPos.y += m_fFollPower;
 	}
+
+	m_Trans.vPos.y += m_fFollPower;
 }
+
+bool clsObject::WallJudge(clsStage* const pStage)
+{
+	m_bGround = false;
+
+	if (!pStage)return false;
+
+	std::vector<clsDX9Mesh*> vvpMeshTmp;
+	vvpMeshTmp = pStage->GetStageMeshArray();
+
+	m_bGround = false;
+
+	bool bResult = false;
+
+	for (int i = 0; i < vvpMeshTmp.size(); i++)
+	{
+		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
+
+		if (!pObjMesh)continue;
+
+		bool bHit = false;
+
+		//StageObjectとの当たり判定.
+		if (WallForward(pObjMesh))if (!bHit)bHit = true;
+		if (WallBack(pObjMesh))if (!bHit)bHit = true;
+		if (WallLeft(pObjMesh))if (!bHit)bHit = true;
+		if (WallRight(pObjMesh))if (!bHit)bHit = true;
+		if (WallUp(pObjMesh))if (!bHit)bHit = true;
+
+		if (WallUnder(pObjMesh))
+		{
+			if (!bHit)bHit = true;
+
+			//D3DXVECTOR3 vMovePos = GetPosition();
+			//D3DXVECTOR3 vMoveDir = { 0.0f, 0.0f, 0.0f };
+
+			//vMovePos += vMoveDir;
+			//SetPosition(vMovePos);
+		}
+
+		if (!bResult)
+		{
+			bResult = bHit; 
+		}
+	}
+
+	FreeFoll();
+
+	return bResult;
+}
+
+void clsObject::Action(clsStage* pStage)
+{
+	m_vOldPos = m_Trans.vPos;
+
+	ActionProduct();
+
+	WallJudge(pStage);
+}
+
+void clsObject::ActionProduct()
+{
+
+}
+
+clsObject::clsObject() :
+m_vOldPos({0.0f,0.0f,0.0f}),
+m_vCenterPos({ 0.0f, 0.0f, 0.0f }),//オブジェクトの中心.
+m_fMoveSpeed(0.0f),
+m_vMoveDir({ 0.0f, 0.0f, 0.0f }),
+m_fRaySpece(0.0f),
+m_fFollPower(0.0f),
+m_bGround(false),
+m_NoFollObj(false)
+{
+	m_Trans.fPitch = 0.0f;
+	m_Trans.fYaw = 0.0f;
+	m_Trans.fRoll = 0.0f;
+
+	m_Trans.vPos = { 0.0f, 0.0f, 0.0f };
+	m_Trans.vScale = { 0.0f, 0.0f, 0.0f };
+};
+
+clsObject::~clsObject(){};

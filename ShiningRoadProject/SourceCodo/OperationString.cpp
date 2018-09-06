@@ -18,34 +18,34 @@ clsOPERATION_STRING::~clsOPERATION_STRING()
 
 //êîéöÇ∆òAåã.
 //òAåã : consolidated.
-string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const int num ) const
+string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const int num, const char cFillZeroNum ) const
 {
-	return ConsolidatedNumberProduct( s, num );
+	return ConsolidatedNumberProduct( s, num, cFillZeroNum );
 };
 
-string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const unsigned int num ) const
+string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const unsigned int num, const char cFillZeroNum ) const
 {
-	return ConsolidatedNumberProduct( s, num );
+	return ConsolidatedNumberProduct( s, num, cFillZeroNum );
 };
 
-string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const short num ) const
+string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const short num, const char cFillZeroNum ) const
 {
-	return ConsolidatedNumberProduct( s, num );
+	return ConsolidatedNumberProduct( s, num, cFillZeroNum );
 };
 
-string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const unsigned short num ) const
+string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const unsigned short num, const char cFillZeroNum ) const
 {
-	return ConsolidatedNumberProduct( s, num );
+	return ConsolidatedNumberProduct( s, num, cFillZeroNum );
 };
 
-string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const char num ) const
+string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const char num, const char cFillZeroNum ) const
 {
-	return ConsolidatedNumberProduct( s, num );
+	return ConsolidatedNumberProduct( s, num, cFillZeroNum );
 };
 
-string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const unsigned char num ) const
+string clsOPERATION_STRING::ConsolidatedNumber( const string& s, const unsigned char num, const char cFillZeroNum ) const
 {
-	return ConsolidatedNumberProduct( s, num );
+	return ConsolidatedNumberProduct( s, num, cFillZeroNum );
 };
 
 

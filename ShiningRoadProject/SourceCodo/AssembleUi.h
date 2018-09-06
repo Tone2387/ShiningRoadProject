@@ -1,17 +1,21 @@
 #pragma once
 
 //#include "Global.h"
+#include "DxInput.h"
+#include "CXInput.h"
 
 #include "Sprite2DCenter.h"
 #include "UiText.h"
 #include "WindowBox.h"
 #include "File.h"
+#include "CFont.h"
 #include <vector>
+
 
 class clsASSEMBLE_UI
 {
 public:
-	clsASSEMBLE_UI();
+	clsASSEMBLE_UI( clsFont* const pFont );
 	~clsASSEMBLE_UI();
 
 	//各パーツUI数受け取り用.
@@ -21,6 +25,7 @@ public:
 	enum class enSELECT_MODE : UCHAR
 	{
 		PARTS = 0,
+		STATUS,
 		MISSION_START
 	}m_enSelectMode;
 
@@ -29,7 +34,9 @@ public:
 		ID3D11DeviceContext* const pContext,
 		PARTS_NUM_DATA data );//各パーツUIの数確定用.
 
-	void Input();
+	void Input(
+		const clsXInput* const pXInput,
+		const clsDxInput* const pDxInput );
 
 	//第二引数はデータから、ステータス以外のデータの数。第三引数はパーツ名の番号.
 	void Update( 
@@ -43,6 +50,33 @@ public:
 		enSELECT_MODE enSelect, 
 		const int iPartsType, 
 		const int iPartsNum );//選択中パーツ番号.
+
+	void RenderPartsState( 
+		enSELECT_MODE enSelect, 
+		const int iPartsType, 
+		const int iPartsNum );//選択中パーツ番号.
+
+	
+	//説明文の行指定.
+	int SetReadLinePartsComment(
+		const int iPartsType );	//パーツ種類.
+
+
+	//ステータスウィンドウを隠す.
+	void SwitchDispStatusComment();
+	//ステータスcommentの切り替え許可.
+	bool isCanSwitchStatusComment();
+
+	//ステータス詳細とパーツ選択の切り替え.
+	void SwitchStatusComment();
+	//指定.
+	void SetStatusComment( const enSELECT_MODE enMode );
+	//.
+	void AddStatusCommentNo( const bool isPlus );
+	//ゴリ押し気味.
+	//選択肢を横に持って行った時の調整.
+	void AddCommentNoForChangePartsType();
+
 
 #if _DEBUG
 	//デバッグテキスト用.
@@ -64,6 +98,12 @@ private:
 		enPARTS_TYPE_SIZE
 	};
 
+	void StatusNumOverGuard();
+
+
+	//パーツ表示用のウィンドウ.
+	D3D11_VIEWPORT m_ViewPortPartsWindow;
+
 	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsType;		//パーツカテゴリ.
 	std::unique_ptr< clsSprite2D >					m_upPartsTypeSelect;//選択中( 半透明 ).
 
@@ -73,6 +113,7 @@ private:
 	std::unique_ptr< clsSprite2D >					m_upStatusWindow;	//ステータスが表示される.
 
 	std::unique_ptr< clsSprite2D >					m_upPartsWindow;	//パーツの単体モデル表示される.
+	std::unique_ptr< clsSprite2D >					m_upRoboWindow;		//ロボ全体が表示される.
 
 	std::unique_ptr< clsSprite2D >					m_upMissionStart;	//出撃ボタン.
 
@@ -82,9 +123,7 @@ private:
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_pArrow;//矢印.
 
 	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
-	std::unique_ptr< clsUiText > m_upFooterText;//フッター文字.
 
-	std::unique_ptr< clsUiText >				m_upStatusTitleText;//ステータスのタイトル.
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目名 ).
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//ステータス値.
 
@@ -95,11 +134,26 @@ private:
 	std::unique_ptr< clsWINDOW_BOX > m_upWndBox;//左右どっちか聞いてくる箱.
 
 
-
 	//ステータスの数( 行数 ).
 	int m_iStatusNum;
 	//ステータスの名前を格納している.
 	std::vector< std::string > m_vsStatusNameBox[enPARTS_TYPE_SIZE];
+
+	//ステータスの表示フラグ.
+	bool	m_isDispStatus;
+
+	//選択しているステータスのNo.
+	int		m_iStatusCommentNo;
+	//それを示すUI.
+	std::unique_ptr< clsSprite2D > m_upSelectStatus;
+	//調整用フラグ.
+	bool	m_bStatusCommentOffset;
+
+	//日本語フォント.
+	clsFont*	m_wpFont;
+	//パーツ、ステータスの日本語説明文の読み込み行指定.
+	int m_iReadLinePartsComment;
+
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;

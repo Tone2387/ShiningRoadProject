@@ -14,7 +14,7 @@
 
 #include"CharaSkinMesh.h"
 #include"Robo.h"
-#include"InputRobo.h"
+#include"EnemyRobo.h"
 
 //#ifdef Tahara
 //#include "PtrGroup.h"
@@ -26,14 +26,17 @@ public:
 	clsTestObj();
 	~clsTestObj();
 
-	void Init( clsPOINTER_GROUP* const pPtrGroup );
+	void Init(clsPOINTER_GROUP* const pPtrGroup);
+	
+	void Init(clsPOINTER_GROUP* const pPtrGroup,
+		LPSTR strEnemyFolderName);
 
-	void Action(const clsDX9Mesh* pWall);
+	void ActionProduct() override;
 
 	void InhUpdate();//Inheritance
 
 private:
-	clsInputRobo* m_pInput;
+	clsEnemyRobo* m_pAI;
 };
 
 //#endif

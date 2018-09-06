@@ -15,19 +15,17 @@
 #define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
 
 //武器の回転情報確定に使う.
-#define  sBONE_NAME_WEAPON_VEC_ROOT	 "WeaponVecRoot"
-#define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVecEnd"
+#define  sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
+#define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
 
 
-//改名案.
-//clsROBO_MODEL_SET.
 
 //アセンブルシーンのモデルさん.
 class clsASSEMBLE_MODEL
 {
 public:
 	clsASSEMBLE_MODEL();
-	~clsASSEMBLE_MODEL();
+	virtual ~clsASSEMBLE_MODEL();
 
 	//選択肢のあるパーツの種類( 配列の添え字になる ).
 	enum enPARTS_TYPES : UCHAR
@@ -45,7 +43,7 @@ public:
 	//アセンブルシーンの各関数内で使います.
 	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus );
 	void UpDate();
-	void Render(
+	virtual void Render(
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
@@ -77,9 +75,11 @@ public:
 	//パーツのアニメーション変更.
 	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
 
-
 	//パーツのボーンの座標を取得.
 	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName );
+
+	//ボーンが存在するか.
+	bool ExistsBone( const enPARTS enParts, const char* sBoneName );
 
 
 #if _DEBUG
@@ -89,6 +89,9 @@ public:
 
 protected:
 
+	//継承先で使ってね.
+	virtual void CreateProduct();
+	virtual void UpdateProduct();
 
 	//腕の角度を武器も模写する.
 	void FitJointModel( 
@@ -103,6 +106,10 @@ protected:
 
 	//回転値抑制.
 	float GuardDirOver( float &outTheta ) const;
+
+
+
+	void ModelUpdate();
 
 	double m_dAnimSpd;
 

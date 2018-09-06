@@ -6,6 +6,7 @@
 //太原の書き足した分.
 #ifdef Tahara
 #include "PtrGroup.h"
+#include "MissionModel.h"
 
 //2018/05/16( 水 ).
 	//関数「RoboInit」に「clsPOINTER_GROUP」型の引数を追加し、.
@@ -36,31 +37,43 @@ public:
 		enWeaponTypeSize
 	};
 
-	/*clsSkinMesh * m_pHead;
-	clsSkinMesh * m_pCore;
-	clsSkinMesh * m_pLeftArm;
-	clsSkinMesh * m_pRightArm;
-	clsSkinMesh * m_pLeg;*/
-	clsSkinMesh* m_pMesh;
+	clsMISSION_MODEL* m_pMesh;
 
-	void RoboInit(clsPOINTER_GROUP* const pPtrGroup);
+	void RoboInit(clsPOINTER_GROUP* const pPtrGroup, 
+		clsROBO_STATUS* const pRobo);
 
 	void ModelUpdate()
 	{
-		m_pMesh->ModelUpdate(m_Trans);
+		D3DXVECTOR3 vTmp;
+
+		vTmp = GetPosition();
+		m_pMesh->SetPos(vTmp);
+
+		vTmp = GetRotation();
+		vTmp.y += D3DX_PI;
+
+		ObjRollOverGuard(&vTmp.y);
+
+		m_pMesh->SetRot(vTmp);
+
+		m_pMesh->SetScale(m_Trans.vScale.x);
+
+		m_pMesh->UpDate();
+		//UpdateCollsion();
 	}
 
 	void Render( 
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
-		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f ,1.0f },
-		const bool alphaFlg = false )
+		const D3DXVECTOR3& vEye) override
 	{
 		ModelUpdate();
-		m_pMesh->ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
+		m_pMesh->Render(mView, mProj, vLight, vEye);
+		UpdatePosfromBone();
 	}
+
+	void UpdateCollsion();
 
 	bool m_bBoost;//true:ブースター展開/false:非展開.
 
@@ -126,11 +139,49 @@ public:
 	void UpdataLimitTime();
 	void UpdataBoost();
 
+	void UpdatePosfromBone();
+
 	clsRobo();
 	~clsRobo();
 
-private:
+	D3DXVECTOR3 m_vMoveDirforBoost;
 
+private:
+	//右腕ブースターエフェクト.
+	std::vector<::Effekseer::Handle> m_v_RHandFrontBoostEfc;
+	std::vector<::Effekseer::Handle> m_v_RHandSideBoostEfc;
+	std::vector<::Effekseer::Handle> m_v_RHandBackBoostEfc;
+
+	//左腕ブースターエフェクト.
+	std::vector<::Effekseer::Handle> m_v_LHandFrontBoostEfc;
+	std::vector<::Effekseer::Handle> m_v_LHandSideBoostEfc;
+	std::vector<::Effekseer::Handle> m_v_LHandBackBoostEfc;
+
+	//脚ブースターエフェクト.
+	std::vector<::Effekseer::Handle> m_v_LegBoostEfc;
+
+	void SetBoostEffect();
+	
+	void SetRHandFrontBoostEffect();
+	void SetRHandSideBoostEffect();
+	void SetRHandBackBoostEffect();
+
+	void SetLHandFrontBoostEffect();
+	void SetLHandSideBoostEffect();
+	void SetLHandBackBoostEffect();
+
+	void SetLegBoostEffect();
+
+	void PlayBoostEfc();
+	
+	void PlayFrontBoostEfc();
+	void PlayRightBoostEfc();
+	void PlayLeftBoostEfc();
+	void PlayBackBoostEfc();
+
+	void PlayLegBoostEfc();
+
+	int GetBoostEfcNum(enPARTS PartsNum,const char* strBoostPosition);
 
 //太原の書き足した分.
 #ifdef Tahara
@@ -138,6 +189,13 @@ private:
 	clsResource*		m_wpResource;
 	clsEffects*			m_wpEffects;
 	clsSOUND_MANAGER_BASE*	m_wpSound;
+
+	//当たり判定のポインタ.
+	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
+
+	//ロボモデル.
+	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
+
 #endif//#ifdef Tahara
 
 

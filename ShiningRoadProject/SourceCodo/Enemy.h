@@ -1,11 +1,14 @@
 #pragma once
 
 #include<random>
+#include<vector>
+#include<string>
 
 #include"Global.h"
-#include"Object.h"
+#include"Charactor.h"
 
 const float g_fDisStandard = 0.1f;
+const float g_fPushHulf = 0.5f;
 
 class clsEnemyBase
 {
@@ -15,34 +18,40 @@ public:
 	D3DXVECTOR3 m_vMovePlansDir;
 	int m_iMoveCategoryNo;
 
-	void Init(LPSTR strEnemyFolderName);
-	//virtual void Update();
+	clsEnemyBase();
+	virtual ~clsEnemyBase();
 
-	void SearchTarget(clsObject* pObj);
-	void SearchNear(clsObject* pObj);
-	void SetMoveDir();
+	void SearchTarget(std::vector<clsCharactor*>);
+
+protected:
+	clsCharactor* m_pChara;
+	clsCharactor* m_pTarget;
+	
+	void SearchNear();
+
+	bool SetMoveDir(float& fPush, float& fAngle);
+	bool SetRotate(float& fPush, float& fAngle);
+	bool SetLook(float& fPush, float& fAngle);
+
+	bool IsJump();
 	bool IsShot();
 
-	clsEnemyBase();
-	~clsEnemyBase();
-
-private:
-	clsObject* m_pTarget;
-
-public:
-	struct EnemyBaseState
+	struct BaseState
 	{
-		char strName[256];
+		char strName[STR_BUFF_MAX];
 		int iMoveCategoryVisType;
 	};
 
-	struct EnemyUpdateState
+	struct UpdateState
 	{
-		D3DXVECTOR3 vHorMoveDir;
+		int iHorDirResult;
+		D3DXVECTOR3 vHorMovePos;
+		float fMoveDir;
+
 		float fVerDis;
 	};
 
-	struct EnemyMoveState
+	struct MoveState
 	{
 		int iHorDistance;
 		int iHorDisRandMax;
@@ -54,61 +63,43 @@ public:
 		int iActUpDateInterval;
 	};
 
-	struct EnemyShotState
+	struct ShotState
 	{
 		int iShotDisMin;
 		int iShotDisMax;
 		int iShotENLimitParcent;
 	};
 
-	struct EnemyVisibilityAreaState
+	struct VisibilityAreaState
 	{
 		int iVisType;
 		int iVisDistance;
 		int iVisAngle;
 	};
 
-	struct EnemyMoveData
+	struct MoveData
 	{
 		int iCategory;
-		EnemyMoveState** MoveState;
+		std::vector<MoveState> v_MoveState;
 	};
 
-	struct EnemyShotData
+	struct ShotData
 	{
 		int iCategory;
-		EnemyShotState** ShotState;
-
-		~EnemyShotData()
-		{
-			for (int i = 0; i < iCategory; i++)
-			{
-				if (ShotState[iCategory])
-				{
-					delete ShotState[iCategory];
-					ShotState[iCategory] = nullptr;
-				}
-			}
-
-			if (ShotState)
-			{
-				delete[] ShotState;
-				ShotState = nullptr;
-			}
-		};
+		std::vector<ShotState> v_ShotState;
 	};
 
-	struct EnemyVisibilityAreaData
+	struct VisibilityAreaData
 	{
 		int iCategory;
-		EnemyVisibilityAreaState** VisAreaState;
+		std::vector<VisibilityAreaState> v_VisAreaState;
 	};
 
-	EnemyBaseState m_BaseData;
+	BaseState m_BaseData;
 
-	EnemyMoveData m_MoveData;
-	EnemyShotData m_ShotData;
-	EnemyVisibilityAreaData m_visAreaData;
-	EnemyUpdateState m_UpdateState;
+	MoveData m_MoveData;
+	ShotData m_ShotData;
+	VisibilityAreaData m_visAreaData;
+	UpdateState m_UpdateState;
 };
 

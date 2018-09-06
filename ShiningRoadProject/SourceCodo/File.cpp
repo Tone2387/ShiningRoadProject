@@ -139,7 +139,7 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 			}
 			for( unsigned int j=0; j<m_vvsData[i].size(); j++ ){
 				sData += m_vvsData[i][j];
-				sData += cDELIMITER;	//‹æØ‚è•¶Žš.
+//				sData += cDELIMITER;	//‹æØ‚è•¶Žš.
 			}
 		}
 		return sData;
@@ -151,7 +151,7 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 		//ˆês˜AŒ‹.
 		for( unsigned int i=0; i<m_vvsData[iRow].size(); i++ ){
 			sData += m_vvsData[iRow][i];
-			sData += cDELIMITER;
+//			sData += cDELIMITER;
 		}
 		return sData;
 	}

@@ -3,9 +3,10 @@
 #include "SceneBase.h"
 #include "CameraMission.h"
 
-
+#include"Player.h"
 #include"TestObject.h"
-
+#include"Stage.h"
+#include"Sprite.h"
 
 //================================//
 //========== ミッション中クラス ==========//
@@ -33,23 +34,84 @@ private:
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
+	void RenderUi() final;//「 UIの 」Render.
 
 #if _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
-	//m_pPlayer
-	//m_vpFrends
-	//m_vpEnemys
+	clsPlayer* m_pPlayer;
+	clsTestObj* m_pTestObj;
+	clsCharactor* m_pCamTar;
+
+	bool m_bCamTarChange;
+
+	std::vector<clsCharactor*> m_v_pFriends;
+	std::vector<clsCharactor*> m_v_pEnemys;
+
+	void CreateFriends();
+	void CreateEnemys();
+
+	void SetEnemys();//敵味方の作成の後にお互いの敵を認識させる.
+
+	void Collison();
+	
+	//同キャラのShotが同キャラのBodyに当たる判定を入れるかは処理の兼ね合いで入れる.
+	void ColFShottoFBody();
+	void ColFShottoEBody();
+
+	void ColEShottoFBody();
+	void ColEShottoEBody();
+
+	bool AllEnemyDead();
+
+	bool m_bEnemyStop;
 
 	//テスト用モデル( これは消しても良いです、いらないです ).
-	clsTestObj* m_pTestRobo;
+
+	void UpdateCamTargetPos(clsCharactor* pChara);
+
+	D3DXVECTOR3 m_vCamTargetPos;
+	D3DXVECTOR3 m_vLookTargetPos;
+	
 	//clsCharaStatic* m_pTestChara;
 
-	clsDX9Mesh* m_pStage;
+	clsStage* m_pStage;
 
-	clsCAMERA_MISSION* m_pCam;
+	float m_fCamMoveSpeed;
+
+	void CreateUI();
+
+	clsSPRITE2D_CENTER* m_pRaderWindow;
+	std::vector<clsSPRITE2D_CENTER*> m_v_pRaderEnemyMark;
+
+	float m_fRaderSizeW;
+	float m_fRaderSizeH;
+
+	float m_fRaderMarkSizeW;
+	float m_fRaderMarkSizeH;
+
+	float m_fRaderDis;
+
+
+	clsSPRITE2D_CENTER* m_pEnelgy;
+	clsSPRITE2D_CENTER* m_pEnelgyFrame;
+
+	clsSprite* m_pCursor;
+	float m_fCursorSize;
+
+	clsSPRITE2D_CENTER* m_pTarget;
+
+	clsUiText* m_pHP;
+
+	clsUiText* m_pLBulletNum;
+	clsUiText* m_pRBulletNum;
+
+	clsUiText* m_pLimitTime;
+
+	clsPlayer* CreatePlayer();
+	clsTestObj* CreateEnemy();
 
 	//基底クラスに以下があります.
 	//カメラ.

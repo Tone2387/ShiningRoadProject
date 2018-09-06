@@ -36,6 +36,7 @@ public:
 	enum enROBO_STATE : UCHAR
 	{
 		HP = 0,		//体力.
+
 		WALK_SPD,	//歩行速度.
 		STABILITY,	//安定性能.
 		TURN,		//旋回性能.
@@ -47,14 +48,16 @@ public:
 		BOOST_COST_H,	//ブースター消費エネルギー( 水平 ).
 		BOOST_THRUST_V,	//ブースター推力( 水直 ).
 		BOOST_COST_V,	//ブースター消費エネルギー( 水直 ).
-		QUICK_THRUST,	//クイック推力.
-		QUICK_COST,		//クイック消費エネルギー.
-		QUICK_TIME,		//クイック噴射時間.
 		ACT_TIME,		//活動時間(ActivityTime).
 
 		SEARCH,	//索敵性能.
+		LOCK_ON_SPEED,	//ロック速度.
+		LOCK_ON_RANGE,	//ロック距離.
 
 		AIMING,	//照準精度( エイム ).
+		QUICK_THRUST,	//クイック推力.
+		QUICK_COST,		//クイック消費エネルギー.
+		QUICK_TIME,		//クイック噴射時間.
 
 		COL_SIZE_LEG,	//脚当たり判定サイズ.
 		COL_SIZE_CORE,	//コア当たり判定サイズ.
@@ -72,8 +75,7 @@ public:
 		RANGE,				//射程距離.
 		COST,				//消費エネルギー.
 		LOAD_TIME,			//装填時間.
-		LOCK_SPD,			//ロック速度.
-		LOCK_RANGE,			//ロック距離.
+		LOCK_ON_TIME,		//ロック時間.
 		SHOT_STABILITY,		//射撃安定.
 		MAGAZINE_LOAD_TIME,	//マガジン装填時間.
 		BULLETS_NUM,		//装弾数.
@@ -82,6 +84,7 @@ public:
 		EFC_BULLET,	//弾本体のエフェクト.
 		EFC_LOCUS,	//弾の軌跡のエフェクト.
 		EFC_HIT,	//着弾のエフェクト.
+		EFC_CARTRIDGE,//薬莢エフェクト.
 		SE_FIER,	//発射SE.
 		SE_HIT,		//着弾のSE.
 

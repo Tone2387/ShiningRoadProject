@@ -12,6 +12,8 @@
 
 #include "Sprite2DCenter.h"
 
+#include "UiText.h"
+
 
 //================================//
 //========== 基底クラス ==========//
@@ -44,6 +46,7 @@ protected:
 	virtual void CreateProduct() = 0;//各シーンのCreate.
 	virtual void UpdateProduct( enSCENE &enNextScene ) = 0;//各シーンのUpdate.
 	virtual void RenderProduct( const D3DXVECTOR3 &vCamPos ) = 0;//各シーンのRender.
+	virtual void RenderUi() = 0;//各シーンの「 UIの 」Render.
 	//----- 各シーンごとの関数 -----//.
 
 	//3D座標をスクリーン( 2D )座標へと変換する.
@@ -66,6 +69,15 @@ protected:
 	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
 	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
+
+	//---継承先のRenderProductで使用する---.
+	void SetViewPort( 
+		D3D11_VIEWPORT* const pVp, 
+		const D3DXVECTOR3 &vCamPos, 
+		const D3DXVECTOR3 &vCamLookPos,
+		const float fWndW, const float fWndH );
+	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
+	D3D11_VIEWPORT* GetViewPortMainPtr();
 	//----- Render用 -----//.
 
 
@@ -94,10 +106,9 @@ protected:
 	clsCAMERA_BASE*			m_wpCamera;	
 	clsROBO_STATUS*			m_wpRoboStatus;
 	clsBLACK_SCREEN*		m_wpBlackScreen;
-
+	clsFont*				m_wpFont;
 
 private:
-
 	//----- Render用 -----//.
 	//カメラ関数.
 	void Camera();
@@ -111,7 +122,15 @@ private:
 	//暗転中に待ってくれるために必要.
 	enSCENE m_enNextScene;
 
-	D3D10_VIEWPORT*				m_wpViewPort;//2DSp用.
+	//2DSp用.
+	D3D10_VIEWPORT* m_wpViewPort10;
+	//分割用( メインのビューポート ).
+	D3D11_VIEWPORT* m_wpViewPort11;
+	
+	//診断用( 今現在使っているビューポート ).
+	D3D11_VIEWPORT* m_wpViewPortUsing;
+
+
 	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
 
 

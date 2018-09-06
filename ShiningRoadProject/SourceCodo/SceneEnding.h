@@ -20,6 +20,7 @@ private:
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
+	void RenderUi() final;//「 UIの 」Render.
 
 
 	std::unique_ptr< clsStage >	m_upStage;//テスト用.

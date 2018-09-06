@@ -3,6 +3,8 @@
 #include"CharactorCommand.h"
 #include"DxInput.h"
 
+const float g_fStickPushMin = 0.5f;
+
 class clsInputCharctor
 {
 public:
@@ -10,8 +12,9 @@ public:
 	{
 		m_pDxInput = new clsDxInput;
 
-		m_pComLS = new clsCommandLS;
-		m_pComRS = new clsCommandRS;
+		m_pComLS = new clsCommandMove;
+		m_pComRSHor = new clsCommandRotation;
+		m_pComRSVer = new clsCommandLookUp;
 		m_pComJump = new clsCommandJump;
 		m_pComShot = new clsCommandShot;
 	}
@@ -20,19 +23,13 @@ public:
 	{
 		delete m_pDxInput;
 		delete m_pComLS;
-		delete m_pComRS;
+		delete m_pComRSHor;
+		delete m_pComRSVer;
 		delete m_pComJump;
 		delete m_pComShot;
 	}
 
 	clsDxInput* m_pDxInput;
-
-	/*clsCharactorCommand* PlressInput()
-	{
-		m_pDxInput->UpdataInputState();
-
-		return nullptr;
-	}*/
 
 	clsCharactorCommand* LSInput(float& fPower, float& fAngle)
 	{
@@ -107,14 +104,56 @@ public:
 
 		}
 
-
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
 
 		return m_pComLS;
 	};
 
+	clsCharactorCommand* LSHorInput(float& fPower, float& fAngle)
+	{
+		fPower = m_pDxInput->GetHorLSPush();
+		fAngle = m_pDxInput->GetLSDir();
+
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
+		return m_pComLS;
+	}
+
+	clsCharactorCommand* LSVerInput(float& fPower, float& fAngle)
+	{
+		fPower = m_pDxInput->GetVerLSPush();
+		fAngle = m_pDxInput->GetLSDir();
+
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
+		return m_pComLS;
+	}
+
 	clsCharactorCommand* RSInput(float& fPower, float& fAngle)
 	{
 		fPower = m_pDxInput->GetRSPush();
+		fAngle = m_pDxInput->GetRSDir();
+
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
+		return m_pComRSHor;
+	};
+
+	clsCharactorCommand* RSHorInput(float& fPower, float& fAngle)
+	{
+		fPower = m_pDxInput->GetHorRSPush();
 		fAngle = m_pDxInput->GetRSDir();
 
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
@@ -129,7 +168,37 @@ public:
 			fAngle = -0.1f;
 		}
 
-		return m_pComRS;
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
+		return m_pComRSHor;
+	};
+
+	clsCharactorCommand* RSVerInput(float& fPower, float& fAngle)
+	{
+		fPower = m_pDxInput->GetVerRSPush();
+		fAngle = m_pDxInput->GetRSDir();
+
+		if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			fPower = 1.0f;
+			fAngle = 0.1f;
+		}
+
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			fPower = -1.0f;
+			fAngle = -0.1f;
+		}
+
+		if (fPower < g_fStickPushMin)
+		{
+			return nullptr;
+		}
+
+		return m_pComRSVer;
 	};
 
 	virtual clsCharactorCommand* Jump()
@@ -143,12 +212,12 @@ public:
 		return nullptr;
 	}
 
-protected:
-	clsCharactorCommand * m_pComJump;
-
 private:
 	clsCharactorCommand* m_pComLS;
-	clsCharactorCommand* m_pComRS;
+	clsCharactorCommand* m_pComRSHor;
+	clsCharactorCommand* m_pComRSVer;
+
+	clsCharactorCommand * m_pComJump;
 
 	clsCharactorCommand* m_pComShot;
 };

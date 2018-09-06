@@ -324,6 +324,18 @@
     <ClCompile Include="SourceCodo\EnemyCharactor.cpp">
       <Filter>Hiyosi\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\PartsWindowModel.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PartsWindowModelForArms.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CFont.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\BlendState.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -572,6 +584,18 @@
     <ClInclude Include="SourceCodo\EnemyCharactor.h">
       <Filter>Hiyosi\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="SourceCodo\PartsWindowModel.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PartsWindowModelForArms.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CFont.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\BlendState.h">
+      <Filter>Tahara</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\DebugText.hlsl">
@@ -590,6 +614,9 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="Shader\Sprite2D.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\FontText.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

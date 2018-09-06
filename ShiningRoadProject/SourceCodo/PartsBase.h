@@ -32,8 +32,8 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4& vColor,
-		const bool isAlpha );
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
+		const bool isAlpha = false );
 
 	D3DXVECTOR3 GetBonePos( const char* sBoneName, const bool isLocalPos = false ) override;
 
@@ -42,6 +42,10 @@ public:
 
 	//パーツの名前を覚える.
 	void SetPartsName( const std::string &sPartsName );
+
+	//ボーンが存在するか.
+	bool ExistsBone( const char* sBoneName );
+
 
 protected:
 	//----- 各パーツごとの関数 -----//.

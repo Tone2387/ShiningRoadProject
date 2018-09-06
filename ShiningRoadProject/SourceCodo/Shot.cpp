@@ -23,13 +23,15 @@ HRESULT clsShot::Init(BulletState BState)
 	m_ShotState = BState;
 
 	//当たり判定の大きさを決める.
-	m_ppColSpheres = new clsObject::SPHERE * [g_iColNum];
 
-	for (int i = 0; i < g_iColNum; i++)
-	{
-		m_ppColSpheres[i]->vCenter = &m_Trans.vPos;
-		m_ppColSpheres[i]->fRadius = 1.0f;
-	}
+	//m_v_Spheres.resize(g_iColNum);
+
+	clsObject::SPHERE Tmp;
+	Tmp.vCenter = &m_Trans.vPos;
+	Tmp.fRadius = m_ShotState.fScale;
+
+	m_v_Spheres.push_back(Tmp);
+	m_v_Spheres.shrink_to_fit();
 	
 	//確認用のｽﾌｨｱをﾚﾝﾀﾞﾘﾝｸﾞする.
 	//当たり判定としては、ここ以降は不要.
@@ -41,15 +43,15 @@ HRESULT clsShot::Init(BulletState BState)
 	return S_OK;
 }
 
-bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
+bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 {
 	if (m_bShotExistFlg)
 	{
 		for (int i = 0; i < g_iColNum; i++)
 		{
-			for (int j = 0; j < iSphereMax; i++)
+			for (int j = 0; j < v_TargetSphere.size(); j++)
 			{
-				if (Collision(*m_ppColSpheres[i], ppTargetSphere[j]))
+				if (Collision(m_v_Spheres[i], v_TargetSphere[j]))
 				{
 					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
@@ -63,33 +65,16 @@ bool clsShot::Hit(SPHERE* ppTargetSphere,int iSphereMax)
 	return false;
 }
 
-bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vTarget)
+bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vDir)
 {
 	if (m_bExistFlg)
 	{
 		return false;
-	}
+	}	
 
-	D3DXMATRIX mInv;
+	m_vMoveDir = vDir;
 
-	D3DXMatrixTranslation(
-		&mInv,
-		vTarget.x,
-		vTarget.y,
-		vTarget.z
-		);
-
-	D3DXMatrixInverse(&mInv, NULL, &mInv);
-
-	D3DXVECTOR3 vStart,vTar;
-
-	D3DXVec3TransformCoord(&vStart, &vShotPos, &mInv);
-	D3DXVec3TransformCoord(&vTar, &vTarget, &mInv);
-
-	m_vMoveDir = vTar - vStart;
-	D3DXVec3Normalize(&m_vMoveDir, &m_vMoveDir);
-
-	m_Trans.vPos = m_vStartPos = vShotPos - m_vMoveDir * m_fMoveSpeed;
+	m_Trans.vPos = m_vStartPos = vShotPos;
 
 	m_bShotExistFlg = true;
 	m_bExistFlg = true;
@@ -103,6 +88,11 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vTarget)
 
 void clsShot::Move()
 {
+	if (!m_bExistFlg)
+	{
+		return;
+	}
+
 	if (!m_bShotExistFlg)
 	{
 		if (!m_wpEffect->isPlay(m_ShotEfcHandles[enEfcLine]) && !m_wpEffect->isPlay(m_ShotEfcHandles[enEfcHit]))
@@ -116,13 +106,11 @@ void clsShot::Move()
 	{
 		m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
 		m_bShotExistFlg = false;
+		return;
 	}
 
-	if (!m_bShotExistFlg)
-	{
-		m_Trans.vPos += m_vMoveDir  * m_fMoveSpeed;
-	}
-
+	m_Trans.vPos += m_vMoveDir * m_ShotState.fSpeed;
+	
 	//座標.
 	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcShot], m_Trans.vPos);
 	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcLine], m_Trans.vPos);

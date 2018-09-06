@@ -3,18 +3,21 @@
 clsPOINTER_GROUP::clsPOINTER_GROUP(		
 	ID3D11Device* const pDevice,
 	ID3D11DeviceContext* const pContext,
-	D3D10_VIEWPORT* const pViewPort,
+	D3D10_VIEWPORT* const pViewPort10,
+	D3D11_VIEWPORT* const pViewPort11,
 	ID3D11DepthStencilState* const pDepthState,
-		clsDxInput* const pDxInput,
-		clsXInput* const pXInput,
+	clsDxInput* const pDxInput,
+	clsXInput* const pXInput,
 	clsResource* const pResource,
 	clsEffects* const pEffects,
 	clsSOUND_MANAGER_BASE* const pSound,
 	clsROBO_STATUS* const pRoboStatus,
-	clsBLACK_SCREEN* const pBlack )
+	clsBLACK_SCREEN* const pBlack,
+	clsFont* const pFont )
 		:m_wpDevice( pDevice )
 		,m_wpContext( pContext )
-		,m_wpViewPort( pViewPort )
+		,m_wpViewPort10( pViewPort10 )
+		,m_wpViewPort11( pViewPort11 )
 		,m_wpDepthStencilState( pDepthState )
 		,m_wpDxInput( pDxInput )
 		,m_wpXInput( pXInput )
@@ -24,6 +27,7 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 		,m_wpRoboStatus( pRoboStatus )
 		,m_wpBlackScreen( pBlack )
 		,m_wpCamera( nullptr )
+		,m_wpFont( pFont )
 {
 }
 
@@ -38,7 +42,8 @@ clsPOINTER_GROUP::~clsPOINTER_GROUP()
 	m_wpXInput = nullptr;
 	m_wpDxInput = nullptr;
 	m_wpDepthStencilState = nullptr;
-	m_wpViewPort = nullptr;
+	m_wpViewPort10 = nullptr;
+	m_wpViewPort11 = nullptr;
 	m_wpContext = nullptr;
 	m_wpDevice = nullptr;
 }
@@ -66,9 +71,14 @@ ID3D11DeviceContext* clsPOINTER_GROUP::GetContext() const
 	return m_wpContext;
 }
 
-D3D10_VIEWPORT* clsPOINTER_GROUP::GetViewPort() const
+D3D10_VIEWPORT* clsPOINTER_GROUP::GetViewPort10() const
 {
-	return m_wpViewPort;
+	return m_wpViewPort10;
+}
+
+D3D11_VIEWPORT* clsPOINTER_GROUP::GetViewPort11() const
+{
+	return m_wpViewPort11;
 }
 
 ID3D11DepthStencilState* clsPOINTER_GROUP::GetDepthState() const
@@ -118,4 +128,9 @@ clsROBO_STATUS* clsPOINTER_GROUP::GetRoboStatus() const
 clsBLACK_SCREEN* clsPOINTER_GROUP::GetBlackScreen() const
 {
 	return m_wpBlackScreen;
+}
+
+clsFont* clsPOINTER_GROUP::GetFont() const
+{
+	return m_wpFont;
 }

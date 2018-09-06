@@ -8,8 +8,8 @@
 
 #include "AssembleUi.h"
 
-#include <vector>
-#include <string>
+#include "PartsWindowModel.h"
+
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -17,9 +17,9 @@
 class clsSCENE_ASSEMBLE : public clsSCENE_BASE
 {
 public:
+
 	clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup );
 	~clsSCENE_ASSEMBLE();
-
 
 
 private:
@@ -38,13 +38,11 @@ private:
 		}
 	}m_PartsSelect;
 
-	//パーツ選択中かそれ以外か.
-	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
-
 
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
+	void RenderUi() final;//「 UIの 」Render.
 
 	//コントローラ操作.
 	//カーソル移動.
@@ -69,7 +67,10 @@ private:
 	//minはその数値より小さくならない、maxはそれ以上にはならない.
 	// min <= t < max.
 	template< class T, class MIN, class MAX >
-	T KeepRange( T t, const MIN min, const MAX max ) const;	
+	T KeepRange( T t, const MIN min, const MAX max ) const;
+
+	//カーソルを出撃に合わせているならtrue.
+	bool isMissionStart();
 
 
 #if _DEBUG
@@ -77,14 +78,29 @@ private:
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
+	//パーツ選択中かそれ以外か.
+	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
+
+	//パーツウィンドウ用.
+	D3D11_VIEWPORT* m_pViewPortPartsWindow;
+	//ロボウィンドウ用.
+	D3D11_VIEWPORT* m_pViewPortRoboWindow;
+
+	//背景.
+	std::unique_ptr< clsSprite2D > m_upBack;
+
 	//お着換えするモデル.
 	clsASSEMBLE_MODEL*	m_pAsmModel;
+
+	//選択中パーツ.
+	clsPARTS_WINDOW_MODEL* m_pSelectParts;
 
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
 
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
 	UCHAR										m_cuFileMax;
+
 
 //	clsSPRITE2D_CENTER* m_pSprite;
 //	clsCharaStatic* m_pTestChara;

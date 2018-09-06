@@ -7,7 +7,7 @@
 //============================================================
 //	インクルード.
 //============================================================
-#include "MyMacro.h"
+#include "Global.h"
 #include "TextSpriteStruct.h"
 
 
@@ -36,7 +36,7 @@ public:
 
 
 	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( bool flg );
+	void SetBlend( bool isAlpha );
 
 	//レンダリング関数.
 	void Render( char* text, int x, int y );
@@ -45,6 +45,10 @@ public:
 	void RenderFont( int FontIndex, int x, int y );
 
 private:
+
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+
 	//↓アプリに一つ.
 	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_pDeviceContext11;	//デバイスコンテキスト.
@@ -61,7 +65,7 @@ private:
 	ID3D11ShaderResourceView*	m_pAsciiTexture;//アスキーテクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
 
-	ID3D11BlendState*			m_pBlendState;	//ブレンドステート.
+	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 
 	DWORD	m_dwWindowWidth;	//ウィンドウ幅.

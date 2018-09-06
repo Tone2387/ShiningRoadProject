@@ -7,6 +7,8 @@ using namespace std;
 
 clsPARTS_BASE::clsPARTS_BASE()
 {	
+	D3DXVECTOR3 vINIT_SCALE = { 1.0f, 1.0f, 1.0f };
+	m_Trans.vScale = vINIT_SCALE;
 }
 
 clsPARTS_BASE::~clsPARTS_BASE()
@@ -52,6 +54,9 @@ D3DXVECTOR3 clsPARTS_BASE::GetBonePos( const char* sBoneName, const bool isLocal
 {
 	D3DXVECTOR3 vBonePos;
 
+	//これが無いと左右の武器が同じ場合に右武器に持っていかれる.
+	ModelUpdate( m_Trans );
+
 	//ボーンの座標を取る.
 	if( !m_pMesh->GetPosFromBone( sBoneName, &vBonePos, isLocalPos ) ){
 		//ボーンが見つからなければ.
@@ -62,6 +67,12 @@ D3DXVECTOR3 clsPARTS_BASE::GetBonePos( const char* sBoneName, const bool isLocal
 	}
 
 	return vBonePos;
+}
+
+//ボーンが存在するか.
+bool clsPARTS_BASE::ExistsBone( const char* sBoneName )
+{
+	return m_pMesh->ExistsBone( sBoneName );
 }
 
 

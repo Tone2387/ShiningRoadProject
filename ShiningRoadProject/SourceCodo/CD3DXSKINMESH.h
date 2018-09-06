@@ -282,6 +282,8 @@ public:
 	// 指定したボーン情報(座標・行列)を取得する関数.
 	bool GetMatrixFromBone( const char* sBoneName, D3DXMATRIX* const pOutMat ) const;
 	bool GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutPos ) const;
+	//ボーンがあるか無いかを調べる関数.
+	bool ExistsBone( const char* sBoneName );
 
 	// メッシュ解放.
 	HRESULT ReleaseMesh( LPD3DXFRAME pFrame );
@@ -367,7 +369,13 @@ public:
 	bool GetPosFromBone( const char* sBoneName, D3DXVECTOR3* const pOutPos, const bool isLocalPos = false ) const;
 	bool GetDeviaPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos, D3DXVECTOR3 vDeviation = D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
+	//ボーンがあるか無いかを調べる関数.
+	bool ExistsBone( const char* sBoneName );
+
 private:
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+
 	HWND m_hWnd;
 	// Dx9.
 	LPDIRECT3D9 m_pD3d9;
@@ -431,7 +439,7 @@ private:
 
 	//透過(アルファブレンド)設定の切り替え.
 	void SetBlend( const bool isAlpha );
-	ID3D11BlendState*	m_pBlendState;	//ブレンドステート.
+	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 };
 

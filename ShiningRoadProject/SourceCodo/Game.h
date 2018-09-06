@@ -21,7 +21,8 @@ public:
 		const HWND hWnd, 
 		ID3D11Device* const pDevice, 
 		ID3D11DeviceContext* const pContext,
-		D3D10_VIEWPORT* const pViewPort,
+		D3D10_VIEWPORT* const pViewPort10,
+		D3D11_VIEWPORT* const pViewPort11,
 		ID3D11DepthStencilState* const pDepthState );
 	~clsGAME();
 
@@ -58,6 +59,9 @@ private:
 	//サウンドのファクトリ.
 	std::unique_ptr< clsFACTORY_SOUND_MANAGER > m_upSoundFactory;
 	
+	//フォント.
+	clsFont*			m_spFont;
+
 
 	//シーン初期化に必要なポインタのまとめ.
 	clsPOINTER_GROUP* m_spPtrGroup; 
@@ -68,7 +72,9 @@ private:
 	ID3D11Device*			m_wpDevice;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_wpContext;	//デバイスコンテキスト.
 	//2DSp用.
-	D3D10_VIEWPORT*			m_wpViewPort;
+	D3D10_VIEWPORT* m_wpViewPort10;
+	//分割用.
+	D3D11_VIEWPORT* m_wpViewPort11;
 	//深度(Z)テスト設定.
 	ID3D11DepthStencilState*	m_wpDepthStencilState;
 

@@ -6,11 +6,10 @@
 //============================================================
 //	インクルード.
 //============================================================
-#include "MyMacro.h"
+#include "Global.h"
 
 #include "TextSpriteStruct.h"
 
-#include <string>
 
 //UIとして文字を扱う.
 class clsUiText
@@ -19,17 +18,32 @@ public:
 	clsUiText();
 	~clsUiText();
 
+	//テキストの左よせ、右寄せ.
+	enum class enPOS : UINT
+	{
+		LEFT,
+		RIGHT,
+		MIDDLE,
+	};
 
-	HRESULT Create( ID3D11DeviceContext* const pContext,
+	HRESULT Create( 
+		ID3D11DeviceContext* const pContext,
 		const DWORD &dwWidth, const DWORD &dwHeight,
 		const float fScale );
 
 
 	//レンダリング関数.
 	//デフォルト引数はtrueにすると右端が指定座標に来る.
-	void Render( const bool bRIght = false );
+	void Render( const enPOS enPos = enPOS::LEFT );
 
 	void SetPos( const D3DXVECTOR2 &vPos );
+	D3DXVECTOR3 GetPos(){
+		D3DXVECTOR3 g;
+		g.x = m_vPos.x;
+		g.y = m_vPos.y;
+		g.z = 0.0f;
+		return g;
+	};
 	void AddPos( const D3DXVECTOR2 &vPos );
 
 	void SetScale( const float fScale );
@@ -40,11 +54,14 @@ public:
 
 private:
 
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+
 	//フォントレンダリング関数.
-	void RenderFont( const int FontIndex, const float x, const float y, const float z ) const;
+	void RenderFont( const int FontIndex, const float x, const float y, const float z );
 
 	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool flg );
+	void SetBlend( const bool isAlpha );
 
 	//↓アプリに一つ.
 	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.
@@ -62,7 +79,7 @@ private:
 	ID3D11ShaderResourceView*	m_pAsciiTexture;//アスキーテクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
 
-	ID3D11BlendState*			m_pBlendState;	//ブレンドステート.
+	ID3D11BlendState*			m_pBlendState[ enBLEND_STATE_size ];	//ブレンドステート.
 
 
 	DWORD	m_dwWindowWidth;	//ウィンドウ幅.

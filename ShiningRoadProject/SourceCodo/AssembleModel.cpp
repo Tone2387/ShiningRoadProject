@@ -73,7 +73,6 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 
 	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
-//	m_vpParts = new clsPARTS_BASE*[ucPARTS_MAX];
 	m_vpParts.reserve( ucPARTS_MAX );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		m_vpParts.push_back( nullptr );
@@ -81,6 +80,12 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 	}
 
 	Init( pStatus );
+
+	CreateProduct();
+}
+
+void clsASSEMBLE_MODEL::CreateProduct()
+{
 }
 
 //モデルの初期セット.
@@ -109,6 +114,10 @@ void clsASSEMBLE_MODEL::UpDate()
 		assert( m_vpParts[i] );
 		m_vpParts[i]->Update();
 	}
+	UpdateProduct();
+}
+void clsASSEMBLE_MODEL::UpdateProduct()
+{
 }
 
 void clsASSEMBLE_MODEL::Render(
@@ -306,8 +315,11 @@ bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex
 }
 
 
+
+
 //パーツのボーンの座標を取得.
-D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( const enPARTS enParts, const char* sBoneName )
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( 
+	const enPARTS enParts, const char* sBoneName )
 {
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
 	char cTmpNum = static_cast<char>( enParts );
@@ -318,6 +330,13 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( const enPARTS enParts, const char* sB
 	return vReturn;
 }
 
+
+//ボーンが存在するか.
+bool clsASSEMBLE_MODEL::ExistsBone( const enPARTS enParts, const char* sBoneName )
+{
+	char cTmpNum = static_cast<char>( enParts );
+	return m_vpParts[ cTmpNum ]->m_pMesh->ExistsBone( sBoneName );
+}
 
 
 //回転値抑制.
@@ -382,6 +401,13 @@ void clsASSEMBLE_MODEL::AnimReSet()
 }
 
 
+void clsASSEMBLE_MODEL::ModelUpdate()
+{
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
+	}
+}
 
 #if _DEBUG
 //各パーツのpos.
