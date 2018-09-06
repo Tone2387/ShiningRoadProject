@@ -78,7 +78,7 @@ void clsRobo::RoboInit(
 		WS[i].BState.iLineEfcNum = 3;
 		WS[i].BState.iSEHitNum = 0;
 		WS[i].BState.iSEShotNum = 0;
-		WS[i].BState.iShotEfcNum = 0;
+		WS[i].BState.iShotEfcNum = 3;
 	}
 
 	WeaponInit(pPtrGroup, WS, enWeaponTypeSize);
@@ -86,7 +86,7 @@ void clsRobo::RoboInit(
 	SetBoostEffect();
 
 	m_fLockRange = 500.0f;//ロックオン距離.
-	m_fLockCircleRadius = 50.0f;//ロックオン判定の半径.
+	m_fLockCircleRadius = 500.0f;//ロックオン判定の半径.
 	
 	
 }
@@ -223,8 +223,10 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
-	PlayBoostEfc();
 	CharactorUpdate();
+
+	PlayBoostEfc();
+	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };
 
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
@@ -405,6 +407,8 @@ void clsRobo::SetBoostEffect()
 	SetLHandSideBoostEffect();
 	SetLHandBackBoostEffect();
 
+	SetCoreBoostEffect();
+
 	SetLegBoostEffect();
 }
 
@@ -501,6 +505,22 @@ void clsRobo::SetLHandBackBoostEffect()
 	for (int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 	{
 		m_v_LHandBackBoostEfc[i] = 0;
+	}
+}
+
+void clsRobo::SetCoreBoostEffect()
+{
+	enPARTS PartsNum = enPARTS::CORE;
+
+	std::string strBoostRootBoneName = "Booster";
+
+	int iEfcNum = GetBoostEfcNum(PartsNum, strBoostRootBoneName.c_str());
+
+	m_v_CoreBoostEfc.resize(iEfcNum);
+
+	for (int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+	{
+		m_v_CoreBoostEfc[i] = 0;
 	}
 }
 
@@ -813,6 +833,35 @@ void clsRobo::PlayBackBoostEfc()
 			}
 			m_wpEffects->SetRotation(m_v_RHandBackBoostEfc[i], vPosRotTmp);
 		}
+
+		strBoostRootName = "BoosterRoot";
+		strBoostEndName = "BoosterEnd";
+
+		for (int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+		{
+			//付け根の名前を生成.
+			strBoostRootNameTmp = strBoostRootName;
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+
+			strBoostEndNameTmp = strBoostEndName;
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+
+			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::CORE, strBoostRootName.c_str(), strBoostEndName.c_str());
+
+			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::CORE, strBoostEndNameTmp.c_str());
+			if (!m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
+			{
+				m_v_CoreBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+			}
+
+			else
+			{
+				m_wpEffects->SetPosition(m_v_CoreBoostEfc[i], vPosEndTmp);
+			}
+			m_wpEffects->SetRotation(m_v_CoreBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetScale(m_v_CoreBoostEfc[i], 2.0f);
+
+		}
 	}
 
 	else
@@ -830,6 +879,14 @@ void clsRobo::PlayBackBoostEfc()
 			if (m_wpEffects->isPlay(m_v_RHandBackBoostEfc[i]))
 			{
 				m_wpEffects->Stop(m_v_RHandBackBoostEfc[i]);
+			}
+		}
+
+		for (int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+		{
+			if (m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
+			{
+				m_wpEffects->Stop(m_v_CoreBoostEfc[i]);
 			}
 		}
 	}

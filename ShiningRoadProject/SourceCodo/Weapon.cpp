@@ -23,6 +23,8 @@ void clsWeapon::Update()
 	{
 		m_ppBullet[i]->Move();
 	}
+
+	m_iReloadCnt--;
 }
 
 int clsWeapon::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
@@ -42,7 +44,7 @@ int clsWeapon::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 
 bool clsWeapon::Shot()
 {
-	if (m_iRemainingBullet > 0 || 
+	if (m_iRemainingBullet > 0 && 
 		m_iReloadCnt < 0)
 	{
 		D3DXVECTOR3 vPos = *m_State.SState.vShotStartPos;
@@ -95,8 +97,6 @@ bool clsWeapon::Shot()
 			}
 		}
 	}
-
-	m_iReloadCnt--;
 
 	return false;
 }

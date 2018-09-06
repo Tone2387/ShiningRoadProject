@@ -211,10 +211,16 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 		}
 	}
 
-	//UpdateCamTargetPos(m_pCamTar);
+	UpdateCamTargetPos(m_pCamTar);
 
-	D3DXVECTOR3 vCamPosTmp = m_pPlayer->GetCamTargetPos();
-	D3DXVECTOR3 vLookPosTmp = m_pPlayer->GetLookTargetPos();
+	D3DXVECTOR3 vCamPosTmp;
+	D3DXVECTOR3 vLookPosTmp;
+
+	//vCamPosTmp = m_pPlayer->GetCamTargetPos();
+	//vLookPosTmp = m_pPlayer->GetLookTargetPos();
+
+	vCamPosTmp = m_vCamTargetPos;
+	vLookPosTmp = m_vLookTargetPos;
 
 	m_wpCamera->SetPos(vCamPosTmp, false);
 	m_wpCamera->SetLookPos(vLookPosTmp);

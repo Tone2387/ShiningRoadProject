@@ -7,6 +7,7 @@
         <CommonValues>
           <MaxGeneration>
             <Value>100</Value>
+            <Infinite>True</Infinite>
           </MaxGeneration>
           <LocationEffectType>1</LocationEffectType>
           <Life>
@@ -31,7 +32,7 @@
             <Scale>
               <X>0.3</X>
               <Y>0.3</Y>
-              <Z>0.8</Z>
+              <Z>0.3</Z>
             </Scale>
           </Fixed>
         </ScalingValues>
@@ -136,7 +137,7 @@
   </Culling>
   <ToolVersion>1.22</ToolVersion>
   <Version>3</Version>
-  <StartFrame>0</StartFrame>
+  <StartFrame>10</StartFrame>
   <EndFrame>101</EndFrame>
   <IsLoop>True</IsLoop>
 </EffekseerProject>

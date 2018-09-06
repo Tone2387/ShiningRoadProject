@@ -192,6 +192,13 @@ int clsMISSION_MODEL::GetSimilarityNameBoneNum(enPARTS PartsNum,const char* strB
 	return iResult;
 }
 
+void clsMISSION_MODEL::SetPartsRotate(enPARTS PartsNum, const D3DXVECTOR3 vRot)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	m_vpParts[cTmpNum]->SetRotation(vRot);
+}
+
 //˜r‚ÌŠp“x‚ğ•Ší‚à–ÍÊ‚·‚é.
 D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(enPARTS PartsNum, const char* strBoneRootName, const char* strBoneEndName)
 {
