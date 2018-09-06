@@ -24,6 +24,7 @@ public:
 	enum class enSELECT_MODE : UCHAR
 	{
 		PARTS = 0,
+		STATUS,
 		MISSION_START
 	}m_enSelectMode;
 
@@ -54,6 +55,21 @@ public:
 		const int iPartsType, 
 		const int iPartsNum );//選択中パーツ番号.
 
+	//ステータスウィンドウを隠す.
+	void SwitchDispStatusComment();
+	//ステータスcommentの切り替え許可.
+	bool isCanSwitchStatusComment();
+
+	//ステータス詳細とパーツ選択の切り替え.
+	void SwitchStatusComment();
+	//指定.
+	void SetStatusComment( const enSELECT_MODE enMode );
+	//.
+	void AddStatusCommentNo( const bool isPlus );
+	//ゴリ押し気味.
+	//選択肢を横に持って行った時の調整.
+	void AddCommentNoForChangePartsType();
+
 
 #if _DEBUG
 	//デバッグテキスト用.
@@ -74,6 +90,9 @@ private:
 	
 		enPARTS_TYPE_SIZE
 	};
+
+	void StatusNumOverGuard();
+
 
 	//パーツ表示用のウィンドウ.
 	D3D11_VIEWPORT m_ViewPortPartsWindow;
@@ -97,7 +116,6 @@ private:
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_pArrow;//矢印.
 
 	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
-	std::unique_ptr< clsUiText > m_upFooterText;//フッター文字.
 
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目名 ).
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//ステータス値.
@@ -116,6 +134,14 @@ private:
 
 	//ステータスの表示フラグ.
 	bool	m_isDispStatus;
+
+	//選択しているステータスのNo.
+	int		m_iStatusCommentNo;
+	//それを示すUI.
+	std::unique_ptr< clsSprite2D > m_upSelectStatus;
+	//調整用フラグ.
+	bool	m_bStatusCommentOffset;
+
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;

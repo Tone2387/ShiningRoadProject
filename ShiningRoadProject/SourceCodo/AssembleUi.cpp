@@ -116,6 +116,10 @@ const char* sPATH_STATUS_WINDOW = "Data\\Image\\AssembleUi\\StatusWindow.png";
 const float fSTATUS_WINDOW_ALPHA = 0.75f;
 const int iSTATUS_NUM_MAX = 11;//ステータスの最大数.
 
+//選択中ステータス.
+const char* sPATH_STATUS_COMMENT = "Data\\Image\\AssembleUi\\SelectStatus.png";
+const float fSTATUS_COMMENT_ALPHA = 0.5f;
+
 //ステータス文字.
 //この窓のタイトル.
 const float TEXT_SCALE_STATUS_TITLE = 2.0f;
@@ -149,17 +153,13 @@ const WHSIZE_FLOAT INIT_SIZE_HEADER  = { WND_W, 54.0f };
 const WHSIZE_FLOAT INIT_SIZE_FOOTER  = { WND_W, 30.0f };
 const D3DXVECTOR3 INIT_POS_HEADER = { 0.0f, 14.0f, 0.0f };
 const D3DXVECTOR3 INIT_POS_FOOTER = { 0.0f, WND_H - INIT_SIZE_FOOTER.h - 15.0f, 0.0f };
-//文字.
-const float fTEXT_SCALE_HEADER = 4.0f;
-const float fTEXT_SCALE_FOOTER = 1.0f;
-const D3DXVECTOR2 vTEXT_POS_OFFSET_HEADER = { 57.0f, 7.0f };//画像とのずれ.
-const D3DXVECTOR2 vTEXT_POS_OFFSET_FOOTER = { 57.0f, 6.0f };
-const D3DXVECTOR2 vTEXT_POS_HEADER = { INIT_POS_HEADER.x + vTEXT_POS_OFFSET_HEADER.x, INIT_POS_HEADER.y + vTEXT_POS_OFFSET_HEADER.y };
-const D3DXVECTOR2 vTEXT_POS_FOOTER = { INIT_POS_FOOTER.x + vTEXT_POS_OFFSET_FOOTER.x, INIT_POS_FOOTER.y + vTEXT_POS_OFFSET_FOOTER.y };
-const char* sHEADER_TEXT = "ASSEMBLE";
-const char* sFOOTER_TEXT = "Enter : B";
 const float fHEADER_ALPHA = 0.5f;
 const float fFOOTER_ALPHA = 0.5f;
+//文字.
+const float fTEXT_SCALE_HEADER = 4.0f;
+const D3DXVECTOR2 vTEXT_POS_OFFSET_HEADER = { 57.0f, 7.0f };//画像とのずれ.
+const D3DXVECTOR2 vTEXT_POS_HEADER = { INIT_POS_HEADER.x + vTEXT_POS_OFFSET_HEADER.x, INIT_POS_HEADER.y + vTEXT_POS_OFFSET_HEADER.y };
+const char* sHEADER_TEXT = "ASSEMBLE";
 //----- ヘッダーとフッター 終わり -----//.
 
 
@@ -203,6 +203,9 @@ const string sSTATUS_NAME_WEAPON[] =
 clsASSEMBLE_UI::clsASSEMBLE_UI()
 	:m_iStatusNum( 0 )
 	,m_isDispStatus( true )
+	,m_iStatusCommentNo( 0 )
+	,m_enSelectMode( enSELECT_MODE::PARTS )
+	,m_bStatusCommentOffset( false )
 {
 	//次のfor文用.
 	const string* tmpStatusNamePtr[enPARTS_TYPE_SIZE] =
@@ -386,14 +389,6 @@ void clsASSEMBLE_UI::Create(
 	m_upHeaderText->SetPos( vTEXT_POS_HEADER );
 	m_upHeaderText->SetText( sHEADER_TEXT );
 
-	//フッター文字.
-	assert( !m_upFooterText );
-	m_upFooterText = make_unique< clsUiText >();
-	m_upFooterText->Create( pContext, WND_W, WND_H, fTEXT_SCALE_FOOTER );
-	m_upFooterText->SetPos( vTEXT_POS_FOOTER );
-	m_upFooterText->SetText( sFOOTER_TEXT );
-
-
 
 	//ステータスが表示される窓.
 	assert( !m_upStatusWindow );
@@ -402,6 +397,13 @@ void clsASSEMBLE_UI::Create(
 	m_upStatusWindow->Create( pDevice, pContext, sPATH_STATUS_WINDOW, ss );
 	m_upStatusWindow->SetPos( vINIT_POS_STATUS_WINDOW );
 	m_upStatusWindow->SetAlpha( fSTATUS_WINDOW_ALPHA );
+
+	//選択中ステータスを示す.
+	assert( !m_upSelectStatus );
+	m_upSelectStatus = make_unique< clsSprite2D >();
+	m_upSelectStatus->Create( pDevice, pContext, sPATH_STATUS_COMMENT, ss );//SelectStatus.png
+	m_upSelectStatus->SetAlpha( fSTATUS_COMMENT_ALPHA );
+
 
 
 	//ステータス項目.
@@ -472,11 +474,6 @@ void clsASSEMBLE_UI::Input(
 
 #endif//#if _DEBUG
 
-	if( pXInput->isPressEnter( XINPUT_Y ) )
-	{
-		if( m_isDispStatus )	m_isDispStatus = false;
-		else					m_isDispStatus = true;
-	}
 
 
 }
@@ -489,8 +486,10 @@ void clsASSEMBLE_UI::Update(
 	const int iPartsNum,
 	const int iStatusCutNum )
 {
-	//パーツ選択中しかやらないよ.
-	if( enSelect != enSELECT_MODE::PARTS ){
+	//パーツ選択中か、ステータス説明確認中しかやらないよ.
+	if( enSelect != enSELECT_MODE::PARTS &&
+		enSelect != enSELECT_MODE::STATUS )
+	{
 		return;
 	}
 
@@ -499,6 +498,9 @@ void clsASSEMBLE_UI::Update(
 	m_upPartsTypeSelect->SetPos( m_vupPartsType[ iPartsType ]->GetPos() );
 	assert( m_upPartsNumSelect );
 	m_upPartsNumSelect->SetPos( m_vupPartsIcon[ iPartsType ][ iPartsNum ]->GetPos() );
+
+	//先への布石.
+	int iOldStausNum = m_iStatusNum;
 
 	//文字列.
 	assert( spFile );
@@ -516,7 +518,20 @@ void clsASSEMBLE_UI::Update(
 		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
 		m_vupStatusNumText[i]->AddPos( { 0.0f, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
 	}
-
+	
+	//ステータスの数の差によるずれを修正.
+	if( m_bStatusCommentOffset ){
+		m_bStatusCommentOffset = false;
+		m_iStatusCommentNo += m_iStatusNum - iOldStausNum;
+		//0に戻す.
+		if( !m_isDispStatus ||
+			m_enSelectMode == enSELECT_MODE::PARTS )
+		{
+			m_iStatusCommentNo = 0;
+		}
+	}
+	//選択中ステータスを管理.
+	StatusNumOverGuard();
 
 	//飛び出さない.
 	if( static_cast< unsigned int >( m_iStatusNum ) > m_vupStatusText.size() ||
@@ -583,13 +598,13 @@ void clsASSEMBLE_UI::Render(
 
 	assert( m_upHeaderText );
 	m_upHeaderText->Render();
-	assert( m_upFooterText );
-	m_upFooterText->Render();
 
 
 
 	//パーツ選択中のみ描画.
-	if( enSelect == enSELECT_MODE::PARTS ){
+	if( enSelect == enSELECT_MODE::PARTS ||
+		enSelect == enSELECT_MODE::STATUS )
+	{
 		//選択中カテゴリ.
 		assert( m_upPartsTypeSelect );
 		m_upPartsTypeSelect->Render();
@@ -623,7 +638,9 @@ void clsASSEMBLE_UI::RenderPartsState(
 	if( !m_isDispStatus ) return;
 
 	//パーツ選択中のみ描画.
-	if( enSelect == enSELECT_MODE::PARTS ){
+	if( enSelect == enSELECT_MODE::PARTS ||
+		enSelect == enSELECT_MODE::STATUS )
+	{
 		//窓.
 		assert( m_upStatusWindow );
 		D3DXVECTOR3 vPos = m_upStatusWindow->GetPos();
@@ -632,6 +649,16 @@ void clsASSEMBLE_UI::RenderPartsState(
 			m_upStatusWindow->AddPos( { 0.0f, -INIT_SIZE_STATUS_WINDOW.h, 0.0f } );
 		}
 		m_upStatusWindow->SetPos( vPos );
+
+		if( enSelect == enSELECT_MODE::STATUS ){
+			assert( m_upSelectStatus );
+			int iTmp = m_iStatusNum - 1;
+			m_upSelectStatus->SetPos( { 
+				m_upStatusWindow->GetPos().x,
+				m_upStatusWindow->GetPos().y + ( m_iStatusCommentNo - iTmp ) * INIT_SIZE_STATUS_WINDOW.h,//計算式はややゴリ押し.
+				0.0f } );
+			m_upSelectStatus->Render();
+		}
 
 		//数値.
 		for( int i=0; i<m_iStatusNum; i++ ){
@@ -644,6 +671,81 @@ void clsASSEMBLE_UI::RenderPartsState(
 
 }
 
+//ステータスウィンドウを隠す.
+void clsASSEMBLE_UI::SwitchDispStatusComment()
+{
+	if( m_isDispStatus ){
+		SetStatusComment( enSELECT_MODE::PARTS );
+		m_isDispStatus = false;
+	}
+	else{
+		SetStatusComment( enSELECT_MODE::PARTS );
+		m_isDispStatus = true;
+	}
+}
+
+//ステータスcommentの切り替え許可.
+bool clsASSEMBLE_UI::isCanSwitchStatusComment()
+{
+	if( m_isDispStatus ){
+		return true;
+	}
+
+	return false;
+}
+
+//ステータス詳細とパーツ選択の切り替え.
+void clsASSEMBLE_UI::SwitchStatusComment()
+{
+
+	if( m_enSelectMode == enSELECT_MODE::PARTS ){
+		m_isDispStatus = true;
+		m_enSelectMode = enSELECT_MODE::STATUS;
+	}
+	else if( m_enSelectMode == enSELECT_MODE::STATUS ){
+		m_enSelectMode = enSELECT_MODE::PARTS;
+	}
+}
+
+//指定.
+void clsASSEMBLE_UI::SetStatusComment( const enSELECT_MODE enMode )
+{
+	m_enSelectMode = enMode;
+
+	m_isDispStatus = true;
+
+//	if( m_enSelectMode == enSELECT_MODE::STATUS ){
+//	}
+//	else if( m_enSelectMode == enSELECT_MODE::PARTS ){
+//	}
+}
+
+//.
+void clsASSEMBLE_UI::AddStatusCommentNo( const bool isPlus )
+{
+	if( !m_isDispStatus ) return;
+
+	if( isPlus ){
+		m_iStatusCommentNo ++;
+	}
+	else{
+		m_iStatusCommentNo --;
+	}
+}
+
+void clsASSEMBLE_UI::StatusNumOverGuard()
+{
+	if( m_iStatusCommentNo >= m_iStatusNum )m_iStatusCommentNo = m_iStatusNum - 1;
+	else if( m_iStatusCommentNo < 0 )		m_iStatusCommentNo = 0;
+
+}
+//ゴリ押し気味.
+//選択肢を横に持って行った時の調整.
+void clsASSEMBLE_UI::AddCommentNoForChangePartsType()
+{
+//	m_iStatusCommentNo += m_iStatusNum;
+	m_bStatusCommentOffset = true;
+}
 
 
 #if _DEBUG

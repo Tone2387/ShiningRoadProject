@@ -290,14 +290,38 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressExit() ){
 		Undo( enNextScene );
 	}
+	//次のシーンへ.
 	if( m_wpXInput->isPressEnter( XINPUT_START ) ){
 		MissionStart( enNextScene );
 	}
+	//ステータスウィンドウを隠す.
+	if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
+		m_pUI->SwitchDispStatusComment();
+		m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+	}
+	//ステータスのcomment切替.
+	if( m_wpXInput->isPressEnter( XINPUT_X ) ){
+		if( m_pUI->isCanSwitchStatusComment() ){
+			if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+				m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+			{
+				m_pUI->SwitchStatusComment();
+				if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+					m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
+				}
+				else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+					m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+				}
+			}
+		}
+	}
+
 
 
 	assert( m_pUI );
 	m_pUI->Input( m_wpXInput, m_wpDxInput );
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		assert( m_vspFile[m_PartsSelect.Type] );
 		m_pUI->Update( 
 			m_enSelectMode,
@@ -377,7 +401,9 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 		m_pViewPortRoboWindow->Width, m_pViewPortRoboWindow->Height );
 	assert( m_pAsmModel );
 	//パーツ選択中は選択しているパーツを光らせる.
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
 		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos(), 
 			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
 	}
@@ -421,14 +447,15 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	MoveCursor();
 
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
-	if( m_enSelectMode != clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		return;
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+		m_PartsSelect.Num[m_PartsSelect.Type] --;
+
+		m_PartsSelect.Num[m_PartsSelect.Type] = 
+			KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
-
-	m_PartsSelect.Num[m_PartsSelect.Type] --;
-
-	m_PartsSelect.Num[m_PartsSelect.Type] = 
-		KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+		m_pUI->AddStatusCommentNo( false );
+	}
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
@@ -436,22 +463,27 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	MoveCursor();
 
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
-	if( m_enSelectMode != clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		return;
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+		m_PartsSelect.Num[m_PartsSelect.Type] ++;
+
+		m_PartsSelect.Num[m_PartsSelect.Type] = 
+			KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+	}
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+		m_pUI->AddStatusCommentNo( true );
 	}
 
-	m_PartsSelect.Num[m_PartsSelect.Type] ++;
-
-	m_PartsSelect.Num[m_PartsSelect.Type] = 
-		KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorRight()
 {
 	MoveCursor();
 
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
 		m_PartsSelect.Type ++;
+		m_pUI->AddCommentNoForChangePartsType();
 
 		//武器を超えたら.
 		if( m_PartsSelect.Type >= clsASSEMBLE_MODEL::ENUM_SIZE ){
@@ -471,8 +503,11 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 	MoveCursor();
 
 	//パーツを選ぶ.
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
 		m_PartsSelect.Type --;
+		m_pUI->AddCommentNoForChangePartsType();
 
 		m_PartsSelect.Type = 
 			KeepRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );

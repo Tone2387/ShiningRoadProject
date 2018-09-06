@@ -100,6 +100,8 @@ private:
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
 	UCHAR										m_cuFileMax;
 
+
+
 //	clsSPRITE2D_CENTER* m_pSprite;
 //	clsCharaStatic* m_pTestChara;
 //	clsCharaStatic* m_pParts;

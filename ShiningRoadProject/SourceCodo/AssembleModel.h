@@ -89,6 +89,8 @@ public:
 
 protected:
 
+	//Œp³æ‚Åg‚Á‚Ä‚Ë.
+	virtual void CreateProduct();
 	virtual void UpdateProduct();
 
 	//˜r‚ÌŠp“x‚ğ•Ší‚à–ÍÊ‚·‚é.
@@ -106,8 +108,6 @@ protected:
 	float GuardDirOver( float &outTheta ) const;
 
 
-	//Œp³æ‚Åg‚Á‚Ä‚Ë.
-	virtual void CreateProduct();
 
 	void ModelUpdate();
 
