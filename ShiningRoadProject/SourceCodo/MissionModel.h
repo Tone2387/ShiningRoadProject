@@ -50,6 +50,8 @@ public:
 	//当たり判定の座標の配列をすべて返す.
 	std::shared_ptr< std::vector< D3DXVECTOR3 > > GetColPosPtr();
 
+	void SetPartsRotate(enPARTS PartsNum, const D3DXVECTOR3 vRot);
+
 private:
 
 	//引数のパーツの当たり判定の情報作成.

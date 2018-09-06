@@ -96,8 +96,6 @@ void clsCharactor::MoveControl()
 	
 	m_bMoving = true;
 	m_Trans.vPos += m_vMoveDir * abs(m_fMoveSpeed);
-
-	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };
 }
 
 void clsCharactor::MoveAccele(const float fPower)//‚¢‚ç‚ñ‚©‚à.

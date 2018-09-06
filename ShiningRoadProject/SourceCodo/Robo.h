@@ -58,6 +58,11 @@ public:
 
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
+		vTmp.x += m_fLookUpDir + (D3DX_PI / 2);
+
+		m_pMesh->SetPartsRotate(enPARTS::ARM_L, vTmp);
+		m_pMesh->SetPartsRotate(enPARTS::ARM_R, vTmp);
+
 		m_pMesh->UpDate();
 		//UpdateCollsion();
 	}
@@ -157,6 +162,9 @@ private:
 	std::vector<::Effekseer::Handle> m_v_LHandSideBoostEfc;
 	std::vector<::Effekseer::Handle> m_v_LHandBackBoostEfc;
 
+	//コアブースターエフェクト.
+	std::vector<::Effekseer::Handle> m_v_CoreBoostEfc;
+
 	//脚ブースターエフェクト.
 	std::vector<::Effekseer::Handle> m_v_LegBoostEfc;
 
@@ -170,6 +178,8 @@ private:
 	void SetLHandSideBoostEffect();
 	void SetLHandBackBoostEffect();
 
+	void SetCoreBoostEffect();
+
 	void SetLegBoostEffect();
 
 	void PlayBoostEfc();
@@ -178,6 +188,8 @@ private:
 	void PlayRightBoostEfc();
 	void PlayLeftBoostEfc();
 	void PlayBackBoostEfc();
+
+	void PlayCoreBoostEfc();
 
 	void PlayLegBoostEfc();
 
