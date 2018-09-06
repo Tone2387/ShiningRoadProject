@@ -8,13 +8,14 @@
 #include "UiText.h"
 #include "WindowBox.h"
 #include "File.h"
+#include "CFont.h"
 #include <vector>
 
 
 class clsASSEMBLE_UI
 {
 public:
-	clsASSEMBLE_UI();
+	clsASSEMBLE_UI( clsFont* const pFont );
 	~clsASSEMBLE_UI();
 
 	//各パーツUI数受け取り用.
@@ -54,6 +55,12 @@ public:
 		enSELECT_MODE enSelect, 
 		const int iPartsType, 
 		const int iPartsNum );//選択中パーツ番号.
+
+	
+	//説明文の行指定.
+	int SetReadLinePartsComment(
+		const int iPartsType );	//パーツ種類.
+
 
 	//ステータスウィンドウを隠す.
 	void SwitchDispStatusComment();
@@ -141,6 +148,11 @@ private:
 	std::unique_ptr< clsSprite2D > m_upSelectStatus;
 	//調整用フラグ.
 	bool	m_bStatusCommentOffset;
+
+	//日本語フォント.
+	clsFont*	m_wpFont;
+	//パーツ、ステータスの日本語説明文の読み込み行指定.
+	int m_iReadLinePartsComment;
 
 
 #if _DEBUG

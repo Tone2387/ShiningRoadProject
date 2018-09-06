@@ -63,6 +63,17 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 
 //日本語UI.
 const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
+//ボタン説明.
+const D3DXVECTOR3 vFONT_BUTTON_POS = { 756.0f, 44.0f, 0.0f };
+const float fFONT_BUTTON_SCALE = 14.0f;
+const int iFONT_BUTTON_LINE = 0;
+const int iFONT_BUTTON_TEXT_SIZE = 64;
+
+//パーツ、ステータス説明.
+const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
+const float fFONT_COMMENT_SCALE = 16.0f;
+const int iFONT_COMMENT_LINE = 1;
+const int iFONT_COMMENT_TEXT_SIZE = 128;
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -146,7 +157,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//UI.
 	assert( !m_pUI );
-	m_pUI = new clsASSEMBLE_UI;
+	m_pUI = new clsASSEMBLE_UI( m_wpFont );
 	m_pUI->Create( m_wpDevice, m_wpContext, partsData );
 
 	//モデルさん作成.
@@ -317,7 +328,6 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	}
 
 
-
 	assert( m_pUI );
 	m_pUI->Input( m_wpXInput, m_wpDxInput );
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
@@ -418,14 +428,10 @@ void clsSCENE_ASSEMBLE::RenderUi()
 {
 
 	//ボタンの説明.
-	m_wpFont->SetPos( { 756.0f, 44.0f, 0.0f } );
-	m_wpFont->SetScale( 14.0f );
-	m_wpFont->Render( 0, 100 );
+	m_wpFont->SetPos( vFONT_BUTTON_POS );
+	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
+	m_wpFont->Render( iFONT_BUTTON_LINE, iFONT_BUTTON_TEXT_SIZE );
 
-	//ステータスの説明.
-	m_wpFont->SetPos( { 28.0f, 680.0f, 0.0f } );
-	m_wpFont->SetScale( 16.0f );
-	m_wpFont->Render( 1, 128 );
 
 //	//スの説明.
 //	m_wpFont->SetPos( { 0.0f,  WND_H*0.5f, 0.0f } );
@@ -636,6 +642,7 @@ bool clsSCENE_ASSEMBLE::isMissionStart()
 
 	return true;
 }
+
 
 
 

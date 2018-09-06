@@ -165,11 +165,6 @@ const char* sHEADER_TEXT = "ASSEMBLE";
 
 
 
-
-
-
-
-
 #if _DEBUG
 //目安.
 const char* sPATH_DESIGN = "Data\\Image\\AssembleDesign.png";
@@ -198,14 +193,24 @@ const string sSTATUS_NAME_WEAPON[] =
 	{ "Attack Power", "Bullet Speed", "Bullet Range", "EN Cost", "Load Time", "Lock on Time", "Stability of Shooting", "Magazine Load Time", "Bullets Num" };
 
 
+//日本語UI.
+//シーンですでに作っている.
+//const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
+//パーツ、ステータス説明.
+const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
+const float fFONT_COMMENT_SCALE = 16.0f;
+const int iFONT_COMMENT_LINE = 1;
+const int iFONT_COMMENT_TEXT_SIZE = 128;
 
 
-clsASSEMBLE_UI::clsASSEMBLE_UI()
+clsASSEMBLE_UI::clsASSEMBLE_UI( clsFont* const pFont )
 	:m_iStatusNum( 0 )
 	,m_isDispStatus( true )
 	,m_iStatusCommentNo( 0 )
 	,m_enSelectMode( enSELECT_MODE::PARTS )
 	,m_bStatusCommentOffset( false )
+	,m_wpFont( pFont )
+	,m_iReadLinePartsComment( 0 )
 {
 	//次のfor文用.
 	const string* tmpStatusNamePtr[enPARTS_TYPE_SIZE] =
@@ -275,6 +280,8 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 	}
 
 	m_iStatusNum = 0;
+
+	m_wpFont = nullptr;
 }
 
 
@@ -555,6 +562,8 @@ void clsASSEMBLE_UI::Update(
 		m_vupStatusNumText[i]->SetText( spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
 	}
 
+	//日本語説明文を調整.
+	SetReadLinePartsComment( iPartsType );
 
 
 	//どっちのうで？.
@@ -634,13 +643,19 @@ void clsASSEMBLE_UI::RenderPartsState(
 	const int iPartsType, 
 	const int iPartsNum )//選択中パーツ番号.
 {
-	//ステータスを表示しないなら飛ばす.
-	if( !m_isDispStatus ) return;
-
 	//パーツ選択中のみ描画.
 	if( enSelect == enSELECT_MODE::PARTS ||
 		enSelect == enSELECT_MODE::STATUS )
 	{
+		//ステータスの説明.
+		assert( m_wpFont );
+		m_wpFont->SetPos( vFONT_COMMENT_POS );
+		m_wpFont->SetScale( fFONT_COMMENT_SCALE );
+		m_wpFont->Render( m_iReadLinePartsComment, iFONT_COMMENT_TEXT_SIZE );
+
+		//ステータスを表示しないなら飛ばす.
+		if( !m_isDispStatus ) return;
+
 		//窓.
 		assert( m_upStatusWindow );
 		D3DXVECTOR3 vPos = m_upStatusWindow->GetPos();
@@ -667,9 +682,44 @@ void clsASSEMBLE_UI::RenderPartsState(
 			assert( m_vupStatusNumText[i] );
 			m_vupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
 		}
+
+
 	}
 
 }
+
+
+//説明文の行指定.
+int clsASSEMBLE_UI::SetReadLinePartsComment(
+	const int iPartsType )	//パーツ種類.
+{
+	//ボタン説明文の分.
+	const int iOTHER_TEXT_LINE_MAX = 1;
+	const int iPARTS_TEXT_LINE_MAX = 6;
+
+	if( m_enSelectMode == enSELECT_MODE::PARTS ){
+		m_iReadLinePartsComment = iPartsType + iOTHER_TEXT_LINE_MAX; 
+	}
+	else if( m_enSelectMode == enSELECT_MODE::STATUS ){
+		m_iReadLinePartsComment = iOTHER_TEXT_LINE_MAX + iPARTS_TEXT_LINE_MAX; 
+		
+		int iTmp = iPartsType;
+		if( iTmp >= iPARTS_TEXT_LINE_MAX - 1 ){
+			iTmp --;
+		}
+
+		//パーツカテゴリ.
+		for( int i=0; i<iTmp; i++ ){
+			m_iReadLinePartsComment += iOPEN_STATUS_NUM[i];
+		}
+
+		//ステータスNo..
+		m_iReadLinePartsComment += m_iStatusCommentNo;
+	}
+	
+	return 0;
+}
+
 
 //ステータスウィンドウを隠す.
 void clsASSEMBLE_UI::SwitchDispStatusComment()
