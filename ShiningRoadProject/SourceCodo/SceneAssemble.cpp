@@ -63,6 +63,17 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 
 //日本語UI.
 const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
+//ボタン説明.
+const D3DXVECTOR3 vFONT_BUTTON_POS = { 756.0f, 44.0f, 0.0f };
+const float fFONT_BUTTON_SCALE = 14.0f;
+const int iFONT_BUTTON_LINE = 0;
+const int iFONT_BUTTON_TEXT_SIZE = 64;
+
+//パーツ、ステータス説明.
+const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
+const float fFONT_COMMENT_SCALE = 16.0f;
+const int iFONT_COMMENT_LINE = 1;
+const int iFONT_COMMENT_TEXT_SIZE = 128;
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -146,7 +157,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//UI.
 	assert( !m_pUI );
-	m_pUI = new clsASSEMBLE_UI;
+	m_pUI = new clsASSEMBLE_UI( m_wpFont );
 	m_pUI->Create( m_wpDevice, m_wpContext, partsData );
 
 	//モデルさん作成.
@@ -290,14 +301,37 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressExit() ){
 		Undo( enNextScene );
 	}
+	//次のシーンへ.
 	if( m_wpXInput->isPressEnter( XINPUT_START ) ){
 		MissionStart( enNextScene );
+	}
+	//ステータスウィンドウを隠す.
+	if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
+		m_pUI->SwitchDispStatusComment();
+		m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+	}
+	//ステータスのcomment切替.
+	if( m_wpXInput->isPressEnter( XINPUT_X ) ){
+		if( m_pUI->isCanSwitchStatusComment() ){
+			if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+				m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+			{
+				m_pUI->SwitchStatusComment();
+				if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+					m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
+				}
+				else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+					m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+				}
+			}
+		}
 	}
 
 
 	assert( m_pUI );
 	m_pUI->Input( m_wpXInput, m_wpDxInput );
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		assert( m_vspFile[m_PartsSelect.Type] );
 		m_pUI->Update( 
 			m_enSelectMode,
@@ -377,7 +411,9 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 		m_pViewPortRoboWindow->Width, m_pViewPortRoboWindow->Height );
 	assert( m_pAsmModel );
 	//パーツ選択中は選択しているパーツを光らせる.
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
 		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos(), 
 			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
 	}
@@ -392,14 +428,10 @@ void clsSCENE_ASSEMBLE::RenderUi()
 {
 
 	//ボタンの説明.
-	m_wpFont->SetPos( { 756.0f, 44.0f, 0.0f } );
-	m_wpFont->SetScale( 14.0f );
-	m_wpFont->Render( 0, 100 );
+	m_wpFont->SetPos( vFONT_BUTTON_POS );
+	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
+	m_wpFont->Render( iFONT_BUTTON_LINE, iFONT_BUTTON_TEXT_SIZE );
 
-	//ステータスの説明.
-	m_wpFont->SetPos( { 28.0f, 680.0f, 0.0f } );
-	m_wpFont->SetScale( 16.0f );
-	m_wpFont->Render( 1, 128 );
 
 //	//スの説明.
 //	m_wpFont->SetPos( { 0.0f,  WND_H*0.5f, 0.0f } );
@@ -421,14 +453,15 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	MoveCursor();
 
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
-	if( m_enSelectMode != clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		return;
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+		m_PartsSelect.Num[m_PartsSelect.Type] --;
+
+		m_PartsSelect.Num[m_PartsSelect.Type] = 
+			KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
-
-	m_PartsSelect.Num[m_PartsSelect.Type] --;
-
-	m_PartsSelect.Num[m_PartsSelect.Type] = 
-		KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+		m_pUI->AddStatusCommentNo( false );
+	}
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorDown()
@@ -436,22 +469,27 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	MoveCursor();
 
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
-	if( m_enSelectMode != clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		return;
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+		m_PartsSelect.Num[m_PartsSelect.Type] ++;
+
+		m_PartsSelect.Num[m_PartsSelect.Type] = 
+			KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+	}
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+		m_pUI->AddStatusCommentNo( true );
 	}
 
-	m_PartsSelect.Num[m_PartsSelect.Type] ++;
-
-	m_PartsSelect.Num[m_PartsSelect.Type] = 
-		KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorRight()
 {
 	MoveCursor();
 
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
 		m_PartsSelect.Type ++;
+		m_pUI->AddCommentNoForChangePartsType();
 
 		//武器を超えたら.
 		if( m_PartsSelect.Type >= clsASSEMBLE_MODEL::ENUM_SIZE ){
@@ -471,8 +509,11 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 	MoveCursor();
 
 	//パーツを選ぶ.
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
 		m_PartsSelect.Type --;
+		m_pUI->AddCommentNoForChangePartsType();
 
 		m_PartsSelect.Type = 
 			KeepRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
@@ -601,6 +642,7 @@ bool clsSCENE_ASSEMBLE::isMissionStart()
 
 	return true;
 }
+
 
 
 

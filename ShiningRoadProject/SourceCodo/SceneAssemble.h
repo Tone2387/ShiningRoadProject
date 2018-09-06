@@ -72,6 +72,7 @@ private:
 	//カーソルを出撃に合わせているならtrue.
 	bool isMissionStart();
 
+
 #if _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
@@ -99,6 +100,7 @@ private:
 
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
 	UCHAR										m_cuFileMax;
+
 
 //	clsSPRITE2D_CENTER* m_pSprite;
 //	clsCharaStatic* m_pTestChara;
