@@ -64,7 +64,7 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 //ì˙ñ{åÍUI.
 const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
 //É{É^Éìê‡ñæ.
-const D3DXVECTOR3 vFONT_BUTTON_POS = { 756.0f, 44.0f, 0.0f };
+const D3DXVECTOR3 vFONT_BUTTON_POS = { 600.0f, 40.0f, 0.0f };
 const float fFONT_BUTTON_SCALE = 14.0f;
 const int iFONT_BUTTON_LINE = 0;
 const int iFONT_BUTTON_TEXT_SIZE = 64;

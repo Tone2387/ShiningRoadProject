@@ -130,6 +130,8 @@ private:
 
 	std::unique_ptr< clsUiText > m_upPartsNameText;//パーツ名.
 
+	std::unique_ptr< clsSprite2D > m_upButton;
+
 	//「その武器は右腕?それとも左腕?」.
 	std::unique_ptr< clsWINDOW_BOX > m_upWndBox;//左右どっちか聞いてくる箱.
 

@@ -202,6 +202,30 @@ const float fFONT_COMMENT_SCALE = 16.0f;
 const int iFONT_COMMENT_LINE = 1;
 const int iFONT_COMMENT_TEXT_SIZE = 128;
 
+//ボタン.
+const char* sPATH_BUTONS = "Data\\Image\\AssembleUi\\Buttons.png";
+const float INIT_DISP_BUTTON_SPRITE = 32.0f;
+const WHSIZE_FLOAT INIT_ANIM_BUTTON_SPRITE = { 5.0f, 1.0f };
+const int iBUTTON_SPRITE_NUM = 5;
+const float fBUTTON_SPRITE_POS_Y = 32.0f;
+const D3DXVECTOR3 vBUTTON_SPRITE_POS[ iBUTTON_SPRITE_NUM ] =
+{
+	{ 570.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 640.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 770.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 950.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 1110.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+};
+const POINTFLOAT vBUTTON_SPRITE_ANIM[ iBUTTON_SPRITE_NUM ] =
+{
+	{ 4.0f, 0.0f },
+	{ 1.0f, 0.0f },
+	{ 3.0f, 0.0f },
+	{ 2.0f, 0.0f },
+	{ 0.0f, 0.0f },
+};
+
+
 
 clsASSEMBLE_UI::clsASSEMBLE_UI( clsFont* const pFont )
 	:m_iStatusNum( 0 )
@@ -447,7 +471,12 @@ void clsASSEMBLE_UI::Create(
 	m_upPartsNameText->SetPos( vTEXT_POS_PARTS_NAME );
 //	m_upPartsNameText->SetText( "PARTS_NAME" );
 
-
+	//ボタン.
+	assert( !m_upButton );
+	ss.Disp = { INIT_DISP_BUTTON_SPRITE, INIT_DISP_BUTTON_SPRITE };
+	ss.Anim = INIT_ANIM_BUTTON_SPRITE;
+	m_upButton = make_unique< clsSprite2D >();
+	m_upButton->Create( pDevice, pContext, sPATH_BUTONS, ss );
 
 #if _DEBUG
 	ss.Disp = { WND_W, WND_H };
@@ -608,7 +637,12 @@ void clsASSEMBLE_UI::Render(
 	assert( m_upHeaderText );
 	m_upHeaderText->Render();
 
-
+	assert( m_upButton );
+	for( int i=0; i<iBUTTON_SPRITE_NUM; i++ ){
+		m_upButton->SetPos( vBUTTON_SPRITE_POS[i] );
+		m_upButton->SetAnim( vBUTTON_SPRITE_ANIM[i] );
+		m_upButton->Render();
+	}
 
 	//パーツ選択中のみ描画.
 	if( enSelect == enSELECT_MODE::PARTS ||
