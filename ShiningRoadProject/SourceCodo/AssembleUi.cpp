@@ -150,6 +150,7 @@ const string sSTATUS_TEXT_MIDWAY = "     >>";
 
 
 
+
 //----- ヘッダーとフッター -----//.
 const char* sHEADER_FILE_PATH = "Data\\Image\\AssembleUi\\Header.png";
 const char* sFOOTER_FILE_PATH = "Data\\Image\\AssembleUi\\Footer.png";
@@ -197,6 +198,22 @@ const string sSTATUS_NAME_WEAPON[] =
 	{ "Attack Power", "Bullet Speed", "Bullet Range", "EN Cost", "Load Time", "Lock on Time", "Stability of Shooting", "Magazine Load Time", "Bullets Num" };
 
 
+//ステータスの色.
+const bool bRED_BIG_LEG[] =
+	{ true, true, true, true, true };		
+const bool bRED_BIG_CORE[] =
+	{ true, true, true, true, false, true, false, true };			
+const bool bRED_BIG_HEAD[] =
+	{ true, true, true, true };			
+const bool bRED_BIG_ARMS[] =
+	{ true, true, true, false, true };			
+const bool bRED_BIG_WEAPON[] =
+	{ true, true, true, false, false, false, true, false, true };
+//集合体.
+const bool* bRED_BIG[] =
+	{ bRED_BIG_LEG, bRED_BIG_CORE, bRED_BIG_HEAD, bRED_BIG_ARMS, bRED_BIG_WEAPON, bRED_BIG_WEAPON };
+
+
 //日本語UI.
 //シーンですでに作っている.
 //const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
@@ -215,7 +232,7 @@ const float fBUTTON_SPRITE_POS_Y = 32.0f;
 const D3DXVECTOR3 vBUTTON_SPRITE_POS[ iBUTTON_SPRITE_NUM ] =
 {
 	{ 570.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-	{ 640.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 645.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
 	{ 770.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
 	{ 950.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
 	{ 1110.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
@@ -228,6 +245,8 @@ const POINTFLOAT vBUTTON_SPRITE_ANIM[ iBUTTON_SPRITE_NUM ] =
 	{ 2.0f, 0.0f },
 	{ 0.0f, 0.0f },
 };
+
+
 
 
 
@@ -589,16 +608,29 @@ void clsASSEMBLE_UI::Update(
 		//ステータス名セット.
 		assert( m_vupStatusText[i] );
 		m_vupStatusText[i]->SetText( m_vsStatusNameBox[ iPartsType ][i].c_str() );
+
+		//色替えの為.
+		int iBefor, iAfter;
+		iBefor = spFile->GetDataInt( 
+			pModel->GetPartsNum( static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( iPartsType ) ),
+			i + iStatusCutNum );
+		iAfter = spFile->GetDataInt( iPartsNum, i + iStatusCutNum );
+		D3DXVECTOR4 vColor = GetStatusColor( iBefor, iAfter,iPartsType, i );
+
 		//ステータス数値セット.
 		assert( m_vupStatusNumText[i] );
 		m_vupStatusNumText[i]->SetText( 
 			spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
+		m_vupStatusNumText[i]->SetColor( vColor );
 		//今のステータス.
 		assert( m_vupStatusNumTextNow[i] );
-		string tmpString = spFile->GetDataString( 
-				pModel->GetPartsNum( static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( iPartsType ) ), 
-				i + iStatusCutNum ) + sSTATUS_TEXT_MIDWAY;
+		string tmpString = 
+			spFile->GetDataString( 
+				pModel->GetPartsNum( static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( iPartsType ) ),
+				i + iStatusCutNum )
+			+ sSTATUS_TEXT_MIDWAY;
 		m_vupStatusNumTextNow[i]->SetText( tmpString.c_str() );
+		m_vupStatusNumTextNow[i]->SetColor( vColor );
 	}
 
 	//日本語説明文を調整.
@@ -838,6 +870,38 @@ void clsASSEMBLE_UI::AddCommentNoForChangePartsType()
 {
 //	m_iStatusCommentNo += m_iStatusNum;
 	m_bStatusCommentOffset = true;
+}
+
+
+D3DXVECTOR4 clsASSEMBLE_UI::GetStatusColor( 
+	const int iBefore, const int iAfter,
+	const int iPartsType, const int iStatusNum )
+{
+	const D3DXVECTOR4 vRED		= { 1.0f, 0.5f, 0.5f, 1.0f };
+	const D3DXVECTOR4 vBLUE		= { 0.5f, 0.5f, 1.0f, 1.0f };
+	const D3DXVECTOR4 vWHITE	= { 1.0f, 1.0f, 1.0f, 1.0f };
+	bool isRed;
+
+	if( iBefore == iAfter ){
+		return vWHITE;
+	}
+	else if( iBefore > iAfter ){
+		isRed = false;
+	}
+	else if( iBefore < iAfter ){
+		isRed = true;
+	}
+	
+	bool tmp = bRED_BIG[ iPartsType ][ iStatusNum ];
+	if( !tmp ){
+		if( isRed ) isRed = false;
+		else		isRed = true;
+	}
+
+	if( isRed ){
+		return vRED;
+	}
+	return vBLUE;
 }
 
 

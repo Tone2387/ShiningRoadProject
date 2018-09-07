@@ -295,7 +295,9 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressLeft()	)MoveCursorLeft();
 	if( isPressUp()		)MoveCursorUp();
 	if( isPressDown()	)MoveCursorDown();
-	if( m_wpXInput->isPressEnter( XINPUT_B ) ){
+	if( m_wpXInput->isPressEnter( XINPUT_B ) ||
+		GetAsyncKeyState( VK_RETURN ) & 0x1 )
+	{
 		Enter( enNextScene );
 	}
 	if( isPressExit() ){

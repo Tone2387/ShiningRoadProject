@@ -100,6 +100,12 @@ private:
 		enPARTS_TYPE_SIZE
 	};
 
+
+	D3DXVECTOR4 GetStatusColor( 
+		const int iBefore, const int iAfter,
+		const int iPartsType, const int iStatusNum );
+
+
 	void StatusNumOverGuard();
 
 

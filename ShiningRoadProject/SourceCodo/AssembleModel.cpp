@@ -210,7 +210,20 @@ void clsASSEMBLE_MODEL::AttachModel(
 	m_vpParts[ucParts]->SetPartsName( tmpName );				//ñºëOã≥Ç¶ÇÈ.
 //	AnimReSet();
 
-	m_enPartsNum[ static_cast<char>( enParts ) ] = static_cast< enPARTS_TYPES >( PartsNum );
+	//GetPartsNumä÷êîóp.
+	int iIndex = static_cast<int>( enParts );
+	if( enParts == enPARTS::ARM_L ||
+		enParts == enPARTS::ARM_R )
+	{
+		iIndex = enPARTS_TYPES::ARMS;
+	}
+	else if( enParts == enPARTS::WEAPON_L ){
+		iIndex = enPARTS_TYPES::WEAPON_L;
+	}
+	else if( enParts == enPARTS::WEAPON_R ){
+		iIndex = enPARTS_TYPES::WEAPON_R;
+	}
+	m_enPartsNum[ iIndex ] = static_cast< enPARTS_TYPES >( PartsNum );
 }
 
 
