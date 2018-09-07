@@ -563,7 +563,7 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 
 	const float fCamMoveSpeed = 0.5f;
 	const float fLookPosSpace = 50.0f;
-	const float fCamSpaceTmp = 2.0f;
+	const float fCamSpaceTmp = 4.0f;
 	const float fCamPosX = 0.5f;
 
 	D3DXMATRIX mRot;
@@ -608,7 +608,7 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 	//====================================================
 	//カメラが少し遅れてついてくるように.
 	//カメラが現在目的としている位置を算出.
-	const D3DXVECTOR3 vCamTargetPos = pChara->m_vCenterPos - vCamAxis * fCamSpaceTmp;
+	const D3DXVECTOR3 vCamTargetPos = pChara->m_vCenterPos - vCamAxis;
 
 	//現在位置を取得し、現在位置と目的の位置の差から移動量を計算する.
 	vCamPosTmp = m_vCamTargetPos;//現在位置を取得

@@ -696,7 +696,7 @@ m_NoFollObj(false)
 	m_Trans.fRoll = 0.0f;
 
 	m_Trans.vPos = { 0.0f, 0.0f, 0.0f };
-	m_Trans.vScale = { 0.0f, 0.0f, 0.0f };
+	m_Trans.vScale = { 1.0f, 1.0f, 1.0f };
 };
 
 clsObject::~clsObject(){};
