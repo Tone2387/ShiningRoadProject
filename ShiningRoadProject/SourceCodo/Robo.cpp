@@ -67,13 +67,13 @@ void clsRobo::RoboInit(
 		WS[i].iBulletNumMax = 10;
 		WS[i].iLockSpeed = 10;
 		WS[i].iShotEN = 0;
-		WS[i].iReloadTime = 20;
+		WS[i].iReloadTime = 10;
 		WS[i].iStablity = 0;
-		WS[i].MagazineReloadTime = 10;
+		WS[i].MagazineReloadTime = 60;
 
 		WS[i].BState.fRangeMax = 1.5f;
 		WS[i].BState.fScale = 0.5f;
-		WS[i].BState.fSpeed = 1.0F;
+		WS[i].BState.fSpeed = 5.0f;
 		WS[i].BState.iHitEfcNum = 0;
 		WS[i].BState.iLineEfcNum = 3;
 		WS[i].BState.iSEHitNum = 0;
@@ -87,8 +87,7 @@ void clsRobo::RoboInit(
 
 	m_fLockRange = 500.0f;//ロックオン距離.
 	m_fLockCircleRadius = 500.0f;//ロックオン判定の半径.
-	
-	
+
 }
 
 void clsRobo::Walk()
@@ -223,10 +222,11 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
-	CharactorUpdate();
+	
 
 	PlayBoostEfc();
-	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };
+	CharactorUpdate();
+	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
 
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{

@@ -19,8 +19,8 @@ void clsEnemyRobo::Init(
 	MSTmp.iHorDistance = 100;
 	MSTmp.iMoveDir = 0;
 	MSTmp.iMoveDirRandMax = 0;
-	MSTmp.iVerDistance = 100;
-	MSTmp.iVerDistRandMax = 200;
+	MSTmp.iVerDistance = 5000;
+	MSTmp.iVerDistRandMax = 500;
 	MSTmp.iVerMoveENLimitParcent = 50;
 
 	m_LShotData.iCategory = 1;
@@ -69,7 +69,7 @@ bool clsEnemyRobo::IsBoostOff()
 
 		if (fVerDis < 0.0f)//ìGÇ™â∫Ç…Ç¢ÇÈ.
 		{
-			if (abs(fVerDis) > fVerDestDis)//ìGÇ∆ÇÃçÇÇ≥ÇÃç∑Ç™ëÂÇ´Ç∑Ç¨ÇÈ.
+			if (abs(fVerDis) > abs(fVerDestDis))//ìGÇ∆ÇÃçÇÇ≥ÇÃç∑Ç™ëÂÇ´Ç∑Ç¨ÇÈ.
 			{
 				return true;
 			}
