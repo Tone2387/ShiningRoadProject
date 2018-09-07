@@ -222,6 +222,7 @@ HRESULT clsDX9Mesh::LoadXMesh(LPSTR fileName)
 	//マテリアル数分繰り返し.
 	for (DWORD i = 0; i < m_dwNumMaterials; i++)
 	{
+		m_ppIndexBuffer[i] = nullptr;
 		//マテリアル情報のコピー.
 		m_pMaterials[i].Ambient.x = d3dxMaterials[i].MatD3D.Ambient.r;
 		m_pMaterials[i].Ambient.y = d3dxMaterials[i].MatD3D.Ambient.g;
