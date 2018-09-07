@@ -9,6 +9,7 @@
 #include "WindowBox.h"
 #include "File.h"
 #include "CFont.h"
+#include "AssembleModel.h"
 #include <vector>
 
 
@@ -42,6 +43,7 @@ public:
 	void Update( 
 		enSELECT_MODE enSelect,
 		std::shared_ptr< clsFILE > const spFile = nullptr,
+		clsASSEMBLE_MODEL* const pModel = nullptr,
 		const int iPartsType = 0,	//パーツ種類.
 		const int iPartsNum = 0,	//パーツ番号.
 		const int iStatusCutNum = 0 );//ステータスじゃないデータの数.	
@@ -123,7 +125,8 @@ private:
 	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
 
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目名 ).
-	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//ステータス値.
+	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//今見ているパーツのステータス値.
+	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumTextNow;	//現在の装備のステータス値.
 
 
 	std::unique_ptr< clsUiText > m_upPartsNameText;//パーツ名.

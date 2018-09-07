@@ -37,6 +37,7 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	,m_upPartsFactory( nullptr )
 	,m_vpParts()
 	,m_dAnimSpd( 0.0 )
+	,m_enPartsNum()
 {
 	m_dAnimSpd = dANIM_SPD;
 }
@@ -208,6 +209,8 @@ void clsASSEMBLE_MODEL::AttachModel(
 	tmpName = OprtStr.ConsolidatedNumber( tmpName, PartsNum );	//そのパーツの何番?.
 	m_vpParts[ucParts]->SetPartsName( tmpName );				//名前教える.
 //	AnimReSet();
+
+	m_enPartsNum[ static_cast<char>( enParts ) ] = static_cast< enPARTS_TYPES >( PartsNum );
 }
 
 
@@ -304,6 +307,13 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 	}
 }
 
+
+int clsASSEMBLE_MODEL::GetPartsNum( const enPARTS_TYPES enPartsType )
+{
+	return m_enPartsNum[ enPartsType ];
+
+	return 0;
+}
 
 
 //パーツのアニメーション変更.

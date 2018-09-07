@@ -142,6 +142,10 @@ const D3DXVECTOR2 vTEXT_POS_STATUS = {
 //値文字の座標.
 const D3DXVECTOR2 vTEXT_POS_STATUS_NUM = 
 	{ vTEXT_POS_STATUS.x + INIT_SIZE_STATUS_WINDOW.w - 12.0f, vTEXT_POS_STATUS.y };
+//ビフォアをどれくらい左にずらすか.
+const float fTEXT_POS_YX_OFFSET_STATUS_NOW = -64.0f;
+//今のステータスとみているパーツの間に挟むもの.
+const string sSTATUS_TEXT_MIDWAY = "     >>";
 //----- ステータスウィンドウ終わり -----//.
 
 
@@ -434,35 +438,36 @@ void clsASSEMBLE_UI::Create(
 	assert( !m_vupStatusText.size() );
 	m_vupStatusText.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-//		m_vupStatusText.push_back( nullptr );
 		m_vupStatusText[i] = make_unique< clsUiText >();
 		m_vupStatusText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
 		m_vupStatusText[i]->SetPos( vTEXT_POS_STATUS );
 		m_vupStatusText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-//		m_vupStatusText[i]->SetText( "Magazine Load Time" );
 	}
 	m_vupStatusText.shrink_to_fit();
 
 	//ステータス値.
 	assert( !m_vupStatusNumText.size() );
-	m_vupStatusNumText.reserve( iSTATUS_NUM_MAX );
+	assert( !m_vupStatusNumTextNow.size() );
+//	m_vupStatusNumText.reserve( iSTATUS_NUM_MAX );
 	m_vupStatusNumText.resize( iSTATUS_NUM_MAX );
+	m_vupStatusNumTextNow.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-//		m_vupStatusNumText.push_back( nullptr );
 		m_vupStatusNumText[i] = make_unique< clsUiText >();
 		m_vupStatusNumText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
 		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
 		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-//		m_vupStatusNumText[i]->SetText( "12345 >> 12345" );
+
+		m_vupStatusNumTextNow[i] = make_unique< clsUiText >();
+		m_vupStatusNumTextNow[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
+		m_vupStatusNumTextNow[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vupStatusNumTextNow[i]->AddPos( { fTEXT_POS_YX_OFFSET_STATUS_NOW, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
 	}
-	m_vupStatusNumText.shrink_to_fit();
 
 	//パーツ名.
 	assert( !m_upPartsNameText );
 	m_upPartsNameText = make_unique< clsUiText >();
 	m_upPartsNameText->Create( pContext, WND_W, WND_H, TEXT_SCALE_PARTS_NAME );
 	m_upPartsNameText->SetPos( vTEXT_POS_PARTS_NAME );
-//	m_upPartsNameText->SetText( "PARTS_NAME" );
 
 #if _DEBUG
 	ss.Disp = { WND_W, WND_H };
@@ -512,6 +517,7 @@ void clsASSEMBLE_UI::Input(
 void clsASSEMBLE_UI::Update( 
 	enSELECT_MODE enSelect,
 	shared_ptr< clsFILE > const spFile, 
+	clsASSEMBLE_MODEL* const pModel,
 	const int iPartsType,
 	const int iPartsNum,
 	const int iStatusCutNum )
@@ -547,6 +553,9 @@ void clsASSEMBLE_UI::Update(
 		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
 		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
 		m_vupStatusNumText[i]->AddPos( { 0.0f, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
+		m_vupStatusNumTextNow[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vupStatusNumTextNow[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vupStatusNumTextNow[i]->AddPos( { fTEXT_POS_YX_OFFSET_STATUS_NOW, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
 	}
 	
 	//ステータスの数の差によるずれを修正.
@@ -582,7 +591,14 @@ void clsASSEMBLE_UI::Update(
 		m_vupStatusText[i]->SetText( m_vsStatusNameBox[ iPartsType ][i].c_str() );
 		//ステータス数値セット.
 		assert( m_vupStatusNumText[i] );
-		m_vupStatusNumText[i]->SetText( spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
+		m_vupStatusNumText[i]->SetText( 
+			spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
+		//今のステータス.
+		assert( m_vupStatusNumTextNow[i] );
+		string tmpString = spFile->GetDataString( 
+				pModel->GetPartsNum( static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( iPartsType ) ), 
+				i + iStatusCutNum ) + sSTATUS_TEXT_MIDWAY;
+		m_vupStatusNumTextNow[i]->SetText( tmpString.c_str() );
 	}
 
 	//日本語説明文を調整.
@@ -706,6 +722,8 @@ void clsASSEMBLE_UI::RenderPartsState(
 			m_vupStatusText[i]->Render();
 			assert( m_vupStatusNumText[i] );
 			m_vupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
+			assert( m_vupStatusNumTextNow[i] );
+			m_vupStatusNumTextNow[i]->Render( clsUiText::enPOS::RIGHT );
 		}
 
 

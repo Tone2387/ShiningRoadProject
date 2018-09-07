@@ -338,6 +338,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_pUI->Update( 
 			m_enSelectMode,
 			m_vspFile[m_PartsSelect.Type], 
+			m_pAsmModel,
 			m_PartsSelect.Type, 
 			m_PartsSelect.Num[m_PartsSelect.Type], 
 			iSTATUS_CUT_NUM );
