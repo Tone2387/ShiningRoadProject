@@ -390,13 +390,6 @@ void clsASSEMBLE_UI::Create(
 	m_upRoboWindow->SetPos( INIT_POS_ROBO_WINDOW );
 	m_upRoboWindow->SetAlpha( fROBO_WINDOW_ALPHA );
 
-	//出撃ボタン.
-	assert( !m_upMissionStart );
-	ss.Disp = SIZE_MISSION_START_BUTTON;
-	m_upMissionStart = make_unique< clsSprite2D >();
-	m_upMissionStart->Create( pDevice, pContext, sPATH_MISSION_START_BUTTON, ss );
-	m_upMissionStart->SetPos( vINIT_POS_MISSION_START_BUTTON );
-
 	//ヘッダー.
 	assert( !m_upHeader );
 	ss.Disp = INIT_SIZE_HEADER;
@@ -471,13 +464,6 @@ void clsASSEMBLE_UI::Create(
 	m_upPartsNameText->SetPos( vTEXT_POS_PARTS_NAME );
 //	m_upPartsNameText->SetText( "PARTS_NAME" );
 
-	//ボタン.
-	assert( !m_upButton );
-	ss.Disp = { INIT_DISP_BUTTON_SPRITE, INIT_DISP_BUTTON_SPRITE };
-	ss.Anim = INIT_ANIM_BUTTON_SPRITE;
-	m_upButton = make_unique< clsSprite2D >();
-	m_upButton->Create( pDevice, pContext, sPATH_BUTONS, ss );
-
 #if _DEBUG
 	ss.Disp = { WND_W, WND_H };
 	m_upDegine = make_unique< clsSprite2D >();
@@ -485,6 +471,14 @@ void clsASSEMBLE_UI::Create(
 	m_upDegine->SetPos( vINIT_POS_DESIGN );
 	m_upDegine->SetAlpha( 0.5f );
 #endif//#if _DEBUG
+
+	//ボタン.
+	assert( !m_upButton );
+	ss.Disp = { INIT_DISP_BUTTON_SPRITE, INIT_DISP_BUTTON_SPRITE };
+	ss.Anim = INIT_ANIM_BUTTON_SPRITE;
+	m_upButton = make_unique< clsSprite2D >();
+	m_upButton->Create( pDevice, pContext, sPATH_BUTONS, ss );
+
 }
 
 
@@ -630,9 +624,6 @@ void clsASSEMBLE_UI::Render(
 	assert( m_upRoboWindow );
 	m_upRoboWindow->Render();
 
-
-	assert( m_upMissionStart );
-	m_upMissionStart->Render();
 
 	assert( m_upHeaderText );
 	m_upHeaderText->Render();
