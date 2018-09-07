@@ -71,6 +71,7 @@ public:
 
 	void SetAnimSpd( const double &dSpd );
 
+	int GetPartsNum( const enPARTS_TYPES enParts );
 
 	//パーツのアニメーション変更.
 	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
@@ -123,6 +124,10 @@ protected:
 //	clsPARTS_BASE**	m_wppParts;
 	std::vector< clsPARTS_BASE* >	m_vpParts;
 
+private:
+
+	//GetPartsNum関数の為.
+	enPARTS_TYPES m_enPartsNum[ enPARTS_TYPES::ENUM_SIZE ];
 
 };
 

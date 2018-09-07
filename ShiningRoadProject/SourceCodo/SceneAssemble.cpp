@@ -64,7 +64,7 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 //日本語UI.
 const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
 //ボタン説明.
-const D3DXVECTOR3 vFONT_BUTTON_POS = { 756.0f, 44.0f, 0.0f };
+const D3DXVECTOR3 vFONT_BUTTON_POS = { 600.0f, 40.0f, 0.0f };
 const float fFONT_BUTTON_SCALE = 14.0f;
 const int iFONT_BUTTON_LINE = 0;
 const int iFONT_BUTTON_TEXT_SIZE = 64;
@@ -219,7 +219,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 #if _DEBUG
 	//テストモデル初期化 & パーツ切替.
-	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
+	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK
 
 		static int tmpI = 0; 
@@ -295,14 +295,18 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressLeft()	)MoveCursorLeft();
 	if( isPressUp()		)MoveCursorUp();
 	if( isPressDown()	)MoveCursorDown();
-	if( isPressEnter()	){
+	if( m_wpXInput->isPressEnter( XINPUT_B ) ||
+		GetAsyncKeyState( VK_RETURN ) & 0x1 )
+	{
 		Enter( enNextScene );
 	}
 	if( isPressExit() ){
 		Undo( enNextScene );
 	}
 	//次のシーンへ.
-	if( m_wpXInput->isPressEnter( XINPUT_START ) ){
+	if( m_wpXInput->isPressEnter( XINPUT_START ) || 
+		GetAsyncKeyState( VK_SPACE ) )
+	{
 		MissionStart( enNextScene );
 	}
 	//ステータスウィンドウを隠す.
@@ -336,6 +340,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_pUI->Update( 
 			m_enSelectMode,
 			m_vspFile[m_PartsSelect.Type], 
+			m_pAsmModel,
 			m_PartsSelect.Type, 
 			m_PartsSelect.Num[m_PartsSelect.Type], 
 			iSTATUS_CUT_NUM );
@@ -491,17 +496,17 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 		m_PartsSelect.Type ++;
 		m_pUI->AddCommentNoForChangePartsType();
 
-		//武器を超えたら.
-		if( m_PartsSelect.Type >= clsASSEMBLE_MODEL::ENUM_SIZE ){
-			//出撃.
-			m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
-		}
+//		//武器を超えたら.
+//		if( m_PartsSelect.Type >= clsASSEMBLE_MODEL::ENUM_SIZE ){
+//			//出撃.
+//			m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
+//		}
 
 		m_PartsSelect.Type = 
 			KeepRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
 	}
-	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
-	}
+//	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
+//	}
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorLeft()
@@ -518,10 +523,11 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 		m_PartsSelect.Type = 
 			KeepRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
 	}
-	//パーツ選択に戻る.
-	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
-		m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
-	}
+	//戻らせないよ.
+//	//パーツ選択に戻る.
+//	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
+//		m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+//	}
 }
 
 //決定.
@@ -540,6 +546,8 @@ void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 {
 	m_wpSound->PlaySE( enSE::MISSION_START );
 	enNextScene = enSCENE::MISSION;
+
+	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
 }
 
 //パーツ変更.

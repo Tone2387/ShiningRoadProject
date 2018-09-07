@@ -3,6 +3,7 @@
 using namespace std;
 
 const float fROBO_SCALE = 0.5f;
+const float fBACK_SCALE = 1.0f;
 
 //ƒƒS.
 const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
@@ -53,7 +54,7 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upBack->AttachModel( 
 		m_wpResource->GetStaticModels( clsResource::enStaticModel_StageBase ) );
 	m_upBack->SetPosition( m_pRoboModel->GetPos() );
-	m_upBack->SetScale( 16.0f );
+	m_upBack->SetScale( fBACK_SCALE );
 
 //	//ƒJƒƒ‰.
 //	assert( m_wpCamera );
