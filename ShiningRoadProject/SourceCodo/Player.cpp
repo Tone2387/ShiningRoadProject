@@ -130,7 +130,7 @@ void clsPlayer::ActionProduct()
 
 D3DXVECTOR3 clsPlayer::GetCamTargetPos()
 {
-	return m_vCamTargetPos;
+	return m_vLockRangePos;
 }
 
 
@@ -197,7 +197,7 @@ void clsPlayer::UpdateCamTargetPos()
 	vCamPosTmp = m_vCamTargetPos;//åªç›à íuÇéÊìæ
 	vCamPosTmp -= (vCamPosTmp - vCamTargetPos) * fCamMoveSpeed;
 
-	m_vLookTargetPos = vCamPosTmp + m_vLockRangeDir * m_fLockRange;
+	m_vLookTargetPos = m_vLockRangePos + m_vLockRangeDir * m_fLockRange;
 
 	D3DXVec3Normalize(&vCamAxis, &vCamAxis);
 
@@ -214,11 +214,6 @@ void clsPlayer::UpdateCamTargetPos()
 		m_vLockRangePos.z
 	};
 
-	//m_vLockCenterPos = m_vLockRangePos + m_vLockRangeDir * (m_fLockRange);
-	//m_vLockCenterPos = m_vCamTargetPos + (vForward * m_fLockRange);
-
-	m_vLockCenterPos = vPos + vForward * m_fLockRange;
-
 	m_vCamTargetPos = vCamPosTmp;
 
 	//CenterPosTest();
@@ -226,7 +221,7 @@ void clsPlayer::UpdateCamTargetPos()
 
 void clsPlayer::CenterPosTest()
 {
-	float fX = m_vLockRangePos.x - m_vCamTargetPos.x;
+	/*float fX = m_vLockRangePos.x - m_vCamTargetPos.x;
 	float fZ = m_vLockRangePos.z - m_vCamTargetPos.z;
 
 	float fYaw = atan2f(fX, fZ) / 2;
@@ -243,7 +238,7 @@ void clsPlayer::CenterPosTest()
 	D3DXVECTOR3 vForward;
 
 	D3DXVec3TransformCoord(&vForward, &g_vDirForward, &mCamRot);
-	m_vLockCenterPos = m_vCamTargetPos + (vForward * m_fLockRange);
+	m_vLockCenterPos = m_vCamTargetPos + (vForward * m_fLockRange);*/
 }
 
 D3DXVECTOR3 clsPlayer::GetLockRangeTmp()

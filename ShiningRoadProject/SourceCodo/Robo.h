@@ -58,11 +58,6 @@ public:
 
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
-		vTmp.x += m_fLookUpDir + (D3DX_PI / 2);
-
-		m_pMesh->SetPartsRotate(enPARTS::ARM_L, vTmp);
-		m_pMesh->SetPartsRotate(enPARTS::ARM_R, vTmp);
-
 		m_pMesh->UpDate();
 		//UpdateCollsion();
 	}
@@ -73,6 +68,7 @@ public:
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye) override
 	{
+		m_mProj = mProj;
 		ModelUpdate();
 		m_pMesh->Render(mView, mProj, vLight, vEye);
 		UpdatePosfromBone();
@@ -138,6 +134,8 @@ public:
 
 	void ShotLWeapon();
 	void ShotRWeapon();
+	bool IsLWeaponLock();
+	bool IsRWeaponLock();
 
 	void Updata();
 	void UpdataQuick();

@@ -110,17 +110,30 @@ void clsSCENE_MISSION::CreateUI()
 	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\GaugeWaku.png", ss);
 	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
 
-	assert(!m_pRaderWindow);
+	assert(!m_pRaderWindowFront);
+	ss.Disp = { 960.0f / 8, 640.0f / 8 };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pRaderWindowFront = new clsSPRITE2D_CENTER;
+
+	m_pRaderWindowFront->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowFront.png", ss);
+	m_pRaderWindowFront->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pRaderWindowFront->SetAlpha(0.4f);
+
+	assert(!m_pRaderWindowBack);
 	ss.Disp = { 960.0f / 8, 640.0f / 8 };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_fRaderSizeW = ss.Disp.w;
 	m_fRaderSizeH = ss.Disp.h;
 
-	m_pRaderWindow = new clsSPRITE2D_CENTER;
+	m_pRaderWindowBack = new clsSPRITE2D_CENTER;
 
-	m_pRaderWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindow.png", ss);
-	m_pRaderWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	m_pRaderWindowBack->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowBack.png", ss);
+	m_pRaderWindowBack->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pRaderWindowBack->SetAlpha(0.4f);
 
 	ss.Disp = { 44.0f / 8, 44.0f / 8 };
 
@@ -139,28 +152,77 @@ void clsSCENE_MISSION::CreateUI()
 		m_v_pRaderEnemyMark[i]->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 	}
 
-	assert(!m_pCursor);
-
-	m_fCursorSize = m_pPlayer->m_fLockCircleRadius;
-
-	ss.Disp = { m_fCursorSize, m_fCursorSize };
+	assert(!m_pCursorFrame);
+	ss.Disp = { 512.0f, 512.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
-	m_pCursor = new clsSprite;
+	m_fRaderSizeW = ss.Disp.w;
+	m_fRaderSizeH = ss.Disp.h;
 
-	m_pCursor->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext());
-	m_pCursor->m_vPos = { WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f };	
-	m_pCursor->SetScale(m_fCursorSize);
+	m_pCursorFrame = new clsSPRITE2D_CENTER;
 
-	assert(!m_pTarget);
+	m_pCursorFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
+	m_pCursorFrame->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	assert(!m_pCursor);
+	ss.Disp = { 1.0f, 1.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_fRaderSizeW = ss.Disp.w;
+	m_fRaderSizeH = ss.Disp.h;
+
+	m_pCursor = new clsSPRITE2D_CENTER;
+
+	m_pCursor->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
+	m_pCursor->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pCursor->SetAlpha(0.4f);
+
+	assert(!m_pLWeaponLockMark);
+	ss.Disp = { 128.0f, 64.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pLWeaponLockMark = new clsSPRITE2D_CENTER;
+
+	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockMark.png", ss);
+	m_pLWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pLWeaponLockMark->SetAlpha(0.4f);
+
+	assert(!m_pRWeaponLockMark);
+	ss.Disp = { 128.0f, 64.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pRWeaponLockMark = new clsSPRITE2D_CENTER;
+
+	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockMark.png", ss);
+	m_pRWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pRWeaponLockMark->SetAlpha(0.4f);
+
+	assert(!m_pHitMark);
+	ss.Disp = { 128.0f, 64.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_fHitMarkRaderSizeW = ss.Disp.w;
+	m_fHitMarkRaderSizeH = ss.Disp.h;
+
+	m_pHitMark = new clsSPRITE2D_CENTER;
+
+	m_pHitMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\HitMark.png", ss);
+	m_pHitMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pHitMark->SetAlpha(0.4f);
+
+	assert(!m_pLockWindow);
 
 	ss.Disp = { 100.0f, 100.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
-	m_pTarget = new clsSPRITE2D_CENTER;
+	m_pLockWindow = new clsSPRITE2D_CENTER;
 
-	m_pTarget->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
-	m_pTarget->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	m_pLockWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockWindow.png", ss);
+	m_pLockWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 }
 
 //毎フレーム通る処理.
@@ -256,11 +318,6 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	Collison();
 
 	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
-
-	SetDepth(false);
-	m_pCursor->m_vPos = m_pPlayer->GetLockCenterPos();
-	m_pCursor->Render(m_mView, m_mProj, vCamPos);
-	SetDepth(true);
 }
 
 void clsSCENE_MISSION::RenderUi()
@@ -322,8 +379,7 @@ void clsSCENE_MISSION::RenderUi()
 	const float fRaderDis = 1.0f;//大きくするとレーダーの索敵範囲が広がる.
 
 	//float fWindowSizeW;
-
-	m_pRaderWindow->Render();
+	m_pRaderWindowBack->Render();
 
 	for (int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
 	{
@@ -348,20 +404,57 @@ void clsSCENE_MISSION::RenderUi()
 		if (abs(fPosX) + (m_fRaderMarkSizeW / 2) < m_fRaderSizeW / 2 &&
 			abs(fPosY) + (m_fRaderMarkSizeH / 2) < m_fRaderSizeH / 2)
 		{
-			fPosX = m_pRaderWindow->GetPos().x + fPosX;
-			fPosY = m_pRaderWindow->GetPos().y + fPosY;
+			fPosX = m_pRaderWindowFront->GetPos().x + fPosX;
+			fPosY = m_pRaderWindowFront->GetPos().y + fPosY;
 
 			m_v_pRaderEnemyMark[i]->SetPos({ fPosX, fPosY, 0.0f });
 			m_v_pRaderEnemyMark[i]->Render();
 		}
 	}
 
+	m_pRaderWindowFront->Render();
+
+	vPosTmp = m_pPlayer->GetLookTargetPos();
+
+	vPosTmp = ConvDimPos(vPosTmp);
+
+	m_pCursorFrame->SetPos(vPosTmp);
+	m_pCursorFrame->Render();
+
+	m_pCursor->SetScale(m_pPlayer->GetLockCircleScale());
+	m_pCursor->SetPos(vPosTmp);
+	m_pCursor->Render();
+
 	if (m_pPlayer->GetTargetPos(vPosTmp))
 	{
-		vPosTmp = ConvDimPos(vPosTmp);
-		m_pTarget->SetPos(vPosTmp);
-		m_pTarget->Render();
+		vPosTmp = m_pPlayer->m_vTargetScrPos;
+
+		//vPosTmp = ConvDimPos(vPosTmp);
+		
+		m_pLockWindow->SetPos(vPosTmp);
+		m_pLockWindow->Render();
+		
+		if (iHitDispTime > 0)
+		{
+			m_pHitMark->SetPos(vPosTmp);
+			m_pHitMark->Render();
+
+			iHitDispTime--;
+		}
+
+		if (m_pPlayer->IsLWeaponLock())
+		{
+			m_pLWeaponLockMark->SetPos(vPosTmp - D3DXVECTOR3{ m_fHitMarkRaderSizeW, m_fHitMarkRaderSizeH, 0.0f });
+			m_pLWeaponLockMark->Render();
+		}
+
+		if (m_pPlayer->IsRWeaponLock())
+		{
+			m_pRWeaponLockMark->SetPos(vPosTmp + D3DXVECTOR3{ m_fHitMarkRaderSizeW, m_fHitMarkRaderSizeH, 0.0f });
+			m_pRWeaponLockMark->Render();
+		}
 	}
+	
 	
 	SetDepth(true);
 }
@@ -403,7 +496,10 @@ void clsSCENE_MISSION::CreateEnemys()
 
 void clsSCENE_MISSION::Collison()
 {
-	ColFShottoEBody();
+	if (ColFShottoEBody())
+	{
+		iHitDispTime = 20 * static_cast<int>(g_fFPS);
+	}
 	ColEShottoFBody();
 }
 
@@ -421,16 +517,21 @@ void clsSCENE_MISSION::ColFShottoFBody()
 	}
 }
 
-void clsSCENE_MISSION::ColFShottoEBody()
+bool clsSCENE_MISSION::ColFShottoEBody()
 {
+	bool bResult = false;
+
 	for (int i = 0; i < m_v_pFriends.size(); i++)
 	{
 		for (int j = 0; j < m_v_pEnemys.size(); j++)
 		{
 			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
 			m_v_pEnemys[j]->Damage(Tmp);
+			if (!bResult)bResult = Tmp.bHit;
 		}
 	}
+
+	return bResult;
 }
 
 void clsSCENE_MISSION::ColEShottoFBody()

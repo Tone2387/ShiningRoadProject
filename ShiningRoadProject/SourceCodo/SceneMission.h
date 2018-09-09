@@ -59,7 +59,7 @@ private:
 	
 	//“¯ƒLƒƒƒ‰‚ÌShot‚ª“¯ƒLƒƒƒ‰‚ÌBody‚É“–‚½‚é”»’è‚ğ“ü‚ê‚é‚©‚Íˆ—‚ÌŒ“‚Ë‡‚¢‚Å“ü‚ê‚é.
 	void ColFShottoFBody();
-	void ColFShottoEBody();
+	bool ColFShottoEBody();
 
 	void ColEShottoFBody();
 	void ColEShottoEBody();
@@ -83,7 +83,8 @@ private:
 
 	void CreateUI();
 
-	clsSPRITE2D_CENTER* m_pRaderWindow;
+	clsSPRITE2D_CENTER* m_pRaderWindowFront;
+	clsSPRITE2D_CENTER* m_pRaderWindowBack;
 	std::vector<clsSPRITE2D_CENTER*> m_v_pRaderEnemyMark;
 
 	float m_fRaderSizeW;
@@ -94,16 +95,26 @@ private:
 
 	float m_fRaderDis;
 
+	clsSPRITE2D_CENTER* m_pLockWindow;
+	clsSPRITE2D_CENTER* m_pLWeaponLockMark;
+	clsSPRITE2D_CENTER* m_pRWeaponLockMark;
+	float m_fHitMarkRaderSizeW;
+	float m_fHitMarkRaderSizeH;
+
+	clsSPRITE2D_CENTER* m_pHitMark;
+	int iHitDispTime;
 
 	clsSPRITE2D_CENTER* m_pEnelgy;
 	clsSPRITE2D_CENTER* m_pEnelgyFrame;
 
-	clsSprite* m_pCursor;
+	clsSPRITE2D_CENTER* m_pCursorFrame;
+	clsSPRITE2D_CENTER* m_pCursor;
 	float m_fCursorSize;
 
-	clsSPRITE2D_CENTER* m_pTarget;
-
 	clsUiText* m_pHP;
+
+	clsSPRITE2D_CENTER* m_pLBulletMark;
+	clsSPRITE2D_CENTER* m_pRBulletMark;
 
 	clsUiText* m_pLBulletNum;
 	clsUiText* m_pRBulletNum;

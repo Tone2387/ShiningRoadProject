@@ -70,9 +70,15 @@ public:
 	float m_fLockCircleRadius;//ロックオン判定の半径.
 
 	D3D10_VIEWPORT* m_pViewPort;//三次元から二次元への変換用.
+	D3DXMATRIX m_mProj;//三次元から二次元への変換用.
 	D3DXMATRIX m_mThisCharaView;//このキャラのカメラのビュー行列.
 	D3DXVECTOR3 m_vLockRangePos;//ロックオン判定の開始座標(カメラ座標).
+	D3DXVECTOR3 m_vLockCenterPos;
+	D3DXVECTOR3 m_vTargetScrPos;
+	bool m_bCamPosXSwitch;
 	bool IsTargetDirBack();//敵がキャラより後ろにいるか.
+
+	
 
 	D3DXVECTOR3 GetCamPos();
 
@@ -108,6 +114,8 @@ public:
 	int m_iTargetNo;
 
 	bool m_bRadarWarning;//ロックされてる.
+
+	void CharaInit(clsPOINTER_GROUP* pPrt);
 
 	void CharactorUpdate();
 
@@ -170,7 +178,7 @@ public:
 	clsCharactor();
 	virtual ~clsCharactor();
 
-	bool RecoLange(
+	bool IsCurcleLange(
 		const D3DXVECTOR3 CenterPos, 
 		const D3DXVECTOR3 TargetPos, 
 		const float Range);//円の範囲判定.

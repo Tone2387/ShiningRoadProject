@@ -88,6 +88,7 @@ void clsRobo::RoboInit(
 	m_fLockRange = 500.0f;//ロックオン距離.
 	m_fLockCircleRadius = 500.0f;//ロックオン判定の半径.
 
+	m_pViewPort = pPtrGroup->GetViewPort10();
 }
 
 void clsRobo::Walk()
@@ -563,6 +564,26 @@ int clsRobo::GetBoostEfcNum(enPARTS PartsNum, const char* strBoostPosition)
 	}
 
 	return iResult;
+}
+
+bool clsRobo::IsLWeaponLock()
+{
+	if (m_v_pWeapons[enWeaponLHand]->IsLock())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool clsRobo::IsRWeaponLock()
+{
+	if (m_v_pWeapons[enWeaponRHand]->IsLock())
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void clsRobo::PlayBoostEfc()
