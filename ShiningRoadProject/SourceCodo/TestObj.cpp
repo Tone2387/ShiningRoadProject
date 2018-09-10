@@ -62,7 +62,7 @@ void clsTestObj::ActionProduct()
 		pRoboCom->Trigger(this, abs(fPush), fAngle);
 	}
 
-	pRoboCom = m_pAI->LookOperation(fPush, fAngle);
+	pRoboCom = m_pAI->LookOperation(fPush, fAngle);//ã‰º‹üˆÚ“®.
 
 	if (pRoboCom)
 	{
