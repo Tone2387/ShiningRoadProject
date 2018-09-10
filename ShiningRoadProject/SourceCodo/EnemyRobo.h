@@ -81,4 +81,6 @@ private:
 		int iAvoidDir;
 		int iLockTimeorDamage;
 	};
+
+	
 };

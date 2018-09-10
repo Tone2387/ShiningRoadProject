@@ -1,6 +1,6 @@
 #include"TestObject.h"
 
-const bool g_bAction = false;
+const bool g_bAction = true;
 
 clsTestObj::clsTestObj()
 	: m_pAI(nullptr)
