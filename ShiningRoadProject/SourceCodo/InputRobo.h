@@ -276,7 +276,7 @@ public:
 
 	clsRoboCommand* MoveSwitch()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_03))
+		if (m_pDxInput->IsPressKey(enPKey_00))
 		{
 			if (!m_bChangeSwitch)
 			{
