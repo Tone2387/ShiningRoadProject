@@ -449,7 +449,10 @@ void clsSCENE_MISSION::RenderUi()
 		}
 	}
 	
-	iHitDispTime--;
+	if (iHitDispTime > 0)
+	{
+		iHitDispTime--;
+	}
 	
 	SetDepth(true);
 }
