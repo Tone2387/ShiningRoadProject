@@ -434,8 +434,6 @@ void clsSCENE_MISSION::RenderUi()
 		{
 			m_pHitMark->SetPos(vPosTmp);
 			m_pHitMark->Render();
-
-			iHitDispTime--;
 		}
 
 		if (m_pPlayer->IsLWeaponLock())
@@ -451,6 +449,7 @@ void clsSCENE_MISSION::RenderUi()
 		}
 	}
 	
+	iHitDispTime--;
 	
 	SetDepth(true);
 }
