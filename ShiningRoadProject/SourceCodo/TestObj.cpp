@@ -1,5 +1,7 @@
 #include"TestObject.h"
 
+const bool g_bAction = false;
+
 clsTestObj::clsTestObj()
 	: m_pAI(nullptr)
 {
@@ -39,15 +41,19 @@ void clsTestObj::ActionProduct()
 
 	float fPushMin = 0.5f;
 
+	LockChara();
+
 	m_pAI->SearchTarget(m_v_pEnemys);
 
-	pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
-
-	if (pRoboCom)
+	if (g_bAction)
 	{
-		pRoboCom->Trigger(this, fPush, fAngle);
+		pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
+
+		if (pRoboCom)
+		{
+			pRoboCom->Trigger(this, fPush, fAngle);
+		}
 	}
-	
 
 	pRoboCom = m_pAI->RotateOperation(fPush, fAngle);//旋回.
 
@@ -63,47 +69,51 @@ void clsTestObj::ActionProduct()
 		pRoboCom->Trigger(this, fPush, fAngle);
 	}
 
-	pRoboCom = m_pAI->LShotOperation();
-
-	if (pRoboCom)
+	if (g_bAction)
 	{
-		pRoboCom->PushBotton(this);
-	}
-
-	pRoboCom = m_pAI->RShotOperation();
-
-	if (pRoboCom)
-	{
-		pRoboCom->PushBotton(this);
-	}
-
-	pRoboCom = m_pAI->QuickTurnOperation(fPush, fAngle);
-
-	if (pRoboCom)
-	{
-		if (m_bBoost)
-		{
-			MoveSwitch();//QuickTrunの為に強制的にブースターを切る.
-		}
-
-		pRoboCom->Trigger(this, fPush, fAngle);
-		pRoboCom->PushBotton(this);
-	}
-
-	else
-	{
-		pRoboCom = m_pAI->MoveSwitchOperation();
+		pRoboCom = m_pAI->LShotOperation();
 
 		if (pRoboCom)
 		{
 			pRoboCom->PushBotton(this);
 		}
 
-		pRoboCom = m_pAI->BoostOperation();
+		pRoboCom = m_pAI->RShotOperation();
 
 		if (pRoboCom)
 		{
 			pRoboCom->PushBotton(this);
+		}
+	
+
+		pRoboCom = m_pAI->QuickTurnOperation(fPush, fAngle);
+
+		if (pRoboCom)
+		{
+			if (m_bBoost)
+			{
+				MoveSwitch();//QuickTrunの為に強制的にブースターを切る.
+			}
+
+			pRoboCom->Trigger(this, fPush, fAngle);
+			pRoboCom->PushBotton(this);
+		}
+
+		else
+		{
+			pRoboCom = m_pAI->MoveSwitchOperation();
+
+			if (pRoboCom)
+			{
+				pRoboCom->PushBotton(this);
+			}
+
+			pRoboCom = m_pAI->BoostOperation();
+
+			if (pRoboCom)
+			{
+				pRoboCom->PushBotton(this);
+			}
 		}
 	}
 

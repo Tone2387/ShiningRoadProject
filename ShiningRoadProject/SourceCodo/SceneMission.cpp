@@ -658,7 +658,10 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 		return;
 	}
 
-	const float fCamMoveSpeed = 0.5f;
+	m_vCamTargetPos = pChara->m_vLockRangePos;
+	m_vLookTargetPos = pChara->m_vLockPos;
+
+	/*const float fCamMoveSpeed = 0.5f;
 	const float fLookPosSpace = 50.0f;
 	const float fCamSpaceTmp = 4.0f;
 	const float fCamPosX = 0.5f;
@@ -675,7 +678,7 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 	//Ž²ÍÞ¸ÄÙ‚ð—pˆÓ.
 	float fCamAxisXTmp = 0.0f;
 
-	/*if (m_bCamPosXSwitch)
+	if (m_bCamPosXSwitch)
 	{
 		fCamAxisXTmp = fCamPosX;
 	}
@@ -683,7 +686,7 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 	else
 	{
 		fCamAxisXTmp = -fCamPosX;
-	}*/
+	}
 
 	D3DXVECTOR3 vCamAxis =
 	{
@@ -713,5 +716,5 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 
 	m_vLookTargetPos = vCamPosTmp + vLookAxis * fLookPosSpace;
 
-	m_vCamTargetPos = vCamPosTmp;
+	m_vCamTargetPos = vCamPosTmp;*/
 }
