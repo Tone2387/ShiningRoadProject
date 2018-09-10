@@ -210,6 +210,7 @@ void clsASSEMBLE_MODEL::AttachModel(
 	m_vpParts[ucParts]->SetPartsName( tmpName );				//–¼‘O‹³‚¦‚é.
 //	AnimReSet();
 
+
 	//GetPartsNumŠÖ”—p.
 	int iIndex = static_cast<int>( enParts );
 	if( enParts == enPARTS::ARM_L ||
