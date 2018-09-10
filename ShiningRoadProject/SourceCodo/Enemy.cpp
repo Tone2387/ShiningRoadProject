@@ -16,7 +16,7 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 {
 	m_pTarget = nullptr;
 
-	for (int i = 0; i < v_pEnemys.size(); i++)
+	for (unsigned int i = 0; i < v_pEnemys.size(); i++)
 	{
 		if (!v_pEnemys[i]->m_bDeadFlg)
 		{

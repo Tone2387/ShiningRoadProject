@@ -50,7 +50,7 @@ public:
 		m_pMesh->SetPos(vTmp);
 
 		vTmp = GetRotation();
-		vTmp.y += D3DX_PI;
+		vTmp.y += static_cast<float>(D3DX_PI);
 
 		ObjRollOverGuard(&vTmp.y);
 

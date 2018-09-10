@@ -27,7 +27,7 @@ void clsRobo::RoboInit(
 	m_iBoostTopSpeedFrame = 60;
 
 	m_fQuickBoostSpeedMax = m_fBoostMoveSpeedMax * 3.0f;
-	m_iQuickBoostTopSpeedTime = 1 * g_fFPS;
+	m_iQuickBoostTopSpeedTime = 1 * static_cast<int>(g_fFPS);
 
 	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
 	m_iQuickTrunTopSpeedTime = 15;
@@ -46,13 +46,13 @@ void clsRobo::RoboInit(
 
 	m_iEnelgyMax = 10000;
 	m_iEnelgy = m_iEnelgyMax;
-	m_iEnelgyOutput = 1500 / g_fFPS;
+	m_iEnelgyOutput = 1500 / static_cast<int>(g_fFPS);
 	m_iBoostFloatRecovery = m_iEnelgyOutput / 2;
 
 	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
 
-	m_iActivityLimitTime = 300 * g_fFPS;
+	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
 
 	m_MaxHP = 5000;
 	m_HP = m_MaxHP;
@@ -327,7 +327,7 @@ void clsRobo::SetEnelgyRecoveryAmount()
 
 	if (false)//射撃準備完了.
 	{
-		m_iEnelgyRecoveryPoint - (m_iEnelgyOutput);
+		m_iEnelgyRecoveryPoint -= (m_iEnelgyOutput);
 	}
 }
 
@@ -423,7 +423,7 @@ void clsRobo::SetRHandFrontBoostEffect()
 
 	m_v_RHandFrontBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
 	{
 		m_v_RHandFrontBoostEfc[i] = 0;
 	}
@@ -439,7 +439,7 @@ void clsRobo::SetRHandSideBoostEffect()
 
 	m_v_RHandSideBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
 	{
 		m_v_RHandSideBoostEfc[i] = 0;
 	}
@@ -455,7 +455,7 @@ void clsRobo::SetRHandBackBoostEffect()
 
 	m_v_RHandBackBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 	{
 		m_v_RHandBackBoostEfc[i] = 0;
 	}
@@ -471,7 +471,7 @@ void clsRobo::SetLHandFrontBoostEffect()
 
 	m_v_LHandFrontBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
 	{
 		m_v_LHandFrontBoostEfc[i] = 0;
 	}
@@ -487,7 +487,7 @@ void clsRobo::SetLHandSideBoostEffect()
 
 	m_v_LHandSideBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
 	{
 		m_v_LHandSideBoostEfc[i] = 0;
 	}
@@ -503,7 +503,7 @@ void clsRobo::SetLHandBackBoostEffect()
 
 	m_v_LHandBackBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 	{
 		m_v_LHandBackBoostEfc[i] = 0;
 	}
@@ -519,7 +519,7 @@ void clsRobo::SetCoreBoostEffect()
 
 	m_v_CoreBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
 	{
 		m_v_CoreBoostEfc[i] = 0;
 	}
@@ -535,7 +535,7 @@ void clsRobo::SetLegBoostEffect()
 
 	m_v_LegBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_LegBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_LegBoostEfc.size(); i++)
 	{
 		m_v_LegBoostEfc[i] = 0;
 	}
@@ -613,7 +613,7 @@ void clsRobo::PlayFrontBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -638,7 +638,7 @@ void clsRobo::PlayFrontBoostEfc()
 			m_wpEffects->SetRotation(m_v_LHandFrontBoostEfc[i], vPosRotTmp);
 		}
 
-		for (int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -666,7 +666,7 @@ void clsRobo::PlayFrontBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LHandFrontBoostEfc[i]))
 			{
@@ -674,7 +674,7 @@ void clsRobo::PlayFrontBoostEfc()
 			}
 		}
 
-		for (int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_RHandFrontBoostEfc[i]))
 			{
@@ -698,7 +698,7 @@ void clsRobo::PlayRightBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -727,7 +727,7 @@ void clsRobo::PlayRightBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_RHandSideBoostEfc[i]))
 			{
@@ -751,7 +751,7 @@ void clsRobo::PlayLeftBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -780,7 +780,7 @@ void clsRobo::PlayLeftBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LHandSideBoostEfc[i]))
 			{
@@ -804,7 +804,7 @@ void clsRobo::PlayBackBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -830,7 +830,7 @@ void clsRobo::PlayBackBoostEfc()
 			m_wpEffects->SetRotation(m_v_LHandBackBoostEfc[i], vPosRotTmp);
 		}
 
-		for (int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -858,7 +858,7 @@ void clsRobo::PlayBackBoostEfc()
 		strBoostRootName = "BoosterRoot";
 		strBoostEndName = "BoosterEnd";
 
-		for (int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -887,7 +887,7 @@ void clsRobo::PlayBackBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LHandBackBoostEfc[i]))
 			{
@@ -895,7 +895,7 @@ void clsRobo::PlayBackBoostEfc()
 			}
 		}
 
-		for (int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_RHandBackBoostEfc[i]))
 			{
@@ -903,7 +903,7 @@ void clsRobo::PlayBackBoostEfc()
 			}
 		}
 
-		for (int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
 			{
@@ -927,7 +927,7 @@ void clsRobo::PlayLegBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_LegBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LegBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -956,7 +956,7 @@ void clsRobo::PlayLegBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_LegBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LegBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LegBoostEfc[i]))
 			{

@@ -47,9 +47,9 @@ bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 {
 	if (m_bShotExistFlg)
 	{
-		for (int i = 0; i < g_iColNum; i++)
+		for (unsigned int i = 0; i < g_iColNum; i++)
 		{
-			for (int j = 0; j < v_TargetSphere.size(); j++)
+			for (unsigned int j = 0; j < v_TargetSphere.size(); j++)
 			{
 				float fLenght = D3DXVec3Length(&(*m_v_Spheres[i].vCenter - *v_TargetSphere[j].vCenter));
 				

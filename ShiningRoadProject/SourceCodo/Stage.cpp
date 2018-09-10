@@ -104,7 +104,7 @@ vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 
 	vvpMeshArrayTmp.push_back(m_pStageGround->GetModelPtr());
 
-	for (int i = 0; i < m_vpStageObject.size(); i++)
+	for (unsigned int i = 0; i < m_vpStageObject.size(); i++)
 	{
 		vvpMeshArrayTmp.push_back(m_vpStageObject[i]->GetModelPtr());
 	}
