@@ -63,7 +63,7 @@ bool clsWeapon::Shot()
 
 			fVerDevia = m_pTargetObj->m_fFollPower * iTime;//垂直方向の予測距離.
 
-			vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * iTime;//水平方向移動ベクトル x 到達予想時間 = 水平方向の予想距離.
+			vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * static_cast<float>(iTime);//水平方向移動ベクトル x 到達予想時間 = 水平方向の予想距離.
 			vPrediction = m_pTargetObj->m_vCenterPos;//予測位置にまずはターゲットの位置を入れる.
 
 			vPrediction += vHorDevia;//水平のみ予測位置.

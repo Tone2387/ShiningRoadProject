@@ -11,8 +11,8 @@ void clsEnemyRobo::Init(
 	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 
 	ShotState SSTmp;
-	SSTmp.iShotDisMax = 50.0f;
-	SSTmp.iShotDisMin = 1.0f;
+	SSTmp.iShotDisMax = 50;
+	SSTmp.iShotDisMin = 1;
 
 	MoveState MSTmp;
 	MSTmp.iHorDisRandMax = 500;

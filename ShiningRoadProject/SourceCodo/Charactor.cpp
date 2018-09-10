@@ -83,7 +83,7 @@ void clsCharactor::SetMoveDir(const float fAngle)
 	//行きたい方向.
 	m_vAcceleDir = GetVec3Dir(fAngle, vForward);
 
-	m_vMoveDir += (m_vAcceleDir - m_vMoveDir) / (m_iMoveReverseDirInertia);
+	m_vMoveDir += (m_vAcceleDir - m_vMoveDir) / static_cast<float>(m_iMoveReverseDirInertia);
 }
 
 void clsCharactor::MoveControl()
@@ -286,7 +286,7 @@ bool clsCharactor::PointIntersect(
 
 	BOOL bHit = false;	//命中ﾌﾗｸﾞ.
 
-	float fDis = 0xffffffff;//最大値を入れる.
+	float fDis = static_cast<float>(0xffffffff);//最大値を入れる.
 
 	D3DXIntersect(
 		pTarget->m_pMesh,	//対象ﾒｯｼｭ.
@@ -410,7 +410,7 @@ void clsCharactor::WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon, cons
 
 void  clsCharactor::WeaponUpdate()
 {
-	for (int i = 0; i < m_v_pWeapons.size(); i++)
+	for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 	{
 		m_v_pWeapons[i]->Update();
 	}
@@ -495,7 +495,7 @@ void clsCharactor::LockChara()
 		//新規にロックするターゲットを決定する.
 		clsCharactor* pCharaTmp = nullptr;
 
-		for (int i = 0; i < m_v_pEnemys.size(); i++)
+		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 		{
 			if (m_v_pEnemys[i]->m_bDeadFlg)
 			{
@@ -567,7 +567,7 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 			&m_mThisCharaView,
 			&mW);
 
-		if (IsCurcleLange(m_vLockCenterPos, vTarPosTmp, m_fLockCircleRadius))
+		if (IsCurcleLange(m_vLockCenterPos, vTarPosTmp, m_fLockCircleRadius / 2))
 		{
 			return true;
 		}
@@ -650,7 +650,7 @@ void clsCharactor::Lock()
 {
 	if (m_pTargetChara)
 	{
-		for (int i = 0; i < m_v_pWeapons.size(); i++)
+		for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 		{
 			m_v_pWeapons[i]->Lock(m_pTargetChara);
 		}
@@ -666,7 +666,7 @@ void clsCharactor::LockOut()
 		m_pTargetChara = nullptr;
 	}
 
-	for (int i = 0; i < m_v_pWeapons.size(); i++)
+	for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 	{
 		m_v_pWeapons[i]->LockOut();
 	}
