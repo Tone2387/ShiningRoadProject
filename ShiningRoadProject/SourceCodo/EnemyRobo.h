@@ -28,6 +28,32 @@ public:
 	clsRoboCommand* RShotOperation();
 	
 private:
+	struct QuickBoostApproach
+	{
+		int iDis;
+	};
+
+	struct QuickTrun
+	{
+		int iDir;
+	};
+
+	enum enAvoidCategory
+	{
+		enAvoidLockTime = 0,
+		enAvoidDamage,
+
+		enAvoidSize
+	};
+
+	struct QuickBoostAvoid
+	{
+		enAvoidCategory iAvoidNum;//回避条件カテゴリナンバー.
+		int iUpdateTime;
+		int iAvoidDir;
+		int iLockTimeorDamage;
+	};
+
 	clsRobo* m_pBody;
 
 	clsRoboCommand* m_pComMove;
@@ -54,8 +80,8 @@ private:
 
 	bool IsQuickBoostAvoid(float& fPush, float& fAngle);//クイックブーストによる回避.
 
-	bool IsQuickBoostAvoidtoRockTime(float& fPush, float& fAngle);
-	bool IsQuickBoostAvoidtoDamage(float& fPush, float& fAngle);
+	bool IsQuickBoostAvoidtoLockTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle);
+	bool IsQuickBoostAvoidtoDamage(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle);
 	void ResetAvoidtoDamage();
 
 	bool IsShotR();
@@ -64,21 +90,9 @@ private:
 	ShotData m_LShotData;
 	ShotData m_RShotData;
 
-	struct QuickBoostApproach
-	{
-		int iDis;
-	};
+	
 
-	struct QuickTrun
-	{
-		int iDir;
-	};
-
-	struct QuickBoostAvoid
-	{
-		int iAvoidNum;//回避条件カテゴリナンバー.
-		int iUpdateTime;
-		int iAvoidDir;
-		int iLockTimeorDamage;
-	};
+	std::vector<QuickBoostApproach> m_v_QuickAppState;
+	std::vector<QuickTrun> m_v_QuickTrunState;
+	std::vector<QuickBoostAvoid> m_v_QuickAvoidState;
 };

@@ -4,6 +4,8 @@ void clsCharactor::CharactorUpdate()
 {
 	Move();
 	Rotate();
+
+	m_iDamage = 0;
 }
 
 void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//‰Á‘¬.
@@ -438,6 +440,7 @@ bool clsCharactor::Damage(HitState HitS)
 {
 	if (HitS.bHit)
 	{
+		m_iDamage = HitS.iDamage;
 		if (m_HP < HitS.iDamage)
 		{
 			m_HP = 0;

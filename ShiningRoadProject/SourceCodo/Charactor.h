@@ -114,6 +114,7 @@ public:
 	int m_iTargetNo;
 
 	bool m_bRadarWarning;//ロックされてる.
+	int m_iDamage;//ダメージ(毎フレーム初期化)
 
 	void CharaInit(clsPOINTER_GROUP* pPrt);
 
