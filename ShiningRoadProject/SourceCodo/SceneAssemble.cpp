@@ -50,8 +50,8 @@ const FLOAT INIT_VP_ROBO_Y = 87.0f;
 const FLOAT INIT_VP_ROBO_MIN =	0.0f;
 const FLOAT INIT_VP_ROBO_MAX =	1.0f;
 //カメラ.
-const D3DXVECTOR3 vROBO_VIEW_CAM_POS  = { 0.0f, 20.0f, -100.0f };
-const D3DXVECTOR3 vROBO_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
+const D3DXVECTOR3 vROBO_VIEW_CAM_POS  = { 0.0f, 10.0f, -100.0f };
+const D3DXVECTOR3 vROBO_VIEW_CAM_LOOK = { 0.0f,-10.0f, 0.0f };
 //----- ロボウィンドウ用 -----//.
 
 //----- 背景 -----//.

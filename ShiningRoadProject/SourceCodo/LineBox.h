@@ -36,6 +36,7 @@ public:
 	void AddScale( const D3DXVECTOR3 &vScale );
 	void AddScale( const float &fScale );
 
+	//‚¶‚í‚¶‚í‘å‚«‚³‚ð•Ï‚¦‚³‚¹‚½‚¢‚Æ‚«‚ÉŽg‚¤.
 	void SetSizeTarget( const D3DXVECTOR3 &vSize );
 	void AddChangeData( 
 		const float fWidthSpd,

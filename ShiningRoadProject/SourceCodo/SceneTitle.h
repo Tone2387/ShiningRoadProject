@@ -38,7 +38,9 @@ private:
 	//背景.
 	std::unique_ptr< clsCharaStatic > m_upBack;
 
-	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
+	std::unique_ptr< clsSprite2D > m_upLogo;
+
+	std::unique_ptr< clsSprite2D > m_upFlash;
 
 	//メッセボックス.
 	std::unique_ptr< clsWINDOW_BOX > m_upBox;
