@@ -9,8 +9,12 @@ const float fBACK_SCALE = 1.0f;
 //ロゴ.
 const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
 const WHSIZE_FLOAT INIT_LOGO_SIZE = { 512.0f, 128.0f };
-const D3DXVECTOR3 vINIT_LOGO_POS = { WND_W*0.5f, 75.0f, 0.0f };
+const D3DXVECTOR3 vINIT_LOGO_POS = { 128.0f, 75.0f, 0.0f };
 
+
+//フラッシュ.
+const char* sFLASH_PATH = "Data\\Image\\TitleUi\\Flash.png";
+const float fFLASH_DOWN = -0.05f;
 
 
 //日本語UI.
@@ -43,11 +47,12 @@ void clsSCENE_TITLE::CreateProduct()
 
 	//ロゴ.
 	assert( !m_upLogo );
-	m_upLogo = make_unique< clsSPRITE2D_CENTER >();
+	m_upLogo = make_unique< clsSprite2D >();
 	SPRITE_STATE ss;
 	ss.Disp = INIT_LOGO_SIZE;
 	m_upLogo->Create( m_wpDevice, m_wpContext, sFILE_PATH_LOGO, ss );
 	m_upLogo->SetPos( vINIT_LOGO_POS );
+	m_upLogo->SetAlpha( 0.0f );
 
 	//背景.
 	assert( !m_upBack );
@@ -57,10 +62,19 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upBack->SetPosition( m_pRoboModel->GetPos() );
 	m_upBack->SetScale( fBACK_SCALE );
 
+	//ごまかしフラッシュ.
+	assert( !m_upFlash );
+	ss.Disp = { WND_W, WND_H };
+	m_upFlash = make_unique< clsSprite2D >();
+	m_upFlash->Create( m_wpDevice, m_wpContext, sFLASH_PATH, ss );
+	m_upFlash->SetAlpha( 0.0f );
+
+
 	//箱.
 	assert( !m_upBox );
 	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
 	m_upBox->SetSize( 0.0f );
+	m_upBox->SetAlpha( 0.5f );
 
 //	//カメラ.
 //	assert( m_wpCamera );
@@ -95,47 +109,49 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpSound->PlaySE( 0 );
 	}
 
-	if( m_upKey->isEnter( 'Z' ) ){
-		m_upBox->SetSizeTarget( { 20.0f, 20.0f, 0.0f } );
-	}
-	if( m_upKey->isEnter( 'X' ) ){
-		m_upBox->SetSizeTarget( { 10.0f, 4.0f, 0.0f } );
-	}
-	if( m_upKey->isEnter( 'C' ) ){
-		m_upBox->SetSizeTarget( { 4.0f, 10.0f, 0.0f } );
-	}
-	if( m_upKey->isEnter( 'V' ) ){
-		m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
-	}
+//	if( m_upKey->isEnter( 'Z' ) ){
+//		m_upBox->SetSizeTarget( { 200.0f, 200.0f, 0.0f } );
+//	}
+//	if( m_upKey->isEnter( 'X' ) ){
+//		m_upBox->SetSizeTarget( { 100.0f, 40.0f, 0.0f } );
+//	}
+//	if( m_upKey->isEnter( 'C' ) ){
+//		m_upBox->SetSizeTarget( { 40.0f, 200.0f, 0.0f } );
+//	}
+//	if( m_upKey->isEnter( 'V' ) ){
+//		m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
+//	}
+//
+//	if( m_upKey->isEnter( 'A' ) ){
+//		m_upBox->AddChangeData( 
+//			10.0f, 10.0f, clsLINE_BOX::encBEFOR_CHANGE::WIDTH );
+//	}
+//	if( m_upKey->isEnter( 'S' ) ){
+//		m_upBox->AddChangeData( 
+//			10.0f, 10.0f, clsLINE_BOX::encBEFOR_CHANGE::HEIGHT );
+//	}
+//	if( m_upKey->isEnter( 'D' ) ){
+//		m_upBox->AddChangeData( 
+//			10.0f, 10.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
+//	}
+//	if( m_upKey->isEnter( 'F' ) ){
+//		m_upBox->AddChangeData( 
+//			100.0f, 100.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
+//	}
 
-	if( m_upKey->isEnter( 'A' ) ){
-		m_upBox->AddChangeData( 
-			1.0f, 1.0f, clsLINE_BOX::encBEFOR_CHANGE::WIDTH );
-	}
-	if( m_upKey->isEnter( 'S' ) ){
-		m_upBox->AddChangeData( 
-			1.0f, 1.0f, clsLINE_BOX::encBEFOR_CHANGE::HEIGHT );
-	}
-	if( m_upKey->isEnter( 'D' ) ){
-		m_upBox->AddChangeData( 
-			1.0f, 1.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
-	}
-	if( m_upKey->isEnter( 'F' ) ){
-		m_upBox->AddChangeData( 
-			100.0f, 100.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
-	}
+	m_upFlash->AddAlpha( fFLASH_DOWN );
 
 
 
-
-//	clsCAMERA_TITLE pct;
-//	pct.SetPos( m_wpCamera->GetPos() );
-//	pct.SetLookPos( m_wpCamera->GetLookPos() );
-//	pct.SetRot( m_wpCamera->GetRot() );
-//	pct.Update();
-//	*m_wpCamera = pct;
 	m_wpCamera->Update();
 	m_upBox->Update();
+
+
+	clsCAMERA_TITLE* pCam = (clsCAMERA_TITLE*)m_wpCamera;//ゴリ押しでごめんなさい.
+	if( pCam->isFlash() ){
+		m_upFlash->SetAlpha( 1.0f );
+		m_upLogo->SetAlpha( 1.0f );
+	}
 
 }
 
@@ -156,12 +172,16 @@ void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	assert( m_upBox );
 	m_upBox->Render();
 
+
+
 	SetDepth( true );
 }
 void clsSCENE_TITLE::RenderUi()
 {
 	m_wpFont->Render( 0, 100 );
 
+	assert( m_upFlash );
+	m_upFlash->Render();
 }
 
 

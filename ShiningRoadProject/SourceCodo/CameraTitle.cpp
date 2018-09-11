@@ -37,10 +37,13 @@ const float fSPN_ZOOM_CHANGE_SPD = 0.1f;//0.1
 //----- 回転中ズームもどき -----//.
 
 
+const float fYAW_OFFSET = static_cast<float>( M_PI_4 ) * ( 0.5f - 0.0625f );
+
 clsCAMERA_TITLE::clsCAMERA_TITLE()
 	:m_enMode( enMODE::START )
 	,m_fDistance()
 	,m_MoveFlg()
+	,m_isFlash( false )
 {
 	Init( enMODE::START );
 }
@@ -73,38 +76,42 @@ void clsCAMERA_TITLE::Update()
 	switch( m_enMode )
 	{
 	case enMODE::START:
-		Advancing( m_vMoveSpd.z );
+		m_vPos = m_CamGhost.vPos;
+		m_vLook = m_CamGhost.vLook;
+		m_vRot = m_CamGhost.vRot;
+
+		Advancing( m_vMoveSpd.z, &m_vPos, &m_vLook, &m_vRot );
+
+		m_CamGhost.vPos = m_vPos;
+		m_CamGhost.vLook = m_vLook;
+		m_CamGhost.vRot = m_vRot;
+
 		if( abs( m_vMoveSpd.z ) < abs( fSTART_END_SPD )){
-			Init( enMODE::IDLE );
+			Init( enMODE::SPN_L );
 		}
+		else{
+			Turn( fYAW_OFFSET );
+		}
+
 		m_vMoveSpd.z *= m_vMoveAcc.z;
-		break;
-	case enMODE::IDLE:
-		Init( enMODE::SPN_L );
 		break;
 	case enMODE::SPN_L:
 		//くるくる.
 		CameraSpnFunction();
-		if(m_vRot.y >= static_cast<float>( M_PI ) ){
-			Init( enMODE::SPN_L_2 );
+		if( m_vRot.y >= static_cast<float>( M_PI ) ){
+			m_vRot.y = 0.0f;
+//			Init( enMODE::SPN_L_2 );
 		}
 		break;
 	case enMODE::SPN_L_2:
 		CameraSpnFunction();
 		CameraFakeZoomFunction();
-		if( m_vRot.y >= static_cast<float>( M_PI ) * 2.0f ){
-			Init( enMODE::SPN_L_3 );
-		}
-		break;
-	case enMODE::SPN_L_3:
-		CameraSpnFunction();
-		CameraFakeZoomFunction();
 		break;
 	}
 
-	float fRotSpd = 1.0f / 360.0f * M_PI;
-	float fMove = 1.0f;
-
+//	float fRotSpd = 1.0f / 360.0f * M_PI;
+//	float fMove = 1.0f;
+//
 //	if( GetAsyncKeyState( 'D' ) & 0x8000 )	Turn(-fRotSpd );
 //	if( GetAsyncKeyState( 'A' ) & 0x8000 )	Turn( fRotSpd );
 //	if( GetAsyncKeyState( 'W' ) & 0x8000 )	Advancing( fMove );
@@ -133,6 +140,21 @@ void clsCAMERA_TITLE::Update()
 
 }
 
+
+//フラッシュ( ごまかし )のタイミングを教えてくれる.
+bool clsCAMERA_TITLE::isFlash()
+{
+	bool bReturn = false;
+	if( m_isFlash ) {
+		bReturn = true;
+	}
+	m_isFlash = false;
+	return bReturn;
+}
+
+
+
+
 //各モードの初期化.
 void clsCAMERA_TITLE::Init( const enMODE enMode )
 {
@@ -152,11 +174,10 @@ void clsCAMERA_TITLE::Init( const enMODE enMode )
 		InitData.vLook = vSPN_INIT_LOOK;
 		m_vMoveSpd = vSPN_MOVE_SPD;
 		m_vMoveAcc = vSPN_MOVE_ACC;
-		break;
+		m_isFlash = true;
+	break;
 	case enMODE::SPN_L_2:
 		m_MoveFlg.z = true;
-		break;
-	case enMODE::SPN_L_3:
 		break;
 	}
 
@@ -174,16 +195,25 @@ void clsCAMERA_TITLE::Init( const enMODE enMode )
 	m_fDistance = sqrtf( fX + fZ );
 
 	Turn( fRotY );
+
+	m_CamGhost.vPos = m_vPos;
+	m_CamGhost.vLook = m_vLook;
+	m_CamGhost.vRot = m_vRot;
+
 }
 
 
 //監視対象を中心に旋回する.
-void clsCAMERA_TITLE::Spn( const float fSpn )
+void clsCAMERA_TITLE::Spn( 
+	const float fSpn,		
+	D3DXVECTOR3* const vPos,
+	D3DXVECTOR3* const vLook,
+	D3DXVECTOR3* const vRot )
 {
-	m_vRot.y -= fSpn;
+	vRot->y -= fSpn;
 
-	m_vPos.x = m_vLook.x + cosf( m_vRot.y - M_PI_2 ) * m_fDistance;
-	m_vPos.z = m_vLook.z + sinf( m_vRot.y - M_PI_2 ) * m_fDistance;
+	vPos->x = vLook->x + cosf( vRot->y - M_PI_2 ) * m_fDistance;
+	vPos->z = vLook->z + sinf( vRot->y - M_PI_2 ) * m_fDistance;
 }
 
 //カメラ位置を中心にして見回す.
@@ -199,10 +229,14 @@ void clsCAMERA_TITLE::Turn( const float fTurn )
 
 
 //今のカメラ向きに前進.advancing
-void clsCAMERA_TITLE::Advancing( const float fMove )
+void clsCAMERA_TITLE::Advancing( 
+	const float fMove, 
+		D3DXVECTOR3* const vPos,
+		D3DXVECTOR3* const vLook,
+		D3DXVECTOR3* const vRot )
 {
 	D3DXMATRIX mYaw;
-	D3DXMatrixRotationY( &mYaw, m_vRot.y );
+	D3DXMatrixRotationY( &mYaw, vRot->y );
 
 	D3DXVECTOR3 vAxisZ( 0.0f, 0.0f, 1.0f );
 
@@ -213,12 +247,37 @@ void clsCAMERA_TITLE::Advancing( const float fMove )
 		&mYaw );
 
 
-	m_vPos.z  += vAxisZ.z * fMove;
-	m_vLook.z += vAxisZ.z * fMove;
+	vPos->z  += vAxisZ.z * fMove;
+	vLook->z += vAxisZ.z * fMove;
 
-	m_vPos.x  -= vAxisZ.x * fMove;
-	m_vLook.x -= vAxisZ.x * fMove;
+	vPos->x  -= vAxisZ.x * fMove;
+	vLook->x -= vAxisZ.x * fMove;
 
+}
+//横平行移動.
+void clsCAMERA_TITLE::CrabWalk( 
+	const float fMove, 
+	D3DXVECTOR3* const vPos,
+	D3DXVECTOR3* const vLook,
+	D3DXVECTOR3* const vRot )
+{
+	D3DXMATRIX mYaw;
+	D3DXMatrixRotationY( &mYaw, vRot->y );
+
+	D3DXVECTOR3 vAxisX( 1.0f, 0.0f, 0.0f );
+
+	//Z軸ベクトルそのものを回転状態により変換する.
+	D3DXVec3TransformCoord(
+		&vAxisX,
+		&vAxisX,
+		&mYaw );
+
+
+	m_vPos.z  += vAxisX.z * fMove;
+	m_vLook.z += vAxisX.z * fMove;
+
+	m_vPos.x  -= vAxisX.x * fMove;
+	m_vLook.x -= vAxisX.x * fMove;
 }
 
 
@@ -251,7 +310,17 @@ void clsCAMERA_TITLE::AddDistance( const float fAdd, const bool isCamMove )
 //くるくる.
 void clsCAMERA_TITLE::CameraSpnFunction()
 {
-	Spn( -m_vMoveSpd.x );
+	m_vPos = m_CamGhost.vPos;
+	m_vLook = m_CamGhost.vLook;
+	m_vRot = m_CamGhost.vRot;
+
+	Spn( -m_vMoveSpd.x, &m_vPos, &m_vLook, &m_vRot );
+
+	m_CamGhost.vRot = m_vRot;
+	m_CamGhost.vLook = m_vLook;
+
+	Turn( fYAW_OFFSET );
+
 	m_vMoveSpd.x += m_vMoveAcc.x;
 	if( m_vMoveSpd.x > fSPN_SPN_SPD_LIMIT ){
 		m_vMoveSpd.x = fSPN_SPN_SPD_LIMIT;
