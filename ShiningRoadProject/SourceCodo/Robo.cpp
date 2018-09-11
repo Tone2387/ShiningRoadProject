@@ -223,6 +223,8 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
+
+
 	PlayBoostEfc();
 	CharactorUpdate();
 	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
