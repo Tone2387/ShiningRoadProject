@@ -217,6 +217,8 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 {
 	assert( m_wpSound );
 
+	int a = m_wpRoboStatus->GetRoboState( clsROBO_STATUS::HP );
+
 #if _DEBUG
 	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){

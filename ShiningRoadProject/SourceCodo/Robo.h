@@ -201,10 +201,10 @@ private:
 	clsSOUND_MANAGER_BASE*	m_wpSound;
 
 	//当たり判定のポインタ.
-	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
+//	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
 
 	//ロボモデル.
-	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
+//	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
 
 #endif//#ifdef Tahara
 
