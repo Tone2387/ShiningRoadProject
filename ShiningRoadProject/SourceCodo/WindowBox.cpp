@@ -29,11 +29,8 @@ clsWINDOW_BOX::~clsWINDOW_BOX()
 }
 
 
-void clsWINDOW_BOX::Update()
+void clsWINDOW_BOX::UpdateProduct()
 {
-	SetUpBox();
-	SetUpJointSize();
-
 	m_upBack->SetPos( m_vPos );
 	m_upBack->SetScale( m_vSize );
 	m_upBack->SetAlpha( m_fAlpha );
@@ -41,18 +38,8 @@ void clsWINDOW_BOX::Update()
 	m_upText->SetPos( { m_vTextOffset.x + m_vPos.x, m_vTextOffset.y + m_vPos.y } );
 }
 
-void clsWINDOW_BOX::Render()
+void clsWINDOW_BOX::RenderProduct()
 {
-	for( char i=0; i<LINE_MAX; i++ ){
-		m_upLineH[i]->Render();
-		m_upLineV[i]->Render();
-	}
-
-
-	for( char i=0; i<JOINT_MAX; i++ ){
-		m_upLineJoint[i]->Render();
-	}
-
 	m_upBack->Render();
 
 	m_upText->Render();

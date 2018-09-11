@@ -336,6 +336,9 @@
     <ClCompile Include="SourceCodo\BlendState.cpp">
       <Filter>Tahara</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\KeyInput.cpp">
+      <Filter>Tahara\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -595,6 +598,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\BlendState.h">
       <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\KeyInput.h">
+      <Filter>Tahara\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

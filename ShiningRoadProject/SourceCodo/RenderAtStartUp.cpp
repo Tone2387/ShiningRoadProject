@@ -76,15 +76,15 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 	ID3D11RenderTargetView*	 const pBackBuffer_TexRTV,
 	ID3D11DepthStencilView*	 const pBackBuffer_DSTexDSV,
 	ID3D11DepthStencilState* const pDepthStencilState )
-:m_wpDevice(pDevice)
-,m_wpContext( pContext )
-,m_wpSwapChain( pSwapChain )
-,m_wpBackBuffer_TexRTV( pBackBuffer_TexRTV )
-,m_wpBackBuffer_DSTexDSV( pBackBuffer_DSTexDSV )
-,m_wpDepthStencilState( pDepthStencilState )
-,m_bEnd( false )
-,m_enMode( enMODE::LINE_V )
-,m_iTimer( 0 )
+	:m_wpDevice(pDevice)
+	,m_wpContext( pContext )
+	,m_wpSwapChain( pSwapChain )
+	,m_wpBackBuffer_TexRTV( pBackBuffer_TexRTV )
+	,m_wpBackBuffer_DSTexDSV( pBackBuffer_DSTexDSV )
+	,m_wpDepthStencilState( pDepthStencilState )
+	,m_bEnd( false )
+	,m_enMode( enMODE::LINE_V )
+	,m_iTimer( 0 )
 {
 	//このクラスの初期化時に灰色画面が出るのを防ぐ.
 	Render( false );
@@ -108,14 +108,12 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 
 	if( !m_upLineBox ){
 		m_upLineBox = make_unique< clsLINE_BOX >( pDevice, pContext );
-		m_upLineBox->Create( pDevice, pContext );
 		m_upLineBox->SetPos( vINIT_LINE_BOX_POS );
 		m_upLineBox->SetSize( { 0.0f, 0.0f, 0.0f } );
 	}
 
 	if( !m_upGageBox ){
 		m_upGageBox = make_unique< clsLINE_BOX >( pDevice, pContext );
-		m_upGageBox->Create( pDevice, pContext );
 		m_upGageBox->SetPos( vINIT_GAGE_BOX_POS );
 		m_upGageBox->SetSize( { 0.0f, 0.0f, 0.0f } );
 	}
