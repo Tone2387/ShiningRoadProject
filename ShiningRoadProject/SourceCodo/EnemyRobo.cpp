@@ -11,8 +11,8 @@ void clsEnemyRobo::Init(
 	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 
 	ShotState SSTmp;
-	SSTmp.iShotDisMax = 50;
-	SSTmp.iShotDisMin = 1;
+	SSTmp.iShotDisMax = 50.0f;
+	SSTmp.iShotDisMin = 1.0f;
 
 	MoveState MSTmp;
 	MSTmp.iHorDisRandMax = 500;
@@ -158,29 +158,82 @@ bool clsEnemyRobo::IsQuickBoostApproach(float& fPush, float& fAngle)//クイックブ
 
 bool clsEnemyRobo::IsQuickBoostAvoid(float& fPush, float& fAngle)//クイックブーストによる回避.
 {
-	if (IsQuickBoostAvoidtoDamage(fPush,fAngle))
-	{
-		return true;
-	}
+	fPush = 0.0f;
+	fAngle = 0.0f;
 
-	if (IsQuickBoostAvoidtoRockTime(fPush, fAngle))
+	for (unsigned int i = 0; i < m_v_QuickAvoidState.size(); i++)
 	{
-		return true;
+		switch (m_v_QuickAvoidState[i].iAvoidNum)
+		{
+		case enAvoidLockTime:
+			if (IsQuickBoostAvoidtoLockTime(m_v_QuickAvoidState[i], fPush, fAngle))
+			{
+				return true;
+			}
+			break;
+
+		case enAvoidDamage:
+			if (IsQuickBoostAvoidtoDamage(m_v_QuickAvoidState[i], fPush,fAngle))
+			{
+				return true;
+			}
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickBoostAvoidtoRockTime(float& fPush, float& fAngle)
+bool clsEnemyRobo::IsQuickBoostAvoidtoLockTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
 {
+	if (m_iLockTime > 0)
+	{
+		m_iLockTime--;
+	}
 
+	else
+	{
+		m_iLockTime = AvoidState.iLockTimeorDamage * static_cast<int>(g_fFPS);
+		fPush = 1.0f;
+		fAngle = static_cast<float>(D3DXToRadian(AvoidState.iAvoidDir));
+		return true;
+	}
+
+	if (!m_pBody->m_bRadarWarning)
+	{
+		m_iLockTime = AvoidState.iLockTimeorDamage * static_cast<int>(g_fFPS);
+	}
+	
+	
 
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickBoostAvoidtoDamage(float& fPush, float& fAngle)
+bool clsEnemyRobo::IsQuickBoostAvoidtoDamage(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
 {
+	if (m_iAvoidDamageUpdateTime > 0)
+	{
+		m_iDamage += m_pBody->m_iDamage;
+		if (m_iDamage > AvoidState.iLockTimeorDamage)
+		{
+			m_iDamage = 0;
+			fPush = 1.0f;
+			fAngle = static_cast<float>(D3DXToRadian(AvoidState.iAvoidDir));
+			return true;
+		}
 
+		m_iAvoidDamageUpdateTime--;
+	}
+
+	else
+	{
+
+		m_iAvoidDamageUpdateTime = AvoidState.iUpdateTime;
+		m_iDamage = 0;
+	}
 
 	return false;
 }
