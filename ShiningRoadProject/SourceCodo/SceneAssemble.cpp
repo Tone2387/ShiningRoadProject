@@ -298,7 +298,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressUp()		)MoveCursorUp();
 	if( isPressDown()	)MoveCursorDown();
 	if( m_wpXInput->isPressEnter( XINPUT_B ) ||
-		GetAsyncKeyState( VK_RETURN ) & 0x1 )
+		m_upKey->isEnter( VK_RETURN ) )
 	{
 		Enter( enNextScene );
 	}
@@ -307,7 +307,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	}
 	//ŽŸ‚ÌƒV[ƒ“‚Ö.
 	if( m_wpXInput->isPressEnter( XINPUT_START ) || 
-		GetAsyncKeyState( VK_SPACE ) )
+		m_upKey->isEnter( VK_SPACE ) )
 	{
 		MissionStart( enNextScene );
 	}

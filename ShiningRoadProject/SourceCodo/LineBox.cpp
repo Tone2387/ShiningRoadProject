@@ -1,4 +1,4 @@
-#include "LineBox.h"
+#include "WindowBox.h"
 
 using namespace std;
 
@@ -22,6 +22,10 @@ clsLINE_BOX::clsLINE_BOX(
 	ID3D11DeviceContext* const pContext11 )
 	:m_vPos()
 	,m_vSize()
+	,m_fAlpha( 1.0f )
+	,m_isChangeBigW( false )
+	,m_isChangeBigH( false )
+	,m_encBeforChange( encBEFOR_CHANGE::NOTHING )
 {
 	m_vPos = { WND_W/2, WND_H/2, 0.0f };
 
@@ -73,11 +77,14 @@ clsLINE_BOX::~clsLINE_BOX()
 	}
 }
 
-void clsLINE_BOX::Create(		
-	ID3D11Device* const pDevice11,
-	ID3D11DeviceContext* const pContext11 )
-{
 
+void clsLINE_BOX::Update()
+{
+	AddSizeForTarget();
+	SetUpBox();
+	SetUpJointSize();
+
+	UpdateProduct();
 }
 
 //箱を形作る.
@@ -105,6 +112,7 @@ void clsLINE_BOX::SetUpBox()
 		m_upLineV[i]->SetScale( { m_vSize.y, fSCALE, 1.0f } );
 	}
 
+	//左上から時計回り.
 	m_upLineJoint[0]->SetPos( { m_upLineV[0]->GetPos().x, m_upLineH[0]->GetPos().y, 1.0f } );
 	m_upLineJoint[1]->SetPos( { m_upLineV[1]->GetPos().x, m_upLineH[0]->GetPos().y, 1.0f } );
 	m_upLineJoint[2]->SetPos( { m_upLineV[1]->GetPos().x, m_upLineH[1]->GetPos().y, 1.0f } );
@@ -134,7 +142,7 @@ void clsLINE_BOX::SetUpJointSize()
 		tmpScale.y = 0.0f;
 	}
 	else if( m_vSize.y <= fSCALE ){
-		tmpScale.y = m_vSize.x;
+		tmpScale.y = m_vSize.y;
 	}
 	else{
 		tmpScale.y = fSCALE;
@@ -146,14 +154,10 @@ void clsLINE_BOX::SetUpJointSize()
 	}
 }
 
-void clsLINE_BOX::Update()
-{
-	SetUpBox();
-	SetUpJointSize();
-}
-
 void clsLINE_BOX::Render()
 {
+	RenderProduct();
+
 	for( char i=0; i<LINE_MAX; i++ ){
 		m_upLineH[i]->Render();
 		m_upLineV[i]->Render();
@@ -189,6 +193,7 @@ void clsLINE_BOX::SetSize( const float &fSize )
 	m_vSize = { fSize, fSize, 1.0f };
 }
 
+
 void clsLINE_BOX::AddSize( const D3DXVECTOR3 &vSize )
 {
 	m_vSize += vSize;
@@ -209,6 +214,162 @@ void clsLINE_BOX::AddScale( const float &fScale )
 }
 
 
+void clsLINE_BOX::SetSizeTarget( const D3DXVECTOR3 &vSize )
+{
+	m_vSizeTarget = vSize;
+
+	D3DXVECTOR3 tmp = m_vSizeTarget - m_vSize;
+
+	if( tmp.x > 0.0f )	m_isChangeBigW = true;
+	else				m_isChangeBigW = false;
+
+	if( tmp.y > 0.0f )	m_isChangeBigH = true;
+	else				m_isChangeBigH = false;
+}
+
+void clsLINE_BOX::AddChangeData( 
+	const float fWidthSpd,
+	const float fHeightSpd,
+	const encBEFOR_CHANGE encBefor )
+{
+	m_vChangeSpd = { fWidthSpd, fHeightSpd, 0.0f };
+	m_encBeforChange = encBefor;
+
+	switch( m_encBeforChange )
+	{
+	case encBEFOR_CHANGE::WIDTH:
+		break;
+	case encBEFOR_CHANGE::HEIGHT:
+		break;
+	case encBEFOR_CHANGE::BOTH:
+		break;
+	default:
+		assert( !"不正な値が与えられました" );
+		break;
+	}
+}
+//Targetに向けてサイズを変える.
+void clsLINE_BOX::AddSizeForTarget()
+{
+	if( m_encBeforChange == encBEFOR_CHANGE::NOTHING ){
+		return;
+	}
+
+	bool isEndW, isEndH;
+	isEndW = isEndH = false;
+
+	switch( m_encBeforChange )
+	{
+	case encBEFOR_CHANGE::WIDTH:
+		if( m_isChangeBigW ){
+			AddSize( { m_vChangeSpd.x, 0.0f, 0.0f } );
+			if( m_vSize.x > m_vSizeTarget.x ){
+				SetSize( { m_vSizeTarget.x, m_vSize.y, 0.0f } );
+				isEndW = true;
+			}
+		}
+		else{
+			AddSize( { -m_vChangeSpd.x, 0.0f, 0.0f } );
+			if( m_vSize.x < m_vSizeTarget.x ){
+				SetSize( { m_vSizeTarget.x, m_vSize.y, 0.0f } );
+				isEndW = true;
+			}
+		}
+		//変化が終わってないなら終わる.
+		if( !isEndW ){
+			break;
+		}
+
+		if( m_isChangeBigH ){
+			AddSize( { 0.0f, m_vChangeSpd.y, 0.0f } );
+			if( m_vSize.y > m_vSizeTarget.y ){
+				SetSize( { m_vSize.x, m_vSizeTarget.y, 0.0f } );
+				isEndH = true;
+			}
+		}
+		else{
+			AddSize( { 0.0f, -m_vChangeSpd.y, 0.0f } );
+			if( m_vSize.y < m_vSizeTarget.y ){
+				SetSize( { m_vSize.x, m_vSizeTarget.y, 0.0f } );
+				isEndH = true;
+			}
+		}
+		break;
+	case encBEFOR_CHANGE::HEIGHT:
+		if( m_isChangeBigH ){
+			AddSize( { 0.0f, m_vChangeSpd.y, 0.0f } );
+			if( m_vSize.y > m_vSizeTarget.y ){
+				SetSize( { m_vSize.x, m_vSizeTarget.y, 0.0f } );
+				isEndH = true;
+			}
+		}
+		else{
+			AddSize( { 0.0f, -m_vChangeSpd.y, 0.0f } );
+			if( m_vSize.y < m_vSizeTarget.y ){
+				SetSize( { m_vSize.x, m_vSizeTarget.y, 0.0f } );
+				isEndH = true;
+			}
+		}
+
+		//変化が終わってないなら終わる.
+		if( !isEndH ){
+			break;
+		}
+
+		if( m_isChangeBigW ){
+			AddSize( { m_vChangeSpd.x, 0.0f, 0.0f } );
+			if( m_vSize.x > m_vSizeTarget.x ){
+				SetSize( { m_vSizeTarget.x, m_vSize.y, 0.0f } );
+				isEndW = true;
+			}
+		}
+		else{
+			AddSize( { -m_vChangeSpd.x, 0.0f, 0.0f } );
+			if( m_vSize.x < m_vSizeTarget.x ){
+				SetSize( { m_vSizeTarget.x, m_vSize.y, 0.0f } );
+				isEndW = true;
+			}
+		}
+		break;
+	case encBEFOR_CHANGE::BOTH:
+		if( m_isChangeBigW ){
+			AddSize( { m_vChangeSpd.x, 0.0f, 0.0f } );
+			if( m_vSize.x > m_vSizeTarget.x ){
+				SetSize( { m_vSizeTarget.x, m_vSize.y, 0.0f } );
+				isEndW = true;
+			}
+		}
+		else{
+			AddSize( { -m_vChangeSpd.x, 0.0f, 0.0f } );
+			if( m_vSize.x < m_vSizeTarget.x ){
+				SetSize( { m_vSizeTarget.x, m_vSize.y, 0.0f } );
+				isEndW = true;
+			}
+		}
+		if( m_isChangeBigH ){
+			AddSize( { 0.0f, m_vChangeSpd.y, 0.0f } );
+			if( m_vSize.y > m_vSizeTarget.y ){
+				SetSize( { m_vSize.x, m_vSizeTarget.y, 0.0f } );
+				isEndH = true;
+			}
+		}
+		else{
+			AddSize( { 0.0f, -m_vChangeSpd.y, 0.0f } );
+			if( m_vSize.y < m_vSizeTarget.y ){
+				SetSize( { m_vSize.x, m_vSizeTarget.y, 0.0f } );
+				isEndH = true;
+			}
+		}
+		break;
+	default:
+		assert( !"不正な値が入っています" );
+		break;
+	}
+
+	if( isEndW && isEndH ){
+		m_encBeforChange = encBEFOR_CHANGE::NOTHING;
+	}
+}
 
 
 D3DXVECTOR3 clsLINE_BOX::GetPos() const
@@ -243,3 +404,11 @@ bool clsLINE_BOX::AddAlpha( const float fAlpha )
 	return false;
 }
 
+
+
+void clsLINE_BOX::UpdateProduct()
+{
+}
+void clsLINE_BOX::RenderProduct()
+{
+}

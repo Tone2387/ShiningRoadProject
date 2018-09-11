@@ -122,6 +122,7 @@
     <ClCompile Include="SourceCodo\GameObject.cpp" />
     <ClCompile Include="SourceCodo\InputCharactor.cpp" />
     <ClCompile Include="SourceCodo\InputRobo.cpp" />
+    <ClCompile Include="SourceCodo\KeyInput.cpp" />
     <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\MissionModel.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="SourceCodo\Global.h" />
     <ClInclude Include="SourceCodo\InputCharactor.h" />
     <ClInclude Include="SourceCodo\InputRobo.h" />
+    <ClInclude Include="SourceCodo\KeyInput.h" />
     <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
     <ClInclude Include="SourceCodo\MissionModel.h" />

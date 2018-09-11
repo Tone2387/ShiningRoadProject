@@ -13,10 +13,6 @@ public:
 
 	~clsWINDOW_BOX();
 
-	void Update() final;
-
-	void Render() final;
-
 	//----- 文字用 -----//.
 	//( ウィンドウの左上からの )座標.
 	void SetTextPos( const D3DXVECTOR2 &vPos );
@@ -25,6 +21,10 @@ public:
 	void SetTextColor( const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f, 1.0f } );
 
 private:
+
+	void UpdateProduct() override;
+
+	void RenderProduct() override;
 
 	std::unique_ptr< clsSPRITE2D_CENTER >	m_upBack;//背景画像.
 

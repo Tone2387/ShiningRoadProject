@@ -1,4 +1,5 @@
 #include "SceneTitle.h"
+#include "WindowBox.h"
 
 using namespace std;
 
@@ -56,6 +57,11 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upBack->SetPosition( m_pRoboModel->GetPos() );
 	m_upBack->SetScale( fBACK_SCALE );
 
+	//” .
+	assert( !m_upBox );
+	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
+	m_upBox->SetSize( 0.0f );
+
 //	//ƒJƒƒ‰.
 //	assert( m_wpCamera );
 //	m_wpCamera->SetPos( { 0.0f, 100.0f, -80.0f } );
@@ -89,6 +95,38 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpSound->PlaySE( 0 );
 	}
 
+	if( m_upKey->isEnter( 'Z' ) ){
+		m_upBox->SetSizeTarget( { 20.0f, 20.0f, 0.0f } );
+	}
+	if( m_upKey->isEnter( 'X' ) ){
+		m_upBox->SetSizeTarget( { 10.0f, 4.0f, 0.0f } );
+	}
+	if( m_upKey->isEnter( 'C' ) ){
+		m_upBox->SetSizeTarget( { 4.0f, 10.0f, 0.0f } );
+	}
+	if( m_upKey->isEnter( 'V' ) ){
+		m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
+	}
+
+	if( m_upKey->isEnter( 'A' ) ){
+		m_upBox->AddChangeData( 
+			1.0f, 1.0f, clsLINE_BOX::encBEFOR_CHANGE::WIDTH );
+	}
+	if( m_upKey->isEnter( 'S' ) ){
+		m_upBox->AddChangeData( 
+			1.0f, 1.0f, clsLINE_BOX::encBEFOR_CHANGE::HEIGHT );
+	}
+	if( m_upKey->isEnter( 'D' ) ){
+		m_upBox->AddChangeData( 
+			1.0f, 1.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
+	}
+	if( m_upKey->isEnter( 'F' ) ){
+		m_upBox->AddChangeData( 
+			100.0f, 100.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
+	}
+
+
+
 
 //	clsCAMERA_TITLE pct;
 //	pct.SetPos( m_wpCamera->GetPos() );
@@ -97,6 +135,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 //	pct.Update();
 //	*m_wpCamera = pct;
 	m_wpCamera->Update();
+	m_upBox->Update();
 
 }
 
@@ -113,6 +152,9 @@ void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 	assert( m_upLogo );
 	m_upLogo->Render();
+
+	assert( m_upBox );
+	m_upBox->Render();
 
 	SetDepth( true );
 }

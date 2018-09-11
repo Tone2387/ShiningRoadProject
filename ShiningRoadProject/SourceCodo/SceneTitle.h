@@ -7,6 +7,8 @@
 #include "AssembleModel.h"
 
 
+class clsWINDOW_BOX;
+
 //================================//
 //========== タイトルクラス ==========//
 //================================//
@@ -37,6 +39,10 @@ private:
 	std::unique_ptr< clsCharaStatic > m_upBack;
 
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
+
+	//メッセボックス.
+	std::unique_ptr< clsWINDOW_BOX > m_upBox;
+
 
 	//テスト用エフェクト.
 	::Effekseer::Handle m_ehHibana;

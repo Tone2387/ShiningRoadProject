@@ -14,6 +14,8 @@
 
 #include "UiText.h"
 
+#include "KeyInput.h"
+
 
 //================================//
 //========== 基底クラス ==========//
@@ -80,6 +82,8 @@ protected:
 	D3D11_VIEWPORT* GetViewPortMainPtr();
 	//----- Render用 -----//.
 
+
+	std::unique_ptr< clsKEY_INPUT > m_upKey;
 
 	//デバッグテキストクラス.
 #if _DEBUG

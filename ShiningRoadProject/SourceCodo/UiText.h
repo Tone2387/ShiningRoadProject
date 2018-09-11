@@ -33,7 +33,7 @@ public:
 
 
 	//レンダリング関数.
-	//デフォルト引数はtrueにすると右端が指定座標に来る.
+	//デフォルト引数はRIGHTにすると右端が指定座標に来る.
 	void Render( const enPOS enPos = enPOS::LEFT );
 
 	void SetPos( const D3DXVECTOR2 &vPos );

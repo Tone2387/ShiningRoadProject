@@ -89,6 +89,8 @@ void clsSCENE_BASE::Create()
 
 	m_enNextScene = enSCENE::NOTHING;
 
+	m_upKey = make_unique< clsKEY_INPUT >();
+
 
 #if _DEBUG
 	//デバッグテキストの初期化.
@@ -116,6 +118,8 @@ void clsSCENE_BASE::Create()
 //				  指定したシーンが生成される ).
 void clsSCENE_BASE::Update( enSCENE &enNextScene )
 {
+	m_upKey->Update();
+
 	//サウンドループ.
 	m_wpSound->UpdateLoop();
 
@@ -194,7 +198,7 @@ bool clsSCENE_BASE::isPressRight()
 	if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
 		return true;
 	}
-	else if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
+	else if( m_upKey->isEnter( VK_RIGHT ) ){
 		return true;
 	}
 	return false;
@@ -205,7 +209,7 @@ bool clsSCENE_BASE::isPressLeft()
 	if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
 		return true;
 	}
-	else if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
+	else if( m_upKey->isEnter( VK_LEFT ) ){
 		return true;
 	}
 	return false;
@@ -216,7 +220,7 @@ bool clsSCENE_BASE::isPressUp()
 	if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
 		return true;
 	}
-	else if( GetAsyncKeyState( VK_UP ) & 0x1 ){
+	else if( m_upKey->isEnter( VK_UP ) ){
 		return true;
 	}
 	return false;
@@ -227,7 +231,7 @@ bool clsSCENE_BASE::isPressDown()
 	if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
 		return true;
 	}
-	else if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
+	else if( m_upKey->isEnter( VK_DOWN ) ){
 		return true;
 	}
 	return false;
@@ -238,7 +242,7 @@ bool clsSCENE_BASE::isPressEnter()
 	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
 		return true;
 	}
-	else if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
+	else if( m_upKey->isEnter( VK_RETURN ) ){
 		return true;
 	}
 	return false;
@@ -249,7 +253,7 @@ bool clsSCENE_BASE::isPressExit()
 	if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
 		return true;
 	}
-	else if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
+	else if( m_upKey->isEnter( VK_BACK ) ){
 		return true;
 	}
 	return false;
