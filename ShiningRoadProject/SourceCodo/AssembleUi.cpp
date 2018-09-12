@@ -250,8 +250,6 @@ const POINTFLOAT vBUTTON_SPRITE_ANIM[ iBUTTON_SPRITE_NUM ] =
 
 
 
-
-
 clsASSEMBLE_UI::clsASSEMBLE_UI( clsFont* const pFont )
 	:m_iStatusNum( 0 )
 	,m_isDispStatus( true )
