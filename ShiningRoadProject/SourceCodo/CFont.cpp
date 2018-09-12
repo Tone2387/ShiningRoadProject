@@ -603,7 +603,7 @@ void clsFont::Render( const int iTex, const int iCharNum )
 
 	for ( int i = 0; i<iCharNum; i++ )
 	{
-		if( i >= m_vvpAsciiTexture[ iTex ].size() ){
+		if( static_cast<unsigned int>( i ) >= m_vvpAsciiTexture[ iTex ].size() ){
 			break;
 		}
 #if 0
