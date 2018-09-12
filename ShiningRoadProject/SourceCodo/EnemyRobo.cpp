@@ -161,9 +161,12 @@ bool clsEnemyRobo::IsQuickBoostAvoid(float& fPush, float& fAngle)//ƒNƒCƒbƒNƒu[ƒ
 	fPush = 0.0f;
 	fAngle = 0.0f;
 
+	//‰ñ”ğğŒ‚Ç‚ê‚©‚ğ–‚½‚¹‚Î‰ñ”ğ.
+	//ğŒ‚Íæ‚É“o˜^‚³‚ê‚½‚à‚Ì‚©‚ç—Dæ‚µ‚Ä”»’è.
+
 	for (unsigned int i = 0; i < m_v_QuickAvoidState.size(); i++)
 	{
-		switch (m_v_QuickAvoidState[i].iAvoidNum)
+		switch (m_v_QuickAvoidState[i].iAvoidNum)//‰ñ”ğƒpƒ^[ƒ“.
 		{
 		case enAvoidLockTime:
 			if (IsQuickBoostAvoidtoLockTime(m_v_QuickAvoidState[i], fPush, fAngle))
@@ -206,8 +209,6 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoLockTime(QuickBoostAvoid& AvoidState, floa
 	{
 		m_iLockTime = AvoidState.iLockTimeorDamage * static_cast<int>(g_fFPS);
 	}
-	
-	
 
 	return false;
 }

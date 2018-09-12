@@ -4,6 +4,8 @@ void clsCharactor::CharactorUpdate()
 {
 	Move();
 	Rotate();
+
+	m_iDamage = 0;//–ˆƒtƒŒ[ƒ€‰Šú‰».
 }
 
 void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//‰Á‘¬.
@@ -438,6 +440,8 @@ bool clsCharactor::Damage(HitState HitS)
 {
 	if (HitS.bHit)
 	{
+		m_iDamage += HitS.iDamage;
+
 		if (m_HP < HitS.iDamage)
 		{
 			m_HP = 0;
@@ -572,71 +576,6 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 			return true;
 		}
 	}
-	
-
-	/*const float fhStantard = 50.0f;
-	const float frStantard = 50.0f;
-
-	float h = 1000.0f;//‚‚³.
-	float fScale = h / fhStantard;
-	float r = frStantard * fScale;*/
-	
-
-
-	/*D3DXVECTOR3 vC = m_vLockRangeDir * m_fLockRange;
-
-	D3DXVECTOR3 H = vC - m_vLockRangePos;
-	float fteimenDis = D3DXVec3Length(&H);
-	D3DXVec3Normalize(&H, &H);
-
-	D3DXVECTOR3 QP = vTargetPos - m_vLockRangePos;
-
-	D3DXVECTOR3 A = { 0.0f, 0.0f, 0.0f };
-
-	D3DXVec3Cross(&A, &H, &QP);
-
-	float PA = D3DXVec3Length(&A);
-
-	float L = D3DXVec3Dot(&H, &QP);
-	float QA = abs(L);
-
-	float Ar = QA / m_fLockRange * m_fLockCircleRadius;
-
-	if ((m_fLockRange * PA) / (QA * m_fLockCircleRadius) > 1.0f)
-	{
-		return false;
-	}
-
-	if (0.0f > L || 
-		m_fLockRange < L)
-	{
-		return false;
-	}
-
-	if (PA > Ar)
-	{
-		return false;
-	}
-
-	/*float QA = abs(L);
-
-	float Ar = (QA) / m•Ší_fLockRange * m_fLockCircleRadius;
-
-	if ((m_fLockRange * PA) / (QA * m_fLockCircleRadius) > 1.0f)
-	{
-		return false;
-	}
-
-	if (0.0f > L ||
-		m_fLockRange < L)
-	{
-		return false;
-	}
-
-	if (PA > m_fLockCircleRadius)
-	{
-		return false;
-	}*/
 
 	return false;
 }
