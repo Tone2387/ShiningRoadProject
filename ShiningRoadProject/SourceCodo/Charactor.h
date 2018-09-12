@@ -76,7 +76,7 @@ public:
 	D3DXVECTOR3 m_vLockCenterPos;
 	D3DXVECTOR3 m_vTargetScrPos;
 	bool m_bCamPosXSwitch;
-	bool IsTargetDirBack();//“G‚ªƒLƒƒƒ‰‚æ‚èŒã‚ë‚É‚¢‚é‚©.
+	bool IsTargetDirBack(D3DXVECTOR3 vTargetPos);//“G‚ªƒLƒƒƒ‰‚æ‚èŒã‚ë‚É‚¢‚é‚©.
 
 	
 
@@ -103,7 +103,7 @@ public:
 	void WeaponUpdate();
 
 	void LockChara();
-	bool IsInLockRange();
+	//bool IsInLockRange();
 	void SetLockRangeDir();
 	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
 

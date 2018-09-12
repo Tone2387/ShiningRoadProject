@@ -553,7 +553,7 @@ void clsCharactor::LockChara()
 bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 {
 	//開始位置.底面の方向.ターゲットの位置.距離.半径
-	if (IsTargetDirBack())
+	if (IsTargetDirBack(vTargetPos))
 	{
 		D3DXMATRIX mW;
 		D3DXMatrixIdentity(&mW);
@@ -572,7 +572,7 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 			&m_mThisCharaView,
 			&mW);
 
-		if (IsCurcleLange(m_vLockCenterPos, vTarPosTmp, m_fLockCircleRadius / 2))
+		if (IsCurcleLange(m_vLockCenterPos, vTarPosTmp, m_fLockCircleRadius / 4))
 		{
 			return true;
 		}
@@ -581,9 +581,22 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 	return false;
 }
 
-bool clsCharactor::IsTargetDirBack()
+bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
 {
-	return true;
+	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
+
+	D3DXVECTOR3 vTarDir = m_vCenterPos - vTargetPos;
+
+	float fDir = D3DXVec3Dot(&vTarDir, &vForword);
+
+	int iDir = (int)D3DXToDegree(fDir);
+
+	if (iDir < (int)D3DXToDegree(D3DX_PI))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void clsCharactor::Lock()

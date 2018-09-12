@@ -417,7 +417,7 @@ void clsSCENE_MISSION::RenderUi()
 	m_pCursorFrame->SetPos(vPosTmp);
 	m_pCursorFrame->Render();
 
-	float fTmp = m_pPlayer->GetLockCircleScale() / 4;
+	float fTmp = m_pPlayer->GetLockCircleScale() / 2;
 
 	m_pCursor->SetScale(fTmp);
 	m_pCursor->SetPos(vPosTmp);
