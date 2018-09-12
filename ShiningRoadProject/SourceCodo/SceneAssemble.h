@@ -126,7 +126,9 @@ private:
 //	clsCharaStatic* m_pTestChara;
 //	clsCharaStatic* m_pParts;
 
-
+	//操作可能ならtrue.
+	bool m_isCanControl;
+		
 
 	//エフェクト.
 	::Effekseer::Handle m_ehHibana;

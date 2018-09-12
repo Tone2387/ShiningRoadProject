@@ -119,6 +119,7 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_pSelectParts( nullptr )
 	,m_iMessageNum( 0 )
 	,m_isMessageBoxYes( true )
+	,m_isCanControl( false )
 //	,m_enSelectMode()
 {
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
@@ -268,6 +269,14 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 	int a = m_wpRoboStatus->GetRoboState( clsROBO_STATUS::HP );
 
+	//暗転中は操作不能.
+	if( m_wpBlackScreen->GetAlpha() ){
+		m_isCanControl = false;
+	}
+	else{
+		m_isCanControl = true;
+	}
+
 #if _DEBUG
 	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
@@ -340,56 +349,61 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 #endif//#if _DEBUG
 
-
-	//選択肢.
-	if( isPressRight()	)MoveCursorRight();
-	if( isPressLeft()	)MoveCursorLeft();
-	if( isPressUp()		)MoveCursorUp();
-	if( isPressDown()	)MoveCursorDown();
-	if( m_wpXInput->isPressEnter( XINPUT_B ) ||
-		GetAsyncKeyState( VK_RETURN ) & 0x1 )
-	{
-		Enter( enNextScene );
-	}
-	if( isPressExit() ){
-		Exit();
-	}
-	//次のシーンへのウィンドウを出す.
-	if( m_wpXInput->isPressEnter( XINPUT_START ) || 
-		GetAsyncKeyState( VK_SPACE ) & 0x1 )
-	{
-		//ウィンドウを出してない時は次のシーンへのウィンドウを出す.
-		if( isMessageBoxClose() ){
-			AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::MISSION_START );
-		}
-		//ウィンドウを出しているときはそのウィンドウの決定ボタンにもなる.
-		else{
+	//操作.
+	if( m_isCanControl ){
+		//選択肢.
+		if( isPressRight()	)MoveCursorRight();
+		if( isPressLeft()	)MoveCursorLeft();
+		if( isPressUp()		)MoveCursorUp();
+		if( isPressDown()	)MoveCursorDown();
+		if( m_wpXInput->isPressEnter( XINPUT_B ) ||
+			GetAsyncKeyState( VK_RETURN ) & 0x1 )
+		{
 			Enter( enNextScene );
 		}
-	}
-	//ステータスウィンドウを隠す.
-	if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
-		//ウィンドウを出してるときは無視.
-		if( isMessageBoxClose() ){
-			m_pUI->SwitchDispStatusComment();
-			m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+		if( isPressExit() ){
+			Exit();
 		}
-	}
-	//ステータスのcomment切替.
-	if( m_wpXInput->isPressEnter( XINPUT_X ) ){
-		if( m_pUI->isCanSwitchStatusComment() ){
-			if( isMessageBoxClose() )
-			{
-				m_pUI->SwitchStatusComment();
-				if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-					m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
-				}
-				else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
-					m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+		//次のシーンへのウィンドウを出す.
+		if( m_wpXInput->isPressEnter( XINPUT_START ) || 
+			GetAsyncKeyState( VK_SPACE ) & 0x1 )
+		{
+			//ウィンドウを出してない時は次のシーンへのウィンドウを出す.
+			if( isMessageBoxClose() ){
+				AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::MISSION_START );
+			}
+			//ウィンドウを出しているときはそのウィンドウの決定ボタンにもなる.
+			else{
+				Enter( enNextScene );
+			}
+		}
+		//ステータスウィンドウを隠す.
+		if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
+			//ウィンドウを出してるときは無視.
+			if( isMessageBoxClose() ){
+				m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+				m_pUI->SwitchDispStatusComment();
+				m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+			}
+		}
+		//ステータスのcomment切替.
+		if( m_wpXInput->isPressEnter( XINPUT_X ) ){
+			if( m_pUI->isCanSwitchStatusComment() ){
+				if( isMessageBoxClose() )
+				{
+					m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+					m_pUI->SwitchStatusComment();
+					if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+						m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
+					}
+					else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+						m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+					}
 				}
 			}
 		}
 	}
+
 
 
 	assert( m_pUI );
