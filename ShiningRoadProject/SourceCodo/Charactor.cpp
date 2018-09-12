@@ -6,6 +6,7 @@ void clsCharactor::CharactorUpdate()
 	Rotate();
 
 	m_iDamage = 0;//–ˆƒtƒŒ[ƒ€‰Šú‰».
+	m_bRadarWarning = false;//‰Šú‰».
 }
 
 void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//‰Á‘¬.
@@ -592,6 +593,11 @@ void clsCharactor::Lock()
 		for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 		{
 			m_v_pWeapons[i]->Lock(m_pTargetChara);
+
+			if (m_v_pWeapons[i]->IsLock())
+			{
+				m_pTargetChara->m_bRadarWarning = true;
+			}
 		}
 	}	
 }

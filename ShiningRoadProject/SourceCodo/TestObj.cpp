@@ -84,23 +84,14 @@ void clsTestObj::ActionProduct()
 		{
 			pRoboCom->PushBotton(this);
 		}
+
+		pRoboCom = m_pAI->QuickBoostOperation(fPush, fAngle);
 	
-
-		pRoboCom = m_pAI->QuickTurnOperation(fPush, fAngle);
-
-		if (pRoboCom)
+		if (pRoboCom)//クイックブーストの使用.
 		{
-			if (m_bBoost)
-			{
-				MoveSwitch();//QuickTrunの為に強制的にブースターを切る.
-			}
-
 			pRoboCom->Trigger(this, fPush, fAngle);
 			pRoboCom->PushBotton(this);
-		}
 
-		else
-		{
 			pRoboCom = m_pAI->MoveSwitchOperation();
 
 			if (pRoboCom)
@@ -115,6 +106,43 @@ void clsTestObj::ActionProduct()
 				pRoboCom->PushBotton(this);
 			}
 		}
+
+		else
+		{
+			pRoboCom = m_pAI->QuickTurnOperation(fPush, fAngle);
+
+			if (pRoboCom)
+			{
+				if (m_bBoost)
+				{
+					MoveSwitch();//QuickTrunの為に強制的にブースターを切る.
+				}
+
+				pRoboCom->Trigger(this, fPush, fAngle);
+				pRoboCom->PushBotton(this);
+			}
+
+			else
+			{
+				pRoboCom = m_pAI->MoveSwitchOperation();
+
+				if (pRoboCom)
+				{
+					pRoboCom->PushBotton(this);
+				}
+
+				pRoboCom = m_pAI->BoostOperation();
+
+				if (pRoboCom)
+				{
+					pRoboCom->PushBotton(this);
+				}
+			}
+		}
+
+		pRoboCom = m_pAI->QuickTurnOperation(fPush, fAngle);
+
+		
 	}
 
 	Updata();
