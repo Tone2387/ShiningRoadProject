@@ -1,4 +1,5 @@
 #include "AssembleUi.h"
+#include "WindowBox.h"
 
 #include "OperationString.h"
 //#include <string>
@@ -220,7 +221,8 @@ const bool* bRED_BIG[] =
 //パーツ、ステータス説明.
 const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
 const float fFONT_COMMENT_SCALE = 16.0f;
-const int iFONT_COMMENT_LINE = 1;
+//パーツ説明以外の行数.
+const int iFONT_COMMENT_LINE = 3;
 const int iFONT_COMMENT_TEXT_SIZE = 128;
 
 //ボタン.
@@ -231,8 +233,8 @@ const int iBUTTON_SPRITE_NUM = 5;
 const float fBUTTON_SPRITE_POS_Y = 32.0f;
 const D3DXVECTOR3 vBUTTON_SPRITE_POS[ iBUTTON_SPRITE_NUM ] =
 {
-	{ 570.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-	{ 645.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 620.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 695.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
 	{ 770.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
 	{ 950.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
 	{ 1110.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
@@ -768,15 +770,14 @@ void clsASSEMBLE_UI::RenderPartsState(
 int clsASSEMBLE_UI::SetReadLinePartsComment(
 	const int iPartsType )	//パーツ種類.
 {
-	//ボタン説明文の分.
-	const int iOTHER_TEXT_LINE_MAX = 1;
+	//パーツ説明文の分.
 	const int iPARTS_TEXT_LINE_MAX = 6;
 
 	if( m_enSelectMode == enSELECT_MODE::PARTS ){
-		m_iReadLinePartsComment = iPartsType + iOTHER_TEXT_LINE_MAX; 
+		m_iReadLinePartsComment = iPartsType + iFONT_COMMENT_LINE; 
 	}
 	else if( m_enSelectMode == enSELECT_MODE::STATUS ){
-		m_iReadLinePartsComment = iOTHER_TEXT_LINE_MAX + iPARTS_TEXT_LINE_MAX; 
+		m_iReadLinePartsComment = iFONT_COMMENT_LINE + iPARTS_TEXT_LINE_MAX; 
 		
 		int iTmp = iPartsType;
 		if( iTmp >= iPARTS_TEXT_LINE_MAX - 1 ){

@@ -26,6 +26,7 @@ clsLINE_BOX::clsLINE_BOX(
 	,m_isChangeBigW( false )
 	,m_isChangeBigH( false )
 	,m_encBeforChange( encBEFOR_CHANGE::NOTHING )
+	,m_isStopChange( true )
 {
 	m_vPos = { WND_W/2, WND_H/2, 0.0f };
 
@@ -247,6 +248,7 @@ void clsLINE_BOX::AddChangeData(
 		assert( !"不正な値が与えられました" );
 		break;
 	}
+	m_isStopChange = false;
 }
 //Targetに向けてサイズを変える.
 void clsLINE_BOX::AddSizeForTarget()
@@ -366,11 +368,17 @@ void clsLINE_BOX::AddSizeForTarget()
 		break;
 	}
 
+	//変化終了.
 	if( isEndW && isEndH ){
 		m_encBeforChange = encBEFOR_CHANGE::NOTHING;
+		m_isStopChange = true;
 	}
 }
 
+bool clsLINE_BOX::isStopChange()
+{
+	return m_isStopChange;
+}
 
 D3DXVECTOR3 clsLINE_BOX::GetPos() const
 {

@@ -109,37 +109,42 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpSound->PlaySE( 0 );
 	}
 
-//	if( m_upKey->isEnter( 'Z' ) ){
-//		m_upBox->SetSizeTarget( { 200.0f, 200.0f, 0.0f } );
-//	}
-//	if( m_upKey->isEnter( 'X' ) ){
-//		m_upBox->SetSizeTarget( { 100.0f, 40.0f, 0.0f } );
-//	}
-//	if( m_upKey->isEnter( 'C' ) ){
-//		m_upBox->SetSizeTarget( { 40.0f, 200.0f, 0.0f } );
-//	}
-//	if( m_upKey->isEnter( 'V' ) ){
-//		m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
-//	}
-//
-//	if( m_upKey->isEnter( 'A' ) ){
-//		m_upBox->AddChangeData( 
-//			10.0f, 10.0f, clsLINE_BOX::encBEFOR_CHANGE::WIDTH );
-//	}
-//	if( m_upKey->isEnter( 'S' ) ){
-//		m_upBox->AddChangeData( 
-//			10.0f, 10.0f, clsLINE_BOX::encBEFOR_CHANGE::HEIGHT );
-//	}
-//	if( m_upKey->isEnter( 'D' ) ){
-//		m_upBox->AddChangeData( 
-//			10.0f, 10.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
-//	}
-//	if( m_upKey->isEnter( 'F' ) ){
-//		m_upBox->AddChangeData( 
-//			100.0f, 100.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
-//	}
+	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+		m_upBox->SetSizeTarget( { 200.0f, 200.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'X' ) & 0x1 ){
+		m_upBox->SetSizeTarget( { 300.0f, 40.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'C' ) & 0x1 ){
+		m_upBox->SetSizeTarget( { 400.0f, 200.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'V' ) & 0x1 ){
+		m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
+	}
 
+	if( GetAsyncKeyState( 'A' ) & 0x1 ){
+		m_upBox->AddChangeData( 
+			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::WIDTH );
+	}
+	if( GetAsyncKeyState( 'S' ) & 0x1 ){
+		m_upBox->AddChangeData( 
+			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::HEIGHT );
+	}
+	if( GetAsyncKeyState( 'D' ) & 0x1 ){
+		m_upBox->AddChangeData( 
+			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
+	}
+	if( GetAsyncKeyState( 'F' ) & 0x1 ){
+		m_upBox->AddChangeData( 
+			100.0f, 100.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
+	}
+
+	//”–‚­‚·‚é.
 	m_upFlash->AddAlpha( fFLASH_DOWN );
+	//Á‚¦‚½‚çŒ©‚¦‚È‚­‚·‚é.
+	if( m_upFlash->GetAlpha() <= 0.0f ){
+		m_upFlash->SetScale( 0.0f );
+	}
 
 
 
@@ -150,6 +155,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	clsCAMERA_TITLE* pCam = (clsCAMERA_TITLE*)m_wpCamera;//ƒSƒŠ‰Ÿ‚µ‚Å‚²‚ß‚ñ‚È‚³‚¢.
 	if( pCam->isFlash() ){
 		m_upFlash->SetAlpha( 1.0f );
+		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
 		m_upLogo->SetAlpha( 1.0f );
 	}
 

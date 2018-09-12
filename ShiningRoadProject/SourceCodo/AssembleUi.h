@@ -6,11 +6,11 @@
 
 #include "Sprite2DCenter.h"
 #include "UiText.h"
-#include "WindowBox.h"
 #include "File.h"
 #include "CFont.h"
 #include "AssembleModel.h"
 #include <vector>
+class clsWINDOW_BOX;
 
 
 class clsASSEMBLE_UI
@@ -27,7 +27,8 @@ public:
 	{
 		PARTS = 0,
 		STATUS,
-		MISSION_START
+		MISSION_START,
+		TITLE_BACK,
 	}m_enSelectMode;
 
 	void Create( 
