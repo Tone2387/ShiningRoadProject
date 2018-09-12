@@ -212,8 +212,8 @@ void clsCAMERA_TITLE::Spn(
 {
 	vRot->y -= fSpn;
 
-	vPos->x = vLook->x + cosf( vRot->y - M_PI_2 ) * m_fDistance;
-	vPos->z = vLook->z + sinf( vRot->y - M_PI_2 ) * m_fDistance;
+	vPos->x = vLook->x + cosf( vRot->y - static_cast<float>( M_PI_2 ) ) * m_fDistance;
+	vPos->z = vLook->z + sinf( vRot->y - static_cast<float>( M_PI_2 ) ) * m_fDistance;
 }
 
 //ƒJƒƒ‰ˆÊ’u‚ğ’†S‚É‚µ‚ÄŒ©‰ñ‚·.
@@ -221,8 +221,8 @@ void clsCAMERA_TITLE::Turn( const float fTurn )
 {
 	m_vRot.y += fTurn;
 
-	m_vLook.x = m_vPos.x + cosf( m_vRot.y + M_PI_2 ) * m_fDistance;
-	m_vLook.z = m_vPos.z + sinf( m_vRot.y + M_PI_2 ) * m_fDistance;
+	m_vLook.x = m_vPos.x + cosf( m_vRot.y + static_cast<float>( M_PI_2 ) ) * m_fDistance;
+	m_vLook.z = m_vPos.z + sinf( m_vRot.y + static_cast<float>( M_PI_2 ) ) * m_fDistance;
 
 }
 
