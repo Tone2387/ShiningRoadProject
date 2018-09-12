@@ -144,6 +144,8 @@ private:
 		ENTER,
 		EXIT,
 		MISSION_START,
+		WIN_APP,
+		WIN_DISAPP,
 	};
 
 };

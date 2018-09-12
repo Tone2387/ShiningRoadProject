@@ -665,9 +665,12 @@ void clsSCENE_ASSEMBLE::Exit()
 void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 {
 	m_wpSound->PlaySE( enSE::MISSION_START );
-	enNextScene = enSCENE::MISSION;
+	m_wpSound->PlaySE( enSE::ENTER );
 
+	enNextScene = enSCENE::MISSION;
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
+
+	m_wpSound->PlaySE( enSE::MISSION_START );
 }
 
 //パーツ変更.
@@ -784,18 +787,20 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 	m_upBox->AddChangeData( fBOX_BIG_SPD_W, fBOX_BIG_SPD_H, encBOX_APPEAR_CHANGE_MODE );
 	m_enSelectMode = encMode;
 	if( encMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
-		m_wpSound->PlaySE( enSE::ENTER );
+		m_wpSound->PlaySE( enSE::WIN_APP );
+//		m_wpSound->PlaySE( enSE::ENTER );
 		m_iMessageNum = iBOX_MESSAGE_LINE_GO_MISSION;
 	}
 	else if( encMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK ){
-		m_wpSound->PlaySE( enSE::EXIT );
+		m_wpSound->PlaySE( enSE::WIN_APP );
+//		m_wpSound->PlaySE( enSE::EXIT );
 		m_iMessageNum = iBOX_MESSAGE_LINE_BACK_TITLE;
 	}
 }
 //メッセボックス消す.
 void clsSCENE_ASSEMBLE::DisAppearMessageBox()
 {
-	m_wpSound->PlaySE( enSE::EXIT );
+	m_wpSound->PlaySE( enSE::WIN_DISAPP );
 
 	m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 	m_upBox->AddChangeData( 
