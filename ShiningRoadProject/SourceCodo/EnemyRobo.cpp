@@ -42,12 +42,12 @@ void clsEnemyRobo::Init(
 	{
 		m_v_QuickAvoidState[i].iAvoidNum = i;
 		m_v_QuickAvoidState[i].iUpdateTime = 300 * (int)g_fFPS;
-		m_v_QuickAvoidState[i].iLockTimeorDamage = 5 * (int)g_fFPS;
+		m_v_QuickAvoidState[i].iLockTimeorDamage = 5;
 		m_v_QuickAvoidState[i].iAvoidDir = 45;
 
 		m_v_QuickAvoidState[i].iAvoidDamageUpdateTime = m_v_QuickAvoidState[i].iUpdateTime;
 		m_v_QuickAvoidState[i].iDamage = 0;
-		m_v_QuickAvoidState[i].iLockTime = m_v_QuickAvoidState[i].iLockTimeorDamage = 5 * (int)g_fFPS;
+		m_v_QuickAvoidState[i].iLockTime = m_v_QuickAvoidState[i].iLockTimeorDamage* (int)g_fFPS;
 	}
 }
 
@@ -286,6 +286,11 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoLockTime(QuickBoostAvoid& AvoidState, floa
 	if (!m_pBody->m_bRadarWarning)
 	{
 		AvoidState.iLockTime = AvoidState.iLockTimeorDamage * static_cast<int>(g_fFPS);
+	}
+
+	else
+	{
+		int y = 0;
 	}
 
 	return false;

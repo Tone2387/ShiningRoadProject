@@ -254,20 +254,7 @@ D3DXVECTOR3 clsPlayer::GetLockRangeTmp()
 
 float clsPlayer::GetLockCircleScale()
 {
-	float fDis = 1 / m_fLockRange;
-	float fTmp;
-
-	float fScale = 0.0f;
-	float fDiameter = 1.0f;
-
-	float siya = 1.0f + static_cast<float>(D3DX_PI / 4.0);
-
-	fScale = (2 * m_fLockRange) * tanf(siya / 2);
-	fScale = fDiameter / fScale;
-
-	fTmp = m_fLockCircleRadius * fScale;
-
-	return fTmp;
+	return m_fLockCircleRadius;
 }
 
 bool clsPlayer::GetTargetPos(D3DXVECTOR3& vTmpPos)
