@@ -620,6 +620,11 @@ void clsSCENE_MISSION::RenderDebugText()
 		m_pPlayer->m_vMoveDirforBoost.z);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
+	sprintf_s( strDbgTxt, 
+		"EnemyEnelgy : [%d]",
+		m_pTestObj->m_iEnelgy);
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
 	/*sprintf_s( strDbgTxt, 
 		"CamLokPos : x[%f], y[%f], z[%f]",
 		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );

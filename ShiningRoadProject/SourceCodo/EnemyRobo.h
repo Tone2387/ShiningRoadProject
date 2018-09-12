@@ -28,14 +28,22 @@ public:
 	clsRoboCommand* RShotOperation();
 	
 private:
+	struct Boost
+	{
+		int iRisingENParcent;//上昇開始していいEN残量率.
+		int iENLimitParcent;//上昇をやめるEN残量率.
+	};
+
 	struct QuickBoostApproach
 	{
 		int iDis;
+		int iENLimit;
 	};
 
 	struct QuickTrun
 	{
 		int iDir;
+		int iENLimit;
 	};
 
 	enum enAvoidCategory
@@ -48,10 +56,16 @@ private:
 
 	struct QuickBoostAvoid
 	{
-		enAvoidCategory iAvoidNum;//回避条件カテゴリナンバー.
+		int iAvoidNum;//回避条件カテゴリナンバー.
 		int iUpdateTime;
 		int iAvoidDir;
 		int iLockTimeorDamage;
+		int iENLimit;
+
+		//以下、毎フレーム更新のための変数.
+		int iAvoidDamageUpdateTime;
+		int iDamage;
+		int iLockTime;
 	};
 
 	clsRobo* m_pBody;
@@ -68,9 +82,8 @@ private:
 	clsRoboCommand* m_pComLShot;
 	clsRoboCommand* m_pComRShot;
 
-	int m_iAvoidDamageUpdateTime;
-	int m_iDamage;
-	int m_iLockTime;
+	void IsENSaving();//ブースト上昇を行っていいほどENが回復したかを判定.
+	bool IsBoostRising();
 
 	bool IsBoostOn();
 	bool IsBoostOff();
@@ -90,9 +103,11 @@ private:
 	ShotData m_LShotData;
 	ShotData m_RShotData;
 
-	
+	Boost m_BoostState;
 
 	std::vector<QuickBoostApproach> m_v_QuickAppState;
 	std::vector<QuickTrun> m_v_QuickTrunState;
 	std::vector<QuickBoostAvoid> m_v_QuickAvoidState;
+
+	bool m_bENSaving;
 };
