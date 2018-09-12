@@ -58,6 +58,14 @@ private:
 	void Exit();
 	//出撃.
 	void MissionStart( enSCENE &enNextScene );
+	
+	
+	//メッセボックス出現.
+	void AppearMessageBox( const clsASSEMBLE_UI::enSELECT_MODE encMode );
+	//メッセボックス消す.
+	void DisAppearMessageBox();
+
+	
 	//パーツ変更.
 	void AssembleParts();
 	//戻る.
@@ -72,8 +80,8 @@ private:
 	template< class T, class MIN, class MAX >
 	T KeepRange( T t, const MIN min, const MAX max ) const;
 
-	//カーソルを出撃に合わせているならtrue.
-	bool isMissionStart();
+	//メッセボックスが閉じているならtrue.
+	bool isMessageBoxClose();
 
 
 #if _DEBUG
@@ -103,6 +111,10 @@ private:
 	//メッセの行数を表す.
 	int									m_iMessageNum;
 
+	//メッセボックスの選択肢.
+	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
+	bool									m_isMessageBoxYes;
+
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
 
@@ -114,7 +126,9 @@ private:
 //	clsCharaStatic* m_pTestChara;
 //	clsCharaStatic* m_pParts;
 
-
+	//操作可能ならtrue.
+	bool m_isCanControl;
+		
 
 	//エフェクト.
 	::Effekseer::Handle m_ehHibana;
@@ -132,6 +146,8 @@ private:
 		ENTER,
 		EXIT,
 		MISSION_START,
+		WIN_APP,
+		WIN_DISAPP,
 	};
 
 };
