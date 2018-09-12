@@ -9,6 +9,7 @@
 #include "AssembleUi.h"
 
 #include "PartsWindowModel.h"
+class clsWINDOW_BOX;
 
 
 //================================//
@@ -53,12 +54,14 @@ private:
 	void MoveCursorLeft();
 	//決定.
 	void Enter( enSCENE &enNextScene );
+	//キャンセル.
+	void Exit();
 	//出撃.
 	void MissionStart( enSCENE &enNextScene );
 	//パーツ変更.
 	void AssembleParts();
 	//戻る.
-	void Undo( enSCENE &enNextScene );
+	void TitleBack( enSCENE &enNextScene );
 	PARTS_SELECT m_OldSelect;//Undo()のために必要( のちに配列化する ).
 
 
@@ -94,6 +97,11 @@ private:
 
 	//選択中パーツ.
 	clsPARTS_WINDOW_MODEL* m_pSelectParts;
+
+	//メッセボックス.
+	std::unique_ptr< clsWINDOW_BOX >	m_upBox;
+	//メッセの行数を表す.
+	int									m_iMessageNum;
 
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;

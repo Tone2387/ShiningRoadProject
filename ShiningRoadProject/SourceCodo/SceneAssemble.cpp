@@ -1,4 +1,5 @@
 #include "SceneAssemble.h"
+#include "WindowBox.h"
 
 using namespace std;
 
@@ -61,13 +62,30 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 //----- 背景 -----//.
 
 
+//メッセボックス.
+const float fBOX_ALPHA = 0.5f;
+const D3DXVECTOR3 vBOX_POS = { WND_W/2, WND_H/2, 0.0f };
+const D3DXVECTOR3 vBOX_SIZE = { WND_W/2, WND_H/2, 0.0f };
+const float fBOX_BIG_SPD_W = 60.0f;
+const float fBOX_BIG_SPD_H = 40.0f;
+const clsLINE_BOX::encBEFOR_CHANGE encBOX_APPEAR_CHANGE_MODE = clsLINE_BOX::encBEFOR_CHANGE::WIDTH;
+const float fBOX_SMALL_SPD_RATE = 1.0 / 16.0f;
+const clsLINE_BOX::encBEFOR_CHANGE encBOX_DISAPPEAR_CHANGE_MODE = clsLINE_BOX::encBEFOR_CHANGE::BOTH;
+const int iBOX_MESSAGE_LINE_GO_MISSION = 1;
+const int iBOX_MESSAGE_LINE_BACK_TITLE = iBOX_MESSAGE_LINE_GO_MISSION + 1;
+
 //日本語UI.
 const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
 //ボタン説明.
-const D3DXVECTOR3 vFONT_BUTTON_POS = { 600.0f, 40.0f, 0.0f };
+const D3DXVECTOR3 vFONT_BUTTON_POS = { 650.0f, 40.0f, 0.0f };
 const float fFONT_BUTTON_SCALE = 14.0f;
 const int iFONT_BUTTON_LINE = 0;
 const int iFONT_BUTTON_TEXT_SIZE = 64;
+
+//出撃メッセージ.
+const D3DXVECTOR3 vFONT_MESSAGE_BOX_TITLE_POS = { 480.0f, 200.0f, 0.0f };
+const float fFONT_MESSAGE_BOX_TITLE_SCALE = 24.0f;
+
 
 //パーツ、ステータス説明.
 const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
@@ -85,6 +103,7 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_pViewPortRoboWindow( nullptr )
 	,m_cuFileMax( 0 )
 	,m_pSelectParts( nullptr )
+	,m_iMessageNum( 0 )
 //	,m_enSelectMode()
 {
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
@@ -154,6 +173,13 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 		partsData[i] = m_vspFile[i]->GetSizeRow();
 	}
+
+	//箱.
+	assert( !m_upBox );
+	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
+	m_upBox->SetPos( vBOX_POS );
+	m_upBox->SetSize( 0.0f );
+	m_upBox->SetAlpha( fBOX_ALPHA );
 
 	//UI.
 	assert( !m_pUI );
@@ -298,23 +324,37 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressUp()		)MoveCursorUp();
 	if( isPressDown()	)MoveCursorDown();
 	if( m_wpXInput->isPressEnter( XINPUT_B ) ||
-		m_upKey->isEnter( VK_RETURN ) )
+		GetAsyncKeyState( VK_RETURN ) & 0x1 )
 	{
 		Enter( enNextScene );
 	}
 	if( isPressExit() ){
-		Undo( enNextScene );
+		Exit();
 	}
 	//次のシーンへ.
 	if( m_wpXInput->isPressEnter( XINPUT_START ) || 
-		m_upKey->isEnter( VK_SPACE ) )
+		GetAsyncKeyState( VK_SPACE ) & 0x1 )
 	{
-		MissionStart( enNextScene );
+		//ウィンドウを出してるときは無視.
+		if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS || 
+			m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+		{
+			m_upBox->SetSizeTarget( vBOX_SIZE );
+			m_upBox->AddChangeData( fBOX_BIG_SPD_W, fBOX_BIG_SPD_H, encBOX_APPEAR_CHANGE_MODE );
+			m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
+			m_iMessageNum = iBOX_MESSAGE_LINE_GO_MISSION;
+//			MissionStart( enNextScene );
+		}
 	}
 	//ステータスウィンドウを隠す.
 	if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
-		m_pUI->SwitchDispStatusComment();
-		m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+		//ウィンドウを出してるときは無視.
+		if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS || 
+			m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+		{
+			m_pUI->SwitchDispStatusComment();
+			m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+		}
 	}
 	//ステータスのcomment切替.
 	if( m_wpXInput->isPressEnter( XINPUT_X ) ){
@@ -360,6 +400,9 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 //		static_cast< SKIN_ENUM_TYPE >( m_PartsSelect.Num[ m_PartsSelect.Type ] ) ) );
 	assert( m_pSelectParts );
 	m_pSelectParts->Update( m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
+
+	assert( m_upBox );
+	m_upBox->Update();
 
 }
 
@@ -433,17 +476,26 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 void clsSCENE_ASSEMBLE::RenderUi()
 {
+	SetDepth( false );
 
 	//ボタンの説明.
 	m_wpFont->SetPos( vFONT_BUTTON_POS );
 	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
 	m_wpFont->Render( iFONT_BUTTON_LINE, iFONT_BUTTON_TEXT_SIZE );
 
+	//箱.
+	assert( m_upBox );
+	m_upBox->Render();
 
-//	//スの説明.
-//	m_wpFont->SetPos( { 0.0f,  WND_H*0.5f, 0.0f } );
-//	m_wpFont->SetScale( 64.0f );
-//	m_wpFont->Render( 0, 128 );
+	//選択肢.
+	if( m_upBox->isStopChange() && m_upBox->GetSize().x ){
+		m_wpFont->SetPos( vFONT_MESSAGE_BOX_TITLE_POS );
+		m_wpFont->SetScale( fFONT_MESSAGE_BOX_TITLE_SCALE );
+		m_wpFont->Render( m_iMessageNum, iFONT_BUTTON_TEXT_SIZE );
+	}
+
+	SetDepth( true );
+
 
 }
 
@@ -541,6 +593,35 @@ void clsSCENE_ASSEMBLE::Enter( enSCENE &enNextScene )
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
 		MissionStart( enNextScene );
 	}
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK ){
+		TitleBack( enNextScene );
+	}
+}
+//キャンセル.
+void clsSCENE_ASSEMBLE::Exit()
+{
+	//ウィンドウがあるとき.
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START || 
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK )
+	{
+		//ウィンドウを消す.
+		m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
+		m_upBox->AddChangeData( 
+			m_upBox->GetSize().x * fBOX_SMALL_SPD_RATE, 
+			m_upBox->GetSize().y * fBOX_SMALL_SPD_RATE, 
+			encBOX_DISAPPEAR_CHANGE_MODE );
+		//選択肢を選べるように戻す.
+		m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS ;
+	}
+	//ないとき.
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS || 
+			 m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS )
+	{
+		m_upBox->SetSizeTarget( vBOX_SIZE );
+		m_upBox->AddChangeData( fBOX_BIG_SPD_W, fBOX_BIG_SPD_H, encBOX_APPEAR_CHANGE_MODE );
+		m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK;
+		m_iMessageNum = iBOX_MESSAGE_LINE_BACK_TITLE;
+	}
 }
 
 //出撃.
@@ -613,7 +694,7 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 
 
 //戻る.
-void clsSCENE_ASSEMBLE::Undo( enSCENE &enNextScene )
+void clsSCENE_ASSEMBLE::TitleBack( enSCENE &enNextScene )
 {
 	m_wpSound->PlaySE( enSE::EXIT );
 	enNextScene = enSCENE::TITLE;
@@ -646,7 +727,9 @@ T clsSCENE_ASSEMBLE::KeepRange( T t, const MIN min, const MAX max ) const
 //カーソルを出撃に合わせているならtrue.
 bool clsSCENE_ASSEMBLE::isMissionStart()
 {
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK )
+	{
 		return false;
 	}
 

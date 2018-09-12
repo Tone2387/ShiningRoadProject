@@ -14,7 +14,7 @@
 
 #include "UiText.h"
 
-#include "KeyInput.h"
+//#include "KeyInput.h"
 
 
 //================================//
@@ -83,7 +83,7 @@ protected:
 	//----- Render用 -----//.
 
 
-	std::unique_ptr< clsKEY_INPUT > m_upKey;
+//	std::unique_ptr< clsKEY_INPUT > m_upKey;
 
 	//デバッグテキストクラス.
 #if _DEBUG

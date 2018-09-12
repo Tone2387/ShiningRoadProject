@@ -42,6 +42,7 @@ public:
 		const float fWidthSpd,
 		const float fHeightSpd,
 		const encBEFOR_CHANGE encBefor );
+	bool isStopChange();
 
 	D3DXVECTOR3 GetPos() const;
 	D3DXVECTOR3 GetSize() const;
@@ -82,5 +83,8 @@ private:
 	virtual void UpdateProduct();
 
 	virtual void RenderProduct();
+
+	//•Ï‰»‚ªŽ~‚Ü‚Á‚Ä‚¢‚é‚©.
+	bool m_isStopChange;
 
 };

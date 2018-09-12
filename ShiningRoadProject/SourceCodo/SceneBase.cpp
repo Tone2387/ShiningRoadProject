@@ -89,7 +89,7 @@ void clsSCENE_BASE::Create()
 
 	m_enNextScene = enSCENE::NOTHING;
 
-	m_upKey = make_unique< clsKEY_INPUT >();
+//	m_upKey = make_unique< clsKEY_INPUT >();
 
 
 #if _DEBUG
@@ -118,7 +118,7 @@ void clsSCENE_BASE::Create()
 //				  指定したシーンが生成される ).
 void clsSCENE_BASE::Update( enSCENE &enNextScene )
 {
-	m_upKey->Update();
+//	m_upKey->Update();
 
 	//サウンドループ.
 	m_wpSound->UpdateLoop();
@@ -170,7 +170,9 @@ void clsSCENE_BASE::Render()
 	SetViewPort( m_wpViewPort11, m_wpCamera->GetPos(), m_wpCamera->GetLookPos(), WND_W, WND_H );
 
 	//各シーンのUIの描画.
+	SetDepth( false );
 	RenderUi();
+	SetDepth( true );
 
 	//元通りのビューポート.
 	if( m_wpViewPortUsing != m_wpViewPort11 ){
@@ -198,7 +200,7 @@ bool clsSCENE_BASE::isPressRight()
 	if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
 		return true;
 	}
-	else if( m_upKey->isEnter( VK_RIGHT ) ){
+	else if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
 		return true;
 	}
 	return false;
@@ -209,7 +211,7 @@ bool clsSCENE_BASE::isPressLeft()
 	if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
 		return true;
 	}
-	else if( m_upKey->isEnter( VK_LEFT ) ){
+	else if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
 		return true;
 	}
 	return false;
@@ -220,7 +222,7 @@ bool clsSCENE_BASE::isPressUp()
 	if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
 		return true;
 	}
-	else if( m_upKey->isEnter( VK_UP ) ){
+	else if( GetAsyncKeyState( VK_UP ) & 0x1 ){
 		return true;
 	}
 	return false;
@@ -231,7 +233,7 @@ bool clsSCENE_BASE::isPressDown()
 	if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
 		return true;
 	}
-	else if( m_upKey->isEnter( VK_DOWN ) ){
+	else if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
 		return true;
 	}
 	return false;
@@ -242,7 +244,7 @@ bool clsSCENE_BASE::isPressEnter()
 	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
 		return true;
 	}
-	else if( m_upKey->isEnter( VK_RETURN ) ){
+	else if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		return true;
 	}
 	return false;
@@ -253,7 +255,7 @@ bool clsSCENE_BASE::isPressExit()
 	if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
 		return true;
 	}
-	else if( m_upKey->isEnter( VK_BACK ) ){
+	else if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		return true;
 	}
 	return false;
