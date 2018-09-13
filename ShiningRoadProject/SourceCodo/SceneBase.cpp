@@ -23,7 +23,7 @@ const float fDEBUG_TEXT_SIZE = 50.0f;
 //========== Šî’êƒNƒ‰ƒX ==========//
 //================================//
 clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
-	:m_wpPtrGroup( ptrGroup )
+	:m_wpPtrGroup(		ptrGroup )
 	,m_wpDevice(		m_wpPtrGroup->GetDevice() )
 	,m_wpContext(		m_wpPtrGroup->GetContext() )
 	,m_wpViewPort10(	m_wpPtrGroup->GetViewPort10() )
@@ -40,10 +40,10 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 #if _DEBUG
 	,m_upText( nullptr )
 #endif//#if _DEBUG
-	,m_enNextScene( enSCENE::NOTHING )
-	,m_wpViewPortUsing( m_wpViewPort11 )
-	,m_pDepthStencilStateOn( nullptr )
-	,m_pDepthStencilStateOff( nullptr )
+	,m_enNextScene(				enSCENE::NOTHING )
+	,m_wpViewPortUsing(			m_wpViewPort11 )
+	,m_pDepthStencilStateOn(	nullptr )
+	,m_pDepthStencilStateOff(	nullptr )
 {
 //	m_wpViewPortUsing = m_wpViewPort11;
 }
