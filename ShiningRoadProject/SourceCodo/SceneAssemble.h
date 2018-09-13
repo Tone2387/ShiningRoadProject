@@ -56,21 +56,23 @@ private:
 	void Enter( enSCENE &enNextScene );
 	//キャンセル.
 	void Exit();
-	//出撃.
-	void MissionStart( enSCENE &enNextScene );
-	
-	
+
+
 	//メッセボックス出現.
 	void AppearMessageBox( const clsASSEMBLE_UI::enSELECT_MODE encMode );
 	//メッセボックス消す.
 	void DisAppearMessageBox();
-
-	
 	//パーツ変更.
 	void AssembleParts();
-	//戻る.
+	//ステータスの表示非表示切替.
+	void SwitchDispStatus();
+	//パーツ選択とステータス選択の切り替え.
+	void ChangePartsSelect();
+	void ChangeStatusSelect();
+	//出撃.
+	void MissionStart( enSCENE &enNextScene );
+	//タイトルに戻る.
 	void TitleBack( enSCENE &enNextScene );
-	PARTS_SELECT m_OldSelect;//Undo()のために必要( のちに配列化する ).
 
 
 
@@ -78,7 +80,7 @@ private:
 	//minはその数値より小さくならない、maxはそれ以上にはならない.
 	// min <= t < max.
 	template< class T, class MIN, class MAX >
-	T KeepRange( T t, const MIN min, const MAX max ) const;
+	T LoopRange( T t, const MIN min, const MAX max ) const;
 
 	//メッセボックスが閉じているならtrue.
 	bool isMessageBoxClose();

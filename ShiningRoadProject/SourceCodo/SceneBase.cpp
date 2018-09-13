@@ -14,6 +14,10 @@ const float fRENDER_LIMIT = 640.0f;//150.0f.
 #define XINPUT_ENTER  ( XINPUT_START | XINPUT_B )
 #define XINPUT_EXIT  ( XINPUT_A )
 
+#if _DEBUG
+const D3DXVECTOR4 vDEBUG_TEXT_COLOR( 1.0f, 1.0f, 1.0f, 1.0f );
+const float fDEBUG_TEXT_SIZE = 50.0f;
+#endif//#if _DEBUG
 
 //================================//
 //========== 基底クラス ==========//
@@ -37,8 +41,11 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_upText( nullptr )
 #endif//#if _DEBUG
 	,m_enNextScene( enSCENE::NOTHING )
+	,m_wpViewPortUsing( m_wpViewPort11 )
+	,m_pDepthStencilStateOn( nullptr )
+	,m_pDepthStencilStateOff( nullptr )
 {
-	m_wpViewPortUsing = m_wpViewPort11;
+//	m_wpViewPortUsing = m_wpViewPort11;
 }
 
 clsSCENE_BASE::~clsSCENE_BASE()
@@ -56,6 +63,9 @@ clsSCENE_BASE::~clsSCENE_BASE()
 //	m_wpSound->StopAllSound();
 	//次のシーンに余計なエフェクトを持ち込まない.
 	m_wpEffects->StopAll();
+
+	SAFE_RELEASE( m_pDepthStencilStateOff );
+	SAFE_RELEASE( m_pDepthStencilStateOn );
 
 
 	m_enNextScene = enSCENE::NOTHING;
@@ -80,6 +90,10 @@ clsSCENE_BASE::~clsSCENE_BASE()
 //シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
 void clsSCENE_BASE::Create()
 {
+	if( FAILED( CreateDepthStencilState() ) ){
+		assert( !"デプスステンシル作成失敗" );
+		return;
+	}
 
 	D3DXMatrixIdentity( &m_mView );
 	D3DXMatrixIdentity( &m_mProj );	
@@ -87,30 +101,24 @@ void clsSCENE_BASE::Create()
 
 	m_wpBlackScreen->GetBright();
 
-	m_enNextScene = enSCENE::NOTHING;
 
 //	m_upKey = make_unique< clsKEY_INPUT >();
 
 
 #if _DEBUG
 	//デバッグテキストの初期化.
-//	m_upText = new clsDebugText;
 	m_upText = make_unique< clsDebugText >();
-	D3DXVECTOR4 vColor( 1.0f, 1.0f, 1.0f, 1.0f );
 	if( FAILED( m_upText->Init(
 		m_wpContext,
-		WND_W, WND_H, 50.0f,
-		vColor ) ) )
+		WND_W, WND_H, fDEBUG_TEXT_SIZE,
+		vDEBUG_TEXT_COLOR ) ) )
 	{
-		MessageBox( NULL, "デバッグテキスト作成失敗", "clsMain::Loop", MB_OK );
+		assert( !"デバッグテキスト作成失敗" );
 	}
 #endif//#if _DEBUG
 
-
-
 	//各シーンのCreate.
 	CreateProduct();
-
 
 }
 
@@ -180,14 +188,12 @@ void clsSCENE_BASE::Render()
 		m_wpContext->RSSetViewports( 1, m_wpViewPort11 );
 	}
 
-
-
 	//暗転描画.
 	m_wpBlackScreen->Render();
 
 #if _DEBUG
-	SetDepth( false );	//Zテスト:OFF.
 	//デバッグテキスト.
+	SetDepth( false );	//Zテスト:OFF.
 	RenderDebugText();
 	SetDepth( true );	//Zテスト:ON.
 #endif//#if _DEBUG
@@ -277,15 +283,14 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 //深度テスト(Zテスト)ON/OFF切替.
 void clsSCENE_BASE::SetDepth( const bool isOn )
 {
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	ZeroMemory( &depthStencilDesc,
-		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
-	depthStencilDesc.DepthEnable = isOn;
-
-	m_wpDevice->CreateDepthStencilState(
-		&depthStencilDesc, &m_wpDepthStencilState );
-	m_wpContext->OMSetDepthStencilState(
-		m_wpDepthStencilState, 1 );
+	if( isOn ){
+		m_wpContext->OMSetDepthStencilState(
+			m_pDepthStencilStateOn, 1 );
+	}
+	else{
+		m_wpContext->OMSetDepthStencilState(
+			m_pDepthStencilStateOff, 1 );
+	}
 }
 
 
@@ -340,6 +345,27 @@ void clsSCENE_BASE::RenderDebugText()
 
 
 
+HRESULT clsSCENE_BASE::CreateDepthStencilState()
+{
+	assert( !m_pDepthStencilStateOn );
+	assert( !m_pDepthStencilStateOff );
+
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	ZeroMemory( &depthStencilDesc,
+		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
+
+	//ON.
+	depthStencilDesc.DepthEnable = true;
+	m_wpDevice->CreateDepthStencilState(
+		&depthStencilDesc, &m_pDepthStencilStateOn );
+
+	//OFF.
+	depthStencilDesc.DepthEnable = false;
+	m_wpDevice->CreateDepthStencilState(
+		&depthStencilDesc, &m_pDepthStencilStateOff );
+
+	return S_OK;
+}
 
 
 

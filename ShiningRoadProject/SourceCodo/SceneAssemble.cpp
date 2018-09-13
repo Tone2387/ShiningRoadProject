@@ -76,13 +76,17 @@ const int iBOX_MESSAGE_LINE_BACK_TITLE = iBOX_MESSAGE_LINE_GO_MISSION + 1;
 
 
 //YesNo.
-const float fMESSAGE_BOX_BUTTON_X_OFFSET = 100.0f;
-const float fMESSAGE_BOX_BUTTON_Y = WND_H/2 + 100.0f;
-const D3DXVECTOR3 vMESSAGEBOX_YES_BUTTON_POS = { WND_W/2 - fMESSAGE_BOX_BUTTON_X_OFFSET, fMESSAGE_BOX_BUTTON_Y, 0.0f };
-const D3DXVECTOR3 vMESSAGEBOX_NO_BUTTON_POS =  { WND_W/2 + fMESSAGE_BOX_BUTTON_X_OFFSET, fMESSAGE_BOX_BUTTON_Y, 0.0f };
+const float fMESSAGEBOX_BUTTON_X_OFFSET = 100.0f;
+const float fMESSAGEBOX_BUTTON_Y = WND_H/2 + 100.0f;
+const D3DXVECTOR3 vMESSAGEBOX_YES_BUTTON_POS = { WND_W/2 - fMESSAGEBOX_BUTTON_X_OFFSET, fMESSAGEBOX_BUTTON_Y, 0.0f };
+const D3DXVECTOR3 vMESSAGEBOX_NO_BUTTON_POS =  { WND_W/2 + fMESSAGEBOX_BUTTON_X_OFFSET, fMESSAGEBOX_BUTTON_Y, 0.0f };
+const WHSIZE_FLOAT MESSAGEBOX_BUTTON_YES_NO_DISP = { 80.0f, 60.0f }; 
+const WHSIZE_FLOAT MESSAGEBOX_BUTTON_YES_NO_ANIM = { 2.0f, 2.0f }; 
+const char* sMESSAGEBOX_BUTTON_YES_NO_PATH = "Data\\Image\\AssembleUi\\YesNo.png";
 const POINTFLOAT MESSAGEBOX_YES_BUTTON_ANIM = { 0.0f, 0.0f };
 const POINTFLOAT MESSAGEBOX_NO_BUTTON_ANIM = { 1.0f, 0.0f };
 const float fMESSAGEBOX_YES_NO_BUTTON_SELECT_ANIM = 1.0f;
+
 
 
 //日本語UI.
@@ -199,10 +203,10 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//yesno.
 	assert( !m_upYesNo );
-	ss.Disp = { 80.0f, 60.0f };
-	ss.Anim = { 2.0f, 2.0f };
+	ss.Disp = MESSAGEBOX_BUTTON_YES_NO_DISP;
+	ss.Anim = MESSAGEBOX_BUTTON_YES_NO_ANIM;
 	m_upYesNo = make_unique< clsSPRITE2D_CENTER >();
-	m_upYesNo->Create( m_wpDevice, m_wpContext, "Data\\Image\\AssembleUi\\YesNo.png", ss );
+	m_upYesNo->Create( m_wpDevice, m_wpContext, sMESSAGEBOX_BUTTON_YES_NO_PATH, ss );
 
 
 	//UI.
@@ -379,26 +383,19 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		}
 		//ステータスウィンドウを隠す.
 		if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
-			//ウィンドウを出してるときは無視.
-			if( isMessageBoxClose() ){
-				m_wpSound->PlaySE( enSE::CURSOL_MOVE );
-				m_pUI->SwitchDispStatusComment();
-				m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
-			}
+			SwitchDispStatus();
 		}
 		//ステータスのcomment切替.
-		if( m_wpXInput->isPressEnter( XINPUT_X ) ){
-			if( m_pUI->isCanSwitchStatusComment() ){
-				if( isMessageBoxClose() )
-				{
-					m_wpSound->PlaySE( enSE::CURSOL_MOVE );
-					m_pUI->SwitchStatusComment();
-					if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-						m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
-					}
-					else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
-						m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
-					}
+		if( m_wpXInput->isPressEnter( XINPUT_X ) )
+		{
+			if( m_pUI->isCanSwitchStatusComment() &&
+				isMessageBoxClose() )
+			{
+				if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+					ChangeStatusSelect();
+				}
+				else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+					ChangePartsSelect();
 				}
 			}
 		}
@@ -435,6 +432,12 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
+
+
+}
+
+void clsSCENE_ASSEMBLE::RenderUi()
+{
 	//パーツ描画用.
 	clsCAMERA_ASSEMBLE PartsViewCam;
 	PartsViewCam.Create();
@@ -452,33 +455,28 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 	//背景.
 	assert( m_upBack );
-	SetDepth( false );
 	m_upBack->Render();
-	SetDepth( true );
 
-
+	//ほとんどのUI.
 	assert( m_pUI );
-	SetDepth( false );
 	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
-	SetDepth( true );
+
+	//ボタンの説明.
+	assert( m_wpFont );
+	m_wpFont->SetPos( vFONT_BUTTON_POS );
+	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
+	m_wpFont->Render( iFONT_BUTTON_LINE, iFONT_BUTTON_TEXT_SIZE );
+
+
 
 	//パーツ描画.
+	SetDepth( true );
 	SetViewPort( 
 		m_pViewPortPartsWindow, 
 		PartsViewCam.GetPos(), PartsViewCam.GetLookPos(),
 		m_pViewPortPartsWindow->Width, m_pViewPortPartsWindow->Height );
 	assert( m_pSelectParts );
 	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos(), isMessageBoxClose() );
-
-	//パーツのステータス.
-	SetViewPort( 
-		GetViewPortMainPtr(), 
-		m_wpCamera->GetPos(), m_wpCamera->GetLookPos(),
-		WND_W, WND_H );
-	assert( m_pUI );
-	SetDepth( false );
-	m_pUI->RenderPartsState( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
-	SetDepth( true );
 
 
 	//ロボ描画.
@@ -496,18 +494,18 @@ void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	else{
 		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos() );
 	}
-
-
-}
-
-void clsSCENE_ASSEMBLE::RenderUi()
-{
 	SetDepth( false );
 
-	//ボタンの説明.
-	m_wpFont->SetPos( vFONT_BUTTON_POS );
-	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
-	m_wpFont->Render( iFONT_BUTTON_LINE, iFONT_BUTTON_TEXT_SIZE );
+
+
+	//パーツのステータス.
+	SetViewPort( 
+		GetViewPortMainPtr(), 
+		m_wpCamera->GetPos(), m_wpCamera->GetLookPos(),
+		WND_W, WND_H );
+	assert( m_pUI );
+	m_pUI->RenderPartsState( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
+
 
 	//箱.
 	assert( m_upBox );
@@ -539,17 +537,13 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		m_upYesNo->Render();
 	}
 
-
-	SetDepth( true );
-
-
 }
 
 //カーソル移動.
 //カーソル移動の共通動作.
 void clsSCENE_ASSEMBLE::MoveCursor()
 {
-	m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+//	m_wpSound->PlaySE( enSE::CURSOL_MOVE );
 }
 
 
@@ -564,7 +558,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 		m_PartsSelect.Num[m_PartsSelect.Type] --;
 
 		m_PartsSelect.Num[m_PartsSelect.Type] = 
-			KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
@@ -583,7 +577,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 		m_PartsSelect.Num[m_PartsSelect.Type] ++;
 
 		m_PartsSelect.Num[m_PartsSelect.Type] = 
-			KeepRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
@@ -595,9 +589,9 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 void clsSCENE_ASSEMBLE::MoveCursorRight()
 {
 	MoveCursor();
-	m_wpSound->PlaySE( enSE::CURSOL_MOVE );
 
 	if( isMessageBoxClose() ){
+		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
 		m_PartsSelect.Type ++;
 		m_pUI->AddCommentNoForChangePartsType();
 
@@ -608,30 +602,36 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 //		}
 
 		m_PartsSelect.Type = 
-			KeepRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
+			LoopRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
 	}
 	//メッセボックスの選択肢.
 	else{
-		m_isMessageBoxYes = false;
+		if( m_isMessageBoxYes ){
+			m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+			m_isMessageBoxYes = false;
+		}
 	}
 }
 
 void clsSCENE_ASSEMBLE::MoveCursorLeft()
 {
 	MoveCursor();
-	m_wpSound->PlaySE( enSE::CURSOL_MOVE );
 
 	//パーツを選ぶ.
 	if( isMessageBoxClose() ){
+		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
 		m_PartsSelect.Type --;
 		m_pUI->AddCommentNoForChangePartsType();
 
 		m_PartsSelect.Type = 
-			KeepRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
+			LoopRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
 	}
 	//メッセボックスの選択肢.
 	else{
-		m_isMessageBoxYes = true;
+		if( !m_isMessageBoxYes ){
+			m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+			m_isMessageBoxYes = true;
+		}
 	}
 }
 
@@ -665,8 +665,16 @@ void clsSCENE_ASSEMBLE::Exit()
 {
 	//ないとき.
 	if( isMessageBoxClose() ){
-		//ウィンドウを出す.
-		AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK );
+		//パーツを選んでいるなら.
+		if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+			//ウィンドウを出す.
+			AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK );
+		}
+		//ステータスを見ているなら.
+		else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+			//パーツセレクトに戻る.
+			ChangePartsSelect();
+		}
 	}
 	//ウィンドウがあるとき.
 	else{
@@ -765,17 +773,23 @@ void clsSCENE_ASSEMBLE::TitleBack( enSCENE &enNextScene )
 //minはその数値より小さくならない、maxはそれ以上にはならない.
 // min <= t < max.
 template<class T, class MIN, class MAX >
-T clsSCENE_ASSEMBLE::KeepRange( T t, const MIN min, const MAX max ) const
+T clsSCENE_ASSEMBLE::LoopRange( T t, const MIN min, const MAX max ) const
 {
 	int num = static_cast<int>( t );
 	int Min = static_cast<int>( min );
 	int Max = static_cast<int>( max );
 	
+//	if( Min > num ){
+//		num = Min;
+//	}
+//	else if( num >= Max ){
+//		num = Max - 1;
+//	}
 	if( Min > num ){
-		num = Min;
+		num = Max - 1;
 	}
 	else if( num >= Max ){
-		num = Max - 1;
+		num = Min;
 	}
 
 	return static_cast<T>( num );
@@ -827,6 +841,34 @@ void clsSCENE_ASSEMBLE::DisAppearMessageBox()
 	m_isMessageBoxYes = true;
 }
 
+
+//ステータスの表示非表示切替.
+void clsSCENE_ASSEMBLE::SwitchDispStatus()
+{
+	//ウィンドウを出してるときは無視.
+	if( !isMessageBoxClose() ){
+		return;
+	}
+
+	m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+	m_pUI->SwitchDispStatusComment();
+	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+}
+
+//パーツ選択とステータス選択の切り替え.
+void clsSCENE_ASSEMBLE::ChangePartsSelect()
+{
+	m_wpSound->PlaySE( enSE::EXIT );
+	m_pUI->SwitchStatusComment();
+	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
+}
+
+void clsSCENE_ASSEMBLE::ChangeStatusSelect()
+{
+	m_wpSound->PlaySE( enSE::ENTER );
+	m_pUI->SwitchStatusComment();
+	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
+}
 
 
 

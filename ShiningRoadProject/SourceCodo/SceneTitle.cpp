@@ -11,15 +11,24 @@ const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
 const WHSIZE_FLOAT INIT_LOGO_SIZE = { 512.0f, 128.0f };
 const D3DXVECTOR3 vINIT_LOGO_POS = { 128.0f, 75.0f, 0.0f };
 
+//ロボ.
+const float fROBO_YAW = static_cast<float>( M_PI_4 ) * 0.75f;
 
 //フラッシュ.
 const char* sFLASH_PATH = "Data\\Image\\TitleUi\\Flash.png";
 const float fFLASH_DOWN = -0.05f;
 
 
-//日本語UI.
-const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
+////日本語UI.
+//const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
 
+//ボタンを押してね.
+const float fPLESS_START_SCALE = 2.0f;
+const char* sPLESS_START_TEXT = "Press B Button";
+const D3DXVECTOR2 vPLESS_START_POS = {
+	vINIT_LOGO_POS.x + INIT_LOGO_SIZE.w * 0.5f, 
+	static_cast<float>( WND_H ) * 0.75f 
+};
 
 //================================//
 //========== タイトルクラス ==========//
@@ -37,12 +46,12 @@ clsSCENE_TITLE::~clsSCENE_TITLE()
 
 void clsSCENE_TITLE::CreateProduct()
 {
-	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 
 	//モデルさん作成.
 	assert( !m_pRoboModel );
 	m_pRoboModel = new clsASSEMBLE_MODEL;
 	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus );
+	m_pRoboModel->SetRot( { 0.0f, fROBO_YAW, 0.0f } );
 	m_pRoboModel->SetScale( fROBO_SCALE );
 
 	//ロゴ.
@@ -68,6 +77,13 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upFlash = make_unique< clsSprite2D >();
 	m_upFlash->Create( m_wpDevice, m_wpContext, sFLASH_PATH, ss );
 	m_upFlash->SetAlpha( 0.0f );
+
+//	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
+	assert( !m_upPlessStart );
+	m_upPlessStart = make_unique< clsUiText >();
+	m_upPlessStart->Create( m_wpContext, WND_W, WND_H, fPLESS_START_SCALE );
+	m_upPlessStart->SetText( sPLESS_START_TEXT );
+	m_upPlessStart->SetPos( vPLESS_START_POS );
 
 
 	//箱.
@@ -172,11 +188,6 @@ void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 	SetDepth( false );
 
-	assert( m_upLogo );
-	m_upLogo->Render();
-
-	assert( m_upBox );
-	m_upBox->Render();
 
 
 
@@ -184,7 +195,15 @@ void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 }
 void clsSCENE_TITLE::RenderUi()
 {
-	m_wpFont->Render( 0, 100 );
+	assert( m_upLogo );
+	m_upLogo->Render();
+
+//	m_wpFont->Render( 0, 100 );
+	assert( m_upPlessStart );
+	m_upPlessStart->Render( clsUiText::enPOS::MIDDLE );
+
+	assert( m_upBox );
+	m_upBox->Render();
 
 	assert( m_upFlash );
 	m_upFlash->Render();

@@ -42,6 +42,8 @@ private:
 
 	std::unique_ptr< clsSprite2D > m_upFlash;
 
+	std::unique_ptr< clsUiText >	m_upPlessStart;
+
 	//メッセボックス.
 	std::unique_ptr< clsWINDOW_BOX > m_upBox;
 

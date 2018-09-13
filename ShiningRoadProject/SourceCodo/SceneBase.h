@@ -113,6 +113,9 @@ protected:
 	clsFont*				m_wpFont;
 
 private:
+
+	HRESULT CreateDepthStencilState();
+
 	//----- Render用 -----//.
 	//カメラ関数.
 	void Camera();
@@ -135,7 +138,8 @@ private:
 	D3D11_VIEWPORT* m_wpViewPortUsing;
 
 
-	ID3D11DepthStencilState*	m_wpDepthStencilState;//深度(Z)テスト設定.
+	ID3D11DepthStencilState* m_pDepthStencilStateOn;
+	ID3D11DepthStencilState* m_pDepthStencilStateOff;
 
 
 };
