@@ -213,9 +213,7 @@ bool clsEnemyBase::SetLook(float& fPush, float& fAngle)
 
 		const float fVecY = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 
-		float fVecXZ;
-
-		fVecXZ = abs(fVecX) + abs(fVecZ);
+		float fVecXZ = abs(fVecX) + abs(fVecZ);
 
 		//static_cast<float>D3DXToRadian(89);
 		float fRot = atan2f(fVecY, fVecXZ);
