@@ -14,6 +14,30 @@ void clsRobo::RoboInit(
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
+	pRobo->GetRoboState(clsROBO_STATUS::HP);
+	pRobo->GetRoboState(clsROBO_STATUS::WALK_SPD);
+	pRobo->GetRoboState(clsROBO_STATUS::STABILITY);
+	pRobo->GetRoboState(clsROBO_STATUS::TURN);
+	pRobo->GetRoboState(clsROBO_STATUS::JUMP_POWER);
+	pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
+	pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT);
+	pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_H);
+	pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
+	pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_V);
+	pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_V);
+	pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME);
+	pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
+	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_SPEED);
+	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
+	pRobo->GetRoboState(clsROBO_STATUS::AIMING);
+	pRobo->GetRoboState(clsROBO_STATUS::QUICK_THRUST);
+	pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);
+	pRobo->GetRoboState(clsROBO_STATUS::QUICK_TIME);
+	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_LEG);
+	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_CORE);
+	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_HEAD);
+	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_ARMS);
+	
 	m_pMesh = new clsMISSION_MODEL;
 
 	m_pMesh->Create(m_wpResource, pRobo);
@@ -63,22 +87,24 @@ void clsRobo::RoboInit(
 	{
 		//float型はintで入ってきたステータスにあれこれして計算する.
 
-		WS[i].iAtk = 5;
-		WS[i].iBulletNumMax = 10;
-		WS[i].iLockSpeed = 10;
-		WS[i].iShotEN = 0;
-		WS[i].iReloadTime = 10;
-		WS[i].iStablity = 0;
-		WS[i].MagazineReloadTime = 60;
+		clsROBO_STATUS::enWEAPON_NUM ucEquipWeaponNum = static_cast<clsROBO_STATUS::enWEAPON_NUM>(i);
 
-		WS[i].BState.fRangeMax = 1.5f;
-		WS[i].BState.fScale = 0.5f;
-		WS[i].BState.fSpeed = 5.0f;
-		WS[i].BState.iHitEfcNum = 0;
-		WS[i].BState.iLineEfcNum = 3;
-		WS[i].BState.iSEHitNum = 0;
-		WS[i].BState.iSEShotNum = 0;
-		WS[i].BState.iShotEfcNum = 3;
+		WS[i].iAtk = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::ATK);
+		WS[i].iBulletNumMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::BULLETS_NUM);
+		WS[i].BState.fSpeed = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::BULLET_SPD);
+		WS[i].BState.fScale = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::COL_SIZE);
+		WS[i].iShotEN = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::COST);
+		WS[i].BState.iShotEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_BULLET);
+		pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_CARTRIDGE);
+		WS[i].BState.iHitEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_HIT);
+		WS[i].BState.iLineEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_LOCUS);
+		WS[i].iReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOAD_TIME);
+		WS[i].iLockSpeed = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOCK_ON_TIME);
+		WS[i].MagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
+		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE);
+		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
+		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
+		WS[i].iStablity = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SHOT_STABILITY);
 	}
 
 	WeaponInit(pPtrGroup, WS, enWeaponTypeSize);

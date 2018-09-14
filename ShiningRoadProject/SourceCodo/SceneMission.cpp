@@ -458,8 +458,6 @@ void clsSCENE_MISSION::RenderUi()
 		}
 	}
 	
-	
-	
 	SetDepth(true);
 }
 

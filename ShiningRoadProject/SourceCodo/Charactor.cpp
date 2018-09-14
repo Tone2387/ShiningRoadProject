@@ -585,13 +585,13 @@ bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
 {
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
-	D3DXVECTOR3 vTarDir = m_vCenterPos - vTargetPos;
+	D3DXVECTOR3 vTarDir = vTargetPos - m_vCenterPos;
 
 	float fDir = D3DXVec3Dot(&vTarDir, &vForword);
 
 	int iDir = (int)D3DXToDegree(fDir);
 
-	if (iDir < (int)D3DXToDegree(D3DX_PI))
+	if (iDir > (int)D3DXToDegree(D3DX_PI))
 	{
 		return true;
 	}
