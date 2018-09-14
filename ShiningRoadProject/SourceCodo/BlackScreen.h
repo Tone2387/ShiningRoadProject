@@ -2,7 +2,8 @@
 
 #include "Sprite2D.h"
 
-const float fBLACK_SCREEN_DEFAULT_SPD = 1.0f / ( 60.0f * 2.0f );
+const float fBLACK_SCREEN_DEFAULT_SPD = 1.0f / ( 60.0f * 2.0f ) *
+	2.0f;
 
 
 class clsBLACK_SCREEN : public clsSprite2D

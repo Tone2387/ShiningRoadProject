@@ -89,18 +89,17 @@ private:
 	float			m_fAlpha;
 		
 
-	int				m_iTextRow;//テキストの行数.
+	int				m_iTextRow;//テキスト( データ )の行数.
 
-	int				m_iFontH;					//読み込んだ文章が何行あるか.
 
 	DESIGNVECTOR		m_Design;
 	RECT				m_Rect;			//指定幅設定.
 
 	std::vector< std::string > 		m_sTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
 
-	int m_fFontSize;
-	int m_fFontMarginX;
-	int m_fFontMarginY;
+	int m_iFontSize;
+	int m_iFontMarginX;
+	int m_iFontMarginY;
 
 
 	//テクスチャ関連.

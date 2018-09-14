@@ -74,8 +74,8 @@ const float fARROW_ROLL_ADD = static_cast<float>( M_PI );
 
 const float fARROW_ROLL_PARTS = static_cast<float>( M_PI_2 );
 const D3DXVECTOR3 vARROW_POS_PARTS = { 83.0f, 172.0f - ARROW_DISP.w * 0.5f, 0.0f };
-const float fARROW_POS_PARTS_OFFSET_Y = ( 20.0f );
-const float fARROW_POS_PARTS_OFFSET_Y_RATE_PARTS_MAX = ( 70.0f + 15.0f );
+const float fARROW_POS_PARTS_OFFSET_Y = ( 4.0f );
+const float fARROW_POS_PARTS_OFFSET_Y_RATE_PARTS_MAX = ( 70.0f + 18.0f );
 ////----- ñÓàÛ èIÇÌÇË -----//.
 
 
