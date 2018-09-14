@@ -62,6 +62,25 @@ const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
 //----- 背景 -----//.
 
 
+////----- 矢印 -----//.
+//m_upArrow
+const WHSIZE_FLOAT ARROW_DISP = { 14.0f, 36.0f };
+const char* sPATH_ARROW = "Data\\Image\\AssembleUi\\Arrow.png";
+const char cARROW_FOR_MAX_NUM = 2;
+
+const D3DXVECTOR3 vARROW_POS_TYPE = { -6.0f + 32.0f - ( ARROW_DISP.w * 0.5f ), 122.0f, 0.0f };
+const float fARROW_POS_TYPE_OFFSET_X = 6.0f + 6.0f * 120.0f;
+const float fARROW_ROLL_ADD = static_cast<float>( M_PI );
+
+const float fARROW_ROLL_PARTS = static_cast<float>( M_PI_2 );
+const D3DXVECTOR3 vARROW_POS_PARTS = { 83.0f, 172.0f - ARROW_DISP.w * 0.5f, 0.0f };
+const float fARROW_POS_PARTS_OFFSET_Y = ( 4.0f );
+const float fARROW_POS_PARTS_OFFSET_Y_RATE_PARTS_MAX = ( 70.0f + 18.0f );
+////----- 矢印 終わり -----//.
+
+
+
+
 //メッセボックス.
 const float fBOX_ALPHA = 0.5f;
 const D3DXVECTOR3 vBOX_POS = { WND_W/2, WND_H/2, 0.0f };
@@ -119,7 +138,6 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_pUI( nullptr )
 	,m_pViewPortPartsWindow( nullptr )
 	,m_pViewPortRoboWindow( nullptr )
-	,m_cuFileMax( 0 )
 	,m_pSelectParts( nullptr )
 	,m_iMessageNum( 0 )
 	,m_isMessageBoxYes( true )
@@ -145,7 +163,6 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 	m_vspFile.clear();
 	m_vspFile.shrink_to_fit();
 
-	m_cuFileMax = 0;
 	m_pSelectParts = nullptr;
 }
 
@@ -175,14 +192,20 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_upBack->Create( m_wpDevice, m_wpContext, sBACK_SPRITE_PATH, ss );
 	m_upBack->SetPos( vBACK_POS );
 
+	//矢印.
+	assert( !m_upArrow );
+	ss.Disp = ARROW_DISP;
+	m_upArrow = make_unique< clsSPRITE2D_CENTER >();
+	m_upArrow->Create( m_wpDevice, m_wpContext, sPATH_ARROW, ss );
+
 
 	//UIの数用変数.
 	clsASSEMBLE_UI::PARTS_NUM_DATA partsData;
 	partsData.resize( clsASSEMBLE_MODEL::ENUM_SIZE );
 
 	//パーツのステータス読み込み.
-	m_cuFileMax = clsASSEMBLE_MODEL::ENUM_SIZE;
-	m_vspFile.resize( m_cuFileMax ); 
+	UCHAR ucFileMax = clsASSEMBLE_MODEL::ENUM_SIZE;
+	m_vspFile.resize( ucFileMax ); 
 	for( UCHAR i=0; i<m_vspFile.size(); i++ ){
 		if( m_vspFile[i] != nullptr ){
 			assert( !"m_spFile[i]は作成済みです" );
@@ -460,6 +483,32 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	//ほとんどのUI.
 	assert( m_pUI );
 	m_pUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
+
+
+	//矢印.
+	assert( m_upArrow );
+	//パーツタイプ.
+	m_upArrow->SetPos( vARROW_POS_TYPE );
+	m_upArrow->SetRot( { 0.0f, 0.0f, 0.0f } );
+	for( char i=0; i<cARROW_FOR_MAX_NUM; i++ ){
+		m_upArrow->Render();
+		m_upArrow->AddPos( { fARROW_POS_TYPE_OFFSET_X, 0.0f, 0.0f } );
+		m_upArrow->AddRot( { 0.0f, 0.0f, fARROW_ROLL_ADD } );
+	}
+	//各パーツ.m_vspFile
+	m_upArrow->SetPos( vARROW_POS_PARTS );
+	m_upArrow->SetRot( { 0.0f, 0.0f, fARROW_ROLL_PARTS } );
+	//今選択しているパーツの最大数.
+	const float fPARTS_MAX = static_cast<float>( m_vspFile[ m_PartsSelect.Type ]->GetSizeRow() );
+	for( char i=0; i<cARROW_FOR_MAX_NUM; i++ ){
+		m_upArrow->Render();
+		m_upArrow->AddPos( { 0.0f, fARROW_POS_PARTS_OFFSET_Y, 0.0f } );
+		m_upArrow->AddPos( { 
+			0.0f, 
+			fARROW_POS_PARTS_OFFSET_Y_RATE_PARTS_MAX * fPARTS_MAX, 
+			0.0f } );
+		m_upArrow->AddRot( { 0.0f, 0.0f, fARROW_ROLL_ADD } );
+	}
 
 	//ボタンの説明.
 	assert( m_wpFont );

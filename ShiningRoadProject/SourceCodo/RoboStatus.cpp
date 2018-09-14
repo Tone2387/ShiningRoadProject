@@ -12,7 +12,14 @@ using namespace std;
 
 
 clsROBO_STATUS::clsROBO_STATUS()
+	:m_ucPartsModelNum()
+	,m_ucPartsModelNumHero()
 {
+	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
+	for( UCHAR i=0; i<tmpSize; i++ ){
+		m_ucPartsModelNum[i] = 0;
+		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
+	}
 	Clear();
 }
 
@@ -39,6 +46,7 @@ void clsROBO_STATUS::Clear()
 	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
 		m_ucPartsModelNum[i] = 0;
+		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
 	}
 }
 
@@ -86,6 +94,24 @@ UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType )
 	return m_ucPartsModelNum[ static_cast<int>( PartsType ) ];
 }
 
+
+//クリア画面で使う : タイトル用の初期化用.
+void clsROBO_STATUS::SaveHeroData()
+{
+	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
+	for( UCHAR i=0; i<tmpSize; i++ ){
+		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
+	}
+}
+
+//AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
+void clsROBO_STATUS::LodeHeroData()
+{
+	int tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
+	for( int i=0; i<tmpSize; i++ ){
+		m_ucPartsModelNum[i] = m_ucPartsModelNumHero[i];
+	}
+}
 
 
 //データの受け取り.

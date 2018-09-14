@@ -30,6 +30,8 @@ const D3DXVECTOR2 vPLESS_START_POS = {
 	static_cast<float>( WND_H ) * 0.75f 
 };
 
+
+
 //================================//
 //========== タイトルクラス ==========//
 //================================//
@@ -50,7 +52,7 @@ void clsSCENE_TITLE::CreateProduct()
 	//モデルさん作成.
 	assert( !m_pRoboModel );
 	m_pRoboModel = new clsASSEMBLE_MODEL;
-	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus );
+	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus, true );
 	m_pRoboModel->SetRot( { 0.0f, fROBO_YAW, 0.0f } );
 	m_pRoboModel->SetScale( fROBO_SCALE );
 
@@ -77,6 +79,8 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upFlash = make_unique< clsSprite2D >();
 	m_upFlash->Create( m_wpDevice, m_wpContext, sFLASH_PATH, ss );
 	m_upFlash->SetAlpha( 0.0f );
+
+
 
 //	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 	assert( !m_upPlessStart );

@@ -68,9 +68,9 @@ clsFont::clsFont(
 	LoadFont();
 
 	//外部情報受け渡し.
-//	m_vPos = D3DXVECTOR3( 0.0f, m_fFontSize, 0.01f );
+//	m_vPos = D3DXVECTOR3( 0.0f, m_iFontSize, 0.01f );
 	m_vPos = D3DXVECTOR3( 0.0f, 0.0f, fPOS_Z );
-	m_fScale = m_fFontSize;
+	m_fScale = static_cast<float>( m_iFontSize );
 
 	if( FAILED( CreateShader() ) ){
 		assert( !"Can't Create Shader" );
@@ -151,9 +151,9 @@ HRESULT clsFont::CreateBlendState()
 //フォント情報読込.
 bool clsFont::LoadFont()
 {
-	m_fFontSize = 32;//22;
-	m_fFontMarginX = 4;//5;
-	m_fFontMarginY = 4;//5;
+	m_iFontSize = 32;//22;
+	m_iFontMarginX = 4;//5;
+	m_iFontMarginY = 4;//5;
 	m_strFont.iFontDispSpeed = 2;
 	m_strFont.iFontAutoFlg = 120;
 
@@ -334,8 +334,6 @@ HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 		return E_FAIL;
 	}
 
-	//行数分繰り返し.
-	int iLoad = 0;		//一行ずつ文字列として読み込み.
 
 	//初期化.
 	//行数.
@@ -363,16 +361,10 @@ HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 		}
 		m_vvpAsciiTexture[i].shrink_to_fit();
 #endif//#ifndef CAN_CHECK_STRING_BYTE_TYPE
-		iLoad++;
 	}
 
-//			if( IsDBCSLeadByte( m_sTextData[iTex][i] ) )
+//	if( IsDBCSLeadByte( m_sTextData[iTex][i] ) )
 
-
-	//読込フォント行を渡す.
-	m_iFontH = iLoad;
-	//脱出！.
-	iLoad = 0;
 
 	//ファイルのクローズ.
 	File.Close();
@@ -385,7 +377,7 @@ HRESULT clsFont::CreateTexture()
 {
 	//fontCreate.
 	LOGFONT lf = {
-		m_fFontSize, 0, 0, 0, 
+		m_iFontSize, 0, 0, 0, 
 		0, 0, 0, 0,
 		SHIFTJIS_CHARSET,
 		OUT_TT_ONLY_PRECIS,
@@ -601,13 +593,14 @@ void clsFont::Render( const int iTex, const int iCharNum )
 	int ii = 0;
 	int iCnt = 0;
 
-	for ( int i = 0; i<iCharNum; i++ )
+//	for ( int i = 0; i<iCharNum; i++ )
+	for ( int i = 0; i<m_vvpAsciiTexture[ iTex ].size(); i++ )
 	{
 		if( static_cast<unsigned int>( i ) >= m_vvpAsciiTexture[ iTex ].size() ){
 			break;
 		}
 #if 0
-		if( vPos.x + m_fFontSize + ( m_fScale + m_fFontMarginX ) * iCnt <= 
+		if( vPos.x + m_iFontSize + ( m_fScale + m_fFontMarginX ) * iCnt <= 
 			m_Rect.right )
 		{
 			//指定範囲の中.
@@ -626,8 +619,8 @@ void clsFont::Render( const int iTex, const int iCharNum )
 		D3DXMATRIX mWorld, mScale, mTran;		//ワールド行列.
 		D3DXMatrixIdentity( &mWorld );
 		D3DXMatrixTranslation( &mTran, 
-			vPos.x + ( m_fScale + m_fFontMarginX ) * iCnt,
-			vPos.y + ( m_fScale + m_fFontMarginY ) * ii * 2,
+			vPos.x + ( m_fScale + m_iFontMarginX ) * iCnt,
+			vPos.y + ( m_fScale + m_iFontMarginY ) * ii * 2,
 			vPos.z );
 
 		D3DXMatrixScaling( &mScale, m_fScale, m_fScale, 1.0f );
