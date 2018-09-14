@@ -137,7 +137,7 @@ private:
 	//ロボのHPを後で合算するための変数.
 	int m_iRoboHp[ enHAVE_HP_PARTS_SIZE ];
 
-	//パーツ番号の配列.//#define SKIN_ENUM_TYPE UCHAR.
+	//パーツ番号の配列.
 	UCHAR m_ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
 	//タイトル用.
 	UCHAR m_ucPartsModelNumHero[ static_cast<int>( enPARTS::MAX ) ];

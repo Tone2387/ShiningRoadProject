@@ -37,9 +37,9 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 	if( isPressDown() ){
 		m_wpCamera->AddPos( { 0.0f, 0.0f, -fff } );
 	}
-	if( isPressEnter() ){
-		m_wpCamera->AddPos( { 0.0f, fff, -0.0f } );
-	}
+//	if( isPressEnter() ){
+//		m_wpCamera->AddPos( { 0.0f, fff, -0.0f } );
+//	}
 	if( isPressExit() ){
 		m_wpCamera->AddPos( { 0.0f, -fff, -0.0f } );
 	}
@@ -48,7 +48,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 	if( isPressEnter() ){
 		enNextScene = enSCENE::TITLE;
-//		m_wpRoboStatus->SaveHeroData();
+		m_wpRoboStatus->SaveHeroData();
 	}
 }
 

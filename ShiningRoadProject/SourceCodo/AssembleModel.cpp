@@ -80,9 +80,10 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
+	//ÅŒã‚ÉƒNƒŠƒA‚µ‚½ó‘Ô‚É‚·‚é.
 	if( isTitleScene ){
-	}
 		pStatus->LodeHeroData();
+	}
 	Init( pStatus );
 
 	CreateProduct();
