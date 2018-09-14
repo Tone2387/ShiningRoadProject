@@ -57,7 +57,10 @@ private:
 		D3DXVECTOR3* const vRot );
 
 	//カメラ位置を中心にして見回す.
-	void Turn( const float fTurn );
+	void Turn( const float fTurn, 
+		D3DXVECTOR3* const vPos,
+		D3DXVECTOR3* const vLook,
+		D3DXVECTOR3* const vRot );
 
 	//今のカメラ向きに前進.advancing
 	void Advancing( 

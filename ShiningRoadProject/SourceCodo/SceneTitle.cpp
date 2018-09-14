@@ -37,6 +37,7 @@ const D3DXVECTOR2 vPLESS_START_POS = {
 //================================//
 clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pRoboModel( nullptr )
+	,m_isDispPlessStart( false )
 {
 }
 
@@ -177,6 +178,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_upFlash->SetAlpha( 1.0f );
 		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
 		m_upLogo->SetAlpha( 1.0f );
+		m_isDispPlessStart = true;
 	}
 
 }
@@ -190,12 +192,6 @@ void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	m_upBack->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 
-	SetDepth( false );
-
-
-
-
-	SetDepth( true );
 }
 void clsSCENE_TITLE::RenderUi()
 {
@@ -203,8 +199,10 @@ void clsSCENE_TITLE::RenderUi()
 	m_upLogo->Render();
 
 //	m_wpFont->Render( 0, 100 );
-	assert( m_upPlessStart );
-	m_upPlessStart->Render( clsUiText::enPOS::MIDDLE );
+	if( m_isDispPlessStart ){
+		assert( m_upPlessStart );
+		m_upPlessStart->Render( clsUiText::enPOS::MIDDLE );
+	}
 
 	assert( m_upBox );
 	m_upBox->Render();

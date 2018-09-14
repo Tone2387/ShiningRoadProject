@@ -23,9 +23,18 @@ const float fSTART_MOVE_ACC_INIT = 0.5f + 0.25f + 0.125f + 0.0625f;//0.5 0.25 0.
 const float fSTART_ROT_Y = -0.29f;
 
 const float fSTART_END_SPD = 0.03125f * 2.0f;
-
+const float fSTART_CRAB_POWER = -24.0f;
+const float fSTART_ADVANC_POWER = 24.0f;
 //----- 最初 -----//.
 
+//----- 回転開始 -----//.
+const INIT_DATA SPN_START_INIT_DATA = 
+{
+	{ -25.0253143f, 6.0f,			-81.9894485f },
+	{ -29.6926422f, 30.8750f,		3.60752869f },
+	{ 0.0f,			0.0544727743f,	0.0f }
+};
+//----- 回転開始 -----//.
 
 //----- 回転 -----//.
 const D3DXVECTOR3 vSPN_INIT_LOOK = { 0.0f, 30.875f, 0.0f };
@@ -92,7 +101,7 @@ void clsCAMERA_TITLE::Update()
 			Init( enMODE::SPN_L );
 		}
 		else{
-			Turn( fYAW_OFFSET );
+			Turn( fYAW_OFFSET, &m_vPos, &m_vLook, &m_vRot );
 		}
 
 		m_vMoveSpd.z *= m_vMoveAcc.z;
@@ -171,13 +180,16 @@ void clsCAMERA_TITLE::Init( const enMODE enMode )
 		fRotY = fSTART_ROT_Y;
 		m_vMoveSpd = { 0.0f, 0.0f, fSTART_MOVE_SPD_INIT };
 		m_vMoveAcc = { 0.0f, 0.0f, fSTART_MOVE_ACC_INIT };
+		CrabWalk( fSTART_CRAB_POWER, &InitData.vPos, &InitData.vLook, &InitData.vRot );
+		Advancing( fSTART_ADVANC_POWER, &InitData.vPos, &InitData.vLook, &InitData.vRot );
 		break;
 	case enMODE::SPN_L:
-		InitData.vLook = vSPN_INIT_LOOK;
+		fRotY = fSTART_ROT_Y;
+		InitData = SPN_START_INIT_DATA;
 		m_vMoveSpd = vSPN_MOVE_SPD;
 		m_vMoveAcc = vSPN_MOVE_ACC;
 		m_isFlash = true;
-	break;
+		break;
 	case enMODE::SPN_L_2:
 		m_MoveFlg.z = true;
 		break;
@@ -196,7 +208,8 @@ void clsCAMERA_TITLE::Init( const enMODE enMode )
 	fZ *= fZ;
 	m_fDistance = sqrtf( fX + fZ );
 
-	Turn( fRotY );
+
+	Turn( fRotY, &m_vPos, &m_vLook, &m_vRot );
 
 	m_CamGhost.vPos = m_vPos;
 	m_CamGhost.vLook = m_vLook;
@@ -219,12 +232,16 @@ void clsCAMERA_TITLE::Spn(
 }
 
 //カメラ位置を中心にして見回す.
-void clsCAMERA_TITLE::Turn( const float fTurn )
+void clsCAMERA_TITLE::Turn( 
+	const float fTurn, 
+	D3DXVECTOR3* const vPos,
+	D3DXVECTOR3* const vLook,
+	D3DXVECTOR3* const vRot )
 {
-	m_vRot.y += fTurn;
+	vRot->y += fTurn;
 
-	m_vLook.x = m_vPos.x + cosf( m_vRot.y + static_cast<float>( M_PI_2 ) ) * m_fDistance;
-	m_vLook.z = m_vPos.z + sinf( m_vRot.y + static_cast<float>( M_PI_2 ) ) * m_fDistance;
+	vLook->x = vPos->x + cosf( vRot->y + static_cast<float>( M_PI_2 ) ) * m_fDistance;
+	vLook->z = vPos->z + sinf( vRot->y + static_cast<float>( M_PI_2 ) ) * m_fDistance;
 
 }
 
@@ -275,11 +292,11 @@ void clsCAMERA_TITLE::CrabWalk(
 		&mYaw );
 
 
-	m_vPos.z  += vAxisX.z * fMove;
-	m_vLook.z += vAxisX.z * fMove;
+	vPos->z  += vAxisX.z * fMove;
+	vLook->z += vAxisX.z * fMove;
 
-	m_vPos.x  -= vAxisX.x * fMove;
-	m_vLook.x -= vAxisX.x * fMove;
+	vPos->x  -= vAxisX.x * fMove;
+	vLook->x -= vAxisX.x * fMove;
 }
 
 
@@ -321,7 +338,7 @@ void clsCAMERA_TITLE::CameraSpnFunction()
 	m_CamGhost.vRot = m_vRot;
 	m_CamGhost.vLook = m_vLook;
 
-	Turn( fYAW_OFFSET );
+	Turn( fYAW_OFFSET, &m_vPos, &m_vLook, &m_vRot );
 
 	m_vMoveSpd.x += m_vMoveAcc.x;
 	if( m_vMoveSpd.x > fSPN_SPN_SPD_LIMIT ){
