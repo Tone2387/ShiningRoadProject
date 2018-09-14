@@ -44,6 +44,7 @@ private:
 
 
 	std::unique_ptr< clsUiText >	m_upPlessStart;
+	bool							m_isDispPlessStart;
 
 	//メッセボックス.
 	std::unique_ptr< clsWINDOW_BOX > m_upBox;
