@@ -41,16 +41,14 @@ public:
 	};
 
 	//アセンブルシーンの各関数内で使います.
-	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus );
+	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene = false );
 	void UpDate();
 	virtual void Render(
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const enPARTS_TYPES AlphaParts = enPARTS_TYPES::ENUM_SIZE/*,
-		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
-		const bool isAlpha = false*/ );
+		const enPARTS_TYPES AlphaParts = enPARTS_TYPES::ENUM_SIZE );
 
 	//モデルの初期セット.
 	void Init( clsROBO_STATUS* const pStatus );

@@ -37,16 +37,6 @@ const char* sPATH_SELECT_PARTS_TYPE = "Data\\Image\\AssembleUi\\SelectPartsType.
 const float fALPHA_SELECT_PARTS_TYPE = 0.5f;
 
 
-//----- 出撃ボタン -----//.
-const char* sPATH_MISSION_START_BUTTON = "Data\\Image\\AssembleUi\\MissionStart.png";
-const WHSIZE_FLOAT SIZE_MISSION_START_BUTTON = { 120.0f, 80.0f };
-const D3DXVECTOR3 vINIT_POS_MISSION_START_BUTTON = 
-	{ vINIT_POS_PARTS_TYPE.x + fOFFSET_POS_X_PARTS_TYPE * cPARTS_TYPE_NUM, //700.75f.<=760.0f
-	vINIT_POS_PARTS_TYPE.y,
-	0.0f };
-
-
-//----- 出撃ボタン 終わり -----//.
 
 
 
@@ -226,7 +216,7 @@ const int iFONT_COMMENT_LINE = 3;
 const int iFONT_COMMENT_TEXT_SIZE = 128;
 
 //ボタン.
-const char* sPATH_BUTONS = "Data\\Image\\AssembleUi\\Buttons.png";
+const char* sPATH_BUTONS = "Data\\Image\\Buttons.png";
 const float INIT_DISP_BUTTON_SPRITE = 32.0f;
 const WHSIZE_FLOAT INIT_ANIM_BUTTON_SPRITE = { 5.0f, 1.0f };
 const int iBUTTON_SPRITE_NUM = 5;
@@ -495,6 +485,9 @@ void clsASSEMBLE_UI::Create(
 	m_upDegine->SetPos( vINIT_POS_DESIGN );
 	m_upDegine->SetAlpha( 0.5f );
 #endif//#if _DEBUG
+
+
+
 
 	//ボタン.
 	assert( !m_upButton );

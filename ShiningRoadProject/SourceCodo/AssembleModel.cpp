@@ -36,7 +36,7 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
 	,m_upPartsFactory( nullptr )
 	,m_vpParts()
-	,m_dAnimSpd( 0.0 )
+	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
 {
 	m_dAnimSpd = dANIM_SPD;
@@ -64,7 +64,7 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 
 
 
-void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus )
+void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene )
 {
 	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
@@ -80,6 +80,9 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
+	if( isTitleScene ){
+	}
+		pStatus->LodeHeroData();
 	Init( pStatus );
 
 	CreateProduct();
@@ -126,9 +129,7 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const enPARTS_TYPES AlphaParts/*,
-	const D3DXVECTOR4& vColor,
-	const bool isAlpha*/ )
+	const enPARTS_TYPES AlphaParts )
 {
 	D3DXVECTOR4 vTmpColor;
 

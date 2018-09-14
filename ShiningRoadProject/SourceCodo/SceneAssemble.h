@@ -108,6 +108,10 @@ private:
 	//選択中パーツ.
 	clsPARTS_WINDOW_MODEL* m_pSelectParts;
 
+	//矢印.
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upArrow;
+
+
 	//メッセボックス.
 	std::unique_ptr< clsWINDOW_BOX >	m_upBox;
 	//メッセの行数を表す.
@@ -121,7 +125,6 @@ private:
 	clsASSEMBLE_UI*		m_pUI;
 
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
-	UCHAR										m_cuFileMax;
 
 
 //	clsSPRITE2D_CENTER* m_pSprite;

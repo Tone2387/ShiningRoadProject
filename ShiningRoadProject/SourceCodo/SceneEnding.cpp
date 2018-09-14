@@ -48,6 +48,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 	if( isPressEnter() ){
 		enNextScene = enSCENE::TITLE;
+//		m_wpRoboStatus->SaveHeroData();
 	}
 }
 

@@ -109,6 +109,12 @@ public:
 	//パーツ番号を返す( いま装備しているパーツが何番か ).//#define SKIN_ENUM_TYPE UCHAR.
 	UCHAR GetPartsNum( const enPARTS PartsType );
 
+	//クリア画面で使う : タイトル用の初期化用のデータを用意する : クリアしたロボを覚えておく.
+	void SaveHeroData();
+
+	//AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
+	void LodeHeroData();
+
 private:
 
 	//HPを持つパーツ.
@@ -133,4 +139,6 @@ private:
 
 	//パーツ番号の配列.//#define SKIN_ENUM_TYPE UCHAR.
 	UCHAR m_ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
+	//タイトル用.
+	UCHAR m_ucPartsModelNumHero[ static_cast<int>( enPARTS::MAX ) ];
 };
