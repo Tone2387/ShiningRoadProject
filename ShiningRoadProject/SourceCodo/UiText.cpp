@@ -477,7 +477,7 @@ void clsUiText::RenderFont( const int FontIndex, const float x, const float y, c
 		//ƒJƒ‰[‚ğ“n‚·.
 		cb.vColor = m_vColor;
 		//“§–¾“x‚ğ“n‚·.m_fAlpha
-		cb.fAlpha.x = m_vColor.w;
+//		cb.fAlpha.x = m_vColor.w;
 		cb.fAlpha.x = m_fAlpha;
 
 		memcpy_s( pData.pData, pData.RowPitch,
