@@ -9,11 +9,8 @@
 //アラインメント設定(強制的に16バイトに設定する).
 #define ALIGN16 _declspec( align ( 16 ) )
 
-//const int TEXT_H = 256;	//行数.
-//const int TEXT_W = 256;	//行数.
 
-
-
+//日本語のUI用.
 class clsFont
 {
 public:
@@ -26,7 +23,7 @@ public:
 	void Create( const char *sTextFileName );//シーン開始時に使う.
 	void Release();							//シーン終了時に使う.
 
-	void Render( const int iTex, const int iCharNum );
+	void Render( const int iTex, const int iCharNum = -1 );
 
 
 
@@ -42,13 +39,21 @@ public:
 	
 private:
 
-	//フォント構造体.
-	struct strFont
-	{
-		int iFontDispSpeed;
-		int iFontAutoFlg;
-	}m_strFont;
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+	//シェーダ作成.
+	HRESULT CreateShader();
+	//バーテックスシェーダ作成.
+	HRESULT CreateVertexBuffer();
+	//定数バッファ作成.
+	HRESULT CreateConstantBuffer();
+	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
+	HRESULT	CreateTexture();
 
+	void SetBlend( const bool isAlpha );
+
+
+private:
 
 	//構造体.
 	struct FONTSHADER_CONSTANT_BUFFER
@@ -68,39 +73,21 @@ private:
 		D3DXVECTOR2 Tex;		//テクスチャ.
 	};
 
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
-	//フォント情報読込.
-	bool LoadFont();
-	//シェーダ作成.
-	HRESULT CreateShader();
-	//バーテックスシェーダ作成.
-	HRESULT CreateVertexBuffer();
-	//定数バッファ作成.
-	HRESULT CreateConstantBuffer();
-	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
-	HRESULT	CreateTexture();
-
-	void SetBlend( const bool isAlpha );
-
 	D3DXVECTOR3		m_vPos;			//位置.
 	float			m_fScale;		//拡縮.
 	D3DXVECTOR4		m_vColor;		//色.
 	float			m_fAlpha;
 		
-
-	int				m_iTextRow;//テキスト( データ )の行数.
-
-
-	DESIGNVECTOR		m_Design;
-	RECT				m_Rect;			//指定幅設定.
+	//テクスチャサイズ( 解像度 ).
+	int		m_iFontSize;
+	//文字と文字の隙間.
+	float	m_fFontMarginX;
+	float	m_fFontMarginY;
+	float	m_fIndentionPosint;//改行するx座標.
 
 	std::vector< std::string > 		m_sTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
 
-	int m_iFontSize;
-	int m_iFontMarginX;
-	int m_iFontMarginY;
-
+	DESIGNVECTOR		m_Design;
 
 	//テクスチャ関連.
 	std::vector< ID3D11Texture2D* >							m_vpTex2D;//[ TEXT_H ];//2Ｄテクスチャ.
@@ -120,8 +107,6 @@ private:
 	ID3D11SamplerState* m_pSampleLinear;	//テクスチャのサンプラー.
 
 	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
-
-
 
 };
 

@@ -114,7 +114,6 @@ const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
 const D3DXVECTOR3 vFONT_BUTTON_POS = { 650.0f, 40.0f, 0.0f };
 const float fFONT_BUTTON_SCALE = 14.0f;
 const int iFONT_BUTTON_LINE = 0;
-const int iFONT_BUTTON_TEXT_SIZE = 64;
 
 //出撃メッセージ.
 const D3DXVECTOR3 vFONT_MESSAGE_BOX_TITLE_POS = { 480.0f, 230.0f, 0.0f };
@@ -514,7 +513,7 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	assert( m_wpFont );
 	m_wpFont->SetPos( vFONT_BUTTON_POS );
 	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
-	m_wpFont->Render( iFONT_BUTTON_LINE, iFONT_BUTTON_TEXT_SIZE );
+	m_wpFont->Render( iFONT_BUTTON_LINE );
 
 
 
@@ -565,7 +564,7 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		//選択肢のタイトル.
 		m_wpFont->SetPos( vFONT_MESSAGE_BOX_TITLE_POS );
 		m_wpFont->SetScale( fFONT_MESSAGE_BOX_TITLE_SCALE );
-		m_wpFont->Render( m_iMessageNum, iFONT_BUTTON_TEXT_SIZE );
+		m_wpFont->Render( m_iMessageNum );
 
 		//選択肢のボタン.
 		//yes.

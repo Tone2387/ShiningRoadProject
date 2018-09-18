@@ -213,7 +213,6 @@ const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
 const float fFONT_COMMENT_SCALE = 16.0f;
 //パーツ説明以外の行数.
 const int iFONT_COMMENT_LINE = 3;
-const int iFONT_COMMENT_TEXT_SIZE = 128;
 
 //ボタン.
 const char* sPATH_BUTONS = "Data\\Image\\Buttons.png";
@@ -623,7 +622,7 @@ void clsASSEMBLE_UI::Update(
 				i + iStatusCutNum )
 			+ sSTATUS_TEXT_MIDWAY;
 		m_vupStatusNumTextNow[i]->SetText( tmpString.c_str() );
-		m_vupStatusNumTextNow[i]->SetColor( vColor );
+//		m_vupStatusNumTextNow[i]->SetColor( vColor );
 	}
 
 	//日本語説明文を調整.
@@ -717,7 +716,7 @@ void clsASSEMBLE_UI::RenderPartsState(
 		assert( m_wpFont );
 		m_wpFont->SetPos( vFONT_COMMENT_POS );
 		m_wpFont->SetScale( fFONT_COMMENT_SCALE );
-		m_wpFont->Render( m_iReadLinePartsComment, iFONT_COMMENT_TEXT_SIZE );
+		m_wpFont->Render( m_iReadLinePartsComment );
 
 		//ステータスを表示しないなら飛ばす.
 		if( !m_isDispStatus ) return;
