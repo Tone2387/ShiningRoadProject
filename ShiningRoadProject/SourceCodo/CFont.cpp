@@ -36,7 +36,6 @@ clsFont::clsFont(
 	,m_pConstantBuffer( nullptr )
 	,m_vpTex2D()
 	,m_vvpAsciiTexture()
-//	,m_pBlendState()
 	,m_sTextData()
 	,m_fAlpha( 1.0f )
 	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
@@ -53,7 +52,7 @@ clsFont::clsFont(
 		FR_PRIVATE,
 		&m_Design ) )
 	{
-		ERR_MSG("フォント失敗", "Error");
+		ERR_MSG( "フォント失敗", "Error" );
 	}
 
 //	m_Rect = {  WND_W / 8,//left.

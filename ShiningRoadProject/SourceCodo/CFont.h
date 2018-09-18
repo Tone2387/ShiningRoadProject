@@ -9,11 +9,8 @@
 //アラインメント設定(強制的に16バイトに設定する).
 #define ALIGN16 _declspec( align ( 16 ) )
 
-//const int TEXT_H = 256;	//行数.
-//const int TEXT_W = 256;	//行数.
 
-
-
+//日本語のUI用.
 class clsFont
 {
 public:
@@ -41,14 +38,6 @@ public:
 
 	
 private:
-
-//	//フォント構造体.
-//	struct strFont
-//	{
-//		int iFontDispSpeed;
-//		int iFontAutoFlg;
-//	}m_strFont;
-
 
 	//構造体.
 	struct FONTSHADER_CONSTANT_BUFFER
@@ -118,8 +107,6 @@ private:
 	ID3D11SamplerState* m_pSampleLinear;	//テクスチャのサンプラー.
 
 	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
-
-
 
 };
 

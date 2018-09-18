@@ -622,7 +622,7 @@ void clsASSEMBLE_UI::Update(
 				i + iStatusCutNum )
 			+ sSTATUS_TEXT_MIDWAY;
 		m_vupStatusNumTextNow[i]->SetText( tmpString.c_str() );
-		m_vupStatusNumTextNow[i]->SetColor( vColor );
+//		m_vupStatusNumTextNow[i]->SetColor( vColor );
 	}
 
 	//“ú–{Œêà–¾•¶‚ð’²®.
