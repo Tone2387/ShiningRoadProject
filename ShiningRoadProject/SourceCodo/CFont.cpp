@@ -19,9 +19,11 @@ const char* sFONT_STYLE_PATH = "Data\\Font\\FontType\\Makinas-Scrap-5.otf";//Mak
 #define FONT_SHADER		"Shader\\FontText.hlsl"
 
 
-const float fPOS_Z = 0.01f;
 
-const int iFULL_MESSAGE_NUMBER = -1;
+
+const int iFONT_SIZE = 32;
+const float fFONT_MARGIN_X = 2.0f;//4.0f.
+const float fFONT_MARGIN_Y = 8.0f;//4.0f.
 
 clsFont::clsFont( 
 	ID3D11Device* const pDevice, 
@@ -36,16 +38,21 @@ clsFont::clsFont(
 	,m_pConstantBuffer( nullptr )
 	,m_vpTex2D()
 	,m_vvpAsciiTexture()
+	,m_pBlendState()
 	,m_sTextData()
-	,m_fAlpha( 1.0f )
-	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 	,m_Design()
 	,m_fIndentionPosint( static_cast<float>( WND_W ) )
+	,m_iFontSize( iFONT_SIZE )
+	,m_fFontMarginX( fFONT_MARGIN_X )
+	,m_fFontMarginY( fFONT_MARGIN_Y )
+	,m_vPos( { 0.0f, 0.0f, 0.0f } )
+	,m_fScale( static_cast<float>( m_iFontSize ) )
+	,m_fAlpha( 1.0f )
+	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 {
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		m_pBlendState[i] = nullptr;
-	}
-
+//	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
+//		m_pBlendState[i] = nullptr;
+//	}
 
 	int iReturn = AddFontResourceEx(
 		sFONT_STYLE_PATH,
@@ -53,23 +60,9 @@ clsFont::clsFont(
 		&m_Design );
 	assert( iReturn );
 
-//	m_Rect = {  WND_W / 8,//left.
-//				WND_H / 2,//top.
-//				WND_W / 3 + WND_W / 2,//right.
-//				WND_H / 4 + WND_H / 2 //bottom.
-//	};    
-
 	if( FAILED( CreateBlendState() ) ){
 		assert( !"Can't Blend State" );
 	}
-
-
-	LoadFont();
-
-	//外部情報受け渡し.
-//	m_vPos = D3DXVECTOR3( 0.0f, m_iFontSize, 0.01f );
-	m_vPos = D3DXVECTOR3( 0.0f, 0.0f, fPOS_Z );
-	m_fScale = static_cast<float>( m_iFontSize );
 
 	if( FAILED( CreateShader() ) ){
 		assert( !"Can't Create Shader" );
@@ -148,18 +141,6 @@ HRESULT clsFont::CreateBlendState()
 	return S_OK;
 }
 
-//フォント情報読込.
-bool clsFont::LoadFont()
-{
-	const int iFONT_SIZE = 32;
-	m_iFontSize = iFONT_SIZE;//22;
-	m_fFontMarginX = 2.0f;//4;
-	m_fFontMarginY = 8.0f;//4;
-//	m_strFont.iFontDispSpeed = 2;
-//	m_strFont.iFontAutoFlg = 120;
-
-	return true;
-}
 
 //シェーダの作成.
 HRESULT clsFont::CreateShader()
@@ -582,6 +563,8 @@ void clsFont::Render( const int iTex, const int iCharNum )
 	if( iTex <= -1 ) return;
 	if( iTex >= static_cast<int>( m_vvpAsciiTexture.size() ) ) return;
 
+	const int iFULL_MESSAGE_NUMBER = -1;//デフォルト引数.
+
 	//使用するシェーダーの登録.
 	m_pContext->VSSetShader( m_pVertexShader,	NULL, 0 );
 	m_pContext->PSSetShader( m_pPixelShader,	NULL, 0 );
@@ -597,8 +580,9 @@ void clsFont::Render( const int iTex, const int iCharNum )
 	const int iNUM_MAX = static_cast<int>( m_vvpAsciiTexture[ iTex ].size() );
 	for( int i=0; i<iNUM_MAX; i++ )
 	{
-		if( iCharNum == iFULL_MESSAGE_NUMBER ){
-		}
+		//デフォルト引数.
+		if( iCharNum == iFULL_MESSAGE_NUMBER ){}
+		//ではない場合の判定.
 		else if( i >= iCharNum ){
 			break;
 		}
@@ -686,7 +670,6 @@ void clsFont::Render( const int iTex, const int iCharNum )
 void clsFont::SetPos( const D3DXVECTOR3 &vPos )
 {
 	m_vPos = vPos;
-	m_vPos.z += fPOS_Z;
 }
 
 D3DXVECTOR3 clsFont::GetPos()

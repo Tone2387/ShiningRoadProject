@@ -39,6 +39,22 @@ public:
 	
 private:
 
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+	//シェーダ作成.
+	HRESULT CreateShader();
+	//バーテックスシェーダ作成.
+	HRESULT CreateVertexBuffer();
+	//定数バッファ作成.
+	HRESULT CreateConstantBuffer();
+	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
+	HRESULT	CreateTexture();
+
+	void SetBlend( const bool isAlpha );
+
+
+private:
+
 	//構造体.
 	struct FONTSHADER_CONSTANT_BUFFER
 	{
@@ -57,30 +73,14 @@ private:
 		D3DXVECTOR2 Tex;		//テクスチャ.
 	};
 
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
-	//フォント情報読込.
-	bool LoadFont();
-	//シェーダ作成.
-	HRESULT CreateShader();
-	//バーテックスシェーダ作成.
-	HRESULT CreateVertexBuffer();
-	//定数バッファ作成.
-	HRESULT CreateConstantBuffer();
-	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
-	HRESULT	CreateTexture();
-
-	void SetBlend( const bool isAlpha );
-
-
-private:
-
 	D3DXVECTOR3		m_vPos;			//位置.
 	float			m_fScale;		//拡縮.
 	D3DXVECTOR4		m_vColor;		//色.
 	float			m_fAlpha;
 		
+	//テクスチャサイズ( 解像度 ).
 	int		m_iFontSize;
+	//文字と文字の隙間.
 	float	m_fFontMarginX;
 	float	m_fFontMarginY;
 	float	m_fIndentionPosint;//改行するx座標.
