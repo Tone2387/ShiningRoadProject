@@ -47,13 +47,11 @@ clsFont::clsFont(
 	}
 
 
-	if( !AddFontResourceEx(
+	int iReturn = AddFontResourceEx(
 		sFONT_STYLE_PATH,
 		FR_PRIVATE,
-		&m_Design ) )
-	{
-		ERR_MSG( "フォント失敗", "Error" );
-	}
+		&m_Design );
+	assert( iReturn );
 
 //	m_Rect = {  WND_W / 8,//left.
 //				WND_H / 2,//top.
@@ -101,12 +99,13 @@ clsFont::~clsFont()
 	}
 
 	//リソース削除.
-	if( !RemoveFontResourceEx(
+	BOOL Return = RemoveFontResourceEx(
 		sFONT_STYLE_PATH,
 		FR_PRIVATE,
-		&m_Design ) )
-	{
-		assert( !"フォントリソース解放失敗" );
+		&m_Design );
+
+	if( !Return ){
+		ERR_MSG( "フォントリソースの破棄に失敗", "" );
 	}
 
 	m_pContext = nullptr;
@@ -595,13 +594,10 @@ void clsFont::Render( const int iTex, const int iCharNum )
 	int ii = 0;
 	int iCnt = 0;
 
-//	for ( int i = 0; i<iCharNum; i++ )
-	for( int i=0; i<m_vvpAsciiTexture[ iTex ].size(); i++ )
+	const int iNUM_MAX = static_cast<int>( m_vvpAsciiTexture[ iTex ].size() );
+	for( int i=0; i<iNUM_MAX; i++ )
 	{
-		if( static_cast<unsigned int>( i ) >= m_vvpAsciiTexture[ iTex ].size() ){
-			break;
-		}
-		else if( iCharNum == iFULL_MESSAGE_NUMBER ){
+		if( iCharNum == iFULL_MESSAGE_NUMBER ){
 		}
 		else if( i >= iCharNum ){
 			break;
