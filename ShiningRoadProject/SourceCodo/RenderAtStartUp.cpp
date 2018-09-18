@@ -147,7 +147,7 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 		else		tmpY = WND_H * 0.5f;
 		m_vupRogo[i]->SetPos( { -128.0f, tmpY, 0.0f } );//256size.
 		m_vupRogo[i]->AddPos( { 96.0f*i, 32.0f*i, 0.0f } );
-		m_vupRogo[i]->SetAnim( { ( i % 3 ), ( i % 2 ) } );
+		m_vupRogo[i]->SetAnim( { static_cast<float>( i % 3 ), static_cast<float>( i % 2 ) } );
 		float tmpAlpha;
 		if( i%2 )	tmpAlpha = 0.75f;
 		else		tmpAlpha = 0.5f;

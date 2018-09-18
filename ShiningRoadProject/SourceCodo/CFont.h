@@ -26,7 +26,7 @@ public:
 	void Create( const char *sTextFileName );//シーン開始時に使う.
 	void Release();							//シーン終了時に使う.
 
-	void Render( const int iTex, const int iCharNum );
+	void Render( const int iTex, const int iCharNum = -1 );
 
 
 
@@ -42,12 +42,12 @@ public:
 	
 private:
 
-	//フォント構造体.
-	struct strFont
-	{
-		int iFontDispSpeed;
-		int iFontAutoFlg;
-	}m_strFont;
+//	//フォント構造体.
+//	struct strFont
+//	{
+//		int iFontDispSpeed;
+//		int iFontAutoFlg;
+//	}m_strFont;
 
 
 	//構造体.
@@ -83,24 +83,22 @@ private:
 
 	void SetBlend( const bool isAlpha );
 
+
+private:
+
 	D3DXVECTOR3		m_vPos;			//位置.
 	float			m_fScale;		//拡縮.
 	D3DXVECTOR4		m_vColor;		//色.
 	float			m_fAlpha;
 		
-
-	int				m_iTextRow;//テキスト( データ )の行数.
-
-
-	DESIGNVECTOR		m_Design;
-	RECT				m_Rect;			//指定幅設定.
+	int		m_iFontSize;
+	float	m_fFontMarginX;
+	float	m_fFontMarginY;
+	float	m_fIndentionPosint;//改行するx座標.
 
 	std::vector< std::string > 		m_sTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
 
-	int m_iFontSize;
-	int m_iFontMarginX;
-	int m_iFontMarginY;
-
+	DESIGNVECTOR		m_Design;
 
 	//テクスチャ関連.
 	std::vector< ID3D11Texture2D* >							m_vpTex2D;//[ TEXT_H ];//2Ｄテクスチャ.
