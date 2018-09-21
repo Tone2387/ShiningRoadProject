@@ -21,14 +21,12 @@ clsGAME::clsGAME(
 	ID3D11Device* const pDevice, 
 	ID3D11DeviceContext* const pContext,
 	D3D10_VIEWPORT* const pViewPort10,
-	D3D11_VIEWPORT* const pViewPort11,
-	ID3D11DepthStencilState* const pDepthState  )
+	D3D11_VIEWPORT* const pViewPort11 )
 		:m_hWnd( hWnd )
 		,m_wpDevice( pDevice )
 		,m_wpContext( pContext )
 		,m_wpViewPort10( pViewPort10 )
 		,m_wpViewPort11( pViewPort11 )
-		,m_wpDepthStencilState( pDepthState )
 		,m_spPtrGroup( nullptr )
 		,m_spDxInput( nullptr )
 		,m_spXInput( nullptr )
@@ -78,7 +76,6 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_spDxInput );
 	SAFE_DELETE( m_spResource );
 
-	m_wpDepthStencilState = nullptr;
 	m_wpViewPort11 = nullptr;
 	m_wpViewPort10 = nullptr;
 	m_wpContext = nullptr;
@@ -127,7 +124,6 @@ void clsGAME::Create()
 	m_spPtrGroup = new clsPOINTER_GROUP( 
 		m_wpDevice, m_wpContext, 
 		m_wpViewPort10, m_wpViewPort11,
-		m_wpDepthStencilState,
 		m_spDxInput, m_spXInput,
 		m_spResource, m_spEffect, m_spSound,
 		m_spRoboStatus, m_spBlackScreen,

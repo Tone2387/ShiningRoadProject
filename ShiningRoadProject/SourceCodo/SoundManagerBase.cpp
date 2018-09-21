@@ -11,8 +11,6 @@ const unsigned int uiRESERVE_SIZE_BGM = 16;
 const unsigned int uiRESERVE_SIZE_SE = 256;
 const unsigned int uiRESURVE_SIZE_MAX = 8;	//同時再生数.
 
-//push_back用.
-const clsSound::SOUND_DATA INIT_SOUND_DATA = { "", "", 1000 };
 
 //添え字.
 const char cALIAS_NUM = 0;	//エイリアス名.
@@ -186,18 +184,13 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 	//エイリアス名用.
 	clsOPERATION_STRING OprtStr;
 
-	//容量を多めにとる.
-	vpSound.reserve( uiRESERVE_SIZE );
-
 	//何行目に書いた音?.
 	vpSound.resize( iSoundNum );
-	for( int i=0; i<iSoundNum; i++ ){
-//		vpSound.push_back( vINIT_VEC_UP_SOUND );
-		vpSound[i].reserve( uiRESURVE_SIZE_MAX );
+	for( unsigned int i=0; i<vpSound.size(); i++ )
+	{
+		vpSound[i].resize( viMaxNum[i] );
 		//何個まで同時再生させる?.
-		for( int j=0; j<viMaxNum[i]; j++ ){
-			//配列を増やしてnew( make_unique )する.
-			vpSound[i].push_back( nullptr );
+		for( unsigned int j=0; j<vpSound[i].size(); j++ ){
 			vpSound[i][j]= make_unique<clsSound>();
 
 			//エイリアス名に数字をつなげる.
@@ -235,21 +228,16 @@ void clsSOUND_MANAGER_BASE::CreateSoundData(
 		vData.clear();
 		viMaxNum.clear();
 		//ファイルがとった行数分増やす.
-		vData.reserve( upFile->GetSizeRow() );
-		viMaxNum.reserve( vData.size() );
+		vData.resize( upFile->GetSizeRow() );
+		viMaxNum.resize( vData.size() );
 		//データの中身を入れる.
 		for( unsigned int i=0; i<upFile->GetSizeRow(); i++ ){
-			vData.push_back( INIT_SOUND_DATA );
-
 			vData[i].sAlias = upFile->GetDataString( i, cALIAS_NUM );
 			vData[i].sPath = sSubPath + upFile->GetDataString( i, cPATH_NUM );
 			vData[i].iMaxVolume = upFile->GetDataInt( i, cVOLUME_NUM );
 			
-			viMaxNum.push_back( upFile->GetDataInt( i, cMAX_NUM ) );
+			viMaxNum[i] = upFile->GetDataInt( i, cMAX_NUM );
 		}
-		vData.shrink_to_fit();
-		viMaxNum.shrink_to_fit();
-
 	}
 	upFile->Close();
 	upFile.reset( nullptr );

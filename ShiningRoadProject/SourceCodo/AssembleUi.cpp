@@ -335,11 +335,10 @@ void clsASSEMBLE_UI::Create(
 
 	//パーツ項目初期化.
 	assert( m_vupPartsType.size() == 0 );
-	m_vupPartsType.reserve( enPARTS_TYPE_SIZE );
 	SPRITE_STATE ss;
 	ss.Disp = PARTS_TYPE_SIZE;
-	for( unsigned int i=0; i<enPARTS_TYPE_SIZE; i++ ){
-		m_vupPartsType.push_back( nullptr );
+	m_vupPartsType.resize( enPARTS_TYPE_SIZE );
+	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
 		m_vupPartsType[i] = make_unique< clsSprite2D >();
 
 		tmpString = sPATH_PARTS_TYPE + sPATH_PARTS_TYPE_CHILDREN[i];
@@ -358,12 +357,11 @@ void clsASSEMBLE_UI::Create(
 	//各パーツUI.
 	clsOPERATION_STRING OprtStr;
 	ss.Disp = PARTS_ICON_SIZE;
-	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
+	for( int i=0; i<enPARTS_TYPE_SIZE; i++ )
+	{
 		assert( m_vupPartsIcon[i].size() == 0 );
-		m_vupPartsIcon[i].reserve( data[i] );
-
+		m_vupPartsIcon[i].resize( data[i] );
 		for( int j=0; j<data[i]; j++ ){
-			m_vupPartsIcon[i].push_back( nullptr );
 			m_vupPartsIcon[i][j] = make_unique< clsSprite2D >();
 
 			tmpString = sPATH_PARTS_ICON_ROOT + sPATH_PARTS_ICON_PARTS[i] + "\\" + sPATH_PARTS_ICON_PARTS[i];
@@ -456,7 +454,6 @@ void clsASSEMBLE_UI::Create(
 	//ステータス値.
 	assert( !m_vupStatusNumText.size() );
 	assert( !m_vupStatusNumTextNow.size() );
-//	m_vupStatusNumText.reserve( iSTATUS_NUM_MAX );
 	m_vupStatusNumText.resize( iSTATUS_NUM_MAX );
 	m_vupStatusNumTextNow.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){

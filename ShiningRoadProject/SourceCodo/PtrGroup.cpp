@@ -5,7 +5,6 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 	ID3D11DeviceContext* const pContext,
 	D3D10_VIEWPORT* const pViewPort10,
 	D3D11_VIEWPORT* const pViewPort11,
-	ID3D11DepthStencilState* const pDepthState,
 	clsDxInput* const pDxInput,
 	clsXInput* const pXInput,
 	clsResource* const pResource,
@@ -18,7 +17,6 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 		,m_wpContext( pContext )
 		,m_wpViewPort10( pViewPort10 )
 		,m_wpViewPort11( pViewPort11 )
-		,m_wpDepthStencilState( pDepthState )
 		,m_wpDxInput( pDxInput )
 		,m_wpXInput( pXInput )
 		,m_wpResource( pResource )
@@ -41,7 +39,6 @@ clsPOINTER_GROUP::~clsPOINTER_GROUP()
 	m_wpResource = nullptr;
 	m_wpXInput = nullptr;
 	m_wpDxInput = nullptr;
-	m_wpDepthStencilState = nullptr;
 	m_wpViewPort10 = nullptr;
 	m_wpViewPort11 = nullptr;
 	m_wpContext = nullptr;
@@ -81,10 +78,6 @@ D3D11_VIEWPORT* clsPOINTER_GROUP::GetViewPort11() const
 	return m_wpViewPort11;
 }
 
-ID3D11DepthStencilState* clsPOINTER_GROUP::GetDepthState() const
-{
-	return m_wpDepthStencilState;
-}
 
 //ジョイスティック.
 clsDxInput* clsPOINTER_GROUP::GetDxInput() const

@@ -19,7 +19,6 @@ public:
 		ID3D11DeviceContext* const pContext,
 		D3D10_VIEWPORT* const pViewPort10,
 		D3D11_VIEWPORT* const pViewPort11,
-		ID3D11DepthStencilState* const pDepthState,
 		clsDxInput* const pDxInput,
 		clsXInput* const pXInput,
 		clsResource* const pResource,
@@ -40,7 +39,6 @@ public:
 	ID3D11DeviceContext* GetContext() const;
 	D3D10_VIEWPORT* GetViewPort10() const;
 	D3D11_VIEWPORT* GetViewPort11() const;
-	ID3D11DepthStencilState* GetDepthState() const;
 	clsDxInput* GetDxInput() const;
 	clsXInput* GetXInput() const;
 	clsResource* GetResource() const;
@@ -59,8 +57,6 @@ private:
 	D3D10_VIEWPORT* m_wpViewPort10;
 	//分割用.
 	D3D11_VIEWPORT* m_wpViewPort11;
-	//深度(Z)テスト設定.
-	ID3D11DepthStencilState* m_wpDepthStencilState;
 
 	//ジョイスティック.
 	clsDxInput*		m_wpDxInput;
