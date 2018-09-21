@@ -33,6 +33,21 @@ private:
 	void RenderDebugText() final;
 #endif//#if _DEBUG
 
-	
+		//âπÇÃà¯êî.
+	enum enBGM : int
+	{
+		enBGM_MAOU2 = 0,
+		enBGM_MUS0,
+		enBGM_POKET0,
+		enBGM_POKET1
+	};
+
+	enum enSE : int
+	{
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+	};
+
 
 };

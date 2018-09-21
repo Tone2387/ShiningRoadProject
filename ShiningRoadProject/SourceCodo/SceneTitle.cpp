@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 const float fROBO_SCALE = 0.5f;
 const float fBACK_SCALE = 1.0f;
 
@@ -49,6 +50,7 @@ clsSCENE_TITLE::~clsSCENE_TITLE()
 
 void clsSCENE_TITLE::CreateProduct()
 {
+	m_wpSound->PlaySE( enSE_BOMBER );
 
 	//モデルさん作成.
 	assert( !m_pRoboModel );
@@ -126,7 +128,6 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		enNextScene = enSCENE::ASSEMBLE;
 		//			Excelの行番号.
 		assert( m_wpSound );
-		m_wpSound->StopBGM( 0 );
 		m_wpSound->PlaySE( 0 );
 	}
 
@@ -172,9 +173,10 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	m_wpCamera->Update();
 	m_upBox->Update();
 
-
+	//フラッシュする瞬間.
 	clsCAMERA_TITLE* pCam = (clsCAMERA_TITLE*)m_wpCamera;//ゴリ押しでごめんなさい.
 	if( pCam->isFlash() ){
+		m_wpSound->PlayBGM( enBGM_MAOU3 );
 		m_upFlash->SetAlpha( 1.0f );
 		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
 		m_upLogo->SetAlpha( 1.0f );

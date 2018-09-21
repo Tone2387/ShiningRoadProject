@@ -16,6 +16,8 @@ clsSCENE_GAME_OVER::~clsSCENE_GAME_OVER()
 
 void clsSCENE_GAME_OVER::CreateProduct()
 {
+//	m_wpSound->PlayBGM( enBGM_MUS0 );
+
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 10.0f } );
 
 	assert( !m_upMissModel );

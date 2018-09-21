@@ -43,6 +43,9 @@ clsGAME::clsGAME(
 		,m_spBlackScreen( nullptr )
 		,m_spFont( nullptr )
 {
+	assert( !m_spResource );
+	m_spResource = new clsResource;
+	m_spResource->Create( m_hWnd, m_wpDevice, m_wpContext );
 
 }
 
@@ -63,7 +66,6 @@ clsGAME::~clsGAME()
 	SAFE_DELETE( m_spBlackScreen );
 	SAFE_DELETE( m_spRoboStatus );
 	SAFE_DELETE( m_spEffect );
-	SAFE_DELETE( m_spResource );
 	SAFE_DELETE( m_spSound );
 	m_upSoundFactory.reset();
 	SAFE_DELETE( m_spXInput );
@@ -74,6 +76,7 @@ clsGAME::~clsGAME()
 //		m_spXInput = nullptr;
 //	}
 	SAFE_DELETE( m_spDxInput );
+	SAFE_DELETE( m_spResource );
 
 	m_wpDepthStencilState = nullptr;
 	m_wpViewPort11 = nullptr;
@@ -99,11 +102,7 @@ void clsGAME::Create()
 	assert( !m_spSound );
 	m_spSound = m_upSoundFactory->Create( START_UP_SCENE, m_hWnd );
 	m_spSound->Create();
-	m_spSound->PlayBGM( cSTART_UP_MUSIC_NO );//起動音再生.
-
-	assert( !m_spResource );
-	m_spResource = new clsResource;
-	m_spResource->Create( m_hWnd, m_wpDevice, m_wpContext );
+//	m_spSound->PlayBGM( cSTART_UP_MUSIC_NO );//起動音再生.
 
 	assert( !m_spEffect );
 	m_spEffect = new clsEffects;
@@ -207,14 +206,14 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	SAFE_DELETE( m_spCamera );
 
 	//起動時は無視.
-	if( !bStartUp ){
+//	if( !bStartUp ){
 		SAFE_DELETE( m_spSound );
 		//指示どうりのシーンを作る.
 		//サウンド.
 		m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
 		m_spSound->Create();
 		m_spPtrGroup->UpdateSoundPtr( m_spSound );
-	}
+//	}
 
 	//カメラ.
 	m_spCamera = m_upCameraFactory->Create( enNextScene );
@@ -223,10 +222,10 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	//お待ちかねのシーン本体.
 	m_upScene = m_upSceneFactory->Create( enNextScene );
 
-	//起動時は無視.
-	if( !bStartUp ){
-		m_spSound->PlayBGM( iINIT_SCENE_BGM_NO );//BGM再生.
-	}
+//	//起動時は無視.
+//	if( !bStartUp ){
+//		m_spSound->PlayBGM( iINIT_SCENE_BGM_NO );//BGM再生.
+//	}
 
 	m_upScene->Create();//シーン初期化.
 

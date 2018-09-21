@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 //要素数は<clsSCENE_ASSEMBLE::ENUM_SIZE>.
 const string sPARTS_STATUS_PASS[] =
 {
@@ -168,6 +169,8 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
+
+	m_wpSound->PlayBGM( enBGM_MAOU2 );
 
 //	m_pTestChara = new clsCharaStatic;
 //	m_pTestChara->AttachModel( 
@@ -591,7 +594,7 @@ void clsSCENE_ASSEMBLE::RenderUi()
 //カーソル移動の共通動作.
 void clsSCENE_ASSEMBLE::MoveCursor()
 {
-//	m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+//	m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 }
 
 
@@ -601,7 +604,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 
 		m_PartsSelect.Num[m_PartsSelect.Type] --;
 
@@ -609,7 +612,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
-		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		m_pUI->AddStatusCommentNo( false );
 	}
 }
@@ -620,7 +623,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 
 		m_PartsSelect.Num[m_PartsSelect.Type] ++;
 
@@ -628,7 +631,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
-		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		m_pUI->AddStatusCommentNo( true );
 	}
 
@@ -639,7 +642,7 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 	MoveCursor();
 
 	if( isMessageBoxClose() ){
-		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		m_PartsSelect.Type ++;
 		m_pUI->AddCommentNoForChangePartsType();
 
@@ -655,7 +658,7 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 	//メッセボックスの選択肢.
 	else{
 		if( m_isMessageBoxYes ){
-			m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 			m_isMessageBoxYes = false;
 		}
 	}
@@ -667,7 +670,7 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 
 	//パーツを選ぶ.
 	if( isMessageBoxClose() ){
-		m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		m_PartsSelect.Type --;
 		m_pUI->AddCommentNoForChangePartsType();
 
@@ -677,7 +680,7 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 	//メッセボックスの選択肢.
 	else{
 		if( !m_isMessageBoxYes ){
-			m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 			m_isMessageBoxYes = true;
 		}
 	}
@@ -734,19 +737,19 @@ void clsSCENE_ASSEMBLE::Exit()
 //出撃.
 void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 {
-	m_wpSound->PlaySE( enSE::MISSION_START );
-	m_wpSound->PlaySE( enSE::ENTER );
+	m_wpSound->PlaySE( enSE_MISSION_START );
+	m_wpSound->PlaySE( enSE_ENTER );
 
 	enNextScene = enSCENE::MISSION;
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
 
-	m_wpSound->PlaySE( enSE::MISSION_START );
+	m_wpSound->PlaySE( enSE_MISSION_START );
 }
 
 //パーツ変更.
 void clsSCENE_ASSEMBLE::AssembleParts()
 {
-	m_wpSound->PlaySE( enSE::ENTER );
+	m_wpSound->PlaySE( enSE_ENTER );
 
 	//ステータスが何項目あるのか.
 	const int iStatusSize = m_vspFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
@@ -806,7 +809,7 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 //戻る.
 void clsSCENE_ASSEMBLE::TitleBack( enSCENE &enNextScene )
 {
-	m_wpSound->PlaySE( enSE::EXIT );
+	m_wpSound->PlaySE( enSE_EXIT );
 	enNextScene = enSCENE::TITLE;
 }
 
@@ -863,20 +866,20 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 	m_upBox->AddChangeData( fBOX_BIG_SPD_W, fBOX_BIG_SPD_H, encBOX_APPEAR_CHANGE_MODE );
 	m_enSelectMode = encMode;
 	if( encMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
-		m_wpSound->PlaySE( enSE::WIN_APP );
-//		m_wpSound->PlaySE( enSE::ENTER );
+		m_wpSound->PlaySE( enSE_WIN_APP );
+//		m_wpSound->PlaySE( enSE_ENTER );
 		m_iMessageNum = iBOX_MESSAGE_LINE_GO_MISSION;
 	}
 	else if( encMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK ){
-		m_wpSound->PlaySE( enSE::WIN_APP );
-//		m_wpSound->PlaySE( enSE::EXIT );
+		m_wpSound->PlaySE( enSE_WIN_APP );
+//		m_wpSound->PlaySE( enSE_EXIT );
 		m_iMessageNum = iBOX_MESSAGE_LINE_BACK_TITLE;
 	}
 }
 //メッセボックス消す.
 void clsSCENE_ASSEMBLE::DisAppearMessageBox()
 {
-	m_wpSound->PlaySE( enSE::WIN_DISAPP );
+	m_wpSound->PlaySE( enSE_WIN_DISAPP );
 
 	m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 	m_upBox->AddChangeData( 
@@ -898,7 +901,7 @@ void clsSCENE_ASSEMBLE::SwitchDispStatus()
 		return;
 	}
 
-	m_wpSound->PlaySE( enSE::CURSOL_MOVE );
+	m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 	m_pUI->SwitchDispStatusComment();
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
 }
@@ -906,14 +909,14 @@ void clsSCENE_ASSEMBLE::SwitchDispStatus()
 //パーツ選択とステータス選択の切り替え.
 void clsSCENE_ASSEMBLE::ChangePartsSelect()
 {
-	m_wpSound->PlaySE( enSE::EXIT );
+	m_wpSound->PlaySE( enSE_EXIT );
 	m_pUI->SwitchStatusComment();
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
 }
 
 void clsSCENE_ASSEMBLE::ChangeStatusSelect()
 {
-	m_wpSound->PlaySE( enSE::ENTER );
+	m_wpSound->PlaySE( enSE_ENTER );
 	m_pUI->SwitchStatusComment();
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
 }

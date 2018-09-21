@@ -52,5 +52,20 @@ private:
 
 	//テスト用エフェクト.
 	::Effekseer::Handle m_ehHibana;
+	//音の引数.
+	enum enBGM : int
+	{
+		enBGM_MAOU1 = 0,
+		enBGM_MAOU3,
+	};
+
+	enum enSE : int
+	{
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+		enSE_BOMBER,
+		enSE_GUITAR
+	};
 
 };

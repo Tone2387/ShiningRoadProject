@@ -245,6 +245,11 @@ void clsMain::Loop()
 	thStartUpRender.join();
 	upRenderAtStartUp.reset();
 
+	//ロード画面終了後にCreateしないと効果音のタイミングがおかしくなる.
+	m_upGame->Create();
+
+
+
 	//----------------------------------------------------------
 	//	フレームレート.
 	//----------------------------------------------------------
@@ -546,8 +551,6 @@ void clsMain::DestroyD3D()
 ////============================================================
 HRESULT clsMain::ReadMesh()
 {
-//	m_upGame = new clsGAME( 
-//		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
 	m_upGame = make_unique< clsGAME >( 
 		m_hWnd, 
 		m_pDevice, 
@@ -555,7 +558,7 @@ HRESULT clsMain::ReadMesh()
 		m_spViewPort10, 
 		m_spViewPort11,
 		m_spDepthStencilState );
-	m_upGame->Create();
+//	m_upGame->Create();//起動時に効果音タイミングずれ対策でロード画面終了瞬間に移動する.
 
 
 
