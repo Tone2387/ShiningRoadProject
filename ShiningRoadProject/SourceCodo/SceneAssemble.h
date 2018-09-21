@@ -142,17 +142,20 @@ private:
 	//âπÇÃà¯êî.
 	enum enBGM : int
 	{
-		ASSEMBLE = 0,
+		enBGM_MAFIA1 = 0,
+		enBGM_MAOU0,
+		enBGM_MAOU2,
+		enBGM_MAOU4
 	};
 
 	enum enSE : int
 	{
-		CURSOL_MOVE = 0,
-		ENTER,
-		EXIT,
-		MISSION_START,
-		WIN_APP,
-		WIN_DISAPP,
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+		enSE_MISSION_START,
+		enSE_WIN_APP,
+		enSE_WIN_DISAPP,
 	};
 
 };
