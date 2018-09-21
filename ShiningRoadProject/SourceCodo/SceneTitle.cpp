@@ -128,9 +128,11 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		enNextScene = enSCENE::ASSEMBLE;
 		//			Excel‚Ìs”Ô†.
 		assert( m_wpSound );
-		m_wpSound->PlaySE( 0 );
+		m_wpSound->PlaySE( enSE_ENTER );
 	}
 
+
+#ifdef _DEBUG
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
 		m_upBox->SetSizeTarget( { 200.0f, 200.0f, 0.0f } );
 	}
@@ -160,6 +162,8 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_upBox->AddChangeData( 
 			100.0f, 100.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
 	}
+#endif//#ifdef _DEBUG
+
 
 	//”–‚­‚·‚é.
 	m_upFlash->AddAlpha( fFLASH_DOWN );
