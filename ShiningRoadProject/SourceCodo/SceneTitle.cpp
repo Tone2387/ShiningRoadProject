@@ -3,7 +3,6 @@
 
 using namespace std;
 
-const int iBGM_NUMBER = 1;
 
 const float fROBO_SCALE = 0.5f;
 const float fBACK_SCALE = 1.0f;
@@ -51,7 +50,7 @@ clsSCENE_TITLE::~clsSCENE_TITLE()
 
 void clsSCENE_TITLE::CreateProduct()
 {
-	m_wpSound->PlaySE( enSE_GUITAR );
+	m_wpSound->PlaySE( enSE_BOMBER );
 
 	//ƒ‚ƒfƒ‹‚³‚ñì¬.
 	assert( !m_pRoboModel );
@@ -177,7 +176,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	//ƒtƒ‰ƒbƒVƒ…‚·‚éuŠÔ.
 	clsCAMERA_TITLE* pCam = (clsCAMERA_TITLE*)m_wpCamera;//ƒSƒŠ‰Ÿ‚µ‚Å‚²‚ß‚ñ‚È‚³‚¢.
 	if( pCam->isFlash() ){
-		m_wpSound->PlayBGM( iBGM_NUMBER );
+		m_wpSound->PlayBGM( enBGM_MAOU3 );
 		m_upFlash->SetAlpha( 1.0f );
 		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
 		m_upLogo->SetAlpha( 1.0f );

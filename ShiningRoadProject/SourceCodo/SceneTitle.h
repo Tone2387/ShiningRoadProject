@@ -57,7 +57,6 @@ private:
 	{
 		enBGM_MAOU1 = 0,
 		enBGM_MAOU3,
-		enBGM_RENGOKU1
 	};
 
 	enum enSE : int

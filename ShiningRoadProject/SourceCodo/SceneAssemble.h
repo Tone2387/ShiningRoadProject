@@ -145,7 +145,6 @@ private:
 		enBGM_MAFIA1 = 0,
 		enBGM_MAOU0,
 		enBGM_MAOU2,
-		enBGM_MAOU4
 	};
 
 	enum enSE : int

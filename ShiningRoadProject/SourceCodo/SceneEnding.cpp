@@ -15,6 +15,8 @@ clsSCENE_ENDING::~clsSCENE_ENDING()
 
 void clsSCENE_ENDING::CreateProduct()
 {
+	m_wpSound->PlayBGM( enBGM_MAFIA1 );
+
 	m_upStage = make_unique< clsStage >( m_wpPtrGroup->GetResource() );
 
 	m_wpCamera->SetPos( { 0.0f, 500.0f, -1.0f } );
