@@ -57,8 +57,6 @@ public:
 
 private:
 
-	//ファイルデータの型のpush_back用.
-	using FILE_DATA_ROW = std::vector< std::string >;
 
 	//ファイル読み込み時に使用.
 	//文字列分割( 第一引数の文字列を分割して返す )( 第二引数は区切り文字 ).

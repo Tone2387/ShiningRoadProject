@@ -3,6 +3,7 @@
 #include "SceneBase.h"
 #include "CameraGameOver.h"
 #include "MissionModel.h"
+#include "Sprite2DCenter.h"
 
 //================================//
 //========== ゲームオーバークラス ==========//
@@ -26,6 +27,7 @@ private:
 
 
 	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upMissionFailed;
 
 
 #if _DEBUG

@@ -22,6 +22,16 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
+	//そのばで透過するスプライト.
+	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupSpriteAlpha;
+	//スクロールするスプライト.
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upSpriteScroll;
+
+	unsigned int m_uiSpriteCnt;
+	bool m_isSpriteAlphaAppear;
+	int m_iIntervalCnt;//始まるまでの時間カウント.
+	bool m_isScroll;
+
 
 	std::unique_ptr< clsStage >	m_upStage;//テスト用.
 

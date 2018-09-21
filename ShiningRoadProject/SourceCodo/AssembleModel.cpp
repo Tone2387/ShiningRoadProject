@@ -74,9 +74,8 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 
 	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
-	m_vpParts.reserve( ucPARTS_MAX );
+	m_vpParts.resize( ucPARTS_MAX, nullptr );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_vpParts.push_back( nullptr );
 		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 

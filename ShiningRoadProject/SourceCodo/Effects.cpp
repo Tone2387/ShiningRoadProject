@@ -177,12 +177,11 @@ HRESULT clsEffects::LoadData()
 
 	string tmpString;
 
-	m_vpEffect.reserve( iRESURVE_SIZE_EFFECTS_MAX );
-
 	//文字列操作用.
 	clsOPERATION_STRING OprtStr;
 
 	//エフェクトの読込.
+//	m_vpEffect.reserve( iRESURVE_SIZE_EFFECTS_MAX );
 	m_vpEffect.resize( upFile->GetSizeRow() );
 	for( unsigned int i=0; i<m_vpEffect.size(); i++ ){
 		//パスを作る.

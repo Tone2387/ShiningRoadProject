@@ -16,8 +16,7 @@ public:
 		ID3D11DeviceContext*	 const pContext,
 		IDXGISwapChain*			 const pSwapChain,
 		ID3D11RenderTargetView*	 const pBackBuffer_TexRTV,
-		ID3D11DepthStencilView*	 const pBackBuffer_DSTexDSV,
-		ID3D11DepthStencilState* const pDepthStencilState );
+		ID3D11DepthStencilView*	 const pBackBuffer_DSTexDSV );
 	~clsRENDER_AT_START_UP();
 
 	//ループ処理.
@@ -27,6 +26,7 @@ public:
 	void FinishLoad();
 
 private:
+	HRESULT CreateDepthStencilState();
 
 	void Update();
 
@@ -88,7 +88,8 @@ private:
 	IDXGISwapChain*				m_wpSwapChain;			//スワップチェーン.
 	ID3D11RenderTargetView*		m_wpBackBuffer_TexRTV;	//レンダーターゲットビュー.
 	ID3D11DepthStencilView*		m_wpBackBuffer_DSTexDSV;//デプスステンシルビュー.
-	ID3D11DepthStencilState*	m_wpDepthStencilState;	//深度(Z)テスト設定.
+	ID3D11DepthStencilState*	m_pDepthStencilStateOn;	//深度(Z)テスト設定.
+	ID3D11DepthStencilState*	m_pDepthStencilStateOff;	//深度(Z)テスト設定.
 
 };
 

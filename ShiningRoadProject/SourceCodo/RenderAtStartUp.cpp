@@ -74,14 +74,14 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 	ID3D11DeviceContext*	 const pContext,
 	IDXGISwapChain*			 const pSwapChain,
 	ID3D11RenderTargetView*	 const pBackBuffer_TexRTV,
-	ID3D11DepthStencilView*	 const pBackBuffer_DSTexDSV,
-	ID3D11DepthStencilState* const pDepthStencilState )
+	ID3D11DepthStencilView*	 const pBackBuffer_DSTexDSV )
 	:m_wpDevice(pDevice)
 	,m_wpContext( pContext )
 	,m_wpSwapChain( pSwapChain )
 	,m_wpBackBuffer_TexRTV( pBackBuffer_TexRTV )
 	,m_wpBackBuffer_DSTexDSV( pBackBuffer_DSTexDSV )
-	,m_wpDepthStencilState( pDepthStencilState )
+	,m_pDepthStencilStateOn( nullptr )
+	,m_pDepthStencilStateOff( nullptr )
 	,m_bEnd( false )
 	,m_enMode( enMODE::LINE_V )
 	,m_iTimer( 0 )
@@ -89,12 +89,13 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 	//このクラスの初期化時に灰色画面が出るのを防ぐ.
 	Render( false );
 
-	SPRITE_STATE ss;
+	CreateDepthStencilState();
 
-	m_vupGage.reserve( cGAGE_MAX );
+	SPRITE_STATE ss;
 	ss.Disp = INIT_DISP_GAGE;
+
+	m_vupGage.resize( cGAGE_MAX );
 	for( char i=0; i<cGAGE_MAX; i++ ){
-		m_vupGage.push_back( nullptr );
 		m_vupGage[i] = make_unique< clsSPRITE2D_CENTER >();
 		m_vupGage[i]->Create( m_wpDevice, m_wpContext, cGAGE_PATH, ss );
 
@@ -197,7 +198,8 @@ clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 
 	m_bEnd = false;
 
-	m_wpDepthStencilState = nullptr;
+	SAFE_RELEASE( m_pDepthStencilStateOff );
+	SAFE_RELEASE( m_pDepthStencilStateOn );
 	m_wpBackBuffer_DSTexDSV = nullptr;
 	m_wpBackBuffer_TexRTV = nullptr;	
 	m_wpSwapChain = nullptr;			
@@ -328,20 +330,6 @@ void clsRENDER_AT_START_UP::Render( bool isLoop )
 	m_wpSwapChain->Present( 0, 0 );
 }
 
-
-//深度テスト(Zテスト)ON/OFF切替.
-void clsRENDER_AT_START_UP::SetDepth( bool isOn )
-{
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	ZeroMemory( &depthStencilDesc,
-		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
-	depthStencilDesc.DepthEnable = isOn;
-
-	m_wpDevice->CreateDepthStencilState(
-		&depthStencilDesc, &m_wpDepthStencilState );
-	m_wpContext->OMSetDepthStencilState(
-		m_wpDepthStencilState, 1 );
-}
 
 
 //仕事の終わり.
@@ -572,3 +560,42 @@ void clsRENDER_AT_START_UP::Complete()
 	}
 
 }
+
+
+HRESULT clsRENDER_AT_START_UP::CreateDepthStencilState()
+{
+	assert( !m_pDepthStencilStateOn );
+	assert( !m_pDepthStencilStateOff );
+
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	ZeroMemory( &depthStencilDesc,
+		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
+
+	//ON.
+	depthStencilDesc.DepthEnable = true;
+	m_wpDevice->CreateDepthStencilState(
+		&depthStencilDesc, &m_pDepthStencilStateOn );
+
+	//OFF.
+	depthStencilDesc.DepthEnable = false;
+	m_wpDevice->CreateDepthStencilState(
+		&depthStencilDesc, &m_pDepthStencilStateOff );
+
+
+	return S_OK;
+}
+
+
+//深度テスト(Zテスト)ON/OFF切替.
+void clsRENDER_AT_START_UP::SetDepth( bool isOn )
+{
+	if( isOn ){
+		m_wpContext->OMSetDepthStencilState(
+			m_pDepthStencilStateOn, 1 );
+	}
+	else{
+		m_wpContext->OMSetDepthStencilState(
+			m_pDepthStencilStateOff, 1 );
+	}
+}
+
