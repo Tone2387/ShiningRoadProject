@@ -70,8 +70,13 @@ public:
 
 	//ボタン入力.
 	bool isPressEnter( const WORD _padKey ) const;	//押した瞬間.
-	bool isPressStay( const WORD _padKey ) const;	//押されてる間.
-	bool isPressExit( const WORD _padKey ) const;	//離した瞬間.
+	bool isPressStay ( const WORD _padKey ) const;	//押されてる間.
+	bool isPressExit ( const WORD _padKey ) const;	//離した瞬間.
+
+	//スティックの上下左右を十字キーと同等に扱う.
+	bool isSlopeEnter( const WORD _padKey, const bool isLeft = true ) const;
+	bool isSlopeStay ( const WORD _padKey, const bool isLeft = true ) const;
+	bool isSlopeExit ( const WORD _padKey, const bool isLeft = true ) const;
 
 	//トリガー、スティック入力.
 #ifndef NORMALIZE_ANALOG_INPUT
@@ -102,9 +107,8 @@ public:
 
 
 
-	//左スティックの角度.
+	//左右スティックの角度.
 	float GetLStickTheta() const;
-	//右スティックの角度.
 	float GetRStickTheta() const;
 
 	//各スティックの倒し具合( どれだけ深く倒しているか：0.0f～1.0fで返す ).
@@ -133,10 +137,10 @@ private:
 	BYTE GetLTriggerInside() const;
 	BYTE GetRTriggerInside() const;
 	//スティック入力( GetStickSlope()とGetStickTheta()の為 ).
-	SHORT GetLThumbXInside() const;
-	SHORT GetLThumbYInside() const;
-	SHORT GetRThumbXInside() const;
-	SHORT GetRThumbYInside() const;
+	SHORT GetLThumbXInside( const bool isOld = false ) const;
+	SHORT GetLThumbYInside( const bool isOld = false ) const;
+	SHORT GetRThumbXInside( const bool isOld = false ) const;
+	SHORT GetRThumbYInside( const bool isOld = false ) const;
 
 
 	DWORD				m_padId;

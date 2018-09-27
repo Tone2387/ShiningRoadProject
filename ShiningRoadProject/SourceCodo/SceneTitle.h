@@ -53,6 +53,7 @@ private:
 
 	//テスト用エフェクト.
 	::Effekseer::Handle m_ehHibana;
+
 	//音の引数.
 	enum enBGM : int
 	{

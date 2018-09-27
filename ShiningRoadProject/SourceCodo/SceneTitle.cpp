@@ -108,6 +108,19 @@ void clsSCENE_TITLE::CreateProduct()
 
 void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 {
+	if( m_wpXInput->isSlopeExit( XINPUT_UP ) ){
+		m_wpSound->PlaySE( enSE_ENTER );
+	}
+	if( m_wpXInput->isSlopeExit( XINPUT_LEFT ) ){
+		m_wpSound->PlaySE( enSE_EXIT );
+	}
+	if( m_wpXInput->isSlopeExit( XINPUT_DOWN ) ){
+		m_wpSound->PlaySE( enSE_BOMBER );
+	}
+	if( m_wpXInput->isSlopeExit( XINPUT_RIGHT ) ){
+		m_wpSound->PlaySE( enSE_GUITAR );
+	}
+
 	//エフェクトの使い方.
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
 		//						Excelの行番号	座標.
@@ -228,6 +241,11 @@ void clsSCENE_TITLE::RenderDebugText()
 	char strDbgTxt[256];
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
+
+	sprintf_s( strDbgTxt, 
+		"LTheta : x[%f]",
+		m_wpXInput->GetLStickTheta() );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	sprintf_s( strDbgTxt, 
 		"CameraPos : x[%f], y[%f], z[%f]",
