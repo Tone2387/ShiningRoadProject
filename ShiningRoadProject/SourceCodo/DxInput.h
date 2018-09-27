@@ -52,6 +52,14 @@ enum enPKey
 	enPKey_Max,//∑∞ç≈ëÂêî.
 };
 
+struct StickState
+{
+	float fDir;
+	float fPush;
+	float fHorPush;
+	float fVerPush;
+};
+
 //========================================================
 //	“≤›∏◊Ω.
 //========================================================
@@ -90,13 +98,12 @@ public:
 
 	float GetLSPush();
 
-	float GetHorLSPush();
-	float GetHorLSEnter();
-	float GetHorLSStay();
+	bool GetLSEnter(enPKey enKey);
+	bool GetLSStay(enPKey enKey);
+	bool GetLSExit(enPKey enKey);
 
+	float GetHorLSPush();
 	float GetVerLSPush();
-	float GetVerLSEnter();
-	float GetVerLSStay();
 
 	float GetRSDir();
 	float GetRSPush();
