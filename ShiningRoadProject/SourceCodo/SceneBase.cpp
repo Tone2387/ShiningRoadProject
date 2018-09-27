@@ -206,6 +206,9 @@ bool clsSCENE_BASE::isPressRight()
 	if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
 		return true;
 	}
+	else if( m_wpXInput->isSlopeEnter( XINPUT_RIGHT ) ){
+		return true;
+	}
 	else if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
 		return true;
 	}
@@ -215,6 +218,9 @@ bool clsSCENE_BASE::isPressRight()
 bool clsSCENE_BASE::isPressLeft()
 {
 	if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
+		return true;
+	}
+	else if( m_wpXInput->isSlopeEnter( XINPUT_LEFT ) ){
 		return true;
 	}
 	else if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
@@ -228,6 +234,9 @@ bool clsSCENE_BASE::isPressUp()
 	if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
 		return true;
 	}
+	else if( m_wpXInput->isSlopeEnter( XINPUT_UP ) ){
+		return true;
+	}
 	else if( GetAsyncKeyState( VK_UP ) & 0x1 ){
 		return true;
 	}
@@ -237,6 +246,9 @@ bool clsSCENE_BASE::isPressUp()
 bool clsSCENE_BASE::isPressDown()
 {
 	if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
+		return true;
+	}
+	else if( m_wpXInput->isSlopeEnter( XINPUT_DOWN ) ){
 		return true;
 	}
 	else if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
