@@ -87,9 +87,16 @@ public:
 	bool IsPressKey(enPKey enKey);
 
 	float GetLSDir();
+
 	float GetLSPush();
+
 	float GetHorLSPush();
+	float GetHorLSEnter();
+	float GetHorLSStay();
+
 	float GetVerLSPush();
+	float GetVerLSEnter();
+	float GetVerLSStay();
 
 	float GetRSDir();
 	float GetRSPush();
