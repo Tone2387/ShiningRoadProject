@@ -44,31 +44,29 @@ public:
 
 	//初期化.
 	HRESULT Create( ID3D11Device* const pDevice11,
-		ID3D11DeviceContext* const pContext11 );
+		ID3D11DeviceContext* const pContext11,
+		const char* sTexName );
 
 
 	//描画(レンダリング)(※DX9MESH内とMain内で2つ存在するので注意).
-	virtual void Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj,
-				 const D3DXVECTOR3 &vEye );
+	virtual void Render( 
+		const D3DXMATRIX& mView, 
+		const D3DXMATRIX& mProj,
+		const D3DXVECTOR3 &vEye, 
+		bool isBillBoard = false );
 
-	void SetScale( const float fScale ){
-		m_fScale = fScale;
-	}
 
 
 	D3DXVECTOR3		m_vPos;	//位置.
-
-	int		m_AnimCount;//UVスクロール.
-
-	bool	m_bDispFlg;//表示フラグ.
-
+	D3DXVECTOR3		m_vRot;
+	D3DXVECTOR3		m_vScale;
 
 protected:
 
 	//シェーダ作成.
 	HRESULT InitShader();
 	////モデル作成.
-	virtual HRESULT InitModel();
+	virtual HRESULT InitModel( const char* sTexName );
 
 	//↓モデルの種類ごとに用意.
 	ID3D11VertexShader*		m_pVertexShader;	//頂点シェーダ.
@@ -84,7 +82,10 @@ protected:
 
 
 
-	float m_fScale;
+
+	int		m_AnimCount;//UVスクロール.
+
+	bool	m_bDispFlg;//表示フラグ.
 
 
 };

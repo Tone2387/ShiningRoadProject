@@ -19,7 +19,6 @@ clsSprite::clsSprite()
 	m_pTexture			= nullptr;		
 	m_pSampleLinear		= nullptr;
 
-	m_fScale = 1.0f;
 }
 
 //============================================================
@@ -27,26 +26,26 @@ clsSprite::clsSprite()
 //============================================================
 clsSprite::~clsSprite()
 {
-	m_pVertexShader		= nullptr;	
-	m_pVertexLayout		= nullptr;	
-	m_pPixelShader		= nullptr;		
-	m_pConstantBuffer	= nullptr;
-	m_pVertexBuffer		= nullptr;
-	m_pTexture			= nullptr;		
-	m_pSampleLinear		= nullptr;
+	SAFE_RELEASE( m_pTexture );
+	SAFE_RELEASE( m_pSampleLinear );
+	SAFE_RELEASE( m_pVertexBuffer );
+	SAFE_RELEASE( m_pConstantBuffer );
+	SAFE_RELEASE( m_pPixelShader );
+	SAFE_RELEASE( m_pVertexLayout );
+	SAFE_RELEASE( m_pVertexShader );
 }
 
 //============================================================
 //初期化.
 //============================================================
 HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
-	ID3D11DeviceContext* const pContext11 )
+	ID3D11DeviceContext* const pContext11,
+	const char* sTexName )
 {
 	m_pDevice11 = pDevice11;
 	m_pDeviceContext11 = pContext11;
 
-	if( FAILED( CreateBlendState() ))
-	{
+	if( FAILED( CreateBlendState() ) ){
 		return E_FAIL;
 	}
 	//シェーダ作成.
@@ -54,7 +53,7 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 		return E_FAIL;
 	}
 	//板ポリゴン作成.
-	if( FAILED( InitModel() ) ){
+	if( FAILED( InitModel( sTexName ) ) ){
 		return E_FAIL;
 	}
 
@@ -211,20 +210,17 @@ HRESULT clsSprite::InitShader()
 		return E_FAIL;
 	}
 
-
-
-
 	return S_OK;
 }
 
 //============================================================
 //	モデル作成.
 //============================================================
-HRESULT clsSprite::InitModel()
+HRESULT clsSprite::InitModel( const char* sTexName )
 {
-	float itaW = 1.0f;
+	const float itaW = 0.5075f;
 	float w, h;
-	w = h = ( 1.0f / 8.0f );
+//	w = h = ( 1.0f / 8.0f );
 	w = h = 1.0f;
 
 	//板ポリ(四角形)の頂点を作成.
@@ -298,7 +294,8 @@ HRESULT clsSprite::InitModel()
 	if( FAILED(
 		D3DX11CreateShaderResourceViewFromFile(
 			m_pDevice11,		//リソースを使用するデバイスへのポインタ.
-			"Data\\Image\\MissonUI\\Lockon.png",	//ファイル名(パスも必要).
+//			"Data\\Image\\MissonUI\\Lockon.png",	//ファイル名(パスも必要).
+			sTexName,
 			NULL, NULL,
 			&m_pTexture,	//(out)テクスチャ.
 			NULL ) ) )
@@ -314,35 +311,40 @@ HRESULT clsSprite::InitModel()
 //============================================================
 //描画(レンダリング)(※DX9MESH内とMain内で2つ存在するので注意).
 //============================================================
-void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const D3DXVECTOR3 &vEye )
+void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const D3DXVECTOR3 &vEye, bool isBillBoard )
 {
 	//ワールド行列.
-	D3DXMATRIX	mWorld, mScale, mTrans;
+	D3DXMATRIX	mWorld, mScale, mTrans, mYaw, mPitch, mRoll;
 	//ワールド変換(表示位置を設定する).
 	D3DXMatrixIdentity( &mWorld );	//初期化:単位行列作成.
 
 	//拡縮.
-	D3DXMatrixScaling( &mScale, m_fScale, m_fScale, m_fScale );
+	D3DXMatrixScaling( &mScale, m_vScale.x, m_vScale.y, m_vScale.z );
 
 	//平行移動.
 	D3DXMatrixTranslation( &mTrans,
 		m_vPos.x, m_vPos.y, m_vPos.z );
 
+	D3DXMatrixRotationZ( &mRoll, m_vRot.z );
+	D3DXMatrixRotationY( &mYaw, m_vRot.y );
+	D3DXMatrixRotationX( &mPitch, m_vRot.x );
+
 	//合算.
-	mWorld = mScale * mTrans;
+	mWorld = mScale * mYaw * mPitch * mRoll * mTrans;
 
 	//使用するシェーダの登録.
 	m_pDeviceContext11->VSSetShader( m_pVertexShader, NULL, 0 );
 	m_pDeviceContext11->PSSetShader( m_pPixelShader,  NULL, 0 );
 
-	//ビルボード用.
-	D3DXMATRIX CancelRotation = mView;//ビュー(カメラ)行列.
-	CancelRotation._41 =
-		CancelRotation._42 = CancelRotation._43 = 0;//xyzを0にする.
-	//CancelRotationの逆行列を求める.
-	D3DXMatrixInverse( &CancelRotation, NULL, &CancelRotation );
-	mWorld = CancelRotation * mWorld;
-
+	if( isBillBoard ){
+		//ビルボード用.
+		D3DXMATRIX CancelRotation = mView;//ビュー(カメラ)行列.
+		CancelRotation._41 =
+			CancelRotation._42 = CancelRotation._43 = 0;//xyzを0にする.
+		//CancelRotationの逆行列を求める.
+		D3DXMatrixInverse( &CancelRotation, NULL, &CancelRotation );
+		mWorld = CancelRotation * mWorld;
+	}
 
 
 	//シェーダのコンスタントバッファに各種データを渡す.
