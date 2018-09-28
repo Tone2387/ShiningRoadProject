@@ -21,7 +21,7 @@ const float fFLASH_DOWN = -0.05f;
 
 
 ////“ú–{ŒêUI.
-//const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
+const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
 
 //ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚Ä‚Ë.
 const float fPLESS_START_SCALE = 2.0f;
@@ -85,7 +85,7 @@ void clsSCENE_TITLE::CreateProduct()
 
 
 
-//	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
+	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 	assert( !m_upPlessStart );
 	m_upPlessStart = make_unique< clsUiText >();
 	m_upPlessStart->Create( m_wpContext, WND_W, WND_H, fPLESS_START_SCALE );
@@ -217,7 +217,9 @@ void clsSCENE_TITLE::RenderUi()
 	assert( m_upLogo );
 	m_upLogo->Render();
 
-//	m_wpFont->Render( 0, 100 );
+	m_wpFont->SetPos( { 0, 0, 0 } );
+	m_wpFont->SetScale( 20 );
+	m_wpFont->Render( 4, 100 );
 	if( m_isDispPlessStart ){
 		assert( m_upPlessStart );
 		m_upPlessStart->Render( clsUiText::enPOS::MIDDLE );
