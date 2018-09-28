@@ -234,8 +234,7 @@ HRESULT clsFont::CreateVertexBuffer()
 	//バーテックスバッファー作成.
 	FONT_VERTEX vertices[4];
 
-	FONT_VERTEX vertices2[] =
-	{
+	FONT_VERTEX vertices2[] ={
 		//頂点座標（ｘ、ｙ、ｚ）　　　　UV座標（u,v）.
 		D3DXVECTOR3( 0.0f, 1.0f, 0.0f ), D3DXVECTOR2( 0.0f, 1.0f ),	//頂点１.
 		D3DXVECTOR3( 0.0f,-1.0f, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ),	//頂点２.
@@ -259,8 +258,7 @@ HRESULT clsFont::CreateVertexBuffer()
 	D3D11_SUBRESOURCE_DATA InitDate;
 	InitDate.pSysMem = vertices;		//三角形の頂点をリセット.
 	//頂点バッファの作成.
-	if( FAILED( m_pDevice->CreateBuffer( &bd, &InitDate, &m_pVertexBuffer ) ) )
-	{
+	if( FAILED( m_pDevice->CreateBuffer( &bd, &InitDate, &m_pVertexBuffer ) ) ){
 		ERR_MSG("頂点バッファ(m_pItaVB)の作成に失敗", "InitPolygon");
 		return E_FAIL;
 	}
@@ -361,6 +359,7 @@ HRESULT clsFont::CreateTexture()
 	LOGFONT lf = {
 		m_iFontSize, 0, 0, 0, 
 		0, 0, 0, 0,
+		//DEFAULT_CHARSET,
 		SHIFTJIS_CHARSET,
 		OUT_TT_ONLY_PRECIS,
 		CLIP_DEFAULT_PRECIS,
@@ -368,6 +367,7 @@ HRESULT clsFont::CreateTexture()
 		FIXED_PITCH | FF_ROMAN,
 		TEXT( sFONT_NAME )
 	};
+	
 
 	//行数分繰り返し.
 	for( unsigned int iTex=0; iTex<m_sTextData.size(); iTex++ )
@@ -384,7 +384,7 @@ HRESULT clsFont::CreateTexture()
 		HFONT oldFont = (HFONT)SelectObject( hdc, hFont );
 
 		int iByteMax = strlen( m_sTextData[ iTex ].c_str() );
-
+		
 //		for( int i=0; i<iByteMax; i++ )
 //		{
 //			if( IsDBCSLeadByte( m_sTextData[ iTex ][i] ) ){
@@ -394,11 +394,9 @@ HRESULT clsFont::CreateTexture()
 
 		UINT code;
 		int iCharCnt = 0;//文字列カウント.
-		for( int i=0; i<iByteMax; i++ )
-		{
+		for( int i=0; i<iByteMax; i++ ){
 			//文字コード取得.
-			if( IsDBCSLeadByte( m_sTextData[ iTex ][i] ) )
-			{
+			if( IsDBCSLeadByte( m_sTextData[ iTex ][i] ) ){
 				code = (BYTE)m_sTextData[ iTex ][i] << 8 | (BYTE)m_sTextData[ iTex ][ i + 1 ];
 			}
 			else{
@@ -431,8 +429,7 @@ HRESULT clsFont::CreateTexture()
 			desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-			if( FAILED( m_pDevice->CreateTexture2D( &desc, 0, &m_vpTex2D[ iTex ] ) ) )
-			{
+			if( FAILED( m_pDevice->CreateTexture2D( &desc, 0, &m_vpTex2D[ iTex ] ) ) ){
 				MessageBox( 0, "テクスチャ作成失敗", "CreateTexture", MB_OK );
 				return E_FAIL;
 			}
@@ -499,8 +496,7 @@ HRESULT clsFont::CreateTexture()
 			}
 
 			//文字コード取得.
-			if( IsDBCSLeadByte( m_sTextData[ iTex ][i] ) )
-			{
+			if( IsDBCSLeadByte( m_sTextData[ iTex ][i] ) ){
 				i++;
 			}
 			iCharCnt++;//文字.

@@ -2,8 +2,8 @@
 
 using namespace std;
 
-const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingSide.png";
-const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTop.png";
+const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide.png";
+const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop.png";
 
 
 const int iRESURVE_NUM = 256;
@@ -21,9 +21,6 @@ clsBUILDING::clsBUILDING(
 		clsDX9Mesh* const pModel )
 	:m_wpDevice( pDevice11 )
 	,m_wpContext( pContext11 )
-//	,m_Trans.vPos( { 0.0f, 0.0f, 0.0f } )
-//	,m_Trans.vRot( { 0.0f, 0.0f, 0.0f } )
-//	,m_vScale( { 100.0f, 100.0f, 100.0f } )
 	,m_Trans( { 
 		{ 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f },
@@ -92,11 +89,13 @@ void clsBUILDING::Update()
 		const int iEND_LOOP = 1;
 		unsigned int uiROW = m_vvTop.size();
 		unsigned int uiCOL = m_vvTop[0].size();
+#if 0
 		//同じものを繰り返さないためのチェック用配列.
 		vector<unsigned int> vuiRow;
 		vector<unsigned int> vuiCol;
 		vuiRow.reserve( iRESURVE_NUM );
 		vuiCol.reserve( iRESURVE_NUM );
+		bool isRowEnd = false;
 		for( int i=0; i<iEND_LOOP;  ){
 			//タイルの目標数を作る.
 			SetTileNumTargetTop( uiROW, uiCOL );
@@ -104,26 +103,37 @@ void clsBUILDING::Update()
 			SetTileNumTop( uiROW, uiCOL );
 			//タイルを並べる.
 			SetTransformTop();
+			//増やす.
 			vuiRow.push_back( uiROW );
 			vuiCol.push_back( uiCOL );
-			bool isRowEnd = false;
-			//最後のものは現状と同じなので比較しない.
-			for( unsigned int j=0; j<vuiRow.size() - 1; j++ ){
-				if( uiROW == vuiRow[j] ){
-					isRowEnd = true;
-					break;
-				}
-			}
 			if( !isRowEnd ){
+				//最後のものは現状と同じなので比較しない.
+				for( unsigned int j=0; j<vuiRow.size() - 1; j++ )
+				{
+					if( uiROW == vuiRow[j] ){
+						isRowEnd = true;
+						break;
+					}
+				}
 				continue;
 			}
-			for( unsigned int j=0; j<vuiCol.size() - 1; j++ ){
-				if( uiCOL == vuiCol[j] ){
-					i = iEND_LOOP;
-					break;
+			else{
+				for( unsigned int j=0; j<vuiCol.size() - 1; j++ ){
+					if( uiCOL == vuiCol[j] ){
+						i = iEND_LOOP;
+						break;
+					}
 				}
 			}
 		}
+#else
+		//タイルの目標数を作る.
+		SetTileNumTargetTop( uiROW, uiCOL );
+		//目標の数に合わせてタイルを増減する.
+		SetTileNumTop( uiROW, uiCOL );
+		//タイルを並べる.
+		SetTransformTop();
+#endif
 	}
 	//側面.
 	{
