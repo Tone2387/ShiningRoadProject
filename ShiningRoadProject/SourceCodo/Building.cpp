@@ -2,8 +2,8 @@
 
 using namespace std;
 
-const char* sTEX_NAME_SIDE = "Data\\Building\\BuildingSide.png";
-const char* sTEX_NAME_TOP  = "Data\\Building\\BuildingTop.png";
+const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingSide.png";
+const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTop.png";
 
 
 const int iRESURVE_NUM = 256;
@@ -58,6 +58,7 @@ clsBUILDING::clsBUILDING(
 
 clsBUILDING::~clsBUILDING()
 {
+	m_upBox->DetatchModel();
 	m_wpDevice = nullptr;
 	m_wpContext = nullptr;
 }
@@ -124,14 +125,15 @@ void clsBUILDING::Render(
 	const D3DXVECTOR3 &vLight, 
 	const D3DXVECTOR3 &vEye )
 {
-//	m_upBox->Render( mView, mProj, vLight, vEye );
-
+#ifdef _DEBUG
+	m_upBox->Render( mView, mProj, vLight, vEye );
+#endif//#ifdef _DEBUG
 	for( unsigned int Row=0; Row<m_vvTop.size(); Row++ )
 	{
 		for( unsigned int Col=0; Col<m_vvTop[ Row ].size(); Col++ ){
-			m_upTop->m_vPos		= m_vvTop[ Row ][ Col ].vPos;
-			m_upTop->m_vRot		= m_vvTop[ Row ][ Col ].vRot;
-			m_upTop->m_vScale	= m_vvTop[ Row ][ Col ].vScale;
+			m_upTop->SetPos( m_vvTop[ Row ][ Col ].vPos );
+			m_upTop->SetRot( m_vvTop[ Row ][ Col ].vRot );
+			m_upTop->SetScale( m_vvTop[ Row ][ Col ].vScale );
 			m_upTop->Render( mView, mProj, vEye );
 		}
 	}
@@ -141,9 +143,9 @@ void clsBUILDING::Render(
 		for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ )
 		{
 			for( unsigned int Col=0; Col<m_vvSide[ SideNum ][ Row ].size(); Col++ ){
-				m_upSide->m_vPos	= m_vvSide[ SideNum ][ Row ][ Col ].vPos;
-				m_upSide->m_vRot	= m_vvSide[ SideNum ][ Row ][ Col ].vRot;
-				m_upSide->m_vScale	= m_vvSide[ SideNum ][ Row ][ Col ].vScale;
+				m_upSide->SetPos( m_vvSide[ SideNum ][ Row ][ Col ].vPos );
+				m_upSide->SetRot( m_vvSide[ SideNum ][ Row ][ Col ].vRot );
+				m_upSide->SetScale( m_vvSide[ SideNum ][ Row ][ Col ].vScale );
 				m_upSide->Render( mView, mProj, vEye );
 			}
 		}
@@ -535,5 +537,63 @@ D3DXVECTOR3 clsBUILDING::GetTilePosForRotation(
 	vReturn = *vTilePos;
 
 	return vReturn;
+}
+
+
+
+clsDX9Mesh* clsBUILDING::GetModelPtr()
+{
+	clsDX9Mesh* pReturn = m_upBox->GetModelPtr();
+
+	return pReturn;
+}
+
+
+
+D3DXVECTOR3 clsBUILDING::GetPos()
+{
+	return m_Trans.vPos;
+}
+
+void clsBUILDING::SetPos( const D3DXVECTOR3& vPos )
+{
+	m_Trans.vPos = vPos;
+}
+
+void clsBUILDING::AddPos( const D3DXVECTOR3& vPos )
+{
+	m_Trans.vPos += vPos;
+}
+
+
+D3DXVECTOR3 clsBUILDING::GetRot()
+{
+	return m_Trans.vRot;
+}
+
+void clsBUILDING::SetRot( const D3DXVECTOR3& vRot )
+{
+	m_Trans.vRot = vRot;
+}
+
+void clsBUILDING::AddRot( const D3DXVECTOR3& vRot )
+{
+	m_Trans.vRot += vRot;
+}
+
+
+D3DXVECTOR3 clsBUILDING::GetScale()
+{
+	return m_Trans.vScale;
+}
+
+void clsBUILDING::SetScale( const D3DXVECTOR3& vScale )
+{
+	m_Trans.vScale = vScale;
+}
+
+void clsBUILDING::AddScale( const D3DXVECTOR3& vScale )
+{
+	m_Trans.vScale += vScale;
 }
 

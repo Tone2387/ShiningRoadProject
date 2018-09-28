@@ -81,7 +81,7 @@ void clsSCENE_ENDING::CreateProduct()
 	}
 
 
-	m_upStage = make_unique< clsStage >( m_wpPtrGroup->GetResource() );
+	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
 
 	m_wpCamera->SetPos( { 0.0f, 500.0f, -1.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );

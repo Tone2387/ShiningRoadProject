@@ -31,7 +31,7 @@ void clsSCENE_MISSION::CreateProduct()
 
 	//テストモデルの初期化.
 
-	m_pStage = new clsStage(m_wpResource);
+	m_pStage = new clsStage( m_wpPtrGroup );
 
 	m_fCamMoveSpeed = 0.01f;
 }

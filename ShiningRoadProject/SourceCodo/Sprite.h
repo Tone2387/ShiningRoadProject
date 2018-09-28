@@ -56,10 +56,18 @@ public:
 		bool isBillBoard = false );
 
 
+	D3DXVECTOR3 GetPos();
+	void SetPos( const D3DXVECTOR3& vPos );
+	void AddPos( const D3DXVECTOR3& vPos );
 
-	D3DXVECTOR3		m_vPos;	//位置.
-	D3DXVECTOR3		m_vRot;
-	D3DXVECTOR3		m_vScale;
+	D3DXVECTOR3 GetRot();
+	void SetRot( const D3DXVECTOR3& vRot );
+	void AddRot( const D3DXVECTOR3& vRot );
+
+	D3DXVECTOR3 GetScale();
+	void SetScale( const D3DXVECTOR3& vScale );
+	void AddScale( const D3DXVECTOR3& vScale );
+
 
 protected:
 
@@ -67,6 +75,14 @@ protected:
 	HRESULT InitShader();
 	////モデル作成.
 	virtual HRESULT InitModel( const char* sTexName );
+
+
+	D3DXVECTOR3		m_vPos;	//位置.
+	D3DXVECTOR3		m_vRot;
+	D3DXVECTOR3		m_vScale;
+
+
+
 
 	//↓モデルの種類ごとに用意.
 	ID3D11VertexShader*		m_pVertexShader;	//頂点シェーダ.
