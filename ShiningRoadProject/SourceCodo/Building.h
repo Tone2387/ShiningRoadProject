@@ -19,6 +19,7 @@ public:
 	~clsBUILDING();
 
 	//–ˆƒtƒŒ[ƒ€g‚Á‚Ä‚Í‚¢‚¯‚È‚¢.
+	//.
 	void Update();
 
 	void Render(

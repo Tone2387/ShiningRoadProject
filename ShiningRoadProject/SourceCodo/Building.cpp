@@ -67,20 +67,20 @@ clsBUILDING::~clsBUILDING()
 
 void clsBUILDING::Update()
 {
-	if( GetAsyncKeyState( VK_UP ) & 0x8000 )	m_Trans.vPos.z += 1.0f;
-	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_Trans.vPos.z -= 1.0f;
-	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 )	m_Trans.vPos.x += 1.0f;
-	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_Trans.vPos.x -= 1.0f;
-
-	if( GetAsyncKeyState( 'W' ) & 0x1 )		m_Trans.vScale.z += 10.0f;
-	if( GetAsyncKeyState( 'S' ) & 0x1 )		m_Trans.vScale.z -= 10.0f;
-	if( GetAsyncKeyState( 'D' ) & 0x1 )		m_Trans.vScale.x += 10.0f;
-	if( GetAsyncKeyState( 'A' ) & 0x1 )		m_Trans.vScale.x -= 10.0f;
-	if( GetAsyncKeyState( 'E' ) & 0x1 )		m_Trans.vScale.y += 10.0f;
-	if( GetAsyncKeyState( 'Q' ) & 0x1 )		m_Trans.vScale.y -= 10.0f;
-
-	if( GetAsyncKeyState( 'R' ) & 0x1 )	m_Trans.vRot.y += 0.01f;
-	if( GetAsyncKeyState( 'F' ) & 0x1 )	m_Trans.vRot.y -= 0.01f;
+//	if( GetAsyncKeyState( VK_UP ) & 0x8000 )	m_Trans.vPos.z += 1.0f;
+//	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_Trans.vPos.z -= 1.0f;
+//	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 )	m_Trans.vPos.x += 1.0f;
+//	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_Trans.vPos.x -= 1.0f;
+//
+//	if( GetAsyncKeyState( 'W' ) & 0x1 )		m_Trans.vScale.z += 10.0f;
+//	if( GetAsyncKeyState( 'S' ) & 0x1 )		m_Trans.vScale.z -= 10.0f;
+//	if( GetAsyncKeyState( 'D' ) & 0x1 )		m_Trans.vScale.x += 10.0f;
+//	if( GetAsyncKeyState( 'A' ) & 0x1 )		m_Trans.vScale.x -= 10.0f;
+//	if( GetAsyncKeyState( 'E' ) & 0x1 )		m_Trans.vScale.y += 10.0f;
+//	if( GetAsyncKeyState( 'Q' ) & 0x1 )		m_Trans.vScale.y -= 10.0f;
+//
+//	if( GetAsyncKeyState( 'R' ) & 0x1 )	m_Trans.vRot.y += 0.01f;
+//	if( GetAsyncKeyState( 'F' ) & 0x1 )	m_Trans.vRot.y -= 0.01f;
 
 
 	m_upBox->SetPosition( m_Trans.vPos );
@@ -89,14 +89,41 @@ void clsBUILDING::Update()
 
 	//上面.
 	{
+		const int iEND_LOOP = 1;
 		unsigned int uiROW = m_vvTop.size();
 		unsigned int uiCOL = m_vvTop[0].size();
-		//タイルの目標数を作る.
-		SetTileNumTargetTop( uiROW, uiCOL );
-		//目標の数に合わせてタイルを増減する.
-		SetTileNumTop( uiROW, uiCOL );
-		//タイルを並べる.
-		SetTransformTop();
+		//同じものを繰り返さないためのチェック用配列.
+		vector<unsigned int> vuiRow;
+		vector<unsigned int> vuiCol;
+		vuiRow.reserve( iRESURVE_NUM );
+		vuiCol.reserve( iRESURVE_NUM );
+		for( int i=0; i<iEND_LOOP;  ){
+			//タイルの目標数を作る.
+			SetTileNumTargetTop( uiROW, uiCOL );
+			//目標の数に合わせてタイルを増減する.
+			SetTileNumTop( uiROW, uiCOL );
+			//タイルを並べる.
+			SetTransformTop();
+			vuiRow.push_back( uiROW );
+			vuiCol.push_back( uiCOL );
+			bool isRowEnd = false;
+			//最後のものは現状と同じなので比較しない.
+			for( unsigned int j=0; j<vuiRow.size() - 1; j++ ){
+				if( uiROW == vuiRow[j] ){
+					isRowEnd = true;
+					break;
+				}
+			}
+			if( !isRowEnd ){
+				continue;
+			}
+			for( unsigned int j=0; j<vuiCol.size() - 1; j++ ){
+				if( uiCOL == vuiCol[j] ){
+					i = iEND_LOOP;
+					break;
+				}
+			}
+		}
 	}
 	//側面.
 	{
