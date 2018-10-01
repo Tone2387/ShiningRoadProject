@@ -22,16 +22,27 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
-	//そのばで透過するスプライト.
-	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupSpriteAlpha;
-	//スクロールするスプライト.
-	std::unique_ptr< clsSPRITE2D_CENTER > m_upSpriteScroll;
+	struct TEXT_STATE
+	{
+		D3DXVECTOR3 vPos;
+		float		fScale;
+		float		fAlpha;
+	};
 
-	unsigned int m_uiSpriteCnt;
-	bool m_isSpriteAlphaAppear;
-	int m_iIntervalCnt;//始まるまでの時間カウント.
-	bool m_isScroll;
+	//範囲をoverするとfalseが返ってくる.
+	bool AddAlphaState( TEXT_STATE* const pTextState, const float fAlpha );
 
+	//そのばで透過する文字用のステータス.
+	std::vector< std::unique_ptr< TEXT_STATE > > m_vupTextStateAlpha;
+	//スクロールする文字用のステータス.
+	std::vector< std::unique_ptr< TEXT_STATE > > m_vupTextStateScroll;
+
+	unsigned int	m_uiSpriteCnt;
+	bool			m_isSpriteAlphaAppear;
+	int				m_iIntervalCnt;//始まるまでの時間カウント.
+	bool			m_isScroll;
+
+	int m_iGoScrollIndex;
 
 	std::unique_ptr< clsStage >	m_upStage;//テスト用.
 

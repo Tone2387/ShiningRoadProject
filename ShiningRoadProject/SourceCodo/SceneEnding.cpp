@@ -1,47 +1,24 @@
 #include "SceneEnding.h"
-
+#include "File.h"
 using namespace std;
-
-const char* sSPRITE_SCROLL_PATH = "Data\\Image\\EndingUi\\SoundWeb.png";
-const WHSIZE_FLOAT SPRITE_SCROLL_DISP = { 512.0f, 1024.0f };
-const D3DXVECTOR3 vSPRITE_SCROLL_POS_INIT = { static_cast<float>( WND_W / 2 ), static_cast<float>( WND_H ) + SPRITE_SCROLL_DISP.h * 0.5f, 0.0f };
-
-//alphaSprite.
-const int iSPRITE_ALPHA_NUM_MAX = 5;
-const char* sSPRITE_ALPHA_STAFF_ROLL = "Data\\Image\\EndingUi\\StaffRoll.png"; 
-const char* sSPRITE_ALPHA_PROGRAMMER = "Data\\Image\\EndingUi\\Programmer.png"; 
-const char* sSPRITE_ALPHA_GRAPHICER = "Data\\Image\\EndingUi\\Graphicer.png"; 
-const char* sSPRITE_ALPHA_KYOSTER = "Data\\Image\\EndingUi\\Kyostar.png";
-const char* sSPRITE_ALPHA_THANK_YOU = "Data\\Image\\EndingUi\\ThankYouForPlaying.png"; 
-const char* sSPRITE_ALPHAS[ iSPRITE_ALPHA_NUM_MAX ] = {
-	sSPRITE_ALPHA_STAFF_ROLL, sSPRITE_ALPHA_PROGRAMMER, sSPRITE_ALPHA_GRAPHICER, sSPRITE_ALPHA_KYOSTER, sSPRITE_ALPHA_THANK_YOU
-};
-const WHSIZE_FLOAT SPRITE_ALPHA_DISP[ iSPRITE_ALPHA_NUM_MAX ] = { 
-	512.0f, 128.0f,
-	512.0f, 256.0f,
-	512.0f, 128.0f,
-	512.0f, 128.0f,
-	512.0f, 128.0f,
-};
-const D3DXVECTOR3 vSPRITE_ALPHA_POS_INIT = { static_cast<float>( WND_W / 2 ), static_cast<float>( WND_H / 2 ), 0.0f };
-
 
 
 const int iINTERVAL_CNT = 120;
 
 
+const char* sSTAFF_ROLL_STATUS_DATA_PATH = "Data\\FileData\\EndingStaffRollTransform.csv";
+const char* sFONT_TEXT_PATH_ENDING = "Data\\Font\\Text\\TextEnding.csv";
+
+const string sSCROLL_START_NUM_TEXT = "フリー音源　使用サイト";
 
 
+const int iPOS_X_FILE_DATA_INDEX = 0;
+const int iPOS_Y_FILE_DATA_INDEX = 1;
+const int iSCALE_FILE_DATA_INDEX = 2;
+const int iALPHA_FILE_DATA_INDEX = 3;
 
 
-
-
-
-
-
-
-
-
+//const float fSCROLL_END_POS_Y = 1;
 
 
 //================================//
@@ -61,25 +38,52 @@ clsSCENE_ENDING::~clsSCENE_ENDING()
 
 void clsSCENE_ENDING::CreateProduct()
 {
+	m_wpFont->Create( sFONT_TEXT_PATH_ENDING );
+
 	m_wpSound->PlayBGM( enBGM_MAFIA1 );
 
-	//スクロール.
-	SPRITE_STATE ss;
-	ss.Disp = SPRITE_SCROLL_DISP;
-	m_upSpriteScroll = make_unique< clsSPRITE2D_CENTER >();
-	m_upSpriteScroll->Create( m_wpDevice, m_wpContext, sSPRITE_SCROLL_PATH, ss );
-	m_upSpriteScroll->SetPos( vSPRITE_SCROLL_POS_INIT );
+	clsFILE File;
+	File.Open( sSTAFF_ROLL_STATUS_DATA_PATH );
 
-	//透過.
-	m_vupSpriteAlpha.resize( iSPRITE_ALPHA_NUM_MAX );
-	for( unsigned int i=0; i<m_vupSpriteAlpha.size(); i++ ){
-		ss.Disp = SPRITE_ALPHA_DISP[i];
-		m_vupSpriteAlpha[i] = make_unique< clsSPRITE2D_CENTER >();
-		m_vupSpriteAlpha[i]->Create( m_wpDevice, m_wpContext, sSPRITE_ALPHAS[i], ss );
-		m_vupSpriteAlpha[i]->SetPos( vSPRITE_ALPHA_POS_INIT );
-		m_vupSpriteAlpha[i]->SetAlpha( 0.0f );
+	//行数を調べる.
+	int iTextNum = m_wpFont->GetTextRow();
+	assert( iTextNum > 0 );
+
+	//スクロール開始番号を調べる.
+	int iAlphaSize = -1;
+	for( int i=0; i<iTextNum; i++ ){
+		if( m_wpFont->GetText( i ) == sSCROLL_START_NUM_TEXT ){
+			iAlphaSize = i;
+			break;
+		}
 	}
 
+	int iScrollSize = iTextNum - iAlphaSize;
+
+	//スクロール.
+	m_vupTextStateScroll.resize( iScrollSize );
+	for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
+		m_vupTextStateScroll[i] = make_unique< TEXT_STATE >();
+		m_vupTextStateScroll[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_X_FILE_DATA_INDEX );
+		m_vupTextStateScroll[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_Y_FILE_DATA_INDEX );
+		m_vupTextStateScroll[i]->fScale = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iSCALE_FILE_DATA_INDEX );
+		m_vupTextStateScroll[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iALPHA_FILE_DATA_INDEX );
+	}
+
+	//最後に表示する番号.
+	m_iGoScrollIndex = iAlphaSize - 1;
+
+	//透過.
+	m_vupTextStateAlpha.resize( iAlphaSize );
+	for( unsigned int i=0; i<m_vupTextStateAlpha.size(); i++ ){
+		m_vupTextStateAlpha[i] = make_unique< TEXT_STATE >();
+		m_vupTextStateAlpha[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ), iPOS_X_FILE_DATA_INDEX );
+		m_vupTextStateAlpha[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ), iPOS_Y_FILE_DATA_INDEX );
+		m_vupTextStateAlpha[i]->fScale = File.GetDataFloat( static_cast<int>( i ), iSCALE_FILE_DATA_INDEX );
+		m_vupTextStateAlpha[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ), iALPHA_FILE_DATA_INDEX );
+	}
+
+	File.Close();
 
 	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
 
@@ -114,21 +118,25 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 #endif//#indef _DEBUG
 
 
-	if( m_iIntervalCnt >= iINTERVAL_CNT )
-	{
+	if( m_iIntervalCnt >= iINTERVAL_CNT ){
 		const float fSCROLL_SPD = -1.0f;
 		const int iOFFSET_SCROLL = -1;
 		const int iOFFSET_END = -1;
 		float fAlpha = 0.25f * 0.25f * 0.25f;
 
 		//終わり.
-		if( m_uiSpriteCnt == m_vupSpriteAlpha.size() ){
+		if( m_uiSpriteCnt == m_vupTextStateAlpha.size() ){
 		}
 		//スクロール.
 		else if( m_isScroll ){
-			m_upSpriteScroll->AddPos( { 0.0f, fSCROLL_SPD, 0.0f } );
+			for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
+				m_vupTextStateScroll[i]->vPos.y += fSCROLL_SPD;
+			}
 			//スクロール終了.
-			if( m_upSpriteScroll->GetPos().y < -SPRITE_SCROLL_DISP.h * 0.5f ){
+			const unsigned int uiSCROLL_LAST_INDEX = m_vupTextStateScroll.size() - 1;
+			if( +m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
+				-m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale )
+			{
 				m_iIntervalCnt = 0;
 				m_isScroll = false;
 			}
@@ -139,13 +147,13 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 				fAlpha *= -1.0f;
 			}
 
-			//透過値変更.
-			if( !m_vupSpriteAlpha[ m_uiSpriteCnt ]->AddAlpha( fAlpha ) ){
+			//透過値変更.AddAlphaState//->fAlpha + fAlpha 
+			if( !AddAlphaState( m_vupTextStateAlpha[ m_uiSpriteCnt ].get(), fAlpha ) ){
 				m_iIntervalCnt = 0;
 				//消す.
 				if( m_isSpriteAlphaAppear ){
 					m_isSpriteAlphaAppear = false;
-					if( m_uiSpriteCnt == m_vupSpriteAlpha.size() + iOFFSET_END ){ 
+					if( m_uiSpriteCnt == m_vupTextStateAlpha.size() + iOFFSET_END ){ 
 						m_isSpriteAlphaAppear = true;
 					}
 				}
@@ -154,7 +162,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 					m_isSpriteAlphaAppear = true;
 					m_uiSpriteCnt ++;
 					//スクロールに行く.
-					if( m_uiSpriteCnt == m_vupSpriteAlpha.size() + iOFFSET_SCROLL ){ 
+					if( m_uiSpriteCnt == m_iGoScrollIndex ){ 
 						m_isScroll = true;
 					}
 				}
@@ -177,15 +185,42 @@ void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 void clsSCENE_ENDING::RenderUi()
 {
-	for( unsigned int i=0; i<m_vupSpriteAlpha.size(); i++  ){
-		assert( m_vupSpriteAlpha[i] );
-		m_vupSpriteAlpha[i]->Render();
+	int iTextIndex = 0;
+
+	for( unsigned int i=0; i<m_vupTextStateAlpha.size(); i++  ){
+		assert( m_vupTextStateAlpha[i] );
+		m_wpFont->SetPos(	m_vupTextStateAlpha[i]->vPos );
+		m_wpFont->SetScale(	m_vupTextStateAlpha[i]->fScale );
+		m_wpFont->SetAlpha(	m_vupTextStateAlpha[i]->fAlpha );
+		m_wpFont->Render( iTextIndex );
+		iTextIndex ++;
 	}
 
-	assert( m_upSpriteScroll );
-	m_upSpriteScroll->Render();
+	for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
+		assert( m_vupTextStateScroll[i] );
+		m_wpFont->SetPos(	m_vupTextStateScroll[i]->vPos );
+		m_wpFont->SetScale(	m_vupTextStateScroll[i]->fScale );
+		m_wpFont->SetAlpha(	m_vupTextStateScroll[i]->fAlpha );
+		m_wpFont->Render( iTextIndex );
+		iTextIndex ++;
+	}
 }
 
+bool clsSCENE_ENDING::AddAlphaState( TEXT_STATE* const pTextState, const float fAlpha )
+{
+	pTextState->fAlpha += fAlpha;
+
+	if( pTextState->fAlpha > 1.0f ){
+		pTextState->fAlpha = 1.0f;
+	}
+	else if( pTextState->fAlpha < 0.0f ){
+		pTextState->fAlpha = 0.0f;
+	}
+	else{
+		return true;
+	}
+	return false;
+}
 
 //============================ デバッグテキスト ===========================//
 #if _DEBUG

@@ -50,6 +50,9 @@ clsSCENE_TITLE::~clsSCENE_TITLE()
 
 void clsSCENE_TITLE::CreateProduct()
 {
+	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
+
+
 	m_wpSound->PlaySE( enSE_BOMBER );
 
 	//ƒ‚ƒfƒ‹‚³‚ñì¬.
@@ -84,8 +87,6 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upFlash->SetAlpha( 0.0f );
 
 
-
-	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 	assert( !m_upPlessStart );
 	m_upPlessStart = make_unique< clsUiText >();
 	m_upPlessStart->Create( m_wpContext, WND_W, WND_H, fPLESS_START_SCALE );
