@@ -18,12 +18,16 @@ const char* sFONT_STYLE_PATH = "Data\\Font\\FontType\\Makinas-Scrap-5.otf";//Mak
 
 #define FONT_SHADER		"Shader\\FontText.hlsl"
 
-
+const int iFULL_MESSAGE_NUMBER = -1;//デフォルト引数.
 
 
 const int iFONT_SIZE = 32;
 const float fFONT_MARGIN_X = 2.0f;//4.0f.
 const float fFONT_MARGIN_Y = 8.0f;//4.0f.
+
+//Createしていないときの行数.
+const int iERROR_TEXT_ROW_NUM = -1;
+
 
 clsFont::clsFont( 
 	ID3D11Device* const pDevice, 
@@ -49,6 +53,8 @@ clsFont::clsFont(
 	,m_fScale( static_cast<float>( m_iFontSize ) )
 	,m_fAlpha( 1.0f )
 	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
+	,m_vPosLast( m_vPos )
+	,m_iTextRow( iERROR_TEXT_ROW_NUM )
 {
 //	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 //		m_pBlendState[i] = nullptr;
@@ -58,6 +64,7 @@ clsFont::clsFont(
 		sFONT_STYLE_PATH,
 		FR_PRIVATE,
 		&m_Design );
+
 	assert( iReturn );
 
 	if( FAILED( CreateBlendState() ) ){
@@ -314,13 +321,12 @@ HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 		return E_FAIL;
 	}
 
-
 	//初期化.
 	//行数.
-	int iTextRow = File.GetSizeRow();
-	m_sTextData.resize( iTextRow );
-	m_vpTex2D.resize( iTextRow, nullptr );
-	m_vvpAsciiTexture.resize( iTextRow );
+	m_iTextRow = static_cast<int>( File.GetSizeRow() );
+	m_sTextData.resize( m_iTextRow );
+	m_vpTex2D.resize( m_iTextRow, nullptr );
+	m_vvpAsciiTexture.resize( m_iTextRow );
 
 	for( unsigned int i=0; i<File.GetSizeRow(); i++ )
 	{
@@ -550,16 +556,17 @@ void clsFont::Release()
 	}
 	m_vpTex2D.clear();
 	m_vpTex2D.shrink_to_fit();
+
+	m_iTextRow = iERROR_TEXT_ROW_NUM;
 }
 
 
-//							↓段( 何行目? )	　	↓文字数.
-void clsFont::Render( const int iTex, const int iCharNum )
+//							↓段( 何行目? )	　		↓文字数.
+void clsFont::Render( const int iTextRow, const int iCharNum )
 {
-	if( iTex <= -1 ) return;
-	if( iTex >= static_cast<int>( m_vvpAsciiTexture.size() ) ) return;
+	if( iTextRow <= -1 ) return;
+	if( iTextRow >= static_cast<int>( m_vvpAsciiTexture.size() ) ) return;
 
-	const int iFULL_MESSAGE_NUMBER = -1;//デフォルト引数.
 
 	//使用するシェーダーの登録.
 	m_pContext->VSSetShader( m_pVertexShader,	NULL, 0 );
@@ -570,10 +577,10 @@ void clsFont::Render( const int iTex, const int iCharNum )
 	const D3DXVECTOR3 vOFFSET_POS = { -m_fScale, m_fScale * 0.5f, 0.0f };
 	D3DXVECTOR3 vPos = m_vPos + vOFFSET_POS;
 
-	int ii = 0;
-	int iCnt = 0;
+	int iRow = 0;//行.
+	int iCnt = 0;//その行の何文字目か.
 
-	const int iNUM_MAX = static_cast<int>( m_vvpAsciiTexture[ iTex ].size() );
+	const int iNUM_MAX = static_cast<int>( m_vvpAsciiTexture[ iTextRow ].size() );
 	for( int i=0; i<iNUM_MAX; i++ )
 	{
 		//デフォルト引数.
@@ -591,7 +598,7 @@ void clsFont::Render( const int iTex, const int iCharNum )
 		}
 		else{
 			//範囲指定外、一段ずらす.
-			ii++;
+			iRow++;
 			iCnt = 1;
 		}
 #else
@@ -603,12 +610,11 @@ void clsFont::Render( const int iTex, const int iCharNum )
 		D3DXMatrixIdentity( &mWorld );
 		D3DXMatrixTranslation( &mTran, 
 			vPos.x + ( m_fScale + m_fFontMarginX ) * static_cast<float>( iCnt ),
-			vPos.y + ( m_fScale + m_fFontMarginY ) * static_cast<float>( ii ),
+			vPos.y + ( m_fScale + m_fFontMarginY ) * static_cast<float>( iRow ),
 			vPos.z );
 
 		D3DXMatrixScaling( &mScale, m_fScale, m_fScale, 1.0f );
 		mWorld = mScale * mTran;
-
 
 		//シェーダーのコンスタントバッファに各種データを渡す.
 		D3D11_MAPPED_SUBRESOURCE	pData;
@@ -635,6 +641,12 @@ void clsFont::Render( const int iTex, const int iCharNum )
 			m_pContext->Unmap( m_pConstantBuffer, 0 );
 		}
 
+		//最後の文字の位置を取得.
+		m_vPosLast = D3DXVECTOR3(
+			vPos.x + ( m_fScale + m_fFontMarginX ) * static_cast<float>( iCnt )	  + static_cast<float>( m_iFontSize * 2 ),
+			vPos.y + ( m_fScale + m_fFontMarginY ) * static_cast<float>( iRow * 2 ) - static_cast<float>( m_iFontSize ),
+			0.0f );
+
 		//このコンスタントバッファを使うシェーダーの登録.
 		m_pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 		m_pContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
@@ -651,7 +663,7 @@ void clsFont::Render( const int iTex, const int iCharNum )
 
 		//テクスチャをシェーダーに渡す.
 		m_pContext->PSSetSamplers( 0, 1, &m_pSampleLinear );
-		m_pContext->PSSetShaderResources( 0, 1, &m_vvpAsciiTexture[ iTex ][i] );
+		m_pContext->PSSetShaderResources( 0, 1, &m_vvpAsciiTexture[ iTextRow ][i] );
 
 		//アルファブレンド用ブレンドステート作成.
 		SetBlend( true );
@@ -672,6 +684,7 @@ D3DXVECTOR3 clsFont::GetPos()
 {
 	return m_vPos;
 }
+
 
 void clsFont::SetScale( const float fScale )
 {
@@ -695,6 +708,18 @@ void clsFont::SetAlpha( const float fAlpha )
 	m_fAlpha = fAlpha;
 }
 
+//折り返し位置.
+void clsFont::SetIndentPos( const float fPosX )
+{
+	m_fIndentionPosint = fPosX;
+}
+
+//読み込んだテキストの数( Createしていないと-1が返る ).
+int clsFont::GetTextRow()
+{
+	return m_iTextRow;
+}
+
 void clsFont::SetBlend( const bool isAlpha )
 {
 	UINT mask = 0xffffffff;	//マスク値白.
@@ -707,4 +732,18 @@ void clsFont::SetBlend( const bool isAlpha )
 		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
 	}
 }
+
+D3DXVECTOR3 clsFont::GetPosLast()
+{
+	return m_vPosLast;
+}
+
+//テキストの内容.
+std::string clsFont::GetText( const int iRow )
+{
+	assert( static_cast<unsigned int>( iRow ) < m_sTextData.size() );
+
+	return m_sTextData[ iRow ];
+}
+
 

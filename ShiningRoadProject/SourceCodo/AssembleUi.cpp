@@ -868,7 +868,7 @@ D3DXVECTOR4 clsASSEMBLE_UI::GetStatusColor(
 	const D3DXVECTOR4 vRED		= { 1.0f, 0.5f, 0.5f, 1.0f };
 	const D3DXVECTOR4 vBLUE		= { 0.5f, 0.5f, 1.0f, 1.0f };
 	const D3DXVECTOR4 vWHITE	= { 1.0f, 1.0f, 1.0f, 1.0f };
-	bool isRed;
+	bool isRed = false;
 
 	if( iBefore == iAfter ){
 		return vWHITE;

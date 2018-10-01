@@ -20,15 +20,24 @@ public:
 		ID3D11DeviceContext* const pContext );
 	~clsFont();
 
+	enum class encPOS : UCHAR
+	{
+		LEFT = 0,
+		CENTER,
+		RIGHT,
+	};
+
+
 	void Create( const char *sTextFileName );//シーン開始時に使う.
 	void Release();							//シーン終了時に使う.
 
-	void Render( const int iTex, const int iCharNum = -1 );
+	void Render( const int iTextRow, const int iCharNum = -1 );
 
 
 
 	void SetPos( const D3DXVECTOR3 &vPos );
 	D3DXVECTOR3 GetPos();
+	D3DXVECTOR3 GetPosLast();
 
 	void SetScale( const float fScale );
 	float GetScale();
@@ -36,7 +45,14 @@ public:
 	void SetColor( const D3DXVECTOR4 &vColor );
 	void SetAlpha( const float fAlpha );
 
+	//折り返し位置.
+	void SetIndentPos( const float fPosX );
 	
+	//読み込んだテキストの数( Createしていないと-1が返る ).
+	int GetTextRow();
+	//テキストの内容.
+	std::string GetText( const int iRow );
+
 private:
 
 	//ブレンドステート作成.
@@ -83,9 +99,17 @@ private:
 	//文字と文字の隙間.
 	float	m_fFontMarginX;
 	float	m_fFontMarginY;
-	float	m_fIndentionPosint;//改行するx座標.
+	//改行するx座標.
+	float	m_fIndentionPosint;
+	//最後の文字の座標.
+	D3DXVECTOR3	m_vPosLast;
 
 	std::vector< std::string > 		m_sTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
+
+	//読み込んだテキストの数( Createしていないと-1が返る ).
+	int m_iTextRow;
+
+
 
 	DESIGNVECTOR		m_Design;
 

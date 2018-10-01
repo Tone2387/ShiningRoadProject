@@ -326,8 +326,6 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 int clsASSEMBLE_MODEL::GetPartsNum( const enPARTS_TYPES enPartsType )
 {
 	return m_enPartsNum[ enPartsType ];
-
-	return 0;
 }
 
 

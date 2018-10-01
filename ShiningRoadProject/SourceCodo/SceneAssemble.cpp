@@ -296,8 +296,6 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 {
 	assert( m_wpSound );
 
-	int a = m_wpRoboStatus->GetRoboState( clsROBO_STATUS::HP );
-
 	//ˆÃ“]’†‚Í‘€ì•s”\.
 	if( m_wpBlackScreen->GetAlpha() ){
 		m_isCanControl = false;

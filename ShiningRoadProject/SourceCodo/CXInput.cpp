@@ -372,7 +372,6 @@ bool clsXInput::isSlopeEnter( const WORD _padKey, const bool isLeft ) const
 bool clsXInput::isSlopeStay ( const WORD _padKey, const bool isLeft ) const
 {
 	const SHORT sPUSH = static_cast<SHORT>( XINPUT_THUMB_MAX * ( 0.9f / 1.0f ) );
-	const bool bOLD = true;
 	SHORT sX, sY;
 
 	if( isLeft ){

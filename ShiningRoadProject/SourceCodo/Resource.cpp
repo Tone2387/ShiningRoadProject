@@ -96,7 +96,7 @@ SKIN_ENUM_TYPE clsResource::GetPartsNum( const enPARTS_READ enPartsRead )
 	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
 	upFile->Open( tmpPass );
 
-	tmpNum = upFile->GetSizeRow();
+	tmpNum = static_cast<SKIN_ENUM_TYPE>( upFile->GetSizeRow() );
 
 	upFile->Close();
 	upFile.reset( nullptr );
