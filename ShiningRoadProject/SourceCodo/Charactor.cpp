@@ -4,6 +4,9 @@ void clsCharactor::CharactorUpdate()
 {
 	Move();
 	Rotate();
+
+	m_iDamage = 0;//毎フレーム初期化.
+	m_bRadarWarning = false;//初期化.
 }
 
 void clsCharactor::SetMoveAcceleSpeed(float fMoveSpeedMax, int iTopSpeedFrame)//加速.
@@ -83,7 +86,7 @@ void clsCharactor::SetMoveDir(const float fAngle)
 	//行きたい方向.
 	m_vAcceleDir = GetVec3Dir(fAngle, vForward);
 
-	m_vMoveDir += (m_vAcceleDir - m_vMoveDir) / (m_iMoveReverseDirInertia);
+	m_vMoveDir += (m_vAcceleDir - m_vMoveDir) / static_cast<float>(m_iMoveReverseDirInertia);
 }
 
 void clsCharactor::MoveControl()
@@ -96,8 +99,6 @@ void clsCharactor::MoveControl()
 	
 	m_bMoving = true;
 	m_Trans.vPos += m_vMoveDir * abs(m_fMoveSpeed);
-
-	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };
 }
 
 void clsCharactor::MoveAccele(const float fPower)//いらんかも.
@@ -288,7 +289,7 @@ bool clsCharactor::PointIntersect(
 
 	BOOL bHit = false;	//命中ﾌﾗｸﾞ.
 
-	float fDis = 0xffffffff;//最大値を入れる.
+	float fDis = static_cast<float>(0xffffffff);//最大値を入れる.
 
 	D3DXIntersect(
 		pTarget->m_pMesh,	//対象ﾒｯｼｭ.
@@ -314,9 +315,9 @@ bool clsCharactor::PointIntersect(
 	return false;//何もない.
 }
 
-bool clsCharactor::RecoLange(D3DXVECTOR3 CenterPos, D3DXVECTOR3 TargetPos, float Range)//円の認識範囲判定.
+bool clsCharactor::IsCurcleLange(D3DXVECTOR3 CenterPos, D3DXVECTOR3 TargetPos, float Range)//円の認識範囲判定.
 {
-	if (pow(TargetPos.x - CenterPos.x, 2.0f) + pow(TargetPos.z - CenterPos.z, 2.0f) <= pow(Range, 2.0f))
+	if (pow(TargetPos.x - CenterPos.x, 2.0f) + pow(TargetPos.y - CenterPos.y, 2.0f) <= pow(Range, 2.0f))
 	{
 		return true;
 	}
@@ -412,7 +413,7 @@ void clsCharactor::WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon, cons
 
 void  clsCharactor::WeaponUpdate()
 {
-	for (int i = 0; i < m_v_pWeapons.size(); i++)
+	for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 	{
 		m_v_pWeapons[i]->Update();
 	}
@@ -440,6 +441,8 @@ bool clsCharactor::Damage(HitState HitS)
 {
 	if (HitS.bHit)
 	{
+		m_iDamage += HitS.iDamage;
+
 		if (m_HP < HitS.iDamage)
 		{
 			m_HP = 0;
@@ -472,6 +475,17 @@ void clsCharactor::LockChara()
 		if (IsInLockRange(m_pTargetChara->m_vCenterPos))
 		{
 			Lock();
+
+			D3DXMATRIX mW;
+			D3DXMatrixIdentity(&mW);
+
+			D3DXVECTOR3 vTmp = m_pTargetChara->GetPosition();
+
+			D3DXVec3Project(&m_vTargetScrPos,
+				&vTmp,
+				m_pViewPort, &m_mProj,
+				&m_mThisCharaView,
+				&mW);
 		}
 
 		else
@@ -486,7 +500,7 @@ void clsCharactor::LockChara()
 		//新規にロックするターゲットを決定する.
 		clsCharactor* pCharaTmp = nullptr;
 
-		for (int i = 0; i < m_v_pEnemys.size(); i++)
+		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 		{
 			if (m_v_pEnemys[i]->m_bDeadFlg)
 			{
@@ -521,6 +535,17 @@ void clsCharactor::LockChara()
 		{
 			//ロックするターゲットを確定.
 			m_pTargetChara = pCharaTmp;
+
+			D3DXMATRIX mW;
+			D3DXMatrixIdentity(&mW);
+
+			D3DXVECTOR3 vTmp = m_pTargetChara->GetPosition();
+
+			D3DXVec3Project(&vTmp,
+				&m_vTargetScrPos,
+				m_pViewPort, &m_mProj,
+				&m_mThisCharaView,
+				&mW);
 		}
 	}
 }
@@ -528,79 +553,64 @@ void clsCharactor::LockChara()
 bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 {
 	//開始位置.底面の方向.ターゲットの位置.距離.半径
-
-	/*const float fhStantard = 50.0f;
-	const float frStantard = 50.0f;
-
-	float h = 1000.0f;//高さ.
-	float fScale = h / fhStantard;
-	float r = frStantard * fScale;*/
-
-	D3DXVECTOR3 vC = m_vLockRangeDir * m_fLockRange;
-
-	D3DXVECTOR3 H = vC - m_vLockRangePos;
-	float fteimenDis = D3DXVec3Length(&H);
-	D3DXVec3Normalize(&H, &H);
-
-	D3DXVECTOR3 QP = vTargetPos - m_vLockRangePos;
-
-	D3DXVECTOR3 A = { 0.0f, 0.0f, 0.0f };
-
-	D3DXVec3Cross(&A, &H, &QP);
-
-	float PA = D3DXVec3Length(&A);
-
-	float L = D3DXVec3Dot(&H, &QP);
-	float QA = abs(L);
-
-	float Ar = QA / m_fLockRange * m_fLockCircleRadius;
-
-	if ((m_fLockRange * PA) / (QA * m_fLockCircleRadius) > 1.0f)
+	if (IsTargetDirBack(vTargetPos))
 	{
-		return false;
+		D3DXMATRIX mW;
+		D3DXMatrixIdentity(&mW);
+
+		D3DXVec3Project(&m_vLockCenterPos,
+			&m_vLockPos,
+			m_pViewPort, &m_mProj,
+			&m_mThisCharaView,
+			&mW);
+
+		D3DXVECTOR3 vTarPosTmp;
+
+		D3DXVec3Project(&vTarPosTmp,
+			&vTargetPos,
+			m_pViewPort, &m_mProj,
+			&m_mThisCharaView,
+			&mW);
+
+		if (IsCurcleLange(m_vLockCenterPos, vTarPosTmp, m_fLockCircleRadius / 4))
+		{
+			return true;
+		}
 	}
 
-	if (0.0f > L || 
-		m_fLockRange < L)
+	return false;
+}
+
+bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
+{
+	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
+
+	D3DXVECTOR3 vTarDir = vTargetPos - m_vCenterPos;
+
+	float fDir = D3DXVec3Dot(&vTarDir, &vForword);
+
+	int iDir = (int)D3DXToDegree(fDir);
+
+	if (iDir > (int)D3DXToDegree(D3DX_PI))
 	{
-		return false;
+		return true;
 	}
 
-	if (PA > Ar)
-	{
-		return false;
-	}
-
-	/*float QA = abs(L);
-
-	float Ar = (QA) / m武器_fLockRange * m_fLockCircleRadius;
-
-	if ((m_fLockRange * PA) / (QA * m_fLockCircleRadius) > 1.0f)
-	{
-		return false;
-	}
-
-	if (0.0f > L ||
-		m_fLockRange < L)
-	{
-		return false;
-	}
-
-	if (PA > m_fLockCircleRadius)
-	{
-		return false;
-	}*/
-
-	return true;
+	return false;
 }
 
 void clsCharactor::Lock()
 {
 	if (m_pTargetChara)
 	{
-		for (int i = 0; i < m_v_pWeapons.size(); i++)
+		for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 		{
 			m_v_pWeapons[i]->Lock(m_pTargetChara);
+
+			if (m_v_pWeapons[i]->IsLock())
+			{
+				m_pTargetChara->m_bRadarWarning = true;
+			}
 		}
 	}	
 }
@@ -614,7 +624,7 @@ void clsCharactor::LockOut()
 		m_pTargetChara = nullptr;
 	}
 
-	for (int i = 0; i < m_v_pWeapons.size(); i++)
+	for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 	{
 		m_v_pWeapons[i]->LockOut();
 	}
@@ -622,6 +632,10 @@ void clsCharactor::LockOut()
 
 void clsCharactor::SetLockRangeDir()
 {
+	const float fCamMoveSpeed = 0.5f;
+	const float fCamSpaceTmp = 4.0f;
+	const float fCamPosX = 1.0f;
+
 	D3DXVECTOR3 vTmp = {0.0f,0.0f,0.0f};
 
 	D3DXMATRIX mRot;
@@ -636,11 +650,61 @@ void clsCharactor::SetLockRangeDir()
 	D3DXVec3TransformCoord(&vTmp, &g_vDirForward, &mRot);
 
 	m_vLockRangeDir = vTmp;
+
+	m_vLockPos = m_vLockRangePos + m_vLockRangeDir * m_fLockRange;
+
+	//軸ﾍﾞｸﾄﾙを用意.
+	float fCamAxisXTmp;
+
+	if (m_bCamPosXSwitch)
+	{
+		fCamAxisXTmp = fCamPosX;
+	}
+
+	else
+	{
+		fCamAxisXTmp = -fCamPosX;
+	}
+
+	D3DXVECTOR3 vCamAxis =
+	{
+		0.0f,
+		m_vCenterPos.y - m_vLockRangePos.y,
+		fCamSpaceTmp
+	};
+
+	D3DXVec3TransformCoord(&vCamAxis, &vCamAxis, &mRot);
+
+	//ﾍﾞｸﾄﾙそのものを回転状態により変換する.
+
+	D3DXVECTOR3 vCamPosTmp;
+
+	//====================================================
+	//ｶﾒﾗ追従処理 ここから.
+	//====================================================
+	//カメラが少し遅れてついてくるように.
+	//カメラが現在目的としている位置を算出.
+	const D3DXVECTOR3 vCamTargetPos = m_vCenterPos - vCamAxis;
+
+	//現在位置を取得し、現在位置と目的の位置の差から移動量を計算する.
+	vCamPosTmp = m_vLockRangePos;//現在位置を取得
+	vCamPosTmp -= (vCamPosTmp - vCamTargetPos) * fCamMoveSpeed;
+
+	m_vLockRangePos = vCamPosTmp;
+
+	D3DXVECTOR3 vUp = { 0.0f, 1.0f, 0.0f };
+
+	D3DXMatrixLookAtLH(&m_mThisCharaView, &m_vLockRangePos, &m_vLockPos, &vUp);
 }
 
 void clsCharactor::SetEnemys(std::vector<clsCharactor*> v_pEnemys)
 {
 	m_v_pEnemys = v_pEnemys;
+}
+
+void clsCharactor::CharaInit(clsPOINTER_GROUP* pPointer)
+{
+	m_pViewPort = pPointer->GetViewPort10();
 }
 
 clsCharactor::clsCharactor() :

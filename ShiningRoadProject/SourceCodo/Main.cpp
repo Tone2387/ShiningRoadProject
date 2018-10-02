@@ -89,7 +89,6 @@ clsMain::clsMain()
 	,m_pBackBuffer_TexRTV( nullptr )
 	,m_pBackBuffer_DSTex( nullptr )
 	,m_pBackBuffer_DSTexDSV( nullptr )
-	,m_spDepthStencilState( nullptr )
 	,m_upGame( nullptr )
 	,m_spViewPort10( nullptr )
 	,m_spViewPort11( nullptr )
@@ -231,8 +230,7 @@ void clsMain::Loop()
 			m_pDeviceContext,
 			m_pSwapChain,
 			m_pBackBuffer_TexRTV,
-			m_pBackBuffer_DSTexDSV,
-			m_spDepthStencilState );
+			m_pBackBuffer_DSTexDSV );
 	//別スレッドで描画.
 //	thread thStartUpRender( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
 	thread thStartUpRender( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
@@ -244,6 +242,11 @@ void clsMain::Loop()
 	upRenderAtStartUp->FinishLoad();
 	thStartUpRender.join();
 	upRenderAtStartUp.reset();
+
+	//ロード画面終了後にCreateしないと効果音のタイミングがおかしくなる.
+	m_upGame->Create();
+
+
 
 	//----------------------------------------------------------
 	//	フレームレート.
@@ -452,18 +455,18 @@ HRESULT clsMain::InitD3D()
 		m_pBackBuffer_DSTexDSV );
 
 
-	//深度テスト(Zテスト)を有効にする.
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	ZeroMemory( &depthStencilDesc,
-		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
-	depthStencilDesc.DepthEnable = true;
-
-	if( SUCCEEDED( m_pDevice->CreateDepthStencilState(
-		&depthStencilDesc, &m_spDepthStencilState ) ) )
-	{
-		m_pDeviceContext->OMSetDepthStencilState(
-			m_spDepthStencilState, 1 );
-	}
+//	//深度テスト(Zテスト)を有効にする.
+//	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+//	ZeroMemory( &depthStencilDesc,
+//		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
+//	depthStencilDesc.DepthEnable = true;
+//
+//	if( SUCCEEDED( m_pDevice->CreateDepthStencilState(
+//		&depthStencilDesc, &m_spDepthStencilState ) ) )
+//	{
+//		m_pDeviceContext->OMSetDepthStencilState(
+//			m_spDepthStencilState, 1 );
+//	}
 
 	//ビューポートの設定.
 	if( !m_spViewPort11 ){
@@ -546,16 +549,13 @@ void clsMain::DestroyD3D()
 ////============================================================
 HRESULT clsMain::ReadMesh()
 {
-//	m_upGame = new clsGAME( 
-//		m_hWnd, m_pDevice, m_pDeviceContext, m_spViewPort, m_spDepthStencilState );
 	m_upGame = make_unique< clsGAME >( 
 		m_hWnd, 
 		m_pDevice, 
 		m_pDeviceContext, 
 		m_spViewPort10, 
-		m_spViewPort11,
-		m_spDepthStencilState );
-	m_upGame->Create();
+		m_spViewPort11 );
+//	m_upGame->Create();//起動時に効果音タイミングずれ対策でロード画面終了瞬間に移動する.
 
 
 

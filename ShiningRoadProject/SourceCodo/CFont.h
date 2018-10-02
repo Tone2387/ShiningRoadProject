@@ -9,11 +9,9 @@
 //アラインメント設定(強制的に16バイトに設定する).
 #define ALIGN16 _declspec( align ( 16 ) )
 
-//const int TEXT_H = 256;	//行数.
-//const int TEXT_W = 256;	//行数.
 
-
-
+//日本語のUI用.
+//これに読み込ませる文字列データは全て全角にすること.
 class clsFont
 {
 public:
@@ -23,15 +21,24 @@ public:
 		ID3D11DeviceContext* const pContext );
 	~clsFont();
 
+	enum class encPOS : UCHAR
+	{
+		LEFT = 0,
+		CENTER,
+		RIGHT,
+	};
+
+
 	void Create( const char *sTextFileName );//シーン開始時に使う.
 	void Release();							//シーン終了時に使う.
 
-	void Render( const int iTex, const int iCharNum );
+	void Render( const int iTextRow, const int iCharNum = -1 );
 
 
 
 	void SetPos( const D3DXVECTOR3 &vPos );
 	D3DXVECTOR3 GetPos();
+	D3DXVECTOR3 GetPosLast();
 
 	void SetScale( const float fScale );
 	float GetScale();
@@ -39,16 +46,48 @@ public:
 	void SetColor( const D3DXVECTOR4 &vColor );
 	void SetAlpha( const float fAlpha );
 
+	//折り返し位置.
+	void SetIndentPos( const float fPosX );
 	
+	//読み込んだテキストの数( Createしていないと-1が返る ).
+	int GetTextRow();
+	//テキストの内容.
+	std::string GetText( const int iRow );
+
 private:
 
-	//フォント構造体.
-	struct strFont
-	{
-		int iFontDispSpeed;
-		int iFontAutoFlg;
-	}m_strFont;
+	//ブレンドステート作成.
+	HRESULT CreateBlendState();
+	//シェーダ作成.
+	HRESULT CreateShader();
+	//バーテックスシェーダ作成.
+	HRESULT CreateVertexBuffer();
+	//定数バッファ作成.
+	HRESULT CreateConstantBuffer();
+	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
+	HRESULT	CreateTexture();
 
+	void SetBlend( const bool isAlpha );
+
+	//文字を細くする倍率を返す( 問題ないなら1.0f ).
+	//第二引数は( 全角で )何文字目か.
+	//最後の引数は文字同士の間隔に何を掛けるか.
+	float GetFineCharactorRate(
+		const int iTextRow, 
+		const int iCharNum, 
+		float* outfAddLeft );
+
+	//戻り値用列挙体.
+	enum class encCHARACTOR_TYPE : UCHAR
+	{
+		ALPHABET = 0,//半角.
+		JAPANESE_HEAD,//日本語先頭バイト.
+		JAPANESE_FOOT,//日本語末尾バイト.
+	};
+	encCHARACTOR_TYPE GetCharactorType( const int iTextRow, const int iCharNum );
+
+
+private:
 
 	//構造体.
 	struct FONTSHADER_CONSTANT_BUFFER
@@ -68,40 +107,29 @@ private:
 		D3DXVECTOR2 Tex;		//テクスチャ.
 	};
 
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
-	//フォント情報読込.
-	bool LoadFont();
-	//シェーダ作成.
-	HRESULT CreateShader();
-	//バーテックスシェーダ作成.
-	HRESULT CreateVertexBuffer();
-	//定数バッファ作成.
-	HRESULT CreateConstantBuffer();
-	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
-	HRESULT	CreateTexture();
-
-	void SetBlend( const bool isAlpha );
-
 	D3DXVECTOR3		m_vPos;			//位置.
 	float			m_fScale;		//拡縮.
 	D3DXVECTOR4		m_vColor;		//色.
 	float			m_fAlpha;
 		
-
-	int				m_iTextRow;//テキストの行数.
-
-	int				m_iFontH;					//読み込んだ文章が何行あるか.
-
-	DESIGNVECTOR		m_Design;
-	RECT				m_Rect;			//指定幅設定.
+	//テクスチャサイズ( 解像度 ).
+	int		m_iFontSize;
+	//文字と文字の隙間.
+	float	m_fFontMarginX;
+	float	m_fFontMarginY;
+	//改行するx座標.
+	float	m_fIndentionPosint;
+	//最後の文字の座標.
+	D3DXVECTOR3	m_vPosLast;
 
 	std::vector< std::string > 		m_sTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
 
-	int m_fFontSize;
-	int m_fFontMarginX;
-	int m_fFontMarginY;
+	//読み込んだテキストの数( Createしていないと-1が返る ).
+	int m_iTextRow;
 
+
+
+	DESIGNVECTOR		m_Design;
 
 	//テクスチャ関連.
 	std::vector< ID3D11Texture2D* >							m_vpTex2D;//[ TEXT_H ];//2Ｄテクスチャ.
@@ -121,8 +149,6 @@ private:
 	ID3D11SamplerState* m_pSampleLinear;	//テクスチャのサンプラー.
 
 	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
-
-
 
 };
 

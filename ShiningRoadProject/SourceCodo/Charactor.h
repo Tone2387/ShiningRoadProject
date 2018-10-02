@@ -64,10 +64,23 @@ public:
 	bool m_bLockStartingPosXSwitch;
 	float m_bLockStartingPosX;
 
-	D3DXVECTOR3 m_vLockRangePos;//ロックオン判定の開始座標.
-	D3DXVECTOR3 m_vLockRangeDir;//ロックオン判定が伸びる方向.
+	D3DXVECTOR3 m_vLockPos;//このキャラの注視点.
+	D3DXVECTOR3 m_vLockRangeDir;//このキャラの視線方向.
 	float m_fLockRange;//ロックオン距離.
 	float m_fLockCircleRadius;//ロックオン判定の半径.
+
+	D3D10_VIEWPORT* m_pViewPort;//三次元から二次元への変換用.
+	D3DXMATRIX m_mProj;//三次元から二次元への変換用.
+	D3DXMATRIX m_mThisCharaView;//このキャラのカメラのビュー行列.
+	D3DXVECTOR3 m_vLockRangePos;//ロックオン判定の開始座標(カメラ座標).
+	D3DXVECTOR3 m_vLockCenterPos;
+	D3DXVECTOR3 m_vTargetScrPos;
+	bool m_bCamPosXSwitch;
+	bool IsTargetDirBack(D3DXVECTOR3 vTargetPos);//敵がキャラより後ろにいるか.
+
+	
+
+	D3DXVECTOR3 GetCamPos();
 
 	std::vector<clsWeapon*> m_v_pWeapons;
 	std::vector<D3DXVECTOR3> m_v_vMuzzlePos;
@@ -90,7 +103,7 @@ public:
 	void WeaponUpdate();
 
 	void LockChara();
-	bool IsInLockRange();
+	//bool IsInLockRange();
 	void SetLockRangeDir();
 	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
 
@@ -101,6 +114,9 @@ public:
 	int m_iTargetNo;
 
 	bool m_bRadarWarning;//ロックされてる.
+	int m_iDamage;//受けたダメージの値(毎フレーム初期化)
+
+	void CharaInit(clsPOINTER_GROUP* pPrt);
 
 	void CharactorUpdate();
 
@@ -163,7 +179,7 @@ public:
 	clsCharactor();
 	virtual ~clsCharactor();
 
-	bool RecoLange(
+	bool IsCurcleLange(
 		const D3DXVECTOR3 CenterPos, 
 		const D3DXVECTOR3 TargetPos, 
 		const float Range);//円の範囲判定.

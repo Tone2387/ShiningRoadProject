@@ -27,9 +27,9 @@ const float fERROR = -999.0f;
 //	UIとして文字を扱う.
 //============================================================
 clsUiText::clsUiText()
-	:m_vPos()
+	:m_vPos( { 0.0f, 0.0f } )
+	,m_fAlpha( 1.0f )
 {
-//	ZeroMemory( this, sizeof( clsUiText ) );	//初期化.
 	m_pDevice11 = nullptr;		//デバイスオブジェクト.
 	m_pDeviceContext11 = nullptr;	//デバイスコンテキスト.
 
@@ -476,8 +476,9 @@ void clsUiText::RenderFont( const int FontIndex, const float x, const float y, c
 		cb.mWVP = m;
 		//カラーを渡す.
 		cb.vColor = m_vColor;
-		//透明度を渡す.
-		cb.fAlpha.x = m_vColor.w;
+		//透明度を渡す.m_fAlpha
+//		cb.fAlpha.x = m_vColor.w;
+		cb.fAlpha.x = m_fAlpha;
 
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)(&cb), sizeof(cb) );
@@ -527,4 +528,9 @@ void clsUiText::SetText( const char* sText )
 void clsUiText::SetColor( const D3DXVECTOR4 &vColor )
 {
 	m_vColor = vColor;
+}
+
+void clsUiText::SetAlpha( const float fAlpha )
+{
+	m_fAlpha = fAlpha;
 }

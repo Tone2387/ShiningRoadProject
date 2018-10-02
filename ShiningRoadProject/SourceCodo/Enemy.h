@@ -59,7 +59,6 @@ protected:
 		int iMoveDirRandMax;
 		int iVerDistance;
 		int iVerDistRandMax;
-		int iVerMoveENLimitParcent;
 		int iActUpDateInterval;
 	};
 

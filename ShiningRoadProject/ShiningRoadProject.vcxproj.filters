@@ -336,6 +336,12 @@
     <ClCompile Include="SourceCodo\BlendState.cpp">
       <Filter>Tahara</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\KeyInput.cpp">
+      <Filter>Tahara\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Building.cpp">
+      <Filter>Tahara</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -594,6 +600,12 @@
       <Filter>Tahara\UI</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\BlendState.h">
+      <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\KeyInput.h">
+      <Filter>Tahara\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Building.h">
       <Filter>Tahara</Filter>
     </ClInclude>
   </ItemGroup>

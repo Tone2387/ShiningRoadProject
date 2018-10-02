@@ -23,6 +23,8 @@ void clsWeapon::Update()
 	{
 		m_ppBullet[i]->Move();
 	}
+
+	m_iReloadCnt--;
 }
 
 int clsWeapon::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
@@ -42,7 +44,7 @@ int clsWeapon::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 
 bool clsWeapon::Shot()
 {
-	if (m_iRemainingBullet > 0 || 
+	if (m_iRemainingBullet > 0 && 
 		m_iReloadCnt < 0)
 	{
 		D3DXVECTOR3 vPos = *m_State.SState.vShotStartPos;
@@ -61,7 +63,7 @@ bool clsWeapon::Shot()
 
 			fVerDevia = m_pTargetObj->m_fFollPower * iTime;//垂直方向の予測距離.
 
-			vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * iTime;//水平方向移動ベクトル x 到達予想時間 = 水平方向の予想距離.
+			vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * static_cast<float>(iTime);//水平方向移動ベクトル x 到達予想時間 = 水平方向の予想距離.
 			vPrediction = m_pTargetObj->m_vCenterPos;//予測位置にまずはターゲットの位置を入れる.
 
 			vPrediction += vHorDevia;//水平のみ予測位置.
@@ -95,8 +97,6 @@ bool clsWeapon::Shot()
 			}
 		}
 	}
-
-	m_iReloadCnt--;
 
 	return false;
 }

@@ -54,6 +54,7 @@
       <AdditionalIncludeDirectories>SourceCodo\Effekseer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -74,6 +75,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -88,6 +90,7 @@
     <ClCompile Include="SourceCodo\AssembleUi.cpp" />
     <ClCompile Include="SourceCodo\BlackScreen.cpp" />
     <ClCompile Include="SourceCodo\BlendState.cpp" />
+    <ClCompile Include="SourceCodo\Building.cpp" />
     <ClCompile Include="SourceCodo\Camera.cpp" />
     <ClCompile Include="SourceCodo\CameraAssemble.cpp" />
     <ClCompile Include="SourceCodo\CameraEnding.cpp" />
@@ -122,6 +125,10 @@
     <ClCompile Include="SourceCodo\GameObject.cpp" />
     <ClCompile Include="SourceCodo\InputCharactor.cpp" />
     <ClCompile Include="SourceCodo\InputRobo.cpp" />
+    <ClCompile Include="SourceCodo\KeyInput.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\MissionModel.cpp" />
@@ -179,6 +186,7 @@
     <ClInclude Include="SourceCodo\AssembleUi.h" />
     <ClInclude Include="SourceCodo\BlackScreen.h" />
     <ClInclude Include="SourceCodo\BlendState.h" />
+    <ClInclude Include="SourceCodo\Building.h" />
     <ClInclude Include="SourceCodo\Camera.h" />
     <ClInclude Include="SourceCodo\CameraAssemble.h" />
     <ClInclude Include="SourceCodo\CameraEnding.h" />
@@ -214,6 +222,10 @@
     <ClInclude Include="SourceCodo\Global.h" />
     <ClInclude Include="SourceCodo\InputCharactor.h" />
     <ClInclude Include="SourceCodo\InputRobo.h" />
+    <ClInclude Include="SourceCodo\KeyInput.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
     <ClInclude Include="SourceCodo\MissionModel.h" />

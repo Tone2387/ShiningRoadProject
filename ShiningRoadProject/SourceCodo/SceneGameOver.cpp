@@ -2,6 +2,9 @@
 
 using namespace std;
 
+const char* sMISSION_FAILED_SPRITE_PATH = "Data\\Image\\GameOverUi\\MissionFailed.png";
+const WHSIZE_FLOAT MISSION_FAILED_SPRITE_SIZE = { 512.0f, 128.0f };
+const D3DXVECTOR3 vMISSION_FAILED_SPRITE_POS = { static_cast<float>( WND_W/2 ), static_cast<float>( WND_H/2 ), 0.0f };
 
 //================================//
 //========== ゲームオーバークラス ==========//
@@ -16,11 +19,20 @@ clsSCENE_GAME_OVER::~clsSCENE_GAME_OVER()
 
 void clsSCENE_GAME_OVER::CreateProduct()
 {
+//	m_wpSound->PlayBGM( enBGM_MUS0 );
+
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 10.0f } );
 
 	assert( !m_upMissModel );
 	m_upMissModel = make_unique< clsMISSION_MODEL >();
 	m_upMissModel->Create( m_wpResource, m_wpRoboStatus );
+
+	assert( !m_upMissionFailed );
+	SPRITE_STATE ss;
+	ss.Disp = MISSION_FAILED_SPRITE_SIZE;
+	m_upMissionFailed = make_unique< clsSPRITE2D_CENTER >();
+	m_upMissionFailed->Create( m_wpDevice, m_wpContext, sMISSION_FAILED_SPRITE_PATH, ss );
+	m_upMissionFailed->SetPos( vMISSION_FAILED_SPRITE_POS );
 }
 
 
@@ -46,6 +58,9 @@ void clsSCENE_GAME_OVER::RenderProduct( const D3DXVECTOR3 &vCamPos )
 }
 void clsSCENE_GAME_OVER::RenderUi()
 {
+	assert( m_upMissionFailed );
+	m_upMissionFailed->Render();
+
 }
 
 

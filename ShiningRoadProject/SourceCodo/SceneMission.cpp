@@ -31,7 +31,7 @@ void clsSCENE_MISSION::CreateProduct()
 
 	//テストモデルの初期化.
 
-	m_pStage = new clsStage(m_wpResource);
+	m_pStage = new clsStage( m_wpPtrGroup );
 
 	m_fCamMoveSpeed = 0.01f;
 }
@@ -88,39 +88,32 @@ void clsSCENE_MISSION::CreateUI()
 
 	m_pHP->SetText(pText);
 
-	//EN.
-
-	assert(!m_pEnelgy);
 	SPRITE_STATE ss;
-	ss.Disp = { 512.0f / 2, 64.0f / 4 };
-	ss.Anim = { 2.0f, 1.0f };
 
-	m_pEnelgy = new clsSPRITE2D_CENTER;
-
-	m_pEnelgy->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Gauge.png", ss);
-	m_pEnelgy->SetPos({ WND_W / 2, WND_H / 5, 0.0f });
-
-	assert(!m_pEnelgyFrame);
-
-	ss.Disp = { 512.0f / 2 + 5, 64.0f / 4  + 3};
+	assert(!m_pRaderWindowFront);
+	ss.Disp = { 960.0f / 8, 640.0f / 8 };
 	ss.Anim = { 1.0f, 1.0f };
 
-	m_pEnelgyFrame = new clsSPRITE2D_CENTER;
+	m_pRaderWindowFront = new clsSPRITE2D_CENTER;
 
-	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\GaugeWaku.png", ss);
-	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
+	m_pRaderWindowFront->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowFront.png", ss);
+	m_pRaderWindowFront->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
-	assert(!m_pRaderWindow);
+	m_pRaderWindowFront->SetAlpha(1.0f);
+
+	assert(!m_pRaderWindowBack);
 	ss.Disp = { 960.0f / 8, 640.0f / 8 };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_fRaderSizeW = ss.Disp.w;
 	m_fRaderSizeH = ss.Disp.h;
 
-	m_pRaderWindow = new clsSPRITE2D_CENTER;
+	m_pRaderWindowBack = new clsSPRITE2D_CENTER;
 
-	m_pRaderWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindow.png", ss);
-	m_pRaderWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	m_pRaderWindowBack->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowBack.png", ss);
+	m_pRaderWindowBack->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pRaderWindowBack->SetAlpha(0.4f);
 
 	ss.Disp = { 44.0f / 8, 44.0f / 8 };
 
@@ -131,7 +124,7 @@ void clsSCENE_MISSION::CreateUI()
 
 	m_v_pRaderEnemyMark.resize(m_v_pEnemys.size());
 
-	for (int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
+	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
 	{
 		m_v_pRaderEnemyMark[i] = new clsSPRITE2D_CENTER;
 
@@ -140,27 +133,92 @@ void clsSCENE_MISSION::CreateUI()
 	}
 
 	assert(!m_pCursor);
-
-	m_fCursorSize = m_pPlayer->m_fLockCircleRadius;
-
-	ss.Disp = { m_fCursorSize, m_fCursorSize };
+	ss.Disp = { 1.0f, 1.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
-	m_pCursor = new clsSprite;
+	m_pCursor = new clsSPRITE2D_CENTER;
 
-	m_pCursor->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext());
-	m_pCursor->m_vPos = { WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f };	
-	m_pCursor->SetScale(m_fCursorSize);
+	m_pCursor->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
+	m_pCursor->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
-	assert(!m_pTarget);
+	m_pCursor->SetAlpha(0.4f);
+
+	assert(!m_pCursorFrame);
+	ss.Disp = { 512.0f, 512.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pCursorFrame = new clsSPRITE2D_CENTER;
+
+	m_pCursorFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
+	m_pCursorFrame->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	//EN.
+
+	assert(!m_pEnelgy);
+
+	ss.Disp = { 512.0f / 2, 64.0f / 4 };
+	ss.Anim = { 2.0f, 1.0f };
+
+	m_pEnelgy = new clsSPRITE2D_CENTER;
+
+	m_pEnelgy->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Gauge.png", ss);
+	m_pEnelgy->SetPos({ WND_W / 2, m_pCursorFrame->GetPos().y - ((256.0f / 2) + (64.0f)), 0.0f });
+
+	assert(!m_pEnelgyFrame);
+
+	ss.Disp = { 512.0f / 2 + 5, 64.0f / 4 + 3 };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pEnelgyFrame = new clsSPRITE2D_CENTER;
+
+	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\GaugeWaku.png", ss);
+	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
+
+	assert(!m_pLWeaponLockMark);
+	ss.Disp = { 128.0f, 64.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pLWeaponLockMark = new clsSPRITE2D_CENTER;
+
+	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockMark.png", ss);
+	m_pLWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pLWeaponLockMark->SetAlpha(0.4f);
+
+	assert(!m_pRWeaponLockMark);
+	ss.Disp = { 128.0f, 64.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pRWeaponLockMark = new clsSPRITE2D_CENTER;
+
+	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockMark.png", ss);
+	m_pRWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pRWeaponLockMark->SetAlpha(0.4f);
+
+	assert(!m_pHitMark);
+	ss.Disp = { 128.0f, 64.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_fHitMarkRaderSizeW = ss.Disp.w;
+	m_fHitMarkRaderSizeH = ss.Disp.h;
+
+	m_pHitMark = new clsSPRITE2D_CENTER;
+
+	m_pHitMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\HitMark.png", ss);
+	m_pHitMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pHitMark->SetAlpha(0.4f);
+
+	assert(!m_pLockWindow);
 
 	ss.Disp = { 100.0f, 100.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
-	m_pTarget = new clsSPRITE2D_CENTER;
+	m_pLockWindow = new clsSPRITE2D_CENTER;
 
-	m_pTarget->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
-	m_pTarget->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	m_pLockWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockWindow.png", ss);
+	m_pLockWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 }
 
 //毎フレーム通る処理.
@@ -198,23 +256,29 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 		}
 	}
 
-	for (int i = 0; i < m_v_pFriends.size(); i++)
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
 		m_v_pFriends[i]->Action(m_pStage);
 	}
 
 	if (!m_bEnemyStop)
 	{
-		for (int i = 0; i < m_v_pEnemys.size(); i++)
+		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 		{
 			m_v_pEnemys[i]->Action(m_pStage);
 		}
 	}
 
-	//UpdateCamTargetPos(m_pCamTar);
+	UpdateCamTargetPos(m_pCamTar);
 
-	D3DXVECTOR3 vCamPosTmp = m_pPlayer->GetCamTargetPos();
-	D3DXVECTOR3 vLookPosTmp = m_pPlayer->GetLookTargetPos();
+	D3DXVECTOR3 vCamPosTmp;
+	D3DXVECTOR3 vLookPosTmp;
+
+	//vCamPosTmp = m_pPlayer->GetCamTargetPos();
+	//vLookPosTmp = m_pPlayer->GetLookTargetPos();
+
+	vCamPosTmp = m_vCamTargetPos;
+	vLookPosTmp = m_vLookTargetPos;
 
 	m_wpCamera->SetPos(vCamPosTmp, false);
 	m_wpCamera->SetLookPos(vLookPosTmp);
@@ -237,12 +301,12 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 	//m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
 
-	for (int i = 0; i < m_v_pFriends.size(); i++)
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
 		m_v_pFriends[i]->Render(m_mView, m_mProj, m_vLight, vCamPos);
 	}
 
-	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
 		m_v_pEnemys[i]->Render(m_mView, m_mProj, m_vLight, vCamPos);
 	}
@@ -250,11 +314,6 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	Collison();
 
 	m_pStage->Render(m_mView, m_mProj, m_vLight, vCamPos);
-
-	SetDepth(false);
-	m_pCursor->m_vPos = m_pPlayer->GetLockCenterPos();
-	m_pCursor->Render(m_mView, m_mProj, vCamPos);
-	SetDepth(true);
 }
 
 void clsSCENE_MISSION::RenderUi()
@@ -313,13 +372,12 @@ void clsSCENE_MISSION::RenderUi()
 	
 	D3DXVECTOR3 vPlayerPos = m_pPlayer->GetPosition();
 
-	const float fRaderDis = 1.0f;//大きくするとレーダーの索敵範囲が広がる.
+	const float fRaderDis = 10.0f;//大きくするとレーダーの索敵範囲が広がる.
 
 	//float fWindowSizeW;
+	m_pRaderWindowBack->Render();
 
-	m_pRaderWindow->Render();
-
-	for (int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
+	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
 	{
 		if (!m_v_pEnemys[i])continue;
 
@@ -342,19 +400,62 @@ void clsSCENE_MISSION::RenderUi()
 		if (abs(fPosX) + (m_fRaderMarkSizeW / 2) < m_fRaderSizeW / 2 &&
 			abs(fPosY) + (m_fRaderMarkSizeH / 2) < m_fRaderSizeH / 2)
 		{
-			fPosX = m_pRaderWindow->GetPos().x + fPosX;
-			fPosY = m_pRaderWindow->GetPos().y + fPosY;
+			fPosX = m_pRaderWindowFront->GetPos().x + fPosX;
+			fPosY = m_pRaderWindowFront->GetPos().y + fPosY;
 
 			m_v_pRaderEnemyMark[i]->SetPos({ fPosX, fPosY, 0.0f });
 			m_v_pRaderEnemyMark[i]->Render();
 		}
 	}
 
+	m_pRaderWindowFront->Render();
+
+	vPosTmp = m_pPlayer->GetLookTargetPos();
+
+	vPosTmp = ConvDimPos(vPosTmp);
+
+	m_pCursorFrame->SetPos(vPosTmp);
+	m_pCursorFrame->Render();
+
+	float fTmp = m_pPlayer->GetLockCircleScale() / 2;
+
+	m_pCursor->SetScale(fTmp);
+	m_pCursor->SetPos(vPosTmp);
+	m_pCursor->Render();
+
 	if (m_pPlayer->GetTargetPos(vPosTmp))
 	{
-		vPosTmp = ConvDimPos(vPosTmp);
-		m_pTarget->SetPos(vPosTmp);
-		m_pTarget->Render();
+		vPosTmp = m_pPlayer->m_vTargetScrPos;
+		
+		m_pLockWindow->SetPos(vPosTmp);
+		m_pLockWindow->Render();
+		
+		if (iHitDispTime > 0)
+		{
+			m_pHitMark->SetPos(vPosTmp);
+			m_pHitMark->Render();
+			iHitDispTime--;
+		}
+
+		if (m_pPlayer->IsLWeaponLock())
+		{
+			m_pLWeaponLockMark->SetPos(vPosTmp - D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
+			m_pLWeaponLockMark->Render();
+		}
+
+		if (m_pPlayer->IsRWeaponLock())
+		{
+			m_pRWeaponLockMark->SetPos(vPosTmp + D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
+			m_pRWeaponLockMark->Render();
+		}
+	}
+
+	else
+	{
+		if (iHitDispTime > 0)
+		{
+			iHitDispTime = 0;
+		}
 	}
 	
 	SetDepth(true);
@@ -362,7 +463,7 @@ void clsSCENE_MISSION::RenderUi()
 
 bool clsSCENE_MISSION::AllEnemyDead()
 {
-	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
 		if (!m_v_pEnemys[i]->m_bDeadFlg)
 		{
@@ -397,16 +498,19 @@ void clsSCENE_MISSION::CreateEnemys()
 
 void clsSCENE_MISSION::Collison()
 {
-	ColFShottoEBody();
+	if (ColFShottoEBody())
+	{
+		iHitDispTime = 30;// *static_cast<int>(g_fFPS);
+	}
 	ColEShottoFBody();
 }
 
 //同キャラのShotが同キャラのBodyに当たる判定を入れるかは処理の兼ね合いで入れる.
 void clsSCENE_MISSION::ColFShottoFBody()
 {
-	for (int i = 0; i < m_v_pFriends.size(); i++)
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
-		for (int j = 0; j < m_v_pFriends.size(); j++)
+		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
 		{
 			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
 			Tmp.iDamage = 0;
@@ -415,23 +519,28 @@ void clsSCENE_MISSION::ColFShottoFBody()
 	}
 }
 
-void clsSCENE_MISSION::ColFShottoEBody()
+bool clsSCENE_MISSION::ColFShottoEBody()
 {
-	for (int i = 0; i < m_v_pFriends.size(); i++)
+	bool bResult = false;
+
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
-		for (int j = 0; j < m_v_pEnemys.size(); j++)
+		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
 		{
 			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
 			m_v_pEnemys[j]->Damage(Tmp);
+			if (!bResult)bResult = Tmp.bHit;
 		}
 	}
+
+	return bResult;
 }
 
 void clsSCENE_MISSION::ColEShottoFBody()
 {
-	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
-		for (int j = 0; j < m_v_pFriends.size(); j++)
+		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
 		{
 			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
 			m_v_pFriends[j]->Damage(Tmp);
@@ -441,9 +550,9 @@ void clsSCENE_MISSION::ColEShottoFBody()
 
 void clsSCENE_MISSION::ColEShottoEBody()
 {
-	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
-		for (int j = 0; j < m_v_pEnemys.size(); j++)
+		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
 		{
 			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
 			Tmp.iDamage = 0;
@@ -480,12 +589,12 @@ clsTestObj* clsSCENE_MISSION::CreateEnemy()
 
 void clsSCENE_MISSION::SetEnemys()
 {
-	for (int i = 0; i < m_v_pFriends.size(); i++)
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
 		m_v_pFriends[i]->SetEnemys(m_v_pEnemys);
 	}
 
-	for (int i = 0; i < m_v_pEnemys.size(); i++)
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
 		m_v_pEnemys[i]->SetEnemys(m_v_pFriends);
 	}
@@ -507,6 +616,11 @@ void clsSCENE_MISSION::RenderDebugText()
 		m_pPlayer->m_vMoveDirforBoost.x,
 		m_pPlayer->m_vMoveDirforBoost.y,
 		m_pPlayer->m_vMoveDirforBoost.z);
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	sprintf_s( strDbgTxt, 
+		"EnemyEnelgy : [%d]",
+		m_pTestObj->m_iEnelgy);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	/*sprintf_s( strDbgTxt, 
@@ -555,9 +669,12 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 		return;
 	}
 
-	const float fCamMoveSpeed = 0.5f;
+	m_vCamTargetPos = pChara->m_vLockRangePos;
+	m_vLookTargetPos = pChara->m_vLockPos;
+
+	/*const float fCamMoveSpeed = 0.5f;
 	const float fLookPosSpace = 50.0f;
-	const float fCamSpaceTmp = 2.0f;
+	const float fCamSpaceTmp = 4.0f;
 	const float fCamPosX = 0.5f;
 
 	D3DXMATRIX mRot;
@@ -572,7 +689,7 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 	//軸ﾍﾞｸﾄﾙを用意.
 	float fCamAxisXTmp = 0.0f;
 
-	/*if (m_bCamPosXSwitch)
+	if (m_bCamPosXSwitch)
 	{
 		fCamAxisXTmp = fCamPosX;
 	}
@@ -580,7 +697,7 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 	else
 	{
 		fCamAxisXTmp = -fCamPosX;
-	}*/
+	}
 
 	D3DXVECTOR3 vCamAxis =
 	{
@@ -602,7 +719,7 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 	//====================================================
 	//カメラが少し遅れてついてくるように.
 	//カメラが現在目的としている位置を算出.
-	const D3DXVECTOR3 vCamTargetPos = pChara->m_vCenterPos - vCamAxis * fCamSpaceTmp;
+	const D3DXVECTOR3 vCamTargetPos = pChara->m_vCenterPos - vCamAxis;
 
 	//現在位置を取得し、現在位置と目的の位置の差から移動量を計算する.
 	vCamPosTmp = m_vCamTargetPos;//現在位置を取得
@@ -610,5 +727,5 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 
 	m_vLookTargetPos = vCamPosTmp + vLookAxis * fLookPosSpace;
 
-	m_vCamTargetPos = vCamPosTmp;
+	m_vCamTargetPos = vCamPosTmp;*/
 }

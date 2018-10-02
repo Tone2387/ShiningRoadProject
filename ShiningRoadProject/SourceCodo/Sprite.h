@@ -44,23 +44,29 @@ public:
 
 	//初期化.
 	HRESULT Create( ID3D11Device* const pDevice11,
-		ID3D11DeviceContext* const pContext11 );
+		ID3D11DeviceContext* const pContext11,
+		const char* sTexName );
 
 
 	//描画(レンダリング)(※DX9MESH内とMain内で2つ存在するので注意).
-	virtual void Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj,
-				 const D3DXVECTOR3 &vEye );
+	virtual void Render( 
+		const D3DXMATRIX& mView, 
+		const D3DXMATRIX& mProj,
+		const D3DXVECTOR3 &vEye, 
+		bool isBillBoard = false );
 
-	void SetScale( const float fScale ){
-		m_fScale = fScale;
-	}
 
+	D3DXVECTOR3 GetPos();
+	void SetPos( const D3DXVECTOR3& vPos );
+	void AddPos( const D3DXVECTOR3& vPos );
 
-	D3DXVECTOR3		m_vPos;	//位置.
+	D3DXVECTOR3 GetRot();
+	void SetRot( const D3DXVECTOR3& vRot );
+	void AddRot( const D3DXVECTOR3& vRot );
 
-	int		m_AnimCount;//UVスクロール.
-
-	bool	m_bDispFlg;//表示フラグ.
+	D3DXVECTOR3 GetScale();
+	void SetScale( const D3DXVECTOR3& vScale );
+	void AddScale( const D3DXVECTOR3& vScale );
 
 
 protected:
@@ -68,7 +74,15 @@ protected:
 	//シェーダ作成.
 	HRESULT InitShader();
 	////モデル作成.
-	virtual HRESULT InitModel();
+	virtual HRESULT InitModel( const char* sTexName );
+
+
+	D3DXVECTOR3		m_vPos;	//位置.
+	D3DXVECTOR3		m_vRot;
+	D3DXVECTOR3		m_vScale;
+
+
+
 
 	//↓モデルの種類ごとに用意.
 	ID3D11VertexShader*		m_pVertexShader;	//頂点シェーダ.
@@ -84,7 +98,10 @@ protected:
 
 
 
-	float m_fScale;
+
+	int		m_AnimCount;//UVスクロール.
+
+	bool	m_bDispFlg;//表示フラグ.
 
 
 };

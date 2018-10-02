@@ -2,7 +2,7 @@
 
 #include "Global.h"
 
-#include <vector>
+//#include <vector>
 
 //アセンブルシーンでの選択肢の型.
 //#define ASSEMBLE_SCENE_SELECT_TYPE short 
@@ -50,11 +50,11 @@ public:
 		BOOST_COST_V,	//ブースター消費エネルギー( 水直 ).
 		ACT_TIME,		//活動時間(ActivityTime).
 
-		SEARCH,	//索敵性能.
+		SEARCH,			//索敵性能.
 		LOCK_ON_SPEED,	//ロック速度.
 		LOCK_ON_RANGE,	//ロック距離.
 
-		AIMING,	//照準精度( エイム ).
+		AIMING,			//照準精度( エイム ).
 		QUICK_THRUST,	//クイック推力.
 		QUICK_COST,		//クイック消費エネルギー.
 		QUICK_TIME,		//クイック噴射時間.
@@ -109,6 +109,12 @@ public:
 	//パーツ番号を返す( いま装備しているパーツが何番か ).//#define SKIN_ENUM_TYPE UCHAR.
 	UCHAR GetPartsNum( const enPARTS PartsType );
 
+	//クリア画面で使う : タイトル用の初期化用のデータを用意する : クリアしたロボを覚えておく.
+	void SaveHeroData();
+
+	//AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
+	void LodeHeroData();
+
 private:
 
 	//HPを持つパーツ.
@@ -126,11 +132,13 @@ private:
 	int m_iRoboState[enROBO_STATE_SIZE];
 
 	//武器のパラメータ.
-	int m_iWeaponState[enWEAPON_NUM_SIZE][enWEAPON_STATE_SIZE];
+	int m_iWeaponState[ enWEAPON_NUM_SIZE ][ enWEAPON_STATE_SIZE ];
 
 	//ロボのHPを後で合算するための変数.
-	int m_iRoboHp[enHAVE_HP_PARTS_SIZE];
+	int m_iRoboHp[ enHAVE_HP_PARTS_SIZE ];
 
-	//パーツ番号の配列.//#define SKIN_ENUM_TYPE UCHAR.
+	//パーツ番号の配列.
 	UCHAR m_ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
+	//タイトル用.
+	UCHAR m_ucPartsModelNumHero[ static_cast<int>( enPARTS::MAX ) ];
 };

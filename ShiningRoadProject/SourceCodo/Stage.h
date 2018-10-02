@@ -1,12 +1,18 @@
 #pragma once
 
-#include "PtrGroup.h"
-#include "CharaStatic.h"
+#include "Global.h"
+
+class clsPOINTER_GROUP;
+class clsBUILDING;
+class clsCharaStatic;
+class clsDX9Mesh;
+
+
 
 class clsStage
 {
 public:
-	clsStage( clsResource* const pResource );
+	clsStage( clsPOINTER_GROUP* const pPtrGroup );
 	~clsStage();
 
 	void Render(				
@@ -18,7 +24,7 @@ public:
 private:
 
 	std::unique_ptr< clsCharaStatic > m_pStageGround;
-	std::vector< std::unique_ptr< clsCharaStatic > > m_vpStageObject;
+	std::vector< std::unique_ptr< clsBUILDING > > m_vpBuilding;
 
 
 };

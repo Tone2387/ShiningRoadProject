@@ -276,7 +276,7 @@ public:
 
 	clsRoboCommand* MoveSwitch()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_03))
+		if (m_pDxInput->IsPressKey(enPKey_00))
 		{
 			if (!m_bChangeSwitch)
 			{
@@ -366,7 +366,7 @@ public:
 	{
 		if (m_pXInput)
 		{
-			if (m_pXInput->isPressExit(XINPUT_LB))
+			if (m_pXInput->isPressStay(XINPUT_LB))
 			{
 				return m_pComLShot;
 			}
@@ -387,7 +387,7 @@ public:
 	{
 		if (m_pXInput)
 		{
-			if (m_pXInput->isPressExit(XINPUT_RB))
+			if (m_pXInput->isPressStay(XINPUT_RB))
 			{
 				return m_pComRShot;
 			}

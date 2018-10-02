@@ -9,6 +9,7 @@
 #include "AssembleUi.h"
 
 #include "PartsWindowModel.h"
+class clsWINDOW_BOX;
 
 
 //================================//
@@ -53,13 +54,25 @@ private:
 	void MoveCursorLeft();
 	//決定.
 	void Enter( enSCENE &enNextScene );
-	//出撃.
-	void MissionStart( enSCENE &enNextScene );
+	//キャンセル.
+	void Exit();
+
+
+	//メッセボックス出現.
+	void AppearMessageBox( const clsASSEMBLE_UI::enSELECT_MODE encMode );
+	//メッセボックス消す.
+	void DisAppearMessageBox();
 	//パーツ変更.
 	void AssembleParts();
-	//戻る.
-	void Undo( enSCENE &enNextScene );
-	PARTS_SELECT m_OldSelect;//Undo()のために必要( のちに配列化する ).
+	//ステータスの表示非表示切替.
+	void SwitchDispStatus();
+	//パーツ選択とステータス選択の切り替え.
+	void ChangePartsSelect();
+	void ChangeStatusSelect();
+	//出撃.
+	void MissionStart( enSCENE &enNextScene );
+	//タイトルに戻る.
+	void TitleBack( enSCENE &enNextScene );
 
 
 
@@ -67,10 +80,10 @@ private:
 	//minはその数値より小さくならない、maxはそれ以上にはならない.
 	// min <= t < max.
 	template< class T, class MIN, class MAX >
-	T KeepRange( T t, const MIN min, const MAX max ) const;
+	T LoopRange( T t, const MIN min, const MAX max ) const;
 
-	//カーソルを出撃に合わせているならtrue.
-	bool isMissionStart();
+	//メッセボックスが閉じているならtrue.
+	bool isMessageBoxClose();
 
 
 #if _DEBUG
@@ -95,18 +108,32 @@ private:
 	//選択中パーツ.
 	clsPARTS_WINDOW_MODEL* m_pSelectParts;
 
+	//矢印.
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upArrow;
+
+
+	//メッセボックス.
+	std::unique_ptr< clsWINDOW_BOX >	m_upBox;
+	//メッセの行数を表す.
+	int									m_iMessageNum;
+
+	//メッセボックスの選択肢.
+	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
+	bool									m_isMessageBoxYes;
+
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
 
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
-	UCHAR										m_cuFileMax;
 
 
 //	clsSPRITE2D_CENTER* m_pSprite;
 //	clsCharaStatic* m_pTestChara;
 //	clsCharaStatic* m_pParts;
 
-
+	//操作可能ならtrue.
+	bool m_isCanControl;
+		
 
 	//エフェクト.
 	::Effekseer::Handle m_ehHibana;
@@ -115,15 +142,19 @@ private:
 	//音の引数.
 	enum enBGM : int
 	{
-		ASSEMBLE = 0,
+		enBGM_MAFIA1 = 0,
+		enBGM_MAOU0,
+		enBGM_MAOU2,
 	};
 
 	enum enSE : int
 	{
-		CURSOL_MOVE = 0,
-		ENTER,
-		EXIT,
-		MISSION_START,
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+		enSE_MISSION_START,
+		enSE_WIN_APP,
+		enSE_WIN_DISAPP,
 	};
 
 };

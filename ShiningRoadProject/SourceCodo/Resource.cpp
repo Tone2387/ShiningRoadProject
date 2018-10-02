@@ -96,7 +96,7 @@ SKIN_ENUM_TYPE clsResource::GetPartsNum( const enPARTS_READ enPartsRead )
 	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
 	upFile->Open( tmpPass );
 
-	tmpNum = upFile->GetSizeRow();
+	tmpNum = static_cast<SKIN_ENUM_TYPE>( upFile->GetSizeRow() );
 
 	upFile->Close();
 	upFile.reset( nullptr );
@@ -110,13 +110,13 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
 		m_PartsNum[i] = iTEST_ROBO_PARTS_MODEL_MAX;
 	}
-#else#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
+#else//#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
 	m_PartsNum[enPARTS_READ::LEG] = GetPartsNum( enPARTS_READ::LEG );
 	m_PartsNum[enPARTS_READ::CORE] = GetPartsNum( enPARTS_READ::CORE );
 	m_PartsNum[enPARTS_READ::HEAD] = GetPartsNum( enPARTS_READ::HEAD );
 	m_PartsNum[enPARTS_READ::ARMS] = GetPartsNum( enPARTS_READ::ARMS );
 	m_PartsNum[enPARTS_READ::WEAPON] = GetPartsNum( enPARTS_READ::WEAPON );
-#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
+#endif//#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
 
 	m_ucSkinModelMax = 
 		m_PartsNum[enPARTS_READ::LEG] + 

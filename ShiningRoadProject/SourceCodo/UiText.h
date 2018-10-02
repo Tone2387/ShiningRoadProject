@@ -33,7 +33,7 @@ public:
 
 
 	//レンダリング関数.
-	//デフォルト引数はtrueにすると右端が指定座標に来る.
+	//デフォルト引数はRIGHTにすると右端が指定座標に来る.
 	void Render( const enPOS enPos = enPOS::LEFT );
 
 	void SetPos( const D3DXVECTOR2 &vPos );
@@ -51,6 +51,7 @@ public:
 	void SetText( const char* sText );
 
 	void SetColor( const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f, 1.0f } );
+	void SetAlpha( const float fAlpha );
 
 private:
 
@@ -88,7 +89,7 @@ private:
 	float		m_fKerning[100];	//カーリング(100個分).
 	D3DXVECTOR2 m_vPos;
 	float		m_fScale;			//拡縮値.
-//	float		m_fAlpha;			//透過値.
+	float		m_fAlpha;			//透過値.
 	D3DXVECTOR4	m_vColor;		//色.
 
 	std::string m_sText;//描画文字.

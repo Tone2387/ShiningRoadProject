@@ -301,27 +301,16 @@ void clsFILE::CreateFileDataForOutPut( FILE_DATA &Outdata, const int iRow, const
 {
 	//‰Šú‰».
 	for( unsigned int i=0; i<Outdata.size(); i++ ){
-		Outdata.clear();
-		Outdata.shrink_to_fit();
+		Outdata[i].clear();
+		Outdata[i].shrink_to_fit();
 	}
 	Outdata.clear();
 	Outdata.shrink_to_fit();
 
-	//push_back—p.
-	FILE_DATA_ROW init_data;
 
-	Outdata.reserve( iRow );
-	for( int i=0; i<iRow; i++ ){
-
-		Outdata.push_back( init_data );
-		Outdata[i].reserve( iCol );
-
-		for( int j=0; j<iCol; j++ ){
-			Outdata[i].push_back( "" );
-		}
-
-		Outdata[i].shrink_to_fit();
+	Outdata.resize( iRow );
+	for( unsigned int i=0; i<Outdata.size(); i++ ){
+		Outdata[i].resize( iCol, "" );
 	}
-	Outdata.shrink_to_fit();
 
 }

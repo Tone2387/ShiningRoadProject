@@ -6,10 +6,11 @@
 
 #include "Sprite2DCenter.h"
 #include "UiText.h"
-#include "WindowBox.h"
 #include "File.h"
 #include "CFont.h"
+#include "AssembleModel.h"
 #include <vector>
+class clsWINDOW_BOX;
 
 
 class clsASSEMBLE_UI
@@ -26,7 +27,8 @@ public:
 	{
 		PARTS = 0,
 		STATUS,
-		MISSION_START
+		MISSION_START,
+		TITLE_BACK,
 	}m_enSelectMode;
 
 	void Create( 
@@ -42,6 +44,7 @@ public:
 	void Update( 
 		enSELECT_MODE enSelect,
 		std::shared_ptr< clsFILE > const spFile = nullptr,
+		clsASSEMBLE_MODEL* const pModel = nullptr,
 		const int iPartsType = 0,	//パーツ種類.
 		const int iPartsNum = 0,	//パーツ番号.
 		const int iStatusCutNum = 0 );//ステータスじゃないデータの数.	
@@ -98,6 +101,12 @@ private:
 		enPARTS_TYPE_SIZE
 	};
 
+
+	D3DXVECTOR4 GetStatusColor( 
+		const int iBefore, const int iAfter,
+		const int iPartsType, const int iStatusNum );
+
+
 	void StatusNumOverGuard();
 
 
@@ -115,8 +124,6 @@ private:
 	std::unique_ptr< clsSprite2D >					m_upPartsWindow;	//パーツの単体モデル表示される.
 	std::unique_ptr< clsSprite2D >					m_upRoboWindow;		//ロボ全体が表示される.
 
-	std::unique_ptr< clsSprite2D >					m_upMissionStart;	//出撃ボタン.
-
 	std::unique_ptr< clsSprite2D > m_upHeader;//画面上部の帯.
 	std::unique_ptr< clsSprite2D > m_upFooter;//画面下部の帯.
 
@@ -125,10 +132,14 @@ private:
 	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
 
 	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目名 ).
-	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//ステータス値.
+	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//今見ているパーツのステータス値.
+	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumTextNow;	//現在の装備のステータス値.
 
 
 	std::unique_ptr< clsUiText > m_upPartsNameText;//パーツ名.
+
+	std::unique_ptr< clsSprite2D > m_upButton;
+
 
 	//「その武器は右腕?それとも左腕?」.
 	std::unique_ptr< clsWINDOW_BOX > m_upWndBox;//左右どっちか聞いてくる箱.

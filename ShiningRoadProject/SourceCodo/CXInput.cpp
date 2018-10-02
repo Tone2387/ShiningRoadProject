@@ -7,6 +7,9 @@
 const float fSLOPE_MAX = 1.0f;
 const float fSLOPE_MIN = 0.0f;
 
+//十字キーが押されている扱いする倒し具合.
+const float fSLOPE_PRESS = 0.85f;
+
 //日吉君のDxInputとのすり合わせ( スティックの角度を[0～360]->[-180～180]にする ).
 #ifdef HIYOSHI_DX_INPUT
 //DIFF : difference = 差.
@@ -319,6 +322,140 @@ float clsXInput::GetStickSlope( const SHORT lY, const SHORT lX ) const
 	return slope;
 }
 
+//スティックの上下左右を十字キーと同等に扱う.
+bool clsXInput::isSlopeEnter( const WORD _padKey, const bool isLeft ) const
+{
+	const SHORT sPUSH = static_cast<SHORT>( XINPUT_THUMB_MAX * ( 0.9f / 1.0f ) );
+	const bool bOLD = true;
+	SHORT sX, sY, sXOld, sYOld;
+
+	if( isLeft ){
+		sX		= GetLThumbXInside();
+		sY		= GetLThumbYInside();
+		sXOld	= GetLThumbXInside( bOLD );
+		sYOld	= GetLThumbYInside( bOLD );
+	}
+	else{
+		sX		= GetRThumbXInside();
+		sY		= GetRThumbYInside();
+		sXOld	= GetRThumbXInside( bOLD );
+		sYOld	= GetRThumbYInside( bOLD );
+	}
+
+	switch( _padKey )
+	{
+	case XINPUT_RIGHT://.
+		if( sX >= sPUSH && sXOld < sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_DOWN:
+		if( sY <= -sPUSH && sYOld > -sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_LEFT:
+		if( sX <= -sPUSH && sXOld > -sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_UP:
+		if( sY >= sPUSH && sYOld < sPUSH ){
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
+bool clsXInput::isSlopeStay ( const WORD _padKey, const bool isLeft ) const
+{
+	const SHORT sPUSH = static_cast<SHORT>( XINPUT_THUMB_MAX * ( 0.9f / 1.0f ) );
+	SHORT sX, sY;
+
+	if( isLeft ){
+		sX = GetLThumbXInside();
+		sY = GetLThumbYInside();
+	}
+	else{
+		sX = GetRThumbXInside();
+		sY = GetRThumbYInside();
+	}
+
+	switch( _padKey )
+	{
+	case XINPUT_RIGHT://.
+		if( sX >= sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_DOWN:
+		if( sY <= -sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_LEFT:
+		if( sX <= -sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_UP:
+		if( sY >= sPUSH ){
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
+bool clsXInput::isSlopeExit ( const WORD _padKey, const bool isLeft ) const
+{
+	const SHORT sPUSH = static_cast<SHORT>( XINPUT_THUMB_MAX * ( 0.9f / 1.0f ) );
+	const bool bOLD = true;
+	SHORT sX, sY, sXOld, sYOld;
+
+	if( isLeft ){
+		sX		= GetLThumbXInside();
+		sY		= GetLThumbYInside();
+		sXOld	= GetLThumbXInside( bOLD );
+		sYOld	= GetLThumbYInside( bOLD );
+	}
+	else{
+		sX		= GetRThumbXInside();
+		sY		= GetRThumbYInside();
+		sXOld	= GetRThumbXInside( bOLD );
+		sYOld	= GetRThumbYInside( bOLD );
+	}
+
+	switch( _padKey )
+	{
+	case XINPUT_RIGHT://.
+		if( sX < sPUSH && sXOld >= sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_DOWN:
+		if( sY > -sPUSH && sYOld <= -sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_LEFT:
+		if( sX > -sPUSH && sXOld <= -sPUSH ){
+			return true;
+		}
+		break;
+	case XINPUT_UP:
+		if( sY < sPUSH && sYOld >= sPUSH ){
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
 
 //左スティックの角度.
 float clsXInput::GetLStickTheta() const
@@ -370,24 +507,44 @@ BYTE clsXInput::GetRTriggerInside() const
 	return Return;
 }
 //スティック入力( GetStickSlope()とGetStickTheta()の為 ).
-SHORT clsXInput::GetLThumbXInside() const 
+SHORT clsXInput::GetLThumbXInside( const bool isOld ) const 
 {
 	SHORT Return =  m_state.Gamepad.sThumbLX;
+
+	if( isOld ){
+		Return = m_stateOld.Gamepad.sThumbLX;
+	}
+
 	return Return;
 }
-SHORT clsXInput::GetLThumbYInside() const 
+SHORT clsXInput::GetLThumbYInside( const bool isOld ) const 
 {
 	SHORT Return =  m_state.Gamepad.sThumbLY;
+
+	if( isOld ){
+		Return = m_stateOld.Gamepad.sThumbLY;
+	}
+
 	return Return;
 }
-SHORT clsXInput::GetRThumbXInside() const 
+SHORT clsXInput::GetRThumbXInside( const bool isOld ) const 
 {
 	SHORT Return =  m_state.Gamepad.sThumbRX;
+
+	if( isOld ){
+		Return = m_stateOld.Gamepad.sThumbRX;
+	}
+
 	return Return;
 }
-SHORT clsXInput::GetRThumbYInside() const 
+SHORT clsXInput::GetRThumbYInside( const bool isOld ) const 
 {
 	SHORT Return =  m_state.Gamepad.sThumbRY;
+
+	if( isOld ){
+		Return = m_stateOld.Gamepad.sThumbRY;
+	}
+
 	return Return;
 }
 

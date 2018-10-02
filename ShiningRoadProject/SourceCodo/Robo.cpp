@@ -14,6 +14,30 @@ void clsRobo::RoboInit(
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
+	pRobo->GetRoboState(clsROBO_STATUS::HP);
+	pRobo->GetRoboState(clsROBO_STATUS::WALK_SPD);
+	pRobo->GetRoboState(clsROBO_STATUS::STABILITY);
+	pRobo->GetRoboState(clsROBO_STATUS::TURN);
+	pRobo->GetRoboState(clsROBO_STATUS::JUMP_POWER);
+	pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
+	pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT);
+	pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_H);
+	pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
+	pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_V);
+	pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_V);
+	pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME);
+	pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
+	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_SPEED);
+	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
+	pRobo->GetRoboState(clsROBO_STATUS::AIMING);
+	pRobo->GetRoboState(clsROBO_STATUS::QUICK_THRUST);
+	pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);
+	pRobo->GetRoboState(clsROBO_STATUS::QUICK_TIME);
+	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_LEG);
+	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_CORE);
+	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_HEAD);
+	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_ARMS);
+	
 	m_pMesh = new clsMISSION_MODEL;
 
 	m_pMesh->Create(m_wpResource, pRobo);
@@ -27,7 +51,7 @@ void clsRobo::RoboInit(
 	m_iBoostTopSpeedFrame = 60;
 
 	m_fQuickBoostSpeedMax = m_fBoostMoveSpeedMax * 3.0f;
-	m_iQuickBoostTopSpeedTime = 1 * g_fFPS;
+	m_iQuickBoostTopSpeedTime = 1 * static_cast<int>(g_fFPS);
 
 	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
 	m_iQuickTrunTopSpeedTime = 15;
@@ -46,13 +70,13 @@ void clsRobo::RoboInit(
 
 	m_iEnelgyMax = 10000;
 	m_iEnelgy = m_iEnelgyMax;
-	m_iEnelgyOutput = 1500 / g_fFPS;
+	m_iEnelgyOutput = 1500 / static_cast<int>(g_fFPS);
 	m_iBoostFloatRecovery = m_iEnelgyOutput / 2;
 
 	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
 
-	m_iActivityLimitTime = 300 * g_fFPS;
+	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
 
 	m_MaxHP = 5000;
 	m_HP = m_MaxHP;
@@ -63,22 +87,24 @@ void clsRobo::RoboInit(
 	{
 		//float型はintで入ってきたステータスにあれこれして計算する.
 
-		WS[i].iAtk = 5;
-		WS[i].iBulletNumMax = 10;
-		WS[i].iLockSpeed = 10;
-		WS[i].iShotEN = 0;
-		WS[i].iReloadTime = 20;
-		WS[i].iStablity = 0;
-		WS[i].MagazineReloadTime = 10;
+		clsROBO_STATUS::enWEAPON_NUM ucEquipWeaponNum = static_cast<clsROBO_STATUS::enWEAPON_NUM>(i);
 
-		WS[i].BState.fRangeMax = 1.5f;
-		WS[i].BState.fScale = 0.5f;
-		WS[i].BState.fSpeed = 1.0F;
-		WS[i].BState.iHitEfcNum = 0;
-		WS[i].BState.iLineEfcNum = 3;
-		WS[i].BState.iSEHitNum = 0;
-		WS[i].BState.iSEShotNum = 0;
-		WS[i].BState.iShotEfcNum = 0;
+		WS[i].iAtk = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::ATK);
+		WS[i].iBulletNumMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::BULLETS_NUM);
+		WS[i].BState.fSpeed = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::BULLET_SPD);
+		WS[i].BState.fScale = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::COL_SIZE);
+		WS[i].iShotEN = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::COST);
+		WS[i].BState.iShotEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_BULLET);
+		pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_CARTRIDGE);
+		WS[i].BState.iHitEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_HIT);
+		WS[i].BState.iLineEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_LOCUS);
+		WS[i].iReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOAD_TIME);
+		WS[i].iLockSpeed = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOCK_ON_TIME);
+		WS[i].MagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
+		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE);
+		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
+		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
+		WS[i].iStablity = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SHOT_STABILITY);
 	}
 
 	WeaponInit(pPtrGroup, WS, enWeaponTypeSize);
@@ -86,9 +112,9 @@ void clsRobo::RoboInit(
 	SetBoostEffect();
 
 	m_fLockRange = 500.0f;//ロックオン距離.
-	m_fLockCircleRadius = 50.0f;//ロックオン判定の半径.
-	
-	
+	m_fLockCircleRadius = 500.0f;//ロックオン判定の半径.
+
+	m_pViewPort = pPtrGroup->GetViewPort10();
 }
 
 void clsRobo::Walk()
@@ -223,8 +249,11 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
+	
+
 	PlayBoostEfc();
 	CharactorUpdate();
+	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
 
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
@@ -324,7 +353,7 @@ void clsRobo::SetEnelgyRecoveryAmount()
 
 	if (false)//射撃準備完了.
 	{
-		m_iEnelgyRecoveryPoint - (m_iEnelgyOutput);
+		m_iEnelgyRecoveryPoint -= (m_iEnelgyOutput);
 	}
 }
 
@@ -405,6 +434,8 @@ void clsRobo::SetBoostEffect()
 	SetLHandSideBoostEffect();
 	SetLHandBackBoostEffect();
 
+	SetCoreBoostEffect();
+
 	SetLegBoostEffect();
 }
 
@@ -418,7 +449,7 @@ void clsRobo::SetRHandFrontBoostEffect()
 
 	m_v_RHandFrontBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
 	{
 		m_v_RHandFrontBoostEfc[i] = 0;
 	}
@@ -434,7 +465,7 @@ void clsRobo::SetRHandSideBoostEffect()
 
 	m_v_RHandSideBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
 	{
 		m_v_RHandSideBoostEfc[i] = 0;
 	}
@@ -450,7 +481,7 @@ void clsRobo::SetRHandBackBoostEffect()
 
 	m_v_RHandBackBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 	{
 		m_v_RHandBackBoostEfc[i] = 0;
 	}
@@ -466,7 +497,7 @@ void clsRobo::SetLHandFrontBoostEffect()
 
 	m_v_LHandFrontBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
 	{
 		m_v_LHandFrontBoostEfc[i] = 0;
 	}
@@ -482,7 +513,7 @@ void clsRobo::SetLHandSideBoostEffect()
 
 	m_v_LHandSideBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
 	{
 		m_v_LHandSideBoostEfc[i] = 0;
 	}
@@ -498,9 +529,25 @@ void clsRobo::SetLHandBackBoostEffect()
 
 	m_v_LHandBackBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 	{
 		m_v_LHandBackBoostEfc[i] = 0;
+	}
+}
+
+void clsRobo::SetCoreBoostEffect()
+{
+	enPARTS PartsNum = enPARTS::CORE;
+
+	std::string strBoostRootBoneName = "Booster";
+
+	int iEfcNum = GetBoostEfcNum(PartsNum, strBoostRootBoneName.c_str());
+
+	m_v_CoreBoostEfc.resize(iEfcNum);
+
+	for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+	{
+		m_v_CoreBoostEfc[i] = 0;
 	}
 }
 
@@ -514,7 +561,7 @@ void clsRobo::SetLegBoostEffect()
 
 	m_v_LegBoostEfc.resize(iEfcNum);
 
-	for (int i = 0; i < m_v_LegBoostEfc.size(); i++)
+	for (unsigned int i = 0; i < m_v_LegBoostEfc.size(); i++)
 	{
 		m_v_LegBoostEfc[i] = 0;
 	}
@@ -545,6 +592,26 @@ int clsRobo::GetBoostEfcNum(enPARTS PartsNum, const char* strBoostPosition)
 	return iResult;
 }
 
+bool clsRobo::IsLWeaponLock()
+{
+	if (m_v_pWeapons[enWeaponLHand]->IsLock())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool clsRobo::IsRWeaponLock()
+{
+	if (m_v_pWeapons[enWeaponRHand]->IsLock())
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void clsRobo::PlayBoostEfc()
 {
 	m_vMoveDirforBoost = GetVec3Dir(-m_Trans.fYaw, m_vAcceleDir);
@@ -572,7 +639,7 @@ void clsRobo::PlayFrontBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -597,7 +664,7 @@ void clsRobo::PlayFrontBoostEfc()
 			m_wpEffects->SetRotation(m_v_LHandFrontBoostEfc[i], vPosRotTmp);
 		}
 
-		for (int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -625,7 +692,7 @@ void clsRobo::PlayFrontBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LHandFrontBoostEfc[i]))
 			{
@@ -633,7 +700,7 @@ void clsRobo::PlayFrontBoostEfc()
 			}
 		}
 
-		for (int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_RHandFrontBoostEfc[i]))
 			{
@@ -657,7 +724,7 @@ void clsRobo::PlayRightBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -686,7 +753,7 @@ void clsRobo::PlayRightBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_RHandSideBoostEfc[i]))
 			{
@@ -710,7 +777,7 @@ void clsRobo::PlayLeftBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -739,7 +806,7 @@ void clsRobo::PlayLeftBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LHandSideBoostEfc[i]))
 			{
@@ -763,7 +830,7 @@ void clsRobo::PlayBackBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -789,7 +856,7 @@ void clsRobo::PlayBackBoostEfc()
 			m_wpEffects->SetRotation(m_v_LHandBackBoostEfc[i], vPosRotTmp);
 		}
 
-		for (int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -813,11 +880,40 @@ void clsRobo::PlayBackBoostEfc()
 			}
 			m_wpEffects->SetRotation(m_v_RHandBackBoostEfc[i], vPosRotTmp);
 		}
+
+		strBoostRootName = "BoosterRoot";
+		strBoostEndName = "BoosterEnd";
+
+		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+		{
+			//付け根の名前を生成.
+			strBoostRootNameTmp = strBoostRootName;
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+
+			strBoostEndNameTmp = strBoostEndName;
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+
+			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::CORE, strBoostRootName.c_str(), strBoostEndName.c_str());
+
+			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::CORE, strBoostEndNameTmp.c_str());
+			if (!m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
+			{
+				m_v_CoreBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+			}
+
+			else
+			{
+				m_wpEffects->SetPosition(m_v_CoreBoostEfc[i], vPosEndTmp);
+			}
+			m_wpEffects->SetRotation(m_v_CoreBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetScale(m_v_CoreBoostEfc[i], 2.0f);
+
+		}
 	}
 
 	else
 	{
-		for (int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LHandBackBoostEfc[i]))
 			{
@@ -825,11 +921,19 @@ void clsRobo::PlayBackBoostEfc()
 			}
 		}
 
-		for (int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_RHandBackBoostEfc[i]))
 			{
 				m_wpEffects->Stop(m_v_RHandBackBoostEfc[i]);
+			}
+		}
+
+		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+		{
+			if (m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
+			{
+				m_wpEffects->Stop(m_v_CoreBoostEfc[i]);
 			}
 		}
 	}
@@ -849,7 +953,7 @@ void clsRobo::PlayLegBoostEfc()
 		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
-		for (int i = 0; i < m_v_LegBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LegBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
@@ -878,7 +982,7 @@ void clsRobo::PlayLegBoostEfc()
 
 	else
 	{
-		for (int i = 0; i < m_v_LegBoostEfc.size(); i++)
+		for (unsigned int i = 0; i < m_v_LegBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LegBoostEfc[i]))
 			{

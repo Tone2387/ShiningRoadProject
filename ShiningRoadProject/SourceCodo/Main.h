@@ -126,9 +126,6 @@ private:
 	ID3D11Texture2D*		m_pBackBuffer_DSTex;//バックバッファ.
 	ID3D11DepthStencilView*	m_pBackBuffer_DSTexDSV;//デプスステンシルビュー.
 
-	//深度(Z)テスト設定.
-	ID3D11DepthStencilState* m_spDepthStencilState;
-
 
 	//シーンクラスにて使用する関数に必要.
 	//ConvDimPosの事前準備.

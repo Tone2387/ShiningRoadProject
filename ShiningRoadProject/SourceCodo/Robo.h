@@ -50,7 +50,7 @@ public:
 		m_pMesh->SetPos(vTmp);
 
 		vTmp = GetRotation();
-		vTmp.y += D3DX_PI;
+		vTmp.y += static_cast<float>(D3DX_PI);
 
 		ObjRollOverGuard(&vTmp.y);
 
@@ -68,6 +68,7 @@ public:
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye) override
 	{
+		m_mProj = mProj;
 		ModelUpdate();
 		m_pMesh->Render(mView, mProj, vLight, vEye);
 		UpdatePosfromBone();
@@ -133,6 +134,8 @@ public:
 
 	void ShotLWeapon();
 	void ShotRWeapon();
+	bool IsLWeaponLock();
+	bool IsRWeaponLock();
 
 	void Updata();
 	void UpdataQuick();
@@ -157,6 +160,9 @@ private:
 	std::vector<::Effekseer::Handle> m_v_LHandSideBoostEfc;
 	std::vector<::Effekseer::Handle> m_v_LHandBackBoostEfc;
 
+	//コアブースターエフェクト.
+	std::vector<::Effekseer::Handle> m_v_CoreBoostEfc;
+
 	//脚ブースターエフェクト.
 	std::vector<::Effekseer::Handle> m_v_LegBoostEfc;
 
@@ -170,6 +176,8 @@ private:
 	void SetLHandSideBoostEffect();
 	void SetLHandBackBoostEffect();
 
+	void SetCoreBoostEffect();
+
 	void SetLegBoostEffect();
 
 	void PlayBoostEfc();
@@ -178,6 +186,8 @@ private:
 	void PlayRightBoostEfc();
 	void PlayLeftBoostEfc();
 	void PlayBackBoostEfc();
+
+	void PlayCoreBoostEfc();
 
 	void PlayLegBoostEfc();
 
@@ -191,10 +201,10 @@ private:
 	clsSOUND_MANAGER_BASE*	m_wpSound;
 
 	//当たり判定のポインタ.
-	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
+//	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
 
 	//ロボモデル.
-	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
+//	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
 
 #endif//#ifdef Tahara
 

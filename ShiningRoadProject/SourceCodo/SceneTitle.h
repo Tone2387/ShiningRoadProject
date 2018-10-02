@@ -7,6 +7,8 @@
 #include "AssembleModel.h"
 
 
+class clsWINDOW_BOX;
+
 //================================//
 //========== タイトルクラス ==========//
 //================================//
@@ -36,9 +38,36 @@ private:
 	//背景.
 	std::unique_ptr< clsCharaStatic > m_upBack;
 
-	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
+	std::unique_ptr< clsSprite2D > m_upLogo;
+
+	std::unique_ptr< clsSprite2D > m_upFlash;
+
+
+
+	std::unique_ptr< clsUiText >	m_upPlessStart;
+	bool							m_isDispPlessStart;
+
+	//メッセボックス.
+	std::unique_ptr< clsWINDOW_BOX > m_upBox;
+
 
 	//テスト用エフェクト.
 	::Effekseer::Handle m_ehHibana;
+
+	//音の引数.
+	enum enBGM : int
+	{
+		enBGM_MAOU1 = 0,
+		enBGM_MAOU3,
+	};
+
+	enum enSE : int
+	{
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+		enSE_BOMBER,
+		enSE_GUITAR
+	};
 
 };

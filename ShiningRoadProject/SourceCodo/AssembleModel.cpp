@@ -36,7 +36,8 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
 	,m_upPartsFactory( nullptr )
 	,m_vpParts()
-	,m_dAnimSpd( 0.0 )
+	,m_dAnimSpd( 1.0 )
+	,m_enPartsNum()
 {
 	m_dAnimSpd = dANIM_SPD;
 }
@@ -63,7 +64,7 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 
 
 
-void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus )
+void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene )
 {
 	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
@@ -73,12 +74,15 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 
 	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
-	m_vpParts.reserve( ucPARTS_MAX );
+	m_vpParts.resize( ucPARTS_MAX, nullptr );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_vpParts.push_back( nullptr );
 		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
+	//最後にクリアした状態にする.
+	if( isTitleScene ){
+		pStatus->LodeHeroData();
+	}
 	Init( pStatus );
 
 	CreateProduct();
@@ -125,9 +129,7 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const enPARTS_TYPES AlphaParts/*,
-	const D3DXVECTOR4& vColor,
-	const bool isAlpha*/ )
+	const enPARTS_TYPES AlphaParts )
 {
 	D3DXVECTOR4 vTmpColor;
 
@@ -208,6 +210,22 @@ void clsASSEMBLE_MODEL::AttachModel(
 	tmpName = OprtStr.ConsolidatedNumber( tmpName, PartsNum );	//そのパーツの何番?.
 	m_vpParts[ucParts]->SetPartsName( tmpName );				//名前教える.
 //	AnimReSet();
+
+
+	//GetPartsNum関数用.
+	int iIndex = static_cast<int>( enParts );
+	if( enParts == enPARTS::ARM_L ||
+		enParts == enPARTS::ARM_R )
+	{
+		iIndex = enPARTS_TYPES::ARMS;
+	}
+	else if( enParts == enPARTS::WEAPON_L ){
+		iIndex = enPARTS_TYPES::WEAPON_L;
+	}
+	else if( enParts == enPARTS::WEAPON_R ){
+		iIndex = enPARTS_TYPES::WEAPON_R;
+	}
+	m_enPartsNum[ iIndex ] = static_cast< enPARTS_TYPES >( PartsNum );
 }
 
 
@@ -304,6 +322,11 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 	}
 }
 
+
+int clsASSEMBLE_MODEL::GetPartsNum( const enPARTS_TYPES enPartsType )
+{
+	return m_enPartsNum[ enPartsType ];
+}
 
 
 //パーツのアニメーション変更.

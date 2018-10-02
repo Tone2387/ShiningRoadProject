@@ -173,13 +173,13 @@ HRESULT clsObject::FindVecticesOnPoly(
 //回転値調整.
 void ObjRollOverGuard(float* fRot)
 {
-	if (*fRot > D3DX_PI * 2.0f)
+	if (*fRot >static_cast<float>(D3DX_PI) * 2.0f)
 	{
 		//1周以上している.
-		*fRot -= D3DX_PI * 2.0f;//2π(360°)分を引く.
+		*fRot -= static_cast<float>(D3DX_PI) * 2.0f;//2π(360°)分を引く.
 
 		//再帰関数.
-		if (*fRot > D3DX_PI*2.0f)
+		if (*fRot > static_cast<float>(D3DX_PI)*2.0f)
 		{
 			ObjRollOverGuard(fRot);
 		}
@@ -188,7 +188,6 @@ void ObjRollOverGuard(float* fRot)
 
 bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3DXVECTOR3 vRayDir)
 {
-	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
 	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
@@ -210,7 +209,6 @@ bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3
 }
 bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 {
-	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
 	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
@@ -288,7 +286,6 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 
 bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 {
-	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
 	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
@@ -365,7 +362,6 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 
 bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 {
-	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
 	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
@@ -443,7 +439,6 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 
 bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 {
-	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis, fYaw;//距離と回転.
 	float fRaySpece = g_fRaySpace + m_fMoveSpeed;
@@ -520,7 +515,6 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 
 bool clsObject::WallUp(const clsDX9Mesh* pWall)
 {
-	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
 	float fRaySpece = g_fRaySpace + m_fFollPower;
@@ -548,7 +542,6 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 {
-	FLOAT fDistance;//距離.
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
 	float fRaySpece = g_fRaySpace - m_fFollPower;
@@ -593,9 +586,9 @@ bool clsObject::Collision(SPHERE pAttacker, SPHERE pTarget)
 
 bool clsObject::ObjectCollision(std::vector<SPHERE> pTarget)
 {
-	for (int i = 0; i < m_v_Spheres.size(); i++)
+	for (unsigned int i = 0; i < m_v_Spheres.size(); i++)
 	{
-		for (int j = 0; j < pTarget.size(); j++)
+		for (unsigned int j = 0; j < pTarget.size(); j++)
 		{
 			if (Collision(m_v_Spheres[i], pTarget[j]))
 			{
@@ -630,7 +623,7 @@ bool clsObject::WallJudge(clsStage* const pStage)
 
 	bool bResult = false;
 
-	for (int i = 0; i < vvpMeshTmp.size(); i++)
+	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{
 		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
 
@@ -696,7 +689,7 @@ m_NoFollObj(false)
 	m_Trans.fRoll = 0.0f;
 
 	m_Trans.vPos = { 0.0f, 0.0f, 0.0f };
-	m_Trans.vScale = { 0.0f, 0.0f, 0.0f };
+	m_Trans.vScale = { 1.0f, 1.0f, 1.0f };
 };
 
 clsObject::~clsObject(){};

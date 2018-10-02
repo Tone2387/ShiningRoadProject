@@ -16,7 +16,7 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 {
 	m_pTarget = nullptr;
 
-	for (int i = 0; i < v_pEnemys.size(); i++)
+	for (unsigned int i = 0; i < v_pEnemys.size(); i++)
 	{
 		if (!v_pEnemys[i]->m_bDeadFlg)
 		{
@@ -208,9 +208,17 @@ bool clsEnemyBase::SetLook(float& fPush, float& fAngle)
 		const int iDirQuar = 90;
 		const int iDirOneEighth = 45;
 
+		const float fVecX = m_pTarget->GetPosition().x - m_pChara->GetPosition().x;
+		const float fVecZ = m_pTarget->GetPosition().z - m_pChara->GetPosition().z;
+
 		const float fVecY = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 
-		float fRot = (atanf(fVecY)) - m_pChara->m_fLookUpDir;
+		float fVecXZ = abs(fVecX) + abs(fVecZ);
+
+		//static_cast<float>D3DXToRadian(89);
+		float fRot = atan2f(fVecY, fVecXZ);
+
+		fRot = fRot - m_pChara->m_fLookUpDir;
 
 		ObjRollOverGuard(&fRot);
 

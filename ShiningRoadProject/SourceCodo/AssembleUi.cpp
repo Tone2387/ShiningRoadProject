@@ -1,4 +1,5 @@
 #include "AssembleUi.h"
+#include "WindowBox.h"
 
 #include "OperationString.h"
 //#include <string>
@@ -36,16 +37,6 @@ const char* sPATH_SELECT_PARTS_TYPE = "Data\\Image\\AssembleUi\\SelectPartsType.
 const float fALPHA_SELECT_PARTS_TYPE = 0.5f;
 
 
-//----- 出撃ボタン -----//.
-const char* sPATH_MISSION_START_BUTTON = "Data\\Image\\AssembleUi\\MissionStart.png";
-const WHSIZE_FLOAT SIZE_MISSION_START_BUTTON = { 120.0f, 80.0f };
-const D3DXVECTOR3 vINIT_POS_MISSION_START_BUTTON = 
-	{ vINIT_POS_PARTS_TYPE.x + fOFFSET_POS_X_PARTS_TYPE * cPARTS_TYPE_NUM, //700.75f.<=760.0f
-	vINIT_POS_PARTS_TYPE.y,
-	0.0f };
-
-
-//----- 出撃ボタン 終わり -----//.
 
 
 
@@ -142,7 +133,12 @@ const D3DXVECTOR2 vTEXT_POS_STATUS = {
 //値文字の座標.
 const D3DXVECTOR2 vTEXT_POS_STATUS_NUM = 
 	{ vTEXT_POS_STATUS.x + INIT_SIZE_STATUS_WINDOW.w - 12.0f, vTEXT_POS_STATUS.y };
+//ビフォアをどれくらい左にずらすか.
+const float fTEXT_POS_YX_OFFSET_STATUS_NOW = -64.0f;
+//今のステータスとみているパーツの間に挟むもの.
+const string sSTATUS_TEXT_MIDWAY = "     >>";
 //----- ステータスウィンドウ終わり -----//.
+
 
 
 
@@ -193,14 +189,54 @@ const string sSTATUS_NAME_WEAPON[] =
 	{ "Attack Power", "Bullet Speed", "Bullet Range", "EN Cost", "Load Time", "Lock on Time", "Stability of Shooting", "Magazine Load Time", "Bullets Num" };
 
 
+//ステータスの色.
+const bool bRED_BIG_LEG[] =
+	{ true, true, true, true, true };		
+const bool bRED_BIG_CORE[] =
+	{ true, true, true, true, false, true, false, true };			
+const bool bRED_BIG_HEAD[] =
+	{ true, true, true, true };			
+const bool bRED_BIG_ARMS[] =
+	{ true, true, true, false, true };			
+const bool bRED_BIG_WEAPON[] =
+	{ true, true, true, false, false, false, true, false, true };
+//集合体.
+const bool* bRED_BIG[] =
+	{ bRED_BIG_LEG, bRED_BIG_CORE, bRED_BIG_HEAD, bRED_BIG_ARMS, bRED_BIG_WEAPON, bRED_BIG_WEAPON };
+
+
 //日本語UI.
 //シーンですでに作っている.
 //const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
 //パーツ、ステータス説明.
 const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
 const float fFONT_COMMENT_SCALE = 16.0f;
-const int iFONT_COMMENT_LINE = 1;
-const int iFONT_COMMENT_TEXT_SIZE = 128;
+//パーツ説明以外の行数.
+const int iFONT_COMMENT_LINE = 3;
+
+//ボタン.
+const char* sPATH_BUTONS = "Data\\Image\\Buttons.png";
+const float INIT_DISP_BUTTON_SPRITE = 32.0f;
+const WHSIZE_FLOAT INIT_ANIM_BUTTON_SPRITE = { 5.0f, 1.0f };
+const int iBUTTON_SPRITE_NUM = 5;
+const float fBUTTON_SPRITE_POS_Y = 32.0f;
+const D3DXVECTOR3 vBUTTON_SPRITE_POS[ iBUTTON_SPRITE_NUM ] =
+{
+	{ 620.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 695.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 770.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 950.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+	{ 1110.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+};
+const POINTFLOAT vBUTTON_SPRITE_ANIM[ iBUTTON_SPRITE_NUM ] =
+{
+	{ 4.0f, 0.0f },
+	{ 1.0f, 0.0f },
+	{ 3.0f, 0.0f },
+	{ 2.0f, 0.0f },
+	{ 0.0f, 0.0f },
+};
+
 
 
 clsASSEMBLE_UI::clsASSEMBLE_UI( clsFont* const pFont )
@@ -299,11 +335,10 @@ void clsASSEMBLE_UI::Create(
 
 	//パーツ項目初期化.
 	assert( m_vupPartsType.size() == 0 );
-	m_vupPartsType.reserve( enPARTS_TYPE_SIZE );
 	SPRITE_STATE ss;
 	ss.Disp = PARTS_TYPE_SIZE;
-	for( unsigned int i=0; i<enPARTS_TYPE_SIZE; i++ ){
-		m_vupPartsType.push_back( nullptr );
+	m_vupPartsType.resize( enPARTS_TYPE_SIZE );
+	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
 		m_vupPartsType[i] = make_unique< clsSprite2D >();
 
 		tmpString = sPATH_PARTS_TYPE + sPATH_PARTS_TYPE_CHILDREN[i];
@@ -322,12 +357,11 @@ void clsASSEMBLE_UI::Create(
 	//各パーツUI.
 	clsOPERATION_STRING OprtStr;
 	ss.Disp = PARTS_ICON_SIZE;
-	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
+	for( int i=0; i<enPARTS_TYPE_SIZE; i++ )
+	{
 		assert( m_vupPartsIcon[i].size() == 0 );
-		m_vupPartsIcon[i].reserve( data[i] );
-
+		m_vupPartsIcon[i].resize( data[i] );
 		for( int j=0; j<data[i]; j++ ){
-			m_vupPartsIcon[i].push_back( nullptr );
 			m_vupPartsIcon[i][j] = make_unique< clsSprite2D >();
 
 			tmpString = sPATH_PARTS_ICON_ROOT + sPATH_PARTS_ICON_PARTS[i] + "\\" + sPATH_PARTS_ICON_PARTS[i];
@@ -365,13 +399,6 @@ void clsASSEMBLE_UI::Create(
 	m_upRoboWindow->Create( pDevice, pContext, sROBO_WINDOW_PATH, ss );
 	m_upRoboWindow->SetPos( INIT_POS_ROBO_WINDOW );
 	m_upRoboWindow->SetAlpha( fROBO_WINDOW_ALPHA );
-
-	//出撃ボタン.
-	assert( !m_upMissionStart );
-	ss.Disp = SIZE_MISSION_START_BUTTON;
-	m_upMissionStart = make_unique< clsSprite2D >();
-	m_upMissionStart->Create( pDevice, pContext, sPATH_MISSION_START_BUTTON, ss );
-	m_upMissionStart->SetPos( vINIT_POS_MISSION_START_BUTTON );
 
 	//ヘッダー.
 	assert( !m_upHeader );
@@ -417,37 +444,35 @@ void clsASSEMBLE_UI::Create(
 	assert( !m_vupStatusText.size() );
 	m_vupStatusText.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-//		m_vupStatusText.push_back( nullptr );
 		m_vupStatusText[i] = make_unique< clsUiText >();
 		m_vupStatusText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
 		m_vupStatusText[i]->SetPos( vTEXT_POS_STATUS );
 		m_vupStatusText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-//		m_vupStatusText[i]->SetText( "Magazine Load Time" );
 	}
 	m_vupStatusText.shrink_to_fit();
 
 	//ステータス値.
 	assert( !m_vupStatusNumText.size() );
-	m_vupStatusNumText.reserve( iSTATUS_NUM_MAX );
+	assert( !m_vupStatusNumTextNow.size() );
 	m_vupStatusNumText.resize( iSTATUS_NUM_MAX );
+	m_vupStatusNumTextNow.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-//		m_vupStatusNumText.push_back( nullptr );
 		m_vupStatusNumText[i] = make_unique< clsUiText >();
 		m_vupStatusNumText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
 		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
 		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-//		m_vupStatusNumText[i]->SetText( "12345 >> 12345" );
+
+		m_vupStatusNumTextNow[i] = make_unique< clsUiText >();
+		m_vupStatusNumTextNow[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
+		m_vupStatusNumTextNow[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vupStatusNumTextNow[i]->AddPos( { fTEXT_POS_YX_OFFSET_STATUS_NOW, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
 	}
-	m_vupStatusNumText.shrink_to_fit();
 
 	//パーツ名.
 	assert( !m_upPartsNameText );
 	m_upPartsNameText = make_unique< clsUiText >();
 	m_upPartsNameText->Create( pContext, WND_W, WND_H, TEXT_SCALE_PARTS_NAME );
 	m_upPartsNameText->SetPos( vTEXT_POS_PARTS_NAME );
-//	m_upPartsNameText->SetText( "PARTS_NAME" );
-
-
 
 #if _DEBUG
 	ss.Disp = { WND_W, WND_H };
@@ -456,6 +481,17 @@ void clsASSEMBLE_UI::Create(
 	m_upDegine->SetPos( vINIT_POS_DESIGN );
 	m_upDegine->SetAlpha( 0.5f );
 #endif//#if _DEBUG
+
+
+
+
+	//ボタン.
+	assert( !m_upButton );
+	ss.Disp = { INIT_DISP_BUTTON_SPRITE, INIT_DISP_BUTTON_SPRITE };
+	ss.Anim = INIT_ANIM_BUTTON_SPRITE;
+	m_upButton = make_unique< clsSprite2D >();
+	m_upButton->Create( pDevice, pContext, sPATH_BUTONS, ss );
+
 }
 
 
@@ -489,6 +525,7 @@ void clsASSEMBLE_UI::Input(
 void clsASSEMBLE_UI::Update( 
 	enSELECT_MODE enSelect,
 	shared_ptr< clsFILE > const spFile, 
+	clsASSEMBLE_MODEL* const pModel,
 	const int iPartsType,
 	const int iPartsNum,
 	const int iStatusCutNum )
@@ -524,6 +561,9 @@ void clsASSEMBLE_UI::Update(
 		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
 		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
 		m_vupStatusNumText[i]->AddPos( { 0.0f, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
+		m_vupStatusNumTextNow[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vupStatusNumTextNow[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vupStatusNumTextNow[i]->AddPos( { fTEXT_POS_YX_OFFSET_STATUS_NOW, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
 	}
 	
 	//ステータスの数の差によるずれを修正.
@@ -557,9 +597,29 @@ void clsASSEMBLE_UI::Update(
 		//ステータス名セット.
 		assert( m_vupStatusText[i] );
 		m_vupStatusText[i]->SetText( m_vsStatusNameBox[ iPartsType ][i].c_str() );
+
+		//色替えの為.
+		int iBefor, iAfter;
+		iBefor = spFile->GetDataInt( 
+			pModel->GetPartsNum( static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( iPartsType ) ),
+			i + iStatusCutNum );
+		iAfter = spFile->GetDataInt( iPartsNum, i + iStatusCutNum );
+		D3DXVECTOR4 vColor = GetStatusColor( iBefor, iAfter,iPartsType, i );
+
 		//ステータス数値セット.
 		assert( m_vupStatusNumText[i] );
-		m_vupStatusNumText[i]->SetText( spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
+		m_vupStatusNumText[i]->SetText( 
+			spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
+		m_vupStatusNumText[i]->SetColor( vColor );
+		//今のステータス.
+		assert( m_vupStatusNumTextNow[i] );
+		string tmpString = 
+			spFile->GetDataString( 
+				pModel->GetPartsNum( static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( iPartsType ) ),
+				i + iStatusCutNum )
+			+ sSTATUS_TEXT_MIDWAY;
+		m_vupStatusNumTextNow[i]->SetText( tmpString.c_str() );
+//		m_vupStatusNumTextNow[i]->SetColor( vColor );
 	}
 
 	//日本語説明文を調整.
@@ -602,13 +662,15 @@ void clsASSEMBLE_UI::Render(
 	m_upRoboWindow->Render();
 
 
-	assert( m_upMissionStart );
-	m_upMissionStart->Render();
-
 	assert( m_upHeaderText );
 	m_upHeaderText->Render();
 
-
+	assert( m_upButton );
+	for( int i=0; i<iBUTTON_SPRITE_NUM; i++ ){
+		m_upButton->SetPos( vBUTTON_SPRITE_POS[i] );
+		m_upButton->SetAnim( vBUTTON_SPRITE_ANIM[i] );
+		m_upButton->Render();
+	}
 
 	//パーツ選択中のみ描画.
 	if( enSelect == enSELECT_MODE::PARTS ||
@@ -651,7 +713,7 @@ void clsASSEMBLE_UI::RenderPartsState(
 		assert( m_wpFont );
 		m_wpFont->SetPos( vFONT_COMMENT_POS );
 		m_wpFont->SetScale( fFONT_COMMENT_SCALE );
-		m_wpFont->Render( m_iReadLinePartsComment, iFONT_COMMENT_TEXT_SIZE );
+		m_wpFont->Render( m_iReadLinePartsComment );
 
 		//ステータスを表示しないなら飛ばす.
 		if( !m_isDispStatus ) return;
@@ -681,6 +743,8 @@ void clsASSEMBLE_UI::RenderPartsState(
 			m_vupStatusText[i]->Render();
 			assert( m_vupStatusNumText[i] );
 			m_vupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
+			assert( m_vupStatusNumTextNow[i] );
+			m_vupStatusNumTextNow[i]->Render( clsUiText::enPOS::RIGHT );
 		}
 
 
@@ -693,15 +757,14 @@ void clsASSEMBLE_UI::RenderPartsState(
 int clsASSEMBLE_UI::SetReadLinePartsComment(
 	const int iPartsType )	//パーツ種類.
 {
-	//ボタン説明文の分.
-	const int iOTHER_TEXT_LINE_MAX = 1;
+	//パーツ説明文の分.
 	const int iPARTS_TEXT_LINE_MAX = 6;
 
 	if( m_enSelectMode == enSELECT_MODE::PARTS ){
-		m_iReadLinePartsComment = iPartsType + iOTHER_TEXT_LINE_MAX; 
+		m_iReadLinePartsComment = iPartsType + iFONT_COMMENT_LINE; 
 	}
 	else if( m_enSelectMode == enSELECT_MODE::STATUS ){
-		m_iReadLinePartsComment = iOTHER_TEXT_LINE_MAX + iPARTS_TEXT_LINE_MAX; 
+		m_iReadLinePartsComment = iFONT_COMMENT_LINE + iPARTS_TEXT_LINE_MAX; 
 		
 		int iTmp = iPartsType;
 		if( iTmp >= iPARTS_TEXT_LINE_MAX - 1 ){
@@ -795,6 +858,38 @@ void clsASSEMBLE_UI::AddCommentNoForChangePartsType()
 {
 //	m_iStatusCommentNo += m_iStatusNum;
 	m_bStatusCommentOffset = true;
+}
+
+
+D3DXVECTOR4 clsASSEMBLE_UI::GetStatusColor( 
+	const int iBefore, const int iAfter,
+	const int iPartsType, const int iStatusNum )
+{
+	const D3DXVECTOR4 vRED		= { 1.0f, 0.5f, 0.5f, 1.0f };
+	const D3DXVECTOR4 vBLUE		= { 0.5f, 0.5f, 1.0f, 1.0f };
+	const D3DXVECTOR4 vWHITE	= { 1.0f, 1.0f, 1.0f, 1.0f };
+	bool isRed = false;
+
+	if( iBefore == iAfter ){
+		return vWHITE;
+	}
+	else if( iBefore > iAfter ){
+		isRed = false;
+	}
+	else if( iBefore < iAfter ){
+		isRed = true;
+	}
+	
+	bool tmp = bRED_BIG[ iPartsType ][ iStatusNum ];
+	if( !tmp ){
+		if( isRed ) isRed = false;
+		else		isRed = true;
+	}
+
+	if( isRed ){
+		return vRED;
+	}
+	return vBLUE;
 }
 
 
