@@ -29,6 +29,7 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	,m_isSpriteAlphaAppear( true )
 	,m_iIntervalCnt( 0 )
 	,m_isScroll( false )
+	,m_isCanGoTitle( false )
 {
 }
 
@@ -100,16 +101,15 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 	{
 		isAccel = true;
 	}
-	const float fACCEL_RATE = 5.0f;
+
+	const float fACCEL_RATE = 50.0f;
 	int iIntervalCnt = 1;
 	if( isAccel ){
 		iIntervalCnt *= static_cast<int>( fACCEL_RATE );
 	}
 
-
 	m_iIntervalCnt += iIntervalCnt;
 
-	bool isCanGoTitle = false;
 
 	if( m_iIntervalCnt >= iINTERVAL_CNT ){
 		const int iOFFSET_SCROLL = -1;
@@ -125,7 +125,6 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 		//終わり.
 		if( m_uiSpriteCnt == m_vupTextStateAlpha.size() ){
-			isCanGoTitle = true;
 		}
 		//スクロール.
 		else if( m_isScroll ){
@@ -154,8 +153,10 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 				//消す.
 				if( m_isSpriteAlphaAppear ){
 					m_isSpriteAlphaAppear = false;
+					//終われるようにする( サンキューの描画完了 ).
 					if( m_uiSpriteCnt == m_vupTextStateAlpha.size() + iOFFSET_END ){ 
 						m_isSpriteAlphaAppear = true;
+						m_isCanGoTitle = true;
 					}
 				}
 				//次へ.
@@ -165,6 +166,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 					//スクロールに行く.
 					if( m_uiSpriteCnt == m_iGoScrollIndex ){ 
 						m_isScroll = true;
+						m_iIntervalCnt = iINTERVAL_CNT;//消えてすぐにスクロールして欲しいから.
 					}
 				}
 			}
@@ -174,7 +176,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 
 	if( ( m_wpXInput->isPressEnter( XINPUT_START ) || GetAsyncKeyState( VK_RETURN ) & 0x1 ) ||
-		( ( m_wpXInput->isPressEnter( XINPUT_B ) ||	GetAsyncKeyState( VK_SPACE ) & 0x1 ) && isCanGoTitle ) )
+		( ( m_wpXInput->isPressEnter( XINPUT_B ) ||	GetAsyncKeyState( VK_SPACE ) & 0x1 ) && m_isCanGoTitle ) )
 	{
 		enNextScene = enSCENE::TITLE;
 		m_wpRoboStatus->SaveHeroData();

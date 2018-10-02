@@ -44,6 +44,8 @@ private:
 
 	int m_iGoScrollIndex;
 
+	bool m_isCanGoTitle;
+
 	std::unique_ptr< clsStage >	m_upStage;//テスト用.
 
 #if _DEBUG

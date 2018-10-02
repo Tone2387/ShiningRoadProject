@@ -3,6 +3,7 @@
 #include "CFont.h"
 
 #include "File.h"
+//#include "OperationString.h"
 
 #include <assert.h>
 
@@ -426,6 +427,7 @@ HRESULT clsFont::CreateTexture()
 			D3D11_TEXTURE2D_DESC desc;
 			memset( &desc, 0, sizeof( desc ) );
 			desc.Width = GM.gmCellIncX;
+	//		desc.Width = ( GM.gmBlackBoxX + 3 ) / 4 * 4;
 			desc.Height = TM.tmHeight;
 			desc.MipLevels = 1;
 			desc.ArraySize = 1;
@@ -434,6 +436,11 @@ HRESULT clsFont::CreateTexture()
 			desc.Usage = D3D11_USAGE_DYNAMIC;
 			desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+//			if( m_sTextData[ iTex ][i] ){
+//				GM.
+//			}
+			
 
 			if( FAILED( m_pDevice->CreateTexture2D( &desc, 0, &m_vpTex2D[ iTex ] ) ) ){
 				MessageBox( 0, "テクスチャ作成失敗", "CreateTexture", MB_OK );
@@ -504,6 +511,7 @@ HRESULT clsFont::CreateTexture()
 			//文字コード取得.
 			if( IsDBCSLeadByte( m_sTextData[ iTex ][i] ) ){
 				i++;
+				iCharCnt++;//文字.//先行バイトの判断がうまくいかないから.
 			}
 			iCharCnt++;//文字.
 			delete[] ptr;
@@ -579,6 +587,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 
 	int iRow = 0;//行.
 	int iCnt = 0;//その行の何文字目か.
+	float fAddLeft = 0.0f;//細い文字を入れた際の左に寄せる量.
 
 	const int iNUM_MAX = static_cast<int>( m_vvpAsciiTexture[ iTextRow ].size() );
 	for( int i=0; i<iNUM_MAX; i++ )
@@ -590,7 +599,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 			break;
 		}
 #if 1
-		if( vPos.x + m_iFontSize + ( m_fScale + m_fFontMarginX ) * iCnt <= 
+		if( vPos.x + m_iFontSize + ( m_fScale + m_fFontMarginX ) * iCnt + ( m_fScale + m_fFontMarginX ) * fAddLeft <= 
 			m_fIndentionPosint )
 		{
 			//指定範囲の中.
@@ -600,6 +609,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 			//範囲指定外、一段ずらす.
 			iRow++;
 			iCnt = 1;
+			fAddLeft = 0.0f;
 		}
 #else
 		//勝手に改行しない.
@@ -609,11 +619,19 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 		D3DXMATRIX mWorld, mScale, mTran;		//ワールド行列.
 		D3DXMatrixIdentity( &mWorld );
 		D3DXMatrixTranslation( &mTran, 
-			vPos.x + ( m_fScale + m_fFontMarginX ) * static_cast<float>( iCnt ),
+			vPos.x + ( m_fScale + m_fFontMarginX ) * static_cast<float>( iCnt ) + ( m_fScale + m_fFontMarginX ) * fAddLeft,
 			vPos.y + ( m_fScale + m_fFontMarginY ) * static_cast<float>( iRow ),
 			vPos.z );
 
-		D3DXMatrixScaling( &mScale, m_fScale, m_fScale, 1.0f );
+
+		float fScaleW = 1.0f;
+			//文字の大きさや詰めを定める.iTextRow, const int iCharNum
+		float fTmpAddLeft = 0.0f;
+		fScaleW = GetFineCharactorRate( iTextRow, i, &fTmpAddLeft );
+		fAddLeft -= fTmpAddLeft;
+
+
+		D3DXMatrixScaling( &mScale, m_fScale * fScaleW, m_fScale, 1.0f );
 		mWorld = mScale * mTran;
 
 		//シェーダーのコンスタントバッファに各種データを渡す.
@@ -747,3 +765,114 @@ std::string clsFont::GetText( const int iRow )
 }
 
 
+//文字を細くする倍率を返す( 問題ないなら1.0f ).
+//第二引数は( 全角で )何文字目か.
+//最後の引数は文字同士の間隔に何を掛けるか.
+float clsFont::GetFineCharactorRate( 
+	const int iTextRow, 
+	const int iCharNum, 
+	float* outfAddLeft )
+{
+	const float fDEFAULT_RATE	= 1.0f;
+	const float fSLENDER_RATE	= 0.5f;
+	const float fSLENDER_RATE_2 = 0.75f;
+	const float fSLENDER_RATE_3 = 0.875f;
+
+	float fReturn = fDEFAULT_RATE;
+	*outfAddLeft = 0.0f;
+
+	//何の文字か判定( 半角か日本語か ).
+	encCHARACTOR_TYPE encCharaType = GetCharactorType( iTextRow, iCharNum );
+
+	//日本語の先頭バイト.
+	if( encCharaType == encCHARACTOR_TYPE::JAPANESE_HEAD ){
+		fReturn = fDEFAULT_RATE;
+		*outfAddLeft = fDEFAULT_RATE - fReturn;
+		return fReturn;
+	}
+	//日本語の末尾バイト.
+	else if( encCharaType == encCHARACTOR_TYPE::JAPANESE_FOOT ){
+		fReturn = 0.0f;
+		*outfAddLeft = fDEFAULT_RATE - fReturn;
+		return fReturn;
+	}
+
+	switch( m_sTextData[ iTextRow ][ iCharNum ] )
+	{
+	case 'a':
+	case 'b':
+	case 'c':
+	case 'd':
+	case 'e':
+	case 'g':
+	case 'h':
+	case 'k':
+	case 'n':
+	case 'o':
+	case 's':
+		fReturn = fSLENDER_RATE_3;
+		*outfAddLeft = fDEFAULT_RATE - fReturn;
+		break;
+
+	case 'f':
+	case 'r':
+	case 't':
+	case 'v':
+	case 'z':
+		fReturn = fSLENDER_RATE_2;
+		*outfAddLeft = fDEFAULT_RATE - fReturn;
+		break;
+
+	case 'i':
+	case 'j':
+	case 'l':
+	case 'I':
+	case '.':
+	case ':':
+	case '/':
+	case '(':
+	case ')':
+		fReturn = 0.5f;
+		*outfAddLeft = fDEFAULT_RATE - fReturn;
+		break;
+
+	default:
+		fReturn = fDEFAULT_RATE;
+		*outfAddLeft = fDEFAULT_RATE - fReturn;
+		break;
+	}
+
+	return fReturn;
+}
+
+
+clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType( const int iTextRow, const int iCharNum )
+{
+	//次がないならそれは文末すなわち、とりあえず半角を返しておけばよい( 仮に日本語の末尾だったとしても見えないから影響しない ).
+	if( iCharNum + 1 >= m_sTextData[ iTextRow ].size() ){
+		return encCHARACTOR_TYPE::ALPHABET;
+	}
+	//マイナスに行こうとすれば許さない( それは絶対半角 ).
+	else if( iCharNum - 1 < 0 ){
+		return encCHARACTOR_TYPE::ALPHABET;
+	}
+
+	//今先頭バイト?.
+	if(  IsDBCSLeadByte( m_sTextData[ iTextRow ][ iCharNum ] ) ){
+		//そいつのテクスチャがnullなら.
+		if( !m_vvpAsciiTexture[ iTextRow ][ iCharNum ] ){
+			//日本語末尾バイト.
+			return encCHARACTOR_TYPE::JAPANESE_FOOT;
+		}
+		//日本語先頭バイト.
+		return encCHARACTOR_TYPE::JAPANESE_HEAD;
+	}
+	//1バイト前が先頭文字なら.
+	else if( IsDBCSLeadByte( m_sTextData[ iTextRow ][ iCharNum - 1 ] ) ){
+		//日本語末尾バイト.
+		return encCHARACTOR_TYPE::JAPANESE_FOOT;
+	}
+
+	//半角文字です.
+	return encCHARACTOR_TYPE::ALPHABET;
+}

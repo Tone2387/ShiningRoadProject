@@ -12,7 +12,7 @@
 #define ERR_MSG(str,title)	{MessageBox(NULL,str,title,MB_OK);}
 
 //‰ð•ú.
-#define SAFE_RELEASE(x)		{ if(x) {(x)->Release();(x)=nullptr; } }
+#define SAFE_RELEASE(p)		{ if(p) {(p)->Release(); /*delete (p)*/; (p)=nullptr; } }
 #define SAFE_DELETE(p)		{ if(p) { delete (p);   (p)=nullptr; } }
 #define SAFE_DELETE_ARRAY(p){ if(p) { delete[] (p); (p)=nullptr; } }
 
