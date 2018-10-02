@@ -93,49 +93,50 @@ void clsSCENE_ENDING::CreateProduct()
 
 void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 {
-	m_iIntervalCnt ++;
+	//ボタンを押していると加速させる.
+	bool isAccel = false;
+	if( m_wpXInput->isPressStay( XINPUT_B ) ||
+		GetAsyncKeyState( VK_SPACE ) & 0x8000 )
+	{
+		isAccel = true;
+	}
+	const float fACCEL_RATE = 5.0f;
+	int iIntervalCnt = 1;
+	if( isAccel ){
+		iIntervalCnt *= static_cast<int>( fACCEL_RATE );
+	}
 
-#ifdef _DEBUG
-	float fff = 50.0f;
-	if( isPressRight() ){
-		m_wpCamera->AddPos( { fff, 0.0f, 0.0f } );
-	}
-	if( isPressLeft() ){
-		m_wpCamera->AddPos( { -fff, 0.0f, 0.0f } );
-	}
-	if( isPressUp() ){
-		m_wpCamera->AddPos( { 0.0f, 0.0f, fff } );
-	}
-	if( isPressDown() ){
-		m_wpCamera->AddPos( { 0.0f, 0.0f, -fff } );
-	}
-//	if( isPressEnter() ){
-//		m_wpCamera->AddPos( { 0.0f, fff, -0.0f } );
-//	}
-	if( isPressExit() ){
-		m_wpCamera->AddPos( { 0.0f, -fff, -0.0f } );
-	}
-#endif//#indef _DEBUG
 
+	m_iIntervalCnt += iIntervalCnt;
+
+	bool isCanGoTitle = false;
 
 	if( m_iIntervalCnt >= iINTERVAL_CNT ){
-		const float fSCROLL_SPD = -1.0f;
 		const int iOFFSET_SCROLL = -1;
 		const int iOFFSET_END = -1;
+		float fScrollSpd = -1.0f;
 		float fAlpha = 0.25f * 0.25f * 0.25f;
+
+		//ボタン押したら加速.
+		if( isAccel ){
+			fScrollSpd *= fACCEL_RATE;
+			fAlpha *= fACCEL_RATE;
+		}
 
 		//終わり.
 		if( m_uiSpriteCnt == m_vupTextStateAlpha.size() ){
+			isCanGoTitle = true;
 		}
 		//スクロール.
 		else if( m_isScroll ){
 			for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
-				m_vupTextStateScroll[i]->vPos.y += fSCROLL_SPD;
+				m_vupTextStateScroll[i]->vPos.y += fScrollSpd;
 			}
 			//スクロール終了.
 			const unsigned int uiSCROLL_LAST_INDEX = m_vupTextStateScroll.size() - 1;
-			if( +m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
-				-m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale )
+			const float fSCROLL_END_POS = m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale * -2.0f;
+			if( m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
+				fSCROLL_END_POS )
 			{
 				m_iIntervalCnt = 0;
 				m_isScroll = false;
@@ -172,10 +173,36 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 
 
-	if( isPressEnter() ){
+	if( ( m_wpXInput->isPressEnter( XINPUT_START ) || GetAsyncKeyState( VK_RETURN ) & 0x1 ) ||
+		( ( m_wpXInput->isPressEnter( XINPUT_B ) ||	GetAsyncKeyState( VK_SPACE ) & 0x1 ) && isCanGoTitle ) )
+	{
 		enNextScene = enSCENE::TITLE;
 		m_wpRoboStatus->SaveHeroData();
 	}
+
+
+#ifdef _DEBUG
+	float fff = 50.0f;
+	if( isPressRight() ){
+		m_wpCamera->AddPos( { fff, 0.0f, 0.0f } );
+	}
+	if( isPressLeft() ){
+		m_wpCamera->AddPos( { -fff, 0.0f, 0.0f } );
+	}
+	if( isPressUp() ){
+		m_wpCamera->AddPos( { 0.0f, 0.0f, fff } );
+	}
+	if( isPressDown() ){
+		m_wpCamera->AddPos( { 0.0f, 0.0f, -fff } );
+	}
+//	if( isPressEnter() ){
+//		m_wpCamera->AddPos( { 0.0f, fff, -0.0f } );
+//	}
+	if( isPressExit() ){
+		m_wpCamera->AddPos( { 0.0f, -fff, -0.0f } );
+	}
+#endif//#indef _DEBUG
+
 }
 
 void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
