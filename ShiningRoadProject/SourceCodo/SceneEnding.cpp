@@ -29,6 +29,7 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	,m_isSpriteAlphaAppear( true )
 	,m_iIntervalCnt( 0 )
 	,m_isScroll( false )
+	,m_isCanGoTitle( false )
 {
 }
 
@@ -93,7 +94,94 @@ void clsSCENE_ENDING::CreateProduct()
 
 void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 {
-	m_iIntervalCnt ++;
+	//ボタンを押していると加速させる.
+	bool isAccel = false;
+	if( m_wpXInput->isPressStay( XINPUT_B ) ||
+		GetAsyncKeyState( VK_SPACE ) & 0x8000 )
+	{
+		isAccel = true;
+	}
+
+	const float fACCEL_RATE = 50.0f;
+	int iIntervalCnt = 1;
+	if( isAccel ){
+		iIntervalCnt *= static_cast<int>( fACCEL_RATE );
+	}
+
+	m_iIntervalCnt += iIntervalCnt;
+
+
+	if( m_iIntervalCnt >= iINTERVAL_CNT ){
+		const int iOFFSET_SCROLL = -1;
+		const int iOFFSET_END = -1;
+		float fScrollSpd = -1.0f;
+		float fAlpha = 0.25f * 0.25f * 0.25f;
+
+		//ボタン押したら加速.
+		if( isAccel ){
+			fScrollSpd *= fACCEL_RATE;
+			fAlpha *= fACCEL_RATE;
+		}
+
+		//終わり.
+		if( m_uiSpriteCnt == m_vupTextStateAlpha.size() ){
+		}
+		//スクロール.
+		else if( m_isScroll ){
+			for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
+				m_vupTextStateScroll[i]->vPos.y += fScrollSpd;
+			}
+			//スクロール終了.
+			const unsigned int uiSCROLL_LAST_INDEX = m_vupTextStateScroll.size() - 1;
+			const float fSCROLL_END_POS = m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale * -2.0f;
+			if( m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
+				fSCROLL_END_POS )
+			{
+				m_iIntervalCnt = 0;
+				m_isScroll = false;
+			}
+		}
+		//透過.
+		else{
+			if( !m_isSpriteAlphaAppear ){
+				fAlpha *= -1.0f;
+			}
+
+			//透過値変更.AddAlphaState//->fAlpha + fAlpha 
+			if( !AddAlphaState( m_vupTextStateAlpha[ m_uiSpriteCnt ].get(), fAlpha ) ){
+				m_iIntervalCnt = 0;
+				//消す.
+				if( m_isSpriteAlphaAppear ){
+					m_isSpriteAlphaAppear = false;
+					//終われるようにする( サンキューの描画完了 ).
+					if( m_uiSpriteCnt == m_vupTextStateAlpha.size() + iOFFSET_END ){ 
+						m_isSpriteAlphaAppear = true;
+						m_isCanGoTitle = true;
+					}
+				}
+				//次へ.
+				else{
+					m_isSpriteAlphaAppear = true;
+					m_uiSpriteCnt ++;
+					//スクロールに行く.
+					if( m_uiSpriteCnt == m_iGoScrollIndex ){ 
+						m_isScroll = true;
+						m_iIntervalCnt = iINTERVAL_CNT;//消えてすぐにスクロールして欲しいから.
+					}
+				}
+			}
+		}
+	}
+
+
+
+	if( ( m_wpXInput->isPressEnter( XINPUT_START ) || GetAsyncKeyState( VK_RETURN ) & 0x1 ) ||
+		( ( m_wpXInput->isPressEnter( XINPUT_B ) ||	GetAsyncKeyState( VK_SPACE ) & 0x1 ) && m_isCanGoTitle ) )
+	{
+		enNextScene = enSCENE::TITLE;
+		m_wpRoboStatus->SaveHeroData();
+	}
+
 
 #ifdef _DEBUG
 	float fff = 50.0f;
@@ -117,65 +205,6 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 	}
 #endif//#indef _DEBUG
 
-
-	if( m_iIntervalCnt >= iINTERVAL_CNT ){
-		const float fSCROLL_SPD = -1.0f;
-		const int iOFFSET_SCROLL = -1;
-		const int iOFFSET_END = -1;
-		float fAlpha = 0.25f * 0.25f * 0.25f;
-
-		//終わり.
-		if( m_uiSpriteCnt == m_vupTextStateAlpha.size() ){
-		}
-		//スクロール.
-		else if( m_isScroll ){
-			for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
-				m_vupTextStateScroll[i]->vPos.y += fSCROLL_SPD;
-			}
-			//スクロール終了.
-			const unsigned int uiSCROLL_LAST_INDEX = m_vupTextStateScroll.size() - 1;
-			if( +m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
-				-m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale )
-			{
-				m_iIntervalCnt = 0;
-				m_isScroll = false;
-			}
-		}
-		//透過.
-		else{
-			if( !m_isSpriteAlphaAppear ){
-				fAlpha *= -1.0f;
-			}
-
-			//透過値変更.AddAlphaState//->fAlpha + fAlpha 
-			if( !AddAlphaState( m_vupTextStateAlpha[ m_uiSpriteCnt ].get(), fAlpha ) ){
-				m_iIntervalCnt = 0;
-				//消す.
-				if( m_isSpriteAlphaAppear ){
-					m_isSpriteAlphaAppear = false;
-					if( m_uiSpriteCnt == m_vupTextStateAlpha.size() + iOFFSET_END ){ 
-						m_isSpriteAlphaAppear = true;
-					}
-				}
-				//次へ.
-				else{
-					m_isSpriteAlphaAppear = true;
-					m_uiSpriteCnt ++;
-					//スクロールに行く.
-					if( m_uiSpriteCnt == m_iGoScrollIndex ){ 
-						m_isScroll = true;
-					}
-				}
-			}
-		}
-	}
-
-
-
-	if( isPressEnter() ){
-		enNextScene = enSCENE::TITLE;
-		m_wpRoboStatus->SaveHeroData();
-	}
 }
 
 void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )

@@ -11,6 +11,7 @@
 
 
 //日本語のUI用.
+//これに読み込ませる文字列データは全て全角にすること.
 class clsFont
 {
 public:
@@ -67,6 +68,23 @@ private:
 	HRESULT	CreateTexture();
 
 	void SetBlend( const bool isAlpha );
+
+	//文字を細くする倍率を返す( 問題ないなら1.0f ).
+	//第二引数は( 全角で )何文字目か.
+	//最後の引数は文字同士の間隔に何を掛けるか.
+	float GetFineCharactorRate(
+		const int iTextRow, 
+		const int iCharNum, 
+		float* outfAddLeft );
+
+	//戻り値用列挙体.
+	enum class encCHARACTOR_TYPE : UCHAR
+	{
+		ALPHABET = 0,//半角.
+		JAPANESE_HEAD,//日本語先頭バイト.
+		JAPANESE_FOOT,//日本語末尾バイト.
+	};
+	encCHARACTOR_TYPE GetCharactorType( const int iTextRow, const int iCharNum );
 
 
 private:
