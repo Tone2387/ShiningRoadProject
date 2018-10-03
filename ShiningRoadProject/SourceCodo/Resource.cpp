@@ -407,9 +407,13 @@ HRESULT clsResource::CreateSkinModel( LPSTR const fileName, const enSKIN_MODEL e
 	}
 
 	//ƒ‚ƒfƒ‹“Çž.
-	m_ppSkinModels[ enModel ] = new clsD3DXSKINMESH;
-	m_ppSkinModels[ enModel ]->Init( &m_Si );
-	m_ppSkinModels[ enModel ]->CreateFromX( fileName );
+	m_ppSkinModels[ enModel ] = new clsD3DXSKINMESH(
+		m_hWnd,
+		m_wpDevice11,
+		m_wpCotext11,
+		fileName );
+//	m_ppSkinModels[ enModel ]->Init( &m_Si );
+//	m_ppSkinModels[ enModel ]->CreateFromX( fileName );
 
 	return S_OK;
 }

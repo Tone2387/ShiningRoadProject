@@ -28,8 +28,9 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
-		const bool alphaFlg = false );
+		const D3DXVECTOR4& vColorBase = { 1.0f, 1.0f, 1.0f, 1.0f },
+		const D3DXVECTOR4& vColorArmor = { 1.0f, 1.0f, 1.0f, 1.0f },
+		const bool isAlpha = false );
 
 	void AnimUpdate();
 	//±∆“∞ºÆ›ç≈ëÂêîÇéÊìæ.

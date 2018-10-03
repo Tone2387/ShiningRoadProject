@@ -37,10 +37,11 @@ void clsPARTS_BASE::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const D3DXVECTOR4& vColor,
+	const D3DXVECTOR4& vColorBase,
+	const D3DXVECTOR4& vColorArmor,
 	const bool isAlpha )
 {
-	ModelRender( mView, mProj, vLight, vEye, vColor, isAlpha );
+	ModelRender( mView, mProj, vLight, vEye, vColorBase, vColorArmor, isAlpha );
 }
 
 //パーツの名前を覚える.

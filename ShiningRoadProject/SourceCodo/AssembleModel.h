@@ -98,7 +98,10 @@ protected:
 		const char *RootBone, const char *EndBone );
 
 	//色を吐き出す.
-	D3DXVECTOR4 CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
+	D3DXVECTOR4 CreateColor( 
+		const enPARTS_TYPES AlphaParts, 
+		const UINT uiIndex,
+		const unsigned int uiMaskNum );
 
 	//アニメーションリセット.
 	void AnimReSet();
@@ -106,7 +109,8 @@ protected:
 	//回転値抑制.
 	float GuardDirOver( float &outTheta ) const;
 
-
+	//パーツの色指定.
+	void GetPartsColor( const D3DXVECTOR4 &vColor, const unsigned int uiMaskNum );
 
 	void ModelUpdate();
 
@@ -126,6 +130,9 @@ private:
 
 	//GetPartsNum関数の為.
 	enPARTS_TYPES m_enPartsNum[ enPARTS_TYPES::ENUM_SIZE ];
+
+	//.
+	std::vector< D3DXVECTOR4 >	m_vecvColor;
 
 };
 

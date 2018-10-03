@@ -9,6 +9,9 @@
 
 // シェーダ名(ディレクトリも含む)
 const char SHADER_NAME[] = "Shader\\MeshSkin.hlsl";
+//マスクテクスチャパス.
+const char sMASK_PATH_BASE[]  = "Data\\RoboParts\\MaskTex\\PartsMaskBase.png";
+const char sMASK_PATH_ARMOR[] = "Data\\RoboParts\\MaskTex\\PartsMaskArmor.png";
 
 
 // フレームを作成する.
@@ -797,12 +800,16 @@ HRESULT D3DXPARSER::Release()
 *
 **/
 // コンストラクタ.
-clsD3DXSKINMESH::clsD3DXSKINMESH()
-	:m_hWnd( NULL )
+clsD3DXSKINMESH::clsD3DXSKINMESH( 
+	const HWND hWnd, 
+	ID3D11Device* const pDevice11,
+	ID3D11DeviceContext* const pContext11, 
+	const char* sFileName )
+	:m_hWnd( hWnd )
+	,m_pDevice( pDevice11 )
+	,m_pDeviceContext( pContext11 )
 	,m_pD3d9( NULL )
 	,m_pDevice9( NULL )
-	,m_pDevice( NULL )
-	,m_pDeviceContext( NULL )
 	,m_pSampleLinear( NULL )
 	,m_pVertexShader( NULL )
 	,m_pPixelShader( NULL )
@@ -812,8 +819,26 @@ clsD3DXSKINMESH::clsD3DXSKINMESH()
 	,m_pConstantBufferBone( NULL )
 	,m_pD3dxMesh( NULL )
 	,m_pBlendState()
-{
-//	ZeroMemory( this, sizeof( clsD3DXSKINMESH ) );
+	,m_pMaskBase( nullptr )
+	,m_pMaskArmor( nullptr )
+{	 
+	if( FAILED( CreateBlendState() ) ){
+		assert( !"CreateBlendState()" );
+	}
+
+	// Dx9 のデバイス関係を作成する.
+	if( FAILED( CreateDeviceDx9( m_hWnd ) ) ){
+		assert( !"CreateDeviceDx9()" );
+	}
+	// シェーダの作成.
+	if( FAILED( InitShader() ) ){
+		assert( !"InitShader()" );
+	}
+	//モデルの作成.
+	if( FAILED( CreateFromX( const_cast<CHAR*>( sFileName ) ) ) ){
+		assert( !"CreateFromX()" );
+	}
+
 	m_Trans.vPos = vecAxisX = vecAxisZ = m_vLight = m_vEye = { 0.0f, 0.0f, 0.0f };
 	m_Trans.fPitch = m_Trans.fYaw = m_Trans.fRoll = 0.0f;
 	m_Trans.vScale = D3DXVECTOR3( 1.0f, 1.0f, 1.0f );
@@ -838,6 +863,9 @@ clsD3DXSKINMESH::clsD3DXSKINMESH()
 // デストラクタ.
 clsD3DXSKINMESH::~clsD3DXSKINMESH()
 {
+	SAFE_DELETE( m_pMaskArmor );
+	SAFE_DELETE( m_pMaskBase );
+
 	// 解放処理.
 	Release();
 
@@ -868,31 +896,6 @@ clsD3DXSKINMESH::~clsD3DXSKINMESH()
 }
 
 
-// 初期化.
-HRESULT clsD3DXSKINMESH::Init( CD3DXSKINMESH_INIT* si )
-{
-	m_hWnd = si->hWnd;
-	m_pDevice = si->pDevice;
-	m_pDeviceContext = si->pDeviceContext;
-
-	if( FAILED( CreateBlendState() ) )
-	{
-		return E_FAIL;
-	}
-
-	// Dx9 のデバイス関係を作成する.
-	if( FAILED( CreateDeviceDx9( m_hWnd ) ) )
-	{
-		return E_FAIL;
-	}
-	// シェーダの作成.
-	if( FAILED( InitShader() ) )
-	{
-		return E_FAIL;
-	}
-
-	return S_OK;
-}
 
 // Dx9のデバイス・デバイスコンテキストの作成.
 HRESULT clsD3DXSKINMESH::CreateDeviceDx9( HWND hWnd )
@@ -1215,7 +1218,8 @@ HRESULT clsD3DXSKINMESH::CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buf
 void clsD3DXSKINMESH::Render(
 	const D3DXMATRIX& mView, const D3DXMATRIX& mProj,
 	const D3DXVECTOR3& vLight, const D3DXVECTOR3& vEye,
-	const D3DXVECTOR4& vColor,
+	const D3DXVECTOR4& vColorBase,
+	const D3DXVECTOR4& vColorArmor,
 	const bool isAlpha, 
 	LPD3DXANIMATIONCONTROLLER pAC )
 {
@@ -1235,7 +1239,7 @@ void clsD3DXSKINMESH::Render(
 	D3DXMATRIX m;
 	D3DXMatrixIdentity( &m );
 	m_pD3dxMesh->UpdateFrameMatrices( m_pD3dxMesh->m_pFrameRoot, &m );
-	DrawFrame( m_pD3dxMesh->m_pFrameRoot, vColor, isAlpha );
+	DrawFrame( m_pD3dxMesh->m_pFrameRoot, vColorBase, vColorArmor, isAlpha );
 }
 
 
@@ -1443,6 +1447,38 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		delete[] pvVB;
 	}
 
+
+	//========== マスク作成 ==========//.
+	//----- ベース -----//.
+	assert( !m_pMaskBase );
+	m_pMaskBase = new MASK_TEXTURE;
+	//テクスチャ作成.
+	if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+		m_pDevice, 
+		sMASK_PATH_BASE,//テクスチャファイル名.
+		NULL, NULL,
+		&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
+		NULL ) ) )
+	{
+		MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+		return E_FAIL;
+	}
+	//----- アーマー -----//.
+	assert( !m_pMaskArmor );
+	m_pMaskArmor = new MASK_TEXTURE;
+	//テクスチャ作成.
+	if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+		m_pDevice, 
+		sMASK_PATH_ARMOR,//テクスチャファイル名.
+		NULL, NULL,
+		&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
+		NULL ) ) )
+	{
+		MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+		return E_FAIL;
+	}
+
+
 	return hRslt;
 }
 
@@ -1485,7 +1521,8 @@ D3DXMATRIX clsD3DXSKINMESH::GetCurrentPoseMatrix( SKIN_PARTS_MESH* pParts, int i
 // フレームの描画.
 VOID clsD3DXSKINMESH::DrawFrame(
 	LPD3DXFRAME p,
-	const D3DXVECTOR4 &vColor, 
+	const D3DXVECTOR4& vColorBase,
+	const D3DXVECTOR4& vColorArmor,
 	const bool isAlpha )
 {
 	MYFRAME*			pFrame	= (MYFRAME*)p;
@@ -1498,19 +1535,21 @@ VOID clsD3DXSKINMESH::DrawFrame(
 			pPartsMesh, 
 			pFrame->CombinedTransformationMatrix,
 			pContainer,
-			vColor, isAlpha );
+			vColorBase, 
+			vColorArmor,
+			isAlpha );
 	}
 
 	//再帰関数.
 	//(兄弟)
 	if( pFrame->pFrameSibling != NULL )
 	{
-		DrawFrame( pFrame->pFrameSibling, vColor, isAlpha );
+		DrawFrame( pFrame->pFrameSibling, vColorBase, vColorArmor, isAlpha );
 	}
 	//(親子)
 	if( pFrame->pFrameFirstChild != NULL )
 	{
-		DrawFrame( pFrame->pFrameFirstChild, vColor, isAlpha );
+		DrawFrame( pFrame->pFrameFirstChild, vColorBase, vColorArmor, isAlpha );
 	}
 }
 
@@ -1520,7 +1559,8 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	SKIN_PARTS_MESH* pMesh, 
 	D3DXMATRIX World, 
 	MYMESHCONTAINER* const pContainer,
-	const D3DXVECTOR4 &vColor, 
+	const D3DXVECTOR4& vColorBase,
+	const D3DXVECTOR4& vColorArmor,
 	const bool isAlpha )
 {
 	D3D11_MAPPED_SUBRESOURCE pData;
@@ -1636,14 +1676,19 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 			SHADER_SKIN_GLOBAL1 sg;
 			sg.mW	= m_mWorld;
 			D3DXMatrixTranspose( &sg.mW, &sg.mW );
+
 			sg.mWVP	= m_mWorld * m_mView * m_mProj;
 			D3DXMatrixTranspose( &sg.mWVP, &sg.mWVP );
+
 			sg.vAmbient	= pMesh->pMaterial[i].Ka;
 			sg.vDiffuse	= pMesh->pMaterial[i].Kd;
 			sg.vSpecular= pMesh->pMaterial[i].Ks;
-			sg.vColor= vColor;
+			sg.vColorBase= vColorBase;
+			sg.vColorArmor= vColorArmor;
+
 			memcpy_s( pDat.pData, pDat.RowPitch,
 				(void*)&sg, sizeof( SHADER_SKIN_GLOBAL1 ));
+
 			m_pDeviceContext->Unmap(
 				m_pConstantBuffer1, 0 );
 		}
@@ -1653,8 +1698,28 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 		// テクスチャをシェーダに渡す.
 		if( pMesh->pMaterial[i].szTextureName[0] != NULL )
 		{
-			m_pDeviceContext->PSSetSamplers( 0, 1, &m_pSampleLinear );
-			m_pDeviceContext->PSSetShaderResources( 0, 1, &pMesh->pMaterial[i].pTexture );
+			UINT slot = 0;
+			//テクスチャ.
+			m_pDeviceContext->PSSetSamplers( 
+				slot, 1, &m_pSampleLinear );
+			m_pDeviceContext->PSSetShaderResources( 
+				slot, 1, &pMesh->pMaterial[i].pTexture );
+			slot ++;
+			if( m_pMaskBase->pTex ){
+				//ベース.
+				m_pDeviceContext->PSSetSamplers( 
+					slot, 1, &m_pSampleLinear );
+				m_pDeviceContext->PSSetShaderResources( 
+					slot, 1, &m_pMaskBase->pTex );
+			}
+			slot ++;
+			if( m_pMaskArmor->pTex ){
+				//アーマー.
+				m_pDeviceContext->PSSetSamplers( 
+					slot, 1, &m_pSampleLinear );
+				m_pDeviceContext->PSSetShaderResources( 
+					slot, 1, &m_pMaskArmor->pTex );
+			}
 		}
 		else
 		{
