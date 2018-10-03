@@ -30,6 +30,8 @@ const double dANIM_SPD = 0.016;
 const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
 const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
 
+//色変更のマスク種類.
+const int iMASK_MAX_NUM = 2;
 
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
@@ -40,6 +42,7 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	,m_enPartsNum()
 {
 	m_dAnimSpd = dANIM_SPD;
+	m_vecvColor.resize( iMASK_MAX_NUM, vCOLOR_NORMAL );
 }
 
 clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
@@ -131,22 +134,34 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXVECTOR3& vEye,
 	const enPARTS_TYPES AlphaParts )
 {
-	D3DXVECTOR4 vTmpColor;
+	D3DXVECTOR4 vTmpColorBase;
+	D3DXVECTOR4 vTmpColorArmor;
 
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
-		vTmpColor = CreateColor( AlphaParts, i );
+		unsigned int uiMaskNum = 0;
+		vTmpColorBase = CreateColor( AlphaParts, i, uiMaskNum ++ );
+		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++ );
 		SetPos( GetPos() );
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
-		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, vTmpColor, true );
+		m_vpParts[i]->ModelRender( 
+			mView, mProj, vLight, vEye, 
+			vTmpColorBase, vTmpColorArmor, true );
 	}
 }
 
 
 //色を吐き出す.
-D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex )
+D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( 
+	const enPARTS_TYPES AlphaParts, 
+	const UINT uiIndex,
+	const unsigned int uiMaskNum )
 {
 	D3DXVECTOR4 vReturn = vCOLOR_NORMAL;
+
+	if( uiMaskNum < m_vecvColor.size() ){
+		vReturn = m_vecvColor[ uiMaskNum ];
+	}
 
 	switch( AlphaParts )
 	{
@@ -420,6 +435,17 @@ void clsASSEMBLE_MODEL::AnimReSet()
 {
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		m_vpParts[i]->PartsAnimChange( 0 );
+	}
+}
+
+
+//パーツの色指定.
+void clsASSEMBLE_MODEL::GetPartsColor( 
+	const D3DXVECTOR4 &vColor, 
+	const unsigned int uiMaskNum )
+{
+	if( uiMaskNum < m_vecvColor.size() ){
+		m_vecvColor[ uiMaskNum ] = vColor;
 	}
 }
 

@@ -20,13 +20,14 @@ void clsSkinMesh::ModelRender(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const D3DXVECTOR4& vColor,
-	const bool alphaFlg )
+	const D3DXVECTOR4& vColorBase,
+	const D3DXVECTOR4& vColorArmor,
+	const bool isAlpha )
 {
 	if (m_pMesh == NULL || m_pAnimCtrl == NULL)return;
 
 	AnimUpdate();
-	m_pMesh->Render(mView, mProj, vLight, vEye, vColor, alphaFlg, m_pAnimCtrl);
+	m_pMesh->Render(mView, mProj, vLight, vEye, vColorBase, vColorArmor, isAlpha, m_pAnimCtrl);
 }
 
 void clsSkinMesh::AnimUpdate()

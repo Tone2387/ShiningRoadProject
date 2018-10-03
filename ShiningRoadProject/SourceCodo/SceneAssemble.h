@@ -58,7 +58,7 @@ private:
 	void Exit();
 
 
-	//メッセボックス出現.
+	//メッセボックス出現.//引数は開きたい窓.
 	void AppearMessageBox( const clsASSEMBLE_UI::enSELECT_MODE encMode );
 	//メッセボックス消す.
 	void DisAppearMessageBox();
@@ -120,6 +120,21 @@ private:
 	//メッセボックスの選択肢.
 	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
 	bool									m_isMessageBoxYes;
+
+	//色の棒.
+	enum enCOLOR_GAGE : UCHAR
+	{
+		enCOLOR_GAGE_BASE_R = 0,
+		enCOLOR_GAGE_BASE_G,
+		enCOLOR_GAGE_BASE_B,
+
+		enCOLOR_GAGE_ARMOR_R,
+		enCOLOR_GAGE_ARMOR_G,
+		enCOLOR_GAGE_ARMOR_B,
+
+		enCOLOR_GAGE_size
+	};
+	clsSPRITE2D_CENTER* m_pColorGages[ enCOLOR_GAGE_size ];
 
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;

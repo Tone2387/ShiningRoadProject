@@ -57,7 +57,8 @@ struct SHADER_SKIN_GLOBAL1
 	D3DXVECTOR4 vAmbient;	// アンビエント光.
 	D3DXVECTOR4 vDiffuse;	// ディフューズ色.
 	D3DXVECTOR4 vSpecular;	// 鏡面反射.
-	D3DXVECTOR4 vColor;		//カラー.
+	D3DXVECTOR4 vColorBase;	//カラー.
+	D3DXVECTOR4 vColorArmor;//カラー.
 };
 
 struct SHADER_GLOBAL_BONES
@@ -300,53 +301,25 @@ public:
 class clsD3DXSKINMESH
 {
 public:
-	TRANSFORM m_Trans;
-
-	//パーサークラスからアニメーションコントローラーを取得する.
-	LPD3DXANIMATIONCONTROLLER GetAnimController()
-	{
-		return m_pD3dxMesh->m_pAnimController;
-	}
-
-
-	//X軸ﾍﾞｸﾄﾙを用意.
-	D3DXVECTOR3 vecAxisX;
-	//Z軸ﾍﾞｸﾄﾙを用意.
-	D3DXVECTOR3 vecAxisZ;
-
-	//方向列挙体.
-	enDirection m_enDir;
-
-	D3DXMATRIX m_mWorld;
-	D3DXMATRIX m_mRotation;
-
-	D3DXMATRIX m_mView;
-	D3DXMATRIX m_mProj;
-	D3DXVECTOR3 m_vLight;
-	D3DXVECTOR3 m_vEye;
-
-	//アニメーション速度.
-	double m_dAnimSpeed;
-	double m_dAnimTime;
 
 	// メソッド.
-	clsD3DXSKINMESH();
+	clsD3DXSKINMESH( 
+		const HWND hWnd, 
+		ID3D11Device* const pDevice11,
+		ID3D11DeviceContext* const pContext11, 
+		const char* sFileName );
 	~clsD3DXSKINMESH();
 
-	HRESULT Init( CD3DXSKINMESH_INIT* si );
-	// Xファイルからスキンメッシュを作成する.
-	HRESULT CreateFromX( CHAR* szFileName );
 	// 描画関数.
 	void Render( 
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye, 
-		const D3DXVECTOR4& vColor = D3DXVECTOR4( 1.0f, 1.0f, 1.0f ,1.0f ),
+		const D3DXVECTOR4& vColorBase,
+		const D3DXVECTOR4& vColorArmor,
 		const bool isAlpha = false, 
 		LPD3DXANIMATIONCONTROLLER pAC=NULL );
-	// 解放関数.
-	HRESULT Release();
 
 	double GetAnimSpeed()				{ return m_dAnimSpeed;		}
 	void SetAnimSpeed( double dSpeed )	{ m_dAnimSpeed = dSpeed;	}
@@ -372,9 +345,104 @@ public:
 	//ボーンがあるか無いかを調べる関数.
 	bool ExistsBone( const char* sBoneName );
 
+	//パーサークラスからアニメーションコントローラーを取得する.
+	LPD3DXANIMATIONCONTROLLER GetAnimController()
+	{
+		return m_pD3dxMesh->m_pAnimController;
+	}
+
+	TRANSFORM m_Trans;
+
+
+	//X軸ﾍﾞｸﾄﾙを用意.
+	D3DXVECTOR3 vecAxisX;
+	//Z軸ﾍﾞｸﾄﾙを用意.
+	D3DXVECTOR3 vecAxisZ;
+
+	//方向列挙体.
+	enDirection m_enDir;
+
+	D3DXMATRIX m_mWorld;
+	D3DXMATRIX m_mRotation;
+
+	D3DXMATRIX m_mView;
+	D3DXMATRIX m_mProj;
+	D3DXVECTOR3 m_vLight;
+	D3DXVECTOR3 m_vEye;
+
+	//アニメーション速度.
+	double m_dAnimSpeed;
+	double m_dAnimTime;
+
 private:
 	//ブレンドステート作成.
 	HRESULT CreateBlendState();
+	// 解放関数.
+	HRESULT Release();
+
+	HRESULT CreateDeviceDx9( HWND hWnd );
+	HRESULT InitShader();
+	// Xファイルからスキンメッシュを作成する.
+	HRESULT CreateFromX( CHAR* sFileName );
+	HRESULT CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buffer** ppIndexBuffer );
+	void RecursiveSetNewPoseMatrices( BONE* pBone,D3DXMATRIX* pmParent );
+
+	// 全てのメッシュを作成する.
+	void BuildAllMesh( D3DXFRAME* pFrame );
+	
+	// メッシュを作成する.
+	HRESULT CreateAppMeshFromD3DXMesh( LPD3DXFRAME pFrame );
+
+	// Xファイルからスキン関連の情報を読み出す関数.
+	HRESULT ReadSkinInfo( MYMESHCONTAINER* pContainer, MY_SKINVERTEX* pvVB, SKIN_PARTS_MESH* pParts );
+
+	// ボーンを次のポーズ位置にセットする関数.
+	void SetNewPoseMatrices( SKIN_PARTS_MESH* pParts, int frame, MYMESHCONTAINER* pContainer );
+	// 次の(現在の)ポーズ行列を返す関数.
+	D3DXMATRIX GetCurrentPoseMatrix( SKIN_PARTS_MESH* pParts, int index );
+
+	// フレーム描画.
+	void DrawFrame( 
+		LPD3DXFRAME pFrame,
+		const D3DXVECTOR4& vColorBase,
+		const D3DXVECTOR4& vColorArmor,
+		const bool isAlpha );
+	// パーツ描画.
+	void DrawPartsMesh( 
+		SKIN_PARTS_MESH* p, 
+		D3DXMATRIX World, 
+		MYMESHCONTAINER* const pContainer,
+		const D3DXVECTOR4& vColorBase,
+		const D3DXVECTOR4& vColorArmor,
+		const bool isAlpha );
+	void DrawPartsMeshStatic( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
+
+	// 全てのメッシュを削除.
+	void DestroyAllMesh( D3DXFRAME* pFrame );
+	HRESULT DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p );
+
+	//透過(アルファブレンド)設定の切り替え.
+	void SetBlend( const bool isAlpha );
+	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
+
+
+	struct MASK_TEXTURE
+	{
+		ID3D11ShaderResourceView*	pTex;
+//		ID3D11SamplerState*			pSample;
+
+		MASK_TEXTURE(){
+			pTex = nullptr;
+//			pSample = nullptr;
+		}
+		~MASK_TEXTURE(){
+//			SAFE_RELEASE( pSample );
+			SAFE_RELEASE( pTex );
+		}
+	};
+	MASK_TEXTURE* m_pMaskBase;
+	MASK_TEXTURE* m_pMaskArmor;
+
 
 	HWND m_hWnd;
 	// Dx9.
@@ -399,47 +467,6 @@ private:
 
 	// アニメーションフレーム.
 	int		m_iFrame;
-
-	HRESULT CreateDeviceDx9( HWND hWnd );
-	HRESULT InitShader();
-	HRESULT CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buffer** ppIndexBuffer );
-	void RecursiveSetNewPoseMatrices( BONE* pBone,D3DXMATRIX* pmParent );
-
-	// 全てのメッシュを作成する.
-	void BuildAllMesh( D3DXFRAME* pFrame );
-	
-	// メッシュを作成する.
-	HRESULT CreateAppMeshFromD3DXMesh( LPD3DXFRAME pFrame );
-
-	// Xファイルからスキン関連の情報を読み出す関数.
-	HRESULT ReadSkinInfo( MYMESHCONTAINER* pContainer, MY_SKINVERTEX* pvVB, SKIN_PARTS_MESH* pParts );
-
-	// ボーンを次のポーズ位置にセットする関数.
-	void SetNewPoseMatrices( SKIN_PARTS_MESH* pParts, int frame, MYMESHCONTAINER* pContainer );
-	// 次の(現在の)ポーズ行列を返す関数.
-	D3DXMATRIX GetCurrentPoseMatrix( SKIN_PARTS_MESH* pParts, int index );
-
-	// フレーム描画.
-	void DrawFrame( 
-		LPD3DXFRAME pFrame,
-		const D3DXVECTOR4 &vColor, 
-		const bool isAlpha );
-	// パーツ描画.
-	void DrawPartsMesh( 
-		SKIN_PARTS_MESH* p, 
-		D3DXMATRIX World, 
-		MYMESHCONTAINER* const pContainer,
-		const D3DXVECTOR4 &vColor, 
-		const bool isAlpha );
-	void DrawPartsMeshStatic( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
-
-	// 全てのメッシュを削除.
-	void DestroyAllMesh( D3DXFRAME* pFrame );
-	HRESULT DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p );
-
-	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool isAlpha );
-	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 };
 

@@ -25,11 +25,12 @@ public:
 		D3DXMATRIX& mProj, 
 		D3DXVECTOR3& vLight, 
 		D3DXVECTOR3& vEye,
-		const D3DXVECTOR4 &vColor,
-		const bool alphaFlg )
+		const D3DXVECTOR4 &vColorBase,
+		const D3DXVECTOR4 &vColorAlpha,
+		const bool isAlpha )
 	{
 		Update();
-		ModelRender(mView, mProj, vLight, vEye, vColor, alphaFlg );
+		ModelRender(mView, mProj, vLight, vEye, vColorBase, vColorAlpha, isAlpha );
 	}
 
 private:
