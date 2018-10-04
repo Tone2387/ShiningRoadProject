@@ -134,7 +134,8 @@ private:
 
 		enCOLOR_GAGE_size
 	};
-	clsSPRITE2D_CENTER* m_pColorGages[ enCOLOR_GAGE_size ];
+	clsSPRITE2D_CENTER* m_pColorGagesBone[ enCOLOR_GAGE_size ];
+	clsSprite2D* m_pColorGages[ enCOLOR_GAGE_size ];
 
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
