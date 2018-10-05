@@ -12,12 +12,12 @@ clsSprite2D::clsSprite2D() :
 	m_pVertexBuffer( nullptr ),	
 	m_pTexture( nullptr ),		
 	m_pSampleLinear( nullptr )	
+	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 {
 //	ZeroMemory( this, sizeof( clsSprite2D ) );
 
 
 	//アルファ値の設定.
-	m_fAlpha = 1.0f;	//0:透明, 1:不透明.
 	m_vPos = m_vScale = { 1.0f, 1.0f, 0.0f };
 	m_fPatternNo = { 0.0f, 0.0f };
 }
@@ -354,7 +354,7 @@ void clsSprite2D::Render()
 		cd.fViewPortHeight= WND_H;
 
 		//アルファ値を渡す.
-		cd.fAlpha = m_fAlpha;
+		cd.vColor = m_vColor;
 
 		//UV座標.
 		//１コマ当たりの割合にコマ番号を掛けて位置を設定する.
@@ -413,11 +413,6 @@ void clsSprite2D::Release()
 	SAFE_RELEASE( m_pVertexLayout );
 	SAFE_RELEASE( m_pVertexShader );
 
-	m_fAlpha = 0.0f;
-	m_vScale = m_vPos = { 0.0f, 0.0f, 0.0f };
-	m_fPatternNo = { 0.0f, 0.0f };
-	m_SState.Anim = { 0.0f, 0.0f };
-	m_SState.Disp = { 0.0f, 0.0f };
 }
 
 
@@ -443,22 +438,22 @@ void clsSprite2D::SetScale( const float &fScale, const bool withZ )
 
 void clsSprite2D::SetAlpha( const float fAlpha )
 {
-	m_fAlpha = fAlpha;
+	m_vColor.w = fAlpha;
 }
 bool clsSprite2D::AddAlpha( const float fAlpha )
 {
 	//範囲内.
 	bool isWithInRange = true;
 
-	m_fAlpha += fAlpha;
+	m_vColor.w += fAlpha;
 
 	//範囲確認.
-	if( m_fAlpha < 0.0f ){
-		m_fAlpha = 0.0f;
+	if( m_vColor.w < 0.0f ){
+		m_vColor.w = 0.0f;
 		isWithInRange = false;
 	}
-	else if( m_fAlpha > 1.0 ){
-		m_fAlpha = 1.0f;
+	else if( m_vColor.w > 1.0 ){
+		m_vColor.w = 1.0f;
 		isWithInRange = false;
 	}
 
@@ -466,7 +461,7 @@ bool clsSprite2D::AddAlpha( const float fAlpha )
 }
 float clsSprite2D::GetAlpha()
 {
-	return m_fAlpha;
+	return m_vColor.w;
 }
 
 
@@ -505,4 +500,24 @@ void clsSprite2D::AddScale( const float &fScale, const bool withZ )
 void clsSprite2D::SetAnim( const POINTFLOAT &anim )
 {
 	m_fPatternNo = anim;
+}
+
+
+
+void clsSprite2D::SetColor( const D3DXVECTOR3& vColor )
+{
+	m_vColor.x = vColor.x;
+	m_vColor.y = vColor.y;
+	m_vColor.z = vColor.z;
+}
+
+D3DXVECTOR3 clsSprite2D::GetColor()
+{
+	D3DXVECTOR3 vReturn;
+
+	vReturn.x = m_vColor.x;
+	vReturn.y = m_vColor.y;
+	vReturn.z = m_vColor.z;
+
+	return vReturn;
 }

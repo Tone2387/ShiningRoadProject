@@ -107,7 +107,15 @@ const float fCOLOR_GAGE_OFFSET_BONE_2 =  24.0f;//ƒp[ƒc‚Ìƒx[ƒX‚Æ‘•b‚Ì‡ŠÔ‚Ì’Ç‰
 //ƒQ[ƒW–{•Ò.
 const char sCOLOR_GAGE_PATH[] = "Data\\Image\\AssembleUi\\ColorGage.png";
 const WHSIZE_FLOAT COLOR_GAGE_SIZE = { 32.0f, 32.0f };
-const float fCOLOR_GAGE_ALPHA = 0.25f;
+const float fCOLOR_GAGE_ALPHA = 0.5f;
+const D3DXVECTOR3 vCOLOR_GAGE_COLOR[] = {
+	{ 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f },
+	{ 1.0f, 0.0f, 0.0f },
+	{ 0.0f, 1.0f, 0.0f },
+	{ 0.0f, 0.0f, 1.0f },
+};
 
 //YesNo.
 const float fMESSAGEBOX_BUTTON_X_OFFSET = 100.0f;
@@ -687,6 +695,9 @@ void clsSCENE_ASSEMBLE::RenderUi()
 					m_pAsmModel->GetColorGradation( static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( i ) ) * ( COLOR_GAGE_SIZE_BONE.w / COLOR_GAGE_SIZE.w ),
 					1.0f, 
 					1.0f } );
+ 				m_pColorGages[i]->SetColor( vCOLOR_GAGE_COLOR[i] );
+				D3DXVECTOR3 ffffff = m_pColorGages[i]->GetColor();
+ 				m_pColorGages[i]->SetColor( ffffff );
 				m_pColorGages[i]->Render();
 				m_upColorTexts[i]->Render();
 

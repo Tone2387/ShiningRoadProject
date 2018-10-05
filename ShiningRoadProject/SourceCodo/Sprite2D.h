@@ -17,9 +17,9 @@
 struct SPRITE2D_CONSTANT_BUFFER
 {
 	ALIGN16 D3DXMATRIX	mW;				//ワールド行列.
+	ALIGN16	D3DXVECTOR4	vColor;			//アルファ値(透過で使用する)
 	ALIGN16 float		fViewPortWidth;	//ビューポート幅.
 	ALIGN16 float		fViewPortHeight;//ビューポート高さ.
-	ALIGN16	float		fAlpha;			//アルファ値(透過で使用する)
 	ALIGN16 D3DXVECTOR2	vUV;			//UV座標.
 };
 
@@ -58,22 +58,29 @@ public:
 
 
 	void SetPos( const D3DXVECTOR3 &vPos );
+	D3DXVECTOR3 GetPos() const;
+	void AddPos( const D3DXVECTOR3 &vPos );		//引数を加算する.
+
+
 	void SetScale( const D3DXVECTOR3 &vScale );
 	void SetScale( const float &fScale, 
 		const bool withZ = false );	//XとYを等しい倍率で書ける.
-									//第二引数をtrueにするとZにも影響する.		
+	D3DXVECTOR3 GetScale() const;
+	void AddScale( const D3DXVECTOR3 &vScale );	//引数倍にする.
+	void AddScale( const float &fScale, const bool withZ = false );
+
+
+	void SetColor( const D3DXVECTOR3& vColor );
+	D3DXVECTOR3 GetColor();
+
+	//第二引数をtrueにするとZにも影響する.		
 	void SetAlpha( const float fAlpha );
 	//範囲をoverするとfalseが返ってくる.
 	bool AddAlpha( const float fAlpha );
 	float GetAlpha();
 
-	D3DXVECTOR3 GetPos() const;
-	D3DXVECTOR3 GetScale() const;
 
 
-	void AddPos( const D3DXVECTOR3 &vPos );		//引数を加算する.
-	void AddScale( const D3DXVECTOR3 &vScale );	//引数倍にする.
-	void AddScale( const float &fScale, const bool withZ = false );
 
 	void SetAnim( const POINTFLOAT &anim );
 
@@ -111,7 +118,7 @@ protected:
 
 	D3DXVECTOR3		m_vScale;
 
-	float			m_fAlpha;	//アルファ値.
+	D3DXVECTOR4		m_vColor;
 };
 
 
