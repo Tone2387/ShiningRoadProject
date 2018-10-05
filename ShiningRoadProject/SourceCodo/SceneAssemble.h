@@ -85,6 +85,9 @@ private:
 	//メッセボックスが閉じているならtrue.
 	bool isMessageBoxClose();
 
+	//色替え( 左右キーを押された ).
+	void AddRoboColor( const bool isIncrement );
+
 
 #if _DEBUG
 	//デバック゛テキストの表示.
@@ -122,20 +125,16 @@ private:
 	bool									m_isMessageBoxYes;
 
 	//色の棒.
-	enum enCOLOR_GAGE : UCHAR
-	{
-		enCOLOR_GAGE_BASE_R = 0,
-		enCOLOR_GAGE_BASE_G,
-		enCOLOR_GAGE_BASE_B,
+	
+	clsASSEMBLE_MODEL::enCOLOR_GAGE m_enColorGageIndex;
 
-		enCOLOR_GAGE_ARMOR_R,
-		enCOLOR_GAGE_ARMOR_G,
-		enCOLOR_GAGE_ARMOR_B,
+	clsSPRITE2D_CENTER* m_pColorGagesBone[ clsASSEMBLE_MODEL::enCOLOR_GAGE_size ];
+	clsSprite2D* m_pColorGages[ clsASSEMBLE_MODEL::enCOLOR_GAGE_size ];
+//	unsigned int m_uiColorChangeNum;//ローカル変数.
+	std::unique_ptr< clsUiText > m_upColorTexts[ clsASSEMBLE_MODEL::enCOLOR_GAGE_size ];//RとかGとか書いてる.
+	std::unique_ptr< clsUiText > m_upColorNumText;//色1と色2とか書く.
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upSelectColor;//選択中の色を表す.
 
-		enCOLOR_GAGE_size
-	};
-	clsSPRITE2D_CENTER* m_pColorGagesBone[ enCOLOR_GAGE_size ];
-	clsSprite2D* m_pColorGages[ enCOLOR_GAGE_size ];
 
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
@@ -143,9 +142,6 @@ private:
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
 
 
-//	clsSPRITE2D_CENTER* m_pSprite;
-//	clsCharaStatic* m_pTestChara;
-//	clsCharaStatic* m_pParts;
 
 	//操作可能ならtrue.
 	bool m_isCanControl;
