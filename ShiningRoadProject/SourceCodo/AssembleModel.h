@@ -40,6 +40,20 @@ public:
 		ENUM_SIZE
 	};
 
+	//色の棒.
+	enum enCOLOR_GAGE : char
+	{
+		enCOLOR_GAGE_BASE_R = 0,
+		enCOLOR_GAGE_BASE_G,
+		enCOLOR_GAGE_BASE_B,
+
+		enCOLOR_GAGE_ARMOR_R,
+		enCOLOR_GAGE_ARMOR_G,
+		enCOLOR_GAGE_ARMOR_B,
+
+		enCOLOR_GAGE_size
+	};
+
 	//アセンブルシーンの各関数内で使います.
 	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene = false );
 	void UpDate();
@@ -81,6 +95,15 @@ public:
 	bool ExistsBone( const enPARTS enParts, const char* sBoneName );
 
 
+	//パーツの色指定.
+	void SetPartsColor( const D3DXVECTOR4 &vColor, const unsigned int uiMaskNum );
+	D3DXVECTOR4 GetPartsColor( const unsigned int uiMaskNum );
+	void IncrementColor( const enCOLOR_GAGE enColorGage );
+	void DecrementColor( const enCOLOR_GAGE enColorGage );
+	//0.0f～1.0fで返す.
+	float GetColorGradation( const enCOLOR_GAGE enColorGage );
+
+
 #if _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
@@ -109,10 +132,10 @@ protected:
 	//回転値抑制.
 	float GuardDirOver( float &outTheta ) const;
 
-	//パーツの色指定.
-	void GetPartsColor( const D3DXVECTOR4 &vColor, const unsigned int uiMaskNum );
-
 	void ModelUpdate();
+
+	//色.
+	void UpdateColor( const enCOLOR_GAGE enColorGage );
 
 	double m_dAnimSpd;
 
@@ -133,6 +156,9 @@ private:
 
 	//.
 	std::vector< D3DXVECTOR4 >	m_vecvColor;
+
+	//色の段階.
+	int m_iColorGradation[ enCOLOR_GAGE_size ];
 
 };
 

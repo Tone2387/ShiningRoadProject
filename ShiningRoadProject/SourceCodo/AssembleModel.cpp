@@ -33,6 +33,10 @@ const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
 //色変更のマスク種類.
 const int iMASK_MAX_NUM = 2;
 
+//色の段階.gradation
+const int iCOLOR_GRADATION_MAX = 16;
+const int iCOLOR_GRADATION_MIN = 1;
+
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
@@ -40,9 +44,14 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	,m_vpParts()
 	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
+	,m_iColorGradation()
 {
 	m_dAnimSpd = dANIM_SPD;
 	m_vecvColor.resize( iMASK_MAX_NUM, vCOLOR_NORMAL );
+	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+		m_iColorGradation[i] = iCOLOR_GRADATION_MIN;
+		UpdateColor( static_cast<enCOLOR_GAGE>( i ) );
+	}
 }
 
 clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
@@ -440,14 +449,78 @@ void clsASSEMBLE_MODEL::AnimReSet()
 
 
 //パーツの色指定.
-void clsASSEMBLE_MODEL::GetPartsColor( 
+void clsASSEMBLE_MODEL::SetPartsColor( 
 	const D3DXVECTOR4 &vColor, 
 	const unsigned int uiMaskNum )
 {
-	if( uiMaskNum < m_vecvColor.size() ){
-		m_vecvColor[ uiMaskNum ] = vColor;
+	if( uiMaskNum >= m_vecvColor.size() ){
+		return;
+	}
+	m_vecvColor[ uiMaskNum ] = vColor;
+}
+
+D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum )
+{
+	if( uiMaskNum >= m_vecvColor.size() ){
+		float fERROR_NUM = -1.0f;
+		return D3DXVECTOR4( fERROR_NUM, fERROR_NUM, fERROR_NUM, fERROR_NUM );
+	}
+	return m_vecvColor[ uiMaskNum ];
+}
+
+void clsASSEMBLE_MODEL::IncrementColor( 
+	const enCOLOR_GAGE enColorGage )
+{
+	m_iColorGradation[ enColorGage ] ++;
+	if( m_iColorGradation[ enColorGage ] > iCOLOR_GRADATION_MAX ){
+		m_iColorGradation[ enColorGage ] = iCOLOR_GRADATION_MAX;
+	}
+
+	UpdateColor( enColorGage );
+}
+void clsASSEMBLE_MODEL::DecrementColor( 
+	const enCOLOR_GAGE enColorGage )
+{
+	m_iColorGradation[ enColorGage ] --;
+	if( m_iColorGradation[ enColorGage ] < iCOLOR_GRADATION_MIN ){
+		m_iColorGradation[ enColorGage ] = iCOLOR_GRADATION_MIN;
+	}
+
+	UpdateColor( enColorGage );
+}
+
+void clsASSEMBLE_MODEL::UpdateColor( const enCOLOR_GAGE enColorGage )
+{
+
+	const int iBASE_NUMBER = 0;
+	const int iARMOR_NUMBER = 1;
+	const float fNEW_COLOR = 
+		static_cast<float>( m_iColorGradation[ enColorGage ] ) / 
+		static_cast<float>( iCOLOR_GRADATION_MAX );
+
+	switch( enColorGage )
+	{
+	case enCOLOR_GAGE_BASE_R:
+		m_vecvColor[ iBASE_NUMBER ].x = fNEW_COLOR;
+		break;
+	case enCOLOR_GAGE_BASE_G:
+		m_vecvColor[ iBASE_NUMBER ].y = fNEW_COLOR;
+		break;
+	case enCOLOR_GAGE_BASE_B:
+		m_vecvColor[ iBASE_NUMBER ].z = fNEW_COLOR;
+		break;
+	case enCOLOR_GAGE_ARMOR_R:
+		m_vecvColor[ iARMOR_NUMBER ].x = fNEW_COLOR;
+		break;
+	case enCOLOR_GAGE_ARMOR_G:
+		m_vecvColor[ iARMOR_NUMBER ].y = fNEW_COLOR;
+		break;
+	case enCOLOR_GAGE_ARMOR_B:
+		m_vecvColor[ iARMOR_NUMBER ].z = fNEW_COLOR;
+		break;
 	}
 }
+
 
 
 void clsASSEMBLE_MODEL::ModelUpdate()
@@ -457,6 +530,28 @@ void clsASSEMBLE_MODEL::ModelUpdate()
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 	}
 }
+
+
+float clsASSEMBLE_MODEL::GetColorGradation( const enCOLOR_GAGE enColorGage )
+{
+	const float fERROR = -1.0f; 
+	if( enColorGage >= enCOLOR_GAGE::enCOLOR_GAGE_size ){
+		return fERROR;
+	}
+	else if( enColorGage < 0.0f ){
+		return fERROR;
+	}
+
+	float fReturn = static_cast<float>( m_iColorGradation[ enColorGage ] ) / static_cast<float>( iCOLOR_GRADATION_MAX );
+	return fReturn;
+}
+
+
+
+
+
+
+
 
 #if _DEBUG
 //各パーツのpos.

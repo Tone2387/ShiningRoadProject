@@ -1450,34 +1450,35 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 
 	//========== マスク作成 ==========//.
 	//----- ベース -----//.
-	assert( !m_pMaskBase );
-	m_pMaskBase = new MASK_TEXTURE;
-	//テクスチャ作成.
-	if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
-		m_pDevice, 
-		sMASK_PATH_BASE,//テクスチャファイル名.
-		NULL, NULL,
-		&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
-		NULL ) ) )
-	{
-		MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-		return E_FAIL;
+	if( !m_pMaskBase ){
+		m_pMaskBase = new MASK_TEXTURE;
+		//テクスチャ作成.
+		if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+			m_pDevice, 
+			sMASK_PATH_BASE,//テクスチャファイル名.
+			NULL, NULL,
+			&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
+			NULL ) ) )
+		{
+			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+			return E_FAIL;
+		}
 	}
 	//----- アーマー -----//.
-	assert( !m_pMaskArmor );
-	m_pMaskArmor = new MASK_TEXTURE;
-	//テクスチャ作成.
-	if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
-		m_pDevice, 
-		sMASK_PATH_ARMOR,//テクスチャファイル名.
-		NULL, NULL,
-		&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
-		NULL ) ) )
-	{
-		MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-		return E_FAIL;
+	if( !m_pMaskArmor ){
+		m_pMaskArmor = new MASK_TEXTURE;
+		//テクスチャ作成.
+		if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+			m_pDevice, 
+			sMASK_PATH_ARMOR,//テクスチャファイル名.
+			NULL, NULL,
+			&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
+			NULL ) ) )
+		{
+			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+			return E_FAIL;
+		}
 	}
-
 
 	return hRslt;
 }

@@ -8,9 +8,9 @@ SamplerState	g_Sampler	: register( s0 );
 cbuffer	global	: register( b0 )
 {
 	matrix	g_mW			: packoffset( c0 );
-	float	g_fViewPortW	: packoffset( c4 );
-	float	g_fViewPortH	: packoffset( c5 );
-	float	g_fAlpha		: packoffset( c6 );
+	float4	g_vColor		: packoffset( c4 );
+	float	g_fViewPortW	: packoffset( c5 );
+	float	g_fViewPortH	: packoffset( c6 );
 	float2	g_vUV			: packoffset( c7 );
 };
 
@@ -51,7 +51,7 @@ float4 PS_Main( VS_OUT input )	: SV_Target
 	float4 color =
 		g_Texture.Sample( g_Sampler, input.UV );//êFÇï‘Ç∑.
 
-	color.a *= g_fAlpha;
+	color *= g_vColor;
 
 	return color;
 }
