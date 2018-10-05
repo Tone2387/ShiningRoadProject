@@ -101,13 +101,13 @@ const int iBOX_MESSAGE_LINE_COLOR_CHANGE = iBOX_MESSAGE_LINE_BACK_TITLE + 1;
 //色ゲージ枠.
 const char sCOLOR_GAGE_PATH_BONE[] = "Data\\Image\\AssembleUi\\ColorGageBone.png";
 const WHSIZE_FLOAT COLOR_GAGE_SIZE_BONE = { 480.0f, 32.0f };
-const D3DXVECTOR3 vCOLOR_GAGE_POS_BONE  = { 160.0f, 200.0f, 0.0f };
+const D3DXVECTOR3 vCOLOR_GAGE_POS_BONE  = { 420.0f, 220.0f, 0.0f };
 const float fCOLOR_GAGE_OFFSET_BONE = COLOR_GAGE_SIZE_BONE.h + 20.0f;
-const float fCOLOR_GAGE_OFFSET_BONE_2 =  12.0f;//パーツのベースと装甲の合間の追加オフセット.
+const float fCOLOR_GAGE_OFFSET_BONE_2 =  24.0f;//パーツのベースと装甲の合間の追加オフセット.
 //ゲージ本編.
 const char sCOLOR_GAGE_PATH[] = "Data\\Image\\AssembleUi\\ColorGage.png";
 const WHSIZE_FLOAT COLOR_GAGE_SIZE = { 32.0f, 32.0f };
-const float fCOLOR_GAGE_ALPHA = 0.875f;
+const float fCOLOR_GAGE_ALPHA = 0.25f;
 
 //YesNo.
 const float fMESSAGEBOX_BUTTON_X_OFFSET = 100.0f;
@@ -330,7 +330,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 		m_pColorGages[i] = new clsSprite2D;
 		m_pColorGages[i]->Create( m_wpDevice, m_wpContext, sCOLOR_GAGE_PATH, ss );
 		m_pColorGages[i]->SetPos( m_pColorGagesBone[i]->GetPos() );
-		m_pColorGages[i]->AddPos( { m_pColorGagesBone[i]->GetScale().x * fPOS_RATE, m_pColorGages[i]->GetScale().y * fPOS_RATE, 0.0f } );
+		m_pColorGages[i]->AddPos( { COLOR_GAGE_SIZE_BONE.w * fPOS_RATE, COLOR_GAGE_SIZE.h * fPOS_RATE, 0.0f } );
 		m_pColorGages[i]->SetAlpha( fCOLOR_GAGE_ALPHA );
 	}
 
