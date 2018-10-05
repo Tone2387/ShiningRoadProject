@@ -531,6 +531,28 @@ void clsASSEMBLE_MODEL::ModelUpdate()
 	}
 }
 
+
+float clsASSEMBLE_MODEL::GetColorGradation( const enCOLOR_GAGE enColorGage )
+{
+	const float fERROR = -1.0f; 
+	if( enColorGage >= enCOLOR_GAGE::enCOLOR_GAGE_size ){
+		return fERROR;
+	}
+	else if( enColorGage < 0.0f ){
+		return fERROR;
+	}
+
+	float fReturn = static_cast<float>( m_iColorGradation[ enColorGage ] ) / static_cast<float>( iCOLOR_GRADATION_MAX );
+	return fReturn;
+}
+
+
+
+
+
+
+
+
 #if _DEBUG
 //各パーツのpos.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const

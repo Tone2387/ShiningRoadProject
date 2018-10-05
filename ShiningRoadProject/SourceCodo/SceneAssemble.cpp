@@ -148,12 +148,17 @@ const string sCOLOR_CHANGE_BOX_IN_TEXT_RGB_TEXT[] = {
 	"G",
 	"B",
 }; 
+
 const float fCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_SCALE = 2.5f;
 D3DXVECTOR2 vCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_POS = { 60.0f, 170.0f };
 float fCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_POS_ADD_Y = fCOLOR_GAGE_OFFSET_BONE * 3 + fCOLOR_GAGE_OFFSET_BONE_2; 
 const string sCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_TEXT[] = {
 	"Color1", "Color2"
 };
+
+const char sCOLOR_CHANGE_BOX_IN_SELECT_COLOR_PATH[] = "Data\\Image\\AssembleUi\\ColorSelect.png"; 
+const WHSIZE_FLOAT COLOR_CHANGE_BOX_IN_SELECT_COLOR_SIZE = { 24.0f, 24.0f };
+
 
 //パーツ、ステータス説明.
 const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
@@ -369,6 +374,12 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_upColorNumText = make_unique< clsUiText >();
 	m_upColorNumText->Create( m_wpContext, WND_W, WND_H, fCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_SCALE );
 	m_upColorNumText->SetPos( vCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_POS );
+	//色の選択肢.
+	assert( !m_upSelectColor );
+	ss.Disp = COLOR_CHANGE_BOX_IN_SELECT_COLOR_SIZE;
+	m_upSelectColor = make_unique< clsSPRITE2D_CENTER >();
+	m_upSelectColor->Create( m_wpDevice, m_wpContext, sCOLOR_CHANGE_BOX_IN_SELECT_COLOR_PATH, ss );
+
 
 	//パーツビューに置くパーツ.
 	assert( !m_pSelectParts );
@@ -539,6 +550,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_pUI->Update( m_enSelectMode );
 	}
 
+
 	assert( m_pAsmModel );
 	m_pAsmModel->UpDate();
 
@@ -663,8 +675,18 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		//色替え.
 		if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
 			tmpMessagePos = vFONT_MESSAGE_BOX_COLOR_CHANGE;
+			assert( m_upSelectColor );
+			const D3DXVECTOR3 vADD_SELECT_COLOR_OFFSET = { 10.0f, 2.0f, 0.0f };
+			m_upSelectColor->SetPos( m_pColorGagesBone[ m_enColorGageIndex ]->GetPos() );
+			m_upSelectColor->AddPos( { m_upColorTexts[0]->GetPos().x - m_pColorGagesBone[0]->GetPos().x, 0.0f, 0.0f } );
+			m_upSelectColor->AddPos( vADD_SELECT_COLOR_OFFSET );
+			m_upSelectColor->Render();
 			for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
 				m_pColorGagesBone[i]->Render();
+				m_pColorGages[i]->SetScale( { 
+					m_pAsmModel->GetColorGradation( static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( i ) ) * ( COLOR_GAGE_SIZE_BONE.w / COLOR_GAGE_SIZE.w ),
+					1.0f, 
+					1.0f } );
 				m_pColorGages[i]->Render();
 				m_upColorTexts[i]->Render();
 
@@ -676,8 +698,6 @@ void clsSCENE_ASSEMBLE::RenderUi()
 				m_upColorNumText->SetText( sCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_TEXT[ tnpIndex ++ ].c_str() );
 				m_upColorNumText->Render();
 			}
-			assert( m_upSelectColor );
-			m_upSelectColor->Render();
 		}
 		//シーン移動.
 		else {
@@ -735,8 +755,8 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 
-		m_enColorGageIndex = static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( m_enColorGageIndex + 1 );
-		LoopRange( m_enColorGageIndex, clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R, clsASSEMBLE_MODEL::enCOLOR_GAGE_size );
+		m_enColorGageIndex = static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( m_enColorGageIndex - 1 );
+		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R, clsASSEMBLE_MODEL::enCOLOR_GAGE_size );
 	}
 }
 
@@ -760,8 +780,8 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 
-		m_enColorGageIndex = static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( m_enColorGageIndex - 1 );
-		LoopRange( m_enColorGageIndex, clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R, clsASSEMBLE_MODEL::enCOLOR_GAGE_size );
+		m_enColorGageIndex = static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( m_enColorGageIndex + 1 );
+		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R, clsASSEMBLE_MODEL::enCOLOR_GAGE_size );
 	}
 
 }

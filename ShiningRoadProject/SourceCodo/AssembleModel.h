@@ -100,6 +100,9 @@ public:
 	D3DXVECTOR4 GetPartsColor( const unsigned int uiMaskNum );
 	void IncrementColor( const enCOLOR_GAGE enColorGage );
 	void DecrementColor( const enCOLOR_GAGE enColorGage );
+	//0.0f～1.0fで返す.
+	float GetColorGradation( const enCOLOR_GAGE enColorGage );
+
 
 #if _DEBUG
 	//各パーツのpos.
