@@ -696,8 +696,6 @@ void clsSCENE_ASSEMBLE::RenderUi()
 					1.0f, 
 					1.0f } );
  				m_pColorGages[i]->SetColor( vCOLOR_GAGE_COLOR[i] );
-				D3DXVECTOR3 ffffff = m_pColorGages[i]->GetColor();
- 				m_pColorGages[i]->SetColor( ffffff );
 				m_pColorGages[i]->Render();
 				m_upColorTexts[i]->Render();
 
