@@ -482,6 +482,9 @@ void clsASSEMBLE_MODEL::IncrementColor(
 	if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
 	}
+	else if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
+		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
+	}
 
 	UpdateColor( enColorGage );
 }
@@ -491,6 +494,9 @@ void clsASSEMBLE_MODEL::DecrementColor(
 	m_iColorRank[ enColorGage ] --;
 	if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
+	}
+	else if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
+		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
 	}
 
 	UpdateColor( enColorGage );

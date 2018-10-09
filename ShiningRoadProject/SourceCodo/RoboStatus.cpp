@@ -7,25 +7,51 @@
 #include "PartsArmR.h"
 #include "PartsWeapon.h"
 
+#include "File.h"
 
 using namespace std;
+
+const int iCOLOR_RANK_INIT = 16;
+
+
+const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\RoboStatusHero.csv";
+const int iFILE_VAR_ROW = 0;//一行しか存在しない.
+const int iFILE_INDEX_LEG			= 0;
+const int iFILE_INDEX_CORE			= 1;
+const int iFILE_INDEX_HEAD			= 2;
+const int iFILE_INDEX_ARM_L			= 3;
+const int iFILE_INDEX_ARM_R			= 4;
+const int iFILE_INDEX_WEAPON_L		= 5;
+const int iFILE_INDEX_WEAPON_R		= 6;
+const int iFILE_INDEX_COLOR_ARMOR_R = 7;
+const int iFILE_INDEX_COLOR_ARMOR_G = 8;
+const int iFILE_INDEX_COLOR_ARMOR_B = 9;
+const int iFILE_INDEX_COLOR_BASE_R	= 10;
+const int iFILE_INDEX_COLOR_BASE_G	= 11;
+const int iFILE_INDEX_COLOR_BASE_B	= 12;
+
+
 
 
 clsROBO_STATUS::clsROBO_STATUS()
 {
+	Clear();
+
+	clsFILE File;
+	File.Open( sROBO_STATUS_HERO_PATH );
+
 	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
-		m_ucPartsModelNum[i] = 0;
-		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
+		m_ucPartsModelNumHero[i] = File.GetDataInt( iFILE_VAR_ROW, static_cast<int>( i ) );
+		m_ucPartsModelNum[i] = m_ucPartsModelNumHero[i];
 	}
 
-	const int iCOLOR_RANK_INIT = 1;
 	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
-		m_iColorRank[i] = iCOLOR_RANK_INIT;
-		m_iColorRankHero[i] = m_iColorRank[i];
+		m_iColorRankHero[i] = File.GetDataInt( iFILE_VAR_ROW, static_cast<int>( i ) + iFILE_INDEX_COLOR_ARMOR_R );
+		m_iColorRank[i] = m_iColorRankHero[i];
 	}
 
-	Clear();
+	File.Close();
 }
 
 clsROBO_STATUS::~clsROBO_STATUS()
@@ -48,11 +74,17 @@ void clsROBO_STATUS::Clear()
 		m_iRoboHp[i] = 0;
 	}
 	
-	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
-	for( UCHAR i=0; i<tmpSize; i++ ){
-		m_ucPartsModelNum[i] = 0;
-		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
-	}
+//	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
+//	for( UCHAR i=0; i<tmpSize; i++ ){
+//		m_ucPartsModelNum[i] = 0;
+////		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];//ヒーローに手は出さない.
+//	}
+//
+//	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+//		m_iColorRank[i] = iCOLOR_RANK_INIT;
+////		m_iColorRankHero[i] = m_iColorRank[i];
+//	}
+
 }
 
 

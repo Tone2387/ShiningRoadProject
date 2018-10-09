@@ -228,20 +228,6 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	m_wpSound->PlayBGM( enBGM_MAOU2 );
 
-//	m_pTestChara = new clsCharaStatic;
-//	m_pTestChara->AttachModel( 
-//		m_wpResource->GetStaticModels( 
-//		clsResource::enSTATIC_MODEL::enStaticModel_Ground ) );
-//	m_pTestChara->Init();
-//	m_pTestChara->SetPosition( D3DXVECTOR3( 1.0f, 0.0f, 50.0f ) );
-//
-//	m_pParts = new clsCharaStatic;
-//	m_pParts->AttachModel( 
-//		m_wpResource->GetStaticModels( 
-//		clsResource::enSTATIC_MODEL::enStaticModel_Enemy ) );
-//	m_pParts->Init();
-//	m_pParts->SetPosition( D3DXVECTOR3( -2.0f, 1.0f, 0.0f ) );
-//
 
 	//背景.
 	SPRITE_STATE ss;
@@ -256,6 +242,10 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_upArrow = make_unique< clsSPRITE2D_CENTER >();
 	m_upArrow->Create( m_wpDevice, m_wpContext, sPATH_ARROW, ss );
 
+
+	//ミッションシーンに引き継ぐ情報の初期化.
+	assert( m_wpRoboStatus );
+	m_wpRoboStatus->Clear();
 
 	//UIの数用変数.
 	clsASSEMBLE_UI::PARTS_NUM_DATA partsData;
@@ -314,10 +304,6 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::ARMS ) ]		= m_wpRoboStatus->GetPartsNum( enPARTS::HEAD );
 	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::WEAPON_L ) ]	= m_wpRoboStatus->GetPartsNum( enPARTS::WEAPON_L );
 	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::WEAPON_R ) ]	= m_wpRoboStatus->GetPartsNum( enPARTS::WEAPON_R );
-
-	//ミッションシーンに引き継ぐ情報の初期化.
-	assert( m_wpRoboStatus );
-	m_wpRoboStatus->Clear();
 
 	//パーツビュー.
 	assert( !m_pViewPortPartsWindow );
