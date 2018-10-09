@@ -8,6 +8,7 @@
 #include "PartsWeapon.h"
 
 #include "File.h"
+#include "OperationString.h"
 
 using namespace std;
 
@@ -135,13 +136,30 @@ UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType )
 //クリア画面で使う : タイトル用の初期化用.
 void clsROBO_STATUS::SaveHeroData()
 {
+	const string InitString;
+	clsOPERATION_STRING OprtStr;
+	clsFILE::FILE_DATA FileData;
+	clsFILE File;
+	const int iOUT_DATA_ROW_SIZE = 1 + iFILE_VAR_ROW;
+	const int iOUT_DATA_COL_SIZE = 1 + iFILE_INDEX_COLOR_BASE_B;
+	File.CreateFileDataForOutPut( FileData, iOUT_DATA_ROW_SIZE, iOUT_DATA_COL_SIZE );
+
+	int iFileDataIndex = 0;
+
 	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
 		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
+		FileData[0][ iFileDataIndex++ ] = OprtStr.ConsolidatedNumber( InitString, m_ucPartsModelNumHero[i] );
 	}
 	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
 		m_iColorRankHero[i] = m_iColorRank[i];
+		FileData[0][ iFileDataIndex++ ] = OprtStr.ConsolidatedNumber( InitString, m_iColorRankHero[i] );
 	}
+
+
+	File.Open( sROBO_STATUS_HERO_PATH );
+	File.OutPutCsv( FileData );
+	File.Close();
 }
 
 //AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.

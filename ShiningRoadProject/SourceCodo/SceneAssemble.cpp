@@ -305,6 +305,12 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::WEAPON_L ) ]	= m_wpRoboStatus->GetPartsNum( enPARTS::WEAPON_L );
 	m_PartsSelect.Num[ static_cast<char>( clsASSEMBLE_MODEL::WEAPON_R ) ]	= m_wpRoboStatus->GetPartsNum( enPARTS::WEAPON_R );
 
+	//ステータスの初期化.
+	for( m_PartsSelect.Type=0; m_PartsSelect.Type<clsASSEMBLE_MODEL::ENUM_SIZE; m_PartsSelect.Type++ ){
+		AssembleParts();
+	}
+	m_PartsSelect.Type = 0;
+
 	//パーツビュー.
 	assert( !m_pViewPortPartsWindow );
 	m_pViewPortPartsWindow = new D3D11_VIEWPORT;
