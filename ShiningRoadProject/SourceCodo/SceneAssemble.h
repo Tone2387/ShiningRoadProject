@@ -126,12 +126,12 @@ private:
 
 	//色の棒.
 	
-	clsASSEMBLE_MODEL::enCOLOR_GAGE m_enColorGageIndex;
+	clsROBO_STATUS::enCOLOR_GAGE m_enColorGageIndex;
 
-	clsSPRITE2D_CENTER* m_pColorGagesBone[ clsASSEMBLE_MODEL::enCOLOR_GAGE_size ];
-	clsSprite2D* m_pColorGages[ clsASSEMBLE_MODEL::enCOLOR_GAGE_size ];
+	clsSPRITE2D_CENTER* m_pColorGagesBone[ clsROBO_STATUS::enCOLOR_GAGE_size ];
+	clsSprite2D* m_pColorGages[ clsROBO_STATUS::enCOLOR_GAGE_size ];
 //	unsigned int m_uiColorChangeNum;//ローカル変数.
-	std::unique_ptr< clsUiText > m_upColorTexts[ clsASSEMBLE_MODEL::enCOLOR_GAGE_size ];//RとかGとか書いてる.
+	std::unique_ptr< clsUiText > m_upColorTexts[ clsROBO_STATUS::enCOLOR_GAGE_size ];//RとかGとか書いてる.
 	std::unique_ptr< clsUiText > m_upColorNumText;//色1と色2とか書く.
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upSelectColor;//選択中の色を表す.
 
