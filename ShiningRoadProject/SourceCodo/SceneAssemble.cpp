@@ -190,19 +190,19 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_isMessageBoxYes( true )
 	,m_isCanControl( false )
 	,m_pColorGagesBone()
-	,m_enColorGageIndex( clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R )
+	,m_enColorGageIndex( clsROBO_STATUS::enCOLOR_GAGE_BASE_R )
 //	,m_enSelectMode()
 {
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
 
-	for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 		m_pColorGagesBone[i] = nullptr;
 	}
 }
 
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 {
-	for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 		SAFE_DELETE( m_pColorGagesBone[i] );
 	}
 
@@ -343,13 +343,13 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	//色ゲージ骨.
 	ss.Disp = COLOR_GAGE_SIZE_BONE;
 	ss.Anim = { 1.0f, 1.0f };
-	for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 		assert( !m_pColorGagesBone[i] );
 		m_pColorGagesBone[i] = new clsSPRITE2D_CENTER;
 		m_pColorGagesBone[i]->Create( m_wpDevice, m_wpContext, sCOLOR_GAGE_PATH_BONE, ss );
 		m_pColorGagesBone[i]->SetPos( vCOLOR_GAGE_POS_BONE );
 		m_pColorGagesBone[i]->AddPos( { 0.0f, fCOLOR_GAGE_OFFSET_BONE * static_cast<float>( i ), 0.0f } );
-		if( i >= clsASSEMBLE_MODEL::enCOLOR_GAGE_ARMOR_R ){
+		if( i >= clsROBO_STATUS::enCOLOR_GAGE_ARMOR_R ){
 			m_pColorGagesBone[i]->AddPos( { 0.0f, fCOLOR_GAGE_OFFSET_BONE_2, 0.0f } );
 		}
 		m_pColorGagesBone[i]->SetAlpha( 0.0f );
@@ -357,7 +357,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//色ゲージ.
 	ss.Disp = COLOR_GAGE_SIZE;
-	for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 		const float fPOS_RATE = -0.5f;
 		assert( !m_pColorGages[i] );
 		m_pColorGages[i] = new clsSprite2D;
@@ -367,7 +367,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 		m_pColorGages[i]->SetAlpha( fCOLOR_GAGE_ALPHA );
 	}
 	//色箱のtext.
-	for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 		const float fPOS_RATE = -0.5f;
 		assert( !m_upColorTexts[i] );
 		m_upColorTexts[i] = make_unique< clsUiText >();
@@ -689,10 +689,10 @@ void clsSCENE_ASSEMBLE::RenderUi()
 			m_upSelectColor->AddPos( { m_upColorTexts[0]->GetPos().x - m_pColorGagesBone[0]->GetPos().x, 0.0f, 0.0f } );
 			m_upSelectColor->AddPos( vADD_SELECT_COLOR_OFFSET );
 			m_upSelectColor->Render();
-			for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
+			for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 				m_pColorGagesBone[i]->Render();
 				m_pColorGages[i]->SetScale( { 
-					m_pAsmModel->GetColorGradation( static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( i ) ) * ( COLOR_GAGE_SIZE_BONE.w / COLOR_GAGE_SIZE.w ),
+					m_pAsmModel->GetColorGradation( static_cast<clsROBO_STATUS::enCOLOR_GAGE>( i ) ) * ( COLOR_GAGE_SIZE_BONE.w / COLOR_GAGE_SIZE.w ),
 					1.0f, 
 					1.0f } );
  				m_pColorGages[i]->SetColor( vCOLOR_GAGE_COLOR[i] );
@@ -764,8 +764,8 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 
-		m_enColorGageIndex = static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( m_enColorGageIndex - 1 );
-		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R, clsASSEMBLE_MODEL::enCOLOR_GAGE_size );
+		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( m_enColorGageIndex - 1 );
+		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsROBO_STATUS::enCOLOR_GAGE_BASE_R, clsROBO_STATUS::enCOLOR_GAGE_size );
 	}
 }
 
@@ -789,8 +789,8 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 
-		m_enColorGageIndex = static_cast<clsASSEMBLE_MODEL::enCOLOR_GAGE>( m_enColorGageIndex + 1 );
-		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R, clsASSEMBLE_MODEL::enCOLOR_GAGE_size );
+		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( m_enColorGageIndex + 1 );
+		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsROBO_STATUS::enCOLOR_GAGE_BASE_R, clsROBO_STATUS::enCOLOR_GAGE_size );
 	}
 
 }
@@ -928,18 +928,26 @@ void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )
 //		return;
 //	}
 
-	if( m_enColorGageIndex >= clsASSEMBLE_MODEL::enCOLOR_GAGE::enCOLOR_GAGE_size ){
+	if( m_enColorGageIndex >= clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_size ){
 		return;
 	}
 
 	assert( m_pAsmModel );
+	//右.
 	if( isIncrement ){
 		m_pAsmModel->IncrementColor( m_enColorGageIndex );
 	}
+	//左.
 	else{
 		m_pAsmModel->DecrementColor( m_enColorGageIndex );
 	}
 
+	//色の保存.
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
+		clsROBO_STATUS::enCOLOR_GAGE tmpIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( i );
+		int iColorRank = m_pAsmModel->GetColorRank( tmpIndex );
+		m_wpRoboStatus->SetColorRank( tmpIndex, iColorRank );
+	}
 }
 
 
@@ -1092,10 +1100,10 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 		m_iMessageNum = iBOX_MESSAGE_LINE_COLOR_CHANGE;
 		m_upBox->SetPos( vBOX_POS_COLOR );
 		m_upBox->SetSizeTarget( vBOX_SIZE_COLOR );
-		for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
+		for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 			m_pColorGagesBone[i]->SetAlpha( 1.0f );
 		}
-		m_enColorGageIndex = clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R;
+		m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE_BASE_R;
 	}
 }
 //メッセボックス消す.
@@ -1110,7 +1118,7 @@ void clsSCENE_ASSEMBLE::DisAppearMessageBox()
 		encBOX_DISAPPEAR_CHANGE_MODE );
 
 	//消す.
-	for( char i=0; i<clsASSEMBLE_MODEL::enCOLOR_GAGE_size; i++ ){
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 		m_pColorGagesBone[i]->SetAlpha( 0.0f );
 	}
 

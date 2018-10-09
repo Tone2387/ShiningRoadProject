@@ -44,13 +44,13 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	,m_vpParts()
 	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
-	,m_iColorGradation()
+	,m_iColorRank()
 {
 	m_dAnimSpd = dANIM_SPD;
 	m_vecvColor.resize( iMASK_MAX_NUM, vCOLOR_NORMAL );
-	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
-		m_iColorGradation[i] = iCOLOR_GRADATION_MIN;
-		UpdateColor( static_cast<enCOLOR_GAGE>( i ) );
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
+		m_iColorRank[i] = iCOLOR_GRADATION_MIN;
+		UpdateColor( static_cast<clsROBO_STATUS::enCOLOR_GAGE>( i ) );
 	}
 }
 
@@ -94,7 +94,8 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 	//ÅŒã‚ÉƒNƒŠƒA‚µ‚½ó‘Ô‚É‚·‚é.
 	if( isTitleScene ){
 		pStatus->LodeHeroData();
-	}
+	}	
+
 	Init( pStatus );
 
 	CreateProduct();
@@ -120,6 +121,12 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 	SetRot( { 0.0f, 0.0f, 0.0f } );
 	SetScale( 1.0f );
 	SetAnimSpd( dANIM_SPD );
+
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
+		clsROBO_STATUS::enCOLOR_GAGE tmpIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( i );
+		m_iColorRank[i] = pStatus->GetColorRank( tmpIndex );
+		UpdateColor( tmpIndex );
+	}
 
 //	AnimReSet();
 }
@@ -469,53 +476,53 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum )
 }
 
 void clsASSEMBLE_MODEL::IncrementColor( 
-	const enCOLOR_GAGE enColorGage )
+	const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
 {
-	m_iColorGradation[ enColorGage ] ++;
-	if( m_iColorGradation[ enColorGage ] > iCOLOR_GRADATION_MAX ){
-		m_iColorGradation[ enColorGage ] = iCOLOR_GRADATION_MAX;
+	m_iColorRank[ enColorGage ] ++;
+	if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
+		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
 	}
 
 	UpdateColor( enColorGage );
 }
 void clsASSEMBLE_MODEL::DecrementColor( 
-	const enCOLOR_GAGE enColorGage )
+	const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
 {
-	m_iColorGradation[ enColorGage ] --;
-	if( m_iColorGradation[ enColorGage ] < iCOLOR_GRADATION_MIN ){
-		m_iColorGradation[ enColorGage ] = iCOLOR_GRADATION_MIN;
+	m_iColorRank[ enColorGage ] --;
+	if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
+		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
 	}
 
 	UpdateColor( enColorGage );
 }
 
-void clsASSEMBLE_MODEL::UpdateColor( const enCOLOR_GAGE enColorGage )
+void clsASSEMBLE_MODEL::UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
 {
 
 	const int iBASE_NUMBER = 0;
 	const int iARMOR_NUMBER = 1;
 	const float fNEW_COLOR = 
-		static_cast<float>( m_iColorGradation[ enColorGage ] ) / 
+		static_cast<float>( m_iColorRank[ enColorGage ] ) / 
 		static_cast<float>( iCOLOR_GRADATION_MAX );
 
 	switch( enColorGage )
 	{
-	case enCOLOR_GAGE_BASE_R:
+	case clsROBO_STATUS::enCOLOR_GAGE_BASE_R:
 		m_vecvColor[ iBASE_NUMBER ].x = fNEW_COLOR;
 		break;
-	case enCOLOR_GAGE_BASE_G:
+	case clsROBO_STATUS::enCOLOR_GAGE_BASE_G:
 		m_vecvColor[ iBASE_NUMBER ].y = fNEW_COLOR;
 		break;
-	case enCOLOR_GAGE_BASE_B:
+	case clsROBO_STATUS::enCOLOR_GAGE_BASE_B:
 		m_vecvColor[ iBASE_NUMBER ].z = fNEW_COLOR;
 		break;
-	case enCOLOR_GAGE_ARMOR_R:
+	case clsROBO_STATUS::enCOLOR_GAGE_ARMOR_R:
 		m_vecvColor[ iARMOR_NUMBER ].x = fNEW_COLOR;
 		break;
-	case enCOLOR_GAGE_ARMOR_G:
+	case clsROBO_STATUS::enCOLOR_GAGE_ARMOR_G:
 		m_vecvColor[ iARMOR_NUMBER ].y = fNEW_COLOR;
 		break;
-	case enCOLOR_GAGE_ARMOR_B:
+	case clsROBO_STATUS::enCOLOR_GAGE_ARMOR_B:
 		m_vecvColor[ iARMOR_NUMBER ].z = fNEW_COLOR;
 		break;
 	}
@@ -532,22 +539,37 @@ void clsASSEMBLE_MODEL::ModelUpdate()
 }
 
 
-float clsASSEMBLE_MODEL::GetColorGradation( const enCOLOR_GAGE enColorGage )
+float clsASSEMBLE_MODEL::GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
 {
 	const float fERROR = -1.0f; 
-	if( enColorGage >= enCOLOR_GAGE::enCOLOR_GAGE_size ){
+	if( enColorGage >= clsROBO_STATUS::enCOLOR_GAGE_size ){
 		return fERROR;
 	}
 	else if( enColorGage < 0.0f ){
 		return fERROR;
 	}
 
-	float fReturn = static_cast<float>( m_iColorGradation[ enColorGage ] ) / static_cast<float>( iCOLOR_GRADATION_MAX );
+	float fReturn = static_cast<float>( m_iColorRank[ enColorGage ] ) / static_cast<float>( iCOLOR_GRADATION_MAX );
 	return fReturn;
 }
 
+std::vector< D3DXVECTOR4 > clsASSEMBLE_MODEL::GetColor()
+{
+	return m_vecvColor;
+}
 
 
+//0~16‚Å•Ô‚·.
+int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+{
+	if( enColorGage >= clsROBO_STATUS::enCOLOR_GAGE_size ||
+		enColorGage < 0 )
+	{
+		return 0;
+	}
+
+	return m_iColorRank[ enColorGage ];
+}
 
 
 

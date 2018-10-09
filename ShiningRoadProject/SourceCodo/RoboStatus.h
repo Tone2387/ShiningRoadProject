@@ -18,6 +18,20 @@ public:
 	clsROBO_STATUS();
 	~clsROBO_STATUS();
 
+	//色の棒.
+	enum enCOLOR_GAGE : char
+	{
+		enCOLOR_GAGE_BASE_R = 0,
+		enCOLOR_GAGE_BASE_G,
+		enCOLOR_GAGE_BASE_B,
+
+		enCOLOR_GAGE_ARMOR_R,
+		enCOLOR_GAGE_ARMOR_G,
+		enCOLOR_GAGE_ARMOR_B,
+
+		enCOLOR_GAGE_size
+	};
+
 	//まっさらにする.
 	void Clear();
 
@@ -115,6 +129,10 @@ public:
 	//AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
 	void LodeHeroData();
 
+	//色フラグのやり取り.
+	void SetColorRank( const enCOLOR_GAGE enColorNum, const int iColorRate );
+	int GetColorRank( const enCOLOR_GAGE enColorNum );
+
 private:
 
 	//HPを持つパーツ.
@@ -141,4 +159,9 @@ private:
 	UCHAR m_ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
 	//タイトル用.
 	UCHAR m_ucPartsModelNumHero[ static_cast<int>( enPARTS::MAX ) ];
+
+	//色の段階.
+	int m_iColorRank[ enCOLOR_GAGE_size ];
+	int m_iColorRankHero[ enCOLOR_GAGE_size ];
+
 };

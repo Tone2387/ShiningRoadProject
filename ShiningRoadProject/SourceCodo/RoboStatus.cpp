@@ -12,14 +12,19 @@ using namespace std;
 
 
 clsROBO_STATUS::clsROBO_STATUS()
-	:m_ucPartsModelNum()
-	,m_ucPartsModelNumHero()
 {
 	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
 		m_ucPartsModelNum[i] = 0;
 		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
 	}
+
+	const int iCOLOR_RANK_INIT = 1;
+	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+		m_iColorRank[i] = iCOLOR_RANK_INIT;
+		m_iColorRankHero[i] = m_iColorRank[i];
+	}
+
 	Clear();
 }
 
@@ -102,6 +107,9 @@ void clsROBO_STATUS::SaveHeroData()
 	for( UCHAR i=0; i<tmpSize; i++ ){
 		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
 	}
+	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+		m_iColorRankHero[i] = m_iColorRank[i];
+	}
 }
 
 //AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
@@ -111,6 +119,10 @@ void clsROBO_STATUS::LodeHeroData()
 	for( int i=0; i<tmpSize; i++ ){
 		m_ucPartsModelNum[i] = m_ucPartsModelNumHero[i];
 	}
+	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+		m_iColorRank[i] = m_iColorRankHero[i];
+	}
+
 }
 
 
@@ -244,3 +256,21 @@ void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSE
 	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_R ) ] = static_cast<UCHAR>( PartsNum );
 }
 
+
+//色フラグのやり取り.
+void clsROBO_STATUS::SetColorRank( 
+	const enCOLOR_GAGE enColorNum, 
+	const int iColorRate )
+{
+	assert( enColorNum >= 0  );
+	assert( enColorNum < enCOLOR_GAGE_size );
+	m_iColorRank[ enColorNum ] = iColorRate;
+}
+
+
+int clsROBO_STATUS::GetColorRank( const enCOLOR_GAGE enColorNum )
+{
+	assert( enColorNum >= 0  );
+	assert( enColorNum < enCOLOR_GAGE_size );
+	return m_iColorRank[ enColorNum ];
+}
