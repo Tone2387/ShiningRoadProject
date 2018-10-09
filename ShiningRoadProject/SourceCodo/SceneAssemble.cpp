@@ -532,6 +532,10 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		}
 	}
 
+	//ƒ‚ƒfƒ‹‰ñ“].
+	const float fMODEL_SPN_SPD = 0.05f;
+	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ), false ) m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+	if( m_wpXInput->isSlopeStay( XINPUT_LEFT ), false ) m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
 
 
 	assert( m_pUI );
