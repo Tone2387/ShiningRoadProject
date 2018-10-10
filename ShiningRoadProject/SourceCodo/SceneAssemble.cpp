@@ -534,8 +534,12 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 	//モデル回転.
 	const float fMODEL_SPN_SPD = 0.05f;
-	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ), false ) m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
-	if( m_wpXInput->isSlopeStay( XINPUT_LEFT ), false ) m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+		m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+	}
+	if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+		m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+	}
 
 
 	assert( m_pUI );
@@ -559,6 +563,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	m_pAsmModel->UpDate();
 
 	assert( m_pSelectParts );
+	m_pSelectParts->SetColors( m_pAsmModel->GetColor() );
 	m_pSelectParts->Update( m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
 
 	assert( m_upBox );
@@ -860,6 +865,7 @@ void clsSCENE_ASSEMBLE::Enter( enSCENE &enNextScene )
 //	m_wpSound->PlaySE( enSE::ENTER );
 
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+		m_wpSound->PlaySE( enSE_ENTER );
 		AssembleParts();
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
@@ -963,7 +969,7 @@ void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 //パーツ変更.
 void clsSCENE_ASSEMBLE::AssembleParts()
 {
-	m_wpSound->PlaySE( enSE_ENTER );
+//	m_wpSound->PlaySE( enSE_ENTER );
 
 	//ステータスが何項目あるのか.
 	const int iStatusSize = m_vspFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;

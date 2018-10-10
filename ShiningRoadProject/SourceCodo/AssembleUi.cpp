@@ -674,8 +674,7 @@ void clsASSEMBLE_UI::Render(
 
 	//パーツ選択中のみ描画.
 	if( enSelect == enSELECT_MODE::PARTS ||
-		enSelect == enSELECT_MODE::STATUS ||
-		enSelect == enSELECT_MODE::COLOR_CHANGE )
+		enSelect == enSELECT_MODE::STATUS )
 	{
 		//選択中カテゴリ.
 		assert( m_upPartsTypeSelect );

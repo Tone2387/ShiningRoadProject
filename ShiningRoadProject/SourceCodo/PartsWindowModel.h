@@ -23,6 +23,9 @@ public:
 	//アセンブルシーンのパーツウィンドウのカメラの高さの基準にする.
 	D3DXVECTOR3 GetSelectPartsHeight();
 
+	//色を受け取る.
+	void SetColors( const std::vector< D3DXVECTOR4 > vecvColors );
+
 private:
 
 	//選択中パーツ.
@@ -37,5 +40,7 @@ private:
 
 	clsResource* m_wpResource;
 
+	//色.
+	std::vector< D3DXVECTOR4 > m_vecvColors;
 };
 

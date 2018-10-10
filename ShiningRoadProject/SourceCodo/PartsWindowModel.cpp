@@ -39,6 +39,12 @@ const D3DXVECTOR3 vCAM_OFFSET[4] =
 	D3DXVECTOR3( 0.0f, 0.0f, 0.0f )
 };
 
+//マスク.
+const int iMASK_ARMOR = 0;
+const int iMASK_BASE = 0;
+const int iMASK_MAX = 2;
+
+
 
 clsPARTS_WINDOW_MODEL::clsPARTS_WINDOW_MODEL( clsResource* const pResource, clsROBO_STATUS* const pStatus )
 	:m_wpResource( pResource )
@@ -95,7 +101,7 @@ void clsPARTS_WINDOW_MODEL::Update( const short Type, const short Num )
 		return;
 	}
 
-	//前進.
+	//全身.
 	m_upRoboModel->AttachModel(
 		m_SelectType, m_SelectNum );
 
@@ -105,6 +111,10 @@ void clsPARTS_WINDOW_MODEL::Update( const short Type, const short Num )
 		m_upRoboModel->AttachModel(
 			m_SelectType, m_SelectNum );
 		m_SelectType = enPARTS::ARM_L;
+	}
+	m_upRoboModel->UpDate();
+	for( int i=0; i<iMASK_MAX; i++ ){
+		m_upRoboModel->SetPartsColor( m_vecvColors[i], i );
 	}
 
 	//武器.
@@ -137,7 +147,7 @@ void clsPARTS_WINDOW_MODEL::Render(
 	case enPARTS::WEAPON_R:
 		assert( m_upWeapon );
 		m_upWeapon->ModelUpdate( m_upWeapon->m_Trans );
-		m_upWeapon->Render( mView, mProj, vLight, vEye );
+		m_upWeapon->Render( mView, mProj, vLight, vEye, m_vecvColors[0], m_vecvColors[1] );
 		break;
 	}
 
@@ -183,7 +193,7 @@ D3DXVECTOR3 clsPARTS_WINDOW_MODEL::GetSelectPartsHeight()
 	}
 	//それ以外.
 	else{
-		m_upRoboModel->UpdateProduct();
+		m_upRoboModel->UpDate();
 		vReturn.y = m_upRoboModel->GetBonePos( 
 			m_SelectType, sBONE_NAME_PARTS_CENTER[ tmpIndex ].c_str() ).y;
 	}
@@ -216,3 +226,13 @@ D3DXVECTOR3 clsPARTS_WINDOW_MODEL::GetSelectPartsHeight()
 
 	return vReturn;
 }
+
+
+//色を受け取る.
+void clsPARTS_WINDOW_MODEL::SetColors( const std::vector< D3DXVECTOR4 > vecvColors )
+{
+	m_vecvColors = vecvColors;
+}
+
+
+

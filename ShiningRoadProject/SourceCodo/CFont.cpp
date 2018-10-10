@@ -849,7 +849,7 @@ float clsFont::GetFineCharactorRate(
 clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType( const int iTextRow, const int iCharNum )
 {
 	//次がないならそれは文末すなわち、とりあえず半角を返しておけばよい( 仮に日本語の末尾だったとしても見えないから影響しない ).
-	if( iCharNum + 1 >= m_sTextData[ iTextRow ].size() ){
+	if( iCharNum + 1 >= static_cast<int>( m_sTextData[ iTextRow ].size() ) ){
 		return encCHARACTOR_TYPE::ALPHABET;
 	}
 	//マイナスに行こうとすれば許さない( それは絶対半角 ).
