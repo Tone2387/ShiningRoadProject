@@ -2,6 +2,11 @@
 #include "File.h"
 using namespace std;
 
+//Ç¬ÇØÇƒÇ¢ÇÈÇ∆îwåiÇ…ê^ÇÒíÜÇ™ÇÌÇ©ÇÈÇ‡ÇÃÇèoÇ∑.
+//#define CENTER_SPRITE_RENDER
+#ifdef CENTER_SPRITE_RENDER
+unique_ptr<clsSprite2D> g_upTex;
+#endif//#ifdef CENTER_SPRITE_RENDER
 
 const int iINTERVAL_CNT = 120;
 
@@ -44,6 +49,12 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	,m_isCanGoTitle( false )
 	,m_uiRenderTextNum( 0 )
 {
+#ifdef CENTER_SPRITE_RENDER	SPRITE_STATE ss;
+	ss.Disp = { WND_W, WND_H };
+	g_upTex = make_unique<clsSprite2D>();
+	g_upTex->Create( m_wpDevice, m_wpContext, "Data\\Image\\sima.png", ss );
+	g_upTex->SetPos( { 0.0f, 0.0f, 0.0f } );
+#endif//#ifdef CENTER_SPRITE_RENDER
 }
 
 clsSCENE_ENDING::~clsSCENE_ENDING()
@@ -244,6 +255,9 @@ void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 void clsSCENE_ENDING::RenderUi()
 {
+#ifdef CENTER_SPRITE_RENDER
+	g_upTex->Render();
+#endif//#ifdef CENTER_SPRITE_RENDER
 	int iTextIndex = 0;
 
 	for( unsigned int i=0; i<m_vupTextStateAlpha.size(); i++  ){
