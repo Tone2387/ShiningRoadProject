@@ -55,6 +55,29 @@ public:
 		delete m_pBoostRising;
 	}
 
+	void InputTest()
+	{
+		m_pDxInput->IsLSUpEnter();
+		m_pDxInput->IsLSDownEnter();
+		m_pDxInput->IsLSLeftEnter();
+		m_pDxInput->IsLSRightEnter();
+
+		m_pDxInput->IsLSUpStay();
+		m_pDxInput->IsLSDownStay();
+		m_pDxInput->IsLSLeftStay();
+		m_pDxInput->IsLSRightStay();
+
+		m_pDxInput->IsRSUpEnter();
+		m_pDxInput->IsRSDownEnter();
+		m_pDxInput->IsRSLeftEnter();
+		m_pDxInput->IsRSRightEnter();
+
+		m_pDxInput->IsRSUpStay();
+		m_pDxInput->IsRSDownStay();
+		m_pDxInput->IsRSLeftStay();
+		m_pDxInput->IsRSRightStay();
+	}
+
 	clsRoboCommand* LSInput(float& fPower, float& fAngle)
 	{
 		fPower = 0.0f;

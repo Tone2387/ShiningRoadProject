@@ -13,6 +13,10 @@
 const int g_iAxisMax = 1000;
 const int g_iAxisMin = g_iAxisMax / 4;
 
+const float g_fPushMax = 1.0f;
+const float g_fPushMin = 0.6f;
+const float g_fNoPush = 0.0f;
+
 //========================================================
 //	列挙体宣言.
 //========================================================
@@ -52,14 +56,6 @@ enum enPKey
 	enPKey_Max,//ｷｰ最大数.
 };
 
-struct StickState
-{
-	float fDir;
-	float fPush;
-	float fHorPush;
-	float fVerPush;
-};
-
 //========================================================
 //	ﾒｲﾝｸﾗｽ.
 //========================================================
@@ -69,16 +65,6 @@ class clsDxInput
 public:
 	clsDxInput();
 	~clsDxInput();
-
-	//左スティック.
-	float m_fLSDir;
-	float m_fHorLSPush;
-	float m_fVerLSPush;
-
-	//右スティック.
-	float m_fRSDir;
-	float m_fHorRSPush;
-	float m_fVerRSPush;
 
 	bool initDI(HWND hWnd);
 
@@ -97,21 +83,53 @@ public:
 	float GetLSDir();
 
 	float GetLSPush();
-
-	bool GetLSEnter(enPKey enKey);
-	bool GetLSStay(enPKey enKey);
-	bool GetLSExit(enPKey enKey);
-
 	float GetHorLSPush();
 	float GetVerLSPush();
 
+	const bool IsLSUpEnter();
+	const bool IsLSDownEnter();
+	const bool IsLSLeftEnter();
+	const bool IsLSRightEnter();
+
+	const bool IsLSUpStay();
+	const bool IsLSDownStay();
+	const bool IsLSLeftStay();
+	const bool IsLSRightStay();
+
 	float GetRSDir();
+
 	float GetRSPush();
 	float GetHorRSPush();
 	float GetVerRSPush();
 
+	const bool IsRSUpEnter();
+	const bool IsRSDownEnter();
+	const bool IsRSLeftEnter();
+	const bool IsRSRightEnter();
+				 
+	const bool IsRSUpStay();
+	const bool IsRSDownStay();
+	const bool IsRSLeftStay();
+	const bool IsRSRightStay();
+
 private:
-	unsigned int m_uInputState;//入力情報.
+	struct InputState
+	{
+		//左スティック.
+		float fLSDir;
+		float fHorLSPush;
+		float fVerLSPush;
+
+		//右スティック.
+		float fRSDir;
+		float fHorRSPush;
+		float fVerRSPush;
+
+		unsigned int uiKeyState;//入力情報.
+	};
+
+	InputState m_InputNowState;//現在の入力情報.
+	InputState m_InputOldState;//1フレーム前の入力情報.
 
 	LPDIRECTINPUT8 m_DI;//DxInputｵﾌﾞｼﾞｪｸﾄ.
 	LPDIRECTINPUTDEVICE8 m_Pad;//ﾃﾞﾊﾞｲｽ(ｺﾝﾄﾛｰﾗ)ｵﾌﾞｼﾞｪｸﾄ.
