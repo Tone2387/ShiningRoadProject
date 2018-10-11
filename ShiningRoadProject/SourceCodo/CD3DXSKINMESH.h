@@ -57,8 +57,8 @@ struct SHADER_SKIN_GLOBAL1
 	D3DXVECTOR4 vAmbient;	// アンビエント光.
 	D3DXVECTOR4 vDiffuse;	// ディフューズ色.
 	D3DXVECTOR4 vSpecular;	// 鏡面反射.
-	D3DXVECTOR4 vColorBase;	//カラー.
 	D3DXVECTOR4 vColorArmor;//カラー.
+	D3DXVECTOR4 vColorBase;	//カラー.
 };
 
 struct SHADER_GLOBAL_BONES
