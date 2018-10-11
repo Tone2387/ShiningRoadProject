@@ -78,8 +78,6 @@ public:
 	bool m_bCamPosXSwitch;
 	bool IsTargetDirBack(D3DXVECTOR3 vTargetPos);//“G‚ªƒLƒƒƒ‰‚æ‚èŒã‚ë‚É‚¢‚é‚©.
 
-	
-
 	D3DXVECTOR3 GetCamPos();
 
 	std::vector<clsWeapon*> m_v_pWeapons;

@@ -66,25 +66,25 @@ public:
 	clsDxInput();
 	~clsDxInput();
 
-	bool initDI(HWND hWnd);
+	const bool initDI(const HWND hWnd);
 
 	//“ü—Íî•ñXVŠÖ”.
-	HRESULT UpdataInputState();
+	const HRESULT UpdataInputState();
 
 	//“ü—Íî•ñ‚ğ’Ç‰Á‚·‚éŠÖ”.
-	void AddInputState(enPKey enKey);
+	void AddInputState(const enPKey enKey);
 
 	//“ü—Íî•ñ‚ğ‰Šú‰»‚·‚éŠÖ”.
 	void InitInputState();
 
 	//“ü—ÍÁª¯¸‚·‚éŠÖ”.
-	bool IsPressKey(enPKey enKey);
+	const bool IsPressKey(const enPKey enKey);
 
-	float GetLSDir();
+	const float GetLSDir();
 
-	float GetLSPush();
-	float GetHorLSPush();
-	float GetVerLSPush();
+	const float GetLSPush();
+	const float GetHorLSPush();
+	const float GetVerLSPush();
 
 	const bool IsLSUpEnter();
 	const bool IsLSDownEnter();
@@ -96,11 +96,11 @@ public:
 	const bool IsLSLeftStay();
 	const bool IsLSRightStay();
 
-	float GetRSDir();
+	const float GetRSDir();
 
-	float GetRSPush();
-	float GetHorRSPush();
-	float GetVerRSPush();
+	const float GetRSPush();
+	const float GetHorRSPush();
+	const float GetVerRSPush();
 
 	const bool IsRSUpEnter();
 	const bool IsRSDownEnter();

@@ -13,17 +13,15 @@ const float g_fPushHulf = 0.5f;
 class clsEnemyBase
 {
 public:
-	TRANSFORM* m_pTrans;
-
-	D3DXVECTOR3 m_vMovePlansDir;
-	int m_iMoveCategoryNo;
-
 	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
+	void Update();
 	void SearchTarget(std::vector<clsCharactor*>);
 
 protected:
+	TRANSFORM* m_pTrans;
+
 	clsCharactor* m_pChara;
 	clsCharactor* m_pTarget;
 	
@@ -39,7 +37,10 @@ protected:
 	struct BaseState
 	{
 		char strName[STR_BUFF_MAX];
-		int iMoveCategoryVisType;
+		
+		int iMoveCategoryVisType;//移動ステータスを切り替える方法.
+		
+		int iProcFrame;//
 	};
 
 	struct UpdateState
@@ -47,6 +48,9 @@ protected:
 		int iHorDirResult;
 		D3DXVECTOR3 vHorMovePos;
 		float fMoveDir;
+
+		float fRotDir;
+		float fVerLookDir;
 
 		float fVerDis;
 	};
@@ -93,6 +97,9 @@ protected:
 		int iCategory;
 		std::vector<VisibilityAreaState> v_VisAreaState;
 	};
+
+	int m_iProcessFrame;//処理更新時間.
+	int m_iMoveCategoryNo;//現在の移動.
 
 	BaseState m_BaseData;
 

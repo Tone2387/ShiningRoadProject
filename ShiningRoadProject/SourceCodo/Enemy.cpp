@@ -177,14 +177,17 @@ bool clsEnemyBase::SetRotate(float& fPush, float& fAngle)
 
 		ObjRollOverGuard(&fRot);
 
-		if (fRot > 0)
+		if (m_iProcessFrame < 0)
 		{
-			fPush = fPushFull;
-		}
+			if (fRot > 0)
+			{
+				fPush = fPushFull;
+			}
 
-		else
-		{
-			fPush = -fPushFull;
+			else
+			{
+				fPush = -fPushFull;
+			}
 		}
 
 		fAngle = fRot;
@@ -222,14 +225,17 @@ bool clsEnemyBase::SetLook(float& fPush, float& fAngle)
 
 		ObjRollOverGuard(&fRot);
 
-		if (fRot > 0)
+		if (m_iProcessFrame < 0)
 		{
-			fPush = fPushFull;
-		}
+			if (fRot > 0)
+			{
+				fPush = fPushFull;
+			}
 
-		else
-		{
-			fPush = -fPushFull;
+			else
+			{
+				fPush = -fPushFull;
+			}
 		}
 
 		fAngle = fRot;
