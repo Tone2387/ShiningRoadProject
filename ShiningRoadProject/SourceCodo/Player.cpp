@@ -25,8 +25,6 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 
 	m_v_Spheres.push_back(Tmp);
 	m_v_Spheres.shrink_to_fit();
-
-	//m_pMesh->SetAnimSpeed(0.01);
 }
 
 void clsPlayer::ActionProduct()
@@ -36,6 +34,8 @@ void clsPlayer::ActionProduct()
 	clsRoboCommand* pRoboCom;
 
 	LockChara();
+
+	m_pInput->InputTest();
 
 	pRoboCom = m_pInput->MoveSwitch();
 
