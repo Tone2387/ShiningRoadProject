@@ -2,6 +2,11 @@
 #include "File.h"
 using namespace std;
 
+//つけていると背景に真ん中がわかるものを出す.
+//#define CENTER_SPRITE_RENDER
+#ifdef CENTER_SPRITE_RENDER
+unique_ptr<clsSprite2D> g_upTex;
+#endif//#ifdef CENTER_SPRITE_RENDER
 
 const int iINTERVAL_CNT = 120;
 
@@ -17,6 +22,18 @@ const int iPOS_Y_FILE_DATA_INDEX = 1;
 const int iSCALE_FILE_DATA_INDEX = 2;
 const int iALPHA_FILE_DATA_INDEX = 3;
 
+struct STAFF_TEXT_RENDER_NUM
+{
+	unsigned int uiIndex;//何番の時に.
+	unsigned int uiNum;	//いくつ同時に描画する?.
+};
+
+const int iSTAFF_TEXT_RENDER_NUM_MAX = 3;
+const STAFF_TEXT_RENDER_NUM STAFF_ROLL_PROGRAMR = { 1, 3 };
+const STAFF_TEXT_RENDER_NUM STAFF_ROLL_GRAPHICR = { 4, 2 };
+const STAFF_TEXT_RENDER_NUM STAFF_ROLL_SPECIAL =  { 6, 2 };
+const STAFF_TEXT_RENDER_NUM STAFF_TEXT_NUM_ARRAY[ iSTAFF_TEXT_RENDER_NUM_MAX ]=
+{ STAFF_ROLL_PROGRAMR, STAFF_ROLL_GRAPHICR, STAFF_ROLL_SPECIAL };
 
 //const float fSCROLL_END_POS_Y = 1;
 
@@ -30,7 +47,14 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	,m_iIntervalCnt( 0 )
 	,m_isScroll( false )
 	,m_isCanGoTitle( false )
+	,m_uiRenderTextNum( 0 )
 {
+#ifdef CENTER_SPRITE_RENDER	SPRITE_STATE ss;
+	ss.Disp = { WND_W, WND_H };
+	g_upTex = make_unique<clsSprite2D>();
+	g_upTex->Create( m_wpDevice, m_wpContext, "Data\\Image\\sima.png", ss );
+	g_upTex->SetPos( { 0.0f, 0.0f, 0.0f } );
+#endif//#ifdef CENTER_SPRITE_RENDER
 }
 
 clsSCENE_ENDING::~clsSCENE_ENDING()
@@ -143,14 +167,31 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 		}
 		//透過.
 		else{
+			//消すときは反転.
 			if( !m_isSpriteAlphaAppear ){
 				fAlpha *= -1.0f;
 			}
 
+			//スタッフロールの同時表示数セット.
+			const unsigned int uiRENDER_TEXT_NUM_DEFFULT = 1;
+			m_uiRenderTextNum = uiRENDER_TEXT_NUM_DEFFULT;
+			//複数同時表示の為.
+			for( int i=0; i<iSTAFF_TEXT_RENDER_NUM_MAX; i++ ){
+				if( m_uiSpriteCnt == STAFF_TEXT_NUM_ARRAY[i].uiIndex ){
+					m_uiRenderTextNum = STAFF_TEXT_NUM_ARRAY[i].uiNum;
+					break;
+				}
+			}
+
+			bool bAddAlphaReturn;
+			for( unsigned int i=0; i<m_uiRenderTextNum; i++ ){
+				bAddAlphaReturn = AddAlphaState( m_vupTextStateAlpha[ m_uiSpriteCnt + i ].get(), fAlpha );
+			}
+
 			//透過値変更.AddAlphaState//->fAlpha + fAlpha 
-			if( !AddAlphaState( m_vupTextStateAlpha[ m_uiSpriteCnt ].get(), fAlpha ) ){
+			if( !bAddAlphaReturn ){
 				m_iIntervalCnt = 0;
-				//消す.
+				//出し終わったので次は消す.
 				if( m_isSpriteAlphaAppear ){
 					m_isSpriteAlphaAppear = false;
 					//終われるようにする( サンキューの描画完了 ).
@@ -159,10 +200,10 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 						m_isCanGoTitle = true;
 					}
 				}
-				//次へ.
+				//消し終わったので次は出す.
 				else{
 					m_isSpriteAlphaAppear = true;
-					m_uiSpriteCnt ++;
+					m_uiSpriteCnt += m_uiRenderTextNum;
 					//スクロールに行く.
 					if( m_uiSpriteCnt == m_iGoScrollIndex ){ 
 						m_isScroll = true;
@@ -214,6 +255,9 @@ void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 void clsSCENE_ENDING::RenderUi()
 {
+#ifdef CENTER_SPRITE_RENDER
+	g_upTex->Render();
+#endif//#ifdef CENTER_SPRITE_RENDER
 	int iTextIndex = 0;
 
 	for( unsigned int i=0; i<m_vupTextStateAlpha.size(); i++  ){

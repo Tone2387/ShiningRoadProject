@@ -138,13 +138,15 @@ protected:
 //	clsPARTS_BASE**	m_wppParts;
 	std::vector< clsPARTS_BASE* >	m_vpParts;
 
+
+	//色の配列.
+	std::vector< D3DXVECTOR4 >	m_vecvColor;
+
 private:
 
 	//GetPartsNum関数の為.
 	enPARTS_TYPES m_enPartsNum[ enPARTS_TYPES::ENUM_SIZE ];
 
-	//.
-	std::vector< D3DXVECTOR4 >	m_vecvColor;
 
 	//色の段階.
 	int m_iColorRank[ clsROBO_STATUS::enCOLOR_GAGE_size ];
