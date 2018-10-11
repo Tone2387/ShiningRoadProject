@@ -151,9 +151,9 @@ float4 PSSkin( PSSkinIn input ) : SV_Target
 	{
 		RetColor *= g_vColorBase;
 	}
-	else if( mask2Color.r >= 0.99f ||
-		mask2Color.g >= 0.99f ||
-		mask2Color.b >= 0.99f )
+	else if(mask2Color.r >= 0.99f ||
+			mask2Color.g >= 0.99f ||
+			mask2Color.b >= 0.99f )
 	{
 		RetColor *= g_vColorArmor;
 	}

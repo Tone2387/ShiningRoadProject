@@ -176,6 +176,11 @@ const int iFONT_COMMENT_TEXT_SIZE = 128;
 
 
 
+//ズーム限界.
+const float fZOOM_RIMIT_MIN = -100.0f;
+const float fZOOM_RIMIT_MAX = 35.0f;
+
+
 
 //================================//
 //========== 組み換えクラス ==========//
@@ -191,6 +196,7 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_isCanControl( false )
 	,m_pColorGagesBone()
 	,m_enColorGageIndex( clsROBO_STATUS::enCOLOR_GAGE_BASE_R )
+	,m_fDistanceAssembleModel( 0.0f )
 //	,m_enSelectMode()
 {
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
@@ -540,6 +546,21 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
 		m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
 	}
+	//モデルズーム.
+	const float fMODEL_MOVE_SPD = 5.0f;
+	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+		m_fDistanceAssembleModel += fMODEL_MOVE_SPD;
+		if( m_fDistanceAssembleModel > fZOOM_RIMIT_MAX ){
+			m_fDistanceAssembleModel = fZOOM_RIMIT_MAX;
+		}
+	}
+	if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+		m_fDistanceAssembleModel -= fMODEL_MOVE_SPD;
+		if( m_fDistanceAssembleModel < fZOOM_RIMIT_MIN ){
+			m_fDistanceAssembleModel = fZOOM_RIMIT_MIN;
+		}
+	}
+
 
 
 	assert( m_pUI );
@@ -589,7 +610,8 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	//ロボ描画用.
 	clsCAMERA_ASSEMBLE RoboViewCam;
 	RoboViewCam.Create();
-	RoboViewCam.SetPos( vROBO_VIEW_CAM_POS );
+	RoboViewCam.SetPos( vROBO_VIEW_CAM_POS );;
+	RoboViewCam.AddPos( { 0.0f, 0.0f, m_fDistanceAssembleModel } );
 	RoboViewCam.SetLookPos( vROBO_VIEW_CAM_LOOK );
 	RoboViewCam.AddPos( m_pAsmModel->GetBonePos( enPARTS::LEG, sBONE_NAME_LEG_TO_CORE ) );
 

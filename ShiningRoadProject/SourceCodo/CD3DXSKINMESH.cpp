@@ -70,6 +70,7 @@ HRESULT MY_HIERARCHY::CreateMeshContainer(
 	pMeshContainer->MeshData.pMesh->GetDevice( &pDevice );
 	LPD3DXMESH pMesh=NULL;
 	pMeshContainer->MeshData.pMesh->CloneMesh( NULL, NULL, pDevice, &pMesh );
+	assert( pMesh );
 	//SAFE_RELEASE( pMeshContainer->MeshData.pMesh );
 	pMeshContainer->MeshData.pMesh=pMesh;
 
