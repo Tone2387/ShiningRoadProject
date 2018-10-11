@@ -111,6 +111,11 @@ public:
 	float GetVerRSPush();
 
 private:
+	struct InputState
+	{
+		int i;
+	};
+
 	unsigned int m_uInputState;//“ü—Íî•ñ.
 
 	LPDIRECTINPUT8 m_DI;//DxInputµÌŞ¼Şª¸Ä.
