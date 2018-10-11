@@ -168,12 +168,6 @@ const char sCOLOR_CHANGE_BOX_IN_SELECT_COLOR_PATH[] = "Data\\Image\\AssembleUi\\
 const WHSIZE_FLOAT COLOR_CHANGE_BOX_IN_SELECT_COLOR_SIZE = { 24.0f, 24.0f };
 
 
-//パーツ、ステータス説明.
-const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
-const float fFONT_COMMENT_SCALE = 16.0f;
-const int iFONT_COMMENT_LINE = 1;
-const int iFONT_COMMENT_TEXT_SIZE = 128;
-
 
 
 //ズーム限界.

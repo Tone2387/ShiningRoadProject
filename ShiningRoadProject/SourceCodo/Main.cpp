@@ -30,7 +30,7 @@ INT WINAPI WinMain(
 	INT nCmdShow )
 {
 	// メモリリーク検出
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 
 //	g_pClsMain = new clsMain;	//初期化&クラスの宣言.
 	g_upMain = make_unique< clsMain >();

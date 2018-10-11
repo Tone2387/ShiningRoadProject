@@ -209,6 +209,9 @@ bool clsSCENE_BASE::isPressRight()
 	else if( m_wpXInput->isSlopeEnter( XINPUT_RIGHT ) ){
 		return true;
 	}
+	else if( m_wpDxInput->IsLSRightEnter() ){
+		return true;
+	}
 	else if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
 		return true;
 	}
@@ -221,6 +224,9 @@ bool clsSCENE_BASE::isPressLeft()
 		return true;
 	}
 	else if( m_wpXInput->isSlopeEnter( XINPUT_LEFT ) ){
+		return true;
+	}
+	else if( m_wpDxInput->IsLSLeftEnter() ){
 		return true;
 	}
 	else if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
@@ -237,6 +243,9 @@ bool clsSCENE_BASE::isPressUp()
 	else if( m_wpXInput->isSlopeEnter( XINPUT_UP ) ){
 		return true;
 	}
+	else if( m_wpDxInput->IsLSUpEnter() ){
+		return true;
+	}
 	else if( GetAsyncKeyState( VK_UP ) & 0x1 ){
 		return true;
 	}
@@ -251,6 +260,9 @@ bool clsSCENE_BASE::isPressDown()
 	else if( m_wpXInput->isSlopeEnter( XINPUT_DOWN ) ){
 		return true;
 	}
+	else if( m_wpDxInput->IsLSDownEnter() ){
+		return true;
+	}
 	else if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
 		return true;
 	}
@@ -262,6 +274,9 @@ bool clsSCENE_BASE::isPressEnter()
 	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
 		return true;
 	}
+//	else if( m_wpDxInput->IsPressKey( enPKey_00 ) ){
+//		return true;
+//	}
 	else if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		return true;
 	}
