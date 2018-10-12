@@ -9,9 +9,9 @@ const float fBACK_SCALE = 1.0f;
 
 //ÉçÉS.
 const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
-const WHSIZE_FLOAT INIT_LOGO_SIZE = { 512.0f, 128.0f };
-const D3DXVECTOR3 vINIT_LOGO_POS = { 128.0f, 75.0f, 0.0f };
-
+const WHSIZE_FLOAT INIT_LOGO_SIZE = { 960.0f, 640.0f };
+const D3DXVECTOR3 vINIT_LOGO_POS = { 53.0f, 75.0f, 0.0f };
+const float fINIT_LOGO_SCALE = 0.682451844f;
 //ÉçÉ{.
 const float fROBO_YAW = static_cast<float>( M_PI_4 ) * 0.75f;
 
@@ -27,7 +27,7 @@ const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
 const float fPLESS_START_SCALE = 2.0f;
 const char* sPLESS_START_TEXT = "Press B Button";
 const D3DXVECTOR2 vPLESS_START_POS = {
-	vINIT_LOGO_POS.x + INIT_LOGO_SIZE.w * 0.5f, 
+	vINIT_LOGO_POS.x * 0.25f + INIT_LOGO_SIZE.w * 0.5f, 
 	static_cast<float>( WND_H ) * 0.75f 
 };
 
@@ -69,6 +69,7 @@ void clsSCENE_TITLE::CreateProduct()
 	ss.Disp = INIT_LOGO_SIZE;
 	m_upLogo->Create( m_wpDevice, m_wpContext, sFILE_PATH_LOGO, ss );
 	m_upLogo->SetPos( vINIT_LOGO_POS );
+	m_upLogo->SetScale( fINIT_LOGO_SCALE );
 	m_upLogo->SetAlpha( 0.0f );
 
 	//îwåi.
@@ -146,7 +147,34 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	}
 
 
+
 #ifdef _DEBUG
+
+
+	const float fPOS_CHANGE = 7.5f;
+	if( GetAsyncKeyState( 'A' ) & 0x8000 ){
+		m_upLogo->AddPos( { -fPOS_CHANGE, 0.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'D' ) & 0x8000 ){
+		m_upLogo->AddPos( { fPOS_CHANGE, 0.0f, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'S' ) & 0x8000 ){
+		m_upLogo->AddPos( { 0.0f, fPOS_CHANGE, 0.0f } );
+	}
+	if( GetAsyncKeyState( 'W' ) & 0x8000 ){
+		m_upLogo->AddPos( { 0.0f, -fPOS_CHANGE, 0.0f } );
+	}
+
+	const float fSCALE_CHANGE = 0.99f;
+	if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
+		m_upLogo->AddScale( 1.0f - fSCALE_CHANGE + 1.0f );
+	}
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
+		m_upLogo->AddScale( fSCALE_CHANGE );
+	}
+
+
+
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
 		m_upBox->SetSizeTarget( { 200.0f, 200.0f, 0.0f } );
 	}
@@ -218,9 +246,13 @@ void clsSCENE_TITLE::RenderUi()
 	assert( m_upLogo );
 	m_upLogo->Render();
 
+#ifdef _DEBUG
 	m_wpFont->SetPos( { 0, 0, 0 } );
 	m_wpFont->SetScale( 20 );
 	m_wpFont->Render( 4, 100 );
+#endif//#ifdef _DEBUG
+
+
 	if( m_isDispPlessStart ){
 		assert( m_upPlessStart );
 		m_upPlessStart->Render( clsUiText::enPOS::MIDDLE );
