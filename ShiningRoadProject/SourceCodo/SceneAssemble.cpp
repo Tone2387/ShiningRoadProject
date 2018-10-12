@@ -101,7 +101,7 @@ const int iBOX_MESSAGE_LINE_COLOR_CHANGE = iBOX_MESSAGE_LINE_BACK_TITLE + 1;
 //色ゲージ枠.
 const char sCOLOR_GAGE_PATH_BONE[] = "Data\\Image\\AssembleUi\\ColorGageBone.png";
 const WHSIZE_FLOAT COLOR_GAGE_SIZE_BONE = { 480.0f, 32.0f };
-const D3DXVECTOR3 vCOLOR_GAGE_POS_BONE  = { 420.0f, 220.0f, 0.0f };
+const D3DXVECTOR3 vCOLOR_GAGE_POS_BONE  = { 420.0f, 240.0f, 0.0f };
 const float fCOLOR_GAGE_OFFSET_BONE = COLOR_GAGE_SIZE_BONE.h + 20.0f;
 const float fCOLOR_GAGE_OFFSET_BONE_2 =  24.0f;//パーツのベースと装甲の合間の追加オフセット.
 //ゲージ本編.
@@ -109,12 +109,8 @@ const char sCOLOR_GAGE_PATH[] = "Data\\Image\\AssembleUi\\ColorGage.png";
 const WHSIZE_FLOAT COLOR_GAGE_SIZE = { 32.0f, 32.0f };
 const float fCOLOR_GAGE_ALPHA = 0.5f;
 const D3DXVECTOR3 vCOLOR_GAGE_COLOR[] = {
-	{ 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f },
-	{ 1.0f, 0.0f, 0.0f },
-	{ 0.0f, 1.0f, 0.0f },
-	{ 0.0f, 0.0f, 1.0f },
+	{ 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f },
+	{ 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f },
 };
 
 //YesNo.
@@ -149,16 +145,12 @@ const float fCOLOR_CHANGE_BOX_IN_TEXT_RGB_SCALE = 2.0f;
 const float COLOR_CHANGE_BOX_IN_TEXT_RGB_OFFSET_X = -30.0f;
 const float COLOR_CHANGE_BOX_IN_TEXT_RGB_OFFSET_Y = -10.0f;
 const string sCOLOR_CHANGE_BOX_IN_TEXT_RGB_TEXT[] = {
-	"R",
-	"G",
-	"B",
-	"R",
-	"G",
-	"B",
+	"R", "G", "B",
+	"R", "G", "B",
 }; 
 
 const float fCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_SCALE = 2.5f;
-D3DXVECTOR2 vCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_POS = { 60.0f, 170.0f };
+D3DXVECTOR2 vCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_POS = { 60.0f, 190.0f };
 float fCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_POS_ADD_Y = fCOLOR_GAGE_OFFSET_BONE * 3 + fCOLOR_GAGE_OFFSET_BONE_2; 
 const string sCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_TEXT[] = {
 	"Color1", "Color2"
@@ -167,8 +159,17 @@ const string sCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_TEXT[] = {
 const char sCOLOR_CHANGE_BOX_IN_SELECT_COLOR_PATH[] = "Data\\Image\\AssembleUi\\ColorSelect.png"; 
 const WHSIZE_FLOAT COLOR_CHANGE_BOX_IN_SELECT_COLOR_SIZE = { 24.0f, 24.0f };
 
+//色の戻るテキスト.
+//本体.
+const D3DXVECTOR3 vCOLOR_CHANGE_BACK_TEXT_POS = { 90.0f, 560.0f, 0.0f };
+const float fCOLOR_CHANGE_BACK_TEXT_SCALE = 18.0f;
+const int iCOLOR_CHANGE_BACK_TEXT_NUMBER = 6;
+//背景.
+const D3DXVECTOR3 vCOLOR_CHANGE_BACK_TEXT_BACK_COLOR_POS = { 112.0f, 570.0f, 0.0f };
 
-
+//色の選択肢の数.
+const char cCOLOR_CHANGE_INDEX_MAX = clsROBO_STATUS::enCOLOR_GAGE_size + 1;
+const char cCOLOR_CHANGE_INDEX_DIS_WINDOW = clsROBO_STATUS::enCOLOR_GAGE_size;
 
 //ズーム限界.
 const float fZOOM_RIMIT_MIN = -100.0f;
@@ -701,10 +702,22 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
 			tmpMessagePos = vFONT_MESSAGE_BOX_COLOR_CHANGE;
 			assert( m_upSelectColor );
-			const D3DXVECTOR3 vADD_SELECT_COLOR_OFFSET = { 10.0f, 2.0f, 0.0f };
-			m_upSelectColor->SetPos( m_pColorGagesBone[ m_enColorGageIndex ]->GetPos() );
-			m_upSelectColor->AddPos( { m_upColorTexts[0]->GetPos().x - m_pColorGagesBone[0]->GetPos().x, 0.0f, 0.0f } );
-			m_upSelectColor->AddPos( vADD_SELECT_COLOR_OFFSET );
+			//----- 選択文字の背景の色 -----//.
+			//戻る.
+			if( m_enColorGageIndex == cCOLOR_CHANGE_INDEX_DIS_WINDOW ){
+				const D3DXVECTOR3 vSCALE = { 2.0625f, 1.25f, 1.0f };
+				m_upSelectColor->SetPos( vCOLOR_CHANGE_BACK_TEXT_BACK_COLOR_POS );
+				m_upSelectColor->SetScale( vSCALE );
+			}
+			//色選択.
+			else{
+				const D3DXVECTOR3 vADD_SELECT_COLOR_OFFSET = { 10.0f, 2.0f, 0.0f };
+				const float fSCALE = 1.0f;
+				m_upSelectColor->SetPos( m_pColorGagesBone[ m_enColorGageIndex ]->GetPos() );
+				m_upSelectColor->AddPos( { m_upColorTexts[0]->GetPos().x - m_pColorGagesBone[0]->GetPos().x, 0.0f, 0.0f } );
+				m_upSelectColor->AddPos( vADD_SELECT_COLOR_OFFSET );
+				m_upSelectColor->SetScale( fSCALE );
+			}
 			m_upSelectColor->Render();
 			for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 				m_pColorGagesBone[i]->Render();
@@ -724,6 +737,10 @@ void clsSCENE_ASSEMBLE::RenderUi()
 				m_upColorNumText->SetText( sCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_TEXT[ tnpIndex ++ ].c_str() );
 				m_upColorNumText->Render();
 			}
+			//戻る.
+			m_wpFont->SetPos( vCOLOR_CHANGE_BACK_TEXT_POS );
+			m_wpFont->SetScale( fCOLOR_CHANGE_BACK_TEXT_SCALE );
+			m_wpFont->Render( iCOLOR_CHANGE_BACK_TEXT_NUMBER );
 		}
 		//シーン移動.
 		else {
@@ -782,7 +799,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 
 		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( m_enColorGageIndex - 1 );
-		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsROBO_STATUS::enCOLOR_GAGE_BASE_R, clsROBO_STATUS::enCOLOR_GAGE_size );
+		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsROBO_STATUS::enCOLOR_GAGE_BASE_R, cCOLOR_CHANGE_INDEX_MAX );
 	}
 }
 
@@ -807,7 +824,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 
 		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( m_enColorGageIndex + 1 );
-		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsROBO_STATUS::enCOLOR_GAGE_BASE_R, clsROBO_STATUS::enCOLOR_GAGE_size );
+		m_enColorGageIndex = LoopRange( m_enColorGageIndex, clsROBO_STATUS::enCOLOR_GAGE_BASE_R, cCOLOR_CHANGE_INDEX_MAX );
 	}
 
 }
@@ -900,6 +917,11 @@ void clsSCENE_ASSEMBLE::Enter( enSCENE &enNextScene )
 			DisAppearMessageBox();
 		}
 	}
+	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
+		if( m_enColorGageIndex == cCOLOR_CHANGE_INDEX_DIS_WINDOW ){ 
+			DisAppearMessageBox();
+		}
+	}
 }
 //キャンセル.
 void clsSCENE_ASSEMBLE::Exit()
@@ -927,25 +949,6 @@ void clsSCENE_ASSEMBLE::Exit()
 //色替え( 左右キーを押された ).
 void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )
 {
-//	unsigned int uiColorChangeNum = 0;
-//	switch( m_enColorGageIndex )
-//	{
-//	case clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_R:
-//	case clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_G:
-//	case clsASSEMBLE_MODEL::enCOLOR_GAGE_BASE_B:
-//		uiColorChangeNum = 0;
-//		break;
-//
-//	case clsASSEMBLE_MODEL::enCOLOR_GAGE_ARMOR_R:
-//	case clsASSEMBLE_MODEL::enCOLOR_GAGE_ARMOR_G:
-//	case clsASSEMBLE_MODEL::enCOLOR_GAGE_ARMOR_B:
-//		uiColorChangeNum = 1;
-//		break;
-//
-//	default:
-//		return;
-//	}
-
 	if( m_enColorGageIndex >= clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_size ){
 		return;
 	}
@@ -1121,7 +1124,7 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 		for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 			m_pColorGagesBone[i]->SetAlpha( 1.0f );
 		}
-		m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE_BASE_R;
+		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( 0 );
 	}
 }
 //メッセボックス消す.
