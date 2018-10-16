@@ -14,6 +14,11 @@ const float fRENDER_LIMIT = 640.0f;//150.0f.
 #define XINPUT_ENTER  ( XINPUT_START | XINPUT_B )
 #define XINPUT_EXIT  ( XINPUT_A )
 
+//ボタンのホールドフレーム.
+const int iHOLD_FREAM = 30;
+const int iHOLD_FREAM_FIRST = 6;
+const int iHOLD_FREAM_FIRST_STEP = 1;
+
 #if _DEBUG
 const D3DXVECTOR4 vDEBUG_TEXT_COLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 const float fDEBUG_TEXT_SIZE = 50.0f;
@@ -294,6 +299,194 @@ bool clsSCENE_BASE::isPressExit()
 	return false;
 }
 
+//メニュー操作に使ってね.
+bool clsSCENE_BASE::isPressHoldRight()
+{
+	bool isPush = false;
+	if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
+		isPush = true;
+	}
+	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) ){
+		isPush = true;
+	}
+	else if( m_wpDxInput->IsLSRightStay() ){
+		isPush = true;
+	}
+	else if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
+		isPush = true;
+	}
+
+	if( isPush ){
+		m_HoldRight.iHoldFream ++;
+		//最初.
+		if(!m_HoldRight.iFirstPush ){
+			m_HoldRight.iFirstPush ++;
+			m_HoldRight.iHoldFream = 0;
+			return true;
+		}
+		//二番目.
+		else if(m_HoldRight.iFirstPush == iHOLD_FREAM_FIRST_STEP ){
+			if( m_HoldRight.iHoldFream >= iHOLD_FREAM ){
+				m_HoldRight.iFirstPush ++;
+				m_HoldRight.iHoldFream = 0;
+				return true;
+			}
+		}
+		else{
+			if( m_HoldRight.iHoldFream >= iHOLD_FREAM_FIRST ){
+				m_HoldRight.iHoldFream = 0;
+				return true;
+			}
+		}
+	}
+	else{
+		m_HoldRight.iHoldFream = iHOLD_FREAM;
+		m_HoldRight.iFirstPush = 0;
+	}
+
+	return false;
+}
+
+bool clsSCENE_BASE::isPressHoldLeft()
+{
+	bool isPush = false;
+	if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
+		isPush = true;
+	}
+	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) ){
+		isPush = true;
+	}
+	else if( m_wpDxInput->IsLSLeftStay() ){
+		isPush = true;
+	}
+	else if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
+		isPush = true;
+	}
+
+	if( isPush ){
+		m_HoldLeft.iHoldFream ++;
+		//最初.
+		if(!m_HoldLeft.iFirstPush ){
+			m_HoldLeft.iFirstPush ++;
+			m_HoldLeft.iHoldFream = 0;
+			return true;
+		}
+		//二番目.
+		else if(m_HoldLeft.iFirstPush == iHOLD_FREAM_FIRST_STEP ){
+			if( m_HoldLeft.iHoldFream >= iHOLD_FREAM ){
+				m_HoldLeft.iFirstPush ++;
+				m_HoldLeft.iHoldFream = 0;
+				return true;
+			}
+		}
+		else{
+			if( m_HoldLeft.iHoldFream >= iHOLD_FREAM_FIRST ){
+				m_HoldLeft.iHoldFream = 0;
+				return true;
+			}
+		}
+	}
+	else{
+		m_HoldLeft.iHoldFream = iHOLD_FREAM;
+		m_HoldLeft.iFirstPush = 0;
+	}
+
+	return false;
+}
+
+bool clsSCENE_BASE::isPressHoldUp()
+{
+	bool isPush = false;
+	if( m_wpXInput->isPressStay( XINPUT_UP ) ){
+		isPush = true;
+	}
+	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) ){
+		isPush = true;
+	}
+	else if( m_wpDxInput->IsLSUpStay() ){
+		isPush = true;
+	}
+	else if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
+		isPush = true;
+	}
+
+	if( isPush ){
+		m_HoldUp.iHoldFream ++;
+		//最初.
+		if(!m_HoldUp.iFirstPush ){
+			m_HoldUp.iFirstPush ++;
+			m_HoldUp.iHoldFream = 0;
+			return true;
+		}
+		//二番目.
+		else if(m_HoldUp.iFirstPush == iHOLD_FREAM_FIRST_STEP ){
+			if( m_HoldUp.iHoldFream >= iHOLD_FREAM ){
+				m_HoldUp.iFirstPush ++;
+				m_HoldUp.iHoldFream = 0;
+				return true;
+			}
+		}
+		else{
+			if( m_HoldUp.iHoldFream >= iHOLD_FREAM_FIRST ){
+				m_HoldUp.iHoldFream = 0;
+				return true;
+			}
+		}
+	}
+	else{
+		m_HoldUp.iHoldFream = iHOLD_FREAM;
+		m_HoldUp.iFirstPush = 0;
+	}
+
+	return false;
+}
+
+bool clsSCENE_BASE::isPressHoldDown()
+{
+	bool isPush = false;
+	if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
+		isPush = true;
+	}
+	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) ){
+		isPush = true;
+	}
+	else if( m_wpDxInput->IsLSDownStay() ){
+		isPush = true;
+	}
+	else if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
+		isPush = true;
+	}
+
+	if( isPush ){
+		m_HoldDown.iHoldFream ++;
+		//最初.
+		if( !m_HoldDown.iFirstPush ){
+			m_HoldDown.iFirstPush ++;
+			m_HoldDown.iHoldFream = 0;
+			return true;
+		}
+		//二番目.
+		else if( m_HoldDown.iFirstPush == iHOLD_FREAM_FIRST_STEP ){
+			if( m_HoldDown.iHoldFream >= iHOLD_FREAM ){
+				m_HoldDown.iFirstPush ++;
+				m_HoldDown.iHoldFream = 0;
+				return true;
+			}
+		}
+		else{
+			if( m_HoldDown.iHoldFream >= iHOLD_FREAM_FIRST ){
+				m_HoldDown.iHoldFream = 0;
+				return true;
+			}
+		}
+	}
+	else{
+		m_HoldDown.iHoldFream = iHOLD_FREAM;
+		m_HoldDown.iFirstPush = 0;
+	}
+
+	return false;
+}
 
 
 //3D座標をスクリーン( 2D )座標へと変換する.dimensions(次元) conversion(変換)

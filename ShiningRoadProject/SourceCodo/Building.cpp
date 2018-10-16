@@ -536,7 +536,6 @@ float clsBUILDING::GetTileTheta(
 	float* const pfTheta, float* const pfDistance ) const
 {
 	float fReturn = 0;
-
 	if( !pfTheta ){
 		return fReturn;
 	}
@@ -557,19 +556,16 @@ float clsBUILDING::GetTileTheta(
 
 //‰ñ“]‚É‰ž‚¶‚ÄÀ•W‚ðXV‚·‚é.
 D3DXVECTOR3 clsBUILDING::GetTilePosForRotation( 
-	D3DXVECTOR3* const vTilePos,
-	const D3DXVECTOR3& vCenterPos,
-	const float fTileTheta, 
-	const float fTileDistance )
+	D3DXVECTOR3* const vTilePos, const D3DXVECTOR3& vCenterPos,
+	const float fTileTheta, const float fTileDistance )
 {
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
-
 	if( !vTilePos ){
 		return vReturn;
 	}
 
 	vTilePos->x = vCenterPos.x + cosf( fTileTheta - m_Trans.vRot.y ) * fTileDistance;
-	vTilePos->z = vCenterPos.x + sinf( fTileTheta - m_Trans.vRot.y ) * fTileDistance;
+	vTilePos->z = vCenterPos.z + sinf( fTileTheta - m_Trans.vRot.y ) * fTileDistance;
 
 	vReturn = *vTilePos;
 
