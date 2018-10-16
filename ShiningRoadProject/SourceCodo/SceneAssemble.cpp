@@ -476,10 +476,10 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	//‘€ì.
 	if( m_isCanControl ){
 		//‘I‘ðŽˆ.
-		if( isPressRight()	)MoveCursorRight();
-		if( isPressLeft()	)MoveCursorLeft();
-		if( isPressUp()		)MoveCursorUp();
-		if( isPressDown()	)MoveCursorDown();
+		if( isPressHoldRight()	)MoveCursorRight();
+		if( isPressHoldLeft()	)MoveCursorLeft();
+		if( isPressHoldUp()		)MoveCursorUp();
+		if( isPressHoldDown()	)MoveCursorDown();
 		if( m_wpXInput->isPressEnter( XINPUT_B ) ||
 			GetAsyncKeyState( VK_RETURN ) & 0x1 )
 		{
