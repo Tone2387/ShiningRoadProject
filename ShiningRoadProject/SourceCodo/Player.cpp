@@ -157,7 +157,7 @@ void clsPlayer::UpdateCamTargetPos()
 	D3DXMatrixRotationYawPitchRoll(
 		&mRot,
 		m_Trans.fYaw,
-		-m_fLookUpDir,
+		-m_fVerLookDir,
 		m_Trans.fRoll);
 
 	//Ž²ÍÞ¸ÄÙ‚ð—pˆÓ.

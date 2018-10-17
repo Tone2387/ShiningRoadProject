@@ -350,7 +350,7 @@ void clsSCENE_MISSION::RenderUi()
 
 	//HP.
 
-	int iHP = m_pPlayer->m_HP;
+	int iHP = m_pPlayer->m_iHP;
 
 	sprintf_s(pText, "%d", iHP);
 	m_pHP->SetText(pText);
@@ -610,13 +610,6 @@ void clsSCENE_MISSION::RenderDebugText()
 	char strDbgTxt[256];
 	int iTxtY = 300;
 	const int iOFFSET = 10;//ˆês–ˆ‚É‚Ç‚ê‚¾‚¯‰º‚É‚¸‚ç‚·‚©.
-
-	sprintf_s( strDbgTxt, 
-		"PlayerPos : x[%f], y[%f], z[%f]",
-		m_pPlayer->m_vMoveDirforBoost.x,
-		m_pPlayer->m_vMoveDirforBoost.y,
-		m_pPlayer->m_vMoveDirforBoost.z);
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	sprintf_s( strDbgTxt, 
 		"EnemyEnelgy : [%d]",

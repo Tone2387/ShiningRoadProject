@@ -10,7 +10,8 @@
 class clsEnemyBase
 {
 public:
-	clsEnemyBase(std::vector<clsCharactor*>& v_Enemys);
+	//clsEnemyBase(std::vector<clsCharactor*>& v_Enemys);
+	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
 	virtual void Update();
@@ -35,12 +36,18 @@ protected:
 	bool IsJump();
 	bool IsShot();
 
+	struct ShotState
+	{
+		int iShotDisMin;
+		int iShotDisMax;
+		int iShotENLimitParcent;
+	};
+
+protected:
 	struct BaseState
 	{
-		char strName[STR_BUFF_MAX];
-		
 		int iMoveCategoryVisType;//移動ステータスを切り替える方法.
-		
+
 		int iProcFrame;//視点調整を更新する時間.
 	};
 
@@ -53,13 +60,6 @@ protected:
 		int iMoveDirRandMax;
 		int iVerDistance;
 		int iVerDistRandMax;
-	};
-
-	struct ShotState
-	{
-		int iShotDisMin;
-		int iShotDisMax;
-		int iShotENLimitParcent;
 	};
 
 	struct VisibilityAreaState
@@ -81,6 +81,8 @@ protected:
 		std::vector<ShotState> v_ShotState;
 	};
 
+	ShotData m_ShotData;
+
 	struct VisibilityAreaData
 	{
 		int iCategory;
@@ -88,12 +90,9 @@ protected:
 	};
 
 	BaseState m_BaseData;
-
 	MoveData m_MoveData;
-	ShotData m_ShotData;
 	VisibilityAreaData m_visAreaData;
 
-protected:
 	struct UpdateState
 	{
 		int iHorDirResult;

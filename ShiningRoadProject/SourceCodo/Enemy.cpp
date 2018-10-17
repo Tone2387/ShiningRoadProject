@@ -1,8 +1,13 @@
 #include"Enemy.h"
 
-clsEnemyBase::clsEnemyBase(std::vector<clsCharactor*>& v_Enemys)
+/*clsEnemyBase::clsEnemyBase(std::vector<clsCharactor*>& v_Enemys)
 {
 	m_vp_pEnemys = &v_Enemys;
+}*/
+
+clsEnemyBase::clsEnemyBase()
+{
+	
 }
 
 clsEnemyBase::~clsEnemyBase()
@@ -32,7 +37,7 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 {
 	m_pTarget = nullptr;
 
-	std::vector<clsCharactor*> v_pEnemysTmp = *m_vp_pEnemys;
+	std::vector<clsCharactor*> v_pEnemysTmp = v_pEnemys;//*m_vp_pEnemys;
 
 	for (unsigned int i = 0; i < v_pEnemysTmp.size(); i++)
 	{
@@ -239,7 +244,7 @@ bool clsEnemyBase::SetLook(float& fPush, float& fAngle)
 
 		float fRot = atan2f(fVecY, fVecXZ);
 
-		fRot = fRot - m_pChara->m_fLookUpDir;
+		fRot = fRot - m_pChara->m_fVerLookDir;
 
 		ObjRollOverGuard(&fRot);
 

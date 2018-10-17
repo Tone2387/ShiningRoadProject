@@ -23,9 +23,6 @@
 
 #endif//#ifdef Tahara
 
-const int g_iQuickInterbal = 1 * (int)g_fFPS;
-const int g_iQuickTurnFrame = 1 * (int)g_fFPS;
-
 class clsRobo : public clsCharactor
 {
 public:
@@ -147,9 +144,10 @@ public:
 	clsRobo();
 	~clsRobo();
 
+	
+private:
 	D3DXVECTOR3 m_vMoveDirforBoost;
 
-private:
 	//右腕ブースターエフェクト.
 	std::vector<::Effekseer::Handle> m_v_RHandFrontBoostEfc;
 	std::vector<::Effekseer::Handle> m_v_RHandSideBoostEfc;

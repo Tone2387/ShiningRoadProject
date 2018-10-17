@@ -16,7 +16,7 @@ clsCharactorCommand* clsCharactorEnemy::MoveOperation(float& fPush, float& fAngl
 {
 	SetMoveDir(fPush, fAngle);
 
-	if (fPush < g_fPushHulf)
+	if (fPush < g_fPushMin)
 	{
 		return nullptr;
 	}
@@ -28,7 +28,7 @@ clsCharactorCommand* clsCharactorEnemy::RotateOperation(float& fPush, float& fAn
 {
 	SetRotate(fPush, fAngle);
 
-	if (fPush < g_fPushHulf)
+	if (fPush < g_fPushMin)
 	{
 		return nullptr;
 	}
@@ -40,7 +40,7 @@ clsCharactorCommand* clsCharactorEnemy::LookOperation(float& fPush, float& fAngl
 {
 	SetLook(fPush, fAngle);
 
-	if (fPush < g_fPushHulf)
+	if (fPush < g_fPushMin)
 	{
 		return nullptr;
 	}

@@ -4,6 +4,15 @@
 //ジョイントボーンの数字の桁数.
 const char cBONE_NAME_NUM_DIGIT_JOINT = 2;
 
+const int g_iQuickInterbal = (int)g_fFPS;
+const int g_iQuickTurnFrame = (int)g_fFPS;
+
+const int g_iWalkTopSpeedFrame = (int)g_fFPS / 10;
+const int g_iRotTopSpeedFrame = (int)g_fFPS / 2;
+const int g_iBoostTopSpeedFrame = (int)g_fFPS;
+const int g_iBoostRisingyTopSpeedFrame = (int)g_fFPS / 4;
+const int g_iBoostRes = 10;
+
 void clsRobo::RoboInit(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsROBO_STATUS* const pRobo)
@@ -14,25 +23,45 @@ void clsRobo::RoboInit(
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
-	pRobo->GetRoboState(clsROBO_STATUS::HP);
-	pRobo->GetRoboState(clsROBO_STATUS::WALK_SPD);
-	pRobo->GetRoboState(clsROBO_STATUS::STABILITY);
-	pRobo->GetRoboState(clsROBO_STATUS::TURN);
-	pRobo->GetRoboState(clsROBO_STATUS::JUMP_POWER);
-	pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
-	pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT);
+	const int iHulf = 2;
+
+	m_iMaxHP = pRobo->GetRoboState(clsROBO_STATUS::HP);//HP受け取り.
+	m_iHP = m_iMaxHP;//現在HPを最大値で初期化.
+	
+	m_fWalktMoveSpeedMax = g_iWalkTopSpeedFrame * g_fDistanceReference;
+	m_iWalkTopSpeedFrame = g_iWalkTopSpeedFrame / pRobo->GetRoboState(clsROBO_STATUS::STABILITY);
+
+	SetRotAcceleSpeed(pRobo->GetRoboState(clsROBO_STATUS::TURN)* g_fDistanceReference,
+		g_iRotTopSpeedFrame / pRobo->GetRoboState(clsROBO_STATUS::STABILITY));
+
+	m_fJumpPower = pRobo->GetRoboState(clsROBO_STATUS::JUMP_POWER) * g_fDistanceReference;
+
+	m_iEnelgy = m_iEnelgyMax = pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
+	m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
+	m_iBoostFloatRecovery = m_iEnelgyOutput / iHulf;
+
+	
 	pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_H);
 	pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
-	pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_V);
-	pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_V);
-	pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME);
-	pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
-	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_SPEED);
-	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
-	pRobo->GetRoboState(clsROBO_STATUS::AIMING);
+
+	m_fBoostRisingSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_V) * g_fDistanceReference;
+	m_iBoostRisingyCost = pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_V);
+	m_iBoostRisingTopSpeedFrame = g_iBoostRisingyTopSpeedFrame;//↑に達するまでのフレーム値.
+	m_fBoostFollRes = m_fBoostRisingSpeedMax / g_iBoostRes;
+
 	pRobo->GetRoboState(clsROBO_STATUS::QUICK_THRUST);
 	pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);
 	pRobo->GetRoboState(clsROBO_STATUS::QUICK_TIME);
+
+	pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME);
+
+	pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
+	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_SPEED);
+	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
+
+	pRobo->GetRoboState(clsROBO_STATUS::AIMING);
+	
+
 	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_LEG);
 	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_CORE);
 	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_HEAD);
@@ -47,7 +76,7 @@ void clsRobo::RoboInit(
 	m_fWalktMoveSpeedMax = 0.25f;
 	m_iWalkTopSpeedFrame = 5;
 
-	m_fBoostMoveSpeedMax = 0.5;
+	m_fBoostMoveSpeedMax = 0.5f;
 	m_iBoostTopSpeedFrame = 60;
 
 	m_fQuickBoostSpeedMax = m_fBoostMoveSpeedMax * 3.0f;
@@ -56,10 +85,8 @@ void clsRobo::RoboInit(
 	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
 	m_iQuickTrunTopSpeedTime = 15;
 
-	m_fBoostRisingSpeedMax = 0.5f;//スピードの最大値.
-	m_iBoostRisingTopSpeedFrame = 20;//↑に達するまでのフレーム値.
 	m_fBoostRisingAccele = m_fBoostRisingSpeedMax / m_iBoostRisingTopSpeedFrame;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
-	m_fBoostFollRes = m_fBoostRisingSpeedMax / 10;
+	
 
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
@@ -78,8 +105,8 @@ void clsRobo::RoboInit(
 
 	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
 
-	m_MaxHP = 5000;
-	m_HP = m_MaxHP;
+	//m_MaxHP = 5000;
+	//m_HP = m_MaxHP;
 
 	WeaponState WS[enWeaponTypeSize];
 
@@ -91,8 +118,8 @@ void clsRobo::RoboInit(
 
 		WS[i].iAtk = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::ATK);
 		WS[i].iBulletNumMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::BULLETS_NUM);
-		WS[i].BState.fSpeed = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::BULLET_SPD);
-		WS[i].BState.fScale = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::COL_SIZE);
+		WS[i].BState.fSpeed = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::BULLET_SPD) * g_fDistanceReference;
+		WS[i].BState.fScale = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::COL_SIZE)* g_fDistanceReference;
 		WS[i].iShotEN = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::COST);
 		WS[i].BState.iShotEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_BULLET);
 		pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_CARTRIDGE);
@@ -101,9 +128,10 @@ void clsRobo::RoboInit(
 		WS[i].iReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOAD_TIME);
 		WS[i].iLockSpeed = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOCK_ON_TIME);
 		WS[i].MagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
-		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE);
+		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE)* g_fDistanceReference;
 		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
 		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
+
 		WS[i].iStablity = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SHOT_STABILITY);
 	}
 

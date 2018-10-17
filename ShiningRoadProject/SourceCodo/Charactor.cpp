@@ -227,15 +227,15 @@ void clsCharactor::Rotate()
 
 void clsCharactor::LookUp(const float fAngle, const float fPush)
 {
-	float fLookDir = m_fLookUpDir + fPush;
+	float fLookDir = m_fVerLookDir + fPush;
 
-	Spin(m_fLookUpDir, fLookDir, m_fRotSpeedMax);
+	Spin(m_fVerLookDir, fLookDir, m_fRotSpeedMax);
 
 	const float fPitchMax = static_cast<float>D3DXToRadian(89);//90‹‚É‚È‚é‚ÆŽ‹ŠE‚ª‚¨‚©‚µ‚­‚È‚é‚½‚ß–hŽ~.
 
-	if (abs(m_fLookUpDir) > fPitchMax)
+	if (abs(m_fVerLookDir) > fPitchMax)
 	{
-		m_fLookUpDir = fPitchMax * (m_fLookUpDir / abs(m_fLookUpDir));
+		m_fVerLookDir = fPitchMax * (m_fVerLookDir / abs(m_fVerLookDir));
 	}
 }
 
@@ -443,15 +443,15 @@ bool clsCharactor::Damage(HitState HitS)
 	{
 		m_iDamage += HitS.iDamage;
 
-		if (m_HP < HitS.iDamage)
+		if (m_iHP < HitS.iDamage)
 		{
-			m_HP = 0;
+			m_iHP = 0;
 			m_bDeadFlg = true;//‰¼.
 		}
 
 		else
 		{
-			m_HP -= HitS.iDamage;
+			m_iHP -= HitS.iDamage;
 		}
 
 		return true;
@@ -644,7 +644,7 @@ void clsCharactor::SetLockRangeDir()
 	D3DXMatrixRotationYawPitchRoll(
 		&mRot,
 		m_Trans.fYaw,
-		-m_fLookUpDir,
+		-m_fVerLookDir,
 		m_Trans.fRoll);
 
 	D3DXVec3TransformCoord(&vTmp, &g_vDirForward, &mRot);
@@ -708,8 +708,8 @@ void clsCharactor::CharaInit(clsPOINTER_GROUP* pPointer)
 }
 
 clsCharactor::clsCharactor() :
-	m_HP( 0 ),
-	m_MaxHP( 0 ),
+	m_iHP( 0 ),
+	m_iMaxHP( 0 ),
 	m_bDeadFlg( false ),
 	m_bMoving( false ),
 	m_fMoveSpeedMax( 0.0f ),
