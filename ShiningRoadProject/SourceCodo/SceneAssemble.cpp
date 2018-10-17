@@ -537,10 +537,10 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	//モデル回転.
 	const float fMODEL_SPN_SPD = 0.05f;
 	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
-		m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+		m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
 	}
 	if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
-		m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+		m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
 	}
 	//モデルズーム.
 	const float fMODEL_MOVE_SPD = 5.0f;
