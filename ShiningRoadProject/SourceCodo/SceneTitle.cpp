@@ -51,8 +51,13 @@ void clsSCENE_TITLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 
-
 	m_wpSound->PlaySE( enSE_BOMBER );
+
+	//プレスB.
+	assert( m_wpFont );
+	m_wpFont->SetPos( vPLESS_START_POS );
+	m_wpFont->SetAlpha( 0.0f );
+	m_wpFont->SetScale( fPLESS_START_SCALE );
 
 	//モデルさん作成.
 	assert( !m_pRoboModel );
@@ -85,18 +90,6 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upFlash = make_unique< clsSprite2D >();
 	m_upFlash->Create( m_wpDevice, m_wpContext, sFLASH_PATH, ss );
 	m_upFlash->SetAlpha( 0.0f );
-
-	//プレスB.
-//	assert( !m_upPlessStart );
-//	m_upPlessStart = make_unique< clsUiText >();
-//	m_upPlessStart->Create( m_wpContext, WND_W, WND_H, fPLESS_START_SCALE );
-//	m_upPlessStart->SetText( sPLESS_START_TEXT );
-//	m_upPlessStart->SetPos( vPLESS_START_POS );
-	assert( m_wpFont );
-	m_wpFont->SetPos( vPLESS_START_POS );
-	m_wpFont->SetAlpha( 0.0f );
-	m_wpFont->SetScale( fPLESS_START_SCALE );
-
 
 	//箱.
 	assert( !m_upBox );
