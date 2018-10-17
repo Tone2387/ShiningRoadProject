@@ -34,9 +34,8 @@ private:
 
 		PARTS_SELECT()
 		:Num()
-		{
-			Type = 0;
-		}
+		,Type( 0 )
+		{}
 	}m_PartsSelect;
 
 
@@ -115,7 +114,7 @@ private:
 	int									m_iMessageNum;
 
 	//メッセボックスの選択肢.
-	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
+//	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
 	bool									m_isMessageBoxYes;
 
 	//色の棒.

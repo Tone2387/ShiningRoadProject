@@ -114,16 +114,16 @@ const D3DXVECTOR3 vCOLOR_GAGE_COLOR[] = {
 };
 
 //YesNo.
-const float fMESSAGEBOX_BUTTON_X_OFFSET = 100.0f;
-const float fMESSAGEBOX_BUTTON_Y = WND_H/2 + 100.0f;
-const D3DXVECTOR3 vMESSAGEBOX_YES_BUTTON_POS = { WND_W/2 - fMESSAGEBOX_BUTTON_X_OFFSET, fMESSAGEBOX_BUTTON_Y, 0.0f };
-const D3DXVECTOR3 vMESSAGEBOX_NO_BUTTON_POS =  { WND_W/2 + fMESSAGEBOX_BUTTON_X_OFFSET, fMESSAGEBOX_BUTTON_Y, 0.0f };
-const WHSIZE_FLOAT MESSAGEBOX_BUTTON_YES_NO_DISP = { 80.0f, 60.0f }; 
-const WHSIZE_FLOAT MESSAGEBOX_BUTTON_YES_NO_ANIM = { 2.0f, 2.0f }; 
-const char* sMESSAGEBOX_BUTTON_YES_NO_PATH = "Data\\Image\\AssembleUi\\YesNo.png";
-const POINTFLOAT MESSAGEBOX_YES_BUTTON_ANIM = { 0.0f, 0.0f };
-const POINTFLOAT MESSAGEBOX_NO_BUTTON_ANIM = { 1.0f, 0.0f };
-const float fMESSAGEBOX_YES_NO_BUTTON_SELECT_ANIM = 1.0f;
+//文字.
+const int iMESSAGEBOX_YES_NO_INDEX_YES = 4;
+const int iMESSAGEBOX_YES_NO_INDEX_NO = 5;
+const D3DXVECTOR3 iMESSAGEBOX_YES_NO_YES_POS = { 550.0f, 450.0f, 0.0f };
+const D3DXVECTOR3 iMESSAGEBOX_YES_NO_NO_POS  = { 750.0f, 450.0f, 0.0f };
+const float fMESSAGE_BOX_YES_NO_SCALE = 18.0f;
+//スプライト.
+const D3DXVECTOR3 vMESSAGE_BOX_YES_NO_SCALE = { 2.5f, 1.25f, 0.0f };
+const D3DXVECTOR3 vMESSAGE_BOX_YES_NO_OFFSET_POS_YES = { 29.0f, 11.0f, 0.0f };
+const D3DXVECTOR3 vMESSAGE_BOX_YES_NO_OFFSET_POS_NO  = { 20.0f, 11.0f, 0.0f };
 
 
 //日本語UI.
@@ -272,13 +272,6 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_upBox->SetPos( vBOX_POS );
 	m_upBox->SetSize( 0.0f );
 	m_upBox->SetAlpha( fBOX_ALPHA );
-
-	//yesno.
-	assert( !m_upYesNo );
-	ss.Disp = MESSAGEBOX_BUTTON_YES_NO_DISP;
-	ss.Anim = MESSAGEBOX_BUTTON_YES_NO_ANIM;
-	m_upYesNo = make_unique< clsSPRITE2D_CENTER >();
-	m_upYesNo->Create( m_wpDevice, m_wpContext, sMESSAGEBOX_BUTTON_YES_NO_PATH, ss );
 
 
 	//UI.
@@ -747,21 +740,22 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		else {
 			//選択肢のボタン.
 			//yes.
-			POINTFLOAT tmpAnim = MESSAGEBOX_YES_BUTTON_ANIM;
 			if( m_isMessageBoxYes ){
-				tmpAnim.y = fMESSAGEBOX_YES_NO_BUTTON_SELECT_ANIM;
+				m_upSelectColor->SetPos( iMESSAGEBOX_YES_NO_YES_POS );
+				m_upSelectColor->AddPos( vMESSAGE_BOX_YES_NO_OFFSET_POS_YES );
 			}
-			m_upYesNo->SetPos( vMESSAGEBOX_YES_BUTTON_POS );
-			m_upYesNo->SetAnim( tmpAnim );
-			m_upYesNo->Render();
-			//no.
-			tmpAnim = MESSAGEBOX_NO_BUTTON_ANIM;
-			if( !m_isMessageBoxYes ){
-				tmpAnim.y = fMESSAGEBOX_YES_NO_BUTTON_SELECT_ANIM;
+			else{
+				m_upSelectColor->SetPos( iMESSAGEBOX_YES_NO_NO_POS );
+				m_upSelectColor->AddPos( vMESSAGE_BOX_YES_NO_OFFSET_POS_NO );
 			}
-			m_upYesNo->SetPos( vMESSAGEBOX_NO_BUTTON_POS );
-			m_upYesNo->SetAnim( tmpAnim );
-			m_upYesNo->Render();
+			m_upSelectColor->SetScale( vMESSAGE_BOX_YES_NO_SCALE );
+			m_upSelectColor->Render();
+			//YesNo.
+			m_wpFont->SetScale( fMESSAGE_BOX_YES_NO_SCALE );
+			m_wpFont->SetPos( iMESSAGEBOX_YES_NO_YES_POS );
+			m_wpFont->Render( iMESSAGEBOX_YES_NO_INDEX_YES );
+			m_wpFont->SetPos( iMESSAGEBOX_YES_NO_NO_POS );
+			m_wpFont->Render( iMESSAGEBOX_YES_NO_INDEX_NO );
 		}
 		//選択肢のタイトル.
 		m_wpFont->SetPos( tmpMessagePos );

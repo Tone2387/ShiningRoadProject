@@ -238,28 +238,19 @@ void clsSCENE_GAME_OVER::RenderDebugText()
 		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	sprintf_s( strDbgTxt, 
-		"MisModelPos : x[%f], y[%f], z[%f]",
-		m_upMissModel->GetPos().x, m_upMissModel->GetPos().y, m_upMissModel->GetPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	sprintf_s( strDbgTxt, 
+//		"MisModelPos : x[%f], y[%f], z[%f]",
+//		m_upMissModel->GetPos().x, m_upMissModel->GetPos().y, m_upMissModel->GetPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"MisModelBoneNum : L[%f], C[%f], H[%f], A[%f]",
+//		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_LEG ), 
+//		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_CORE ), 
+//		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_HEAD ), 
+//		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_ARMS ) );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	sprintf_s( strDbgTxt, 
-		"MisModelBoneNum : L[%f], C[%f], H[%f], A[%f]",
-		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_LEG ), 
-		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_CORE ), 
-		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_HEAD ), 
-		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_ARMS ) );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-
-	//dbgtxty += 10;
-	//if( m_pBgm[0]->IsStopped() ){
-	//	sprintf_s( strDbgTxt, "Stopped" );
-	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-	//}
-	//if( m_pBgm[0]->IsPlaying() ){
-	//	sprintf_s( strDbgTxt, "Playingn" );
-	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-	//}
 }
 #endif //#if _DEBUG
