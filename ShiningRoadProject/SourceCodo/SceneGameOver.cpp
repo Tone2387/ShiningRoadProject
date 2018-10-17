@@ -1,5 +1,6 @@
 #include "SceneGameOver.h"
 #include "WindowBox.h"
+#include "File.h"
 
 using namespace std;
 
@@ -16,30 +17,18 @@ const D3DXVECTOR3 vBLACK_BACK_SCALE = { WND_W, WND_H, 1.0f };
 
 
 //テキスト.
-const D3DXVECTOR3 vTEXT_POS_0 = { 400.0f, 300.0f, 0.0f };
-const float		fTEXT_SCALE_0 = 24.0f;
-
-const D3DXVECTOR3 vTEXT_POS_1 = { 600.0f, 280.0f, 0.0f };
-const float		fTEXT_SCALE_1 = 32.0f;
-
-const D3DXVECTOR3 vTEXT_POS_2 = { 680.0f, 500.0f, 0.0f };
-const float		fTEXT_SCALE_2 = 16.0f;
-
-const D3DXVECTOR3 vTEXT_POS_3 = { 920.0f, 500.0f, 0.0f };
-
-const D3DXVECTOR3 vTEXT_POS_4 = { 400.0f, 200.0f, 0.0f };
-const float		fTEXT_SCALE_4 = 36.0f;
-
 const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
 const D3DXVECTOR4 vTEXT_COLOR_GAME_OVER = { 1.0f, 0.0625f, 0.0625f, 1.0f };
-const float		fTEXT_ALPHA = 1.0f;
-const float		fTEXT_ALPHA_GAME_OVER = 0.0f;
 
 
 //================================//
 //========== ゲームオーバークラス ==========//
 //================================//
 clsSCENE_GAME_OVER::clsSCENE_GAME_OVER( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
+	,m_fTextAlphaWhite( 1.0f )
+	,m_fTextAlphaRed( 0.0f )
+	,m_bCanBoxOpen( false )
+	,m_isBoxOpened( false )
 {
 }
 
@@ -66,6 +55,18 @@ void clsSCENE_GAME_OVER::CreateProduct()
 	m_upBlackBack->SetPos( { 0.0f, 0.0f, 0.0f } );
 	m_upBlackBack->SetScale( vBLACK_BACK_SCALE );
 
+	//文字の位置などをファイルから読み込む.
+	const char* sFILE_PATH = "Data\\FileData\\GameOverTextTransform.csv";
+	clsFILE File;
+	File.Open( sFILE_PATH );
+
+	for( int i=0; i<enMESSAGE_INDEX_size; i++ ){
+		int iCol = 0;
+		m_TextStateArray[i].vPos.x = File.GetDataFloat( i, iCol++ );
+		m_TextStateArray[i].vPos.y = File.GetDataFloat( i, iCol++ );
+		m_TextStateArray[i].fScale = File.GetDataFloat( i, iCol++ );
+	}
+
 
 
 
@@ -76,13 +77,31 @@ void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 {
 	m_upBox->Update();
 
-	float fff = 1.0f;
+//	float fff = 1.0f;
 //	if( GetAsyncKeyState( 'W' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, fff, 0.0f } );
 //	if( GetAsyncKeyState( 'S' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, -fff, 0.0f } );
 //	if( GetAsyncKeyState( 'D' ) & 0x8000 ) m_upMissModel->AddPos( { fff, 0.0f, 0.0f } );
 //	if( GetAsyncKeyState( 'A' ) & 0x8000 ) m_upMissModel->AddPos( { -fff, 0.0f, 0.0f } );
 //	if( GetAsyncKeyState( 'E' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, 0.0f, fff } );
 //	if( GetAsyncKeyState( 'Q' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, 0.0f, -fff } );
+
+	if( !m_wpBlackScreen->GetAlpha() ){
+		//箱の開き始め.
+		if(!m_bCanBoxOpen ){
+			m_bCanBoxOpen = true;
+			const D3DXVECTOR3 vTARGET_SIZE = { 600.0f, 400.0f, 1.0f };
+			const D3DXVECTOR2 vCHANGE_SPD = { 60.0f, 30.0f };
+			m_upBox->SetSizeTarget( vTARGET_SIZE );
+			m_upBox->AddChangeData( 
+				vCHANGE_SPD.x, vCHANGE_SPD.y, 
+				clsWINDOW_BOX::encBEFOR_CHANGE::WIDTH );
+		}
+		//開き始めた後.
+		else if( m_upBox->isStopChange() ){
+			m_isBoxOpened = true;
+		}
+	}
+
 
 	if( isPressEnter() ){
 		enNextScene = enSCENE::TITLE;
@@ -96,35 +115,64 @@ void clsSCENE_GAME_OVER::RenderUi()
 {
 	m_upBlackBack->Render();
 
-	m_upBox->Render();
 
-	//mission failed.
-	m_wpFont->SetPos( vTEXT_POS_0 );
-	m_wpFont->SetScale( fTEXT_SCALE_0 );
-	m_wpFont->SetAlpha( fTEXT_ALPHA );
 	m_wpFont->SetColor( vTEXT_COLOR );
-	m_wpFont->Render( enMESSAGE_INDEX_MISSION_FAILD );
+	m_wpFont->SetAlpha( m_fTextAlphaWhite );
 
-	//continue.
-	m_wpFont->SetPos( vTEXT_POS_1 );
-	m_wpFont->SetScale( fTEXT_SCALE_1 );
-	m_wpFont->Render( enMESSAGE_INDEX_CONTINUE );
+	for( char i=0; i<enMESSAGE_INDEX_size; i++ ){
+		//この範囲は映さないこともある.
+		if( enMESSAGE_INDEX_CONTINUE <= i && i <= enMESSAGE_INDEX_NO ){
+			//まだBOXが開ききっていないなら次.
+			if( !m_isBoxOpened ){
+				continue;
+			}
+		}
 
-	//yes.
-	m_wpFont->SetPos( vTEXT_POS_2 );
-	m_wpFont->SetScale( fTEXT_SCALE_2 );
-	m_wpFont->Render( enMESSAGE_INDEX_YES );
+		//日本語描画.
+		m_wpFont->SetPos( m_TextStateArray[i].vPos );
+		m_wpFont->SetScale( m_TextStateArray[i].fScale );
+		if( i == enMESSAGE_INDEX_GAME_OVER ){
+			m_wpFont->SetColor( vTEXT_COLOR_GAME_OVER );
+			m_wpFont->SetAlpha( m_fTextAlphaRed );
+		}
+		m_wpFont->Render( i );
 
-	//no.
-	m_wpFont->SetPos( vTEXT_POS_3 );
-	m_wpFont->Render( enMESSAGE_INDEX_NO );
+		//一つ目の上に箱を置く.
+		if( i == enMESSAGE_INDEX_MISSION_FAILD ){
+			//箱.
+			m_upBox->Render();
+		}
+	}
 
-	//game over.
-	m_wpFont->SetPos( vTEXT_POS_4 );
-	m_wpFont->SetScale( fTEXT_SCALE_4 );
-	m_wpFont->SetAlpha( fTEXT_ALPHA_GAME_OVER + 1.0f );
-	m_wpFont->SetColor( vTEXT_COLOR_GAME_OVER );
-	m_wpFont->Render( enMESSAGE_INDEX_GAME_OVER );
+//	//mission failed.
+//	m_wpFont->SetPos( vTEXT_POS_0 );
+//	m_wpFont->SetScale( fTEXT_SCALE_0 );
+//	m_wpFont->SetAlpha( fTEXT_ALPHA );
+//	m_wpFont->SetColor( vTEXT_COLOR );
+//	m_wpFont->Render( enMESSAGE_INDEX_MISSION_FAILD );
+//
+//	//continue.
+//	m_wpFont->SetPos( vTEXT_POS_1 );
+//	m_wpFont->SetScale( fTEXT_SCALE_1 );
+//	m_wpFont->Render( enMESSAGE_INDEX_CONTINUE );
+//
+//	//yes.
+//	m_wpFont->SetPos( vTEXT_POS_2 );
+//	m_wpFont->SetScale( fTEXT_SCALE_2 );
+//	m_wpFont->Render( enMESSAGE_INDEX_YES );
+//
+//	//no.
+//	m_wpFont->SetPos( vTEXT_POS_3 );
+//	m_wpFont->Render( enMESSAGE_INDEX_NO );
+//
+//	//game over.
+//	if( m_upBox->isStopChange() ){
+//		m_wpFont->SetPos( vTEXT_POS_4 );
+//		m_wpFont->SetScale( fTEXT_SCALE_4 );
+//		m_wpFont->SetAlpha( fTEXT_ALPHA_GAME_OVER + 1.0f );
+//		m_wpFont->SetColor( vTEXT_COLOR_GAME_OVER );
+//		m_wpFont->Render( enMESSAGE_INDEX_GAME_OVER );
+//	}
 
 
 }

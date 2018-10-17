@@ -22,10 +22,11 @@ public:
 	//ˆÃ–¾“]‚ÌÀs.
 	void Update();
 
-	//ˆÃ“]‚ªŠ®—¹‚·‚é‚Ætrue‚ğ•Ô‚·.
+	//ˆÃ“]‚ªŠ®—¹‚·‚é‚Ætrue‚ğ•Ô‚·( ‚»‚ÌuŠÔ‚¾‚¯ ).
 	bool isDarkEnd();
 	//–¾“]‚ªŠ®—¹‚·‚é‚Ætrue‚ğ•Ô‚·.
 	bool isBrightEnd();
+
 
 private:
 

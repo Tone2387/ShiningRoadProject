@@ -95,7 +95,6 @@ bool clsBLACK_SCREEN::isBrightEnd()
 }
 
 
-
 //ビットフラグ更新.
 void clsBLACK_SCREEN::UpdateBitFlg( const enFLG_GROUP enFlg, const bool bStand )
 {
