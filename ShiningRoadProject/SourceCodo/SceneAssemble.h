@@ -88,12 +88,6 @@ private:
 	//色替え( 左右キーを押された ).
 	void AddRoboColor( const bool isIncrement );
 
-
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
-
 	//パーツ選択中かそれ以外か.
 	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
 
@@ -157,7 +151,7 @@ private:
 	//音の引数.
 	enum enBGM : int
 	{
-		enBGM_MAFIA1 = 0,
+		enBGM_RENGOKU0 = 0,
 		enBGM_MAOU0,
 		enBGM_MAOU2,
 	};
@@ -171,6 +165,12 @@ private:
 		enSE_WIN_APP,
 		enSE_WIN_DISAPP,
 	};
+
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
 
 };
 

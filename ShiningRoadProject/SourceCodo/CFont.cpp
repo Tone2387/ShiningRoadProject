@@ -534,6 +534,11 @@ void clsFont::Create( const char *sTextFileName )
 	if( FAILED( CreateTexture() ) ){
 		assert( !"Can't Create Texture" );
 	}
+
+	SetPos( { 0.0f, 0.0f, 0.0f } );
+	SetScale( 0.0f );
+	SetAlpha( 1.0f );
+	SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
 }
 
 void clsFont::Release()

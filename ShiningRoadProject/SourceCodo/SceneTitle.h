@@ -27,11 +27,6 @@ private:
 	void RenderUi() final;//「 UIの 」Render.
 
 
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
-
 	//タイトルでズンとただずむロボット君.
 	clsASSEMBLE_MODEL*	m_pRoboModel;
 
@@ -43,9 +38,6 @@ private:
 	std::unique_ptr< clsSprite2D > m_upFlash;
 
 
-
-	std::unique_ptr< clsUiText >	m_upPlessStart;
-	bool							m_isDispPlessStart;
 
 	//メッセボックス.
 	std::unique_ptr< clsWINDOW_BOX > m_upBox;
@@ -69,5 +61,11 @@ private:
 		enSE_BOMBER,
 		enSE_GUITAR
 	};
+
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
 
 };

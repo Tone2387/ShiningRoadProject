@@ -117,6 +117,11 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 	AttachModel( enPARTS::WEAPON_L, pStatus->GetPartsNum( enPARTS::WEAPON_L ) );
 	AttachModel( enPARTS::WEAPON_R, pStatus->GetPartsNum( enPARTS::WEAPON_R ) );
 
+	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
+		m_vpParts[i]->PartsAnimChange( 0 );
+	}
+
+
 	SetPos( { 0.0f, 0.0f, 0.0f } );
 	SetRot( { 0.0f, 0.0f, 0.0f } );
 	SetScale( 1.0f );

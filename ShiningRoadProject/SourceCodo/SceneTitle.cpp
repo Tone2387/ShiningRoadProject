@@ -24,13 +24,13 @@ const float fFLASH_DOWN = -0.05f;
 const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
 
 //ボタンを押してね.
-const float fPLESS_START_SCALE = 2.0f;
-const char* sPLESS_START_TEXT = "Press B Button";
-const D3DXVECTOR2 vPLESS_START_POS = {
-	vINIT_LOGO_POS.x * 0.25f + INIT_LOGO_SIZE.w * 0.5f, 
-	static_cast<float>( WND_H ) * 0.75f 
+const float fPLESS_START_SCALE = 16.0f;
+const D3DXVECTOR3 vPLESS_START_POS = {
+	250, 
+	static_cast<float>( WND_H ) * 0.75f ,
+	0.0f
 };
-
+const int iPLESS_START_MESSAGE_INDEX = 0;
 
 
 //================================//
@@ -38,7 +38,6 @@ const D3DXVECTOR2 vPLESS_START_POS = {
 //================================//
 clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pRoboModel( nullptr )
-	,m_isDispPlessStart( false )
 {
 }
 
@@ -52,8 +51,13 @@ void clsSCENE_TITLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 
-
 	m_wpSound->PlaySE( enSE_BOMBER );
+
+	//プレスB.
+	assert( m_wpFont );
+	m_wpFont->SetPos( vPLESS_START_POS );
+	m_wpFont->SetAlpha( 0.0f );
+	m_wpFont->SetScale( fPLESS_START_SCALE );
 
 	//モデルさん作成.
 	assert( !m_pRoboModel );
@@ -87,14 +91,6 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upFlash->Create( m_wpDevice, m_wpContext, sFLASH_PATH, ss );
 	m_upFlash->SetAlpha( 0.0f );
 
-
-	assert( !m_upPlessStart );
-	m_upPlessStart = make_unique< clsUiText >();
-	m_upPlessStart->Create( m_wpContext, WND_W, WND_H, fPLESS_START_SCALE );
-	m_upPlessStart->SetText( sPLESS_START_TEXT );
-	m_upPlessStart->SetPos( vPLESS_START_POS );
-
-
 	//箱.
 	assert( !m_upBox );
 	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
@@ -110,6 +106,8 @@ void clsSCENE_TITLE::CreateProduct()
 
 void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 {
+#ifdef _DEBUG
+
 	if( m_wpXInput->isSlopeExit( XINPUT_UP ) ){
 		m_wpSound->PlaySE( enSE_ENTER );
 	}
@@ -137,19 +135,6 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpEffects->SetRotation( m_ehHibana, { 0.0f, 0.0f, fff } );
 		fff += 0.1f;
 	}
-
-	//音声とシーン移動.
-	if( isPressEnter() ){
-		enNextScene = enSCENE::ASSEMBLE;
-		//			Excelの行番号.
-		assert( m_wpSound );
-		m_wpSound->PlaySE( enSE_ENTER );
-	}
-
-
-
-#ifdef _DEBUG
-
 
 	const float fPOS_CHANGE = 7.5f;
 	if( GetAsyncKeyState( 'A' ) & 0x8000 ){
@@ -207,6 +192,16 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 #endif//#ifdef _DEBUG
 
 
+	//音声とシーン移動.
+	if( isPressEnter() ){
+		enNextScene = enSCENE::ASSEMBLE;
+		//			Excelの行番号.
+		assert( m_wpSound );
+		m_wpSound->PlaySE( enSE_ENTER );
+	}
+
+
+
 	//薄くする.
 	m_upFlash->AddAlpha( fFLASH_DOWN );
 	//消えたら見えなくする.
@@ -222,11 +217,12 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	//フラッシュする瞬間.
 	clsCAMERA_TITLE* pCam = (clsCAMERA_TITLE*)m_wpCamera;//ゴリ押しでごめんなさい.
 	if( pCam->isFlash() ){
+		const float fNEW_ALPHA = 1.0f;
 		m_wpSound->PlayBGM( enBGM_MAOU3 );
-		m_upFlash->SetAlpha( 1.0f );
 		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
-		m_upLogo->SetAlpha( 1.0f );
-		m_isDispPlessStart = true;
+		m_upFlash->SetAlpha( fNEW_ALPHA );
+		m_upLogo->SetAlpha( fNEW_ALPHA );
+		m_wpFont->SetAlpha( fNEW_ALPHA );
 	}
 
 }
@@ -246,20 +242,17 @@ void clsSCENE_TITLE::RenderUi()
 	assert( m_upLogo );
 	m_upLogo->Render();
 
+
+	assert( m_wpFont );
+	m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
+
 #ifdef _DEBUG
 	m_wpFont->SetPos( { 0, 0, 0 } );
 	m_wpFont->SetScale( 20 );
 	m_wpFont->Render( 4, 100 );
-#endif//#ifdef _DEBUG
-
-
-	if( m_isDispPlessStart ){
-		assert( m_upPlessStart );
-		m_upPlessStart->Render( clsUiText::enPOS::MIDDLE );
-	}
-
 	assert( m_upBox );
 	m_upBox->Render();
+#endif//#ifdef _DEBUG
 
 	assert( m_upFlash );
 	m_upFlash->Render();

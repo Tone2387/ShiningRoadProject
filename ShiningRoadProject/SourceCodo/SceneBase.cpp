@@ -104,6 +104,7 @@ void clsSCENE_BASE::Create()
 	D3DXMatrixIdentity( &m_mProj );	
 	m_vLight = vLIGHT_DIR;
 
+	m_wpBlackScreen->SetChangeSpd( fBLACK_SCREEN_DEFAULT_SPD );
 	m_wpBlackScreen->GetBright();
 
 
