@@ -157,7 +157,7 @@ private:
 	//âπÇÃà¯êî.
 	enum enBGM : int
 	{
-		enBGM_MAFIA1 = 0,
+		enBGM_RENGOKU0 = 0,
 		enBGM_MAOU0,
 		enBGM_MAOU2,
 	};

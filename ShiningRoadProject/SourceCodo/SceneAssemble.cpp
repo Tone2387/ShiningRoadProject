@@ -227,7 +227,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
 
-	m_wpSound->PlayBGM( enBGM_MAOU2 );
+	m_wpSound->PlayBGM( enBGM_RENGOKU0 );
 
 
 	//îwåi.
