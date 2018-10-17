@@ -2,8 +2,7 @@
 
 #include "Sprite2D.h"
 
-const float fBLACK_SCREEN_DEFAULT_SPD = 1.0f / ( 60.0f * 2.0f ) *
-	2.0f;
+const float fBLACK_SCREEN_DEFAULT_SPD = 1.0f / ( 60.0f * 2.0f ) * 2.0f;
 
 
 class clsBLACK_SCREEN : public clsSprite2D
@@ -12,15 +11,18 @@ public:
 	clsBLACK_SCREEN();
 	~clsBLACK_SCREEN();
 
+	//暗明転の実行( 毎フレーム ).
+	void Update();
+
+	//0.0f ～ 1.0fで与えてね( はみ出ても、わざとなら問題はないが ).
+	void SetChangeSpd( const float fSpd );
 
 	//----- 暗明転の指示 -----.
 	//暗転指示.//Alpha Per Frame.
-	void GetDark( const float fDarkSpd = fBLACK_SCREEN_DEFAULT_SPD );
+	void GetDark();
 	//明転指示.//Alpha Per Frame.
-	void GetBright( const float fBrightSpd = -fBLACK_SCREEN_DEFAULT_SPD );
+	void GetBright();
 
-	//暗明転の実行.
-	void Update();
 
 	//暗転が完了するとtrueを返す( その瞬間だけ ).
 	bool isDarkEnd();

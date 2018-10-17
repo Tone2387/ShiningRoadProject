@@ -53,6 +53,11 @@ private:
 	bool m_bCanBoxOpen;
 	bool m_isBoxOpened;
 
+	bool m_isYes;
+
+	//‘I‘ğ‚µ‚Ä‚¢‚é‘I‘ğˆ‚ğÆ‚ç‚·.
+	std::unique_ptr< clsSprite2D > m_upSelect;
+
 	//•”wŒi.
 	std::unique_ptr< clsSprite2D > m_upBlackBack;
 
@@ -76,6 +81,9 @@ private:
 		enSE_CURSOL_MOVE = 0,
 		enSE_ENTER,
 		enSE_EXIT,
+		enSE_MISSION_START,
+		enSE_WIN_APP,
+		enSE_WIN_DISAPP,
 	};
 
 
