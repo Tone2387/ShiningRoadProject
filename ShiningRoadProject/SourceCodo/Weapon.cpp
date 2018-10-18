@@ -77,7 +77,6 @@ bool clsWeapon::Shot()
 		//UŒ‚—Í‚É‚æ‚éƒuƒŒ‚Æ‚»‚ê‚ğ—}‚¦‚é”’l.
 		float fRandMax = (m_State.iAtk / g_iMOAReference) * (m_State.iStablity * g_fPercentage);
 
-
 		if (fRandMax != 0.0f)//0‚¾‚Æ~‚Ü‚é.
 		{
 			float fDirError;//•ûŒüŒë·.

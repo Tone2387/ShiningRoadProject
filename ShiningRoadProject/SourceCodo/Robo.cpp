@@ -10,8 +10,8 @@ const int g_iQuickTurnFrame = (int)g_fFPS;
 const int g_iWalkTopSpeedFrame = (int)g_fFPS / 10;
 const int g_iRotTopSpeedFrame = (int)g_fFPS / 2;
 const int g_iBoostTopSpeedFrame = (int)g_fFPS;
-const int g_iBoostRisingyTopSpeedFrame = (int)g_fFPS / 4;
-const int g_iBoostRes = 10;
+const int g_iBoostRisingyTopSpeedFrame = (int)g_fFPS / 4;//ブースト上昇加速時間.
+const int g_iBoostResDec = 10;
 
 void clsRobo::RoboInit(
 	clsPOINTER_GROUP* const pPtrGroup,
@@ -28,26 +28,42 @@ void clsRobo::RoboInit(
 	m_iMaxHP = pRobo->GetRoboState(clsROBO_STATUS::HP);//HP受け取り.
 	m_iHP = m_iMaxHP;//現在HPを最大値で初期化.
 	
-	m_fWalktMoveSpeedMax = g_iWalkTopSpeedFrame * g_fDistanceReference;
+	//歩行最高速度.
+	m_fWalktMoveSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::WALK_SPD) * g_fDistanceReference;
+	//歩行加速時間.
 	m_iWalkTopSpeedFrame = g_iWalkTopSpeedFrame / pRobo->GetRoboState(clsROBO_STATUS::STABILITY);
 
+	//
 	SetRotAcceleSpeed(pRobo->GetRoboState(clsROBO_STATUS::TURN)* g_fDistanceReference,
-		g_iRotTopSpeedFrame / pRobo->GetRoboState(clsROBO_STATUS::STABILITY));
+	//回転最高速と加速時間設定.
+	g_iRotTopSpeedFrame / pRobo->GetRoboState(clsROBO_STATUS::STABILITY));
 
+	//ジャンプ力.
 	m_fJumpPower = pRobo->GetRoboState(clsROBO_STATUS::JUMP_POWER) * g_fDistanceReference;
 
+	//エネルギー最大値.
 	m_iEnelgy = m_iEnelgyMax = pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
+	//エネルギー回復量.
 	m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
+	//浮遊時エネルギー回復量.
 	m_iBoostFloatRecovery = m_iEnelgyOutput / iHulf;
-
 	
-	pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_H);
-	pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
+	//ブースト移動速度.
+	m_fBoostMoveSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_H);
+	//ブースト加速時間.
+	m_iBoostTopSpeedFrame = m_fBoostMoveSpeedMax / pRobo->GetRoboState(clsROBO_STATUS::STABILITY);
+	//ブースト稼働中のEN消費.
+	m_iBoostMoveCost = pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
 
+	//ブースト上昇速度.
 	m_fBoostRisingSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_V) * g_fDistanceReference;
+	//ブースト上昇EN消費率.
 	m_iBoostRisingyCost = pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_V);
-	m_iBoostRisingTopSpeedFrame = g_iBoostRisingyTopSpeedFrame;//↑に達するまでのフレーム値.
-	m_fBoostFollRes = m_fBoostRisingSpeedMax / g_iBoostRes;
+
+	//ブースト上昇加速時間.
+	m_iBoostRisingTopSpeedFrame = g_iBoostRisingyTopSpeedFrame;
+	//ブースト稼働中に下に落ちる速度.
+	m_fBoostFollRes = m_fBoostRisingSpeedMax / g_iBoostResDec;
 
 	pRobo->GetRoboState(clsROBO_STATUS::QUICK_THRUST);
 	pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);

@@ -110,7 +110,7 @@ public:
 	float m_fBoostFollRes;//ブースター展開時に落ちる速度.
 
 	int m_iActivityLimitTime;//活動限界時間.
-	bool m_bTimeUp;
+	bool m_bTimeUp;//活動限界.
 
 	//Armパーツから数値を取得する変数と関連する変数//
 
@@ -144,7 +144,6 @@ public:
 	clsRobo();
 	~clsRobo();
 
-	
 private:
 	D3DXVECTOR3 m_vMoveDirforBoost;
 
