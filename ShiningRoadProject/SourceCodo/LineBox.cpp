@@ -85,7 +85,6 @@ void clsLINE_BOX::Update()
 	SetUpBox();
 	SetUpJointSize();
 
-	UpdateProduct();
 }
 
 //î†Çå`çÏÇÈ.
@@ -157,7 +156,6 @@ void clsLINE_BOX::SetUpJointSize()
 
 void clsLINE_BOX::Render()
 {
-	RenderProduct();
 
 	for( char i=0; i<LINE_MAX; i++ ){
 		m_upLineH[i]->Render();
@@ -413,10 +411,3 @@ bool clsLINE_BOX::AddAlpha( const float fAlpha )
 }
 
 
-
-void clsLINE_BOX::UpdateProduct()
-{
-}
-void clsLINE_BOX::RenderProduct()
-{
-}

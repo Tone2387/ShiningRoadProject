@@ -85,6 +85,9 @@
     <Filter Include="Hiyosi\Object\Charactor\Robot">
       <UniqueIdentifier>{b10da82e-75d3-4a62-836c-dd4b42b2c5e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\UI\MenuWindows">
+      <UniqueIdentifier>{6af2db03-c7ce-40c6-98b0-c2e8c1567870}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\CameraMission.cpp">
@@ -341,6 +344,9 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\Building.cpp">
       <Filter>Tahara</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowBase.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -607,6 +613,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Building.h">
       <Filter>Tahara</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowBase.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
