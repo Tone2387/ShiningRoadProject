@@ -1,5 +1,7 @@
 #include "SceneTitle.h"
 #include "WindowBox.h"
+#include "MenuWindowTitle.h"
+#include "File.h"
 
 using namespace std;
 
@@ -91,11 +93,23 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upFlash->Create( m_wpDevice, m_wpContext, sFLASH_PATH, ss );
 	m_upFlash->SetAlpha( 0.0f );
 
-	//箱.
-	assert( !m_upBox );
-	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
-	m_upBox->SetSize( 0.0f );
-	m_upBox->SetAlpha( 0.5f );
+
+	//照合用情報の作成の為のファイルデータ取得.
+	const char sTITLE_INFORMATION_DATA_PATH[] = "Data\\FileData\\Tahara\\TitleMenuInformation.csv";
+	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
+	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
+	//照合用情報の作成.
+	for( char i=0; i<enINFORMATION_size; i++ ){
+		const int iCOL = 0;
+		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
+		m_uiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
+	}
+	upFile.reset();
+
+//	//箱.
+//	assert( !m_upMenuBox );
+//	m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
+//		m_wpPtrGroup, nullptr );
 
 //	//カメラ.
 //	assert( m_wpCamera );
@@ -160,46 +174,36 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 
 
 
-	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-		m_upBox->SetSizeTarget( { 200.0f, 200.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'X' ) & 0x1 ){
-		m_upBox->SetSizeTarget( { 300.0f, 40.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'C' ) & 0x1 ){
-		m_upBox->SetSizeTarget( { 400.0f, 200.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'V' ) & 0x1 ){
-		m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
-	}
-
-	if( GetAsyncKeyState( 'A' ) & 0x1 ){
-		m_upBox->AddChangeData( 
-			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::WIDTH );
-	}
-	if( GetAsyncKeyState( 'S' ) & 0x1 ){
-		m_upBox->AddChangeData( 
-			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::HEIGHT );
-	}
-	if( GetAsyncKeyState( 'D' ) & 0x1 ){
-		m_upBox->AddChangeData( 
-			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
-	}
-	if( GetAsyncKeyState( 'F' ) & 0x1 ){
-		m_upBox->AddChangeData( 
-			100.0f, 100.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
-	}
+//	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+//		m_upBox->SetSizeTarget( { 200.0f, 200.0f, 0.0f } );
+//	}
+//	if( GetAsyncKeyState( 'X' ) & 0x1 ){
+//		m_upBox->SetSizeTarget( { 300.0f, 40.0f, 0.0f } );
+//	}
+//	if( GetAsyncKeyState( 'C' ) & 0x1 ){
+//		m_upBox->SetSizeTarget( { 400.0f, 200.0f, 0.0f } );
+//	}
+//	if( GetAsyncKeyState( 'V' ) & 0x1 ){
+//		m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
+//	}
+//
+//	if( GetAsyncKeyState( 'A' ) & 0x1 ){
+//		m_upBox->AddChangeData( 
+//			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::WIDTH );
+//	}
+//	if( GetAsyncKeyState( 'S' ) & 0x1 ){
+//		m_upBox->AddChangeData( 
+//			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::HEIGHT );
+//	}
+//	if( GetAsyncKeyState( 'D' ) & 0x1 ){
+//		m_upBox->AddChangeData( 
+//			50.0f, 50.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
+//	}
+//	if( GetAsyncKeyState( 'F' ) & 0x1 ){
+//		m_upBox->AddChangeData( 
+//			100.0f, 100.0f, clsLINE_BOX::encBEFOR_CHANGE::BOTH );
+//	}
 #endif//#ifdef _DEBUG
-
-
-	//音声とシーン移動.
-	if( isPressEnter() ){
-		enNextScene = enSCENE::ASSEMBLE;
-		//			Excelの行番号.
-		assert( m_wpSound );
-		m_wpSound->PlaySE( enSE_ENTER );
-	}
-
 
 
 	//薄くする.
@@ -209,10 +213,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_upFlash->SetScale( 0.0f );
 	}
 
-
-
 	m_wpCamera->Update();
-	m_upBox->Update();
 
 	//フラッシュする瞬間.
 	clsCAMERA_TITLE* pCam = (clsCAMERA_TITLE*)m_wpCamera;//ゴリ押しでごめんなさい.
@@ -225,7 +226,66 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpFont->SetAlpha( fNEW_ALPHA );
 	}
 
+	//メニューが開いているなら.
+	if( m_upMenuBox ){
+		MenuUpdate( enNextScene );
+		return;
+	}
+
+
+	//音声とシーン移動.
+	if( isPressEnter() ){
+		//箱.
+		assert( !m_upMenuBox );
+		m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
+			m_wpPtrGroup, 
+			nullptr,
+			m_uiInformationDataArray );
+		//		Excelの行番号.
+		assert( m_wpSound );
+		m_wpSound->PlaySE( enSE_ENTER );
+	}
+
+
 }
+
+//メニューの動き.
+void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
+{
+	m_upMenuBox->Update();
+	//メニューが何か返してくる.
+	unsigned int uiReceiveInformation = m_upMenuBox->GetInformation();
+	if( uiReceiveInformation )
+	{
+		char cInformationIndex = -1;
+		for( char i=0; i<enINFORMATION_size; i++ ){
+			//有用な情報と合致したなら.
+			if( uiReceiveInformation == m_uiInformationDataArray[i] ){
+				cInformationIndex = i;
+			}
+		}
+		switch( cInformationIndex )
+		{
+		case enINFORMATION_GAME_END:
+			m_upMenuBox->Close();
+//			exit( true );
+			break;
+		case enINFORMATION_NEXT_SCENE:
+			enNextScene = enSCENE::ASSEMBLE;
+			break;
+		default:
+			assert( !"不正な情報が返されました" );
+			break;
+		}
+	}
+
+	//( 見た目が )消えたら( メモリからも )消える.
+	if( m_upMenuBox->isDeletePermission() ){
+		m_upMenuBox.reset( nullptr );
+	}
+
+}
+
 
 void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
@@ -246,12 +306,14 @@ void clsSCENE_TITLE::RenderUi()
 	assert( m_wpFont );
 	m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
 
+	if( m_upMenuBox ){
+		m_upMenuBox->Render();
+	}
+
 #ifdef _DEBUG
 	m_wpFont->SetPos( { 0, 0, 0 } );
 	m_wpFont->SetScale( 20 );
 	m_wpFont->Render( 4, 100 );
-	assert( m_upBox );
-	m_upBox->Render();
 #endif//#ifdef _DEBUG
 
 	assert( m_upFlash );

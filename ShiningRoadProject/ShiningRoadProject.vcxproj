@@ -132,6 +132,7 @@
     <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowBase.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowTitle.cpp" />
     <ClCompile Include="SourceCodo\MissionModel.cpp" />
     <ClCompile Include="SourceCodo\Object.cpp" />
     <ClCompile Include="SourceCodo\ObjSkinMesh.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
     <ClInclude Include="SourceCodo\MenuWindowBase.h" />
+    <ClInclude Include="SourceCodo\MenuWindowTitle.h" />
     <ClInclude Include="SourceCodo\MissionModel.h" />
     <ClInclude Include="SourceCodo\MyMacro.h" />
     <ClInclude Include="SourceCodo\Object.h" />

@@ -15,7 +15,7 @@ using namespace std;
 const int iCOLOR_RANK_INIT = 16;
 
 
-const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\RoboStatusHero.csv";
+const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\Tahara\\RoboStatusHero.csv";
 const int iFILE_VAR_ROW = 0;//àÍçsÇµÇ©ë∂ç›ÇµÇ»Ç¢.
 const int iFILE_INDEX_LEG			= 0;
 const int iFILE_INDEX_CORE			= 1;

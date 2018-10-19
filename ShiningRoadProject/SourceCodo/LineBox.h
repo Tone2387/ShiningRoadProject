@@ -64,7 +64,7 @@ protected:
 	}
 
 	D3DXVECTOR3 m_vPos;
-	D3DXVECTOR3 m_vSize;//直径.
+	D3DXVECTOR3 m_vSize;//今の直径.
 
 	float		m_fAlpha;	//アルファ値.
 
