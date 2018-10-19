@@ -11,10 +11,12 @@
 
 #include"Stage.h"
 
-const float g_fPercentage = 0.01f;
-const float g_fDistanceReference = 0.01f;
-
-const float g_fGravity = 0.01f;
+const float g_fPercentage = 0.01f;//百分率に変換用.
+const float g_fDistanceReference = 0.01f;//距離の規定値.
+const float g_fDirectionReference = 0.001f;//回転値の規定値.
+const float g_fGravity = 0.01f;//重力.
+const float g_fGroundSpece = 0.01f;
+const float g_fRaySpace = 0.01f;
 
 const D3DXVECTOR3 g_vDirForward	= D3DXVECTOR3(  0.0f,  0.0f,  1.0f);
 const D3DXVECTOR3 g_vDirBack	= D3DXVECTOR3(  0.0f,  0.0f, -1.0f);
@@ -23,20 +25,37 @@ const D3DXVECTOR3 g_vDirLeft	= D3DXVECTOR3( -1.0f,  0.0f,  0.0f);
 const D3DXVECTOR3 g_vDirUp		= D3DXVECTOR3(  0.0f,  1.0f,  0.0f);
 const D3DXVECTOR3 g_vDirDown	= D3DXVECTOR3(  0.0f, -1.0f,  0.0f);
 
-const float g_fGroundSpece = 0.01f;
-const float g_fRaySpace = 1.0f;
+enum enVec3Direction
+{
+	enForward,
+	enBack,
+	enRight,
+	enLeft,
+	enUp,
+	enDown,
+
+	enDirectionSize
+};
+
+const D3DXVECTOR3 g_vDirs[enDirectionSize]
+{
+	{ 0.0f,  0.0f,  1.0f},
+	{ 0.0f,  0.0f, -1.0f},
+	{ 1.0f,  0.0f,  0.0f},
+	{-1.0f,  0.0f,  0.0f},
+	{ 0.0f,  1.0f,  0.0f},
+	{ 0.0f, -1.0f,  0.0f},
+};
 
 //回転値調整.
 void ObjRollOverGuard(float* fRot);
-
-D3DXVECTOR3 GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis);
+//現在の方向
+D3DXVECTOR3 GetVec3Dir(const float fAngle, const D3DXVECTOR3 vAxis);
 
 class clsObject
 {
 public:
 	clsObject();
-	//ZeroMemory(this, sizeof(clsObject));
-
 	virtual ~clsObject();
 
 	struct RAYSTATE
@@ -54,7 +73,7 @@ public:
 
 	TRANSFORM m_Trans;
 	D3DXVECTOR3 m_vOldPos;
-	D3DXVECTOR3 m_vCenterPos;//オブジェクトの中心.
+	D3DXVECTOR3 m_vCenterPos;//オブジェクトの中心位置(モデルに合わせた中心座標).
 
 	float m_fRaySpece;
 	float m_fFollPower;
@@ -85,6 +104,7 @@ public:
 		m_Trans.vPos = vPos; 
 	}
 	D3DXVECTOR3 GetPosition(){ return m_Trans.vPos; }
+	const D3DXVECTOR3 GetCenterPos()const;//中心座標を渡す.
 	//回転関係関数.
 	void SetRotation(const D3DXVECTOR3& vRot)
 	{

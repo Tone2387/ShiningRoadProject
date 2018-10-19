@@ -1,3 +1,6 @@
 Cursol,CursorMove.wav,30,1,
 Enter,Enter.wav,60,1,
 Exit,Error.wav,60,1,
+MissionStart,MissionStart.wav,1000,2,
+WinApp,WinAppear.wav,300,1,
+WinDisApp,WinDisAppear.wav,150,1,

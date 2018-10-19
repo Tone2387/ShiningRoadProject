@@ -227,15 +227,15 @@ void clsCharactor::Rotate()
 
 void clsCharactor::LookUp(const float fAngle, const float fPush)
 {
-	float fLookDir = m_fLookUpDir + fPush;
+	float fLookDir = m_fVerLookDir + fPush;
 
-	Spin(m_fLookUpDir, fLookDir, m_fRotSpeedMax);
+	Spin(m_fVerLookDir, fLookDir, m_fRotSpeedMax);
 
 	const float fPitchMax = static_cast<float>D3DXToRadian(89);//90‹‚É‚È‚é‚ÆŽ‹ŠE‚ª‚¨‚©‚µ‚­‚È‚é‚½‚ß–hŽ~.
 
-	if (abs(m_fLookUpDir) > fPitchMax)
+	if (abs(m_fVerLookDir) > fPitchMax)
 	{
-		m_fLookUpDir = fPitchMax * (m_fLookUpDir / abs(m_fLookUpDir));
+		m_fVerLookDir = fPitchMax * (m_fVerLookDir / abs(m_fVerLookDir));
 	}
 }
 
@@ -443,15 +443,15 @@ bool clsCharactor::Damage(HitState HitS)
 	{
 		m_iDamage += HitS.iDamage;
 
-		if (m_HP < HitS.iDamage)
+		if (m_iHP < HitS.iDamage)
 		{
-			m_HP = 0;
+			m_iHP = 0;
 			m_bDeadFlg = true;//‰¼.
 		}
 
 		else
 		{
-			m_HP -= HitS.iDamage;
+			m_iHP -= HitS.iDamage;
 		}
 
 		return true;
@@ -479,7 +479,7 @@ void clsCharactor::LockChara()
 			D3DXMATRIX mW;
 			D3DXMatrixIdentity(&mW);
 
-			D3DXVECTOR3 vTmp = m_pTargetChara->GetPosition();
+			D3DXVECTOR3 vTmp = m_pTargetChara->GetCenterPos();
 
 			D3DXVec3Project(&m_vTargetScrPos,
 				&vTmp,
@@ -586,12 +586,14 @@ bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
 	D3DXVECTOR3 vTarDir = vTargetPos - m_vCenterPos;
+	D3DXVec3Normalize(&vTarDir, &vTarDir);
 
 	float fDir = D3DXVec3Dot(&vTarDir, &vForword);
+	fDir = acosf(fDir);
 
-	int iDir = (int)D3DXToDegree(fDir);
+	const float fForwardRangefromacos = 1.0f;//acos‚Åo‚Ä‚­‚é³–Ê•ûŒü‚Ì”ÍˆÍ.
 
-	if (iDir > (int)D3DXToDegree(D3DX_PI))
+	if (abs(fDir) < fForwardRangefromacos)
 	{
 		return true;
 	}
@@ -644,7 +646,7 @@ void clsCharactor::SetLockRangeDir()
 	D3DXMatrixRotationYawPitchRoll(
 		&mRot,
 		m_Trans.fYaw,
-		-m_fLookUpDir,
+		-m_fVerLookDir,
 		m_Trans.fRoll);
 
 	D3DXVec3TransformCoord(&vTmp, &g_vDirForward, &mRot);
@@ -707,9 +709,14 @@ void clsCharactor::CharaInit(clsPOINTER_GROUP* pPointer)
 	m_pViewPort = pPointer->GetViewPort10();
 }
 
+const float clsCharactor::GetRaderRange()const
+{
+	return m_fRaderRange;
+}
+
 clsCharactor::clsCharactor() :
-	m_HP( 0 ),
-	m_MaxHP( 0 ),
+	m_iHP( 0 ),
+	m_iMaxHP( 0 ),
 	m_bDeadFlg( false ),
 	m_bMoving( false ),
 	m_fMoveSpeedMax( 0.0f ),

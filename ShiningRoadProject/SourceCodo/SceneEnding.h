@@ -42,9 +42,14 @@ private:
 	int				m_iIntervalCnt;//始まるまでの時間カウント.
 	bool			m_isScroll;
 
+	//最後に表示する添え字.
 	int m_iGoScrollIndex;
 
+	//スクロールが終わったら決定ボタンでタイトルに戻る許可を出す.
 	bool m_isCanGoTitle;
+
+	//スタッフロール透過文字の同時表示数.
+	unsigned int m_uiRenderTextNum;
 
 	std::unique_ptr< clsStage >	m_upStage;//テスト用.
 

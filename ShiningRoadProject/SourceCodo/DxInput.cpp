@@ -63,7 +63,7 @@ clsDxInput::~clsDxInput()
 }
 
 // DirectInputの初期設定。
-bool clsDxInput::initDI( HWND hWnd)
+const bool clsDxInput::initDI(const HWND hWnd)
 {
 	HRESULT hRlt;	// 関数復帰値
 	hRlt = DirectInput8Create(
@@ -124,10 +124,12 @@ bool clsDxInput::initDI( HWND hWnd)
 }
 
 //入力情報更新関数.
-HRESULT clsDxInput::UpdataInputState()
+const HRESULT clsDxInput::UpdataInputState()
 {
 	HRESULT hRslt;//関数復帰値.
 	DIJOYSTATE2 js;//ｼﾞｮｲｽﾃｨｯｸ情報構造体.
+
+	const int iHulf = 2;//半分.
 
 	//ｼﾞｮｲｽﾃｨｯｸの接続確認.
 	if (m_Pad == NULL)
@@ -160,89 +162,87 @@ HRESULT clsDxInput::UpdataInputState()
 	//入力情報の初期化.
 	InitInputState();
 
-	const int iAxisPushMin = g_iAxisMax / 4;
-
 	//左ｱﾅﾛｸﾞｽﾃｨｯｸ(ｽﾃｨｯｸの傾き具合(遊び)の値を500,-500として考える)
-	if (js.lX > iAxisPushMin)
+	if (js.lX > g_iAxisMin)
 	{
 		AddInputState(enPKey_LRight);
 	}
 
-	else if (js.lX < -iAxisPushMin)
+	else if (js.lX < -g_iAxisMin)
 	{
 		//左ｷｰ.
 		AddInputState(enPKey_LLeft);
 	}
 
-	if (js.lY < -iAxisPushMin)
+	if (js.lY < -g_iAxisMin)
 	{
 		//上ｷｰ.
 		AddInputState(enPKey_LUp);
 	}
 
-	else if (js.lY > iAxisPushMin)
+	else if (js.lY > g_iAxisMin)
 	{
 		//上ｷｰ.
 		AddInputState(enPKey_LDown);
 	}
 
-	if (abs(js.lX) > iAxisPushMin)
+	if (abs(js.lX) > g_iAxisMin)
 	{
-		m_fHorLSPush = (float)js.lX;
-		m_fHorLSPush /= g_iAxisMax;
+		m_InputNowState.fHorLSPush = (float)js.lX;
+		m_InputNowState.fHorLSPush /= g_iAxisMax;
 	}
 
-	if (abs(js.lY) > iAxisPushMin)
+	if (abs(js.lY) > g_iAxisMin)
 	{
-		m_fVerLSPush = (float)js.lY;
-		m_fVerLSPush /= g_iAxisMax;
+		m_InputNowState.fVerLSPush = (float)js.lY;
+		m_InputNowState.fVerLSPush /= g_iAxisMax;
 	}
 
-	if ((abs(js.lX) + abs(js.lY)) / 2 > iAxisPushMin)
+	if ((abs(js.lX) + abs(js.lY)) / iHulf > g_iAxisMin)
 	{
 		AddInputState(enPKey_L);
-		m_fLSDir = atan2f((float)js.lX, (float)-js.lY);
+		m_InputNowState.fLSDir = atan2f((float)js.lX, (float)-js.lY);
 	}
 
-	if (js.lRx > iAxisPushMin)
+	if (js.lRx > g_iAxisMin)
 	{
 		AddInputState(enPKey_RRight);
 	}
 
-	else if (js.lRx < -iAxisPushMin)
+	else if (js.lRx < -g_iAxisMin)
 	{
 		//左ｷｰ.
 		AddInputState(enPKey_RLeft);
 	}
 
-	if (js.lRy < -iAxisPushMin)
+	if (js.lRy < -g_iAxisMin)
 	{
 		//上ｷｰ.
 		AddInputState(enPKey_RUp);
 	}
 
-	else if (js.lRy > iAxisPushMin)
+	else if (js.lRy > g_iAxisMin)
 	{
 		//上ｷｰ.
 		AddInputState(enPKey_RDown);
 	}
 
-	if (abs(js.lRx) > iAxisPushMin)
+	if (abs(js.lRx) > g_iAxisMin)
 	{
-		m_fHorRSPush = (float)js.lRx;
-		m_fHorRSPush /= g_iAxisMax;
+		m_InputNowState.fHorRSPush = (float)js.lRx;
+		m_InputNowState.fHorRSPush /= g_iAxisMax;
 	}
 
-	if (abs(js.lRy) > iAxisPushMin)
+	if (abs(js.lRy) > g_iAxisMin)
 	{
-		m_fVerRSPush = (float)js.lRy;
-		m_fVerRSPush /= g_iAxisMax;
+		m_InputNowState.fVerRSPush = (float)js.lRy;
+		m_InputNowState.fVerRSPush /= g_iAxisMax;
 	}
 
-	if ((abs(js.lRx) + abs(js.lRy)) / 2 > iAxisPushMin)
+	if ((abs(js.lRx) + abs(js.lRy)) / iHulf > g_iAxisMin)
 	{
 		AddInputState(enPKey_R);
-		m_fRSDir = atan2f((float)js.lRx, (float)-js.lRy);
+		m_InputNowState.fRSDir = atan2f((float)js.lRx, (float)-js.lRy);
 	}
 
 	//ﾎﾞﾀﾝ.
@@ -254,17 +254,15 @@ HRESULT clsDxInput::UpdataInputState()
 		}
 	}
 	
-	if (js.lZ < -500)
+	if (js.lZ < -g_iAxisMin)
 	{
 		AddInputState(enPKey_ZLeft);
 	}
 
-	if (js.lZ > 500)
+	if (js.lZ > g_iAxisMin)
 	{
 		AddInputState(enPKey_ZRight);
 	}
-
-	
 
 	switch (js.rgdwPOV[0])
 	{
@@ -309,30 +307,32 @@ HRESULT clsDxInput::UpdataInputState()
 void clsDxInput::AddInputState(enPKey enKey)
 {
 	//<< ｼﾌﾄ演算子:左にｼﾌﾄ.
-	m_uInputState |= 1 << enKey;
+	m_InputNowState.uiKeyState |= 1 << enKey;
 
 }
 
 //入力情報を初期化する関数.
 void clsDxInput::InitInputState()
 {
-	m_uInputState = 0;
+	m_InputOldState = m_InputNowState;
 
-	m_fHorLSPush = 0.0f;
-	m_fVerLSPush = 0.0f;
-	m_fLSDir = 0.0f;
+	m_InputNowState.uiKeyState = 0;
 
-	m_fHorRSPush = 0.0f;
-	m_fVerRSPush = 0.0f;
-	m_fRSDir = 0.0f;
+	m_InputNowState.fHorLSPush = 0.0f;
+	m_InputNowState.fVerLSPush = 0.0f;
+	m_InputNowState.fLSDir = 0.0f;
+
+	m_InputNowState.fHorRSPush = 0.0f;
+	m_InputNowState.fVerRSPush = 0.0f;
+	m_InputNowState.fRSDir = 0.0f;
 }
 
 //入力ﾁｪｯｸする関数.
 // ※UpdateInputState():関数で入力情報が更新されていることが前提.
-bool clsDxInput::IsPressKey(enPKey enKey)
+const bool clsDxInput::IsPressKey(enPKey enKey)
 {
 	// >> ｼﾌﾄ演算子:右にｼﾌﾄ.
-	if ((m_uInputState >> enKey) & 1)
+	if ((m_InputNowState.uiKeyState >> enKey) & 1)
 	{
 		return true;
 	}
@@ -340,55 +340,240 @@ bool clsDxInput::IsPressKey(enPKey enKey)
 	return false;
 }
 
-float clsDxInput::GetLSDir()
+const float clsDxInput::GetLSDir()
 {
-	return m_fLSDir;
+	return m_InputNowState.fLSDir;
 }
 
-float clsDxInput::GetLSPush()
+const float clsDxInput::GetLSPush()
 {
-	float fLSPush = abs(m_fHorLSPush) + abs(m_fVerLSPush);
+	float fLSPush = abs(m_InputNowState.fHorLSPush) + abs(m_InputNowState.fVerLSPush);
 
-	if (fLSPush >= 1.0f)
+	if (fLSPush >= g_fPushMax)
 	{
-		fLSPush = 1.0f;
+		fLSPush = g_fPushMax;
 	}
+
 	return fLSPush;
 }
 
-float clsDxInput::GetHorLSPush()
+const float clsDxInput::GetHorLSPush()
 {
-	return m_fHorLSPush;
+	return m_InputNowState.fHorLSPush;
 }
 
-float clsDxInput::GetVerLSPush()
+const float clsDxInput::GetVerLSPush()
 {
-	return m_fVerLSPush;
+	return m_InputNowState.fVerLSPush;
 }
 
-float clsDxInput::GetRSDir()
+const bool clsDxInput::IsLSUpEnter()
 {
-	return m_fRSDir;
-}
-
-float clsDxInput::GetRSPush()
-{
-	float fRSPush = abs(m_fHorRSPush) + abs(m_fVerRSPush);
-
-	if (fRSPush >= 1.0f)
+	if (m_InputNowState.fVerLSPush < -g_fPushMin)
 	{
-		fRSPush = 1.0f;
+		if (m_InputOldState.fVerLSPush > -g_fPushMin)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsLSDownEnter()
+{
+	if (m_InputNowState.fVerLSPush > g_fPushMin)
+	{
+		if (m_InputOldState.fVerLSPush < g_fPushMin)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsLSLeftEnter()
+{
+	if (m_InputNowState.fHorLSPush < -g_fPushMin)
+	{
+		if (m_InputOldState.fHorLSPush > -g_fPushMin)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsLSRightEnter()
+{
+	if (m_InputNowState.fHorLSPush > g_fPushMin)
+	{
+		if (m_InputOldState.fHorLSPush < g_fPushMin)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsLSUpStay()
+{
+	if (m_InputNowState.fVerLSPush < -g_fPushMin)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsLSDownStay()
+{
+	if (m_InputNowState.fVerLSPush > g_fPushMin)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsLSLeftStay()
+{
+	if (m_InputNowState.fHorLSPush < -g_fPushMin)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsLSRightStay()
+{
+	if (m_InputNowState.fHorLSPush > g_fPushMin)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const float clsDxInput::GetRSDir()
+{
+	return m_InputNowState.fRSDir;
+}
+
+const float clsDxInput::GetRSPush()
+{
+	float fRSPush = abs(m_InputNowState.fHorRSPush) + abs(m_InputNowState.fVerRSPush);
+
+	if (fRSPush >= g_fPushMax)
+	{
+		fRSPush = g_fPushMax;
 	}
 
 	return fRSPush;
 }
 
-float clsDxInput::GetHorRSPush()
+const float clsDxInput::GetHorRSPush()
 {
-	return m_fHorRSPush;
+	return m_InputNowState.fHorRSPush;
 }
 
-float clsDxInput::GetVerRSPush()
+const float clsDxInput::GetVerRSPush()
 {
-	return m_fVerRSPush;
+	return m_InputNowState.fVerRSPush;
+}
+
+const bool clsDxInput::IsRSUpEnter()
+{
+	if (m_InputNowState.fVerRSPush < -g_fPushMin)
+	{
+		if (m_InputOldState.fVerRSPush > -g_fPushMin)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsRSDownEnter()
+{
+	if (m_InputNowState.fVerRSPush > g_fPushMin)
+	{
+		if (m_InputOldState.fVerRSPush < g_fPushMin)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsRSLeftEnter()
+{
+	if (m_InputNowState.fHorRSPush < -g_fPushMin)
+	{
+		if (m_InputOldState.fHorRSPush > -g_fPushMin)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsRSRightEnter()
+{
+	if (m_InputNowState.fHorRSPush > g_fPushMin)
+	{
+		if (m_InputOldState.fHorRSPush < g_fPushMin)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsRSUpStay()
+{
+	if (m_InputNowState.fVerRSPush < -g_fPushMin)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsRSDownStay()
+{
+	if (m_InputNowState.fVerRSPush > g_fPushMin)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsRSLeftStay()
+{
+	if (m_InputNowState.fHorRSPush < -g_fPushMin)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool clsDxInput::IsRSRightStay()
+{
+	if (m_InputNowState.fHorRSPush > g_fPushMin)
+	{
+		return true;
+	}
+
+	return false;
 }

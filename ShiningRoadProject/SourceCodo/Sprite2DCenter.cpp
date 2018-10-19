@@ -142,7 +142,7 @@ void clsSPRITE2D_CENTER::Render()
 		cd.fViewPortHeight= WND_H;
 
 		//アルファ値を渡す.
-		cd.fAlpha = m_fAlpha;
+		cd.vColor = m_vColor;
 
 		//UV座標.
 		//１コマ当たりの割合にコマ番号を掛けて位置を設定する.

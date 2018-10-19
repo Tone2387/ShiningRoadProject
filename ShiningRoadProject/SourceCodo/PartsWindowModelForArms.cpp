@@ -38,7 +38,7 @@ void clsPARTS_WINDOW_MODEL_FOR_ARMS::Render(
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 		//•`‰æ.
 		if( !bRender ) continue;
-		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye );
+		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, m_vecvColor[0], m_vecvColor[1] );
 	}
 }
 

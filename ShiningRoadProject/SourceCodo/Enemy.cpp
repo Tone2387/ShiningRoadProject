@@ -1,7 +1,13 @@
 #include"Enemy.h"
 
+/*clsEnemyBase::clsEnemyBase(std::vector<clsCharactor*>& v_Enemys)
+{
+	m_vp_pEnemys = &v_Enemys;
+}*/
+
 clsEnemyBase::clsEnemyBase()
 {
+	
 }
 
 clsEnemyBase::~clsEnemyBase()
@@ -10,17 +16,34 @@ clsEnemyBase::~clsEnemyBase()
 	{
 		m_pTarget = nullptr;
 	}
+
+	if (m_vp_pEnemys)
+	{
+		m_vp_pEnemys = nullptr;
+	}
+}
+
+void clsEnemyBase::Update()
+{
+	if (m_UpdateState.iProcessCnt < 0)
+	{
+		m_UpdateState.iProcessCnt--;
+	}
+
+	UpdateProduct();
 }
 
 void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 {
 	m_pTarget = nullptr;
 
-	for (unsigned int i = 0; i < v_pEnemys.size(); i++)
+	std::vector<clsCharactor*> v_pEnemysTmp = v_pEnemys;//*m_vp_pEnemys;
+
+	for (unsigned int i = 0; i < v_pEnemysTmp.size(); i++)
 	{
-		if (!v_pEnemys[i]->m_bDeadFlg)
+		if (!v_pEnemysTmp[i]->m_bDeadFlg)
 		{
-			m_pTarget = v_pEnemys[i];
+			m_pTarget = v_pEnemysTmp[i];
 		}
 	}
 
@@ -71,6 +94,7 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 			}
 		}
 	}*/
+
 }
 
 bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
@@ -103,43 +127,46 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 
 	if (m_pTarget)
 	{
-		fPush = 1.0f;
-
-		m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
-		m_UpdateState.fVerDis = 0.0f;
-
-		D3DXVECTOR3 vTmp;
-
-		float fRandMax = 0.0f;
-
-		float fHorDestDis = 0.0f;//Destination:ñ⁄ìIín.
-		fHorDestDis = m_MoveData.v_MoveState[m_iMoveCategoryNo].iHorDistance * g_fDistanceReference;
-		fRandMax = m_MoveData.v_MoveState[m_iMoveCategoryNo].iHorDisRandMax* g_fDistanceReference;
-
-		if (fRandMax != 0.0f)//0ÇæÇ∆é~Ç‹ÇÈÇÃÇ≈ñhé~.
+		if (m_UpdateState.iMoveUpdateCnt < 0)
 		{
-			fHorDestDis += fmodf(static_cast<float>(rand()), (fRandMax));//ïœìÆílÇ™Ç†ÇÈèÍçáÅAóêêîê∂ê¨.
+			MoveState MoveStatus = m_MoveData.v_MoveState[m_UpdateState.iMoveCategoryNo];
+
+			m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
+			m_UpdateState.fVerDis = 0.0f;
+
+			D3DXVECTOR3 vTmp;
+
+			float fRandMax = 0.0f;
+
+			float fHorDestDis = 0.0f;//Destination:ñ⁄ìIín.
+			fHorDestDis = MoveStatus.iHorDistance * g_fDistanceReference;
+			fRandMax = MoveStatus.iHorDisRandMax* g_fDistanceReference;
+
+			if (fRandMax != 0.0f)//0ÇæÇ∆é~Ç‹ÇÈÇÃÇ≈ñhé~.
+			{
+				fHorDestDis += fmodf(static_cast<float>(rand()), (fRandMax));//ïœìÆílÇ™Ç†ÇÈèÍçáÅAóêêîê∂ê¨.
+			}
+
+			int iRandMax = 0;
+
+			m_UpdateState.iHorDirResult = MoveStatus.iMoveDir;
+			iRandMax = MoveStatus.iMoveDirRandMax;
+
+			if (iRandMax != 0)//0ÇæÇ∆é~Ç‹ÇÈÇÃÇ≈ñhé~.
+			{
+				m_UpdateState.iHorDirResult += (rand() % (iRandMax * 2)) - iRandMax;
+			}
+
+			vTmp = m_pChara->GetPosition() - m_pTarget->GetPosition();
+			vTmp.y = 0.0f;//êÇíºï˚å¸ÇÕä÷åWÇ»Ç¢ÇÃÇ≈0Ç…Ç∑ÇÈ.
+			D3DXVec3Normalize(&vTmp, &vTmp);//É^Å[ÉQÉbÉgÇ©ÇÁé©ï™Ç÷ÇÃï˚å¸ÉxÉNÉgÉãÇéÊìæ.
+
+			m_UpdateState.vHorMovePos = m_pTarget->GetPosition() + vTmp * fHorDestDis;//ñ⁄ìIín.
+
+			m_UpdateState.vHorMovePos.y = 0.0f;//êÇíºï˚å¸ÇÕä÷åWÇ»Ç¢ÇÃÇ≈0Ç…Ç∑ÇÈ.
+
+			m_UpdateState.iMoveUpdateCnt = MoveStatus.iMoveUpdateInterval;
 		}
-
-		int iRandMax = 0;
-
-		m_UpdateState.iHorDirResult = m_MoveData.v_MoveState[m_iMoveCategoryNo].iMoveDir;
-		iRandMax = m_MoveData.v_MoveState[m_iMoveCategoryNo].iMoveDirRandMax;
-
-		if (iRandMax != 0)//0ÇæÇ∆é~Ç‹ÇÈÇÃÇ≈ñhé~.
-		{
-			m_UpdateState.iHorDirResult += (rand() % (iRandMax * 2)) - iRandMax;
-		}
-
-		vTmp = m_pChara->GetPosition() - m_pTarget->GetPosition();
-		vTmp.y = 0.0f;//êÇíºï˚å¸ÇÕä÷åWÇ»Ç¢ÇÃÇ≈0Ç…Ç∑ÇÈ.
-		D3DXVec3Normalize(&vTmp, &vTmp);//É^Å[ÉQÉbÉgÇ©ÇÁé©ï™Ç÷ÇÃï˚å¸ÉxÉNÉgÉãÇéÊìæ.
-
-		m_UpdateState.vHorMovePos = m_pTarget->GetPosition() + vTmp * fHorDestDis;//ñ⁄ìIín.
-
-		m_UpdateState.vHorMovePos.y = 0.0f;//êÇíºï˚å¸ÇÕä÷åWÇ»Ç¢ÇÃÇ≈0Ç…Ç∑ÇÈ.
-
-		//_MoveState.iNowUpdateCnt = m_MoveState.iUpdateInterval;
 	}
 
 	else
@@ -159,6 +186,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 	fAngle = fRot;
 
 	return true;
+
 }
 
 bool clsEnemyBase::SetRotate(float& fPush, float& fAngle)
@@ -177,16 +205,20 @@ bool clsEnemyBase::SetRotate(float& fPush, float& fAngle)
 
 		ObjRollOverGuard(&fRot);
 
-		if (fRot > 0)
+		if (m_UpdateState.iProcessCnt < 0)
 		{
-			fPush = fPushFull;
-		}
+			if (fRot > 0)
+			{
+				m_UpdateState.fRotDir = fPushFull;
+			}
 
-		else
-		{
-			fPush = -fPushFull;
+			else
+			{
+				m_UpdateState.fRotDir = -fPushFull;
+			}
 		}
-
+		
+		fPush = m_UpdateState.fRotDir;
 		fAngle = fRot;
 
 		return true;
@@ -204,34 +236,32 @@ bool clsEnemyBase::SetLook(float& fPush, float& fAngle)
 	{
 		const float fPushFull = 1.0f;
 
-		const int iDirHulf = 180;
-		const int iDirQuar = 90;
-		const int iDirOneEighth = 45;
-
 		const float fVecX = m_pTarget->GetPosition().x - m_pChara->GetPosition().x;
 		const float fVecZ = m_pTarget->GetPosition().z - m_pChara->GetPosition().z;
-
 		const float fVecY = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 
-		float fVecXZ = abs(fVecX) + abs(fVecZ);
+		const float fVecXZ = abs(fVecX) + abs(fVecZ);
 
-		//static_cast<float>D3DXToRadian(89);
 		float fRot = atan2f(fVecY, fVecXZ);
 
-		fRot = fRot - m_pChara->m_fLookUpDir;
+		fRot = fRot - m_pChara->m_fVerLookDir;
 
 		ObjRollOverGuard(&fRot);
 
-		if (fRot > 0)
+		if (m_UpdateState.iProcessCnt < 0)
 		{
-			fPush = fPushFull;
+			if (fRot > 0)
+			{
+				m_UpdateState.fVerLookDir = fPushFull;
+			}
+
+			else
+			{
+				m_UpdateState.fVerLookDir = -fPushFull;
+			}
 		}
 
-		else
-		{
-			fPush = -fPushFull;
-		}
-
+		fPush = m_UpdateState.fVerLookDir;
 		fAngle = fRot;
 
 		return true;
@@ -244,10 +274,12 @@ bool clsEnemyBase::IsJump()
 {
 	if (m_pTarget)
 	{
-		int iVerDestDis = m_MoveData.v_MoveState[m_iMoveCategoryNo].iVerDistance;
+		MoveState MoveStatus = m_MoveData.v_MoveState[m_UpdateState.iMoveCategoryNo];
+
+		int iVerDestDis = MoveStatus.iVerDistance;
 
 		int iRandMax = 0;
-		iRandMax = m_MoveData.v_MoveState[m_iMoveCategoryNo].iVerDistRandMax;
+		iRandMax = MoveStatus.iVerDistRandMax;
 
 		if (iRandMax != 0)//0ÇæÇ∆é~Ç‹ÇÈÇÃÇ≈ñhé~.
 		{
@@ -289,3 +321,5 @@ bool clsEnemyBase::IsShot()
 
 	return false;
 }
+
+void clsEnemyBase::UpdateProduct(){}

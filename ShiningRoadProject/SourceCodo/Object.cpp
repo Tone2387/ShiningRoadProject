@@ -8,11 +8,9 @@ D3DXVECTOR3 GetVec3Dir(const float Angle, const D3DXVECTOR3 vAxis)
 	D3DXMatrixRotationY(&mYaw, Angle);//Y軸回転.
 
 	D3DXVECTOR3 vDir;
-
-	//Z軸ﾍﾞｸﾄﾙそのものを回転状態により変換する.
+	//ベクトルそのものを回転状態により変換する.
 	D3DXVec3TransformCoord(&vDir, &vAxis, &mYaw);
-
-	D3DXVec3Normalize(&vDir, &vDir);//現在向いている方向ベクトル.
+	D3DXVec3Normalize(&vDir, &vDir);//取得する方向ベクトル.
 
 	return vDir;
 }
@@ -200,7 +198,7 @@ bool clsObject::WallSetAxis(const clsDX9Mesh* pWall, float* fResultDis, const D3
 	bool bResult = false;
 
 	//前が壁に接近.
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece && fDis > 0.0f)
 	{
 		bResult = true;
 	}
@@ -225,7 +223,7 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 	bool bResult = false;
 	
 	//前が壁に接近.
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece && fDis > 0.0f)
 	{
 		bResult = true;
 
@@ -301,7 +299,7 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece && fDis > 0.0f)
 	{
 		bResult = true;
 
@@ -377,7 +375,7 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece && fDis > 0.0f)
 	{
 		bResult = true;
 
@@ -454,7 +452,7 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece && fDis > 0.0f)
 	{
 		bResult = true;
 
@@ -517,7 +515,7 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 {
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
-	float fRaySpece = g_fRaySpace + m_fFollPower;
+	float fRaySpece = g_fRaySpace;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirUp;
 	rs.vRayStart = m_Trans.vPos;
@@ -526,14 +524,14 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece + m_fFollPower && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece + m_fFollPower && fDis > 0.0f)
 	{
 		bResult = true;
 
 		if (m_fFollPower > 0.0f)
 		{
 			m_fFollPower = 0.0f;
-			m_Trans.vPos.y = vIntersect.y - fRaySpece;
+			m_Trans.vPos.y = vIntersect.y - g_fGroundSpece;
 		}
 	}
 
@@ -542,9 +540,14 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 {
+	if (m_bGround)
+	{
+		return true;
+	}
+
 	D3DXVECTOR3 vIntersect;//交点座標.
 	float fDis;//距離と回転.
-	float fRaySpece = g_fRaySpace - m_fFollPower;
+	float fRaySpece = g_fRaySpace;
 	RAYSTATE rs;
 	rs.vAxis = g_vDirDown;
 	rs.vRayStart = m_Trans.vPos;
@@ -553,12 +556,12 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > g_fGroundSpece)
+	if (fDis < fRaySpece - m_fFollPower && fDis > 0.0f)
 	{
 		m_bGround = true;
 		bResult = true;
 
-		m_Trans.vPos.y = vIntersect.y + (fRaySpece + m_fFollPower);
+		m_Trans.vPos.y = vIntersect.y + g_fGroundSpece;
 
 		m_fFollPower = 0.0f;
 	}
@@ -619,9 +622,36 @@ bool clsObject::WallJudge(clsStage* const pStage)
 	std::vector<clsDX9Mesh*> vvpMeshTmp;
 	vvpMeshTmp = pStage->GetStageMeshArray();
 
-	m_bGround = false;
-
 	bool bResult = false;
+
+	/*clsDX9Mesh* pObjMesh = vvpMeshTmp[0];
+
+	if (!pObjMesh)return false;
+
+	bool bHit = false;
+
+	//StageObjectとの当たり判定.
+	if (WallForward(pObjMesh))if (!bHit)bHit = true;
+	if (WallBack(pObjMesh))if (!bHit)bHit = true;
+	if (WallLeft(pObjMesh))if (!bHit)bHit = true;
+	if (WallRight(pObjMesh))if (!bHit)bHit = true;
+	if (WallUp(pObjMesh))if (!bHit)bHit = true;
+
+	if (WallUnder(pObjMesh))
+	{
+		if (!bHit)bHit = true;
+
+		//D3DXVECTOR3 vMovePos = GetPosition();
+		//D3DXVECTOR3 vMoveDir = { 0.0f, 0.0f, 0.0f };
+
+		//vMovePos += vMoveDir;
+		//SetPosition(vMovePos);
+	}
+
+	if (!bResult)
+	{
+		bResult = bHit;
+	}*/
 
 	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{
@@ -672,6 +702,11 @@ void clsObject::Action(clsStage* pStage)
 void clsObject::ActionProduct()
 {
 
+}
+
+const D3DXVECTOR3 clsObject::GetCenterPos()const
+{
+	return m_vCenterPos;
 }
 
 clsObject::clsObject() :

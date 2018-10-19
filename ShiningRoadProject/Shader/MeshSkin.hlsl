@@ -9,6 +9,12 @@
 Texture2D		g_texColor	: register( t0 );	// テクスチャーは レジスターt(n).
 SamplerState	g_samLinear : register( s0 );	// サンプラーはレジスターs(n).
 
+//マスク.
+Texture2D		g_TexMask1	: register( t1 );	// テクスチャーは レジスターt(n).
+SamplerState	g_SamMask1 : register( s1 );	// サンプラーはレジスターs(n).
+Texture2D		g_TexMask2	: register( t2 );	// テクスチャーは レジスターt(n).
+SamplerState	g_SamMask2 : register( s2 );	// サンプラーはレジスターs(n).
+
 cbuffer global_0	: register( b0 )
 {
 	float4 g_vLight;// ライトの方向ベクトル.
@@ -22,7 +28,8 @@ cbuffer global_1	: register( b1 )
 	float4 g_Ambient	= float4( 0, 0, 0, 0 );	// アンビエント光.
 	float4 g_Diffuse	= float4( 1, 0, 0, 0 );	// 拡散反射(色）.
 	float4 g_Specular	= float4( 1, 1, 1, 1 );	// 鏡面反射.
-	float4 g_vColor		= float4( 1, 1, 1, 1 );	//カラー(透過色).
+	float4 g_vColorBase	= float4( 1, 1, 1, 1 );	//カラー(透過色).
+	float4 g_vColorArmor= float4( 1, 1, 1, 1 );	//カラー(透過色).
 };
 
 cbuffer global_bones: register( b2 )//ボーンのポーズ行列が入る.
@@ -132,7 +139,24 @@ float4 PSSkin( PSSkinIn input ) : SV_Target
 
 	// テクスチャのα値をそのまま使用.
 	RetColor.a = TexDiffuse.a;
-	RetColor *= g_vColor;
+//	RetColor *= g_vColor;
+
+	//マスク.
+	float4 mask1Color = g_TexMask1.Sample( g_SamMask1, input.Tex );
+	float4 mask2Color = g_TexMask2.Sample( g_SamMask2, input.Tex );
+
+	if( mask1Color.r >= 0.99f ||
+		mask1Color.g >= 0.99f ||
+		mask1Color.b >= 0.99f )
+	{
+		RetColor *= g_vColorBase;
+	}
+	else if(mask2Color.r >= 0.99f ||
+			mask2Color.g >= 0.99f ||
+			mask2Color.b >= 0.99f )
+	{
+		RetColor *= g_vColorArmor;
+	}
 
 
 

@@ -2,8 +2,7 @@
 
 #include "Sprite2D.h"
 
-const float fBLACK_SCREEN_DEFAULT_SPD = 1.0f / ( 60.0f * 2.0f ) *
-	2.0f;
+const float fBLACK_SCREEN_DEFAULT_SPD = 1.0f / ( 60.0f * 2.0f ) * 2.0f;
 
 
 class clsBLACK_SCREEN : public clsSprite2D
@@ -12,20 +11,24 @@ public:
 	clsBLACK_SCREEN();
 	~clsBLACK_SCREEN();
 
+	//ˆÃ–¾“]‚ÌÀs( –ˆƒtƒŒ[ƒ€ ).
+	void Update();
+
+	//0.0f ` 1.0f‚Å—^‚¦‚Ä‚Ë( ‚Í‚İo‚Ä‚àA‚í‚´‚Æ‚È‚ç–â‘è‚Í‚È‚¢‚ª ).
+	void SetChangeSpd( const float fSpd );
 
 	//----- ˆÃ–¾“]‚Ìw¦ -----.
 	//ˆÃ“]w¦.//Alpha Per Frame.
-	void GetDark( const float fDarkSpd = fBLACK_SCREEN_DEFAULT_SPD );
+	void GetDark();
 	//–¾“]w¦.//Alpha Per Frame.
-	void GetBright( const float fBrightSpd = -fBLACK_SCREEN_DEFAULT_SPD );
+	void GetBright();
 
-	//ˆÃ–¾“]‚ÌÀs.
-	void Update();
 
-	//ˆÃ“]‚ªŠ®—¹‚·‚é‚Ætrue‚ğ•Ô‚·.
+	//ˆÃ“]‚ªŠ®—¹‚·‚é‚Ætrue‚ğ•Ô‚·( ‚»‚ÌuŠÔ‚¾‚¯ ).
 	bool isDarkEnd();
 	//–¾“]‚ªŠ®—¹‚·‚é‚Ætrue‚ğ•Ô‚·.
 	bool isBrightEnd();
+
 
 private:
 

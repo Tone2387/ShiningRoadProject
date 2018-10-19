@@ -29,6 +29,7 @@ public:
 		STATUS,
 		MISSION_START,
 		TITLE_BACK,
+		COLOR_CHANGE,
 	}m_enSelectMode;
 
 	void Create( 

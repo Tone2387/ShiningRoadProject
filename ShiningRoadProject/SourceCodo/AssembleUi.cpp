@@ -212,7 +212,7 @@ const bool* bRED_BIG[] =
 const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
 const float fFONT_COMMENT_SCALE = 16.0f;
 //パーツ説明以外の行数.
-const int iFONT_COMMENT_LINE = 3;
+const int iFONT_COMMENT_LINE = 4 + 3;
 
 //ボタン.
 const char* sPATH_BUTONS = "Data\\Image\\Buttons.png";
@@ -727,6 +727,7 @@ void clsASSEMBLE_UI::RenderPartsState(
 		}
 		m_upStatusWindow->SetPos( vPos );
 
+		//ステータス名.
 		if( enSelect == enSELECT_MODE::STATUS ){
 			assert( m_upSelectStatus );
 			int iTmp = m_iStatusNum - 1;

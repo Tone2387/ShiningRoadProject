@@ -8,6 +8,7 @@
 
 
 class clsWINDOW_BOX;
+class clsMENU_WINDOW_TITLE;
 
 //================================//
 //========== タイトルクラス ==========//
@@ -26,11 +27,8 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
-
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
+	//メニューの動き.
+	void MenuUpdate( enSCENE &enNextScene );
 
 	//タイトルでズンとただずむロボット君.
 	clsASSEMBLE_MODEL*	m_pRoboModel;
@@ -44,11 +42,17 @@ private:
 
 
 
-	std::unique_ptr< clsUiText >	m_upPlessStart;
-	bool							m_isDispPlessStart;
+	std::unique_ptr< clsMENU_WINDOW_TITLE > m_upMenuBox;
 
-	//メッセボックス.
-	std::unique_ptr< clsWINDOW_BOX > m_upBox;
+	//メニューから受け取った情報を照合する.
+	enum enINFORMATION : char
+	{
+		enINFORMATION_GAME_END = 0,
+		enINFORMATION_NEXT_SCENE,
+
+		enINFORMATION_size
+	};
+	unsigned int m_uiInformationDataArray[ enINFORMATION_size ];
 
 
 	//テスト用エフェクト.
@@ -69,5 +73,11 @@ private:
 		enSE_BOMBER,
 		enSE_GUITAR
 	};
+
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
 
 };

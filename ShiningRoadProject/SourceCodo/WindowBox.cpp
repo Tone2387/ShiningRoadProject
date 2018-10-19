@@ -20,8 +20,6 @@ clsWINDOW_BOX::clsWINDOW_BOX(
 	m_upBack = make_unique< clsSPRITE2D_CENTER >();
 	m_upBack->Create( pDevice11, pContext11, sFILE_NAME, ss );
 
-	m_upText = make_unique< clsUiText >();
-	m_upText->Create( pContext11, WND_W, WND_H, 1.0f );
 }
 
 clsWINDOW_BOX::~clsWINDOW_BOX()
@@ -29,42 +27,23 @@ clsWINDOW_BOX::~clsWINDOW_BOX()
 }
 
 
-void clsWINDOW_BOX::UpdateProduct()
+void clsWINDOW_BOX::Update()
 {
+	clsLINE_BOX::Update();
+
 	m_upBack->SetPos( m_vPos );
 	m_upBack->SetScale( m_vSize );
 	m_upBack->SetAlpha( m_fAlpha );
 
-	m_upText->SetPos( { m_vTextOffset.x + m_vPos.x, m_vTextOffset.y + m_vPos.y } );
 }
 
-void clsWINDOW_BOX::RenderProduct()
+void clsWINDOW_BOX::Render()
 {
+
 	m_upBack->Render();
+	clsLINE_BOX::Render();
 
-	m_upText->Render();
+
 }
 
 
-//----- 文字用 -----//.
-//( ウィンドウの左上からの )座標.
-void clsWINDOW_BOX::SetTextPos( const D3DXVECTOR2 &vPos )
-{
-	m_vTextOffset = vPos;
-	m_upText->SetPos( { m_vTextOffset.x + m_vPos.x, m_vTextOffset.y + m_vPos.y } );
-}
-
-void clsWINDOW_BOX::SetTextScale( const float fScale )
-{
-	m_upText->SetScale( fScale );
-}
-
-void clsWINDOW_BOX::SetText( const char* sText )
-{
-	m_upText->SetText( sText );
-}
-
-void clsWINDOW_BOX::SetTextColor( const D3DXVECTOR4 &vColor )
-{
-	m_upText->SetColor( vColor );
-}

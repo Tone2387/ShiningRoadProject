@@ -34,9 +34,8 @@ private:
 
 		PARTS_SELECT()
 		:Num()
-		{
-			Type = 0;
-		}
+		,Type( 0 )
+		{}
 	}m_PartsSelect;
 
 
@@ -58,7 +57,7 @@ private:
 	void Exit();
 
 
-	//メッセボックス出現.
+	//メッセボックス出現.//引数は開きたい窓.
 	void AppearMessageBox( const clsASSEMBLE_UI::enSELECT_MODE encMode );
 	//メッセボックス消す.
 	void DisAppearMessageBox();
@@ -85,11 +84,8 @@ private:
 	//メッセボックスが閉じているならtrue.
 	bool isMessageBoxClose();
 
-
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
+	//色替え( 左右キーを押された ).
+	void AddRoboColor( const bool isIncrement );
 
 	//パーツ選択中かそれ以外か.
 	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
@@ -118,8 +114,20 @@ private:
 	int									m_iMessageNum;
 
 	//メッセボックスの選択肢.
-	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
+//	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
 	bool									m_isMessageBoxYes;
+
+	//色の棒.
+	
+	clsROBO_STATUS::enCOLOR_GAGE m_enColorGageIndex;
+
+	clsSPRITE2D_CENTER* m_pColorGagesBone[ clsROBO_STATUS::enCOLOR_GAGE_size ];
+	clsSprite2D* m_pColorGages[ clsROBO_STATUS::enCOLOR_GAGE_size ];
+//	unsigned int m_uiColorChangeNum;//ローカル変数.
+	std::unique_ptr< clsUiText > m_upColorTexts[ clsROBO_STATUS::enCOLOR_GAGE_size ];//RとかGとか書いてる.
+	std::unique_ptr< clsUiText > m_upColorNumText;//色1と色2とか書く.
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upSelectColor;//選択中の色を表す.
+
 
 	//UI.
 	clsASSEMBLE_UI*		m_pUI;
@@ -127,12 +135,12 @@ private:
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
 
 
-//	clsSPRITE2D_CENTER* m_pSprite;
-//	clsCharaStatic* m_pTestChara;
-//	clsCharaStatic* m_pParts;
 
 	//操作可能ならtrue.
 	bool m_isCanControl;
+
+	//右スティックでモデルに近づく距離.
+	float m_fDistanceAssembleModel;
 		
 
 	//エフェクト.
@@ -142,7 +150,7 @@ private:
 	//音の引数.
 	enum enBGM : int
 	{
-		enBGM_MAFIA1 = 0,
+		enBGM_RENGOKU0 = 0,
 		enBGM_MAOU0,
 		enBGM_MAOU2,
 	};
@@ -156,6 +164,12 @@ private:
 		enSE_WIN_APP,
 		enSE_WIN_DISAPP,
 	};
+
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
 
 };
 

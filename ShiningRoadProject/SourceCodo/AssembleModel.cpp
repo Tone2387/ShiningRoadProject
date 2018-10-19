@@ -30,6 +30,12 @@ const double dANIM_SPD = 0.016;
 const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
 const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
 
+//色変更のマスク種類.
+const int iMASK_MAX_NUM = 2;
+
+//色の段階.gradation
+const int iCOLOR_GRADATION_MAX = 16;
+const int iCOLOR_GRADATION_MIN = 1;
 
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
@@ -38,8 +44,14 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	,m_vpParts()
 	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
+	,m_iColorRank()
 {
 	m_dAnimSpd = dANIM_SPD;
+	m_vecvColor.resize( iMASK_MAX_NUM, vCOLOR_NORMAL );
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
+		m_iColorRank[i] = iCOLOR_GRADATION_MIN;
+		UpdateColor( static_cast<clsROBO_STATUS::enCOLOR_GAGE>( i ) );
+	}
 }
 
 clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
@@ -82,7 +94,8 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 	//最後にクリアした状態にする.
 	if( isTitleScene ){
 		pStatus->LodeHeroData();
-	}
+	}	
+
 	Init( pStatus );
 
 	CreateProduct();
@@ -104,10 +117,21 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 	AttachModel( enPARTS::WEAPON_L, pStatus->GetPartsNum( enPARTS::WEAPON_L ) );
 	AttachModel( enPARTS::WEAPON_R, pStatus->GetPartsNum( enPARTS::WEAPON_R ) );
 
+	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
+		m_vpParts[i]->PartsAnimChange( 0 );
+	}
+
+
 	SetPos( { 0.0f, 0.0f, 0.0f } );
 	SetRot( { 0.0f, 0.0f, 0.0f } );
 	SetScale( 1.0f );
 	SetAnimSpd( dANIM_SPD );
+
+	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
+		clsROBO_STATUS::enCOLOR_GAGE tmpIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( i );
+		m_iColorRank[i] = pStatus->GetColorRank( tmpIndex );
+		UpdateColor( tmpIndex );
+	}
 
 //	AnimReSet();
 }
@@ -131,22 +155,34 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXVECTOR3& vEye,
 	const enPARTS_TYPES AlphaParts )
 {
-	D3DXVECTOR4 vTmpColor;
+	D3DXVECTOR4 vTmpColorBase;
+	D3DXVECTOR4 vTmpColorArmor;
 
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
-		vTmpColor = CreateColor( AlphaParts, i );
+		unsigned int uiMaskNum = 0;
+		vTmpColorBase = CreateColor( AlphaParts, i, uiMaskNum ++ );
+		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++ );
 		SetPos( GetPos() );
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
-		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, vTmpColor, true );
+		m_vpParts[i]->ModelRender( 
+			mView, mProj, vLight, vEye, 
+			vTmpColorBase, vTmpColorArmor, true );
 	}
 }
 
 
 //色を吐き出す.
-D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( const enPARTS_TYPES AlphaParts, const UINT uiIndex )
+D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( 
+	const enPARTS_TYPES AlphaParts, 
+	const UINT uiIndex,
+	const unsigned int uiMaskNum )
 {
 	D3DXVECTOR4 vReturn = vCOLOR_NORMAL;
+
+	if( uiMaskNum < m_vecvColor.size() ){
+		vReturn = m_vecvColor[ uiMaskNum ];
+	}
 
 	switch( AlphaParts )
 	{
@@ -424,6 +460,87 @@ void clsASSEMBLE_MODEL::AnimReSet()
 }
 
 
+//パーツの色指定.
+void clsASSEMBLE_MODEL::SetPartsColor( 
+	const D3DXVECTOR4 &vColor, 
+	const unsigned int uiMaskNum )
+{
+	if( uiMaskNum >= m_vecvColor.size() ){
+		return;
+	}
+	m_vecvColor[ uiMaskNum ] = vColor;
+}
+
+D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum )
+{
+	if( uiMaskNum >= m_vecvColor.size() ){
+		float fERROR_NUM = -1.0f;
+		return D3DXVECTOR4( fERROR_NUM, fERROR_NUM, fERROR_NUM, fERROR_NUM );
+	}
+	return m_vecvColor[ uiMaskNum ];
+}
+
+void clsASSEMBLE_MODEL::IncrementColor( 
+	const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+{
+	m_iColorRank[ enColorGage ] ++;
+	if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
+		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
+	}
+	else if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
+		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
+	}
+
+	UpdateColor( enColorGage );
+}
+void clsASSEMBLE_MODEL::DecrementColor( 
+	const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+{
+	m_iColorRank[ enColorGage ] --;
+	if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
+		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
+	}
+	else if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
+		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
+	}
+
+	UpdateColor( enColorGage );
+}
+
+void clsASSEMBLE_MODEL::UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+{
+
+	const int iBASE_NUMBER = 0;
+	const int iARMOR_NUMBER = 1;
+	const float fNEW_COLOR = 
+		static_cast<float>( m_iColorRank[ enColorGage ] ) / 
+		static_cast<float>( iCOLOR_GRADATION_MAX );
+
+	switch( enColorGage )
+	{
+	case clsROBO_STATUS::enCOLOR_GAGE_BASE_R:
+		m_vecvColor[ iBASE_NUMBER ].x = fNEW_COLOR;
+		break;
+	case clsROBO_STATUS::enCOLOR_GAGE_BASE_G:
+		m_vecvColor[ iBASE_NUMBER ].y = fNEW_COLOR;
+		break;
+	case clsROBO_STATUS::enCOLOR_GAGE_BASE_B:
+		m_vecvColor[ iBASE_NUMBER ].z = fNEW_COLOR;
+		break;
+	case clsROBO_STATUS::enCOLOR_GAGE_ARMOR_R:
+		m_vecvColor[ iARMOR_NUMBER ].x = fNEW_COLOR;
+		break;
+	case clsROBO_STATUS::enCOLOR_GAGE_ARMOR_G:
+		m_vecvColor[ iARMOR_NUMBER ].y = fNEW_COLOR;
+		break;
+	case clsROBO_STATUS::enCOLOR_GAGE_ARMOR_B:
+		m_vecvColor[ iARMOR_NUMBER ].z = fNEW_COLOR;
+		break;
+	}
+}
+
+
+
 void clsASSEMBLE_MODEL::ModelUpdate()
 {
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
@@ -431,6 +548,43 @@ void clsASSEMBLE_MODEL::ModelUpdate()
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 	}
 }
+
+
+float clsASSEMBLE_MODEL::GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+{
+	const float fERROR = -1.0f; 
+	if( enColorGage >= clsROBO_STATUS::enCOLOR_GAGE_size ){
+		return fERROR;
+	}
+	else if( enColorGage < 0.0f ){
+		return fERROR;
+	}
+
+	float fReturn = static_cast<float>( m_iColorRank[ enColorGage ] ) / static_cast<float>( iCOLOR_GRADATION_MAX );
+	return fReturn;
+}
+
+std::vector< D3DXVECTOR4 > clsASSEMBLE_MODEL::GetColor()
+{
+	return m_vecvColor;
+}
+
+
+//0~16で返す.
+int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+{
+	if( enColorGage >= clsROBO_STATUS::enCOLOR_GAGE_size ||
+		enColorGage < 0 )
+	{
+		return 0;
+	}
+
+	return m_iColorRank[ enColorGage ];
+}
+
+
+
+
 
 #if _DEBUG
 //各パーツのpos.

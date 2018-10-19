@@ -65,6 +65,29 @@ protected:
 	bool isPressEnter();
 	bool isPressExit();
 
+	//押しっぱなしで動く.
+	bool isPressHoldRight();
+	bool isPressHoldLeft();
+	bool isPressHoldUp();
+	bool isPressHoldDown();
+//	int m_iHoldFreamRight;
+//	int m_iHoldFreamLeft;
+//	int m_iHoldFreamUp;
+//	int m_iHoldFreamDown;
+	struct HOLD_STATE
+	{
+		int iHoldFream;
+		int iFirstPush;//最初の一歩.
+		HOLD_STATE()
+		:iHoldFream( 0 )
+		,iFirstPush( 0 )
+		{}
+	};
+	HOLD_STATE m_HoldRight;
+	HOLD_STATE m_HoldLeft;
+	HOLD_STATE m_HoldUp;
+	HOLD_STATE m_HoldDown;
+
 	//----- Render用 -----//.
 	//深度テスト(Zテスト)　ON/OFF切替.
 	void SetDepth( const bool isOn );

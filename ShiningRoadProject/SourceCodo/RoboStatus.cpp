@@ -7,20 +7,52 @@
 #include "PartsArmR.h"
 #include "PartsWeapon.h"
 
+#include "File.h"
+#include "OperationString.h"
 
 using namespace std;
 
+const int iCOLOR_RANK_INIT = 16;
+
+
+const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\Tahara\\RoboStatusHero.csv";
+const int iFILE_VAR_ROW = 0;//一行しか存在しない.
+const int iFILE_INDEX_LEG			= 0;
+const int iFILE_INDEX_CORE			= 1;
+const int iFILE_INDEX_HEAD			= 2;
+const int iFILE_INDEX_ARM_L			= 3;
+const int iFILE_INDEX_ARM_R			= 4;
+const int iFILE_INDEX_WEAPON_L		= 5;
+const int iFILE_INDEX_WEAPON_R		= 6;
+const int iFILE_INDEX_COLOR_ARMOR_R = 7;
+const int iFILE_INDEX_COLOR_ARMOR_G = 8;
+const int iFILE_INDEX_COLOR_ARMOR_B = 9;
+const int iFILE_INDEX_COLOR_BASE_R	= 10;
+const int iFILE_INDEX_COLOR_BASE_G	= 11;
+const int iFILE_INDEX_COLOR_BASE_B	= 12;
+
+
+
 
 clsROBO_STATUS::clsROBO_STATUS()
-	:m_ucPartsModelNum()
-	,m_ucPartsModelNumHero()
 {
+	Clear();
+
+	clsFILE File;
+	File.Open( sROBO_STATUS_HERO_PATH );
+
 	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
-		m_ucPartsModelNum[i] = 0;
-		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
+		m_ucPartsModelNumHero[i] = File.GetDataInt( iFILE_VAR_ROW, static_cast<int>( i ) );
+		m_ucPartsModelNum[i] = m_ucPartsModelNumHero[i];
 	}
-	Clear();
+
+	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+		m_iColorRankHero[i] = File.GetDataInt( iFILE_VAR_ROW, static_cast<int>( i ) + iFILE_INDEX_COLOR_ARMOR_R );
+		m_iColorRank[i] = m_iColorRankHero[i];
+	}
+
+	File.Close();
 }
 
 clsROBO_STATUS::~clsROBO_STATUS()
@@ -43,11 +75,17 @@ void clsROBO_STATUS::Clear()
 		m_iRoboHp[i] = 0;
 	}
 	
-	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
-	for( UCHAR i=0; i<tmpSize; i++ ){
-		m_ucPartsModelNum[i] = 0;
-		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
-	}
+//	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
+//	for( UCHAR i=0; i<tmpSize; i++ ){
+//		m_ucPartsModelNum[i] = 0;
+////		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];//ヒーローに手は出さない.
+//	}
+//
+//	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+//		m_iColorRank[i] = iCOLOR_RANK_INIT;
+////		m_iColorRankHero[i] = m_iColorRank[i];
+//	}
+
 }
 
 
@@ -98,10 +136,30 @@ UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType )
 //クリア画面で使う : タイトル用の初期化用.
 void clsROBO_STATUS::SaveHeroData()
 {
+	const string InitString;
+	clsOPERATION_STRING OprtStr;
+	clsFILE::FILE_DATA FileData;
+	clsFILE File;
+	const int iOUT_DATA_ROW_SIZE = 1 + iFILE_VAR_ROW;
+	const int iOUT_DATA_COL_SIZE = 1 + iFILE_INDEX_COLOR_BASE_B;
+	File.CreateFileDataForOutPut( FileData, iOUT_DATA_ROW_SIZE, iOUT_DATA_COL_SIZE );
+
+	int iFileDataIndex = 0;
+
 	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
 		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
+		FileData[0][ iFileDataIndex++ ] = OprtStr.ConsolidatedNumber( InitString, m_ucPartsModelNumHero[i] );
 	}
+	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+		m_iColorRankHero[i] = m_iColorRank[i];
+		FileData[0][ iFileDataIndex++ ] = OprtStr.ConsolidatedNumber( InitString, m_iColorRankHero[i] );
+	}
+
+
+	File.Open( sROBO_STATUS_HERO_PATH );
+	File.OutPutCsv( FileData );
+	File.Close();
 }
 
 //AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
@@ -111,6 +169,10 @@ void clsROBO_STATUS::LodeHeroData()
 	for( int i=0; i<tmpSize; i++ ){
 		m_ucPartsModelNum[i] = m_ucPartsModelNumHero[i];
 	}
+	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
+		m_iColorRank[i] = m_iColorRankHero[i];
+	}
+
 }
 
 
@@ -244,3 +306,21 @@ void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSE
 	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_R ) ] = static_cast<UCHAR>( PartsNum );
 }
 
+
+//色フラグのやり取り.
+void clsROBO_STATUS::SetColorRank( 
+	const enCOLOR_GAGE enColorNum, 
+	const int iColorRate )
+{
+	assert( enColorNum >= 0  );
+	assert( enColorNum < enCOLOR_GAGE_size );
+	m_iColorRank[ enColorNum ] = iColorRate;
+}
+
+
+int clsROBO_STATUS::GetColorRank( const enCOLOR_GAGE enColorNum )
+{
+	assert( enColorNum >= 0  );
+	assert( enColorNum < enCOLOR_GAGE_size );
+	return m_iColorRank[ enColorNum ];
+}
