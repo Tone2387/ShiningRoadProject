@@ -125,6 +125,16 @@ void clsMENU_WINDOW_BASE::Render()
 		m_upCursor->Render();
 	}
 
+	//ëÄçÏÇµÇ»Ç¢ëãÇÕà√Ç≠Ç∑ÇÈ1.
+	if( m_isOperation ){
+		const D3DXVECTOR3 vTRUE_COLOR = { 1.0f, 1.0f, 1.0f };
+		SetColor( vTRUE_COLOR );
+	}
+	else{
+		const D3DXVECTOR3 vBLACK_COLOR = { 0.375f, 0.375f, 0.375f };
+		SetColor( vBLACK_COLOR );
+	}
+
 	//ï∂éö.
 	RenderProduct();
 
@@ -162,16 +172,6 @@ bool clsMENU_WINDOW_BASE::CreateNextWindow(
 void clsMENU_WINDOW_BASE::Operation( const bool isOperation )
 {
 	m_isOperation = isOperation;
-
-	//ëÄçÏÇµÇ»Ç¢ëãÇÕà√Ç≠Ç∑ÇÈ1.
-	if( m_isOperation ){
-		const D3DXVECTOR3 vTRUE_COLOR = { 1.0f, 1.0f, 1.0f };
-		SetColor( vTRUE_COLOR );
-	}
-	else{
-		const D3DXVECTOR3 vBLACK_COLOR = { 0.375f, 0.375f, 0.375f };
-		SetColor( vBLACK_COLOR );
-	}
 }
 
 
@@ -180,7 +180,7 @@ void clsMENU_WINDOW_BASE::Close()
 {
 	SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 
-	const float CLOSE_SPD_RATE = 4.0f;
+	const float CLOSE_SPD_RATE = 2.0f;
 	const D3DXVECTOR2 vCLOSE_SPD = { m_vSize.x / CLOSE_SPD_RATE, m_vSize.y / CLOSE_SPD_RATE };
 	AddChangeData( 
 		vCLOSE_SPD.x, vCLOSE_SPD.y, 
@@ -198,6 +198,21 @@ void clsMENU_WINDOW_BASE::SetColor( const D3DXVECTOR3& vColor )
 	for( unsigned int i=0; i<m_vecupUiText.size(); i++ ){
 		m_vecupUiText[i]->SetColor( { vColor.x, vColor.y, vColor.z, 1.0f } );
 	}
+}
+
+//ëãÇÃç∂è„Ç0Ç∆ÇµÇƒç¿ïWÇó^Ç¶ÇÈ.
+D3DXVECTOR3 clsMENU_WINDOW_BASE::SetPosFromWindow( 
+	const D3DXVECTOR2& vPos )
+{
+	D3DXVECTOR3 vReturn;
+	vReturn = { vPos.x, vPos.y, 0.0f };
+
+	//ëãÇÃíÜêSÇ÷.
+	vReturn += m_vPos;
+	//ç∂è„Ç÷.
+	vReturn += m_vSize;
+
+	return vReturn;
 }
 
 

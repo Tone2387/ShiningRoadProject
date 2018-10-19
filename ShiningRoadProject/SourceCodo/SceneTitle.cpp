@@ -28,7 +28,7 @@ const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
 //ボタンを押してね.
 const float fPLESS_START_SCALE = 16.0f;
 const D3DXVECTOR3 vPLESS_START_POS = {
-	250, 
+	300, 
 	static_cast<float>( WND_H ) * 0.75f ,
 	0.0f
 };
@@ -235,13 +235,14 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 
 	//音声とシーン移動.
 	if( isPressEnter() ){
-		//箱.
+		//メニューウィンドウ作成.
 		assert( !m_upMenuBox );
 		m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
-			m_wpPtrGroup, 
-			nullptr,
+			m_wpPtrGroup, nullptr,
 			m_uiInformationDataArray );
-		//		Excelの行番号.
+		const D3DXVECTOR3 vMENU_POS = { 400.0f, 550.0f, 0.0f };
+		m_upMenuBox->SetPos( vMENU_POS );
+
 		assert( m_wpSound );
 		m_wpSound->PlaySE( enSE_ENTER );
 	}
@@ -304,6 +305,10 @@ void clsSCENE_TITLE::RenderUi()
 
 
 	assert( m_wpFont );
+	const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
+	m_wpFont->SetPos( vPLESS_START_POS );
+	m_wpFont->SetScale( fPLESS_START_SCALE );
+	m_wpFont->SetColor( vTEXT_COLOR );
 	m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
 
 	if( m_upMenuBox ){

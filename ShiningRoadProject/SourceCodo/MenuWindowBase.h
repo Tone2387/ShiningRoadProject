@@ -38,6 +38,10 @@ public:
 	//このウィンドウを閉じて親ウィンドウに操作を返す.
 	void Close();
 
+	//窓の左上を0として座標を与える.
+	D3DXVECTOR3 SetPosFromWindow( const D3DXVECTOR2& vPos );
+
+
 	//選択先した結果を返す.
 	unsigned int GetInformation(){
 		if( m_pNextWindow ){

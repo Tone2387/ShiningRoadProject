@@ -14,7 +14,7 @@ clsMENU_WINDOW_TITLE::clsMENU_WINDOW_TITLE(
 		:clsMENU_WINDOW_BASE( pPtrGroup, pParentWindow, pInformationArray )
 {
 	//‚±‚Ì‘‹‚ÌƒTƒCƒY.
-	D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 360.0f };
+	D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 300.0f, 200.0f };
 	Open( vTHIS_WINDOW_SIZE );
 }
 
@@ -46,13 +46,17 @@ void clsMENU_WINDOW_TITLE::UpdateProduct()
 	}
 
 	if( SelectEnter() ){
-		m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_NEXT_SCENE ];
+		if( m_iSelectNum ){
+			m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_GAME_END ];
+		}
+		else{
+			m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_NEXT_SCENE ];
+		}
 	}
 
 	if( SelectExit() ){
 		m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_GAME_END ];
 	}
-
 
 }
 
