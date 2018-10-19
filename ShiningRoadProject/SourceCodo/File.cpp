@@ -37,8 +37,10 @@ clsFILE::~clsFILE()
 //----- 読み込み関係 -----//.
 bool clsFILE::Open( const string &sFileName )
 {
-	assert( !m_bUsing );//使用中にopenするな.
-	if( m_bUsing ) return false;
+	if( m_bUsing ){
+		assert( !m_bUsing );//使用中にopenするな.
+		return false;
+	}
 
 	m_sFileName = sFileName;
 
