@@ -11,7 +11,7 @@ unique_ptr<clsSprite2D> g_upTex;
 const int iINTERVAL_CNT = 120;
 
 
-const char* sSTAFF_ROLL_STATUS_DATA_PATH = "Data\\FileData\\EndingStaffRollTransform.csv";
+const char* sSTAFF_ROLL_STATUS_DATA_PATH = "Data\\FileData\\Tahara\\EndingStaffRollTransform.csv";
 const char* sFONT_TEXT_PATH_ENDING = "Data\\Font\\Text\\TextEnding.csv";
 
 const string sSCROLL_START_NUM_TEXT = "フリー音源　使用サイト";

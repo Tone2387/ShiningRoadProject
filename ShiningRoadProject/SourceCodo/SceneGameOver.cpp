@@ -72,7 +72,7 @@ void clsSCENE_GAME_OVER::CreateProduct()
 	m_upSelect->SetAlpha( fSELECT_SPRITE_ALPHA );
 
 	//文字の位置などをファイルから読み込む.
-	const char* sFILE_PATH = "Data\\FileData\\GameOverTextTransform.csv";
+	const char* sFILE_PATH = "Data\\FileData\\Tahara\\GameOverTextTransform.csv";
 	clsFILE File;
 	File.Open( sFILE_PATH );
 	for( int i=0; i<enMESSAGE_INDEX_size; i++ ){
