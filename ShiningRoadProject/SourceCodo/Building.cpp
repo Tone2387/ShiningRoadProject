@@ -164,7 +164,7 @@ void clsBUILDING::Render(
 {
 #ifdef _DEBUG
 	m_upBox->Render( mView, mProj, vLight, vEye );
-#endif//#ifdef _DEBUG
+#else//#ifdef _DEBUG
 	for( unsigned int Row=0; Row<m_vvTop.size(); Row++ )
 	{
 		for( unsigned int Col=0; Col<m_vvTop[ Row ].size(); Col++ ){
@@ -187,6 +187,7 @@ void clsBUILDING::Render(
 			}
 		}
 	}
+#endif//#ifdef _DEBUG
 
 }
 
