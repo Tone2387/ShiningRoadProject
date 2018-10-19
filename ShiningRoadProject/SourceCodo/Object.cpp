@@ -540,6 +540,11 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 {
+	if (m_bGround)
+	{
+		return true;
+	}
+
 	D3DXVECTOR3 vIntersect;//Œð“_À•W.
 	float fDis;//‹——£‚Æ‰ñ“].
 	float fRaySpece = g_fRaySpace;
@@ -618,6 +623,35 @@ bool clsObject::WallJudge(clsStage* const pStage)
 	vvpMeshTmp = pStage->GetStageMeshArray();
 
 	bool bResult = false;
+
+	/*clsDX9Mesh* pObjMesh = vvpMeshTmp[0];
+
+	if (!pObjMesh)return false;
+
+	bool bHit = false;
+
+	//StageObject‚Æ‚Ì“–‚½‚è”»’è.
+	if (WallForward(pObjMesh))if (!bHit)bHit = true;
+	if (WallBack(pObjMesh))if (!bHit)bHit = true;
+	if (WallLeft(pObjMesh))if (!bHit)bHit = true;
+	if (WallRight(pObjMesh))if (!bHit)bHit = true;
+	if (WallUp(pObjMesh))if (!bHit)bHit = true;
+
+	if (WallUnder(pObjMesh))
+	{
+		if (!bHit)bHit = true;
+
+		//D3DXVECTOR3 vMovePos = GetPosition();
+		//D3DXVECTOR3 vMoveDir = { 0.0f, 0.0f, 0.0f };
+
+		//vMovePos += vMoveDir;
+		//SetPosition(vMovePos);
+	}
+
+	if (!bResult)
+	{
+		bResult = bHit;
+	}*/
 
 	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{

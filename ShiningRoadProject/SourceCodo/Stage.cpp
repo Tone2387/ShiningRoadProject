@@ -112,7 +112,7 @@ vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 
 	int iSize = m_vpBuilding.size() + 1;
 
-	vvpMeshArrayTmp.resize(iSize);
+	vvpMeshArrayTmp.reserve(iSize);
 
 	vvpMeshArrayTmp.push_back(m_pStageGround->GetModelPtr());
 
@@ -120,6 +120,7 @@ vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 	{
 		vvpMeshArrayTmp.push_back(m_vpBuilding[i]->GetModelPtr());
 	}
+	vvpMeshArrayTmp.shrink_to_fit();
 
 	return vvpMeshArrayTmp;
 }
