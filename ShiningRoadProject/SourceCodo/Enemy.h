@@ -7,25 +7,25 @@
 #include"Global.h"
 #include"Charactor.h"
 
-const float g_fDisStandard = 0.1f;
-const float g_fPushHulf = 0.5f;
-
 class clsEnemyBase
 {
 public:
-	TRANSFORM* m_pTrans;
-
-	D3DXVECTOR3 m_vMovePlansDir;
-	int m_iMoveCategoryNo;
-
+	//clsEnemyBase(std::vector<clsCharactor*>& v_Enemys);
 	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
+	virtual void Update();
 	void SearchTarget(std::vector<clsCharactor*>);
 
 protected:
+	TRANSFORM* m_pTrans;
+
 	clsCharactor* m_pChara;
 	clsCharactor* m_pTarget;
+
+	std::vector<clsCharactor*>* m_vp_pEnemys;
+
+	virtual void UpdateProduct();
 	
 	void SearchNear();
 
@@ -36,37 +36,30 @@ protected:
 	bool IsJump();
 	bool IsShot();
 
-	struct BaseState
+	struct ShotState
 	{
-		char strName[STR_BUFF_MAX];
-		int iMoveCategoryVisType;
+		int iShotDisMin;
+		int iShotDisMax;
+		int iShotENLimitParcent;
 	};
 
-	struct UpdateState
+protected:
+	struct BaseState
 	{
-		int iHorDirResult;
-		D3DXVECTOR3 vHorMovePos;
-		float fMoveDir;
+		int iMoveCategoryVisType;//移動ステータスを切り替える方法.
 
-		float fVerDis;
+		int iProcFrame;//視点調整を更新する時間.
 	};
 
 	struct MoveState
 	{
+		int iMoveUpdateInterval;
 		int iHorDistance;
 		int iHorDisRandMax;
 		int iMoveDir;
 		int iMoveDirRandMax;
 		int iVerDistance;
 		int iVerDistRandMax;
-		int iActUpDateInterval;
-	};
-
-	struct ShotState
-	{
-		int iShotDisMin;
-		int iShotDisMax;
-		int iShotENLimitParcent;
 	};
 
 	struct VisibilityAreaState
@@ -88,6 +81,8 @@ protected:
 		std::vector<ShotState> v_ShotState;
 	};
 
+	ShotData m_ShotData;
+
 	struct VisibilityAreaData
 	{
 		int iCategory;
@@ -95,10 +90,26 @@ protected:
 	};
 
 	BaseState m_BaseData;
-
 	MoveData m_MoveData;
-	ShotData m_ShotData;
 	VisibilityAreaData m_visAreaData;
+
+	struct UpdateState
+	{
+		int iHorDirResult;
+		D3DXVECTOR3 vHorMovePos;
+		float fMoveDir;
+
+		float fRotDir;
+		float fVerLookDir;
+
+		float fVerDis;
+
+		int iMoveCategoryNo;//現在の移動.
+
+		int iProcessCnt;//処理更新時間.
+		int iMoveUpdateCnt;//移動ステータス更新間隔.
+	};
+
 	UpdateState m_UpdateState;
 };
 

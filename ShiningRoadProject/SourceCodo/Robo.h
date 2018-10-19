@@ -23,9 +23,6 @@
 
 #endif//#ifdef Tahara
 
-const int g_iQuickInterbal = 1 * (int)g_fFPS;
-const int g_iQuickTurnFrame = 1 * (int)g_fFPS;
-
 class clsRobo : public clsCharactor
 {
 public:
@@ -89,6 +86,7 @@ public:
 
 	void EnelgyRecovery();
 	void SetEnelgyRecoveryAmount();
+	bool IsEnelgyRamaining(const int iConsumption);//エネルギーが消費量を超えているか?true:超えている.
 	bool EnelgyConsumption(const int iConsumption);//エネルギー消費はここから.
 
 	float m_fBoostMoveSpeedMax;
@@ -113,7 +111,7 @@ public:
 	float m_fBoostFollRes;//ブースター展開時に落ちる速度.
 
 	int m_iActivityLimitTime;//活動限界時間.
-	bool m_bTimeUp;
+	bool m_bTimeUp;//活動限界.
 
 	//Armパーツから数値を取得する変数と関連する変数//
 
@@ -147,9 +145,9 @@ public:
 	clsRobo();
 	~clsRobo();
 
+private:
 	D3DXVECTOR3 m_vMoveDirforBoost;
 
-private:
 	//右腕ブースターエフェクト.
 	std::vector<::Effekseer::Handle> m_v_RHandFrontBoostEfc;
 	std::vector<::Effekseer::Handle> m_v_RHandSideBoostEfc;

@@ -7,7 +7,7 @@ class clsCharactorEnemy : public clsEnemyBase
 {
 public:
 	clsCharactorEnemy();
-	~clsCharactorEnemy();
+	virtual ~clsCharactorEnemy();
 
 	void Init(
 		LPSTR strEnemyFolderName,

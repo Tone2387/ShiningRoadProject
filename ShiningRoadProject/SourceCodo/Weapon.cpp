@@ -1,5 +1,7 @@
 #include"Weapon.h"
 
+const int g_iMOAReference = 1000;//ATKの高さからブレを決めるための基準値.
+
 void clsWeapon::Create(WeaponState State)
 {
 	m_State = State;
@@ -50,8 +52,6 @@ bool clsWeapon::Shot()
 		D3DXVECTOR3 vPos = *m_State.SState.vShotStartPos;
 		D3DXVECTOR3 vDir = *m_State.SState.vShotMoveDir;
 
-		int iRandMax = m_State.iStablity;
-
 		if (m_pTargetObj)//ターゲットいるなら偏差射撃.
 		{
 			int iTime;
@@ -63,7 +63,7 @@ bool clsWeapon::Shot()
 
 			fVerDevia = m_pTargetObj->m_fFollPower * iTime;//垂直方向の予測距離.
 
-			vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * static_cast<float>(iTime);//水平方向移動ベクトル x 到達予想時間 = 水平方向の予想距離.
+			vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * static_cast<float>(iTime);//水平方向移動ベクトル * 到達予想時間 = 水平方向の予想距離.
 			vPrediction = m_pTargetObj->m_vCenterPos;//予測位置にまずはターゲットの位置を入れる.
 
 			vPrediction += vHorDevia;//水平のみ予測位置.
@@ -74,16 +74,21 @@ bool clsWeapon::Shot()
 			D3DXVec3Normalize(&vDir, &vDirTmp);
 		}
 
-		if (iRandMax != 0)//0だと止まる.
+		//攻撃力によるブレとそれを抑える数値.
+		float fRandMax = (m_State.iAtk / g_iMOAReference) * (m_State.iStablity * g_fPercentage);
+
+		if (fRandMax != 0.0f)//0だと止まる.
 		{
 			float fDirError;//方向誤差.
-			fDirError = (float)(rand() % (iRandMax * 2) - iRandMax) * g_fDistanceReference;
+
+			//fDirError = (float)(rand() % (iRandMax * 2) - iRandMax) * g_fDistanceReference;
+			fDirError = fmodf(static_cast<float>(rand()), (fRandMax));//変動値がある場合、乱数生成.
 			vDir.x += fDirError;//x軸の誤差.
 
-			fDirError = (float)(rand() % (iRandMax * 2) - iRandMax) * g_fDistanceReference;
+			fDirError = fmodf(static_cast<float>(rand()), (fRandMax));//変動値がある場合、乱数生成.
 			vDir.y += fDirError;//y軸の誤差.
 
-			fDirError = (float)(rand() % (iRandMax * 2) - iRandMax) * g_fDistanceReference;
+			fDirError = fmodf(static_cast<float>(rand()), (fRandMax));//変動値がある場合、乱数生成.
 			vDir.z += fDirError;//z軸の誤差.
 		}
 		

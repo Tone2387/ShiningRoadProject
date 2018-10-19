@@ -63,7 +63,7 @@ clsDxInput::~clsDxInput()
 }
 
 // DirectInputの初期設定。
-bool clsDxInput::initDI( HWND hWnd)
+const bool clsDxInput::initDI(const HWND hWnd)
 {
 	HRESULT hRlt;	// 関数復帰値
 	hRlt = DirectInput8Create(
@@ -124,7 +124,7 @@ bool clsDxInput::initDI( HWND hWnd)
 }
 
 //入力情報更新関数.
-HRESULT clsDxInput::UpdataInputState()
+const HRESULT clsDxInput::UpdataInputState()
 {
 	HRESULT hRslt;//関数復帰値.
 	DIJOYSTATE2 js;//ｼﾞｮｲｽﾃｨｯｸ情報構造体.
@@ -329,7 +329,7 @@ void clsDxInput::InitInputState()
 
 //入力ﾁｪｯｸする関数.
 // ※UpdateInputState():関数で入力情報が更新されていることが前提.
-bool clsDxInput::IsPressKey(enPKey enKey)
+const bool clsDxInput::IsPressKey(enPKey enKey)
 {
 	// >> ｼﾌﾄ演算子:右にｼﾌﾄ.
 	if ((m_InputNowState.uiKeyState >> enKey) & 1)
@@ -340,12 +340,12 @@ bool clsDxInput::IsPressKey(enPKey enKey)
 	return false;
 }
 
-float clsDxInput::GetLSDir()
+const float clsDxInput::GetLSDir()
 {
 	return m_InputNowState.fLSDir;
 }
 
-float clsDxInput::GetLSPush()
+const float clsDxInput::GetLSPush()
 {
 	float fLSPush = abs(m_InputNowState.fHorLSPush) + abs(m_InputNowState.fVerLSPush);
 
@@ -357,12 +357,12 @@ float clsDxInput::GetLSPush()
 	return fLSPush;
 }
 
-float clsDxInput::GetHorLSPush()
+const float clsDxInput::GetHorLSPush()
 {
 	return m_InputNowState.fHorLSPush;
 }
 
-float clsDxInput::GetVerLSPush()
+const float clsDxInput::GetVerLSPush()
 {
 	return m_InputNowState.fVerLSPush;
 }
@@ -459,12 +459,12 @@ const bool clsDxInput::IsLSRightStay()
 	return false;
 }
 
-float clsDxInput::GetRSDir()
+const float clsDxInput::GetRSDir()
 {
 	return m_InputNowState.fRSDir;
 }
 
-float clsDxInput::GetRSPush()
+const float clsDxInput::GetRSPush()
 {
 	float fRSPush = abs(m_InputNowState.fHorRSPush) + abs(m_InputNowState.fVerRSPush);
 
@@ -476,12 +476,12 @@ float clsDxInput::GetRSPush()
 	return fRSPush;
 }
 
-float clsDxInput::GetHorRSPush()
+const float clsDxInput::GetHorRSPush()
 {
 	return m_InputNowState.fHorRSPush;
 }
 
-float clsDxInput::GetVerRSPush()
+const float clsDxInput::GetVerRSPush()
 {
 	return m_InputNowState.fVerRSPush;
 }

@@ -21,64 +21,57 @@ class clsCharactor : public clsObject
 {
 public:
 	//共通ステータス.
-	int m_HP;//体力.
-	int m_MaxHP;//最大体力.
+	int m_iHP;//体力.
+	int m_iMaxHP;//最大体力.
 
 	bool m_bDeadFlg;//死亡フラグ.
 
-	//入力関係.
-	float fPushMin;
-
 	//移動関係.
 	bool m_bMoving;
-	
 	float m_fMoveSpeedMax;//スピードの最大値.
-
 	int m_iTopMoveSpeedFrame;//↑に達するまでのフレーム値.
 	float m_fMoveAccele;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
-	
 	int m_iMoveStopFrame;//完全に停止するまでのフレーム値.
 	float m_fMoveDecele;// = m_fMoveSpeed / m_iStopFrame;
+	D3DXVECTOR3 m_vAcceleDir;//加速方向.
+	int m_iMoveReverseDirInertia;//逆方向に進むときにかかる力.
 
-	D3DXVECTOR3 m_vAcceleDir;
+	bool m_bRotation;//旋回中か?.
 
-	int m_iMoveReverseDirInertia;
+	float m_fRotSpeed;//旋回速度.
+	float m_fRotSpeedMax;//旋回最高速.
+	int m_iTopRotSpeedFrame;//旋回最高速到達時間(フレーム).
 
-	bool m_bRotation;
+	float m_fRotAccele;//旋回加速時間.
 
-	float m_fRotSpeed;
-	float m_fRotSpeedMax;
+	int m_iRotStopFrame;//旋回減速時間.
+	float m_fRotDecele;//旋回減速度.
 
-	int m_iTopRotSpeedFrame;
-	float m_fRotAccele;
+	float m_fRotDir;//旋回方向.
 
-	int m_iRotStopFrame;
-	float m_fRotDecele;
+	float m_fVerLookDir;//垂直視点角度.
 
-	float m_fRotDir;
+	float m_fJumpPower;//垂直移動値.
 
-	float m_fLookUpDir;
-
-	float m_fJumpPower;
-
-	bool m_bLockStartingPosXSwitch;
-	float m_bLockStartingPosX;
+	bool m_bLockStartingPosXSwitch;//カメラ位置を横にずらす.
+	float m_bLockStartingPosX;//カメラ位置.
 
 	D3DXVECTOR3 m_vLockPos;//このキャラの注視点.
 	D3DXVECTOR3 m_vLockRangeDir;//このキャラの視線方向.
 	float m_fLockRange;//ロックオン距離.
 	float m_fLockCircleRadius;//ロックオン判定の半径.
 
+	float m_fRaderRange;//レーダー距離.
+	const float GetRaderRange()const;//レーダー距離を渡す.
+
 	D3D10_VIEWPORT* m_pViewPort;//三次元から二次元への変換用.
 	D3DXMATRIX m_mProj;//三次元から二次元への変換用.
 	D3DXMATRIX m_mThisCharaView;//このキャラのカメラのビュー行列.
 	D3DXVECTOR3 m_vLockRangePos;//ロックオン判定の開始座標(カメラ座標).
-	D3DXVECTOR3 m_vLockCenterPos;
+	D3DXVECTOR3 m_vLockCenterPos;//ロックオン判定終点の
 	D3DXVECTOR3 m_vTargetScrPos;
 	bool m_bCamPosXSwitch;
 	bool IsTargetDirBack(D3DXVECTOR3 vTargetPos);//敵がキャラより後ろにいるか.
-
-	
 
 	D3DXVECTOR3 GetCamPos();
 
@@ -103,7 +96,6 @@ public:
 	void WeaponUpdate();
 
 	void LockChara();
-	//bool IsInLockRange();
 	void SetLockRangeDir();
 	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
 
