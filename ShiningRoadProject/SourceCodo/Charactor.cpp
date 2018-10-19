@@ -479,7 +479,7 @@ void clsCharactor::LockChara()
 			D3DXMATRIX mW;
 			D3DXMatrixIdentity(&mW);
 
-			D3DXVECTOR3 vTmp = m_pTargetChara->GetPosition();
+			D3DXVECTOR3 vTmp = m_pTargetChara->GetCenterPos();
 
 			D3DXVec3Project(&m_vTargetScrPos,
 				&vTmp,
@@ -586,12 +586,14 @@ bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
 	D3DXVECTOR3 vTarDir = vTargetPos - m_vCenterPos;
+	D3DXVec3Normalize(&vTarDir, &vTarDir);
 
 	float fDir = D3DXVec3Dot(&vTarDir, &vForword);
+	fDir = acosf(fDir);
 
-	int iDir = (int)D3DXToDegree(fDir);
+	const float fForwardRangefromacos = 1.0f;//acos‚Åo‚Ä‚­‚é³–Ê•ûŒü‚Ì”ÍˆÍ.
 
-	if (iDir > (int)D3DXToDegree(D3DX_PI))
+	if (abs(fDir) < fForwardRangefromacos)
 	{
 		return true;
 	}
@@ -705,6 +707,11 @@ void clsCharactor::SetEnemys(std::vector<clsCharactor*> v_pEnemys)
 void clsCharactor::CharaInit(clsPOINTER_GROUP* pPointer)
 {
 	m_pViewPort = pPointer->GetViewPort10();
+}
+
+const float clsCharactor::GetRaderRange()const
+{
+	return m_fRaderRange;
 }
 
 clsCharactor::clsCharactor() :

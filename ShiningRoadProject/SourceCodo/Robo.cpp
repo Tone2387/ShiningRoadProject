@@ -2,7 +2,7 @@
 #include "OperationString.h"
 
 //ジョイントボーンの数字の桁数.
-const char cBONE_NAME_NUM_DIGIT_JOINT = 2;
+const char g_cBONE_NAME_NUM_DIGIT_JOINT = 2;
 
 const int g_iQuickInterbal = (int)g_fFPS;
 const int g_iQuickTurnFrame = (int)g_fFPS;
@@ -11,7 +11,11 @@ const int g_iWalkTopSpeedFrame = (int)g_fFPS / 10;
 const int g_iRotTopSpeedFrame = (int)g_fFPS / 2;
 const int g_iBoostTopSpeedFrame = (int)g_fFPS;
 const int g_iBoostRisingyTopSpeedFrame = (int)g_fFPS / 4;//ブースト上昇加速時間.
-const int g_iBoostResDec = 10;
+
+const int g_iStabilityVariationRange = 3;//安定性能などで減衰するステータスが最低値から何倍分の変動をするか.
+
+const int g_iBoostResDec = 10;//ブースト展開中.の落下速度減衰の度合.
+const int g_iHeadLockSpeedReference = 500;//頭パーツのロック速度の基準値、これより低いとロック時間が長くなる.
 
 void clsRobo::RoboInit(
 	clsPOINTER_GROUP* const pPtrGroup,
@@ -26,33 +30,33 @@ void clsRobo::RoboInit(
 	const int iHulf = 2;
 
 	m_iMaxHP = pRobo->GetRoboState(clsROBO_STATUS::HP);//HP受け取り.
+	m_iMaxHP = 10000;
 	m_iHP = m_iMaxHP;//現在HPを最大値で初期化.
 	
 	//歩行最高速度.
 	m_fWalktMoveSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::WALK_SPD) * g_fDistanceReference;
 	//歩行加速時間.
-	m_iWalkTopSpeedFrame = g_iWalkTopSpeedFrame / pRobo->GetRoboState(clsROBO_STATUS::STABILITY);
+	m_iWalkTopSpeedFrame = g_iWalkTopSpeedFrame + (g_iWalkTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage);
 
-	//
-	SetRotAcceleSpeed(pRobo->GetRoboState(clsROBO_STATUS::TURN)* g_fDistanceReference,
 	//回転最高速と加速時間設定.
-	g_iRotTopSpeedFrame / pRobo->GetRoboState(clsROBO_STATUS::STABILITY));
+	SetRotAcceleSpeed(pRobo->GetRoboState(clsROBO_STATUS::TURN)* g_fDirectionReference,
+		g_iRotTopSpeedFrame + ((g_iRotTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage)));
 
 	//ジャンプ力.
-	m_fJumpPower = pRobo->GetRoboState(clsROBO_STATUS::JUMP_POWER) * g_fDistanceReference;
+	SetJumpPower(pRobo->GetRoboState(clsROBO_STATUS::JUMP_POWER) * g_fDistanceReference);
 
 	//エネルギー最大値.
 	m_iEnelgy = m_iEnelgyMax = pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
 	//エネルギー回復量.
 	m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
-	//浮遊時エネルギー回復量.
+	//浮遊時エネルギー回復量(通常エネルギーの半分).
 	m_iBoostFloatRecovery = m_iEnelgyOutput / iHulf;
 	
 	//ブースト移動速度.
-	m_fBoostMoveSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_H);
+	m_fBoostMoveSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_H) * g_fDistanceReference;
 	//ブースト加速時間.
-	m_iBoostTopSpeedFrame = m_fBoostMoveSpeedMax / pRobo->GetRoboState(clsROBO_STATUS::STABILITY);
-	//ブースト稼働中のEN消費.
+	m_iBoostTopSpeedFrame = g_iBoostRisingyTopSpeedFrame + (g_iWalkTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage);
+	//ブースト展開中のEN消費.
 	m_iBoostMoveCost = pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
 
 	//ブースト上昇速度.
@@ -62,34 +66,40 @@ void clsRobo::RoboInit(
 
 	//ブースト上昇加速時間.
 	m_iBoostRisingTopSpeedFrame = g_iBoostRisingyTopSpeedFrame;
-	//ブースト稼働中に下に落ちる速度.
+	//ブースト上昇加速量.
+	m_fBoostRisingAccele = m_fBoostRisingSpeedMax / g_iBoostRisingyTopSpeedFrame;
+
+	//ブースト展開中に下に落ちる速度.
 	m_fBoostFollRes = m_fBoostRisingSpeedMax / g_iBoostResDec;
 
-	pRobo->GetRoboState(clsROBO_STATUS::QUICK_THRUST);
-	pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);
-	pRobo->GetRoboState(clsROBO_STATUS::QUICK_TIME);
+	m_fQuickBoostSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::QUICK_THRUST) * g_fDistanceReference;
+	m_iQuickBoostEnelgyCost = pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);
+	m_iQuickBoostTopSpeedTime = pRobo->GetRoboState(clsROBO_STATUS::QUICK_TIME);
 
-	pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME);
+	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
+	m_iQuickTrunTopSpeedTime = m_iQuickBoostTopSpeedTime;
 
-	pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
-	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_SPEED);
-	pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
+	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
+	//m_iActivityLimitTime = pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME) * static_cast<int>(g_fFPS);
 
-	pRobo->GetRoboState(clsROBO_STATUS::AIMING);
-	
+	m_fRaderRange = pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
 
-	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_LEG);
-	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_CORE);
-	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_HEAD);
-	pRobo->GetRoboState(clsROBO_STATUS::COL_SIZE_ARMS);
-	
+	m_fLockRange = pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
+
 	m_pMesh = new clsMISSION_MODEL;
 
 	m_pMesh->Create(m_wpResource, pRobo);
 
 	m_Trans.vPos.y = 10.0f;
 
-	m_fWalktMoveSpeedMax = 0.25f;
+	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
+	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
+
+	m_iEnelgyMax = 10000;
+
+	m_iEnelgy = m_iEnelgyMax;
+
+	/*m_fWalktMoveSpeedMax = 0.25f;
 	m_iWalkTopSpeedFrame = 5;
 
 	m_fBoostMoveSpeedMax = 0.5f;
@@ -119,7 +129,7 @@ void clsRobo::RoboInit(
 	SetRotAcceleSpeed(0.01f, 30);
 	SetJumpPower(0.5f);
 
-	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
+	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);*/
 
 	//m_MaxHP = 5000;
 	//m_HP = m_MaxHP;
@@ -142,20 +152,27 @@ void clsRobo::RoboInit(
 		WS[i].BState.iHitEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_HIT);
 		WS[i].BState.iLineEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_LOCUS);
 		WS[i].iReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOAD_TIME);
-		WS[i].iLockSpeed = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOCK_ON_TIME);
+		
 		WS[i].MagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
 		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE)* g_fDistanceReference;
 		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
 		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
 
-		WS[i].iStablity = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SHOT_STABILITY);
+		WS[i].iLockSpeed = (
+			pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOCK_ON_TIME) / pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_SPEED));
+
+		//腕の照準精度と武器自体の射撃精度で集団率を設定.
+		WS[i].iStablity = (
+			(pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SHOT_STABILITY) + 
+			pRobo->GetRoboState(clsROBO_STATUS::AIMING)) 
+			/ iHulf);
 	}
 
 	WeaponInit(pPtrGroup, WS, enWeaponTypeSize);
 
 	SetBoostEffect();
 
-	m_fLockRange = 500.0f;//ロックオン距離.
+	//m_fLockRange = 500.0f;//ロックオン距離.
 	m_fLockCircleRadius = 500.0f;//ロックオン判定の半径.
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
@@ -379,16 +396,24 @@ void clsRobo::EnelgyRecovery()
 	{
 		m_iEnelgy = m_iEnelgyMax;
 	}
+
+	if (m_iEnelgy < 0)
+	{
+		m_iEnelgy = 0;
+	}
 }
 
 void clsRobo::SetEnelgyRecoveryAmount()
 {
 	m_iEnelgyRecoveryPoint = m_iEnelgyOutput;
 
+	//ブースト展開中.
 	if (m_bBoost)
 	{
+		//浮遊時.
 		if (!m_bGround)
 		{
+			//EN回復を落とす.
 			m_iEnelgyRecoveryPoint -= m_iBoostFloatRecovery;
 		}
 
@@ -403,9 +428,19 @@ void clsRobo::SetEnelgyRecoveryAmount()
 
 bool clsRobo::EnelgyConsumption(const int iConsumption)
 {
-	if (m_iEnelgy >= iConsumption)
+	if (IsEnelgyRamaining(iConsumption))
 	{
 		m_iEnelgy -= iConsumption;
+		return true;
+	}
+
+	return false;
+}
+
+bool clsRobo::IsEnelgyRamaining(const int iConsumption)
+{
+	if (m_iEnelgy >= iConsumption)
+	{
 		return true;
 	}
 
@@ -433,39 +468,51 @@ void clsRobo::UpdatePosfromBone()
 void clsRobo::ShotLWeapon()
 {
 	ShotSwich(enWeaponLHand);
-	if (Shot())
+	if (IsEnelgyRamaining(m_v_pWeapons[enWeaponLHand]->GetShotEN()))
 	{
-		EnelgyConsumption(m_v_pWeapons[enWeaponLHand]->GetShotEN());
-		//射撃アニメ処理.
-
-		
-	}
-
-	else
-	{
-		if (Reload())
+		if (Shot())
 		{
-			//リロードアニメ処理.
+			//EN消費.
+			EnelgyConsumption(m_v_pWeapons[enWeaponLHand]->GetShotEN());
+
+			//射撃アニメ処理.
+
+
+		}
+
+		else
+		{
+			if (Reload())
+			{
+				//リロードアニメ処理.
+			}
 		}
 	}
 }
+	
 
 void clsRobo::ShotRWeapon()
 {
 	ShotSwich(enWeaponRHand);
-	if (Shot())
+	if (IsEnelgyRamaining(m_v_pWeapons[enWeaponRHand]->GetShotEN()))
 	{
-		EnelgyConsumption(m_v_pWeapons[enWeaponLHand]->GetShotEN());
-		//射撃アニメ処理.
-	}
-
-	else
-	{
-		if (Reload())
+		if (Shot())
 		{
-			//リロードアニメ処理.
+			//EN消費.
+			EnelgyConsumption(m_v_pWeapons[enWeaponRHand]->GetShotEN());
+
+			//射撃アニメ処理.
+		}
+
+		else
+		{
+			if (Reload())
+			{
+				//リロードアニメ処理.
+			}
 		}
 	}
+	
 }
 
 void clsRobo::SetBoostEffect()
@@ -687,10 +734,10 @@ void clsRobo::PlayFrontBoostEfc()
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_L, strBoostRootName.c_str(), strBoostEndName.c_str());
 			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_L, strBoostEndNameTmp.c_str());
@@ -712,10 +759,10 @@ void clsRobo::PlayFrontBoostEfc()
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_R, strBoostRootName.c_str(), strBoostEndName.c_str());
 
@@ -772,10 +819,10 @@ void clsRobo::PlayRightBoostEfc()
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_R, strBoostRootName.c_str(), strBoostEndName.c_str());
 
@@ -825,10 +872,10 @@ void clsRobo::PlayLeftBoostEfc()
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_L, strBoostRootName.c_str(), strBoostEndName.c_str());
 
@@ -878,10 +925,10 @@ void clsRobo::PlayBackBoostEfc()
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_L, strBoostRootName.c_str(), strBoostEndName.c_str());
 
@@ -904,10 +951,10 @@ void clsRobo::PlayBackBoostEfc()
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_R, strBoostRootName.c_str(), strBoostEndName.c_str());
 
@@ -932,10 +979,10 @@ void clsRobo::PlayBackBoostEfc()
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::CORE, strBoostRootName.c_str(), strBoostEndName.c_str());
 
@@ -1001,10 +1048,10 @@ void clsRobo::PlayLegBoostEfc()
 		{
 			//付け根の名前を生成.
 			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, cBONE_NAME_NUM_DIGIT_JOINT);
+			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
 			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::LEG, strBoostRootName.c_str(), strBoostEndName.c_str());
 

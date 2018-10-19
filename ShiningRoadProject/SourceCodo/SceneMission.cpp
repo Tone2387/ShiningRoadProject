@@ -274,9 +274,6 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	D3DXVECTOR3 vCamPosTmp;
 	D3DXVECTOR3 vLookPosTmp;
 
-	//vCamPosTmp = m_pPlayer->GetCamTargetPos();
-	//vLookPosTmp = m_pPlayer->GetLookTargetPos();
-
 	vCamPosTmp = m_vCamTargetPos;
 	vLookPosTmp = m_vLookTargetPos;
 
@@ -328,7 +325,7 @@ void clsSCENE_MISSION::RenderUi()
 
 	char pText[STR_BUFF_MAX];
 
-	sprintf_s(pText, "%d:%d:%d", iMin, iSecond, iN);
+	sprintf_s(pText, "%2d:%2d:%2d", iMin, iSecond, iN);
 	m_pLimitTime->SetText(pText);
 	m_pLimitTime->Render();
 
@@ -337,14 +334,14 @@ void clsSCENE_MISSION::RenderUi()
 	int iNowNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponLHand]->GetNowBulletNum();
 	int iMaxNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponLHand]->GetMaxBulletNum();
 
-	sprintf_s(pText, "%d/%d", iNowNum, iMaxNum);
+	sprintf_s(pText, "%2d/%2d", iNowNum, iMaxNum);
 	m_pLBulletNum->SetText(pText);
 	m_pLBulletNum->Render();
 
 	iNowNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponRHand]->GetNowBulletNum();
 	iMaxNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponRHand]->GetMaxBulletNum();
 
-	sprintf_s(pText, "%d/%d", iNowNum, iMaxNum);
+	sprintf_s(pText, "%2d/%2d", iNowNum, iMaxNum);
 	m_pRBulletNum->SetText(pText);
 	m_pRBulletNum->Render();
 
@@ -372,9 +369,8 @@ void clsSCENE_MISSION::RenderUi()
 	
 	D3DXVECTOR3 vPlayerPos = m_pPlayer->GetPosition();
 
-	const float fRaderDis = 10.0f;//大きくするとレーダーの索敵範囲が広がる.
+	const float fRaderDis = m_pPlayer->GetRaderRange();//大きくするとレーダーの索敵範囲が広がる.
 
-	//float fWindowSizeW;
 	m_pRaderWindowBack->Render();
 
 	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
@@ -410,6 +406,9 @@ void clsSCENE_MISSION::RenderUi()
 
 	m_pRaderWindowFront->Render();
 
+
+	//ロックオン関係.
+	//ロックオンフレーム.
 	vPosTmp = m_pPlayer->GetLookTargetPos();
 
 	vPosTmp = ConvDimPos(vPosTmp);
@@ -417,19 +416,23 @@ void clsSCENE_MISSION::RenderUi()
 	m_pCursorFrame->SetPos(vPosTmp);
 	m_pCursorFrame->Render();
 
+	//ロックオンカーソル.
 	float fTmp = m_pPlayer->GetLockCircleScale() / 2;
 
 	m_pCursor->SetScale(fTmp);
 	m_pCursor->SetPos(vPosTmp);
 	m_pCursor->Render();
 
+	//ロックオンカーソル内に敵を入れている間の処理.
 	if (m_pPlayer->GetTargetPos(vPosTmp))
 	{
+		//ロックオンウィンドウ描画.
 		vPosTmp = m_pPlayer->m_vTargetScrPos;
 		
 		m_pLockWindow->SetPos(vPosTmp);
 		m_pLockWindow->Render();
-		
+
+		//ヒットマーク描画.
 		if (iHitDispTime > 0)
 		{
 			m_pHitMark->SetPos(vPosTmp);
@@ -452,6 +455,7 @@ void clsSCENE_MISSION::RenderUi()
 
 	else
 	{
+		//ロックオンカーソル内に敵がいないなら、ヒットマークを出さない.
 		if (iHitDispTime > 0)
 		{
 			iHitDispTime = 0;
@@ -664,61 +668,4 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 
 	m_vCamTargetPos = pChara->m_vLockRangePos;
 	m_vLookTargetPos = pChara->m_vLockPos;
-
-	/*const float fCamMoveSpeed = 0.5f;
-	const float fLookPosSpace = 50.0f;
-	const float fCamSpaceTmp = 4.0f;
-	const float fCamPosX = 0.5f;
-
-	D3DXMATRIX mRot;
-
-	//カメラ位置のための回転行列作成.
-	D3DXMatrixRotationYawPitchRoll(
-		&mRot,
-		pChara->m_Trans.fYaw,
-		-pChara->m_fLookUpDir,
-		pChara->m_Trans.fRoll);
-
-	//軸ﾍﾞｸﾄﾙを用意.
-	float fCamAxisXTmp = 0.0f;
-
-	if (m_bCamPosXSwitch)
-	{
-		fCamAxisXTmp = fCamPosX;
-	}
-
-	else
-	{
-		fCamAxisXTmp = -fCamPosX;
-	}
-
-	D3DXVECTOR3 vCamAxis =
-	{
-		fCamAxisXTmp,
-		0.0f,
-		fCamSpaceTmp
-	};
-
-	D3DXVECTOR3 vLookAxis;
-
-	//ﾍﾞｸﾄﾙそのものを回転状態により変換する.
-	D3DXVec3TransformCoord(&vCamAxis, &vCamAxis, &mRot);
-	D3DXVec3TransformCoord(&vLookAxis, &g_vDirForward, &mRot);
-
-	D3DXVECTOR3 vCamPosTmp;
-
-	//====================================================
-	//ｶﾒﾗ追従処理 ここから.
-	//====================================================
-	//カメラが少し遅れてついてくるように.
-	//カメラが現在目的としている位置を算出.
-	const D3DXVECTOR3 vCamTargetPos = pChara->m_vCenterPos - vCamAxis;
-
-	//現在位置を取得し、現在位置と目的の位置の差から移動量を計算する.
-	vCamPosTmp = m_vCamTargetPos;//現在位置を取得
-	vCamPosTmp -= (vCamPosTmp - vCamTargetPos) * fCamMoveSpeed;
-
-	m_vLookTargetPos = vCamPosTmp + vLookAxis * fLookPosSpace;
-
-	m_vCamTargetPos = vCamPosTmp;*/
 }

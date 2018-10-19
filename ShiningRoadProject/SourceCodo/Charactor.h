@@ -61,11 +61,14 @@ public:
 	float m_fLockRange;//ロックオン距離.
 	float m_fLockCircleRadius;//ロックオン判定の半径.
 
+	float m_fRaderRange;//レーダー距離.
+	const float GetRaderRange()const;//レーダー距離を渡す.
+
 	D3D10_VIEWPORT* m_pViewPort;//三次元から二次元への変換用.
 	D3DXMATRIX m_mProj;//三次元から二次元への変換用.
 	D3DXMATRIX m_mThisCharaView;//このキャラのカメラのビュー行列.
 	D3DXVECTOR3 m_vLockRangePos;//ロックオン判定の開始座標(カメラ座標).
-	D3DXVECTOR3 m_vLockCenterPos;
+	D3DXVECTOR3 m_vLockCenterPos;//ロックオン判定終点の
 	D3DXVECTOR3 m_vTargetScrPos;
 	bool m_bCamPosXSwitch;
 	bool IsTargetDirBack(D3DXVECTOR3 vTargetPos);//敵がキャラより後ろにいるか.
@@ -93,7 +96,6 @@ public:
 	void WeaponUpdate();
 
 	void LockChara();
-	//bool IsInLockRange();
 	void SetLockRangeDir();
 	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
 

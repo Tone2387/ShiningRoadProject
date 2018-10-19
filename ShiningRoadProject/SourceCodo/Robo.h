@@ -86,6 +86,7 @@ public:
 
 	void EnelgyRecovery();
 	void SetEnelgyRecoveryAmount();
+	bool IsEnelgyRamaining(const int iConsumption);//エネルギーが消費量を超えているか?true:超えている.
 	bool EnelgyConsumption(const int iConsumption);//エネルギー消費はここから.
 
 	float m_fBoostMoveSpeedMax;
