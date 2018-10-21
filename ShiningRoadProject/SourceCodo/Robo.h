@@ -47,17 +47,25 @@ public:
 		m_pMesh->SetPos(vTmp);
 
 		vTmp = GetRotation();
-		vTmp.y += static_cast<float>(D3DX_PI);
-
-		ObjRollOverGuard(&vTmp.y);
-
+		//vTmp.y += static_cast<float>(D3DX_PI);
+		//ObjRollOverGuard(&vTmp.y);
 		m_pMesh->SetRot(vTmp);
+		
+		/*SetRotateHeadPart();
+		SetRotateHArmPart();
+		SetRotateCorePart();
+		SetRotateLegPart();*/
 
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
 		m_pMesh->UpDate();
 		//UpdateCollsion();
 	}
+
+	void SetRotateHeadPart();
+	void SetRotateHArmPart();
+	void SetRotateCorePart();
+	void SetRotateLegPart();
 
 	void Render( 
 		const D3DXMATRIX& mView, 

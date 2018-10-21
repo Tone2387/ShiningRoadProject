@@ -1083,6 +1083,66 @@ void clsRobo::PlayLegBoostEfc()
 	}
 }
 
+void clsRobo::SetRotateHeadPart()
+{
+	D3DXVECTOR3 vTmp = GetRotation();
+
+	if (m_pTargetChara)
+	{
+		const float fVecX = m_pTargetChara->GetPosition().x - GetPosition().x;
+		const float fVecZ = m_pTargetChara->GetPosition().z - GetPosition().z;
+
+		float fRot = atan2f(fVecX, fVecZ);
+
+		D3DXVECTOR3 vHeadRot = { vTmp.x, fRot, vTmp.z };
+
+		m_pMesh->SetPartsRotate(enPARTS::HEAD, vHeadRot);
+	}
+
+	else
+	{
+		m_pMesh->SetPartsRotate(enPARTS::HEAD, vTmp);
+	}
+}
+
+void clsRobo::SetRotateHArmPart()
+{
+	D3DXVECTOR3 vTmp = GetRotation();
+
+	//const float fVecX = m_pTargetChara->GetPosition().x - GetPosition().x;
+	//const float fVecZ = m_pTargetChara->GetPosition().z - GetPosition().z;
+
+	//float fRot = atan2f(fVecX, fVecZ);
+
+	float fRot = m_fVerLookDir;
+
+	D3DXVECTOR3 vArmRot = { fRot, vTmp.y, vTmp.z };
+
+	m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
+	m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
+}
+
+void clsRobo::SetRotateCorePart()
+{
+	D3DXVECTOR3 vTmp = GetRotation();
+
+	m_pMesh->SetPartsRotate(enPARTS::CORE, vTmp);
+}
+
+void clsRobo::SetRotateLegPart()
+{
+	D3DXVECTOR3 vTmp = GetRotation();
+
+	const float fVecX = m_vAcceleDir.x;
+	const float fVecZ = m_vAcceleDir.z;
+
+	float fRot = atan2f(fVecX, fVecZ);
+
+	D3DXVECTOR3 vLegRot = { vTmp.x, fRot, vTmp.z };
+
+	m_pMesh->SetPartsRotate(enPARTS::LEG, vLegRot);
+}
+
 clsRobo::clsRobo() :
 m_pMesh(NULL),
 m_bBoost(false),
