@@ -51,10 +51,10 @@ public:
 		//ObjRollOverGuard(&vTmp.y);
 		m_pMesh->SetRot(vTmp);
 		
-		SetRotateHeadPart();
+		/*SetRotateHeadPart();
 		SetRotateHArmPart();
 		SetRotateCorePart();
-		SetRotateLegPart();
+		SetRotateLegPart();*/
 
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
