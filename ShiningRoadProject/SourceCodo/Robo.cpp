@@ -17,6 +17,24 @@ const int g_iStabilityVariationRange = 3;//à¿íËê´î\Ç»Ç«Ç≈å∏êäÇ∑ÇÈÉXÉeÅ[É^ÉXÇ™ç≈í
 const int g_iBoostResDec = 10;//ÉuÅ[ÉXÉgìWäJíÜ.ÇÃóéâ∫ë¨ìxå∏êäÇÃìxçá.
 const int g_iHeadLockSpeedReference = 500;//ì™ÉpÅ[ÉcÇÃÉçÉbÉNë¨ìxÇÃäÓèÄílÅAÇ±ÇÍÇÊÇËí·Ç¢Ç∆ÉçÉbÉNéûä‘Ç™í∑Ç≠Ç»ÇÈ.
 
+enum enAnimNoLeg
+{
+	enAnimNoLegWait = 0,
+	enAnimNoLegWalkStart,
+	enAnimNoLegWalkRight,
+	enAnimNoLegWalkLeft,
+	enAnimNoLegWalkEndRight,
+	enAnimNoLegWalkEndLeft,
+	enAnimNoLegBoostStart,
+	enAnimNoLegBoost,
+	enAnimNoLegBoostEnd,
+	enAnimNoLegJumpStart,
+	enAnimNoLegJumpUp,
+	enAnimNoLegJumpDown,
+	enAnimNoLegJumpEnd,
+	//enAnimNoLegDown
+};
+
 void clsRobo::RoboInit(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsROBO_STATUS* const pRobo)
@@ -176,6 +194,9 @@ void clsRobo::RoboInit(
 	m_fLockCircleRadius = 500.0f;//ÉçÉbÉNÉIÉìîªíËÇÃîºåa.
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
+
+	m_pMesh->PartsAnimChange(enPARTS::ARM_R, 3);
+	m_pMesh->SetAnimSpd(0.0f);
 }
 
 void clsRobo::Walk()
@@ -310,8 +331,6 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
-	
-
 	PlayBoostEfc();
 	CharactorUpdate();
 	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ÉuÅ[ÉXÉ^Å[ÉGÉtÉFÉNÉgî≠ê∂Ç…égÇ¡ÇƒÇ¢ÇÈÇÃÇ≈ñàÉtÉåÅ[ÉÄÇÃèâä˙âªÇ™ïKóvÇ…Ç»ÇÈ.
@@ -1086,6 +1105,7 @@ void clsRobo::PlayLegBoostEfc()
 void clsRobo::SetRotateHeadPart()
 {
 	D3DXVECTOR3 vTmp = GetRotation();
+	vTmp.y += static_cast<float>(D3DX_PI);
 
 	if (m_pTargetChara)
 	{
@@ -1093,6 +1113,9 @@ void clsRobo::SetRotateHeadPart()
 		const float fVecZ = m_pTargetChara->GetPosition().z - GetPosition().z;
 
 		float fRot = atan2f(fVecX, fVecZ);
+		
+		fRot += static_cast<float>(D3DX_PI);
+		ObjRollOverGuard(&fRot);
 
 		D3DXVECTOR3 vHeadRot = { vTmp.x, fRot, vTmp.z };
 
@@ -1105,7 +1128,7 @@ void clsRobo::SetRotateHeadPart()
 	}
 }
 
-void clsRobo::SetRotateHArmPart()
+void clsRobo::SetRotateArmPart()
 {
 	D3DXVECTOR3 vTmp = GetRotation();
 
@@ -1116,6 +1139,9 @@ void clsRobo::SetRotateHArmPart()
 
 	float fRot = m_fVerLookDir;
 
+	vTmp.y += static_cast<float>(D3DX_PI);
+	ObjRollOverGuard(&vTmp.y);
+
 	D3DXVECTOR3 vArmRot = { fRot, vTmp.y, vTmp.z };
 
 	m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
@@ -1125,6 +1151,8 @@ void clsRobo::SetRotateHArmPart()
 void clsRobo::SetRotateCorePart()
 {
 	D3DXVECTOR3 vTmp = GetRotation();
+	vTmp.y += static_cast<float>(D3DX_PI);
+	ObjRollOverGuard(&vTmp.y);
 
 	m_pMesh->SetPartsRotate(enPARTS::CORE, vTmp);
 }
@@ -1133,14 +1161,57 @@ void clsRobo::SetRotateLegPart()
 {
 	D3DXVECTOR3 vTmp = GetRotation();
 
-	const float fVecX = m_vAcceleDir.x;
-	const float fVecZ = m_vAcceleDir.z;
+	const float fHulfDir = D3DX_PI / 2;
+
+	const float fVecX = m_vMoveDirforBoost.x;
+	const float fVecZ = m_vMoveDirforBoost.z;
 
 	float fRot = atan2f(fVecX, fVecZ);
 
-	D3DXVECTOR3 vLegRot = { vTmp.x, fRot, vTmp.z };
+	if (abs(fRot) > fHulfDir)
+	{
+		fRot -= D3DX_PI * (abs(fRot) / fRot);
+	}
+
+	vTmp.y += fRot;
+
+	vTmp.y += static_cast<float>(D3DX_PI);
+	ObjRollOverGuard(&vTmp.y);
+
+	D3DXVECTOR3 vLegRot = vTmp;
 
 	m_pMesh->SetPartsRotate(enPARTS::LEG, vLegRot);
+}
+
+void clsRobo::AnimUpdate()
+{
+
+}
+
+void clsRobo::AnimUpdateLeg()
+{
+	const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
+
+	switch (iAnimNo)
+	{
+	default:
+		break;
+	}
+}
+
+void clsRobo::AnimUpdateCore()
+{
+
+}
+
+void clsRobo::AnimUpdateArmL()
+{
+
+}
+
+void clsRobo::AnimUpdateArmR()
+{
+
 }
 
 clsRobo::clsRobo() :
