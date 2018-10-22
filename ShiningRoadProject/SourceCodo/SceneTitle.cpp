@@ -310,15 +310,16 @@ void clsSCENE_TITLE::RenderUi()
 	m_upLogo->Render();
 
 
-	assert( m_wpFont );
-	const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
-	m_wpFont->SetPos( vPLESS_START_POS );
-	m_wpFont->SetScale( fPLESS_START_SCALE );
-	m_wpFont->SetColor( vTEXT_COLOR );
-	m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
-
 	if( m_upMenuBox ){
 		m_upMenuBox->Render();
+	}
+	else{
+		assert( m_wpFont );
+		const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
+		m_wpFont->SetPos( vPLESS_START_POS );
+		m_wpFont->SetScale( fPLESS_START_SCALE );
+		m_wpFont->SetColor( vTEXT_COLOR );
+		m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
 	}
 
 #ifdef _DEBUG
