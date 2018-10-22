@@ -15,6 +15,11 @@ clsSOUND_MANAGER_BASE* clsFACTORY_SOUND_MANAGER::Create( const enSCENE enNextSce
 		return new clsSOUND_MANAGER_ENDING( hWnd );
 	case enSCENE::GAMEOVER:
 		return new clsSOUND_MANAGER_GAME_OVER( hWnd );
+
+	case enSCENE::EXIT_APP:
+		return nullptr;
+		break;
+
 	default:
 		assert( !"不正なシーンが指定されました" );
 		break;

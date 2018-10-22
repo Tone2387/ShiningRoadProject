@@ -27,8 +27,8 @@ public:
 
 	//new直後に使う.
 	void Create();
-	//毎フレーム使う.
-	void Update();
+	//毎フレーム使う( 戻り値は、正常ならtrue, 終了ならfalse ).
+	bool Update();
 	//毎フレーム使う.
 	void Render( 
 		ID3D11RenderTargetView *pBackBuffer_TexRTV,
@@ -49,6 +49,7 @@ private:
 	clsSCENE_BASE*		m_upScene;
 	//シーンのファクトリ.
 	std::unique_ptr< clsSCENE_FACTORY > m_upSceneFactory;
+
 
 	//カメラ.
 	clsCAMERA_BASE*	m_spCamera;

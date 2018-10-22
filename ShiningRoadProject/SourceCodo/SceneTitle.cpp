@@ -240,7 +240,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
 			m_wpPtrGroup, nullptr,
 			m_uiInformationDataArray );
-		const D3DXVECTOR3 vMENU_POS = { 400.0f, 550.0f, 0.0f };
+		const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
 		m_upMenuBox->SetPos( vMENU_POS );
 
 		assert( m_wpSound );
@@ -268,12 +268,18 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 		switch( cInformationIndex )
 		{
 		case enINFORMATION_GAME_END:
-			m_upMenuBox->Close();
 //			exit( true );
+			enNextScene = enSCENE::EXIT_APP;
 			break;
+
 		case enINFORMATION_NEXT_SCENE:
 			enNextScene = enSCENE::ASSEMBLE;
 			break;
+
+		case enINFORMATION_CLOSE_MENU:
+			m_upMenuBox->Close();
+			break;
+
 		default:
 			assert( !"•s³‚Èî•ñ‚ª•Ô‚³‚ê‚Ü‚µ‚½" );
 			break;

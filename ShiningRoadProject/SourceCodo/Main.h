@@ -83,7 +83,7 @@ private:
 	//起動中の描画.
 
 	//アプリケーションメイン処理.
-	void AppMain();
+	bool AppMain();
 	//描画(レンダリング).
 	void Render();
 

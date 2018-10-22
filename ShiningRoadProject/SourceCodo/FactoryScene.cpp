@@ -59,6 +59,10 @@ clsSCENE_BASE* clsSCENE_FACTORY::CreateProduct(
 	case enSCENE::GAMEOVER:
 		return new clsSCENE_GAME_OVER( m_wpPtrGroup );
 		break;
+
+	case enSCENE::EXIT_APP:
+		return nullptr;
+		break;
 	default:
 		assert( !"不正なシーンが指定されました" );
 		break;
