@@ -322,4 +322,29 @@ bool clsEnemyBase::IsShot()
 	return false;
 }
 
+void clsEnemyBase::SetData(std::string strEnemyFolderName)
+{
+
+}
+
+void clsEnemyBase::SetBaseData(std::string strEnemyFolderName)
+{
+	m_BaseData.strEnemyFolderName = strEnemyFolderName;
+}
+
+void clsEnemyBase::SetMoveData()
+{
+
+}
+
+void clsEnemyBase::SetVisibilityData()
+{
+
+}
+
+void clsEnemyBase::SetShotData()
+{
+
+}
+
 void clsEnemyBase::UpdateProduct(){}

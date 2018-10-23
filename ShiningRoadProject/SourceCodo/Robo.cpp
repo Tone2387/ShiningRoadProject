@@ -389,7 +389,7 @@ void clsRobo::Updata()
 
 	UpdataLimitTime();
 
-	
+	AnimUpdate();
 }
 
 void clsRobo::UpdataLimitTime()
@@ -1185,17 +1185,153 @@ void clsRobo::SetRotateLegPart()
 
 void clsRobo::AnimUpdate()
 {
-
+	AnimUpdateLeg();
 }
 
 void clsRobo::AnimUpdateLeg()
 {
 	const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
 
+	enAnimNoLeg iChangeAnimNo = iAnimNo;
+	double dAnimStartTime = 0.0f;
+
 	switch (iAnimNo)
 	{
+	case enAnimNoLegWait://待機中.
+
+		if (IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegWalkStart;
+		}
+
+		if (m_bBoost)
+		{
+			iChangeAnimNo = enAnimNoLegBoostStart;
+		}
+
+		break;
+	case enAnimNoLegWalkStart:
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWalkStart;
+		}
+
+		if (IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegWalkEndRight;
+			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
+		}
+
+		break;
+	case enAnimNoLegWalkRight:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWalkLeft;
+		}
+
+		if (IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegWalkEndRight;
+			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
+		}
+
+		break;
+	case enAnimNoLegWalkLeft:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWalkRight;
+		}
+
+		if (IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegWalkEndLeft;
+			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
+		}
+
+		break;
+	case enAnimNoLegWalkEndRight:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWait;
+		}
+
+		break;
+	case enAnimNoLegWalkEndLeft:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWait;
+		}
+
+		break;
+	case enAnimNoLegBoostStart:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegBoost;
+		}
+
+		break;
+	case enAnimNoLegBoost:
+
+		if (!m_bBoost)//|| !IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegBoostEnd;
+		}
+
+		break;
+	case enAnimNoLegBoostEnd:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWait;
+		}
+
+		break;
+	case enAnimNoLegJumpStart:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegJumpUp;
+			Jump();
+		}
+
+		break;
+	case enAnimNoLegJumpUp:
+
+		if (m_fFollPower < 0)
+		{
+			iChangeAnimNo = enAnimNoLegJumpDown;
+		}
+
+		break;
+	case enAnimNoLegJumpDown:
+
+		if (m_bGround)
+		{
+			iChangeAnimNo = enAnimNoLegJumpEnd;
+		}
+
+		break;
+	case enAnimNoLegJumpEnd:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWait;
+		}
+
+		break;
 	default:
 		break;
+	}
+
+	//アニメーションの変更がある.
+	if (iChangeAnimNo != iAnimNo)
+	{
+		m_pMesh->SetPartsAnimNo(enPARTS::LEG, iChangeAnimNo, dAnimStartTime);
 	}
 }
 

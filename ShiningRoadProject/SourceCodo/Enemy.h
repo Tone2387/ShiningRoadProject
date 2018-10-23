@@ -15,6 +15,7 @@ public:
 	virtual ~clsEnemyBase();
 
 	virtual void Update();
+	virtual void SetData(std::string strEnemyFolderName);
 	void SearchTarget(std::vector<clsCharactor*>);
 
 protected:
@@ -25,8 +26,13 @@ protected:
 
 	std::vector<clsCharactor*>* m_vp_pEnemys;
 
+	void SetBaseData(std::string strEnemyFolderName);
+	void SetMoveData();
+	void SetVisibilityData();
+	void SetShotData();
+
 	virtual void UpdateProduct();
-	
+
 	void SearchNear();
 
 	bool SetMoveDir(float& fPush, float& fAngle);
@@ -43,11 +49,11 @@ protected:
 		int iShotENLimitParcent;
 	};
 
-protected:
 	struct BaseState
 	{
-		int iMoveCategoryVisType;//移動ステータスを切り替える方法.
+		std::string strEnemyFolderName;
 
+		int iMoveCategoryVisType;//移動ステータスを切り替える方法.
 		int iProcFrame;//視点調整を更新する時間.
 	};
 
@@ -81,7 +87,7 @@ protected:
 		std::vector<ShotState> v_ShotState;
 	};
 
-	ShotData m_ShotData;
+	
 
 	struct VisibilityAreaData
 	{
@@ -92,6 +98,7 @@ protected:
 	BaseState m_BaseData;
 	MoveData m_MoveData;
 	VisibilityAreaData m_visAreaData;
+	ShotData m_ShotData;
 
 	struct UpdateState
 	{
