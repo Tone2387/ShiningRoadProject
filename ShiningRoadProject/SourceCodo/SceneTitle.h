@@ -7,7 +7,6 @@
 #include "AssembleModel.h"
 
 
-class clsWINDOW_BOX;
 class clsMENU_WINDOW_TITLE;
 
 //================================//

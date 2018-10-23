@@ -18,6 +18,8 @@ clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(
 	clsMENU_WINDOW_BASE* pParentWindow,
 	unsigned int* const pInformationArray )
 		:clsWINDOW_BOX( pPtrGroup->GetDevice(), pPtrGroup->GetContext() )
+		,m_pPtrGroup( pPtrGroup )
+		,m_puiInformationArray( pInformationArray )
 		,m_wpFont( pPtrGroup->GetFont() )
 		,m_wpXInput( pPtrGroup->GetXInput() )
 		,m_wpDInput( pPtrGroup->GetDxInput() )
@@ -28,8 +30,12 @@ clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(
 		,m_isOperation( true )
 		,m_iSelectNum( 0 )
 		,m_uiInformation( 0 )
+		,m_isClose( false )
 {
 	Operation( true );
+	if( pParentWindow ){
+		pParentWindow->Operation( false );
+	}
 
 	const char sCURSOR_PATH[] = "Data\\Image\\StartUp\\Cursor.png";
 	const WHSIZE_FLOAT CURSOR_DISP = { 1.0f, 1.0f };
@@ -57,6 +63,8 @@ clsMENU_WINDOW_BASE::~clsMENU_WINDOW_BASE()
 	m_wpDInput = nullptr;
 	m_wpXInput = nullptr;
 	m_wpFont = nullptr;
+	m_puiInformationArray = nullptr;
+	m_pPtrGroup = nullptr;
 }
 
 
@@ -95,8 +103,12 @@ void clsMENU_WINDOW_BASE::Update()
 		m_pNextWindow->Update();
 		//子供が閉じたら.
 		if( m_pNextWindow->GetSize().x <= 0.0f && m_pNextWindow->GetSize().y <= 0.0f ){
-			delete m_pNextWindow;//消されたら操作権が戻ってくる.
+			delete m_pNextWindow;
 			m_pNextWindow = nullptr;
+			//閉じる予約をしていたら自分も閉じる.
+			if( m_isClose ){
+				Close();
+			}
 		}
 	}
 
@@ -122,7 +134,7 @@ void clsMENU_WINDOW_BASE::Render()
 		m_upCursor->Render();
 	}
 
-	//操作しない窓は暗くする1.
+	//操作しない窓は暗くする.
 	if( m_isOperation ){
 		const D3DXVECTOR3 vTRUE_COLOR = { 1.0f, 1.0f, 1.0f };
 		SetColor( vTRUE_COLOR );
@@ -131,9 +143,13 @@ void clsMENU_WINDOW_BASE::Render()
 		const D3DXVECTOR3 vBLACK_COLOR = { 0.375f, 0.375f, 0.375f };
 		SetColor( vBLACK_COLOR );
 	}
+	const float fTEXT_ALPHA = 1.0f;
+	SetTextAlpha( fTEXT_ALPHA );
 
-	//文字.
-	RenderProduct();
+	//文字とカーソル.
+	if( isStopChange() ){
+		RenderProduct();
+	}
 
 	//子供を描画.
 	if( m_pNextWindow ){
@@ -172,9 +188,15 @@ void clsMENU_WINDOW_BASE::Operation( const bool isOperation )
 }
 
 
-//このウィンドウを閉じて親ウィンドウに操作を返す.
+//このウィンドウを閉じ始めて親ウィンドウに操作を返す.
 void clsMENU_WINDOW_BASE::Close( const float fCloseSpdRate )
 {
+	m_isClose = true;
+	if( m_pNextWindow ){
+		m_pNextWindow->Close( fCloseSpdRate );
+		return;
+	}
+
 	SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 
 	const D3DXVECTOR2 vCLOSE_SPD = { m_vSize.x / fCloseSpdRate, m_vSize.y / fCloseSpdRate };
@@ -202,6 +224,16 @@ void clsMENU_WINDOW_BASE::SetColor( const D3DXVECTOR3& vColor )
 		m_vecupUiText[i]->SetColor( { vColor.x, vColor.y, vColor.z, 1.0f } );
 	}
 }
+
+void clsMENU_WINDOW_BASE::SetTextAlpha( const float& fAlpha )
+{
+	m_wpFont->SetAlpha( fAlpha );
+	for( unsigned int i=0; i<m_vecupUiText.size(); i++ ){
+		m_vecupUiText[i]->SetAlpha( fAlpha );
+	}
+
+}
+
 
 //窓の左上を0として座標を与える.
 D3DXVECTOR3 clsMENU_WINDOW_BASE::SetPosFromWindow( 
