@@ -27,7 +27,6 @@ void clsMISSION_MODEL::CreateProduct()
 	FixBoneStates();
 }
 
-
 int clsMISSION_MODEL::CreateColStateBones()
 {
 	int iReturn = 0;
@@ -38,8 +37,6 @@ int clsMISSION_MODEL::CreateColStateBones()
 
 	return iReturn;
 }
-
-
 
 //そのパーツの当たり判定の数を返す.
 int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
@@ -123,7 +120,6 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 	return iReturn;
 }
 
-
 //ボーンの数を確定する.
 void clsMISSION_MODEL::FixBoneStates()
 {
@@ -151,7 +147,6 @@ int clsMISSION_MODEL::GetColNum( const enCOL_PARTS enColParts )
 	return -1;
 }
 
-
 //当たり判定の座標の配列をすべて返す.
 shared_ptr< vector< D3DXVECTOR3 > > clsMISSION_MODEL::GetColPosPtr()
 {
@@ -167,7 +162,7 @@ shared_ptr< vector< D3DXVECTOR3 > > clsMISSION_MODEL::GetColPosPtr()
 	return spvvReturn;
 }
 
-int clsMISSION_MODEL::GetSimilarityNameBoneNum(enPARTS PartsNum,const char* strBoneName)
+int clsMISSION_MODEL::GetSimilarityNameBoneNum(const enPARTS PartsNum, const char* strBoneName)
 {
 	int iResult = 0;
 	int iSearchNum = 0;
@@ -192,15 +187,16 @@ int clsMISSION_MODEL::GetSimilarityNameBoneNum(enPARTS PartsNum,const char* strB
 	return iResult;
 }
 
-void clsMISSION_MODEL::SetPartsRotate(enPARTS PartsNum, const D3DXVECTOR3 vRot)
+void clsMISSION_MODEL::SetPartsRotate(const enPARTS PartsNum, const D3DXVECTOR3 vRot)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
+	assert(m_vpParts[cTmpNum]);
 	m_vpParts[cTmpNum]->SetRotation(vRot);
 }
 
 //腕の角度を武器も模写する.
-D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(enPARTS PartsNum, const char* strBoneRootName, const char* strBoneEndName)
+D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(const enPARTS PartsNum, const char* strBoneRootName, const char* strBoneEndName)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 	//return m_vpParts[cTmpNum]->m_pMesh->ExistsBone(sBoneName);
@@ -231,4 +227,28 @@ D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(enPARTS PartsNum, const char* strBo
 	//	vRot.z = GuardDirOver( vRot.z );
 
 	return vRot;
+}
+
+void clsMISSION_MODEL::SetPartsAnimNo(const enPARTS PartsNum, const int iAnimIndex, const double dAnimTime)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->SetAnimChange(iAnimIndex, dAnimTime);
+}
+
+void clsMISSION_MODEL::SetPartsAnimSpeed(const enPARTS PartsNum, const double dAnimSpeed)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->SetAnimSpeed(dAnimSpeed);
+}
+
+const int clsMISSION_MODEL::GetPartsAnimNo(const enPARTS PartsNum)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	assert(m_vpParts[cTmpNum]);
+	return m_vpParts[cTmpNum]->GetAnimNo();
 }
