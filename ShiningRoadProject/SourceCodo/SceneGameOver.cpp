@@ -180,8 +180,14 @@ void clsSCENE_GAME_OVER::MenuUpdate( enSCENE &enNextScene )
 		switch( cInformationIndex )
 		{
 		case enINFORMATION_GAME_OVER:
-			enNextScene = enSCENE::TITLE;
-			m_upMenu->Close();
+			{
+				enNextScene = enSCENE::TITLE;
+				m_upMenu->Close();
+				//メニューの下でメッセージの透明度を交換.
+				float tmp = m_fTextAlphaRed;
+				m_fTextAlphaRed = m_fTextAlphaWhite;
+				m_fTextAlphaWhite = tmp;
+			}
 			break;
 
 		case enINFORMATION_CONTINUE:
