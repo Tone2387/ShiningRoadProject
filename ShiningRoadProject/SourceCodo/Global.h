@@ -68,6 +68,8 @@ enum class enDIRECTION : UCHAR
 //このゲームの各シーンの列挙体( フラグ用 ).
 enum class enSCENE : UCHAR
 {
+	EXIT_APP = 0,	//ゲームを閉じる.
+
 	TITLE,		//タイトル画面.
 	ASSEMBLE,	//パーツ組み換え画面.
 	MISSION,	//アクションシーン( ゲームのメイン ).

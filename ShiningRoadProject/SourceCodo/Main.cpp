@@ -54,7 +54,6 @@ INT WINAPI WinMain(
 		//終了.
 		g_upMain->DestroyD3D();//Direct3Dの解放.
 
-//		delete g_upMain;		//クラスの破棄.
 		g_upMain.reset( nullptr );
 	}
 
@@ -263,7 +262,10 @@ void clsMain::Loop()
 	MSG msg = { 0 };
 	ZeroMemory( &msg, sizeof( msg ) );
 
-	while( msg.message != WM_QUIT )
+	//終了フラグ.
+	bool isExitApp = true;
+
+	while( msg.message != WM_QUIT && isExitApp )
 	{
 		Sleep( 1 );
 		sync_now = timeGetTime();	//現在時間を取得.
@@ -279,7 +281,7 @@ void clsMain::Loop()
 			sync_old = sync_now;	//現在時間に置きかえ.
 
 			//アプリケーション処理はここから飛ぶ.
-			AppMain();
+			isExitApp = AppMain();
 		}
 	}
 	//アプリケーションの終了.
@@ -289,14 +291,18 @@ void clsMain::Loop()
 //============================================================
 //	アプリケーションメイン処理.
 //============================================================
-void clsMain::AppMain()
+bool clsMain::AppMain()
 {
+	bool isExitApp;
+
 	//ゲームループ.
 	assert( m_upGame );
-	m_upGame->Update();
+	isExitApp = m_upGame->Update();
 
 	//レンダリング.
 	Render();
+
+	return isExitApp;
 }
 
 //============================================================

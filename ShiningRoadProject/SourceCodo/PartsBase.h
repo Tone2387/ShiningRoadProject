@@ -47,6 +47,9 @@ public:
 	//ボーンが存在するか.
 	bool ExistsBone( const char* sBoneName );
 
+	void AddRotation( const D3DXVECTOR3& vRot ){
+		SetRotation( GetRotation() + vRot );
+	};
 
 protected:
 	//----- 各パーツごとの関数 -----//.

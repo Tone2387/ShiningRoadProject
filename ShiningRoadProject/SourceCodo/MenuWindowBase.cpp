@@ -51,10 +51,7 @@ clsMENU_WINDOW_BASE::~clsMENU_WINDOW_BASE()
 	SAFE_DELETE( m_pNextWindow );
 
 	Operation( false );
-	if( m_pParentWindow ){
-		m_pParentWindow->Operation( true );
-		m_pParentWindow = nullptr;
-	}
+	m_pParentWindow = nullptr;
 
 	m_wpSound = nullptr;
 	m_wpDInput = nullptr;
@@ -121,7 +118,7 @@ void clsMENU_WINDOW_BASE::Render()
 	clsWINDOW_BOX::Render();
 
 	//操作する窓だけカーソル表示.
-	if( m_isOperation ){
+	if( m_isOperation && isStopChange() ){
 		m_upCursor->Render();
 	}
 
@@ -176,15 +173,21 @@ void clsMENU_WINDOW_BASE::Operation( const bool isOperation )
 
 
 //このウィンドウを閉じて親ウィンドウに操作を返す.
-void clsMENU_WINDOW_BASE::Close()
+void clsMENU_WINDOW_BASE::Close( const float fCloseSpdRate )
 {
 	SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 
-	const float CLOSE_SPD_RATE = 2.0f;
-	const D3DXVECTOR2 vCLOSE_SPD = { m_vSize.x / CLOSE_SPD_RATE, m_vSize.y / CLOSE_SPD_RATE };
+	const D3DXVECTOR2 vCLOSE_SPD = { m_vSize.x / fCloseSpdRate, m_vSize.y / fCloseSpdRate };
 	AddChangeData( 
 		vCLOSE_SPD.x, vCLOSE_SPD.y, 
 		encBEFOR_CHANGE::BOTH );
+
+	Operation( false );
+	if( m_pParentWindow ){
+		m_pParentWindow->Operation( true );
+		m_pParentWindow = nullptr;
+	}
+
 }
 
 
@@ -210,7 +213,8 @@ D3DXVECTOR3 clsMENU_WINDOW_BASE::SetPosFromWindow(
 	//窓の中心へ.
 	vReturn += m_vPos;
 	//左上へ.
-	vReturn += m_vSize;
+	const float fHARH = 0.5f;
+	vReturn -= m_vSize * fHARH;
 
 	return vReturn;
 }

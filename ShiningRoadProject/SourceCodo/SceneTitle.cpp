@@ -240,7 +240,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
 			m_wpPtrGroup, nullptr,
 			m_uiInformationDataArray );
-		const D3DXVECTOR3 vMENU_POS = { 400.0f, 550.0f, 0.0f };
+		const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
 		m_upMenuBox->SetPos( vMENU_POS );
 
 		assert( m_wpSound );
@@ -268,12 +268,18 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 		switch( cInformationIndex )
 		{
 		case enINFORMATION_GAME_END:
-			m_upMenuBox->Close();
 //			exit( true );
+			enNextScene = enSCENE::EXIT_APP;
 			break;
+
 		case enINFORMATION_NEXT_SCENE:
 			enNextScene = enSCENE::ASSEMBLE;
 			break;
+
+		case enINFORMATION_CLOSE_MENU:
+			m_upMenuBox->Close();
+			break;
+
 		default:
 			assert( !"•s³‚Èî•ñ‚ª•Ô‚³‚ê‚Ü‚µ‚½" );
 			break;
@@ -304,15 +310,16 @@ void clsSCENE_TITLE::RenderUi()
 	m_upLogo->Render();
 
 
-	assert( m_wpFont );
-	const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
-	m_wpFont->SetPos( vPLESS_START_POS );
-	m_wpFont->SetScale( fPLESS_START_SCALE );
-	m_wpFont->SetColor( vTEXT_COLOR );
-	m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
-
 	if( m_upMenuBox ){
 		m_upMenuBox->Render();
+	}
+	else{
+		assert( m_wpFont );
+		const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
+		m_wpFont->SetPos( vPLESS_START_POS );
+		m_wpFont->SetScale( fPLESS_START_SCALE );
+		m_wpFont->SetColor( vTEXT_COLOR );
+		m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
 	}
 
 #ifdef _DEBUG

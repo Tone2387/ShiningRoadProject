@@ -21,6 +21,11 @@ clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene )
 	case enSCENE::GAMEOVER:
 		return new clsCAMERA_GAMEOVER();
 		break;
+
+	case enSCENE::EXIT_APP:
+		return nullptr;
+		break;
+
 	default:
 		assert( !"不正なシーンが指定されました" );
 		break;

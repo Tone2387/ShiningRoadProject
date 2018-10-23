@@ -36,7 +36,7 @@ public:
 	void Render() final;
 
 	//このウィンドウを閉じて親ウィンドウに操作を返す.
-	void Close();
+	void Close( const float fCloseSpdRate = 4.0f );
 
 	//窓の左上を0として座標を与える.
 	D3DXVECTOR3 SetPosFromWindow( const D3DXVECTOR2& vPos );
@@ -44,10 +44,12 @@ public:
 
 	//選択先した結果を返す.
 	unsigned int GetInformation(){
+		auto ReturnInformation = m_uiInformation;
 		if( m_pNextWindow ){
 			m_pNextWindow->GetInformation();
 		}
-		return m_uiInformation;
+		m_uiInformation = 0;
+		return ReturnInformation;
 	}
 
 
@@ -74,6 +76,18 @@ protected:
 	unsigned int m_uiInformation;
 	//シーンからもらってくる, 情報の何が何を表すかの数値の配列.
 	unsigned int* m_puiInformationDataArray;
+
+	//文字.
+	clsFont* m_wpFont;
+	std::vector< std::unique_ptr< clsUiText > > m_vecupUiText;
+	//選択カーソル.
+	std::unique_ptr< clsSprite2D > m_upCursor;
+
+	//操作.
+	clsXInput*	m_wpXInput;
+	clsDxInput* m_wpDInput;
+
+	clsSOUND_MANAGER_BASE* m_wpSound;
 
 private:
 	virtual void UpdateProduct() = 0;
@@ -102,8 +116,6 @@ private:
 
 
 
-	//選択カーソル.
-	std::unique_ptr< clsSprite2D > m_upCursor;
 
 	//この窓を開いた窓.
 	clsMENU_WINDOW_BASE* m_pParentWindow;
@@ -117,15 +129,6 @@ private:
 
 
 
-	//表示.
-	clsFont* m_wpFont;
-	std::vector< std::unique_ptr< clsUiText > > m_vecupUiText;
-
-	//操作.
-	clsXInput*	m_wpXInput;
-	clsDxInput* m_wpDInput;
-
-	clsSOUND_MANAGER_BASE* m_wpSound;
 };
 
 #endif//#ifndef MENU_WINDOW_BASE_H_
