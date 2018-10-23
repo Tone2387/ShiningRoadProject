@@ -439,7 +439,6 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 
 	if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
-//		enNextScene = enSCENE::MISSION;
 		static int tmpLAnim = 0;
 		m_pAsmModel->PartsAnimChange( static_cast<enPARTS>( m_PartsSelect.Type ), tmpLAnim++ );
 		if( tmpLAnim >= 5 ) tmpLAnim = 0;

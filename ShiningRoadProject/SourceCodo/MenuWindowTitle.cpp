@@ -1,6 +1,6 @@
 #include "MenuWindowTitle.h"
 #include "PtrGroup.h"
-#include "UiText.h"
+//#include "UiText.h"
 
 
 
@@ -18,7 +18,7 @@ clsMENU_WINDOW_TITLE::clsMENU_WINDOW_TITLE(
 		:clsMENU_WINDOW_BASE( pPtrGroup, pParentWindow, pInformationArray )
 {
 	//この窓のサイズ.
-	D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
 	Open( vTHIS_WINDOW_SIZE );
 }
 
@@ -67,35 +67,33 @@ void clsMENU_WINDOW_TITLE::UpdateProduct()
 
 void clsMENU_WINDOW_TITLE::RenderProduct()
 {
-	if( isStopChange() ){
-		//始める.
-		const D3DXVECTOR2 vPOS_START_LOCAL = { 45.0f, 30.0f };
-		const D3DXVECTOR3 vPOS_START = SetPosFromWindow( vPOS_START_LOCAL );
-		const float fSCALE = 24;
-		int iTextRow = 1;
-		m_wpFont->SetPos( vPOS_START );
-		m_wpFont->SetScale( fSCALE );
-		m_wpFont->Render( iTextRow ++ );
+	//始める.
+	const D3DXVECTOR2 vPOS_START_LOCAL = { 45.0f, 30.0f };
+	const D3DXVECTOR3 vPOS_START = SetPosFromWindow( vPOS_START_LOCAL );
+	const float fSCALE = 24;
+	int iTextRow = 1;
+	m_wpFont->SetPos( vPOS_START );
+	m_wpFont->SetScale( fSCALE );
+	m_wpFont->Render( iTextRow ++ );
 
-		//終わる.
-		const D3DXVECTOR2 vPOS_EXIT_LOCAL = { 45.0f, 80.0f };
-		const D3DXVECTOR3 vPOS_EXIT = SetPosFromWindow( vPOS_EXIT_LOCAL );
-		m_wpFont->SetPos( vPOS_EXIT );
-		m_wpFont->Render( iTextRow ++ );
+	//終わる.
+	const D3DXVECTOR2 vPOS_EXIT_LOCAL = { 45.0f, 80.0f };
+	const D3DXVECTOR3 vPOS_EXIT = SetPosFromWindow( vPOS_EXIT_LOCAL );
+	m_wpFont->SetPos( vPOS_EXIT );
+	m_wpFont->Render( iTextRow ++ );
 
-		///カーソル移動.
-		if( m_iSelectNum == 0 ){
-			const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*5.0f, 32.0f, 0.0f };
-			m_upCursor->SetScale( vCURSOR_SCALE );
-			m_upCursor->SetPos( vPOS_START );
-		}
-		else if( m_iSelectNum == 1 ){
-			const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*4.0f, 32.0f, 0.0f };
-			m_upCursor->SetScale( vCURSOR_SCALE );
-			m_upCursor->SetPos( vPOS_EXIT );
-		}
-
+	///カーソル移動.
+	if( m_iSelectNum == 0 ){
+		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*5.0f, 32.0f, 0.0f };
+		m_upCursor->SetScale( vCURSOR_SCALE );
+		m_upCursor->SetPos( vPOS_START );
 	}
+	else if( m_iSelectNum == 1 ){
+		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*4.0f, 32.0f, 0.0f };
+		m_upCursor->SetScale( vCURSOR_SCALE );
+		m_upCursor->SetPos( vPOS_EXIT );
+	}
+
 
 }
 

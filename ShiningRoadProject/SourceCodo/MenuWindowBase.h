@@ -35,7 +35,7 @@ public:
 
 	void Render() final;
 
-	//このウィンドウを閉じて親ウィンドウに操作を返す.
+	//このウィンドウを閉じ始めて親ウィンドウに操作を返す.
 	void Close( const float fCloseSpdRate = 4.0f );
 
 	//窓の左上を0として座標を与える.
@@ -46,11 +46,16 @@ public:
 	unsigned int GetInformation(){
 		auto ReturnInformation = m_uiInformation;
 		if( m_pNextWindow ){
-			m_pNextWindow->GetInformation();
+			ReturnInformation = m_pNextWindow->GetInformation();
 		}
 		m_uiInformation = 0;
 		return ReturnInformation;
 	}
+
+
+	//子供のために必要.
+	clsPOINTER_GROUP*	m_pPtrGroup;
+	unsigned int*		m_puiInformationArray;
 
 
 protected:
@@ -89,6 +94,10 @@ protected:
 
 	clsSOUND_MANAGER_BASE* m_wpSound;
 
+	//次に開く窓.
+	clsMENU_WINDOW_BASE* m_pNextWindow;
+
+
 private:
 	virtual void UpdateProduct() = 0;
 	virtual void RenderProduct() = 0;
@@ -97,6 +106,7 @@ private:
 		clsMENU_WINDOW_BASE* const pParentWindow ) = 0;
 
 	void SetColor( const D3DXVECTOR3& vColor ) final;
+	void SetTextAlpha( const float& fAlpha );
 
 	//カーソル移動に必要.
 	struct HOLD_STATE
@@ -119,15 +129,13 @@ private:
 
 	//この窓を開いた窓.
 	clsMENU_WINDOW_BASE* m_pParentWindow;
-	//次に開く窓.
-	clsMENU_WINDOW_BASE* m_pNextWindow;
 
 
 	//trueならこの窓を動かせる.
 	bool m_isOperation;
-
-
-
+	
+	//この窓を閉じる予約.
+	bool m_isClose;
 
 };
 

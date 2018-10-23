@@ -4,7 +4,7 @@
 #include "CameraGameOver.h"
 #include "MissionModel.h"
 #include "Sprite2DCenter.h"
-class clsWINDOW_BOX;
+class clsMENU_WINDOW_GAME_OVER_CONTINUE;
 
 //================================//
 //========== ゲームオーバークラス ==========//
@@ -23,6 +23,11 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
+	//メニューの動き.
+	void MenuUpdate( enSCENE &enNextScene );
+
+
+
 	struct MESSAGE_TEXT_STATE
 	{
 		D3DXVECTOR3 vPos;
@@ -37,34 +42,39 @@ private:
 	enum enMESSAGE_INDEX : int
 	{
 		enMESSAGE_INDEX_MISSION_FAILD = 0,
-		enMESSAGE_INDEX_CONTINUE,
-		enMESSAGE_INDEX_YES,
-		enMESSAGE_INDEX_NO,
 		enMESSAGE_INDEX_GAME_OVER,
 
 		enMESSAGE_INDEX_size
 	};
-	//メッセボックス.
-	std::unique_ptr< clsWINDOW_BOX > m_upBox;
 	MESSAGE_TEXT_STATE m_TextStateArray[ enMESSAGE_INDEX_size ];
+
 	float m_fTextAlphaWhite;
 	float m_fTextAlphaRed;
 
-	bool m_bCanBoxOpen;
-	bool m_isBoxOpened;
 
-	bool m_isYes;
 
-	//選択している選択肢を照らす.
-	std::unique_ptr< clsSprite2D > m_upSelect;
+
+
+
+	//メッセボックス.
+	std::unique_ptr< clsMENU_WINDOW_GAME_OVER_CONTINUE > m_upMenu;
+
+	//メニューから受け取った情報を照合するindex.
+	enum enINFORMATION : char
+	{
+		enINFORMATION_GAME_OVER = 0,
+		enINFORMATION_CONTINUE,
+		enINFORMATION_ASSEMBLE,
+
+		enINFORMATION_size
+	};
+	unsigned int m_uiInformationDataArray[ enINFORMATION_size ];
+
+
+
 
 	//黒背景.
 	std::unique_ptr< clsSprite2D > m_upBlackBack;
-
-
-
-//	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
-//	std::unique_ptr< clsSPRITE2D_CENTER > m_upMissionFailed;
 
 
 		//音の引数.

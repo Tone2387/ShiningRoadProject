@@ -26,7 +26,7 @@ clsLINE_BOX::clsLINE_BOX(
 	,m_isChangeBigW( false )
 	,m_isChangeBigH( false )
 	,m_encBeforChange( encBEFOR_CHANGE::NOTHING )
-	,m_isStopChange( true )
+	,m_isStopChange( false )
 {
 	m_vPos = { WND_W/2, WND_H/2, 0.0f };
 
