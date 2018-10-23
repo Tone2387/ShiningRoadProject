@@ -252,3 +252,19 @@ const int clsMISSION_MODEL::GetPartsAnimNo(const enPARTS PartsNum)
 	assert(m_vpParts[cTmpNum]);
 	return m_vpParts[cTmpNum]->GetAnimNo();
 }
+
+const bool clsMISSION_MODEL::IsPartsAnimEnd(const enPARTS PartsNum)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	assert(m_vpParts[cTmpNum]);
+	return m_vpParts[cTmpNum]->IsAnimTimeEnd();
+}
+
+const double clsMISSION_MODEL::GetPartsAnimNowTime(const enPARTS PartsNum)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	assert(m_vpParts[cTmpNum]);
+	return m_vpParts[cTmpNum]->GetAnimTime();
+}

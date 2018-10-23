@@ -60,6 +60,10 @@ public:
 
 	//指定したパーツのアニメーション番号を渡す.
 	const int GetPartsAnimNo(const enPARTS PartsNum);
+	//指定したパーツのアニメーション終了を渡す.
+	const bool IsPartsAnimEnd(const enPARTS PartsNum);
+	//指定したパーツのアニメーション再生時間を渡す.
+	const double GetPartsAnimNowTime(const enPARTS PartsNum);
 
 private:
 
