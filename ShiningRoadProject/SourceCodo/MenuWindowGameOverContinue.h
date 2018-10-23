@@ -3,6 +3,8 @@
 
 #include "MenuWindowBase.h"
 
+//やられたときにコンティニューするかしないか聞いてくる.
+//コンティニューするならロボを組みなおすか聞いてくるメニューを開く.
 class clsMENU_WINDOW_GAME_OVER_CONTINUE : public clsMENU_WINDOW_BASE
 {
 public:

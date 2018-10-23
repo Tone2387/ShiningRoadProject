@@ -133,6 +133,7 @@
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowGameOverContinue.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowGameOverDoAssemble.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowTitle.cpp" />
     <ClCompile Include="SourceCodo\MissionModel.cpp" />
     <ClCompile Include="SourceCodo\Object.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="SourceCodo\Main.h" />
     <ClInclude Include="SourceCodo\MenuWindowBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowGameOverContinue.h" />
+    <ClInclude Include="SourceCodo\MenuWindowGameOverDoAssemble.h" />
     <ClInclude Include="SourceCodo\MenuWindowTitle.h" />
     <ClInclude Include="SourceCodo\MissionModel.h" />
     <ClInclude Include="SourceCodo\MyMacro.h" />

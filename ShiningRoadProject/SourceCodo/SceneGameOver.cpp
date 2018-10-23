@@ -33,8 +33,7 @@ const D3DXVECTOR4 vTEXT_COLOR_GAME_OVER = { 1.0f, 0.0625f, 0.0625f, 1.0f };
 //========== ゲームオーバークラス ==========//
 //================================//
 clsSCENE_GAME_OVER::clsSCENE_GAME_OVER( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
-	,m_fTextAlphaWhite( 1.0f )
-	,m_fTextAlphaRed( 0.0f )
+	,m_enTextRenderIndex( enMESSAGE_INDEX_MISSION_FAILD )
 {
 }
 
@@ -174,28 +173,25 @@ void clsSCENE_GAME_OVER::MenuUpdate( enSCENE &enNextScene )
 		for( char i=0; i<enINFORMATION_size; i++ ){
 			//有用な情報と合致したなら.
 			if( uiReceiveInformation == m_uiInformationDataArray[i] ){
+				m_upMenu->Close();
 				cInformationIndex = i;
 			}
 		}
 		switch( cInformationIndex )
 		{
 		case enINFORMATION_GAME_OVER:
-			{
-				enNextScene = enSCENE::TITLE;
-				m_upMenu->Close();
-				//メニューの下でメッセージの透明度を交換.
-				float tmp = m_fTextAlphaRed;
-				m_fTextAlphaRed = m_fTextAlphaWhite;
-				m_fTextAlphaWhite = tmp;
-			}
+			enNextScene = enSCENE::TITLE;
+			m_enTextRenderIndex = enMESSAGE_INDEX_GAME_OVER;
 			break;
 
 		case enINFORMATION_CONTINUE:
 			enNextScene = enSCENE::MISSION;
+			m_enTextRenderIndex = enMESSAGE_INDEX_NEVER_GIVE_UP;
 			break;
 
 		case enINFORMATION_ASSEMBLE:
 			enNextScene = enSCENE::ASSEMBLE;
+			m_enTextRenderIndex = enMESSAGE_INDEX_NEVER_GIVE_UP;
 			break;
 
 		default:
@@ -203,6 +199,7 @@ void clsSCENE_GAME_OVER::MenuUpdate( enSCENE &enNextScene )
 			break;
 		}
 	}
+
 
 	//( 見た目が )消えたら( メモリからも )消える.
 	if( m_upMenu->isDeletePermission() ){
@@ -223,22 +220,40 @@ void clsSCENE_GAME_OVER::RenderUi()
 	m_upBlackBack->Render();
 
 
-	for( char i=0; i<enMESSAGE_INDEX_size; i++ ){
-		//日本語描画.
-		m_wpFont->SetPos( m_TextStateArray[i].vPos );
-		m_wpFont->SetScale( m_TextStateArray[i].fScale );
 
-		if( i == enMESSAGE_INDEX_MISSION_FAILD ){
+//	for( char i=0; i<enMESSAGE_INDEX_size; i++ ){
+//		//日本語描画.
+//		m_wpFont->SetPos( m_TextStateArray[i].vPos );
+//		m_wpFont->SetScale( m_TextStateArray[i].fScale );
+//
+//		if( i == enMESSAGE_INDEX_MISSION_FAILD ){
+//			m_wpFont->SetColor( vTEXT_COLOR );
+//			m_wpFont->SetAlpha( m_fTextAlphaWhite );
+//		}
+//		else if( i == enMESSAGE_INDEX_GAME_OVER ){
+//			m_wpFont->SetColor( vTEXT_COLOR_GAME_OVER );
+//			m_wpFont->SetAlpha( m_fTextAlphaRed );
+//		}
+//
+//		m_wpFont->Render( i );
+//	}
+
+		if( m_enTextRenderIndex == enMESSAGE_INDEX_MISSION_FAILD ){
 			m_wpFont->SetColor( vTEXT_COLOR );
-			m_wpFont->SetAlpha( m_fTextAlphaWhite );
 		}
-		else if( i == enMESSAGE_INDEX_GAME_OVER ){
+		else if( m_enTextRenderIndex == enMESSAGE_INDEX_GAME_OVER ){
 			m_wpFont->SetColor( vTEXT_COLOR_GAME_OVER );
-			m_wpFont->SetAlpha( m_fTextAlphaRed );
+		}
+		else if( m_enTextRenderIndex == enMESSAGE_INDEX_NEVER_GIVE_UP ){
+			m_wpFont->SetColor( vTEXT_COLOR );
 		}
 
-		m_wpFont->Render( i );
-	}
+		//日本語描画.
+		m_wpFont->SetPos( m_TextStateArray[ m_enTextRenderIndex ].vPos );
+		m_wpFont->SetScale( m_TextStateArray[ m_enTextRenderIndex ].fScale );
+		m_wpFont->SetAlpha( 1.0f );
+		m_wpFont->Render( m_enTextRenderIndex );
+
 
 	if( m_upMenu ){
 		m_upMenu->Render();

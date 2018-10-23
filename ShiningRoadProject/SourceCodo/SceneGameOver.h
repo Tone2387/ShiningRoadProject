@@ -43,13 +43,13 @@ private:
 	{
 		enMESSAGE_INDEX_MISSION_FAILD = 0,
 		enMESSAGE_INDEX_GAME_OVER,
+		enMESSAGE_INDEX_NEVER_GIVE_UP,
 
 		enMESSAGE_INDEX_size
 	};
 	MESSAGE_TEXT_STATE m_TextStateArray[ enMESSAGE_INDEX_size ];
+	enMESSAGE_INDEX m_enTextRenderIndex;
 
-	float m_fTextAlphaWhite;
-	float m_fTextAlphaRed;
 
 
 
