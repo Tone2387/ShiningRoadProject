@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LINE_BOX_H_
+#define LINE_BOX_H_
+
 
 #include "Sprite2DCenter.h"
 
@@ -96,3 +98,4 @@ private:
 	bool m_isStopChange;
 
 };
+#endif//#ifndef LINE_BOX_H_

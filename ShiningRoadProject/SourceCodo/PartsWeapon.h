@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PARTS_WEAPON_H_
+#define PARTS_WEAPON_H_
+
 
 #include "PartsBase.h"
 
@@ -44,3 +46,4 @@ private:
 
 };
 
+#endif//PARTS_WEAPON_H_

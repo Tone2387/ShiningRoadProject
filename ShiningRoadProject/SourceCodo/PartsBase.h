@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef PARTS_BASE_H_
+#define PARTS_BASE_H_
 
 
 #include "Global.h"
@@ -64,3 +64,4 @@ private:
 
 };
 
+#endif//#ifndef PARTS_BASE_H_

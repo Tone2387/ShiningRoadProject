@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ASSENBLE_UI_H_
+#define ASSENBLE_UI_H_
 
 //#include "Global.h"
 #include "DxInput.h"
@@ -171,3 +172,5 @@ private:
 	std::unique_ptr< clsSprite2D > m_upDegine;
 #endif//#if _DEBUG
 };
+
+#endif//#ifndef ASSENBLE_UI_H_

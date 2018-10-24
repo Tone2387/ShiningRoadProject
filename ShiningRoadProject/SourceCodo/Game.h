@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GAME_H_
+#define GAME_H_
+
 
 #include "FactoryScene.h"
 #include "FactoryCamera.h"
@@ -96,3 +98,4 @@ private:
 };
 
 
+#endif//#ifndef GAME_H_

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ASSEMBLE_MODEL_H_
+#define ASSEMBLE_MODEL_H_
+
 
 #include "FactoryParts.h"
 
@@ -6,6 +8,8 @@
 
 #include "RoboStatus.h"
 
+//足元の基点のボーン名.
+#define sBONE_NAME_LEG_POSITION_BASE "PositionBase"
 
 //連結部分のボーン名.
 #define sBONE_NAME_LEG_TO_CORE		"JunctionCore"
@@ -160,3 +164,4 @@ private:
 
 };
 
+#endif//#ifndef ASSEMBLE_MODEL_H_

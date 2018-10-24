@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SCENE_GAME_OVER_H_
+#define SCENE_GAME_OVER_H_
+
 
 #include "SceneBase.h"
 #include "CameraGameOver.h"
@@ -104,3 +106,4 @@ private:
 
 
 };
+#endif//#ifndef SCENE_GAME_OVER_H_

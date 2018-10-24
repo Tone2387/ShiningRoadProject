@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PARTS_WINDOW_MODEL_FOR_ARMS_H_
+#define PARTS_WINDOW_MODEL_FOR_ARMS_H_
 
 #include "AssembleModel.h"
 
@@ -28,3 +29,4 @@ private:
 	bool isRender( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
 
 };
+#endif//#ifndef PARTS_WINDOW_MODEL_FOR_ARMS_H_

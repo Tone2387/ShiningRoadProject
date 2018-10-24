@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UI_TEXT_H_
+#define UI_TEXT_H_
 
 //警告についてのコード分析を無効にする.4005:再定義.
 #pragma warning( disable:4005 )	
@@ -100,3 +101,4 @@ private:
 
 
 };
+#endif//#ifndef UI_TEXT_H_

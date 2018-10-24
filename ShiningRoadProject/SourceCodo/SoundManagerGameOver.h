@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SOUND_MANAGER_GAME_OVER_H_
+#define SOUND_MANAGER_GAME_OVER_H_
 
 #include "SoundManagerBase.h"
 
@@ -16,3 +17,4 @@ private:
 
 };
 
+#endif//#ifndef SOUND_MANAGER_GAME_OVER_H_

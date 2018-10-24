@@ -1,4 +1,6 @@
-#pragma once 
+#ifndef ROBO_STATUS_H_
+#define ROBO_STATUS_H_
+
 
 #include "Global.h"
 
@@ -165,3 +167,4 @@ private:
 	int m_iColorRankHero[ enCOLOR_GAGE_size ];
 
 };
+#endif//#ifndef ROBO_STATUS_H_

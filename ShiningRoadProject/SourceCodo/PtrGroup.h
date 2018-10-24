@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PTR_GROUP_H_
+#define PTR_GROUP_H_
+
 
 #include "DxInput.h"
 #include "CXInput.h"
@@ -81,3 +83,4 @@ private:
 	clsFont*			m_wpFont;
 };
 
+#endif//#ifndef PTR_GROUP_H_
