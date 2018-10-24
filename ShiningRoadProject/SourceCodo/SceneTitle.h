@@ -7,7 +7,7 @@
 #include "AssembleModel.h"
 
 
-class clsMENU_WINDOW_TITLE;
+class clsMENU_WINDOW_TITLE_START_OR_END;
 
 //================================//
 //========== タイトルクラス ==========//
@@ -41,7 +41,7 @@ private:
 
 
 
-	std::unique_ptr< clsMENU_WINDOW_TITLE > m_upMenuBox;
+	std::unique_ptr< clsMENU_WINDOW_TITLE_START_OR_END > m_upMenuBox;
 
 	//メニューから受け取った情報を照合する.
 	enum enINFORMATION : char

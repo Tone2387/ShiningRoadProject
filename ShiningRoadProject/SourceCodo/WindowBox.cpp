@@ -33,7 +33,6 @@ void clsWINDOW_BOX::Update()
 
 	m_upBack->SetPos( m_vPos );
 	m_upBack->SetScale( m_vSize );
-	m_upBack->SetAlpha( m_fAlpha );
 
 }
 
@@ -47,3 +46,15 @@ void clsWINDOW_BOX::Render()
 }
 
 
+void clsWINDOW_BOX::SetAlpha( const float fAlpha )
+{
+	clsLINE_BOX::SetAlpha( fAlpha );
+	SetAlphaBack( fAlpha );
+
+}
+
+void clsWINDOW_BOX::SetAlphaBack( const float fAlpha )
+{
+	m_fAlpha = fAlpha;
+	m_upBack->SetAlpha( m_fAlpha );
+}

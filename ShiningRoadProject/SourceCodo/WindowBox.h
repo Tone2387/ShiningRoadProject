@@ -17,13 +17,16 @@ public:
 	virtual void Render() override;
 
 
+	void SetAlpha( const float fAlpha ) override;
+
+	void SetAlphaBack( const float fAlpha );
+
 protected:
 
 	virtual void SetColor( const D3DXVECTOR3& vColor ) override {
 		clsLINE_BOX::SetColor( vColor );
 		m_upBack->SetColor( vColor );
 	}
-
 
 private:
 

@@ -348,9 +348,6 @@
     <ClCompile Include="SourceCodo\MenuWindowBase.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\MenuWindowTitle.cpp">
-      <Filter>Tahara\UI\MenuWindows</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\MenuWindowGameOverContinue.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
@@ -358,6 +355,12 @@
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\MenuWindowGameOverBase.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowTitleStartOrEnd.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowTitleBase.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -629,9 +632,6 @@
     <ClInclude Include="SourceCodo\MenuWindowBase.h">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\MenuWindowTitle.h">
-      <Filter>Tahara\UI\MenuWindows</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\MenuWindowGameOverContinue.h">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
@@ -639,6 +639,12 @@
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\MenuWindowGameOverBase.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowTitleStartOrEnd.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowTitleBase.h">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
   </ItemGroup>

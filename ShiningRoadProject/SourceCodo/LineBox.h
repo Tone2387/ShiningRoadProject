@@ -48,7 +48,7 @@ public:
 	D3DXVECTOR3 GetPos() const;
 	D3DXVECTOR3 GetSize() const;
 
-	void SetAlpha( const float fAlpha );
+	virtual void SetAlpha( const float fAlpha );
 	//”ÍˆÍ‚ðover‚·‚é‚Æfalse‚ª•Ô‚Á‚Ä‚­‚é.
 	bool AddAlpha( const float fAlpha );
 

@@ -1,6 +1,6 @@
 #include "SceneTitle.h"
 #include "WindowBox.h"
-#include "MenuWindowTitle.h"
+#include "MenuWindowTitleStartOrEnd.h"
 #include "File.h"
 
 using namespace std;
@@ -108,7 +108,7 @@ void clsSCENE_TITLE::CreateProduct()
 
 //	//箱.
 //	assert( !m_upMenuBox );
-//	m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
+//	m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
 //		m_wpPtrGroup, nullptr );
 
 //	//カメラ.
@@ -237,7 +237,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	if( isPressEnter() ){
 		//メニューウィンドウ作成.
 		assert( !m_upMenuBox );
-		m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
+		m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
 			m_wpPtrGroup, nullptr,
 			m_uiInformationDataArray );
 		const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
