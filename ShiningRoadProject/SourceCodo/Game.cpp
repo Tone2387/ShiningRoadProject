@@ -7,8 +7,8 @@ const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
 
 //起動時の初期シーン.
 #define START_UP_SCENE enSCENE::TITLE
-//シーン初期化時の初期BGM番号.
-const int iINIT_SCENE_BGM_NO = 0;
+//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
+#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
 
 const unsigned char cSTART_UP_MUSIC_NO = 0;
 
@@ -97,9 +97,8 @@ void clsGAME::Create()
 	m_upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
 
 	assert( !m_spSound );
-	m_spSound = m_upSoundFactory->Create( START_UP_SCENE, m_hWnd );
-	m_spSound->Create();
-//	m_spSound->PlayBGM( cSTART_UP_MUSIC_NO );//起動音再生.
+//	m_spSound = m_upSoundFactory->Create( START_UP_SCENE, m_hWnd );
+//	m_spSound->Create();
 
 	assert( !m_spEffect );
 	m_spEffect = new clsEffects;
@@ -132,12 +131,12 @@ void clsGAME::Create()
 
 	//ファクトリの作成.
 	assert( !m_upSceneFactory );
-//	m_pSceneFactory = new clsSCENE_FACTORY( m_spPtrGroup );
 	m_upSceneFactory = make_unique< clsSCENE_FACTORY >( m_spPtrGroup );
 	assert( !m_upCameraFactory );
-//	m_pCameraFactory = new clsFACTORY_CAMERA;
 	m_upCameraFactory = make_unique< clsFACTORY_CAMERA >();
 
+	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
+	SwitchScene( GET_STATUS_DATA_INIT_SCENE, true );
 	//最初のシーンはタイトルを指定する.
 	SwitchScene( START_UP_SCENE, true );
 
