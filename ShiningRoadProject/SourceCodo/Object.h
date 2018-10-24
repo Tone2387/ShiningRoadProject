@@ -16,7 +16,7 @@ const float g_fDistanceReference = 0.01f;//距離の規定値.
 const float g_fDirectionReference = 0.001f;//回転値の規定値.
 const float g_fGravity = 0.01f;//重力.
 const float g_fGroundSpece = 0.01f;
-const float g_fRaySpace = 0.01f;
+const float g_fRaySpace = 0.5f;
 
 const D3DXVECTOR3 g_vDirForward	= D3DXVECTOR3(  0.0f,  0.0f,  1.0f);
 const D3DXVECTOR3 g_vDirBack	= D3DXVECTOR3(  0.0f,  0.0f, -1.0f);
