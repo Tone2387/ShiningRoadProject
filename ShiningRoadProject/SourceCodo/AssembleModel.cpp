@@ -300,6 +300,7 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	FitJointModel( m_vpParts[ucWEAPON_R], m_vpParts[ucARM_R],
 		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );
 
+
 	m_vpParts[ucWEAPON_L]->AddRotation( { m_vpParts[ucARM_L]->GetRotation().x, 0.0f, 0.0f } );
 	m_vpParts[ucWEAPON_R]->AddRotation( { m_vpParts[ucARM_R]->GetRotation().x, 0.0f, 0.0f } );
 }

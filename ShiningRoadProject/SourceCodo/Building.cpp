@@ -1,4 +1,6 @@
 #include "Building.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 using namespace std;
 
@@ -26,7 +28,7 @@ clsBUILDING::clsBUILDING(
 		{ 0.0f, 0.0f, 0.0f },
 		{ 100.0f, 100.0f, 100.0f } } )
 {
-	m_upBox = make_unique< clsCharaStatic >();
+	m_upBox = make_unique< clsObjStaticMesh >();
 	m_upBox->AttachModel( pModel );
 
 
@@ -577,7 +579,7 @@ D3DXVECTOR3 clsBUILDING::GetTilePosForRotation(
 
 clsDX9Mesh* clsBUILDING::GetModelPtr()
 {
-	clsDX9Mesh* pReturn = m_upBox->GetModelPtr();
+	clsDX9Mesh* pReturn = m_upBox->GetStaticMesh();
 
 	return pReturn;
 }
