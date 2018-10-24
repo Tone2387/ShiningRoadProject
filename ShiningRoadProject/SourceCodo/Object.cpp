@@ -93,6 +93,31 @@ bool clsObject::Intersect(
 			+ U * (vVertex[1] - vVertex[0])
 			+ V * (vVertex[2] - vVertex[0]);
 
+		/*pvIntersect->x += pTarget->m_Trans.vPos.x;
+		pvIntersect->y += pTarget->m_Trans.vPos.y;
+		pvIntersect->z += pTarget->m_Trans.vPos.z;
+
+		D3DXMatrixTranslation(&mTrans,
+			pvIntersect->x,
+			pvIntersect->y,
+			pvIntersect->z);
+
+		D3DXMatrixRotationYawPitchRoll(&mRotate,
+			pTarget->m_Trans.fYaw,
+			pTarget->m_Trans.fPitch,
+			pTarget->m_Trans.fRoll);
+
+		D3DXMatrixScaling(&mScale,
+			pTarget->m_Trans.vScale.x,
+			pTarget->m_Trans.vScale.y,
+			pTarget->m_Trans.vScale.z);
+
+		matWorld = mTrans * mRotate * mScale;
+
+		pvIntersect->x = matWorld._41;
+		pvIntersect->y = matWorld._42;
+		pvIntersect->z = matWorld._43;*/
+
 		pvIntersect->x *= pTarget->m_Trans.vScale.x;
 		pvIntersect->y *= pTarget->m_Trans.vScale.y;
 		pvIntersect->z *= pTarget->m_Trans.vScale.z;
@@ -624,7 +649,7 @@ bool clsObject::WallJudge(clsStage* const pStage)
 
 	bool bResult = false;
 
-	/*clsDX9Mesh* pObjMesh = vvpMeshTmp[0];
+	clsDX9Mesh* pObjMesh = vvpMeshTmp[vvpMeshTmp.size() - 1];
 
 	if (!pObjMesh)return false;
 
@@ -651,10 +676,11 @@ bool clsObject::WallJudge(clsStage* const pStage)
 	if (!bResult)
 	{
 		bResult = bHit;
-	}*/
+	}
 
-	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
+	/*for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{
+		pStage->SetStageObjTransform(i);
 		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
 
 		if (!pObjMesh)continue;
@@ -683,7 +709,7 @@ bool clsObject::WallJudge(clsStage* const pStage)
 		{
 			bResult = bHit; 
 		}
-	}
+	}*/
 
 	FreeFoll();
 

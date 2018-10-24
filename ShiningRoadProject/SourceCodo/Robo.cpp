@@ -30,6 +30,7 @@ enum enAnimNoLeg
 	enAnimNoLegBoostEnd,
 	enAnimNoLegJumpStart,
 	enAnimNoLegJumpUp,
+	enAnimNoLegJump,
 	enAnimNoLegJumpDown,
 	enAnimNoLegJumpEnd,
 	enAnimNoLegDown
@@ -1334,6 +1335,14 @@ void clsRobo::AnimUpdateLeg()
 		break;
 	case enAnimNoLegJumpUp:
 
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegJump;
+		}
+
+		break;
+	case enAnimNoLegJump:
+
 		if (m_fFollPower < 0)
 		{
 			iChangeAnimNo = enAnimNoLegJumpDown;
@@ -1342,9 +1351,15 @@ void clsRobo::AnimUpdateLeg()
 		break;
 	case enAnimNoLegJumpDown:
 
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, 0.0);
+		}
+
 		if (m_bGround)
 		{
 			iChangeAnimNo = enAnimNoLegJumpEnd;
+			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
 		}
 
 		break;

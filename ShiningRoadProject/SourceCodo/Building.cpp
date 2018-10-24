@@ -86,6 +86,8 @@ void clsBUILDING::Update()
 	m_upBox->SetRotation( m_Trans.vRot );
 	m_upBox->SetScale( m_Trans.vScale );
 
+	m_upBox->ModelTransUpdate();
+
 	//è„ñ .
 	{
 		const int iEND_LOOP = 1;
