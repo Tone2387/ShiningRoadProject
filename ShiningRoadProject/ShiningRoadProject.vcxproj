@@ -132,6 +132,7 @@
     <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowBase.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowGameOverBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowGameOverContinue.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowGameOverDoAssemble.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowTitle.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
     <ClInclude Include="SourceCodo\MenuWindowBase.h" />
+    <ClInclude Include="SourceCodo\MenuWindowGameOverBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowGameOverContinue.h" />
     <ClInclude Include="SourceCodo\MenuWindowGameOverDoAssemble.h" />
     <ClInclude Include="SourceCodo\MenuWindowTitle.h" />

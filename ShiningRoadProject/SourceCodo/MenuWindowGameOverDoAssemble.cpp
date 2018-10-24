@@ -3,24 +3,13 @@
 //#include "UiText.h"
 
 
-namespace{
-	//渡す情報の添え字.
-	const char INFORMATION__INDEX_GAME_OVER	= 0;
-	const char INFORMATION__INDEX_CONTINUE	= 1;
-	const char INFORMATION__INDEX_ASSEMBLE	= 2;
-}
-
-
 
 clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	unsigned int* const pInformationArray )
-	:clsMENU_WINDOW_BASE( pPtrGroup, pParentWindow, pInformationArray, enSE_WIN_DISAPP )
+	:clsMENU_WINDOW_GAME_OVER_BASE( pPtrGroup, pParentWindow, pInformationArray )
 {
-	assert( m_wpSound );
-	m_wpSound->PlaySE( enSE_WIN_APP );
-
 	//この窓のサイズ.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 400.0f };
 	Open( vTHIS_WINDOW_SIZE );
@@ -60,11 +49,11 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::UpdateProduct()
 		m_wpSound->PlaySE( enSE_ENTER );
 		//アセンブルしなおす.
 		if( m_iSelectNum == 0 ){
-			m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_ASSEMBLE ];
+			m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_ASSEMBLE ];
 		}
 		//そのまま戦う.
 		else if( m_iSelectNum == 1 ){
-			m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_CONTINUE ];
+			m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_CONTINUE ];
 		}
 	}
 
