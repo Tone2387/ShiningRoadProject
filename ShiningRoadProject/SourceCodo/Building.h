@@ -2,7 +2,7 @@
 #define BUILDING_H_
 
 #include "Global.h"
-#include "CharaStatic.h"
+#include"ObjStaticMesh.h"
 #include "Sprite.h"
 #include <vector>
 
@@ -101,7 +101,7 @@ private:
 	std::vector< std::vector< TRANSFORM > > m_vvSide[ enWALL_DIRECTION_size ];
 
 
-	std::unique_ptr< clsCharaStatic > m_upBox;
+	std::unique_ptr< clsObjStaticMesh > m_upBox;
 
 
 	std::unique_ptr< clsSprite > m_upTop;
