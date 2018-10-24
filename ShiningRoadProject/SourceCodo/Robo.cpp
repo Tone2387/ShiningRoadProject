@@ -32,7 +32,7 @@ enum enAnimNoLeg
 	enAnimNoLegJumpUp,
 	enAnimNoLegJumpDown,
 	enAnimNoLegJumpEnd,
-	//enAnimNoLegDown
+	enAnimNoLegDown
 };
 
 void clsRobo::RoboInit(
@@ -195,7 +195,7 @@ void clsRobo::RoboInit(
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
 
-	m_pMesh->PartsAnimChange(enPARTS::ARM_R, 2);
+	m_pMesh->PartsAnimChange(enPARTS::ARM_R, 3);
 	m_pMesh->SetAnimSpd(g_dAnimSpeedReference);
 }
 
@@ -397,6 +397,7 @@ void clsRobo::UpdataLimitTime()
 	if (m_iActivityLimitTime < 0)
 	{
 		m_bTimeUp = true;
+		m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegDown);
 	}
 
 	else
@@ -1355,7 +1356,13 @@ void clsRobo::AnimUpdateLeg()
 		}
 
 		break;
-	default:
+	case enAnimNoLegDown:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, 0.0);
+		}
+
 		break;
 	}
 
