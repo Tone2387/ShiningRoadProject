@@ -93,6 +93,7 @@ public:
 	//0~16で返す.
 	int GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 
+
 #if _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
@@ -103,6 +104,12 @@ protected:
 	//継承先で使ってね.
 	virtual void CreateProduct();
 	virtual void UpdateProduct();
+
+
+	//パーツをボーンの位置( 正式な場所 )に合わせる( +武器の角度を腕に合わせる ).
+	void SetPartsFormalPos(){
+		SetPos( GetPos() );
+	}
 
 	//腕の角度を武器も模写する.
 	void FitJointModel( 
