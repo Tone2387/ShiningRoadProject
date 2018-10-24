@@ -132,7 +132,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpSound->PlaySE( enSE_BOMBER );
 	}
 	if( m_wpXInput->isSlopeExit( XINPUT_RIGHT ) ){
-		m_wpSound->PlaySE( enSE_GUITAR );
+		m_wpSound->PlaySE( enSE_WIN_APP );
 	}
 
 	//エフェクトの使い方.
@@ -243,8 +243,6 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
 		m_upMenuBox->SetPos( vMENU_POS );
 
-		assert( m_wpSound );
-		m_wpSound->PlaySE( enSE_ENTER );
 	}
 
 

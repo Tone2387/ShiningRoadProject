@@ -17,7 +17,10 @@ clsMENU_WINDOW_TITLE::clsMENU_WINDOW_TITLE(
 		unsigned int* const pInformationArray )
 		:clsMENU_WINDOW_BASE( pPtrGroup, pParentWindow, pInformationArray )
 {
-	//この窓のサイズ.
+	assert( m_wpSound );
+	m_wpSound->PlaySE( enSE_WIN_APP );
+
+		//この窓のサイズ.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
 	Open( vTHIS_WINDOW_SIZE );
 }
@@ -39,7 +42,9 @@ void clsMENU_WINDOW_TITLE::UpdateProduct()
 		if( m_iSelectNum < 0 ){
 			m_iSelectNum = 0;
 		}
-
+		else{
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		}
 	}
 
 	if( SelectDown() ){
@@ -47,18 +52,24 @@ void clsMENU_WINDOW_TITLE::UpdateProduct()
 		if( m_iSelectNum > iSELECT_NUM_MAX ){
 			m_iSelectNum = iSELECT_NUM_MAX;
 		}
+		else{
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		}
 	}
 
 	if( SelectEnter() ){
 		if( m_iSelectNum ){
+			m_wpSound->PlaySE( enSE_EXIT );
 			m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_GAME_END ];
 		}
 		else{
+			m_wpSound->PlaySE( enSE_ENTER );
 			m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_NEXT_SCENE ];
 		}
 	}
 
 	if( SelectExit() ){
+		m_wpSound->PlaySE( enSE_WIN_DIS_APP );
 		m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_CLOSE_MENU ];
 	}
 

@@ -25,6 +25,17 @@ private:
 		clsMENU_WINDOW_BASE* const pParentWindow ) override;
 
 
+	enum enSE : int
+	{
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+
+		enSE_BOMBER,
+
+		enSE_WIN_APP,
+		enSE_WIN_DIS_APP
+	};
 
 
 };
