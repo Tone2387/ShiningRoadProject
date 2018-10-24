@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SOUND_MANAGER_BASE_H_
+#define SOUND_MANAGER_BASE_H_
 
 
 #include "Sound.h"
@@ -120,3 +121,4 @@ private:
 
 };
 
+#endif//#ifndef SOUND_MANAGER_BASE_H_

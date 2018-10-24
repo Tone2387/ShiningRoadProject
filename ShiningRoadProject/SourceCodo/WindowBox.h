@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WINDOW_BOX_H_
+#define WINDOW_BOX_H_
 
 #include "LineBox.h"
 
@@ -35,3 +36,4 @@ private:
 
 };
 
+#endif//#ifndef WINDOW_BOX_H_

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RENDER_AT_START_UP_H_
+#define RENDER_AT_START_UP_H_
 
 //#include "Global.h"
 #include "Sprite2DCenter.h"
@@ -94,3 +95,4 @@ private:
 };
 
 
+#endif//#ifndef RENDER_AT_START_UP_H_

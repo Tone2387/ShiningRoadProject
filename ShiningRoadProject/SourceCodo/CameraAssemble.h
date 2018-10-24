@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CAMERA_ASSEMBLE_H_
+#define CAMERA_ASSEMBLE_H_
+
 
 #include "Camera.h"
 
@@ -17,3 +19,4 @@ private:
 
 };
 
+#endif//#ifndef CAMERA_ASSEMBLE_H_

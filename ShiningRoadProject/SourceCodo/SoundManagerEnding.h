@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SOUND_MANAGER_ENDING_H_
+#define SOUND_MANAGER_ENDING_H_
 
 #include "SoundManagerBase.h"
 
@@ -16,3 +17,4 @@ private:
 
 };
 
+#endif//#ifndef SOUND_MANAGER_ENDING_H_

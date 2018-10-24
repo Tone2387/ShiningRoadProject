@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ASSEMBLE_MODEL_H_
+#define ASSEMBLE_MODEL_H_
+
 
 #include "FactoryParts.h"
 
@@ -160,3 +162,4 @@ private:
 
 };
 
+#endif//#ifndef ASSEMBLE_MODEL_H_

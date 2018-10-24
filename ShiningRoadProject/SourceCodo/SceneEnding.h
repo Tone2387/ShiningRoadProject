@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SCENE_ENDING_H_
+#define SCENE_ENDING_H_
+
 
 #include "SceneBase.h"
 #include "CameraEnding.h"
@@ -78,3 +80,4 @@ private:
 	};
 
 };
+#endif//#ifndef SCENE_ENDING_H_

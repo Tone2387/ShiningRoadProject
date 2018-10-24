@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FILE_H_
+#define FILE_H_
 
 #include <string>
 #include <vector>
@@ -76,3 +77,4 @@ private:
 	bool m_bUsing;//Žg—p’†‚È‚çtrue.
 
 };
+#endif//#ifndef FILE_H_

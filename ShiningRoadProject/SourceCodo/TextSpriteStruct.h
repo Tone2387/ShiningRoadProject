@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TEXT_SPRITE_STRUCT_H_
+#define TEXT_SPRITE_STRUCT_H_
 
 #include	"MyMacro.h"
 
@@ -37,3 +38,4 @@ struct TextVertex
 	D3DXVECTOR2	Tex;	//テクスチャ座標.
 };
 
+#endif//#ifndef TEXT_SPRITE_STRUCT_H_

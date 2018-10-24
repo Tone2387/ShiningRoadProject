@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SCENE_ASSEMBLE_H_
+#define SCENE_ASSEMBLE_H_
+
 
 #include "File.h"
 
@@ -175,3 +177,4 @@ private:
 
 
 
+#endif//#ifndef SCENE_ASSEMBLE_H_

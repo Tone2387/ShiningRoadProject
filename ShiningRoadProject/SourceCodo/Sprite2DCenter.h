@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SPRITE_2D_CENTER_H_
+#define SPRITE_2D_CENTER_H_
 
 #include "Sprite2D.h"
 
@@ -30,3 +31,4 @@ protected:
 	D3DXVECTOR3 m_vRot;//‰ñ“].
 };
 
+#endif//#ifndef SPRITE_2D_CENTER_H_

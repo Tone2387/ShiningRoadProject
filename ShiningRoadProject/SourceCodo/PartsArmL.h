@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PARTS_ARM_L_H_
+#define PARTS_ARM_L_H_
 
 
 #include "PartsArmBase.h"
@@ -19,3 +20,4 @@ private:
 
 };
 
+#endif//#ifndef PARTS_ARM_L_H_

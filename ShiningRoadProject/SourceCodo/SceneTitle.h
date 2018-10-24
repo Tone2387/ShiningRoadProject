@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SCENE_TITLE_H_
+#define SCENE_TITLE_H_
+
 
 #include "SceneBase.h"
 #include "CameraTitle.h"
@@ -84,3 +86,4 @@ private:
 #endif//#if _DEBUG
 
 };
+#endif//#ifndef SCENE_TITLE_H_

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FACTORY_SOUND_MANAGER_H_
+#define FACTORY_SOUND_MANAGER_H_
+
 
 #include "Global.h"
 
@@ -20,3 +22,4 @@ public:
 
 };
 
+#endif//#ifndef FACTORY_SOUND_MANAGER_H_

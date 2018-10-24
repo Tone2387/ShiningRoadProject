@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CAMERA_GAME_OVER_H_
+#define CAMERA_GAME_OVER_H_
 
 #include "Camera.h"
 
@@ -17,3 +18,4 @@ private:
 
 };
 
+#endif//#ifndef CAMERA_GAME_OVER_H_

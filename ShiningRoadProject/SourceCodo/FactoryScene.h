@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FACTORY_SCENE_H_
+#define FACTORY_SCENE_H_
 
 //#include "SceneBase.h"
 #include "SceneTitle.h"
@@ -49,3 +50,4 @@ private:
 
 };
 
+#endif//#ifndef FACTORY_SCENE_H_
