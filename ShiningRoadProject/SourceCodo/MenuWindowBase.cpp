@@ -16,7 +16,8 @@ namespace{
 clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(		
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* pParentWindow,
-	unsigned int* const pInformationArray )
+	unsigned int* const pInformationArray,
+	const int iCloseSeNum )
 		:clsWINDOW_BOX( pPtrGroup->GetDevice(), pPtrGroup->GetContext() )
 		,m_pPtrGroup( pPtrGroup )
 		,m_puiInformationArray( pInformationArray )
@@ -31,6 +32,7 @@ clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(
 		,m_iSelectNum( 0 )
 		,m_uiInformation( 0 )
 		,m_isClose( false )
+		,m_iCLOSE_SE_NUM( iCloseSeNum )
 {
 	Operation( true );
 	if( pParentWindow ){
@@ -196,6 +198,8 @@ void clsMENU_WINDOW_BASE::Close( const float fCloseSpdRate )
 		m_pNextWindow->Close( fCloseSpdRate );
 		return;
 	}
+
+	m_wpSound->PlaySE( m_iCLOSE_SE_NUM );
 
 	SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 

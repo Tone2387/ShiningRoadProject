@@ -23,6 +23,18 @@ private:
 		clsMENU_WINDOW_BASE** ppOutNextWindow, 
 		clsMENU_WINDOW_BASE* const pParentWindow ) override;
 
+
+	enum enSE : int
+	{
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+		enSE_MISSION_START,
+		enSE_WIN_APP,
+		enSE_WIN_DISAPP,
+	};
+
+
 };
 
 #endif//#ifndef MENU_WINDOW_GAME_OVER_DO_ASSEMBLE_H_

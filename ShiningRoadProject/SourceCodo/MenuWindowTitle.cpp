@@ -15,12 +15,12 @@ clsMENU_WINDOW_TITLE::clsMENU_WINDOW_TITLE(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* pParentWindow,
 		unsigned int* const pInformationArray )
-		:clsMENU_WINDOW_BASE( pPtrGroup, pParentWindow, pInformationArray )
+		:clsMENU_WINDOW_BASE( pPtrGroup, pParentWindow, pInformationArray, enSE_WIN_DIS_APP )
 {
 	assert( m_wpSound );
 	m_wpSound->PlaySE( enSE_WIN_APP );
 
-		//この窓のサイズ.
+	//この窓のサイズ.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
 	Open( vTHIS_WINDOW_SIZE );
 }

@@ -19,7 +19,8 @@ public:
 	clsMENU_WINDOW_BASE(		
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
-		unsigned int* const pInformationArray );
+		unsigned int* const pInformationArray,
+		const int iCloseSeNum );
 	virtual ~clsMENU_WINDOW_BASE();
 
 
@@ -142,6 +143,9 @@ private:
 	
 	//‚±‚Ì‘‹‚ğ•Â‚¶‚é—\–ñ.
 	bool m_isClose;
+
+	//•Â‚¶‚éSE‚Ì”Ô†.
+	const int m_iCLOSE_SE_NUM;
 
 };
 

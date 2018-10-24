@@ -77,7 +77,7 @@ private:
 	std::unique_ptr< clsSprite2D > m_upBlackBack;
 
 
-		//‰¹‚Ìˆø”.
+	//‰¹‚Ìˆø”.
 	enum enBGM : int
 	{
 		enBGM_MAOU2 = 0,
