@@ -116,6 +116,7 @@ const bool clsSkinMesh::SetAnimChange(const int iAnimNo, const double dStartPos)
 		return false;
 	}
 	m_pMesh->ChangeAnimSet_StartPos(iAnimNo, dStartPos, m_pAnimCtrl);
+	m_iAnimNo = iAnimNo;
 	m_dAnimTime = dStartPos;
 	return true;
 }
@@ -242,4 +243,27 @@ const int clsSkinMesh::GetAnimNo()
 const bool clsSkinMesh::IsExistsBone(const char* sBoneName)
 {
 	return m_pMesh->ExistsBone(sBoneName);
+}
+
+void clsSkinMesh::AnimReverce(const bool bAnimTimeInit)
+{
+	if (bAnimTimeInit)
+	{
+		m_dAnimTime = GetAnimEndTime(m_iAnimNo);
+	}
+	m_bAnimReverce = true;
+}
+
+void clsSkinMesh::AnimNormal(const bool bAnimTimeInit)
+{
+	if (bAnimTimeInit)
+	{
+		m_dAnimTime = 0.0;
+	}
+	m_bAnimReverce = false;
+}
+
+const bool clsSkinMesh::IsAnimReverce()
+{
+	return m_bAnimReverce;
 }

@@ -245,6 +245,22 @@ void clsMISSION_MODEL::SetPartsAnimSpeed(const enPARTS PartsNum, const double dA
 	m_vpParts[cTmpNum]->SetAnimSpeed(dAnimSpeed);
 }
 
+void clsMISSION_MODEL::SetPartsAnimNormal(const enPARTS PartsNum, const bool bAnimTimeInit)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->AnimNormal(bAnimTimeInit);
+}
+
+void clsMISSION_MODEL::SetPartsAnimReverce(const enPARTS PartsNum, const bool bAnimTimeInit)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->AnimReverce(bAnimTimeInit);
+}
+
 const int clsMISSION_MODEL::GetPartsAnimNo(const enPARTS PartsNum)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
@@ -267,4 +283,12 @@ const double clsMISSION_MODEL::GetPartsAnimNowTime(const enPARTS PartsNum)
 
 	assert(m_vpParts[cTmpNum]);
 	return m_vpParts[cTmpNum]->GetAnimTime();
+}
+
+const bool clsMISSION_MODEL::IsPartsAnimReverce(const enPARTS PartsNum)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	assert(m_vpParts[cTmpNum]);
+	return m_vpParts[cTmpNum]->IsAnimReverce();
 }

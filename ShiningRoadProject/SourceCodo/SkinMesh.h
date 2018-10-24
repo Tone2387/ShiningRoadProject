@@ -5,6 +5,8 @@
 
 #include "CD3DXSKINMESH.h"
 
+static const double g_dAnimSpeedReference = static_cast<double>(1 / g_fFPS);
+
 class clsSkinMesh
 {
 public:
@@ -48,6 +50,13 @@ public:
 	const bool IsAnimTimeAfter(const double dDesignationTime);
 	const bool IsAnimTimePoint(const double dDesignationTime);
 	const bool IsExistsBone(const char* sBoneName);
+
+	//アニメーションを逆再生させる.
+	void AnimReverce(const bool bAnimTimeInit = false);
+	//アニメーションを通常再生させる.
+	void AnimNormal(const bool bAnimTimeInit = false);
+	//アニメーション再生の状態を渡す true:逆再生.
+	const bool IsAnimReverce();
 
 	clsD3DXSKINMESH* m_pMesh;
 
