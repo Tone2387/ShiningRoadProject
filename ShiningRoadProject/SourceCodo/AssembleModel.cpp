@@ -275,7 +275,14 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 //		m_wppParts[i]->SetPosition( m_Trans.vPos );
 	}
 
+	//ƒ‚ƒfƒ‹‚ÌŠî“_.
+	D3DXVECTOR3 vLegPosNull = m_Trans.vPos;
 	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
+	//ƒ‚ƒfƒ‹‚Ì‘«Œ³.
+	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
+
+	//.
+	m_vpParts[ucLEG]->SetPosition( vLegPosPositionBase - vLegPosNull );
 
 	m_vpParts[ucCORE]->SetPosition( 
  		m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_TO_CORE ) );

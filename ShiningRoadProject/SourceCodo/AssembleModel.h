@@ -8,6 +8,8 @@
 
 #include "RoboStatus.h"
 
+//足元の基点のボーン名.
+#define sBONE_NAME_LEG_POSITION_BASE "PositionBase"
 
 //連結部分のボーン名.
 #define sBONE_NAME_LEG_TO_CORE		"JunctionCore"

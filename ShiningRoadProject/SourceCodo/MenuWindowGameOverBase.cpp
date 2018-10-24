@@ -1,6 +1,9 @@
 #include "MenuWindowGameOverBase.h"
 #include "SoundManagerGameOver.h"
 
+namespace{
+	const float fBACK_ALPHA = 0.75f;
+}
 
 clsMENU_WINDOW_GAME_OVER_BASE::clsMENU_WINDOW_GAME_OVER_BASE(		
 	clsPOINTER_GROUP* const pPtrGroup,
@@ -14,6 +17,7 @@ clsMENU_WINDOW_GAME_OVER_BASE::clsMENU_WINDOW_GAME_OVER_BASE(
 	assert( m_wpSound );
 	m_wpSound->PlaySE( enSE_WIN_APP );
 
+	SetAlphaBack( fBACK_ALPHA );
 }
 
 
