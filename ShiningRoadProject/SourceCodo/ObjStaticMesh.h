@@ -8,13 +8,13 @@ class clsObjStaticMesh : public clsObject
 {
 public:
 	void AttachModel(clsDX9Mesh* const pMesh);
-	void DttachModel();
+	void DetatchModel();
 	
 	clsDX9Mesh* GetStaticMesh() const;
 
 	void ModelTransUpdate();
 
-	virtual void Render(D3DXMATRIX& const mView, D3DXMATRIX& const mProj, D3DXVECTOR3& const vLight, D3DXVECTOR3& const vEye);
+	virtual void Render(const D3DXMATRIX& mView, const  D3DXMATRIX& mProj, const D3DXVECTOR3& vLight, const  D3DXVECTOR3& vEye);
 
 	clsObjStaticMesh();
 	~clsObjStaticMesh();

@@ -122,7 +122,8 @@ public:
 	bool ObjectCollision(std::vector<SPHERE> pTarget);
 
 	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
-	void SetScale(float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
+	void SetScale(const float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
+	void SetScale(const D3DXVECTOR3 vScale){ m_Trans.vScale = vScale; }
 
 	bool WallJudge(clsStage* const pStage);
 

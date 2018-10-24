@@ -195,8 +195,8 @@ void clsRobo::RoboInit(
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
 
-	m_pMesh->PartsAnimChange(enPARTS::ARM_R, 3);
-	m_pMesh->SetAnimSpd(0.0f);
+	m_pMesh->PartsAnimChange(enPARTS::ARM_R, 2);
+	m_pMesh->SetAnimSpd(g_dAnimSpeedReference);
 }
 
 void clsRobo::Walk()
@@ -261,7 +261,7 @@ void clsRobo::BoostRising()
 
 	else
 	{
-		Jump();
+		m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegJumpStart);
 	}
 }
 
@@ -1102,7 +1102,7 @@ void clsRobo::PlayLegBoostEfc()
 	}
 }
 
-void clsRobo::SetRotateHeadPart()
+void clsRobo::SetRotateHeadParts()
 {
 	D3DXVECTOR3 vTmp = GetRotation();
 	vTmp.y += static_cast<float>(D3DX_PI);
@@ -1128,7 +1128,7 @@ void clsRobo::SetRotateHeadPart()
 	}
 }
 
-void clsRobo::SetRotateArmPart()
+void clsRobo::SetRotateArmParts()
 {
 	D3DXVECTOR3 vTmp = GetRotation();
 
@@ -1148,7 +1148,7 @@ void clsRobo::SetRotateArmPart()
 	m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
 }
 
-void clsRobo::SetRotateCorePart()
+void clsRobo::SetRotateCoreParts()
 {
 	D3DXVECTOR3 vTmp = GetRotation();
 	vTmp.y += static_cast<float>(D3DX_PI);
@@ -1157,10 +1157,10 @@ void clsRobo::SetRotateCorePart()
 	m_pMesh->SetPartsRotate(enPARTS::CORE, vTmp);
 }
 
-void clsRobo::SetRotateLegPart()
+void clsRobo::SetRotateLegParts()
 {
 	D3DXVECTOR3 vTmp = GetRotation();
-
+	
 	const float fHulfDir = D3DX_PI / 2;
 
 	const float fVecX = m_vMoveDirforBoost.x;
@@ -1168,9 +1168,39 @@ void clsRobo::SetRotateLegPart()
 
 	float fRot = atan2f(fVecX, fVecZ);
 
-	if (abs(fRot) > fHulfDir)
+	if (!m_bBoost)
 	{
-		fRot -= D3DX_PI * (abs(fRot) / fRot);
+		if (abs(fRot) > fHulfDir)
+		{
+			fRot -= D3DX_PI * (abs(fRot) / fRot);
+
+			const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
+
+			if (iAnimNo > enAnimNoLegWait &&
+				iAnimNo < enAnimNoLegBoostStart)//脚パーツのアニメーションが歩行系統か?.
+			{
+				//歩行アニメーションだった.
+				if (!m_pMesh->IsPartsAnimReverce(enPARTS::LEG))
+				{
+					m_pMesh->SetPartsAnimReverce(enPARTS::LEG,true);
+				}
+			}
+		}
+
+		else
+		{
+			const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
+
+			if (iAnimNo > enAnimNoLegWait &&
+				iAnimNo < enAnimNoLegBoostStart)//脚パーツのアニメーションが歩行系統か?.
+			{
+				//歩行アニメーションだった.
+				if (m_pMesh->IsPartsAnimReverce(enPARTS::LEG))
+				{
+					m_pMesh->SetPartsAnimNormal(enPARTS::LEG, true);
+				}
+			}
+		}
 	}
 
 	vTmp.y += fRot;
@@ -1193,6 +1223,7 @@ void clsRobo::AnimUpdateLeg()
 	const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
 
 	enAnimNoLeg iChangeAnimNo = iAnimNo;
+
 	double dAnimStartTime = 0.0f;
 
 	switch (iAnimNo)
@@ -1211,15 +1242,15 @@ void clsRobo::AnimUpdateLeg()
 
 		break;
 	case enAnimNoLegWalkStart:
-		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG) || m_pMesh->IsPartsAnimReverce(enPARTS::LEG))//逆再生になっていたら.
 		{
-			iChangeAnimNo = enAnimNoLegWalkStart;
+			iChangeAnimNo = enAnimNoLegWalkRight;
+			//dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
 		}
 
-		if (IsMoveing())
+		if (!IsMoveing())
 		{
 			iChangeAnimNo = enAnimNoLegWalkEndRight;
-			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
 		}
 
 		break;
@@ -1230,10 +1261,10 @@ void clsRobo::AnimUpdateLeg()
 			iChangeAnimNo = enAnimNoLegWalkLeft;
 		}
 
-		if (IsMoveing())
+		if (!IsMoveing())
 		{
 			iChangeAnimNo = enAnimNoLegWalkEndRight;
-			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
+			//dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
 		}
 
 		break;
@@ -1244,7 +1275,7 @@ void clsRobo::AnimUpdateLeg()
 			iChangeAnimNo = enAnimNoLegWalkRight;
 		}
 
-		if (IsMoveing())
+		if (!IsMoveing())
 		{
 			iChangeAnimNo = enAnimNoLegWalkEndLeft;
 			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
@@ -1331,6 +1362,11 @@ void clsRobo::AnimUpdateLeg()
 	//アニメーションの変更がある.
 	if (iChangeAnimNo != iAnimNo)
 	{
+		if (m_pMesh->IsPartsAnimReverce(enPARTS::LEG))//逆再生になっていたら.
+		{
+			m_pMesh->SetPartsAnimNormal(enPARTS::LEG);//通常再生に戻す.
+		}
+
 		m_pMesh->SetPartsAnimNo(enPARTS::LEG, iChangeAnimNo, dAnimStartTime);
 	}
 }

@@ -48,10 +48,10 @@ public:
 		//ObjRollOverGuard(&vTmp.y);
 		//m_pMesh->SetRot(vTmp);
 		
-		SetRotateHeadPart();
-		SetRotateArmPart();
-		SetRotateCorePart();
-		SetRotateLegPart();
+		SetRotateHeadParts();
+		SetRotateArmParts();
+		SetRotateCoreParts();
+		SetRotateLegParts();
 
 		vTmp = GetPosition();
 		m_pMesh->SetPos(vTmp);
@@ -62,10 +62,10 @@ public:
 		//UpdateCollsion();
 	}
 
-	void SetRotateHeadPart();
-	void SetRotateArmPart();
-	void SetRotateCorePart();
-	void SetRotateLegPart();
+	void SetRotateHeadParts();
+	void SetRotateArmParts();
+	void SetRotateCoreParts();
+	void SetRotateLegParts();
 
 	void Render( 
 		const D3DXMATRIX& mView, 

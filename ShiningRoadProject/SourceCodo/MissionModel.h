@@ -57,13 +57,19 @@ public:
 	void SetPartsAnimNo(const enPARTS PartsNum, const int iAnimIndex, const double dAnimTime = 0.0);
 	//指定したパーツのアニメーション速度を変える.
 	void SetPartsAnimSpeed(const enPARTS PartsNum, const double dAnimSpeed);
+	//指定したパーツのアニメーションを通常再生にする.
+	void SetPartsAnimNormal(const enPARTS PartsNum, const bool bAnimTimeInit = false);
+	//指定したパーツのアニメーションを逆再生にする.
+	void SetPartsAnimReverce(const enPARTS PartsNum, const bool bAnimTimeInit = false);
 
 	//指定したパーツのアニメーション番号を渡す.
 	const int GetPartsAnimNo(const enPARTS PartsNum);
-	//指定したパーツのアニメーション終了を渡す.
+	//指定したパーツのアニメーション終了を渡す true:アニメーション終了.
 	const bool IsPartsAnimEnd(const enPARTS PartsNum);
 	//指定したパーツのアニメーション再生時間を渡す.
 	const double GetPartsAnimNowTime(const enPARTS PartsNum);
+	//指定したパーツのアニメーション再生状態を渡す true:逆再生.
+	const bool IsPartsAnimReverce(const enPARTS PartsNum);
 
 private:
 

@@ -4,7 +4,7 @@
 
 class clsPOINTER_GROUP;
 class clsBUILDING;
-class clsCharaStatic;
+class clsObjStaticMesh;
 class clsDX9Mesh;
 
 
@@ -20,10 +20,13 @@ public:
 		const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye );
 
 	std::vector<clsDX9Mesh*> GetStageMeshArray();
+	
+	//指定したオブジェク位置回転拡縮を更新.
+	void SetStageObjTransform(const int iObjNo);
 
 private:
 
-	std::unique_ptr< clsCharaStatic > m_pStageGround;
+	std::unique_ptr< clsObjStaticMesh > m_pStageGround;
 	std::vector< std::unique_ptr< clsBUILDING > > m_vpBuilding;
 
 

@@ -6,7 +6,7 @@ void clsObjStaticMesh::AttachModel(clsDX9Mesh* const pMesh)
 	m_pModel = pMesh;
 }
 
-void clsObjStaticMesh::DttachModel()
+void clsObjStaticMesh::DetatchModel()
 {
 	if (m_pModel)
 	{
@@ -31,10 +31,10 @@ void clsObjStaticMesh::ModelTransUpdate()
 }
 
 void clsObjStaticMesh::Render(
-	D3DXMATRIX& const mView, 
-	D3DXMATRIX& const mProj, 
-	D3DXVECTOR3& const vLight, 
-	D3DXVECTOR3& const vEye)
+	const D3DXMATRIX&  mView,
+	const D3DXMATRIX& mProj,
+	const D3DXVECTOR3& vLight,
+	const D3DXVECTOR3& vEye)
 {
 	if (!m_pModel)return;
 	ModelTransUpdate();
@@ -49,5 +49,5 @@ clsObjStaticMesh::clsObjStaticMesh()
 
 clsObjStaticMesh::~clsObjStaticMesh()
 {
-	DttachModel();
+	DetatchModel();
 }

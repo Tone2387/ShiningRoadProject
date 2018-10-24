@@ -2,7 +2,7 @@
 #include "File.h"
 #include "Building.h"
 #include "PtrGroup.h"
-#include "CharaStatic.h"
+#include "ObjStaticMesh.h"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	clsFILE file;
 	file.Open( sSTAGE_BASE_DATA_PATH );
 	//“y‘ä.
-	m_pStageGround = make_unique< clsCharaStatic >();
+	m_pStageGround = make_unique< clsObjStaticMesh >();
 	m_pStageGround->AttachModel( 
 		pPtrGroup->GetResource()->GetStaticModels( clsResource::enStaticModel_StageBase ) );
 
@@ -114,7 +114,7 @@ vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 
 	vvpMeshArrayTmp.reserve(iSize);
 
-	vvpMeshArrayTmp.push_back(m_pStageGround->GetModelPtr());
+	vvpMeshArrayTmp.push_back(m_pStageGround->GetStaticMesh());
 
 	for (unsigned int i = 0; i < m_vpBuilding.size(); i++)
 	{
@@ -125,3 +125,12 @@ vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 	return vvpMeshArrayTmp;
 }
 
+void clsStage::SetStageObjTransform(const int iObjNo)
+{
+	if (iObjNo >= m_vpBuilding.size())
+	{
+		return;
+	}
+
+
+}
