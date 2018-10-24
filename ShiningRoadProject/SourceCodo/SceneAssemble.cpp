@@ -271,7 +271,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
 	m_upBox->SetPos( vBOX_POS );
 	m_upBox->SetSize( 0.0f );
-	m_upBox->SetAlpha( fBOX_ALPHA );
+	m_upBox->SetAlphaBack( fBOX_ALPHA );
 
 
 	//UI.

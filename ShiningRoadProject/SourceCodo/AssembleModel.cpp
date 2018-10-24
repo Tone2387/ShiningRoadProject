@@ -163,7 +163,7 @@ void clsASSEMBLE_MODEL::Render(
 		unsigned int uiMaskNum = 0;
 		vTmpColorBase = CreateColor( AlphaParts, i, uiMaskNum ++ );
 		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++ );
-		SetPos( GetPos() );
+		SetPartsFormalPos();
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 		m_vpParts[i]->ModelRender( 
 			mView, mProj, vLight, vEye, 

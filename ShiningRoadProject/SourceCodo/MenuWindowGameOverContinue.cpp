@@ -4,19 +4,13 @@
 #include "MenuWindowGameOverDoAssemble.h"
 
 
-namespace{
-	//渡す情報の添え字.
-	const char INFORMATION__INDEX_GAME_OVER	= 0;
-	const char INFORMATION__INDEX_CONTINUE	= 1;
-	const char INFORMATION__INDEX_ASSEMBLE	= 2;
-}
 
 
 clsMENU_WINDOW_GAME_OVER_CONTINUE::clsMENU_WINDOW_GAME_OVER_CONTINUE(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	unsigned int* const pInformationArray )
-	:clsMENU_WINDOW_BASE( pPtrGroup, pParentWindow, pInformationArray )
+	:clsMENU_WINDOW_GAME_OVER_BASE( pPtrGroup, pParentWindow, pInformationArray )
 {
 	//この窓のサイズ.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 400.0f };
@@ -39,7 +33,9 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 		if( m_iSelectNum < 0 ){
 			m_iSelectNum = 0;
 		}
-
+		else{
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		}
 	}
 
 	if( SelectRight() ){
@@ -47,25 +43,30 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 		if( m_iSelectNum > iSELECT_NUM_MAX ){
 			m_iSelectNum = iSELECT_NUM_MAX;
 		}
+		else{
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		}
 	}
 
 	if( SelectEnter() ){
 		if( m_iSelectNum == 0 ){
-//			m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_CONTINUE ];
 			//次を開く.
 			if( CreateNextWindow( &m_pNextWindow ) ){
+				m_wpSound->PlaySE( enSE_ENTER );
 				const D3DXVECTOR3 vADD_POS = D3DXVECTOR3( 20.0f, 20.0f, 0.0f );
 				m_pNextWindow->SetPos( GetPos() + vADD_POS );
 				Operation( false );
 			}
 		}
 		else if( m_iSelectNum == 1 ){
-			m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_GAME_OVER ];
+			m_wpSound->PlaySE( enSE_EXIT );
+			m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_GAME_OVER ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_uiInformation = m_puiInformationDataArray[ INFORMATION__INDEX_GAME_OVER ];
+		m_wpSound->PlaySE( enSE_EXIT );
+		m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_GAME_OVER ];
 	}
 
 }

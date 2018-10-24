@@ -1,11 +1,11 @@
 #ifndef MENU_WINDOW_GAME_OVER_DO_ASSEMBLE_H_
 #define MENU_WINDOW_GAME_OVER_DO_ASSEMBLE_H_
 
-#include "MenuWindowBase.h"
+#include "MenuWindowGameOverBase.h"
 
 
 //コンティニューすると答えたときに出現し、ロボを組みなおすか聞いてくるメニュー.
-class clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE : public clsMENU_WINDOW_BASE
+class clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE : public clsMENU_WINDOW_GAME_OVER_BASE
 {
 public:
 	clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE(
@@ -22,6 +22,7 @@ private:
 	bool CreateNextWindowProduct( 
 		clsMENU_WINDOW_BASE** ppOutNextWindow, 
 		clsMENU_WINDOW_BASE* const pParentWindow ) override;
+
 
 };
 

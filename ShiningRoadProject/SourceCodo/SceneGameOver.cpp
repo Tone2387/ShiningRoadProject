@@ -110,7 +110,7 @@ void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 	if( !m_wpBlackScreen->GetAlpha() ){
 		//” ‚ÌŠJ‚«Žn‚ß.
 		if(!m_upMenu ){
-			m_wpSound->PlaySE( enSE_WIN_APP );
+//			m_wpSound->PlaySE( enSE_WIN_APP );
 			m_upMenu = make_unique<clsMENU_WINDOW_GAME_OVER_CONTINUE>( m_wpPtrGroup, nullptr, m_uiInformationDataArray );
 		}
 	}
@@ -187,11 +187,13 @@ void clsSCENE_GAME_OVER::MenuUpdate( enSCENE &enNextScene )
 		case enINFORMATION_CONTINUE:
 			enNextScene = enSCENE::MISSION;
 			m_enTextRenderIndex = enMESSAGE_INDEX_NEVER_GIVE_UP;
+			m_wpSound->PlaySE( enSE_MISSION_START );
 			break;
 
 		case enINFORMATION_ASSEMBLE:
 			enNextScene = enSCENE::ASSEMBLE;
 			m_enTextRenderIndex = enMESSAGE_INDEX_NEVER_GIVE_UP;
+			m_wpSound->PlaySE( enSE_MISSION_START );
 			break;
 
 		default:

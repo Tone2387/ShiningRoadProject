@@ -390,6 +390,16 @@ D3DXVECTOR3 clsLINE_BOX::GetSize() const
 void clsLINE_BOX::SetAlpha( const float fAlpha )
 {
 	m_fAlpha = fAlpha;
+
+	for( char i=0; i<LINE_MAX; i++ ){
+		m_upLineH[i]->SetAlpha( m_fAlpha );
+		m_upLineV[i]->SetAlpha( m_fAlpha );
+	}
+
+
+	for( char i=0; i<JOINT_MAX; i++ ){
+		m_upLineJoint[i]->SetAlpha( m_fAlpha );
+	}
 }
 
 //”ÍˆÍ‚ðover‚·‚é‚Æfalse‚ª•Ô‚Á‚Ä‚­‚é.

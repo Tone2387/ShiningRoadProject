@@ -1,11 +1,11 @@
 #ifndef MENU_WINDOW_GAME_OVER_CONTINUE_H_
 #define MENU_WINDOW_GAME_OVER_CONTINUE_H_
 
-#include "MenuWindowBase.h"
+#include "MenuWindowGameOverBase.h"
 
 //やられたときにコンティニューするかしないか聞いてくる.
 //コンティニューするならロボを組みなおすか聞いてくるメニューを開く.
-class clsMENU_WINDOW_GAME_OVER_CONTINUE : public clsMENU_WINDOW_BASE
+class clsMENU_WINDOW_GAME_OVER_CONTINUE : public clsMENU_WINDOW_GAME_OVER_BASE
 {
 public:
 	clsMENU_WINDOW_GAME_OVER_CONTINUE(
@@ -21,7 +21,6 @@ private:
 	bool CreateNextWindowProduct( 
 		clsMENU_WINDOW_BASE** ppOutNextWindow, 
 		clsMENU_WINDOW_BASE* const pParentWindow ) override;
-
 
 
 

@@ -19,16 +19,18 @@ public:
 	clsMENU_WINDOW_BASE(		
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
-		unsigned int* const pInformationArray );
+		unsigned int* const pInformationArray,
+		const int iCloseSeNum );
 	virtual ~clsMENU_WINDOW_BASE();
 
-	//このメニューウィンドウのdeleteはこのif文の中で使いましょう.
-	bool isDeletePermission();
 
 protected:
+
 	//継承先のコンストラクタで使う.
 	void Open( const D3DXVECTOR2& vSize );
+
 public:
+
 
 
 	void Update() final;
@@ -37,6 +39,9 @@ public:
 
 	//このウィンドウを閉じ始めて親ウィンドウに操作を返す.
 	void Close( const float fCloseSpdRate = 4.0f );
+
+	//このメニューウィンドウのdeleteはこのif文の中で使いましょう.
+	bool isDeletePermission();
 
 	//窓の左上を0として座標を与える.
 	D3DXVECTOR3 SetPosFromWindow( const D3DXVECTOR2& vPos );
@@ -52,10 +57,6 @@ public:
 		return ReturnInformation;
 	}
 
-
-	//子供のために必要.
-	clsPOINTER_GROUP*	m_pPtrGroup;
-	unsigned int*		m_puiInformationArray;
 
 
 protected:
@@ -92,11 +93,17 @@ protected:
 	clsXInput*	m_wpXInput;
 	clsDxInput* m_wpDInput;
 
-	clsSOUND_MANAGER_BASE* m_wpSound;
 
 	//次に開く窓.
 	clsMENU_WINDOW_BASE* m_pNextWindow;
 
+
+	//子供のために必要.
+	clsPOINTER_GROUP*	m_pPtrGroup;
+	unsigned int*		m_puiInformationArray;
+
+	//効果音.
+	clsSOUND_MANAGER_BASE* m_wpSound;
 
 private:
 	virtual void UpdateProduct() = 0;
@@ -136,6 +143,9 @@ private:
 	
 	//この窓を閉じる予約.
 	bool m_isClose;
+
+	//閉じるSEの番号.
+	const int m_iCLOSE_SE_NUM;
 
 };
 

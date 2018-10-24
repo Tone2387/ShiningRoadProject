@@ -1,18 +1,18 @@
-#ifndef MENU_WINDOW_TITLE_H_
-#define MENU_WINDOW_TITLE_H_
+#ifndef MENU_WINDOW_TITLE_START_OR_END_H_
+#define MENU_WINDOW_TITLE_START_OR_END_H_
 
 
-#include "MenuWindowBase.h"
+#include "MenuWindowTitleBase.h"
 
-class clsMENU_WINDOW_TITLE : public clsMENU_WINDOW_BASE
+class clsMENU_WINDOW_TITLE_START_OR_END : public clsMENU_WINDOW_TITLE_BASE
 {
 public:
-	clsMENU_WINDOW_TITLE(		
+	clsMENU_WINDOW_TITLE_START_OR_END(		
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		unsigned int* const pInformationArray );
 
-	~clsMENU_WINDOW_TITLE();
+	~clsMENU_WINDOW_TITLE_START_OR_END();
 
 
 
@@ -25,7 +25,5 @@ private:
 		clsMENU_WINDOW_BASE* const pParentWindow ) override;
 
 
-
-
 };
-#endif//#ifndef MENU_WINDOW_TITLE_H_
+#endif//#ifndef MENU_WINDOW_TITLE_START_OR_END_H_
