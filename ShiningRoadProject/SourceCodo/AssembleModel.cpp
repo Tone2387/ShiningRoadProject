@@ -2,6 +2,9 @@
 
 #include "OperationString.h"
 
+//legのモデルの足元がおかしい場合.
+#define LEG_MODEL_POSITION_BASE_Y_OFFSET
+
 using namespace std;
 
 //配列の添え字.
@@ -158,6 +161,17 @@ void clsASSEMBLE_MODEL::Render(
 	D3DXVECTOR4 vTmpColorBase;
 	D3DXVECTOR4 vTmpColorArmor;
 
+#ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
+	//モデルの足元.
+	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
+	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( "null" );
+	const float fADD_POS_Y = vLegPosPositionBase.y - vLegPosNull.y;
+
+
+	m_Trans.vPos += D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
+
+#endif
+
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
 		unsigned int uiMaskNum = 0;
@@ -165,10 +179,16 @@ void clsASSEMBLE_MODEL::Render(
 		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++ );
 		SetPartsFormalPos();
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
+//		ModelUpdate();
 		m_vpParts[i]->ModelRender( 
 			mView, mProj, vLight, vEye, 
 			vTmpColorBase, vTmpColorArmor, true );
 	}
+
+#ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
+	m_Trans.vPos -= D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
+#endif//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
+
 }
 
 
@@ -279,17 +299,11 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
 
 
-#if 1
-	//モデルの足元.
-	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
-	const D3DXVECTOR3 vADD_POS = m_Trans.vPos - vLegPosPositionBase;
-	//nullを今のPositionBaseと同じ場所にずらする.
-	m_vpParts[ucLEG]->SetPosition( m_vpParts[ucLEG]->GetPosition() + vADD_POS );
-#endif
-
-
 	m_vpParts[ucCORE]->SetPosition( 
- 		m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_TO_CORE ) );
+ 		m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_TO_CORE ) 
+//		+ D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f )
+		);
+//	m_vpParts[ucCORE]->AddPosition( D3DXVECTOR3( 0.0f, -fADD_POS_Y*5, 0.0f ) );
 
 	m_vpParts[ucHEAD]->SetPosition( 
 		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_HEAD ) );
@@ -306,6 +320,7 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	m_vpParts[ucWEAPON_R]->SetPosition( 
 		m_vpParts[ucARM_R]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
 
+	//武器の角度.
 	FitJointModel( m_vpParts[ucWEAPON_L], m_vpParts[ucARM_L],
 		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
 	FitJointModel( m_vpParts[ucWEAPON_R], m_vpParts[ucARM_R],
@@ -314,6 +329,9 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 
 	m_vpParts[ucWEAPON_L]->AddRotation( { m_vpParts[ucARM_L]->GetRotation().x, 0.0f, 0.0f } );
 	m_vpParts[ucWEAPON_R]->AddRotation( { m_vpParts[ucARM_R]->GetRotation().x, 0.0f, 0.0f } );
+
+
+
 }
 void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
 {

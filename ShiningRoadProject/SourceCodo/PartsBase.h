@@ -47,6 +47,10 @@ public:
 	//É{Å[ÉìÇ™ë∂ç›Ç∑ÇÈÇ©.
 	bool ExistsBone( const char* sBoneName );
 
+	void AddPosition( const D3DXVECTOR3& vPos ){
+		SetPosition( GetPosition() + vPos );
+	}
+
 	void AddRotation( const D3DXVECTOR3& vRot ){
 		SetRotation( GetRotation() + vRot );
 	};

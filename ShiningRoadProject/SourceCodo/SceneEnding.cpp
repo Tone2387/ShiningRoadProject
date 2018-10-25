@@ -49,7 +49,8 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	,m_isCanGoTitle( false )
 	,m_uiRenderTextNum( 0 )
 {
-#ifdef CENTER_SPRITE_RENDER	SPRITE_STATE ss;
+#ifdef CENTER_SPRITE_RENDER	
+	SPRITE_STATE ss;
 	ss.Disp = { WND_W, WND_H };
 	g_upTex = make_unique<clsSprite2D>();
 	g_upTex->Create( m_wpDevice, m_wpContext, "Data\\Image\\sima.png", ss );
