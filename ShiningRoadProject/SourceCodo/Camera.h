@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CAMERA_BASE_H_
+#define CAMERA_BASE_H_
 
 #include "Global.h"
 
@@ -39,3 +40,4 @@ protected:
 
 };
 
+#endif//#ifndef CAMERA_BASE_H_

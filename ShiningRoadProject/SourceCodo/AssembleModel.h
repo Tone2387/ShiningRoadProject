@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ASSEMBLE_MODEL_H_
+#define ASSEMBLE_MODEL_H_
+
 
 #include "FactoryParts.h"
 
@@ -6,6 +8,8 @@
 
 #include "RoboStatus.h"
 
+//足元の基点のボーン名.
+#define sBONE_NAME_LEG_POSITION_BASE "PositionBase"
 
 //連結部分のボーン名.
 #define sBONE_NAME_LEG_TO_CORE		"JunctionCore"
@@ -15,8 +19,8 @@
 #define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
 
 //武器の回転情報確定に使う.
-#define  sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
-#define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
+#define sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
+#define sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
 
 
 
@@ -93,6 +97,7 @@ public:
 	//0~16で返す.
 	int GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 
+
 #if _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
@@ -103,6 +108,12 @@ protected:
 	//継承先で使ってね.
 	virtual void CreateProduct();
 	virtual void UpdateProduct();
+
+
+	//パーツをボーンの位置( 正式な場所 )に合わせる( +武器の角度を腕に合わせる ).
+	void SetPartsFormalPos(){
+		SetPos( GetPos() );
+	}
 
 	//腕の角度を武器も模写する.
 	void FitJointModel( 
@@ -153,3 +164,4 @@ private:
 
 };
 
+#endif//#ifndef ASSEMBLE_MODEL_H_

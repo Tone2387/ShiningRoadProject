@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCENE_BASE_H_
+#define SCENE_BASE_H_
 
 #include "Global.h"
 
@@ -166,3 +167,4 @@ private:
 
 
 };
+#endif//#ifndef SCENE_BASE_H_

@@ -7,8 +7,8 @@ const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
 
 //起動時の初期シーン.
 #define START_UP_SCENE enSCENE::TITLE
-//シーン初期化時の初期BGM番号.
-const int iINIT_SCENE_BGM_NO = 0;
+//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
+#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
 
 const unsigned char cSTART_UP_MUSIC_NO = 0;
 
@@ -97,9 +97,8 @@ void clsGAME::Create()
 	m_upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
 
 	assert( !m_spSound );
-	m_spSound = m_upSoundFactory->Create( START_UP_SCENE, m_hWnd );
-	m_spSound->Create();
-//	m_spSound->PlayBGM( cSTART_UP_MUSIC_NO );//起動音再生.
+//	m_spSound = m_upSoundFactory->Create( START_UP_SCENE, m_hWnd );
+//	m_spSound->Create();
 
 	assert( !m_spEffect );
 	m_spEffect = new clsEffects;
@@ -132,20 +131,25 @@ void clsGAME::Create()
 
 	//ファクトリの作成.
 	assert( !m_upSceneFactory );
-//	m_pSceneFactory = new clsSCENE_FACTORY( m_spPtrGroup );
 	m_upSceneFactory = make_unique< clsSCENE_FACTORY >( m_spPtrGroup );
 	assert( !m_upCameraFactory );
-//	m_pCameraFactory = new clsFACTORY_CAMERA;
 	m_upCameraFactory = make_unique< clsFACTORY_CAMERA >();
 
+	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
+	SwitchScene( GET_STATUS_DATA_INIT_SCENE, true );
 	//最初のシーンはタイトルを指定する.
 	SwitchScene( START_UP_SCENE, true );
 
 }
 
 //毎フレーム使う.
-void clsGAME::Update()
+bool clsGAME::Update()
 { 
+	if( !m_upScene ){
+		//閉じる.
+		return false;
+	}
+
 	//コントローラ入力情報更新.
 	assert( m_spDxInput );
 	m_spDxInput->UpdataInputState();
@@ -157,13 +161,14 @@ void clsGAME::Update()
 	enSCENE enNextScene = enSCENE::NOTHING;
 
 	//シーンが作られているなら.
-	assert( m_upScene );
 	m_upScene->Update( enNextScene );
 
 	//フラグに変更があればシーン変更.
 	if( enNextScene != enSCENE::NOTHING ){
 		SwitchScene( enNextScene );
 	}
+
+	return true;
 }
 
 //毎フレーム使う.
@@ -182,9 +187,9 @@ void clsGAME::Render(
 		1.0f, 0 );
 
 	//シーンの描画.
-	assert( m_upScene );
-	m_upScene->Render(); 
-
+	if( m_upScene ){
+		m_upScene->Render(); 
+	}
 
 }
 
@@ -200,16 +205,14 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	//今のシーンを消して.
 	SAFE_DELETE( m_upScene );
 	SAFE_DELETE( m_spCamera );
+	SAFE_DELETE( m_spSound );
 
-	//起動時は無視.
-//	if( !bStartUp ){
-		SAFE_DELETE( m_spSound );
-		//指示どうりのシーンを作る.
-		//サウンド.
-		m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
+	//サウンド.
+	m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
+	if( m_spSound ){
 		m_spSound->Create();
-		m_spPtrGroup->UpdateSoundPtr( m_spSound );
-//	}
+	}
+	m_spPtrGroup->UpdateSoundPtr( m_spSound );
 
 	//カメラ.
 	m_spCamera = m_upCameraFactory->Create( enNextScene );
@@ -218,12 +221,10 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	//お待ちかねのシーン本体.
 	m_upScene = m_upSceneFactory->Create( enNextScene );
 
-//	//起動時は無視.
-//	if( !bStartUp ){
-//		m_spSound->PlayBGM( iINIT_SCENE_BGM_NO );//BGM再生.
-//	}
+	if( m_upScene ){
+		m_upScene->Create();//シーン初期化.
+	}
 
-	m_upScene->Create();//シーン初期化.
 
 	//明転開始.
 	m_spBlackScreen->GetBright();

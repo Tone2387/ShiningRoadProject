@@ -38,19 +38,38 @@ public:
 
 	//Similarity:相似、類似性.
 	//番号が違うだけの名前のボーンの数を返す.
-	int GetSimilarityNameBoneNum(enPARTS PartsNum,const char* strBoneName);
+	int GetSimilarityNameBoneNum(const enPARTS PartsNum, const char* strBoneName);
 
 	//各パーツの当たり判定の数を返す.
 	int GetColNum( const enCOL_PARTS enColParts );
 
-	D3DXVECTOR3 GetDirfromBone(enPARTS PartsNum, 
+	D3DXVECTOR3 GetDirfromBone(
+		const enPARTS PartsNum,
 		const char* strBoneRootName, 
 		const char* strBoneEndName);
 
 	//当たり判定の座標の配列をすべて返す.
 	std::shared_ptr< std::vector< D3DXVECTOR3 > > GetColPosPtr();
 
-	void SetPartsRotate(enPARTS PartsNum, const D3DXVECTOR3 vRot);
+	//指定したパーツの回転値を変更する.
+	void SetPartsRotate(const enPARTS PartsNum, const D3DXVECTOR3 vRot);
+	//指定したパーツのアニメーションを変える.
+	void SetPartsAnimNo(const enPARTS PartsNum, const int iAnimIndex, const double dAnimTime = 0.0);
+	//指定したパーツのアニメーション速度を変える.
+	void SetPartsAnimSpeed(const enPARTS PartsNum, const double dAnimSpeed);
+	//指定したパーツのアニメーションを通常再生にする.
+	void SetPartsAnimNormal(const enPARTS PartsNum, const bool bAnimTimeInit = false);
+	//指定したパーツのアニメーションを逆再生にする.
+	void SetPartsAnimReverce(const enPARTS PartsNum, const bool bAnimTimeInit = false);
+
+	//指定したパーツのアニメーション番号を渡す.
+	const int GetPartsAnimNo(const enPARTS PartsNum);
+	//指定したパーツのアニメーション終了を渡す true:アニメーション終了.
+	const bool IsPartsAnimEnd(const enPARTS PartsNum);
+	//指定したパーツのアニメーション再生時間を渡す.
+	const double GetPartsAnimNowTime(const enPARTS PartsNum);
+	//指定したパーツのアニメーション再生状態を渡す true:逆再生.
+	const bool IsPartsAnimReverce(const enPARTS PartsNum);
 
 private:
 

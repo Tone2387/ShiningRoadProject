@@ -619,8 +619,6 @@ void clsCharactor::Lock()
 
 void clsCharactor::LockOut()
 {
-	//m_iTargetNo = -1;
-
 	if (m_pTargetChara)
 	{
 		m_pTargetChara = nullptr;

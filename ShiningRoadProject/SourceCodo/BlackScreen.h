@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BLACK_SCREEN_H_
+#define BLACK_SCREEN_H_
+
 
 #include "Sprite2D.h"
 
@@ -63,3 +65,4 @@ private:
 
 };
 
+#endif//#ifndef BLACK_SCREEN_H_

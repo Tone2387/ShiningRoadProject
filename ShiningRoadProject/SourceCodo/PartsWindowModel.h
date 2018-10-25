@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PARTS_WINDOW_MODEL_H_
+#define PARTS_WINDOW_MODEL_H_
 
 
 #include "AssembleModel.h"
@@ -44,3 +45,4 @@ private:
 	std::vector< D3DXVECTOR4 > m_vecvColors;
 };
 
+#endif//#ifndef PARTS_WINDOW_MODEL_H_

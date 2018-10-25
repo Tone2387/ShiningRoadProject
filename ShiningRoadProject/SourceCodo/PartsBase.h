@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef PARTS_BASE_H_
+#define PARTS_BASE_H_
 
 
 #include "Global.h"
@@ -47,6 +47,13 @@ public:
 	//ボーンが存在するか.
 	bool ExistsBone( const char* sBoneName );
 
+	void AddPosition( const D3DXVECTOR3& vPos ){
+		SetPosition( GetPosition() + vPos );
+	}
+
+	void AddRotation( const D3DXVECTOR3& vRot ){
+		SetRotation( GetRotation() + vRot );
+	};
 
 protected:
 	//----- 各パーツごとの関数 -----//.
@@ -61,3 +68,4 @@ private:
 
 };
 
+#endif//#ifndef PARTS_BASE_H_

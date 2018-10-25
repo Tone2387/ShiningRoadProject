@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SCENE_ASSEMBLE_H_
+#define SCENE_ASSEMBLE_H_
+
 
 #include "File.h"
 
@@ -135,10 +137,6 @@ private:
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
 
 
-
-	//操作可能ならtrue.
-	bool m_isCanControl;
-
 	//右スティックでモデルに近づく距離.
 	float m_fDistanceAssembleModel;
 		
@@ -175,3 +173,4 @@ private:
 
 
 
+#endif//#ifndef SCENE_ASSEMBLE_H_

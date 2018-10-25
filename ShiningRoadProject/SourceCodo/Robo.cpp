@@ -17,6 +17,25 @@ const int g_iStabilityVariationRange = 3;//à¿íËê´î\Ç»Ç«Ç≈å∏êäÇ∑ÇÈÉXÉeÅ[É^ÉXÇ™ç≈í
 const int g_iBoostResDec = 10;//ÉuÅ[ÉXÉgìWäJíÜ.ÇÃóéâ∫ë¨ìxå∏êäÇÃìxçá.
 const int g_iHeadLockSpeedReference = 500;//ì™ÉpÅ[ÉcÇÃÉçÉbÉNë¨ìxÇÃäÓèÄílÅAÇ±ÇÍÇÊÇËí·Ç¢Ç∆ÉçÉbÉNéûä‘Ç™í∑Ç≠Ç»ÇÈ.
 
+enum enAnimNoLeg
+{
+	enAnimNoLegWait = 0,
+	enAnimNoLegWalkStart,
+	enAnimNoLegWalkRight,
+	enAnimNoLegWalkLeft,
+	enAnimNoLegWalkEndRight,
+	enAnimNoLegWalkEndLeft,
+	enAnimNoLegBoostStart,
+	enAnimNoLegBoost,
+	enAnimNoLegBoostEnd,
+	enAnimNoLegJumpStart,
+	enAnimNoLegJumpUp,
+	enAnimNoLegJump,
+	enAnimNoLegJumpDown,
+	enAnimNoLegJumpEnd,
+	enAnimNoLegDown
+};
+
 void clsRobo::RoboInit(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsROBO_STATUS* const pRobo)
@@ -48,7 +67,10 @@ void clsRobo::RoboInit(
 	//ÉGÉlÉãÉMÅ[ç≈ëÂíl.
 	m_iEnelgy = m_iEnelgyMax = pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
 	//ÉGÉlÉãÉMÅ[âÒïúó .
-	m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
+	//m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
+
+	m_iEnelgyOutput = 50000;
+
 	//ïÇóVéûÉGÉlÉãÉMÅ[âÒïúó (í èÌÉGÉlÉãÉMÅ[ÇÃîºï™).
 	m_iBoostFloatRecovery = m_iEnelgyOutput / iHulf;
 	
@@ -176,6 +198,9 @@ void clsRobo::RoboInit(
 	m_fLockCircleRadius = 500.0f;//ÉçÉbÉNÉIÉìîªíËÇÃîºåa.
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
+
+	m_pMesh->PartsAnimChange(enPARTS::ARM_R, 3);
+	m_pMesh->SetAnimSpd(g_dAnimSpeedReference);
 }
 
 void clsRobo::Walk()
@@ -240,7 +265,7 @@ void clsRobo::BoostRising()
 
 	else
 	{
-		Jump();
+		m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegJumpStart);
 	}
 }
 
@@ -310,8 +335,6 @@ void clsRobo::QuickTurn()
 
 void clsRobo::Updata()
 {
-	
-
 	PlayBoostEfc();
 	CharactorUpdate();
 	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ÉuÅ[ÉXÉ^Å[ÉGÉtÉFÉNÉgî≠ê∂Ç…égÇ¡ÇƒÇ¢ÇÈÇÃÇ≈ñàÉtÉåÅ[ÉÄÇÃèâä˙âªÇ™ïKóvÇ…Ç»ÇÈ.
@@ -370,7 +393,7 @@ void clsRobo::Updata()
 
 	UpdataLimitTime();
 
-	
+	AnimUpdate();
 }
 
 void clsRobo::UpdataLimitTime()
@@ -378,6 +401,7 @@ void clsRobo::UpdataLimitTime()
 	if (m_iActivityLimitTime < 0)
 	{
 		m_bTimeUp = true;
+		m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegDown);
 	}
 
 	else
@@ -1081,6 +1105,310 @@ void clsRobo::PlayLegBoostEfc()
 			}
 		}
 	}
+}
+
+void clsRobo::SetRotateHeadParts()
+{
+	D3DXVECTOR3 vTmp = GetRotation();
+	vTmp.y += static_cast<float>(D3DX_PI);
+
+	if (m_pTargetChara)
+	{
+		const float fVecX = m_pTargetChara->GetPosition().x - GetPosition().x;
+		const float fVecZ = m_pTargetChara->GetPosition().z - GetPosition().z;
+
+		float fRot = atan2f(fVecX, fVecZ);
+		
+		fRot += static_cast<float>(D3DX_PI);
+		ObjRollOverGuard(&fRot);
+
+		D3DXVECTOR3 vHeadRot = { vTmp.x, fRot, vTmp.z };
+
+		m_pMesh->SetPartsRotate(enPARTS::HEAD, vHeadRot);
+	}
+
+	else
+	{
+		m_pMesh->SetPartsRotate(enPARTS::HEAD, vTmp);
+	}
+}
+
+void clsRobo::SetRotateArmParts()
+{
+	D3DXVECTOR3 vTmp = GetRotation();
+
+	//const float fVecX = m_pTargetChara->GetPosition().x - GetPosition().x;
+	//const float fVecZ = m_pTargetChara->GetPosition().z - GetPosition().z;
+
+	//float fRot = atan2f(fVecX, fVecZ);
+
+	float fRot = m_fVerLookDir;
+
+	vTmp.y += static_cast<float>(D3DX_PI);
+	ObjRollOverGuard(&vTmp.y);
+
+	D3DXVECTOR3 vArmRot = { fRot, vTmp.y, vTmp.z };
+
+	m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
+	m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
+}
+
+void clsRobo::SetRotateCoreParts()
+{
+	D3DXVECTOR3 vTmp = GetRotation();
+	vTmp.y += static_cast<float>(D3DX_PI);
+	ObjRollOverGuard(&vTmp.y);
+
+	m_pMesh->SetPartsRotate(enPARTS::CORE, vTmp);
+}
+
+void clsRobo::SetRotateLegParts()
+{
+	D3DXVECTOR3 vTmp = GetRotation();
+	
+	const float fHulfDir = D3DX_PI / 2;
+
+	const float fVecX = m_vMoveDirforBoost.x;
+	const float fVecZ = m_vMoveDirforBoost.z;
+
+	float fRot = atan2f(fVecX, fVecZ);
+
+	if (!m_bBoost)
+	{
+		if (abs(fRot) > fHulfDir)
+		{
+			fRot -= D3DX_PI * (abs(fRot) / fRot);
+
+			const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
+
+			if (iAnimNo > enAnimNoLegWait &&
+				iAnimNo < enAnimNoLegBoostStart)//ãrÉpÅ[ÉcÇÃÉAÉjÉÅÅ[ÉVÉáÉìÇ™ï‡çsånìùÇ©?.
+			{
+				//ï‡çsÉAÉjÉÅÅ[ÉVÉáÉìÇæÇ¡ÇΩ.
+				if (!m_pMesh->IsPartsAnimReverce(enPARTS::LEG))
+				{
+					m_pMesh->SetPartsAnimReverce(enPARTS::LEG,true);
+				}
+			}
+		}
+
+		else
+		{
+			const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
+
+			if (iAnimNo > enAnimNoLegWait &&
+				iAnimNo < enAnimNoLegBoostStart)//ãrÉpÅ[ÉcÇÃÉAÉjÉÅÅ[ÉVÉáÉìÇ™ï‡çsånìùÇ©?.
+			{
+				//ï‡çsÉAÉjÉÅÅ[ÉVÉáÉìÇæÇ¡ÇΩ.
+				if (m_pMesh->IsPartsAnimReverce(enPARTS::LEG))
+				{
+					m_pMesh->SetPartsAnimNormal(enPARTS::LEG, true);
+				}
+			}
+		}
+	}
+
+	vTmp.y += fRot;
+
+	vTmp.y += static_cast<float>(D3DX_PI);
+	ObjRollOverGuard(&vTmp.y);
+
+	D3DXVECTOR3 vLegRot = vTmp;
+
+	m_pMesh->SetPartsRotate(enPARTS::LEG, vLegRot);
+}
+
+void clsRobo::AnimUpdate()
+{
+	AnimUpdateLeg();
+}
+
+void clsRobo::AnimUpdateLeg()
+{
+	const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
+
+	enAnimNoLeg iChangeAnimNo = iAnimNo;
+
+	double dAnimStartTime = 0.0f;
+
+	switch (iAnimNo)
+	{
+	case enAnimNoLegWait://ë“ã@íÜ.
+
+		if (IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegWalkStart;
+		}
+
+		if (m_bBoost)
+		{
+			iChangeAnimNo = enAnimNoLegBoostStart;
+		}
+
+		break;
+	case enAnimNoLegWalkStart:
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG) || m_pMesh->IsPartsAnimReverce(enPARTS::LEG))//ãtçƒê∂Ç…Ç»Ç¡ÇƒÇ¢ÇΩÇÁ.
+		{
+			iChangeAnimNo = enAnimNoLegWalkRight;
+			//dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
+		}
+
+		if (!IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegWalkEndRight;
+		}
+
+		break;
+	case enAnimNoLegWalkRight:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWalkLeft;
+		}
+
+		if (!IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegWalkEndRight;
+			//dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
+		}
+
+		break;
+	case enAnimNoLegWalkLeft:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWalkRight;
+		}
+
+		if (!IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegWalkEndLeft;
+			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
+		}
+
+		break;
+	case enAnimNoLegWalkEndRight:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWait;
+		}
+
+		break;
+	case enAnimNoLegWalkEndLeft:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWait;
+		}
+
+		break;
+	case enAnimNoLegBoostStart:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegBoost;
+		}
+
+		break;
+	case enAnimNoLegBoost:
+
+		if (!m_bBoost)//|| !IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegBoostEnd;
+		}
+
+		break;
+	case enAnimNoLegBoostEnd:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWait;
+		}
+
+		break;
+	case enAnimNoLegJumpStart:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegJumpUp;
+			Jump();
+		}
+
+		break;
+	case enAnimNoLegJumpUp:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegJump;
+		}
+
+		break;
+	case enAnimNoLegJump:
+
+		if (m_fFollPower < 0)
+		{
+			iChangeAnimNo = enAnimNoLegJumpDown;
+		}
+
+		break;
+	case enAnimNoLegJumpDown:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, 0.0);
+		}
+
+		if (m_bGround)
+		{
+			iChangeAnimNo = enAnimNoLegJumpEnd;
+			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
+		}
+
+		break;
+	case enAnimNoLegJumpEnd:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			iChangeAnimNo = enAnimNoLegWait;
+		}
+
+		break;
+	case enAnimNoLegDown:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, 0.0);
+		}
+
+		break;
+	}
+
+	//ÉAÉjÉÅÅ[ÉVÉáÉìÇÃïœçXÇ™Ç†ÇÈ.
+	if (iChangeAnimNo != iAnimNo)
+	{
+		if (m_pMesh->IsPartsAnimReverce(enPARTS::LEG))//ãtçƒê∂Ç…Ç»Ç¡ÇƒÇ¢ÇΩÇÁ.
+		{
+			m_pMesh->SetPartsAnimNormal(enPARTS::LEG);//í èÌçƒê∂Ç…ñﬂÇ∑.
+		}
+
+		m_pMesh->SetPartsAnimNo(enPARTS::LEG, iChangeAnimNo, dAnimStartTime);
+	}
+}
+
+void clsRobo::AnimUpdateCore()
+{
+
+}
+
+void clsRobo::AnimUpdateArmL()
+{
+
+}
+
+void clsRobo::AnimUpdateArmR()
+{
+
 }
 
 clsRobo::clsRobo() :

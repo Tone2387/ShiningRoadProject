@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FACTORY_PARTS_H_
+#define FACTORY_PARTS_H_
+
 
 
 #include "PartsLeg.h"
@@ -19,3 +21,4 @@ public:
 
 };
 
+#endif//#ifndef FACTORY_PARTS_H_

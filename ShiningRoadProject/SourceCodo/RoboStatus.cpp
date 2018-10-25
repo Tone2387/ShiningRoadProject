@@ -39,7 +39,14 @@ clsROBO_STATUS::clsROBO_STATUS()
 	Clear();
 
 	clsFILE File;
-	File.Open( sROBO_STATUS_HERO_PATH );
+	bool isOpened = File.Open( sROBO_STATUS_HERO_PATH );
+
+	if( !isOpened ){
+		ERR_MSG( 
+			sROBO_STATUS_HERO_PATH, 
+			"データがありません。\
+			ドライブからデータをDLして、以下のパスに入れてください" );
+	}
 
 	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){

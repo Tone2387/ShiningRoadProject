@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LINE_BOX_H_
+#define LINE_BOX_H_
+
 
 #include "Sprite2DCenter.h"
 
@@ -48,7 +50,7 @@ public:
 	D3DXVECTOR3 GetPos() const;
 	D3DXVECTOR3 GetSize() const;
 
-	void SetAlpha( const float fAlpha );
+	virtual void SetAlpha( const float fAlpha );
 	//”ÍˆÍ‚ðover‚·‚é‚Æfalse‚ª•Ô‚Á‚Ä‚­‚é.
 	bool AddAlpha( const float fAlpha );
 
@@ -96,3 +98,4 @@ private:
 	bool m_isStopChange;
 
 };
+#endif//#ifndef LINE_BOX_H_

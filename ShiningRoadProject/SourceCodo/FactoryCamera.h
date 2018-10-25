@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FACTORY_CAMERA_H_
+#define FACTORY_CAMERA_H_
+
 
 
 #include "Camera.h"
@@ -21,3 +23,4 @@ public:
 
 };
 
+#endif//#ifndef FACTORY_CAMERA_H_

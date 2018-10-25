@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CAMERA_TITLE_H_
+#define CAMERA_TITLE_H_
 
 #include "Camera.h"
 
@@ -105,3 +106,4 @@ private:
 	bool m_isFlash;
 };
 
+#endif//#ifndef CAMERA_TITLE_H_

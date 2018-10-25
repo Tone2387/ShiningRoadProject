@@ -16,8 +16,6 @@ public:
 		m_pMesh->m_Trans.fPitch = m_Trans.fPitch;
 		m_pMesh->m_Trans.fRoll = m_Trans.fRoll;
 		m_pMesh->m_Trans.vScale = m_Trans.vScale;
-
-		m_pMesh->SetAnimSpeed(m_dAnimSpeed);
 	}
 	
 	clsObjSkinMesh();

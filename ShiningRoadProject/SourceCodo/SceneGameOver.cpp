@@ -1,6 +1,7 @@
 #include "SceneGameOver.h"
-#include "WindowBox.h"
+#include "MenuWindowGameOverContinue.h"
 #include "File.h"
+#include "SceneGameOverInformation.h"
 
 using namespace std;
 
@@ -33,11 +34,7 @@ const D3DXVECTOR4 vTEXT_COLOR_GAME_OVER = { 1.0f, 0.0625f, 0.0625f, 1.0f };
 //========== ゲームオーバークラス ==========//
 //================================//
 clsSCENE_GAME_OVER::clsSCENE_GAME_OVER( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
-	,m_fTextAlphaWhite( 1.0f )
-	,m_fTextAlphaRed( 0.0f )
-	,m_bCanBoxOpen( false )
-	,m_isBoxOpened( false )
-	,m_isYes( true )
+	,m_enTextRenderIndex( enMESSAGE_INDEX_MISSION_FAILD )
 {
 }
 
@@ -53,8 +50,8 @@ void clsSCENE_GAME_OVER::CreateProduct()
 
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 10.0f } );
 
-	assert( !m_upBox );
-	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
+//	assert( !m_upBox );
+//	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
 
 	assert( !m_upBlackBack );
 	SPRITE_STATE ss;
@@ -64,23 +61,30 @@ void clsSCENE_GAME_OVER::CreateProduct()
 	m_upBlackBack->SetPos( { 0.0f, 0.0f, 0.0f } );
 	m_upBlackBack->SetScale( vBLACK_BACK_SCALE );
 
-	//選択肢を示す.
-	m_upSelect = make_unique< clsSprite2D >();
-	m_upSelect->Create( m_wpDevice, m_wpContext, sSELECT_SPRITE_PATH, ss  );
-	m_upSelect->SetPos( vSELECT_SPRITE_POS_YES );
-	m_upSelect->SetScale( vSELECT_SPRITE_SCALE_YES );
-	m_upSelect->SetAlpha( fSELECT_SPRITE_ALPHA );
 
 	//文字の位置などをファイルから読み込む.
 	const char* sFILE_PATH = "Data\\FileData\\Tahara\\GameOverTextTransform.csv";
-	clsFILE File;
-	File.Open( sFILE_PATH );
+	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
+	upFile->Open( sFILE_PATH );
 	for( int i=0; i<enMESSAGE_INDEX_size; i++ ){
 		int iCol = 0;
-		m_TextStateArray[i].vPos.x = File.GetDataFloat( i, iCol++ );
-		m_TextStateArray[i].vPos.y = File.GetDataFloat( i, iCol++ );
-		m_TextStateArray[i].fScale = File.GetDataFloat( i, iCol++ );
+		m_TextStateArray[i].vPos.x = upFile->GetDataFloat( i, iCol++ );
+		m_TextStateArray[i].vPos.y = upFile->GetDataFloat( i, iCol++ );
+		m_TextStateArray[i].fScale = upFile->GetDataFloat( i, iCol++ );
 	}
+	upFile->Close();
+
+	//照合用情報の作成の為のファイルデータ取得.
+	const char sTITLE_INFORMATION_DATA_PATH[] = "Data\\FileData\\Tahara\\GameOverMenuInformation.csv";
+	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
+	//照合用情報の作成.
+	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size, 0 );
+	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
+		const int iCOL = 0;
+		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
+		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
+	}
+	upFile.reset();
 
 
 	//ゆっくり暗明転.
@@ -92,7 +96,10 @@ void clsSCENE_GAME_OVER::CreateProduct()
 
 void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 {
-	m_upBox->Update();
+	if( m_upMenu ){
+		MenuUpdate( enNextScene );
+	}
+
 
 //	float fff = 1.0f;
 //	if( GetAsyncKeyState( 'W' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, fff, 0.0f } );
@@ -104,74 +111,110 @@ void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 
 	if( !m_wpBlackScreen->GetAlpha() ){
 		//箱の開き始め.
-		if(!m_bCanBoxOpen ){
-			m_bCanBoxOpen = true;
-			m_wpSound->PlaySE( enSE_WIN_APP );
-			//箱を開く.
-			const D3DXVECTOR3 vTARGET_SIZE = { 600.0f, 400.0f, 1.0f };
-			const D3DXVECTOR2 vCHANGE_SPD = { 60.0f, 30.0f };
-			m_upBox->SetSizeTarget( vTARGET_SIZE );
-			m_upBox->AddChangeData( 
-				vCHANGE_SPD.x, vCHANGE_SPD.y, 
-				clsWINDOW_BOX::encBEFOR_CHANGE::WIDTH );
-		}
-		//開き始めた後.
-		else if( m_upBox->isStopChange() ){
-			m_isBoxOpened = true;
+		if(!m_upMenu ){
+//			m_wpSound->PlaySE( enSE_WIN_APP );
+			m_upMenu = make_unique<clsMENU_WINDOW_GAME_OVER_CONTINUE>( m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
 		}
 	}
 
-	//開ききるまで動かせない.
-	if( !m_isBoxOpened ){
-		return;
-	}
+//	//開ききるまで動かせない.
+//	if( !m_isBoxOpened ){
+//		return;
+//	}
+//
+//	//コントローラ.
+//	if( isPressLeft() ){
+//		if(!m_isYes ){
+//			m_isYes = true;
+//			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+//		}
+//	}
+//	if( isPressRight() ){
+//		if( m_isYes ){
+//			m_isYes = false;
+//			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+//		}
+//	}
 
-	//コントローラ.
-	if( isPressLeft() ){
-		if(!m_isYes ){
-			m_isYes = true;
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
-			m_upSelect->SetPos( vSELECT_SPRITE_POS_YES );
-			m_upSelect->SetScale( vSELECT_SPRITE_SCALE_YES );
-		}
-	}
-	if( isPressRight() ){
-		if( m_isYes ){
-			m_isYes = false;
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
-			m_upSelect->SetPos( vSELECT_SPRITE_POS_NO );
-			m_upSelect->SetScale( vSELECT_SPRITE_SCALE_NO );
-		}
-	}
-
-	if( isPressEnter() ){
-		//リトライ.
-		if( m_isYes ){
-			m_wpSound->PlaySE( enSE_ENTER );
-			m_wpSound->PlaySE( enSE_MISSION_START );
-			enNextScene = enSCENE::MISSION;
-		}
-		//あきらめる.
-		else{
-			m_wpSound->PlaySE( enSE_EXIT );
-			m_wpSound->PlaySE( enSE_WIN_DISAPP );
-			//箱を閉じる.
-			const D3DXVECTOR2 vCHANGE_SPD = { 60.0f, 30.0f };
-			m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
-			m_upBox->AddChangeData( 
-				vCHANGE_SPD.x, vCHANGE_SPD.y, 
-				clsWINDOW_BOX::encBEFOR_CHANGE::BOTH );
-			//文字を消す & 赤い文字を出す.
-			float fTmpAlpha = m_fTextAlphaWhite;
-			m_fTextAlphaWhite = m_fTextAlphaRed;
-			m_fTextAlphaRed = fTmpAlpha;
-			//選択を消す.
-			m_upSelect->SetAlpha( 0.0f );
-			//シーン飛ぶ.
-			enNextScene = enSCENE::TITLE;
-		}
-	}
+//	if( isPressEnter() ){
+//		//リトライ.
+//		if( m_isYes ){
+//			m_wpSound->PlaySE( enSE_ENTER );
+//			m_wpSound->PlaySE( enSE_MISSION_START );
+//			enNextScene = enSCENE::MISSION;
+//		}
+//		//あきらめる.
+//		else{
+//			m_wpSound->PlaySE( enSE_EXIT );
+//			m_wpSound->PlaySE( enSE_WIN_DISAPP );
+//			//箱を閉じる.
+//			const D3DXVECTOR2 vCHANGE_SPD = { 60.0f, 30.0f };
+//			m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
+//			m_upBox->AddChangeData( 
+//				vCHANGE_SPD.x, vCHANGE_SPD.y, 
+//				clsWINDOW_BOX::encBEFOR_CHANGE::BOTH );
+//			//文字を消す & 赤い文字を出す.
+//			float fTmpAlpha = m_fTextAlphaWhite;
+//			m_fTextAlphaWhite = m_fTextAlphaRed;
+//			m_fTextAlphaRed = fTmpAlpha;
+//			//シーン飛ぶ.
+//			enNextScene = enSCENE::TITLE;
+//		}
+//	}
 }
+
+//メニューの動き.
+void clsSCENE_GAME_OVER::MenuUpdate( enSCENE &enNextScene )
+{
+	m_upMenu->Update();
+	//メニューが何か返してくる.
+	unsigned int uiReceiveInformation = m_upMenu->GetInformation();
+	if( uiReceiveInformation )
+	{
+		char cInformationIndex = -1;
+		for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
+			//有用な情報と合致したなら.
+			if( uiReceiveInformation == m_vecuiInformationDataArray[i] ){
+				m_upMenu->Close();
+				cInformationIndex = i;
+			}
+		}
+		switch( cInformationIndex )
+		{
+		case enINFORMATION_INDEX_GAME_OVER:
+			enNextScene = enSCENE::TITLE;
+			m_enTextRenderIndex = enMESSAGE_INDEX_GAME_OVER;
+			break;
+
+		case enINFORMATION_INDEX_CONTINUE:
+			enNextScene = enSCENE::MISSION;
+			m_enTextRenderIndex = enMESSAGE_INDEX_NEVER_GIVE_UP;
+			m_wpSound->PlaySE( enSE_MISSION_START );
+			break;
+
+		case enINFORMATION_INDEX_ASSEMBLE:
+			enNextScene = enSCENE::ASSEMBLE;
+			m_enTextRenderIndex = enMESSAGE_INDEX_NEVER_GIVE_UP;
+			m_wpSound->PlaySE( enSE_MISSION_START );
+			break;
+
+		default:
+			assert( !"不正な情報が返されました" );
+			break;
+		}
+	}
+
+
+	//( 見た目が )消えたら( メモリからも )消える.
+	if( m_upMenu->isDeletePermission() ){
+		m_upMenu.reset( nullptr );
+	}
+
+}
+
+
+
+
 
 void clsSCENE_GAME_OVER::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
@@ -181,37 +224,43 @@ void clsSCENE_GAME_OVER::RenderUi()
 	m_upBlackBack->Render();
 
 
-	m_wpFont->SetColor( vTEXT_COLOR );
-	m_wpFont->SetAlpha( m_fTextAlphaWhite );
 
-	for( char i=0; i<enMESSAGE_INDEX_size; i++ ){
-		//この範囲は映さないこともある.
-		if( enMESSAGE_INDEX_CONTINUE <= i && i <= enMESSAGE_INDEX_NO ){
-			//まだBOXが開ききっていないなら次.
-			if( !m_isBoxOpened ){
-				continue;
-			}
+//	for( char i=0; i<enMESSAGE_INDEX_size; i++ ){
+//		//日本語描画.
+//		m_wpFont->SetPos( m_TextStateArray[i].vPos );
+//		m_wpFont->SetScale( m_TextStateArray[i].fScale );
+//
+//		if( i == enMESSAGE_INDEX_MISSION_FAILD ){
+//			m_wpFont->SetColor( vTEXT_COLOR );
+//			m_wpFont->SetAlpha( m_fTextAlphaWhite );
+//		}
+//		else if( i == enMESSAGE_INDEX_GAME_OVER ){
+//			m_wpFont->SetColor( vTEXT_COLOR_GAME_OVER );
+//			m_wpFont->SetAlpha( m_fTextAlphaRed );
+//		}
+//
+//		m_wpFont->Render( i );
+//	}
+
+		if( m_enTextRenderIndex == enMESSAGE_INDEX_MISSION_FAILD ){
+			m_wpFont->SetColor( vTEXT_COLOR );
 		}
-
-		//色は文字の後ろ.
-		if( enMESSAGE_INDEX_CONTINUE == i ){
-			m_upSelect->Render();
+		else if( m_enTextRenderIndex == enMESSAGE_INDEX_GAME_OVER ){
+			m_wpFont->SetColor( vTEXT_COLOR_GAME_OVER );
+		}
+		else if( m_enTextRenderIndex == enMESSAGE_INDEX_NEVER_GIVE_UP ){
+			m_wpFont->SetColor( vTEXT_COLOR );
 		}
 
 		//日本語描画.
-		m_wpFont->SetPos( m_TextStateArray[i].vPos );
-		m_wpFont->SetScale( m_TextStateArray[i].fScale );
-		if( i == enMESSAGE_INDEX_GAME_OVER ){
-			m_wpFont->SetColor( vTEXT_COLOR_GAME_OVER );
-			m_wpFont->SetAlpha( m_fTextAlphaRed );
-		}
-		m_wpFont->Render( i );
+		m_wpFont->SetPos( m_TextStateArray[ m_enTextRenderIndex ].vPos );
+		m_wpFont->SetScale( m_TextStateArray[ m_enTextRenderIndex ].fScale );
+		m_wpFont->SetAlpha( 1.0f );
+		m_wpFont->Render( m_enTextRenderIndex );
 
-		//一つ目の上に箱を置く.
-		if( i == enMESSAGE_INDEX_MISSION_FAILD ){
-			//箱.
-			m_upBox->Render();
-		}
+
+	if( m_upMenu ){
+		m_upMenu->Render();
 	}
 
 }

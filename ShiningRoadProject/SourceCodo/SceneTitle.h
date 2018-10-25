@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SCENE_TITLE_H_
+#define SCENE_TITLE_H_
+
 
 #include "SceneBase.h"
 #include "CameraTitle.h"
@@ -7,8 +9,8 @@
 #include "AssembleModel.h"
 
 
-class clsWINDOW_BOX;
-class clsMENU_WINDOW_TITLE;
+
+class clsMENU_WINDOW_TITLE_START_OR_END;
 
 //================================//
 //========== タイトルクラス ==========//
@@ -42,37 +44,14 @@ private:
 
 
 
-	std::unique_ptr< clsMENU_WINDOW_TITLE > m_upMenuBox;
+	std::unique_ptr< clsMENU_WINDOW_TITLE_START_OR_END > m_upMenuBox;
 
 	//メニューから受け取った情報を照合する.
-	enum enINFORMATION : char
-	{
-		enINFORMATION_GAME_END = 0,
-		enINFORMATION_NEXT_SCENE,
-
-		enINFORMATION_size
-	};
-	unsigned int m_uiInformationDataArray[ enINFORMATION_size ];
+	std::vector<unsigned int> m_vecuiInformationDataArray;
 
 
 	//テスト用エフェクト.
 	::Effekseer::Handle m_ehHibana;
-
-	//音の引数.
-	enum enBGM : int
-	{
-		enBGM_MAOU1 = 0,
-		enBGM_MAOU3,
-	};
-
-	enum enSE : int
-	{
-		enSE_CURSOL_MOVE = 0,
-		enSE_ENTER,
-		enSE_EXIT,
-		enSE_BOMBER,
-		enSE_GUITAR
-	};
 
 
 #if _DEBUG
@@ -81,3 +60,4 @@ private:
 #endif//#if _DEBUG
 
 };
+#endif//#ifndef SCENE_TITLE_H_

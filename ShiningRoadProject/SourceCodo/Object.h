@@ -16,7 +16,7 @@ const float g_fDistanceReference = 0.01f;//ãóó£ÇÃãKíËíl.
 const float g_fDirectionReference = 0.001f;//âÒì]ílÇÃãKíËíl.
 const float g_fGravity = 0.01f;//èdóÕ.
 const float g_fGroundSpece = 0.01f;
-const float g_fRaySpace = 0.01f;
+const float g_fRaySpace = 0.5f;
 
 const D3DXVECTOR3 g_vDirForward	= D3DXVECTOR3(  0.0f,  0.0f,  1.0f);
 const D3DXVECTOR3 g_vDirBack	= D3DXVECTOR3(  0.0f,  0.0f, -1.0f);
@@ -122,7 +122,8 @@ public:
 	bool ObjectCollision(std::vector<SPHERE> pTarget);
 
 	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
-	void SetScale(float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
+	void SetScale(const float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
+	void SetScale(const D3DXVECTOR3 vScale){ m_Trans.vScale = vScale; }
 
 	bool WallJudge(clsStage* const pStage);
 

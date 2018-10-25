@@ -188,7 +188,6 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_pSelectParts( nullptr )
 	,m_iMessageNum( 0 )
 	,m_isMessageBoxYes( true )
-	,m_isCanControl( false )
 	,m_pColorGagesBone()
 	,m_enColorGageIndex( clsROBO_STATUS::enCOLOR_GAGE_BASE_R )
 	,m_fDistanceAssembleModel( 0.0f )
@@ -271,7 +270,7 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_upBox = make_unique< clsWINDOW_BOX >( m_wpDevice, m_wpContext );
 	m_upBox->SetPos( vBOX_POS );
 	m_upBox->SetSize( 0.0f );
-	m_upBox->SetAlpha( fBOX_ALPHA );
+	m_upBox->SetAlphaBack( fBOX_ALPHA );
 
 
 	//UI.
@@ -387,11 +386,9 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	assert( m_wpSound );
 
 	//à√ì]íÜÇÕëÄçÏïsî\.
+	bool isCanControl = true;
 	if( m_wpBlackScreen->GetAlpha() ){
-		m_isCanControl = false;
-	}
-	else{
-		m_isCanControl = true;
+		isCanControl = false;
 	}
 
 #if _DEBUG
@@ -439,7 +436,6 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 
 	if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
-//		enNextScene = enSCENE::MISSION;
 		static int tmpLAnim = 0;
 		m_pAsmModel->PartsAnimChange( static_cast<enPARTS>( m_PartsSelect.Type ), tmpLAnim++ );
 		if( tmpLAnim >= 5 ) tmpLAnim = 0;
@@ -467,7 +463,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 #endif//#if _DEBUG
 
 	//ëÄçÏ.
-	if( m_isCanControl ){
+	if( isCanControl ){
 		//ëIëéà.
 		if( isPressHoldRight()	)MoveCursorRight();
 		if( isPressHoldLeft()	)MoveCursorLeft();

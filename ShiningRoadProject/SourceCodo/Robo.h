@@ -43,21 +43,29 @@ public:
 	{
 		D3DXVECTOR3 vTmp;
 
+		vTmp = GetRotation();
+		//vTmp.y += static_cast<float>(D3DX_PI);
+		//ObjRollOverGuard(&vTmp.y);
+		//m_pMesh->SetRot(vTmp);
+		
+		SetRotateHeadParts();
+		SetRotateArmParts();
+		SetRotateCoreParts();
+		SetRotateLegParts();
+
 		vTmp = GetPosition();
 		m_pMesh->SetPos(vTmp);
-
-		vTmp = GetRotation();
-		vTmp.y += static_cast<float>(D3DX_PI);
-
-		ObjRollOverGuard(&vTmp.y);
-
-		m_pMesh->SetRot(vTmp);
 
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
 		m_pMesh->UpDate();
 		//UpdateCollsion();
 	}
+
+	void SetRotateHeadParts();
+	void SetRotateArmParts();
+	void SetRotateCoreParts();
+	void SetRotateLegParts();
 
 	void Render( 
 		const D3DXMATRIX& mView, 
@@ -190,6 +198,12 @@ private:
 	void PlayLegBoostEfc();
 
 	int GetBoostEfcNum(enPARTS PartsNum,const char* strBoostPosition);
+
+	void AnimUpdate();
+	void AnimUpdateLeg();
+	void AnimUpdateCore();
+	void AnimUpdateArmL();
+	void AnimUpdateArmR();
 
 //‘¾Œ´‚Ì‘‚«‘«‚µ‚½•ª.
 #ifdef Tahara

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PARTS_CORE_H_
+#define PARTS_CORE_H_
+
 
 
 #include "PartsBase.h"
@@ -40,3 +42,4 @@ private:
 
 };
 
+#endif//#ifndef PARTS_CORE_H_

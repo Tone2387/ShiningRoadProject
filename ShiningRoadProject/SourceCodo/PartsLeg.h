@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PARTS_LEG_H_
+#define PARTS_LEG_H_
+
 
 
 #include "PartsBase.h"
@@ -35,3 +37,4 @@ private:
 
 };
 
+#endif//#ifndef PARTS_LEG_H_

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WINDOW_BOX_H_
+#define WINDOW_BOX_H_
 
 #include "LineBox.h"
 
@@ -17,13 +18,16 @@ public:
 	virtual void Render() override;
 
 
+	void SetAlpha( const float fAlpha ) override;
+
+	void SetAlphaBack( const float fAlpha );
+
 protected:
 
 	virtual void SetColor( const D3DXVECTOR3& vColor ) override {
 		clsLINE_BOX::SetColor( vColor );
 		m_upBack->SetColor( vColor );
 	}
-
 
 private:
 
@@ -32,3 +36,4 @@ private:
 
 };
 
+#endif//#ifndef WINDOW_BOX_H_

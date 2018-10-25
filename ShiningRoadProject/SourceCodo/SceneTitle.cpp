@@ -1,7 +1,8 @@
 #include "SceneTitle.h"
 #include "WindowBox.h"
-#include "MenuWindowTitle.h"
+#include "MenuWindowTitleStartOrEnd.h"
 #include "File.h"
+#include "SceneTitleInformation.h"
 
 using namespace std;
 
@@ -99,16 +100,17 @@ void clsSCENE_TITLE::CreateProduct()
 	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
 	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
 	//照合用情報の作成.
-	for( char i=0; i<enINFORMATION_size; i++ ){
+	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size );
+	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
 		const int iCOL = 0;
 		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
-		m_uiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
+		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
 	}
 	upFile.reset();
 
 //	//箱.
 //	assert( !m_upMenuBox );
-//	m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
+//	m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
 //		m_wpPtrGroup, nullptr );
 
 //	//カメラ.
@@ -132,7 +134,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpSound->PlaySE( enSE_BOMBER );
 	}
 	if( m_wpXInput->isSlopeExit( XINPUT_RIGHT ) ){
-		m_wpSound->PlaySE( enSE_GUITAR );
+		m_wpSound->PlaySE( enSE_WIN_APP );
 	}
 
 	//エフェクトの使い方.
@@ -205,6 +207,11 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 //	}
 #endif//#ifdef _DEBUG
 
+	//暗転中は操作不能.
+	bool isCanControl = true;
+	if( m_wpBlackScreen->GetAlpha() ){
+		isCanControl = false;
+	}
 
 	//薄くする.
 	m_upFlash->AddAlpha( fFLASH_DOWN );
@@ -226,25 +233,23 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpFont->SetAlpha( fNEW_ALPHA );
 	}
 
-	//メニューが開いているなら.
-	if( m_upMenuBox ){
-		MenuUpdate( enNextScene );
-		return;
-	}
+	if( isCanControl ){
+		//メニューが開いているなら.
+		if( m_upMenuBox ){
+			MenuUpdate( enNextScene );
+			return;
+		}
 
-
-	//音声とシーン移動.
-	if( isPressEnter() ){
-		//メニューウィンドウ作成.
-		assert( !m_upMenuBox );
-		m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE >( 
-			m_wpPtrGroup, nullptr,
-			m_uiInformationDataArray );
-		const D3DXVECTOR3 vMENU_POS = { 400.0f, 550.0f, 0.0f };
-		m_upMenuBox->SetPos( vMENU_POS );
-
-		assert( m_wpSound );
-		m_wpSound->PlaySE( enSE_ENTER );
+		//音声とシーン移動.
+		if( isPressEnter() ){
+			//メニューウィンドウ作成.
+			assert( !m_upMenuBox );
+			m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
+				m_wpPtrGroup, nullptr,
+				&m_vecuiInformationDataArray );
+			const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
+			m_upMenuBox->SetPos( vMENU_POS );
+		}
 	}
 
 
@@ -259,21 +264,27 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 	if( uiReceiveInformation )
 	{
 		char cInformationIndex = -1;
-		for( char i=0; i<enINFORMATION_size; i++ ){
+		for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
 			//有用な情報と合致したなら.
-			if( uiReceiveInformation == m_uiInformationDataArray[i] ){
+			if( uiReceiveInformation == m_vecuiInformationDataArray[i] ){
 				cInformationIndex = i;
 			}
 		}
 		switch( cInformationIndex )
 		{
-		case enINFORMATION_GAME_END:
-			m_upMenuBox->Close();
+		case enINFORMATION_INDEX_GAME_END:
 //			exit( true );
+			enNextScene = enSCENE::EXIT_APP;
 			break;
-		case enINFORMATION_NEXT_SCENE:
+
+		case enINFORMATION_INDEX_NEXT_SCENE:
 			enNextScene = enSCENE::ASSEMBLE;
 			break;
+
+		case enINFORMATION_INDEX_CLOSE_MENU:
+			m_upMenuBox->Close();
+			break;
+
 		default:
 			assert( !"不正な情報が返されました" );
 			break;
@@ -304,15 +315,16 @@ void clsSCENE_TITLE::RenderUi()
 	m_upLogo->Render();
 
 
-	assert( m_wpFont );
-	const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
-	m_wpFont->SetPos( vPLESS_START_POS );
-	m_wpFont->SetScale( fPLESS_START_SCALE );
-	m_wpFont->SetColor( vTEXT_COLOR );
-	m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
-
 	if( m_upMenuBox ){
 		m_upMenuBox->Render();
+	}
+	else{
+		assert( m_wpFont );
+		const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
+		m_wpFont->SetPos( vPLESS_START_POS );
+		m_wpFont->SetScale( fPLESS_START_SCALE );
+		m_wpFont->SetColor( vTEXT_COLOR );
+		m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
 	}
 
 #ifdef _DEBUG
