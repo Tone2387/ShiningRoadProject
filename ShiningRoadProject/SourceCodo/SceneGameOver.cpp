@@ -1,6 +1,7 @@
 #include "SceneGameOver.h"
 #include "MenuWindowGameOverContinue.h"
 #include "File.h"
+#include "SceneGameOverInformation.h"
 
 using namespace std;
 
@@ -77,10 +78,11 @@ void clsSCENE_GAME_OVER::CreateProduct()
 	const char sTITLE_INFORMATION_DATA_PATH[] = "Data\\FileData\\Tahara\\GameOverMenuInformation.csv";
 	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
 	//照合用情報の作成.
-	for( char i=0; i<enINFORMATION_size; i++ ){
+	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size, 0 );
+	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
 		const int iCOL = 0;
 		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
-		m_uiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
+		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
 	}
 	upFile.reset();
 
@@ -111,7 +113,7 @@ void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 		//箱の開き始め.
 		if(!m_upMenu ){
 //			m_wpSound->PlaySE( enSE_WIN_APP );
-			m_upMenu = make_unique<clsMENU_WINDOW_GAME_OVER_CONTINUE>( m_wpPtrGroup, nullptr, m_uiInformationDataArray );
+			m_upMenu = make_unique<clsMENU_WINDOW_GAME_OVER_CONTINUE>( m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
 		}
 	}
 
@@ -170,27 +172,27 @@ void clsSCENE_GAME_OVER::MenuUpdate( enSCENE &enNextScene )
 	if( uiReceiveInformation )
 	{
 		char cInformationIndex = -1;
-		for( char i=0; i<enINFORMATION_size; i++ ){
+		for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
 			//有用な情報と合致したなら.
-			if( uiReceiveInformation == m_uiInformationDataArray[i] ){
+			if( uiReceiveInformation == m_vecuiInformationDataArray[i] ){
 				m_upMenu->Close();
 				cInformationIndex = i;
 			}
 		}
 		switch( cInformationIndex )
 		{
-		case enINFORMATION_GAME_OVER:
+		case enINFORMATION_INDEX_GAME_OVER:
 			enNextScene = enSCENE::TITLE;
 			m_enTextRenderIndex = enMESSAGE_INDEX_GAME_OVER;
 			break;
 
-		case enINFORMATION_CONTINUE:
+		case enINFORMATION_INDEX_CONTINUE:
 			enNextScene = enSCENE::MISSION;
 			m_enTextRenderIndex = enMESSAGE_INDEX_NEVER_GIVE_UP;
 			m_wpSound->PlaySE( enSE_MISSION_START );
 			break;
 
-		case enINFORMATION_ASSEMBLE:
+		case enINFORMATION_INDEX_ASSEMBLE:
 			enNextScene = enSCENE::ASSEMBLE;
 			m_enTextRenderIndex = enMESSAGE_INDEX_NEVER_GIVE_UP;
 			m_wpSound->PlaySE( enSE_MISSION_START );

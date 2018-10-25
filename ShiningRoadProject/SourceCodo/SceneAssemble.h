@@ -137,10 +137,6 @@ private:
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
 
 
-
-	//操作可能ならtrue.
-	bool m_isCanControl;
-
 	//右スティックでモデルに近づく距離.
 	float m_fDistanceAssembleModel;
 		

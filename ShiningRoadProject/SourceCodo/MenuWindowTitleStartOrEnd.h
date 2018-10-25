@@ -10,7 +10,7 @@ public:
 	clsMENU_WINDOW_TITLE_START_OR_END(		
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
-		unsigned int* const pInformationArray );
+		std::vector<unsigned int>* const pInformationVec );
 
 	~clsMENU_WINDOW_TITLE_START_OR_END();
 

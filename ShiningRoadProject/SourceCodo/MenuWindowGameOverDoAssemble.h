@@ -11,7 +11,7 @@ public:
 	clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE(
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
-		unsigned int* const pInformationArray );
+		std::vector<unsigned int>* const pInformationVec );
 
 	~clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE();
 

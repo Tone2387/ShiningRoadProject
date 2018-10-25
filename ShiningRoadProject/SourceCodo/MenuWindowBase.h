@@ -19,7 +19,7 @@ public:
 	clsMENU_WINDOW_BASE(		
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
-		unsigned int* const pInformationArray,
+		std::vector<unsigned int>* const pInformationVec,
 		const int iCloseSeNum );
 	virtual ~clsMENU_WINDOW_BASE();
 
@@ -81,7 +81,7 @@ protected:
 	//メニューを開いたものに返す値.
 	unsigned int m_uiInformation;
 	//シーンからもらってくる, 情報の何が何を表すかの数値の配列.
-	unsigned int* m_puiInformationDataArray;
+	std::vector<unsigned int>*		m_pInformationVec;
 
 	//文字.
 	clsFont* m_wpFont;
@@ -100,7 +100,6 @@ protected:
 
 	//子供のために必要.
 	clsPOINTER_GROUP*	m_pPtrGroup;
-	unsigned int*		m_puiInformationArray;
 
 	//効果音.
 	clsSOUND_MANAGER_BASE* m_wpSound;

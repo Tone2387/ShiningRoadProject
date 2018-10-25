@@ -16,17 +16,16 @@ namespace{
 clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(		
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* pParentWindow,
-	unsigned int* const pInformationArray,
+	std::vector<unsigned int>* const pInformationVec,
 	const int iCloseSeNum )
 		:clsWINDOW_BOX( pPtrGroup->GetDevice(), pPtrGroup->GetContext() )
 		,m_pPtrGroup( pPtrGroup )
-		,m_puiInformationArray( pInformationArray )
+		,m_pInformationVec( pInformationVec )
 		,m_wpFont( pPtrGroup->GetFont() )
 		,m_wpXInput( pPtrGroup->GetXInput() )
 		,m_wpDInput( pPtrGroup->GetDxInput() )
 		,m_wpSound( pPtrGroup->GetSound() )
 		,m_pParentWindow( pParentWindow )
-		,m_puiInformationDataArray( pInformationArray )
 		,m_pNextWindow( nullptr )
 		,m_isOperation( true )
 		,m_iSelectNum( 0 )
@@ -65,7 +64,7 @@ clsMENU_WINDOW_BASE::~clsMENU_WINDOW_BASE()
 	m_wpDInput = nullptr;
 	m_wpXInput = nullptr;
 	m_wpFont = nullptr;
-	m_puiInformationArray = nullptr;
+	m_pInformationVec = nullptr;
 	m_pPtrGroup = nullptr;
 }
 

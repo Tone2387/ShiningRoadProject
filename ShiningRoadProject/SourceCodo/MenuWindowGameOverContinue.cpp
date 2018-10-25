@@ -9,8 +9,8 @@
 clsMENU_WINDOW_GAME_OVER_CONTINUE::clsMENU_WINDOW_GAME_OVER_CONTINUE(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
-	unsigned int* const pInformationArray )
-	:clsMENU_WINDOW_GAME_OVER_BASE( pPtrGroup, pParentWindow, pInformationArray )
+	std::vector<unsigned int>* const pInformationVec )
+	:clsMENU_WINDOW_GAME_OVER_BASE( pPtrGroup, pParentWindow, pInformationVec )
 {
 	//‚±‚Ì‘‹‚ÌƒTƒCƒY.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 400.0f };
@@ -60,13 +60,13 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 		}
 		else if( m_iSelectNum == 1 ){
 			m_wpSound->PlaySE( enSE_EXIT );
-			m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_GAME_OVER ];
+			m_uiInformation = ( *m_pInformationVec )[ m_INFORMATION__INDEX_GAME_OVER ];
 		}
 	}
 
 	if( SelectExit() ){
 		m_wpSound->PlaySE( enSE_EXIT );
-		m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_GAME_OVER ];
+		m_uiInformation = ( *m_pInformationVec )[ m_INFORMATION__INDEX_GAME_OVER ];
 	}
 
 }
@@ -117,7 +117,7 @@ bool clsMENU_WINDOW_GAME_OVER_CONTINUE::CreateNextWindowProduct(
 	clsMENU_WINDOW_BASE* const pParentWindow ) 
 {
 //	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_CONTINUE( m_pPtrGroup, pParentWindow, m_puiInformationArray );
-	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE( m_pPtrGroup, pParentWindow, m_puiInformationArray );
+	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE( m_pPtrGroup, pParentWindow, m_pInformationVec );
 
 	if( *ppOutNextWindow ){
 		return true;

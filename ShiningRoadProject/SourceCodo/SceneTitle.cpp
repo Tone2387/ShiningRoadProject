@@ -2,6 +2,7 @@
 #include "WindowBox.h"
 #include "MenuWindowTitleStartOrEnd.h"
 #include "File.h"
+#include "SceneTitleInformation.h"
 
 using namespace std;
 
@@ -99,10 +100,11 @@ void clsSCENE_TITLE::CreateProduct()
 	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
 	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
 	//è∆çáópèÓïÒÇÃçÏê¨.
-	for( char i=0; i<enINFORMATION_size; i++ ){
+	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size );
+	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
 		const int iCOL = 0;
 		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
-		m_uiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
+		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
 	}
 	upFile.reset();
 
@@ -244,7 +246,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 			assert( !m_upMenuBox );
 			m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
 				m_wpPtrGroup, nullptr,
-				m_uiInformationDataArray );
+				&m_vecuiInformationDataArray );
 			const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
 			m_upMenuBox->SetPos( vMENU_POS );
 		}
@@ -262,24 +264,24 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 	if( uiReceiveInformation )
 	{
 		char cInformationIndex = -1;
-		for( char i=0; i<enINFORMATION_size; i++ ){
+		for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
 			//óLópÇ»èÓïÒÇ∆çáívÇµÇΩÇ»ÇÁ.
-			if( uiReceiveInformation == m_uiInformationDataArray[i] ){
+			if( uiReceiveInformation == m_vecuiInformationDataArray[i] ){
 				cInformationIndex = i;
 			}
 		}
 		switch( cInformationIndex )
 		{
-		case enINFORMATION_GAME_END:
+		case enINFORMATION_INDEX_GAME_END:
 //			exit( true );
 			enNextScene = enSCENE::EXIT_APP;
 			break;
 
-		case enINFORMATION_NEXT_SCENE:
+		case enINFORMATION_INDEX_NEXT_SCENE:
 			enNextScene = enSCENE::ASSEMBLE;
 			break;
 
-		case enINFORMATION_CLOSE_MENU:
+		case enINFORMATION_INDEX_CLOSE_MENU:
 			m_upMenuBox->Close();
 			break;
 
