@@ -19,8 +19,8 @@ void clsEnemyRobo::Init(
 	MSTmp.iHorDistance = 100;
 	MSTmp.iMoveDir = 0;
 	MSTmp.iMoveDirRandMax = 0;
-	MSTmp.iVerDistance = 5000;
-	MSTmp.iVerDistRandMax = 500;
+	MSTmp.iVerDistance = 10;
+	MSTmp.iVerDistRandMax = 2;
 
 	m_BoostState.iENLimitParcent = 30;
 	m_BoostState.iRisingENParcent = 70;

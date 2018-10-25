@@ -1614,7 +1614,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	//=================================================================//
 
 	// 回転行列(合成)
-	m_mRotation = Roll * Pitch * Yaw;	
+	m_mRotation = Roll * Pitch * Yaw;
 	// 平行移動.
 	D3DXMatrixTranslation( &Tran, m_Trans.vPos.x, m_Trans.vPos.y, m_Trans.vPos.z );
 	// ワールド行列.

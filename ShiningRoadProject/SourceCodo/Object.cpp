@@ -39,7 +39,7 @@ bool clsObject::Intersect(
 	vecEnd += vecAxis * 1.0f;
 
 	//対象が動いてる物体でも、対象のworld行列の、逆並列を用いれば正しくﾚｲが当たる.
-	D3DXMATRIX matWorld,mTrans,mRotate,mScale;
+	D3DXMATRIX mWorld, mWorldInv, mTrans, mRotate, mScale;
 	D3DXMatrixTranslation(&mTrans,
 		pTarget->m_Trans.vPos.x,
 		pTarget->m_Trans.vPos.y,
@@ -55,12 +55,12 @@ bool clsObject::Intersect(
 		pTarget->m_Trans.vScale.y,
 		pTarget->m_Trans.vScale.z);
 
-	matWorld = mTrans * mRotate * mScale;
+	mWorld = mScale * mRotate * mTrans;//もともと.
 
 	//逆並列を求める.
-	D3DXMatrixInverse(&matWorld, NULL, &matWorld);
-	D3DXVec3TransformCoord(&vecStart, &vecStart, &matWorld);
-	D3DXVec3TransformCoord(&vecEnd, &vecEnd, &matWorld);
+	D3DXMatrixInverse(&mWorldInv, NULL, &mWorld);
+	D3DXVec3TransformCoord(&vecStart, &vecStart, &mWorldInv);
+	D3DXVec3TransformCoord(&vecEnd, &vecEnd, &mWorldInv);
 
 	//距離を求める.
 	vecDistance = vecEnd - vecStart;
@@ -92,31 +92,6 @@ bool clsObject::Intersect(
 			vVertex[0]
 			+ U * (vVertex[1] - vVertex[0])
 			+ V * (vVertex[2] - vVertex[0]);
-
-		/*pvIntersect->x += pTarget->m_Trans.vPos.x;
-		pvIntersect->y += pTarget->m_Trans.vPos.y;
-		pvIntersect->z += pTarget->m_Trans.vPos.z;
-
-		D3DXMatrixTranslation(&mTrans,
-			pvIntersect->x,
-			pvIntersect->y,
-			pvIntersect->z);
-
-		D3DXMatrixRotationYawPitchRoll(&mRotate,
-			pTarget->m_Trans.fYaw,
-			pTarget->m_Trans.fPitch,
-			pTarget->m_Trans.fRoll);
-
-		D3DXMatrixScaling(&mScale,
-			pTarget->m_Trans.vScale.x,
-			pTarget->m_Trans.vScale.y,
-			pTarget->m_Trans.vScale.z);
-
-		matWorld = mTrans * mRotate * mScale;
-
-		pvIntersect->x = matWorld._41;
-		pvIntersect->y = matWorld._42;
-		pvIntersect->z = matWorld._43;*/
 
 		pvIntersect->x *= pTarget->m_Trans.vScale.x;
 		pvIntersect->y *= pTarget->m_Trans.vScale.y;
@@ -243,62 +218,63 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 	fYaw = fabs(m_Trans.fYaw);//fabs:絶対値(float版)
 	ObjRollOverGuard(&fYaw);//0～2πの間に収める.
 
-	Intersect(rs, pWall, &fDis, &vIntersect);
-
 	bool bResult = false;
-	
-	//前が壁に接近.
-	if (fDis < fRaySpece && fDis > 0.0f)
+
+	if (Intersect(rs, pWall, &fDis, &vIntersect))
 	{
-		bResult = true;
-
-		if (bSlip)
+		//前が壁に接近.
+		if (fDis < fRaySpece && fDis > 0.0f)
 		{
-			if (m_Trans.fYaw < 0.0f)
+			bResult = true;
+
+			if (bSlip)
 			{
-				//時計回り
-				if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+				if (m_Trans.fYaw < 0.0f)
 				{
-					m_Trans.vPos.x += fRaySpece - fDis;
+					//時計回り
+					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+					{
+						m_Trans.vPos.x += fRaySpece - fDis;
+					}
+
+					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+					{
+						m_Trans.vPos.z += fRaySpece - fDis;
+					}
+
+					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
+					{
+						m_Trans.vPos.x -= fRaySpece - fDis;
+					}
+
+					else//奥から.
+					{
+						m_Trans.vPos.z -= fRaySpece - fDis;
+					}
 				}
 
-				else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+				else
 				{
-					m_Trans.vPos.z += fRaySpece - fDis;
-				}
+					//反時計回り
+					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+					{
+						m_Trans.vPos.x -= fRaySpece - fDis;
+					}
 
-				else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
-				{
-					m_Trans.vPos.x -= fRaySpece - fDis;
-				}
+					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+					{
+						m_Trans.vPos.z += fRaySpece - fDis;
+					}
 
-				else//奥から.
-				{
-					m_Trans.vPos.z -= fRaySpece - fDis;
-				}
-			}
+					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
+					{
+						m_Trans.vPos.x += fRaySpece - fDis;
+					}
 
-			else
-			{
-				//反時計回り
-				if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
-				{
-					m_Trans.vPos.x -= fRaySpece - fDis;
-				}
-
-				else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
-				{
-					m_Trans.vPos.z += fRaySpece - fDis;
-				}
-
-				else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
-				{
-					m_Trans.vPos.x += fRaySpece - fDis;
-				}
-
-				else//奥から.
-				{
-					m_Trans.vPos.z -= fRaySpece - fDis;
+					else//奥から.
+					{
+						m_Trans.vPos.z -= fRaySpece - fDis;
+					}
 				}
 			}
 		}
@@ -320,61 +296,62 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 	fYaw = fabs(m_Trans.fYaw);//fabs:絶対値(float版)
 	ObjRollOverGuard(&fYaw);//0～2πの間に収める.
 
-	Intersect(rs, pWall, &fDis, &vIntersect);
-
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > 0.0f)
+	if (Intersect(rs, pWall, &fDis, &vIntersect))
 	{
-		bResult = true;
-
-		if (bSlip)
+		if (fDis < fRaySpece && fDis > 0.0f)
 		{
-			if (m_Trans.fYaw < 0.0f)
+			bResult = true;
+
+			if (bSlip)
 			{
-				//時計回り
-				if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+				if (m_Trans.fYaw < 0.0f)
 				{
-					m_Trans.vPos.x -= fRaySpece - fDis;
+					//時計回り
+					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+					{
+						m_Trans.vPos.x -= fRaySpece - fDis;
+					}
+
+					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+					{
+						m_Trans.vPos.z -= fRaySpece - fDis;
+					}
+
+					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
+					{
+						m_Trans.vPos.x += fRaySpece - fDis;
+					}
+
+					else//奥から.
+					{
+						m_Trans.vPos.z += fRaySpece - fDis;
+					}
 				}
 
-				else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+				else
 				{
-					m_Trans.vPos.z -= fRaySpece - fDis;
-				}
+					//反時計回り
+					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+					{
+						m_Trans.vPos.x += fRaySpece - fDis;
+					}
 
-				else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
-				{
-					m_Trans.vPos.x += fRaySpece - fDis;
-				}
+					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+					{
+						m_Trans.vPos.z -= fRaySpece - fDis;
+					}
 
-				else//奥から.
-				{
-					m_Trans.vPos.z += fRaySpece - fDis;
-				}
-			}
+					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
+					{
+						m_Trans.vPos.x -= fRaySpece - fDis;
+					}
 
-			else
-			{
-				//反時計回り
-				if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
-				{
-					m_Trans.vPos.x += fRaySpece - fDis;
-				}
-
-				else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
-				{
-					m_Trans.vPos.z -= fRaySpece - fDis;
-				}
-
-				else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
-				{
-					m_Trans.vPos.x -= fRaySpece - fDis;
-				}
-
-				else//奥から.
-				{
-					m_Trans.vPos.z += fRaySpece - fDis;
+					else//奥から.
+					{
+						m_Trans.vPos.z += fRaySpece - fDis;
+					}
 				}
 			}
 		}
@@ -396,63 +373,64 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 	fYaw = fabs(m_Trans.fYaw);//fabs:絶対値(float版)
 	ObjRollOverGuard(&fYaw);//0～2πの間に収める.
 
-	Intersect(rs, pWall, &fDis, &vIntersect);
-
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > 0.0f)
+	if (Intersect(rs, pWall, &fDis, &vIntersect))
 	{
-		bResult = true;
-
-		if (bSlip)
+		if (fDis < fRaySpece && fDis > 0.0f)
 		{
-			if (m_Trans.fYaw < 0.0f)
+			bResult = true;
+
+			if (bSlip)
 			{
-				//時計回り
-				if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+				if (m_Trans.fYaw < 0.0f)
 				{
-					m_Trans.vPos.z += fRaySpece - fDis;
+					//時計回り
+					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+					{
+						m_Trans.vPos.z += fRaySpece - fDis;
+					}
+
+					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+					{
+						m_Trans.vPos.x -= fRaySpece - fDis;
+					}
+
+					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
+					{
+						m_Trans.vPos.z -= fRaySpece - fDis;
+					}
+
+					else//奥から.
+					{
+						m_Trans.vPos.x += fRaySpece - fDis;
+					}
 				}
 
-				else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+				else
 				{
-					m_Trans.vPos.x -= fRaySpece - fDis;
-				}
+					//反時計回り
+					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+					{
+						m_Trans.vPos.z -= fRaySpece - fDis;
+					}
 
-				else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
-				{
-					m_Trans.vPos.z -= fRaySpece - fDis;
-				}
+					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+					{
+						m_Trans.vPos.x -= fRaySpece - fDis;
+					}
 
-				else//奥から.
-				{
-					m_Trans.vPos.x += fRaySpece - fDis;
-				}
-			}
+					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
+					{
+						m_Trans.vPos.z += fRaySpece - fDis;
+					}
 
-			else
-			{
-				//反時計回り
-				if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
-				{
-					m_Trans.vPos.z -= fRaySpece - fDis;
-				}
+					else//奥から.
+					{
+						m_Trans.vPos.x += fRaySpece - fDis;
+					}
 
-				else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
-				{
-					m_Trans.vPos.x -= fRaySpece - fDis;
 				}
-
-				else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
-				{
-					m_Trans.vPos.z += fRaySpece - fDis;
-				}
-
-				else//奥から.
-				{
-					m_Trans.vPos.x += fRaySpece - fDis;
-				}
-
 			}
 		}
 	}
@@ -473,61 +451,62 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 	fYaw = fabs(m_Trans.fYaw);//fabs:絶対値(float版)
 	ObjRollOverGuard(&fYaw);//0～2πの間に収める.
 
-	Intersect(rs, pWall, &fDis, &vIntersect);
-
 	bool bResult = false;
 
-	if (fDis < fRaySpece && fDis > 0.0f)
+	if (Intersect(rs, pWall, &fDis, &vIntersect))
 	{
-		bResult = true;
-
-		if (bSlip)
+		if (fDis < fRaySpece && fDis > 0.0f)
 		{
-			if (m_Trans.fYaw < 0.0f)
+			bResult = true;
+
+			if (bSlip)
 			{
-				//時計回り
-				if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+				if (m_Trans.fYaw < 0.0f)
 				{
-					m_Trans.vPos.z -= fRaySpece - fDis;
+					//時計回り
+					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+					{
+						m_Trans.vPos.z -= fRaySpece - fDis;
+					}
+
+					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+					{
+						m_Trans.vPos.x += fRaySpece - fDis;
+					}
+
+					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
+					{
+						m_Trans.vPos.z += fRaySpece - fDis;
+					}
+
+					else//奥から.
+					{
+						m_Trans.vPos.x -= fRaySpece - fDis;
+					}
 				}
 
-				else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+				else
 				{
-					m_Trans.vPos.x += fRaySpece - fDis;
-				}
+					//反時計回り
+					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
+					{
+						m_Trans.vPos.z += fRaySpece - fDis;
+					}
 
-				else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
-				{
-					m_Trans.vPos.z += fRaySpece - fDis;
-				}
+					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
+					{
+						m_Trans.vPos.x += fRaySpece - fDis;
+					}
 
-				else//奥から.
-				{
-					m_Trans.vPos.x -= fRaySpece - fDis;
-				}
-			}
+					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
+					{
+						m_Trans.vPos.z -= fRaySpece - fDis;
+					}
 
-			else
-			{
-				//反時計回り
-				if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
-				{
-					m_Trans.vPos.z += fRaySpece - fDis;
-				}
-
-				else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
-				{
-					m_Trans.vPos.x += fRaySpece - fDis;
-				}
-
-				else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
-				{
-					m_Trans.vPos.z -= fRaySpece - fDis;
-				}
-
-				else//奥から.
-				{
-					m_Trans.vPos.x -= fRaySpece - fDis;
+					else//奥から.
+					{
+						m_Trans.vPos.x -= fRaySpece - fDis;
+					}
 				}
 			}
 		}
@@ -545,18 +524,19 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 	rs.vAxis = g_vDirUp;
 	rs.vRayStart = m_Trans.vPos;
 
-	Intersect(rs, pWall, &fDis, &vIntersect);
-
 	bool bResult = false;
 
-	if (fDis < fRaySpece + m_fFollPower && fDis > 0.0f)
+	if (Intersect(rs, pWall, &fDis, &vIntersect))
 	{
-		bResult = true;
-
-		if (m_fFollPower > 0.0f)
+		if (fDis < m_fFollPower && fDis > 0.0f)
 		{
-			m_fFollPower = 0.0f;
-			m_Trans.vPos.y = vIntersect.y - g_fGroundSpece;
+			bResult = true;
+
+			if (m_fFollPower > 0.0f)
+			{
+				m_fFollPower = 0.0f;
+				m_Trans.vPos.y = vIntersect.y - g_fGroundSpece;
+			}
 		}
 	}
 
@@ -567,7 +547,7 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 {
 	if (m_bGround)
 	{
-		return true;
+		return false;
 	}
 
 	D3DXVECTOR3 vIntersect;//交点座標.
@@ -577,18 +557,21 @@ bool clsObject::WallUnder(const clsDX9Mesh* pWall)
 	rs.vAxis = g_vDirDown;
 	rs.vRayStart = m_Trans.vPos;
 
-	Intersect(rs, pWall, &fDis, &vIntersect);
-
 	bool bResult = false;
 
-	if (fDis < fRaySpece - m_fFollPower && fDis > 0.0f)
+	if (Intersect(rs, pWall, &fDis, &vIntersect))
 	{
-		m_bGround = true;
-		bResult = true;
+		if (fDis < fRaySpece - m_fFollPower && fDis > 0.0f)
+		{
+			m_bGround = true;
+			bResult = true;
 
-		m_Trans.vPos.y = vIntersect.y + g_fGroundSpece;
-
-		m_fFollPower = 0.0f;
+			if (m_fFollPower < 0.0f)
+			{
+				m_Trans.vPos.y = vIntersect.y + g_fGroundSpece;
+				m_fFollPower = 0.0f;
+			}
+		}
 	}
 
 	return bResult;
@@ -648,12 +631,10 @@ bool clsObject::WallJudge(clsStage* const pStage)
 	vvpMeshTmp = pStage->GetStageMeshArray();
 
 	bool bResult = false;
-
-	clsDX9Mesh* pObjMesh = vvpMeshTmp[vvpMeshTmp.size() - 1];
-
-	if (!pObjMesh)return false;
-
 	bool bHit = false;
+
+	/*clsDX9Mesh* pObjMesh = vvpMeshTmp[vvpMeshTmp.size() - 1];
+	if (!pObjMesh)return false;
 
 	//StageObjectとの当たり判定.
 	if (WallForward(pObjMesh))if (!bHit)bHit = true;
@@ -676,12 +657,12 @@ bool clsObject::WallJudge(clsStage* const pStage)
 	if (!bResult)
 	{
 		bResult = bHit;
-	}
+	}*/
 
-	/*for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
+	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{
-		pStage->SetStageObjTransform(i);
 		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
+		pStage->SetStageObjTransform(i);
 
 		if (!pObjMesh)continue;
 
@@ -709,7 +690,7 @@ bool clsObject::WallJudge(clsStage* const pStage)
 		{
 			bResult = bHit; 
 		}
-	}*/
+	}
 
 	FreeFoll();
 
