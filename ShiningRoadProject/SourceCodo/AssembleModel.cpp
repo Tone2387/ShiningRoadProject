@@ -282,12 +282,9 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 #if 1
 	//モデルの足元.
 	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
-	const float fADD_POS = m_Trans.vPos.y - vLegPosPositionBase.y;
-	if( fADD_POS != 0.0f ){
-		ERR_MSG( "ボーン位置がずれた", "0" );
-	}
+	const D3DXVECTOR3 vADD_POS = m_Trans.vPos - vLegPosPositionBase;
 	//nullを今のPositionBaseと同じ場所にずらする.
-	m_vpParts[ucLEG]->SetPosition( m_vpParts[ucLEG]->GetPosition() + D3DXVECTOR3( 0.0f, fADD_POS, 0.0f ) );
+	m_vpParts[ucLEG]->SetPosition( m_vpParts[ucLEG]->GetPosition() + vADD_POS );
 #endif
 
 
