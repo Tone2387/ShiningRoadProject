@@ -8,8 +8,8 @@
 clsMENU_WINDOW_TITLE_START_OR_END::clsMENU_WINDOW_TITLE_START_OR_END(		
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* pParentWindow,
-		unsigned int* const pInformationArray )
-		:clsMENU_WINDOW_TITLE_BASE( pPtrGroup, pParentWindow, pInformationArray )
+		std::vector<unsigned int>* const pInformationVec )
+		:clsMENU_WINDOW_TITLE_BASE( pPtrGroup, pParentWindow, pInformationVec )
 {
 	//‚±‚Ì‘‹‚ÌƒTƒCƒY.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
@@ -51,17 +51,17 @@ void clsMENU_WINDOW_TITLE_START_OR_END::UpdateProduct()
 	if( SelectEnter() ){
 		if( m_iSelectNum ){
 			m_wpSound->PlaySE( enSE_EXIT );
-			m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_GAME_END ];
+			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GAME_END ];
 		}
 		else{
 			m_wpSound->PlaySE( enSE_ENTER );
-			m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_NEXT_SCENE ];
+			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_NEXT_SCENE ];
 		}
 	}
 
 	if( SelectExit() ){
 		m_wpSound->PlaySE( enSE_WIN_DIS_APP );
-		m_uiInformation = m_puiInformationDataArray[ m_INFORMATION__INDEX_CLOSE_MENU ];
+		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_MENU ];
 	}
 
 

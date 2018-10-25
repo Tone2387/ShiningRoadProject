@@ -268,8 +268,10 @@
     <ClInclude Include="SourceCodo\SceneBase.h" />
     <ClInclude Include="SourceCodo\SceneEnding.h" />
     <ClInclude Include="SourceCodo\SceneGameOver.h" />
+    <ClInclude Include="SourceCodo\SceneGameOverInformation.h" />
     <ClInclude Include="SourceCodo\SceneMission.h" />
     <ClInclude Include="SourceCodo\SceneTitle.h" />
+    <ClInclude Include="SourceCodo\SceneTitleInformation.h" />
     <ClInclude Include="SourceCodo\Shot.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>

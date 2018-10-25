@@ -188,7 +188,6 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_pSelectParts( nullptr )
 	,m_iMessageNum( 0 )
 	,m_isMessageBoxYes( true )
-	,m_isCanControl( false )
 	,m_pColorGagesBone()
 	,m_enColorGageIndex( clsROBO_STATUS::enCOLOR_GAGE_BASE_R )
 	,m_fDistanceAssembleModel( 0.0f )
@@ -387,11 +386,9 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	assert( m_wpSound );
 
 	//à√ì]íÜÇÕëÄçÏïsî\.
+	bool isCanControl = true;
 	if( m_wpBlackScreen->GetAlpha() ){
-		m_isCanControl = false;
-	}
-	else{
-		m_isCanControl = true;
+		isCanControl = false;
 	}
 
 #if _DEBUG
@@ -466,7 +463,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 #endif//#if _DEBUG
 
 	//ëÄçÏ.
-	if( m_isCanControl ){
+	if( isCanControl ){
 		//ëIëéà.
 		if( isPressHoldRight()	)MoveCursorRight();
 		if( isPressHoldLeft()	)MoveCursorLeft();

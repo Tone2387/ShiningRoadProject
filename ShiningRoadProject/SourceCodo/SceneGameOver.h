@@ -60,17 +60,9 @@ private:
 
 	//メッセボックス.
 	std::unique_ptr< clsMENU_WINDOW_GAME_OVER_CONTINUE > m_upMenu;
-
-	//メニューから受け取った情報を照合するindex.
-	enum enINFORMATION : char
-	{
-		enINFORMATION_GAME_OVER = 0,
-		enINFORMATION_CONTINUE,
-		enINFORMATION_ASSEMBLE,
-
-		enINFORMATION_size
-	};
-	unsigned int m_uiInformationDataArray[ enINFORMATION_size ];
+	
+	//メニューから帰ってくる情報との照合用.
+	std::vector<unsigned int> m_vecuiInformationDataArray;
 
 
 
@@ -78,25 +70,6 @@ private:
 	//黒背景.
 	std::unique_ptr< clsSprite2D > m_upBlackBack;
 
-
-	//音の引数.
-	enum enBGM : int
-	{
-		enBGM_MAOU2 = 0,
-		enBGM_MUS0,
-		enBGM_POKET0,
-		enBGM_POKET1
-	};
-
-	enum enSE : int
-	{
-		enSE_CURSOL_MOVE = 0,
-		enSE_ENTER,
-		enSE_EXIT,
-		enSE_MISSION_START,
-		enSE_WIN_APP,
-		enSE_WIN_DISAPP,
-	};
 
 
 #if _DEBUG
