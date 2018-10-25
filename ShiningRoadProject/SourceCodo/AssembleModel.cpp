@@ -278,11 +278,10 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 	//モデルの基点.
 	D3DXVECTOR3 vLegPosNull = m_Trans.vPos;
 	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
-	//モデルの足元.
-	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
-
-	//.
-	m_vpParts[ucLEG]->SetPosition( vLegPosPositionBase - vLegPosNull );
+//	//モデルの足元.
+//	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
+//	//.
+//	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos + vLegPosPositionBase - vLegPosNull );
 
 	m_vpParts[ucCORE]->SetPosition( 
  		m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_TO_CORE ) );
