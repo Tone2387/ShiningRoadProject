@@ -38,7 +38,7 @@ public:
 	void Render() final;
 
 	//このウィンドウを閉じ始めて親ウィンドウに操作を返す.
-	void Close( const float fCloseSpdRate = 4.0f );
+	void Close( const float fCloseSpdRate = 8.0f );
 
 	//このメニューウィンドウのdeleteはこのif文の中で使いましょう.
 	bool isDeletePermission();

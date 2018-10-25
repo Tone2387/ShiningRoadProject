@@ -205,6 +205,11 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 //	}
 #endif//#ifdef _DEBUG
 
+	//暗転中は操作不能.
+	bool isCanControl = true;
+	if( m_wpBlackScreen->GetAlpha() ){
+		isCanControl = false;
+	}
 
 	//薄くする.
 	m_upFlash->AddAlpha( fFLASH_DOWN );
@@ -226,23 +231,23 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_wpFont->SetAlpha( fNEW_ALPHA );
 	}
 
-	//メニューが開いているなら.
-	if( m_upMenuBox ){
-		MenuUpdate( enNextScene );
-		return;
-	}
+	if( isCanControl ){
+		//メニューが開いているなら.
+		if( m_upMenuBox ){
+			MenuUpdate( enNextScene );
+			return;
+		}
 
-
-	//音声とシーン移動.
-	if( isPressEnter() ){
-		//メニューウィンドウ作成.
-		assert( !m_upMenuBox );
-		m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
-			m_wpPtrGroup, nullptr,
-			m_uiInformationDataArray );
-		const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
-		m_upMenuBox->SetPos( vMENU_POS );
-
+		//音声とシーン移動.
+		if( isPressEnter() ){
+			//メニューウィンドウ作成.
+			assert( !m_upMenuBox );
+			m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
+				m_wpPtrGroup, nullptr,
+				m_uiInformationDataArray );
+			const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
+			m_upMenuBox->SetPos( vMENU_POS );
+		}
 	}
 
 
