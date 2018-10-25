@@ -19,8 +19,8 @@
 #define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
 
 //•Ší‚Ì‰ñ“]î•ñŠm’è‚Ég‚¤.
-#define  sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
-#define  sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
+#define sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
+#define sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
 
 
 
