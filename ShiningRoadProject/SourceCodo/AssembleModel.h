@@ -8,21 +8,7 @@
 
 #include "RoboStatus.h"
 
-//足元の基点のボーン名.
-#define sBONE_NAME_LEG_POSITION_BASE "PositionBase"
-#define sBONE_NAME_NULL				 "null"
-
-//連結部分のボーン名.
-#define sBONE_NAME_LEG_TO_CORE		"JunctionCore"
-#define sBONE_NAME_CORE_TO_HEAD		"JunctionHead"
-#define sBONE_NAME_CORE_TO_ARM_L	"JunctionArmL"
-#define sBONE_NAME_CORE_TO_ARM_R	"JunctionArmR"
-#define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
-
-//武器の回転情報確定に使う.
-#define sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
-#define sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
-
+#include "AssembleModelBonePossitions.h"
 
 
 //アセンブルシーンのモデルさん.

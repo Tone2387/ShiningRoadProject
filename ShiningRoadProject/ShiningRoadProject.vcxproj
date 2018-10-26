@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\AssembleModel.cpp" />
+    <ClCompile Include="SourceCodo\AssembleModelBonePositions.cpp" />
     <ClCompile Include="SourceCodo\AssembleUi.cpp" />
     <ClCompile Include="SourceCodo\BlackScreen.cpp" />
     <ClCompile Include="SourceCodo\BlendState.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="SourceCodo\RoboCommand.cpp" />
     <ClCompile Include="SourceCodo\RoboStatus.cpp" />
     <ClCompile Include="SourceCodo\SceneAssemble.cpp" />
+    <ClCompile Include="SourceCodo\SceneAssembleInformation.cpp" />
     <ClCompile Include="SourceCodo\SceneBase.cpp" />
     <ClCompile Include="SourceCodo\SceneEnding.cpp" />
     <ClCompile Include="SourceCodo\SceneGameOver.cpp" />
@@ -189,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\AssembleModel.h" />
+    <ClInclude Include="SourceCodo\AssembleModelBonePossitions.h" />
     <ClInclude Include="SourceCodo\AssembleUi.h" />
     <ClInclude Include="SourceCodo\BlackScreen.h" />
     <ClInclude Include="SourceCodo\BlendState.h" />

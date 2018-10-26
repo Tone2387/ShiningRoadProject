@@ -1,0 +1,24 @@
+#include "AssembleModelBonePossitions.h"
+
+
+
+
+
+clsASSEMBLE_MODEL_BONE_POSITIONS::clsASSEMBLE_MODEL_BONE_POSITIONS()
+{
+}
+
+clsASSEMBLE_MODEL_BONE_POSITIONS::~clsASSEMBLE_MODEL_BONE_POSITIONS()
+{
+}
+
+
+
+
+
+
+
+
+
+
+
