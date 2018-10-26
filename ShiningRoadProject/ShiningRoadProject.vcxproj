@@ -87,7 +87,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\AssembleModel.cpp" />
-    <ClCompile Include="SourceCodo\AssembleModelBonePositions.cpp" />
     <ClCompile Include="SourceCodo\AssembleUi.cpp" />
     <ClCompile Include="SourceCodo\BlackScreen.cpp" />
     <ClCompile Include="SourceCodo\BlendState.cpp" />
@@ -191,7 +190,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\AssembleModel.h" />
-    <ClInclude Include="SourceCodo\AssembleModelBonePossitions.h" />
     <ClInclude Include="SourceCodo\AssembleUi.h" />
     <ClInclude Include="SourceCodo\BlackScreen.h" />
     <ClInclude Include="SourceCodo\BlendState.h" />

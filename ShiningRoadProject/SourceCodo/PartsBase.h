@@ -36,7 +36,15 @@ public:
 		const D3DXVECTOR4& vColorArmor = { 1.0f, 1.0f, 1.0f, 1.0f },
 		const bool isAlpha = false );
 
+	//直前のフレームのボーンの座標を持ってくる.
+	virtual D3DXVECTOR3 GetBonePosPreviosFrame( const int enBoneName, int iVecNum = 0 ) = 0;
+	//↑で使うためにボーン座標を記録する( Renderの直後に使う ).
+	virtual void UpdateBonePosPreviosFrame() = 0;
+
+
+	//今のボーン座標を持ってくる.
 	D3DXVECTOR3 GetBonePos( const char* sBoneName, const bool isLocalPos = false ) override;
+
 
 	//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
 	bool PartsAnimChange( const int iIndex );
@@ -44,7 +52,7 @@ public:
 	//パーツの名前を覚える.
 	void SetPartsName( const std::string &sPartsName );
 
-	//ボーンが存在するか.
+	//ボーンが存在するならtrue.
 	bool ExistsBone( const char* sBoneName );
 
 	void AddPosition( const D3DXVECTOR3& vPos ){
@@ -61,8 +69,25 @@ protected:
 	virtual void UpdateProduct() = 0;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 
+	void IntOverGuird( int* const i, const int start, const int end ){
+		if( *i >= end ){
+			*i = end - 1;
+		}
+		else if( *i < start ){
+			*i = start;
+		}
+	}
+
 	//パーツの名前.
 	std::string m_sPartsName;
+
+	//----- ボーン名の桁数 -----//.
+	//ブースター.
+	const int m_iDIGIT_BOOSTER_NUM;
+	//足の裏.
+	const int m_iDIGIT_SOLE_NUM;
+	//関節.
+	const int m_iDIGIT_JOINT_NUM;
 
 private:
 

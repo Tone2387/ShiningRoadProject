@@ -5,6 +5,17 @@
 
 #include "PartsBase.h"
 
+//----- コア -----//.
+#define sBONE_NAME_CORE_NULL		"null"
+//ブースター( 00 ～ xx ).
+#define sBONE_NAME_CORE_BOOSTER_ROOT "BoosterRoot"
+#define sBONE_NAME_CORE_BOOSTER_END	 "BoosterEnd"
+//モデルの中心.
+#define sBONE_NAME_CORE_JENERATOR	"Jenerator"
+//連結部分のボーン名.
+#define sBONE_NAME_CORE_TO_HEAD		"JunctionHead"
+#define sBONE_NAME_CORE_TO_ARM_L	"JunctionArmL"
+#define sBONE_NAME_CORE_TO_ARM_R	"JunctionArmR"
 
 
 class clsPARTS_CORE : public clsPARTS_BASE
@@ -33,11 +44,40 @@ public:
 	};
 
 
+	enum enCORE_BONE_POSITIONS : int
+	{
+		enCORE_BONE_POSITIONS_BOOSTER_ROOT = 0,
+		enCORE_BONE_POSITIONS_BOOSTER_END,
+		enCORE_BONE_POSITIONS_JENERATOR,
+		enCORE_BONE_POSITIONS_JUNCTION_HEAD,
+		enCORE_BONE_POSITIONS_JUNCTION_ARM_L,
+		enCORE_BONE_POSITIONS_JUNCTION_ARM_R,
+		
+		enCORE_STATUS_size
+	};
+
+	//直前のフレームのボーンの座標を持ってくる.
+	D3DXVECTOR3 GetBonePosPreviosFrame( 
+		const int enBoneName, 
+		int iVecNum = 0 ) override;
+	//↑で使うためにボーン座標を記録する( Renderの直後に使う ).
+	void UpdateBonePosPreviosFrame() override;
+
 private:
 	//----- 各パーツごとの関数 -----//.
 	void CreateProduct() final;//各シーンのCreate.
 	void UpdateProduct() final;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
+
+	struct CORE_BONE_POSITIONS
+	{
+		std::vector<D3DXVECTOR3> vecvBoosterRoot;
+		std::vector<D3DXVECTOR3> vecvBoosterEnd;
+		D3DXVECTOR3				 vJenerator;
+		D3DXVECTOR3				 vJunctionHead;
+		D3DXVECTOR3				 vJunctionArmL;
+		D3DXVECTOR3				 vJunctionArmR;
+	}	m_BonePositions;
 
 
 };
