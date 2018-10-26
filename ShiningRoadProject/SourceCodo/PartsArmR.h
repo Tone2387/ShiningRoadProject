@@ -5,7 +5,7 @@
 #include "PartsArmBase.h"
 
 
-class clsPARTS_ARM_R : public clsPARTS_BASE
+class clsPARTS_ARM_R : public clsPARTS_ARM_BASE
 {
 public:
 	clsPARTS_ARM_R();

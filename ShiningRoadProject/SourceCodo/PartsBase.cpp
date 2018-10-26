@@ -6,6 +6,9 @@ using namespace std;
 //#define ERROR_MESSAGE_MACRO_BONE_NAME_NOT_FIND
 
 clsPARTS_BASE::clsPARTS_BASE()
+	:m_iDIGIT_BOOSTER_NUM( 2 )
+	,m_iDIGIT_SOLE_NUM( 1 )
+	,m_iDIGIT_JOINT_NUM( 2 )
 {	
 	D3DXVECTOR3 vINIT_SCALE = { 1.0f, 1.0f, 1.0f };
 	m_Trans.vScale = vINIT_SCALE;

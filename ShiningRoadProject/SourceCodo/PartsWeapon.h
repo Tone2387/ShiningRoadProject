@@ -2,7 +2,15 @@
 #define PARTS_WEAPON_H_
 
 
+
 #include "PartsBase.h"
+
+//----- 武器 -----//.
+#define sBONE_NAME_WEAPON_MUZZLE_ROOT			"MuzzleRoot"
+#define sBONE_NAME_WEAPON_MUZZLE_END			"MuzzleEnd"
+#define sBONE_NAME_WEAPON_CARTRIDGE_INJECTION	"CartridgeInjection"
+
+
 
 
 class clsPARTS_WEAPON : public clsPARTS_BASE
@@ -35,6 +43,22 @@ public:
 		size
 	};
 
+	enum enWEAPON_BONE_POSITIONS
+	{
+		enWEAPON_BONE_POSITIONS_MUZZLE_ROOT,
+		enWEAPON_BONE_POSITIONS_MUZZLE_END,
+		enWEAPON_BONE_POSITIONS_CARTRIDGE_INJECTION,
+				 
+		enWEAPON_BONE_POSITIONS_size
+	};
+
+
+	//直前のフレームのボーンの座標を持ってくる.
+	D3DXVECTOR3 GetBonePosPreviosFrame( 
+		const int enBoneName, 
+		int iVecNum = 0 ) override;
+	//↑で使うためにボーン座標を記録する( Renderの直後に使う ).
+	void UpdateBonePosPreviosFrame() override;
 
 
 private:
@@ -42,6 +66,13 @@ private:
 	void CreateProduct() final;//各シーンのCreate.
 	void UpdateProduct() final;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
+
+	struct WEAPON_BONE_POSITIONS
+	{
+		D3DXVECTOR3 vMuzzleRoot;
+		D3DXVECTOR3 vMuzzleEnd;
+		D3DXVECTOR3 vCartridgeInjection;
+	}	m_BonePositions;
 
 
 };

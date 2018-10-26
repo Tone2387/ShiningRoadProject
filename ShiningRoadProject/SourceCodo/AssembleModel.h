@@ -8,21 +8,6 @@
 
 #include "RoboStatus.h"
 
-//足元の基点のボーン名.
-#define sBONE_NAME_LEG_POSITION_BASE "PositionBase"
-#define sBONE_NAME_NULL				 "null"
-
-//連結部分のボーン名.
-#define sBONE_NAME_LEG_TO_CORE		"JunctionCore"
-#define sBONE_NAME_CORE_TO_HEAD		"JunctionHead"
-#define sBONE_NAME_CORE_TO_ARM_L	"JunctionArmL"
-#define sBONE_NAME_CORE_TO_ARM_R	"JunctionArmR"
-#define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
-
-//武器の回転情報確定に使う.
-#define sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
-#define sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
-
 
 
 //アセンブルシーンのモデルさん.
@@ -45,6 +30,21 @@ public:
 		ENUM_SIZE
 	};
 
+	//m_vpPartsの添え字.
+	enum enPARTS_INDEX : int
+	{
+		enPARTS_INDEX_LEG = 0,
+		enPARTS_INDEX_CORE,
+		enPARTS_INDEX_HEAD,
+		enPARTS_INDEX_ARM_L,
+		enPARTS_INDEX_ARM_R,
+		enPARTS_INDEX_WEAPON_L,
+		enPARTS_INDEX_WEAPON_R,
+
+		enPARTS_INDEX_size
+	};
+
+
 	//アセンブルシーンの各関数内で使います.
 	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene = false );
 	void UpDate();
@@ -60,6 +60,15 @@ public:
 
 	//モデルつけ変え.
 	void AttachModel( const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum );
+
+
+	//直前のフレームでの、指定パーツの指定ボーンの座標を返す.
+	D3DXVECTOR3 GetBonePosPreviosFrame( 
+		const enPARTS_INDEX enParts, 
+		const int enBoneName,
+		int iVecNum = 0 ) const;
+
+
 
 	//トランスフォーム.
 	void SetPos( const D3DXVECTOR3 &vPos );

@@ -194,7 +194,7 @@ void clsASSEMBLE_MODEL::Render(
 
 	//モデルの足元.
 	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
-	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_NULL );
+	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_NULL );
 	const float fADD_POS_Y = vLegPosPositionBase.y - vLegPosNull.y;
 
 
@@ -213,6 +213,9 @@ void clsASSEMBLE_MODEL::Render(
 		m_vpParts[i]->ModelRender( 
 			mView, mProj, vLight, vEye, 
 			vTmpColorBase, vTmpColorArmor, true );
+
+		//ボーン位置を教え込ませる.
+		m_vpParts[i]->UpdateBonePosPreviosFrame();
 	}
 
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
@@ -327,6 +330,22 @@ void clsASSEMBLE_MODEL::AttachModel(
 }
 
 
+
+//直前のフレームでの、指定パーツの指定ボーンの座標を返す.
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePosPreviosFrame( 
+	const enPARTS_INDEX enParts, 
+	const int enBoneName,
+	int iVecNum ) const
+{
+	if( enParts < static_cast<enPARTS_INDEX>( m_vpParts.size() ) ){
+		return m_vpParts[ enParts ]->GetBonePosPreviosFrame( enBoneName, iVecNum );
+	}
+
+	return D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
+}
+
+
+
 //トランスフォーム.
 void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 {
@@ -364,9 +383,9 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 
 	//武器の角度.
 	FitJointModel( m_vpParts[ucWEAPON_L], m_vpParts[ucARM_L],
-		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
+		sBONE_NAME_ARM_WEAPON_VEC_ROOT, sBONE_NAME_ARM_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
 	FitJointModel( m_vpParts[ucWEAPON_R], m_vpParts[ucARM_R],
-		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );
+		sBONE_NAME_ARM_WEAPON_VEC_ROOT, sBONE_NAME_ARM_WEAPON_VEC_END );
 
 
 	m_vpParts[ucWEAPON_L]->AddRotation( { m_vpParts[ucARM_L]->GetRotation().x, 0.0f, 0.0f } );

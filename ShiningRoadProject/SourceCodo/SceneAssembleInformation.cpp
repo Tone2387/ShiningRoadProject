@@ -1,0 +1,19 @@
+#ifndef SCENE_ASSEMBLE_INFORMATION_H_
+#define SCENE_ASSEMBLE_INFORMATION_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#endif//#ifndef SCENE_ASSEMBLE_INFORMATION_H_

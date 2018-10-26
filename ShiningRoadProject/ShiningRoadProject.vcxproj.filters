@@ -363,6 +363,9 @@
     <ClCompile Include="SourceCodo\MenuWindowTitleBase.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\SceneAssembleInformation.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
