@@ -216,6 +216,9 @@ void clsRobo::Boost()
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
 	m_iMoveStopFrame = m_iBoostTopSpeedFrame;
 
+	m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
+	m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegBoostStart);
+
 	m_bBoost = true;
 }
 
@@ -265,7 +268,11 @@ void clsRobo::BoostRising()
 
 	else
 	{
-		m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegJumpStart);
+		if (m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpStart)
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
+			m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegJumpStart);
+		}
 	}
 }
 
@@ -398,15 +405,18 @@ void clsRobo::Updata()
 
 void clsRobo::UpdataLimitTime()
 {
-	if (m_iActivityLimitTime < 0)
+	if (!m_bTimeUp)
 	{
-		m_bTimeUp = true;
-		m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegDown);
-	}
+		if (m_iActivityLimitTime < 0)
+		{
+			m_bTimeUp = true;
+			m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegDown);
+		}
 
-	else
-	{
-		m_iActivityLimitTime--;
+		else
+		{
+			m_iActivityLimitTime--;
+		}
 	}
 }
 
@@ -1240,17 +1250,11 @@ void clsRobo::AnimUpdateLeg()
 			iChangeAnimNo = enAnimNoLegWalkStart;
 		}
 
-		if (m_bBoost)
-		{
-			iChangeAnimNo = enAnimNoLegBoostStart;
-		}
-
 		break;
 	case enAnimNoLegWalkStart:
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG) || m_pMesh->IsPartsAnimReverce(enPARTS::LEG))//逆再生になっていたら.
 		{
 			iChangeAnimNo = enAnimNoLegWalkRight;
-			//dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
 		}
 
 		if (!IsMoveing())
@@ -1269,7 +1273,7 @@ void clsRobo::AnimUpdateLeg()
 		if (!IsMoveing())
 		{
 			iChangeAnimNo = enAnimNoLegWalkEndRight;
-			//dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
+			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
 		}
 
 		break;
@@ -1308,6 +1312,12 @@ void clsRobo::AnimUpdateLeg()
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
 		{
 			iChangeAnimNo = enAnimNoLegBoost;
+		}
+
+		if (!m_bBoost)//|| !IsMoveing())
+		{
+			iChangeAnimNo = enAnimNoLegBoostEnd;
+			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
 		}
 
 		break;
@@ -1384,6 +1394,18 @@ void clsRobo::AnimUpdateLeg()
 		break;
 	}
 
+	//落ちてる間ブーストをふかしてないなら強制的に落下モーション.
+	if (!m_bGround && m_fFollPower < 0.0f)
+	{
+		if (!m_bBoost)
+		{
+			if (m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpDown)
+			{
+				iChangeAnimNo = enAnimNoLegJumpDown;
+			}
+		}
+	}
+
 	//アニメーションの変更がある.
 	if (iChangeAnimNo != iAnimNo)
 	{
@@ -1392,6 +1414,7 @@ void clsRobo::AnimUpdateLeg()
 			m_pMesh->SetPartsAnimNormal(enPARTS::LEG);//通常再生に戻す.
 		}
 
+		m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
 		m_pMesh->SetPartsAnimNo(enPARTS::LEG, iChangeAnimNo, dAnimStartTime);
 	}
 }
