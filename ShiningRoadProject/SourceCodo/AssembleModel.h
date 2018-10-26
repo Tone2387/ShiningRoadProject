@@ -10,6 +10,7 @@
 
 //足元の基点のボーン名.
 #define sBONE_NAME_LEG_POSITION_BASE "PositionBase"
+#define sBONE_NAME_NULL				 "null"
 
 //連結部分のボーン名.
 #define sBONE_NAME_LEG_TO_CORE		"JunctionCore"
@@ -101,6 +102,7 @@ public:
 #if _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
+
 #endif//#if _DEBUG
 
 protected:

@@ -5,6 +5,14 @@
 //leg‚Ìƒ‚ƒfƒ‹‚Ì‘«Œ³‚ª‚¨‚©‚µ‚¢ê‡.
 #define LEG_MODEL_POSITION_BASE_Y_OFFSET
 
+#if _DEBUG
+#include "CharaStatic.h"
+	//‘«Œ³.
+	std::unique_ptr<clsCharaStatic> m_upFoot;
+	std::unique_ptr<clsCharaStatic> m_upFootNull;
+
+#endif//#if _DEBUG
+
 using namespace std;
 
 //”z—ñ‚Ì“Y‚¦š.
@@ -102,6 +110,23 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 	Init( pStatus );
 
 	CreateProduct();
+
+#if _DEBUG
+	float fRATE = 2.5f;
+	//‘«Œ³.
+	m_upFoot = make_unique<clsCharaStatic>();
+	m_upFoot->AttachModel(
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
+	m_upFoot->AddRotationZ( static_cast<float>( M_PI ) );
+	m_upFoot->SetScale( 0.25f / fRATE );
+
+	m_upFootNull = make_unique<clsCharaStatic>();
+	m_upFootNull->AttachModel(
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
+	m_upFootNull->AddRotationZ( static_cast<float>( M_PI ) );
+	m_upFootNull->SetScale( { 0.125f / fRATE, 0.5f / fRATE, 0.125f / fRATE } );
+#endif//#if _DEBUG
+
 }
 
 void clsASSEMBLE_MODEL::CreateProduct()
@@ -146,7 +171,10 @@ void clsASSEMBLE_MODEL::UpDate()
 		m_vpParts[i]->Update();
 	}
 	UpdateProduct();
+
+
 }
+
 void clsASSEMBLE_MODEL::UpdateProduct()
 {
 }
@@ -162,9 +190,11 @@ void clsASSEMBLE_MODEL::Render(
 	D3DXVECTOR4 vTmpColorArmor;
 
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
+	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
+
 	//ƒ‚ƒfƒ‹‚Ì‘«Œ³.
 	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
-	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( "null" );
+	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_NULL );
 	const float fADD_POS_Y = vLegPosPositionBase.y - vLegPosNull.y;
 
 
@@ -188,6 +218,18 @@ void clsASSEMBLE_MODEL::Render(
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
 	m_Trans.vPos -= D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
 #endif//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
+
+
+#if _DEBUG
+	m_upFootNull->SetPosition( vLegPosNull );
+	m_upFootNull->UpdatePos();
+	m_upFootNull->Render( mView, mProj, vLight, vEye, { 10.0f, 0.0f, 0.0f, 0.5f }, true );
+	
+	m_upFoot->SetPosition( m_Trans.vPos );
+	m_upFoot->UpdatePos();
+	m_upFoot->Render( mView, mProj, vLight, vEye, { 0.0f, 10.0f, 0.0f, 0.5f }, true );
+	
+#endif//#if _DEBUG
 
 }
 
