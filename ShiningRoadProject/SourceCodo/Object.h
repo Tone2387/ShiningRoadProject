@@ -15,7 +15,7 @@ const float g_fPercentage = 0.01f;//•S•ª—¦‚É•ÏŠ·—p.
 const float g_fDistanceReference = 0.01f;//‹——£‚Ì‹K’è’l.
 const float g_fDirectionReference = 0.001f;//‰ñ“]’l‚Ì‹K’è’l.
 const float g_fGravity = 0.01f;//d—Í.
-const float g_fGroundSpece = 0.01f;
+const float g_fGroundSpece = 0.001f;
 const float g_fRaySpace = 0.5f;
 
 const D3DXVECTOR3 g_vDirForward	= D3DXVECTOR3(  0.0f,  0.0f,  1.0f);
