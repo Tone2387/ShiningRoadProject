@@ -199,11 +199,75 @@ private:
 
 	int GetBoostEfcNum(enPARTS PartsNum,const char* strBoostPosition);
 
+	enum enAnimNoLeg
+	{
+		enAnimNoLegWait = 0,
+		enAnimNoLegWalkStart,
+		enAnimNoLegWalkRight,
+		enAnimNoLegWalkLeft,
+		enAnimNoLegWalkEndRight,
+		enAnimNoLegWalkEndLeft,
+		enAnimNoLegBoostStart,
+		enAnimNoLegBoost,
+		enAnimNoLegBoostEnd,
+		enAnimNoLegJumpStart,
+		enAnimNoLegJumpUp,
+		enAnimNoLegJump,
+		enAnimNoLegJumpDown,
+		enAnimNoLegJumpEnd,
+		enAnimNoLegDown
+	};
+
+	enum enAnimNoArm
+	{
+		enAnimNoArmWait = 0,
+		enAnimNoArmWeaponHoldStart,
+		enAnimNoArmWeaponHoldAct,
+		enAnimNoArmWeaponShot,
+		enAnimNoArmWeaponHoldEnd,
+		enAnimNoArmWeaponReload,
+		enAnimNoArmDown,
+	};
+
+	enum enAnimNoCore
+	{
+		enAnimNoCoreWait = 0,
+		enAnimNoCoreDown,
+		enAnimNoCoreRadiatorOpen,
+		enAnimNoCoreRadiatorAct,
+		enAnimNoCoreRadiatorClose
+	};
+
+	enum enAnimNoHead
+	{
+		enAnimNoHeadWait = 0,
+		enAnimNoHeadDown
+	};
+
+	enum enAnimNoWeapon
+	{
+		enAnimNoWeaponWait = 0,
+		enAnimNoWeaponShot,
+		enAnimNoWeaponReload
+	};
+
 	void AnimUpdate();
+
 	void AnimUpdateLeg();
 	void AnimUpdateCore();
+	void AnimUpdateHead();
 	void AnimUpdateArmL();
 	void AnimUpdateArmR();
+	void AnimUpdateWeaponL();
+	void AnimUpdateWeaponR();
+
+	void AnimChangeLeg(enAnimNoLeg enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeCore(enAnimNoCore enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeHead(enAnimNoHead enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeArmL(enAnimNoArm enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeArmR(enAnimNoArm enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeWeaponL(enAnimNoWeapon enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeWeaponR(enAnimNoWeapon enChangeAnimNo, double dAnimTime = 0.0);
 
 //ëæå¥ÇÃèëÇ´ë´ÇµÇΩï™.
 #ifdef Tahara

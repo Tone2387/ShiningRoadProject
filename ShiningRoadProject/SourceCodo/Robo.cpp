@@ -30,10 +30,43 @@ enum enAnimNoLeg
 	enAnimNoLegBoostEnd,
 	enAnimNoLegJumpStart,
 	enAnimNoLegJumpUp,
-	enAnimNoLegJump,
+	//enAnimNoLegJump,
 	enAnimNoLegJumpDown,
 	enAnimNoLegJumpEnd,
 	enAnimNoLegDown
+};
+
+enum enAnimNoArm
+{
+	enAnimNoArmWait = 0,
+	enAnimNoArmWeaponHoldStart,
+	enAnimNoArmWeaponHoldAct,
+	enAnimNoArmWeaponShot,
+	enAnimNoArmWeaponHoldEnd,
+	enAnimNoArmWeaponReload,
+	enAnimNoArmDown,
+};
+
+enum enAnimNoCore
+{
+	enAnimNoCoreWait = 0,
+	enAnimNoCoreDown,
+	enAnimNoCoreRadiatorOpen,
+	enAnimNoCoreRadiatorAct,
+	enAnimNoCoreRadiatorClose
+};
+
+enum enAnimNoHead
+{
+	enAnimNoHeadWait = 0,
+	enAnimNoHeadDown
+};
+
+enum enAnimNoWeapon
+{
+	enAnimNoWeaponWait = 0,
+	enAnimNoWeaponShot,
+	enAnimNoWeaponReload
 };
 
 void clsRobo::RoboInit(
@@ -199,7 +232,9 @@ void clsRobo::RoboInit(
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
 
-	m_pMesh->PartsAnimChange(enPARTS::ARM_R, 3);
+	m_pMesh->PartsAnimChange(enPARTS::ARM_R, enAnimNoArmWeaponHoldStart);
+	m_pMesh->PartsAnimChange(enPARTS::ARM_L, enAnimNoArmWeaponHoldStart);
+	
 	m_pMesh->SetAnimSpd(g_dAnimSpeedReference);
 }
 
@@ -216,8 +251,14 @@ void clsRobo::Boost()
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
 	m_iMoveStopFrame = m_iBoostTopSpeedFrame;
 
-	m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
-	m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegBoostStart);
+	const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
+
+	if (iAnimNo > enAnimNoLegBoostEnd + 1 ||
+		iAnimNo < enAnimNoLegBoostStart - 1)//脚パーツのアニメーションがブースター系統以外か?.
+	{
+		//ブースターアニメーションではなかった.
+		AnimChangeLeg(enAnimNoLegBoostStart);//ブースターに切り替え.
+	}
 
 	m_bBoost = true;
 }
@@ -240,7 +281,18 @@ void clsRobo::MoveSwitch()
 
 void clsRobo::BoostRising()
 {
-	if (!m_bGround || IsMoveing())
+	if (!m_bBoost && 
+		m_bGround && 
+		!IsMoveing())
+	{
+		if (m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpStart)
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
+			m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegJumpStart);
+		}
+	}
+
+	else
 	{
 		if (EnelgyConsumption(m_iBoostRisingyCost))
 		{
@@ -263,15 +315,6 @@ void clsRobo::BoostRising()
 		else
 		{
 			Walk();
-		}
-	}
-
-	else
-	{
-		if (m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpStart)
-		{
-			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
-			m_pMesh->SetPartsAnimNo(enPARTS::LEG, enAnimNoLegJumpStart);
 		}
 	}
 }
@@ -444,20 +487,21 @@ void clsRobo::SetEnelgyRecoveryAmount()
 	//ブースト展開中.
 	if (m_bBoost)
 	{
+		//EN回復を落とす.
+		m_iEnelgyRecoveryPoint -= m_iBoostMoveCost;
+
 		//浮遊時.
 		if (!m_bGround)
 		{
 			//EN回復を落とす.
 			m_iEnelgyRecoveryPoint -= m_iBoostFloatRecovery;
 		}
-
-		m_iEnelgyRecoveryPoint -= m_iBoostMoveCost;
 	}
 
-	if (false)//射撃準備完了.
+	/*if (false)//射撃準備完了.
 	{
 		m_iEnelgyRecoveryPoint -= (m_iEnelgyOutput);
-	}
+	}*/
 }
 
 bool clsRobo::EnelgyConsumption(const int iConsumption)
@@ -1191,8 +1235,8 @@ void clsRobo::SetRotateLegParts()
 
 			const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
 
-			if (iAnimNo > enAnimNoLegWait &&
-				iAnimNo < enAnimNoLegBoostStart)//脚パーツのアニメーションが歩行系統か?.
+			if (iAnimNo > enAnimNoLegWalkStart - 1 &&
+				iAnimNo < enAnimNoLegWalkEndLeft + 1)//脚パーツのアニメーションが歩行系統か?.
 			{
 				//歩行アニメーションだった.
 				if (!m_pMesh->IsPartsAnimReverce(enPARTS::LEG))
@@ -1206,8 +1250,8 @@ void clsRobo::SetRotateLegParts()
 		{
 			const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
 
-			if (iAnimNo > enAnimNoLegWait &&
-				iAnimNo < enAnimNoLegBoostStart)//脚パーツのアニメーションが歩行系統か?.
+			if (iAnimNo > enAnimNoLegWalkStart - 1 &&
+				iAnimNo < enAnimNoLegWalkEndLeft + 1)//脚パーツのアニメーションが歩行系統か?.
 			{
 				//歩行アニメーションだった.
 				if (m_pMesh->IsPartsAnimReverce(enPARTS::LEG))
@@ -1230,7 +1274,13 @@ void clsRobo::SetRotateLegParts()
 
 void clsRobo::AnimUpdate()
 {
+	AnimUpdateHead();
+	AnimUpdateCore();
 	AnimUpdateLeg();
+	AnimUpdateArmL();
+	AnimUpdateArmR();
+	AnimUpdateWeaponL();
+	AnimUpdateWeaponR();
 }
 
 void clsRobo::AnimUpdateLeg()
@@ -1317,7 +1367,6 @@ void clsRobo::AnimUpdateLeg()
 		if (!m_bBoost)//|| !IsMoveing())
 		{
 			iChangeAnimNo = enAnimNoLegBoostEnd;
-			dAnimStartTime = m_pMesh->GetPartsAnimNowTime(enPARTS::LEG);
 		}
 
 		break;
@@ -1353,6 +1402,11 @@ void clsRobo::AnimUpdateLeg()
 			iChangeAnimNo = enAnimNoLegJump;
 		}
 
+		if (m_fFollPower < 0)
+		{
+			iChangeAnimNo = enAnimNoLegJumpDown;
+		}
+
 		break;
 	case enAnimNoLegJump:
 
@@ -1372,7 +1426,6 @@ void clsRobo::AnimUpdateLeg()
 		if (m_bGround)
 		{
 			iChangeAnimNo = enAnimNoLegJumpEnd;
-			m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
 		}
 
 		break;
@@ -1409,29 +1462,373 @@ void clsRobo::AnimUpdateLeg()
 	//アニメーションの変更がある.
 	if (iChangeAnimNo != iAnimNo)
 	{
-		if (m_pMesh->IsPartsAnimReverce(enPARTS::LEG))//逆再生になっていたら.
-		{
-			m_pMesh->SetPartsAnimNormal(enPARTS::LEG);//通常再生に戻す.
-		}
-
-		m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
-		m_pMesh->SetPartsAnimNo(enPARTS::LEG, iChangeAnimNo, dAnimStartTime);
+		AnimChangeLeg(iChangeAnimNo, dAnimStartTime);
 	}
 }
 
 void clsRobo::AnimUpdateCore()
 {
+	const enAnimNoCore iAnimNo = static_cast<enAnimNoCore>(m_pMesh->GetPartsAnimNo(enPARTS::CORE));
+	enAnimNoCore iChangeAnimNo = iAnimNo;
+	double dAnimStartTime = 0.0f;
+
+	switch (iAnimNo)
+	{
+	case enAnimNoCoreWait:
+
+		if(m_pMesh->IsPartsAnimEnd(enPARTS::CORE))
+		{
+			iChangeAnimNo = enAnimNoCoreRadiatorOpen;
+		}
+
+		break;
+	case enAnimNoCoreDown:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::CORE))
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::CORE, 0.0);
+		}
+
+		break;
+	case enAnimNoCoreRadiatorOpen:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::CORE))
+		{
+			iChangeAnimNo = enAnimNoCoreRadiatorAct;
+		}
+
+		break;
+	case enAnimNoCoreRadiatorAct:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::CORE))
+		{
+			iChangeAnimNo = enAnimNoCoreRadiatorClose;
+		}
+
+		break;
+	case enAnimNoCoreRadiatorClose:
+		
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::CORE))
+		{
+			iChangeAnimNo = enAnimNoCoreWait;
+		}
+
+		break;
+	}
+
+	//アニメーションの変更がある.
+	if (iChangeAnimNo != iAnimNo)
+	{
+		AnimChangeCore(iChangeAnimNo, dAnimStartTime);
+	}
+}
+
+void clsRobo::AnimUpdateHead()
+{
+	const enAnimNoHead iAnimNo = static_cast<enAnimNoHead>(m_pMesh->GetPartsAnimNo(enPARTS::HEAD));
+	enAnimNoHead iChangeAnimNo = iAnimNo;
+	double dAnimStartTime = 0.0f;
+
+	switch (iAnimNo)
+	{
+	case clsRobo::enAnimNoHeadWait:
+		break;
+	case clsRobo::enAnimNoHeadDown:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::HEAD))
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::HEAD, 0.0);
+		}
+
+		break;
+	}
+	//アニメーションの変更がある.
+	if (iChangeAnimNo != iAnimNo)
+	{
+		AnimChangeHead(iChangeAnimNo, dAnimStartTime);
+	}
 
 }
 
 void clsRobo::AnimUpdateArmL()
 {
+	const enAnimNoArm iAnimNo = static_cast<enAnimNoArm>(m_pMesh->GetPartsAnimNo(enPARTS::ARM_L));
+	enAnimNoArm iChangeAnimNo = iAnimNo;
+	double dAnimStartTime = 0.0f;
 
+	switch (iAnimNo)
+	{
+	case enAnimNoArmWait:
+
+
+
+		break;
+	case enAnimNoArmWeaponHoldStart:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
+
+		break;
+	case enAnimNoArmWeaponHoldAct:
+
+		
+
+		break;
+	case enAnimNoArmWeaponShot:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
+
+		break;
+	case enAnimNoArmWeaponHoldEnd:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			iChangeAnimNo = enAnimNoArmWait;
+		}
+
+		break;
+	case enAnimNoArmWeaponReload:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
+
+		break;
+	case enAnimNoArmDown:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::ARM_L, 0.0);
+		}
+
+		break;
+	}
+
+	//アニメーションの変更がある.
+	if (iChangeAnimNo != iAnimNo)
+	{
+		AnimChangeArmL(iChangeAnimNo, dAnimStartTime);
+	}
 }
 
 void clsRobo::AnimUpdateArmR()
 {
+	const enAnimNoArm iAnimNo = static_cast<enAnimNoArm>(m_pMesh->GetPartsAnimNo(enPARTS::ARM_R));
+	enAnimNoArm iChangeAnimNo = iAnimNo;
+	double dAnimStartTime = 0.0f;
 
+	switch (iAnimNo)
+	{
+	case enAnimNoArmWait:
+
+
+
+		break;
+	case enAnimNoArmWeaponHoldStart:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
+
+		break;
+	case enAnimNoArmWeaponHoldAct:
+
+
+
+		break;
+	case enAnimNoArmWeaponShot:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
+
+		break;
+	case enAnimNoArmWeaponHoldEnd:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			iChangeAnimNo = enAnimNoArmWait;
+		}
+
+		break;
+	case enAnimNoArmWeaponReload:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
+
+		break;
+	case enAnimNoArmDown:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			m_pMesh->SetPartsAnimSpeed(enPARTS::ARM_R, 0.0);
+		}
+
+		break;
+	}
+
+	//アニメーションの変更がある.
+	if (iChangeAnimNo != iAnimNo)
+	{
+		AnimChangeArmR(iChangeAnimNo, dAnimStartTime);
+	}
+}
+
+void clsRobo::AnimUpdateWeaponL()
+{
+	const enAnimNoWeapon iAnimNo = static_cast<enAnimNoWeapon>(m_pMesh->GetPartsAnimNo(enPARTS::WEAPON_L));
+	enAnimNoWeapon iChangeAnimNo = iAnimNo;
+	double dAnimStartTime = 0.0f;
+
+	switch (iAnimNo)
+	{
+	case enAnimNoWeaponWait:
+		break;
+	case enAnimNoWeaponShot:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::WEAPON_L))
+		{
+			iChangeAnimNo = enAnimNoWeaponWait;
+		}
+
+		break;
+	case enAnimNoWeaponReload:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::WEAPON_L))
+		{
+			iChangeAnimNo = enAnimNoWeaponWait;
+		}
+
+		break;
+	}
+
+	//アニメーションの変更がある.
+	if (iChangeAnimNo != iAnimNo)
+	{
+		AnimChangeWeaponL(iChangeAnimNo, dAnimStartTime);
+	}
+}
+
+void clsRobo::AnimUpdateWeaponR()
+{
+	const enAnimNoWeapon iAnimNo = static_cast<enAnimNoWeapon>(m_pMesh->GetPartsAnimNo(enPARTS::WEAPON_R));
+	enAnimNoWeapon iChangeAnimNo = iAnimNo;
+	double dAnimStartTime = 0.0f;
+
+	switch (iAnimNo)
+	{
+	case enAnimNoWeaponWait:
+		break;
+	case enAnimNoWeaponShot:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::WEAPON_R))
+		{
+			iChangeAnimNo = enAnimNoWeaponWait;
+		}
+
+		break;
+	case enAnimNoWeaponReload:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::WEAPON_R))
+		{
+			iChangeAnimNo = enAnimNoWeaponWait;
+		}
+
+		break;
+	}
+
+	//アニメーションの変更がある.
+	if (iChangeAnimNo != iAnimNo)
+	{
+		AnimChangeWeaponR(iChangeAnimNo, dAnimStartTime);
+	}
+}
+
+void clsRobo::AnimChangeLeg(enAnimNoLeg enChangeAnimNo, double dAnimTime)
+{
+	if (m_pMesh->IsPartsAnimReverce(enPARTS::LEG))//逆再生になっていたら.
+	{
+		m_pMesh->SetPartsAnimNormal(enPARTS::LEG);//通常再生に戻す.
+	}
+
+	m_pMesh->SetPartsAnimSpeed(enPARTS::LEG, g_dAnimSpeedReference);
+	m_pMesh->SetPartsAnimNo(enPARTS::LEG, enChangeAnimNo, dAnimTime);
+}
+
+void clsRobo::AnimChangeCore(enAnimNoCore enChangeAnimNo, double dAnimTime)
+{
+	if (m_pMesh->IsPartsAnimReverce(enPARTS::CORE))//逆再生になっていたら.
+	{
+		m_pMesh->SetPartsAnimNormal(enPARTS::CORE);//通常再生に戻す.
+	}
+
+	m_pMesh->SetPartsAnimSpeed(enPARTS::CORE, g_dAnimSpeedReference);
+	m_pMesh->SetPartsAnimNo(enPARTS::CORE, enChangeAnimNo, dAnimTime);
+}
+
+void clsRobo::AnimChangeHead(enAnimNoHead enChangeAnimNo, double dAnimTime)
+{
+	if (m_pMesh->IsPartsAnimReverce(enPARTS::HEAD))//逆再生になっていたら.
+	{
+		m_pMesh->SetPartsAnimNormal(enPARTS::HEAD);//通常再生に戻す.
+	}
+
+	m_pMesh->SetPartsAnimSpeed(enPARTS::HEAD, g_dAnimSpeedReference);
+	m_pMesh->SetPartsAnimNo(enPARTS::HEAD, enChangeAnimNo, dAnimTime);
+}
+
+void clsRobo::AnimChangeArmL(enAnimNoArm enChangeAnimNo, double dAnimTime)
+{
+	if (m_pMesh->IsPartsAnimReverce(enPARTS::ARM_L))//逆再生になっていたら.
+	{
+		m_pMesh->SetPartsAnimNormal(enPARTS::ARM_L);//通常再生に戻す.
+	}
+
+	m_pMesh->SetPartsAnimSpeed(enPARTS::ARM_L, g_dAnimSpeedReference);
+	m_pMesh->SetPartsAnimNo(enPARTS::ARM_L, enChangeAnimNo, dAnimTime);
+}
+
+void clsRobo::AnimChangeArmR(enAnimNoArm enChangeAnimNo, double dAnimTime)
+{
+	if (m_pMesh->IsPartsAnimReverce(enPARTS::ARM_R))//逆再生になっていたら.
+	{
+		m_pMesh->SetPartsAnimNormal(enPARTS::ARM_R);//通常再生に戻す.
+	}
+
+	m_pMesh->SetPartsAnimSpeed(enPARTS::ARM_R, g_dAnimSpeedReference);
+	m_pMesh->SetPartsAnimNo(enPARTS::ARM_R, enChangeAnimNo, dAnimTime);
+}
+
+void clsRobo::AnimChangeWeaponL(enAnimNoWeapon enChangeAnimNo, double dAnimTime)
+{
+	if (m_pMesh->IsPartsAnimReverce(enPARTS::WEAPON_L))//逆再生になっていたら.
+	{
+		m_pMesh->SetPartsAnimNormal(enPARTS::WEAPON_L);//通常再生に戻す.
+	}
+
+	m_pMesh->SetPartsAnimSpeed(enPARTS::WEAPON_L, g_dAnimSpeedReference);
+	m_pMesh->SetPartsAnimNo(enPARTS::WEAPON_L, enChangeAnimNo, dAnimTime);
+}
+
+void clsRobo::AnimChangeWeaponR(enAnimNoWeapon enChangeAnimNo, double dAnimTime)
+{
+	if (m_pMesh->IsPartsAnimReverce(enPARTS::WEAPON_R))//逆再生になっていたら.
+	{
+		m_pMesh->SetPartsAnimNormal(enPARTS::WEAPON_R);//通常再生に戻す.
+	}
+
+	m_pMesh->SetPartsAnimSpeed(enPARTS::WEAPON_R, g_dAnimSpeedReference);
+	m_pMesh->SetPartsAnimNo(enPARTS::WEAPON_R, enChangeAnimNo, dAnimTime);
 }
 
 clsRobo::clsRobo() :
