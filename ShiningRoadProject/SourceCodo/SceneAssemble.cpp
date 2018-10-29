@@ -2,6 +2,10 @@
 #include "WindowBox.h"
 #include "SceneAssembleInformation.h"
 
+#include "MenuWindowAssembleBackTitle.h"
+#include "MenuWindowAssembleTakeOff.h"
+#include "MenuWindowAssembleColorChange.h"
+
 using namespace std;
 
 
@@ -350,7 +354,10 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 		m_pColorGages[i] = new clsSprite2D;
 		m_pColorGages[i]->Create( m_wpDevice, m_wpContext, sCOLOR_GAGE_PATH, ss );
 		m_pColorGages[i]->SetPos( m_pColorGagesBone[i]->GetPos() );
-		m_pColorGages[i]->AddPos( { COLOR_GAGE_SIZE_BONE.w * fPOS_RATE, COLOR_GAGE_SIZE.h * fPOS_RATE, 0.0f } );
+		m_pColorGages[i]->AddPos( { 
+			COLOR_GAGE_SIZE_BONE.w * fPOS_RATE, 
+			COLOR_GAGE_SIZE.h * fPOS_RATE, 
+			0.0f } );
 		m_pColorGages[i]->SetAlpha( fCOLOR_GAGE_ALPHA );
 	}
 	//色箱のtext.
@@ -379,6 +386,22 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	//パーツビューに置くパーツ.
 	assert( !m_pSelectParts );
 	m_pSelectParts = new clsPARTS_WINDOW_MODEL( m_wpResource, m_wpRoboStatus );
+
+
+	//照合用情報の作成の為のファイルデータ取得.
+	const char sTITLE_INFORMATION_DATA_PATH[] = "Data\\FileData\\Tahara\\AssembleMenuInformation.csv";
+	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
+	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
+	//照合用情報の作成.
+	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size );
+	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
+		const int iCOL = 0;
+		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
+		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
+	}
+	upFile.reset();
+
+
 
 }
 
@@ -463,90 +486,95 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 #endif//#if _DEBUG
 
-	//操作.
-	if( isCanControl ){
-		//選択肢.
-		if( isPressHoldRight()	)MoveCursorRight();
-		if( isPressHoldLeft()	)MoveCursorLeft();
-		if( isPressHoldUp()		)MoveCursorUp();
-		if( isPressHoldDown()	)MoveCursorDown();
-		if( m_wpXInput->isPressEnter( XINPUT_B ) ||
-			GetAsyncKeyState( VK_RETURN ) & 0x1 )
-		{
-			Enter( enNextScene );
-		}
-		if( isPressExit() ){
-			Exit();
-		}
-		//次のシーンへのウィンドウを出す.
-		if( m_wpXInput->isPressEnter( XINPUT_START ) || 
-			GetAsyncKeyState( VK_SPACE ) & 0x1 )
-		{
-			//ウィンドウを出してない時は次のシーンへのウィンドウを出す.
-			if( isMessageBoxClose() ){
-				AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::MISSION_START );
-			}
-			//ウィンドウを出しているときはそのウィンドウの決定ボタンにもなる.
-			else{
+
+	if( m_upMenu ){
+		MenuUpdate( enNextScene );
+	}
+	else{
+		//操作.
+		if( isCanControl ){
+			//選択肢.
+			if( isPressHoldRight()	)MoveCursorRight();
+			if( isPressHoldLeft()	)MoveCursorLeft();
+			if( isPressHoldUp()		)MoveCursorUp();
+			if( isPressHoldDown()	)MoveCursorDown();
+			if( m_wpXInput->isPressEnter( XINPUT_B ) ||
+				GetAsyncKeyState( VK_RETURN ) & 0x1 )
+			{
 				Enter( enNextScene );
 			}
-		}
-		//カラーチェンジ.
-		if( m_wpXInput->isPressEnter( XINPUT_BACK ) ||
-			GetAsyncKeyState( VK_SHIFT ) & 0x1 )
-		{
-			//開けるなら開く.
-			if( isMessageBoxClose() ){
-				AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE );
+			if( isPressExit() ){
+				Exit();
 			}
-			//既に開いていているなら閉じる.
-			else{
-				DisAppearMessageBox();
-			}
-		}
-		//ステータスウィンドウを隠す.
-		if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
-			SwitchDispStatus();
-		}
-		//ステータスのcomment切替.
-		if( m_wpXInput->isPressEnter( XINPUT_X ) )
-		{
-			if( m_pUI->isCanSwitchStatusComment() &&
-				isMessageBoxClose() )
+			//次のシーンへのウィンドウを出す.
+			if( m_wpXInput->isPressEnter( XINPUT_START ) || 
+				GetAsyncKeyState( VK_SPACE ) & 0x1 )
 			{
-				if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
-					ChangeStatusSelect();
+				//ウィンドウを出してない時は次のシーンへのウィンドウを出す.
+				if( isMessageBoxClose() ){
+					AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::MISSION_START );
 				}
-				else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
-					ChangePartsSelect();
+				//ウィンドウを出しているときはそのウィンドウの決定ボタンにもなる.
+				else{
+					Enter( enNextScene );
+				}
+			}
+			//カラーチェンジ.
+			if( m_wpXInput->isPressEnter( XINPUT_BACK ) ||
+				GetAsyncKeyState( VK_SHIFT ) & 0x1 )
+			{
+				//開けるなら開く.
+				if( isMessageBoxClose() ){
+					AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE );
+				}
+				//既に開いていているなら閉じる.
+				else{
+					DisAppearMessageBox();
+				}
+			}
+			//ステータスウィンドウを隠す.
+			if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
+				SwitchDispStatus();
+			}
+			//ステータスのcomment切替.
+			if( m_wpXInput->isPressEnter( XINPUT_X ) )
+			{
+				if( m_pUI->isCanSwitchStatusComment() &&
+					isMessageBoxClose() )
+				{
+					if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
+						ChangeStatusSelect();
+					}
+					else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
+						ChangePartsSelect();
+					}
 				}
 			}
 		}
-	}
 
-	//モデル回転.
-	const float fMODEL_SPN_SPD = 0.05f;
-	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
-		m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
-	}
-	if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
-		m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
-	}
-	//モデルズーム.
-	const float fMODEL_MOVE_SPD = 5.0f;
-	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
-		m_fDistanceAssembleModel += fMODEL_MOVE_SPD;
-		if( m_fDistanceAssembleModel > fZOOM_RIMIT_MAX ){
-			m_fDistanceAssembleModel = fZOOM_RIMIT_MAX;
+		//モデル回転.
+		const float fMODEL_SPN_SPD = 0.05f;
+		if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+			m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+		}
+		if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+			m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+		}
+		//モデルズーム.
+		const float fMODEL_MOVE_SPD = 5.0f;
+		if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+			m_fDistanceAssembleModel += fMODEL_MOVE_SPD;
+			if( m_fDistanceAssembleModel > fZOOM_RIMIT_MAX ){
+				m_fDistanceAssembleModel = fZOOM_RIMIT_MAX;
+			}
+		}
+		if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+			m_fDistanceAssembleModel -= fMODEL_MOVE_SPD;
+			if( m_fDistanceAssembleModel < fZOOM_RIMIT_MIN ){
+				m_fDistanceAssembleModel = fZOOM_RIMIT_MIN;
+			}
 		}
 	}
-	if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
-		m_fDistanceAssembleModel -= fMODEL_MOVE_SPD;
-		if( m_fDistanceAssembleModel < fZOOM_RIMIT_MIN ){
-			m_fDistanceAssembleModel = fZOOM_RIMIT_MIN;
-		}
-	}
-
 
 
 	assert( m_pUI );
@@ -574,7 +602,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	m_pSelectParts->Update( m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
 
 	assert( m_upBox );
-	m_upBox->Update();
+//	m_upBox->Update();
 
 }
 
@@ -758,6 +786,10 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		m_wpFont->SetPos( tmpMessagePos );
 		m_wpFont->SetScale( fFONT_MESSAGE_BOX_TITLE_SCALE );
 		m_wpFont->Render( m_iMessageNum );
+	}
+
+	if( m_upMenu ){
+		m_upMenu->Render();
 	}
 
 }
@@ -1040,7 +1072,7 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 //戻る.
 void clsSCENE_ASSEMBLE::TitleBack( enSCENE &enNextScene )
 {
-	m_wpSound->PlaySE( enSE_EXIT );
+//	m_wpSound->PlaySE( enSE_EXIT );
 	enNextScene = enSCENE::TITLE;
 }
 
@@ -1097,19 +1129,23 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 	m_upBox->AddChangeData( fBOX_BIG_SPD_W, fBOX_BIG_SPD_H, encBOX_APPEAR_CHANGE_MODE );
 	m_enSelectMode = encMode;
 	if( encMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
-		m_wpSound->PlaySE( enSE_WIN_APP );
+//		m_wpSound->PlaySE( enSE_WIN_APP );
 		m_iMessageNum = iBOX_MESSAGE_LINE_GO_MISSION;
 		m_upBox->SetPos( vBOX_POS );
 		m_upBox->SetSizeTarget( vBOX_SIZE );
+		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_TAKE_OFF >(
+			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
 	}
 	else if( encMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK ){
-		m_wpSound->PlaySE( enSE_WIN_APP );
+//		m_wpSound->PlaySE( enSE_WIN_APP );
 		m_iMessageNum = iBOX_MESSAGE_LINE_BACK_TITLE;
 		m_upBox->SetPos( vBOX_POS );
 		m_upBox->SetSizeTarget( vBOX_SIZE );
+		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_BACK_TITLE >(
+			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
 	}
 	else if( encMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
-		m_wpSound->PlaySE( enSE_WIN_APP );
+//		m_wpSound->PlaySE( enSE_WIN_APP );
 		m_iMessageNum = iBOX_MESSAGE_LINE_COLOR_CHANGE;
 		m_upBox->SetPos( vBOX_POS_COLOR );
 		m_upBox->SetSizeTarget( vBOX_SIZE_COLOR );
@@ -1117,12 +1153,14 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 			m_pColorGagesBone[i]->SetAlpha( 1.0f );
 		}
 		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( 0 );
+		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE >(
+			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray, m_pAsmModel );
 	}
 }
 //メッセボックス消す.
 void clsSCENE_ASSEMBLE::DisAppearMessageBox()
 {
-	m_wpSound->PlaySE( enSE_WIN_DISAPP );
+//	m_wpSound->PlaySE( enSE_WIN_DISAPP );
 
 	m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 	m_upBox->AddChangeData( 
@@ -1168,6 +1206,105 @@ void clsSCENE_ASSEMBLE::ChangeStatusSelect()
 	m_wpSound->PlaySE( enSE_ENTER );
 	m_pUI->SwitchStatusComment();
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::STATUS;
+}
+
+
+
+
+//メニューの動き.
+void clsSCENE_ASSEMBLE::MenuUpdate( enSCENE &enNextScene )
+{
+	m_upMenu->Update();
+	//メニューが何か返してくる.
+	unsigned int uiReceiveInformation = m_upMenu->GetInformation();
+	if( uiReceiveInformation )
+	{
+		char cInformationIndex = -1;
+		for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
+			//有用な情報と合致したなら.
+			if( uiReceiveInformation == m_vecuiInformationDataArray[i] ){
+				cInformationIndex = i;
+			}
+		}
+		switch( cInformationIndex )
+		{
+		case enINFORMATION_INDEX_GO_TITLE:
+			TitleBack( enNextScene );
+			break;
+		case enINFORMATION_INDEX_GO_MISSION:
+			MissionStart( enNextScene );
+			break;
+		case enINFORMATION_INDEX_CLOSE_WINDOW:
+			m_upMenu->Close();
+			DisAppearMessageBox();
+			break;
+
+		case enINFORMATION_INDEX_COLOR_1_R_INCREMENT:
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
+			AddRoboColor( true );
+			break;
+		case enINFORMATION_INDEX_COLOR_1_R_DECREMENT:
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
+			AddRoboColor( false );
+			break;
+
+		case enINFORMATION_INDEX_COLOR_1_G_INCREMENT:
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
+			AddRoboColor( true );
+			break;
+		case enINFORMATION_INDEX_COLOR_1_G_DECREMENT:
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
+			AddRoboColor( false );
+			break;
+
+		case enINFORMATION_INDEX_COLOR_1_B_INCREMENT:
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
+			AddRoboColor( true );
+			break;
+		case enINFORMATION_INDEX_COLOR_1_B_DECREMENT:
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
+			AddRoboColor( false );
+			break;
+
+
+		case enINFORMATION_INDEX_COLOR_2_R_INCREMENT:
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
+			AddRoboColor( true );											
+			break;															
+		case enINFORMATION_INDEX_COLOR_2_R_DECREMENT:						
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
+			AddRoboColor( false );											
+			break;															
+																			
+		case enINFORMATION_INDEX_COLOR_2_G_INCREMENT:						
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
+			AddRoboColor( true );											
+			break;															
+		case enINFORMATION_INDEX_COLOR_2_G_DECREMENT:						
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
+			AddRoboColor( false );											
+			break;															
+																			
+		case enINFORMATION_INDEX_COLOR_2_B_INCREMENT:						
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
+			AddRoboColor( true );											
+			break;															
+		case enINFORMATION_INDEX_COLOR_2_B_DECREMENT:						
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
+			AddRoboColor( false );
+			break;
+
+		default:
+			assert( !"不正な情報が返されました" );
+			break;
+		}
+	}
+
+	//( 見た目が )消えたら( メモリからも )消える.
+	if( m_upMenu->isDeletePermission() ){
+		m_upMenu.reset( nullptr );
+	}
+
 }
 
 

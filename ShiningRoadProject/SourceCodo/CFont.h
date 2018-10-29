@@ -39,6 +39,9 @@ public:
 	void SetPos( const D3DXVECTOR3 &vPos );
 	D3DXVECTOR3 GetPos();
 	D3DXVECTOR3 GetPosLast();
+	void AddPos( const D3DXVECTOR3 &vPos ){
+		SetPos( m_vPos + vPos );
+	}
 
 	void SetScale( const float fScale );
 	float GetScale();

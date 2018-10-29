@@ -1,6 +1,6 @@
 #include "MenuWindowGameOverContinue.h"
 #include "PtrGroup.h"
-//#include "UiText.h"
+//ƒƒjƒ…[‚ðŒÄ‚Ño‚·‚½‚ß.
 #include "MenuWindowGameOverDoAssemble.h"
 
 
@@ -60,13 +60,13 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 		}
 		else if( m_iSelectNum == 1 ){
 			m_wpSound->PlaySE( enSE_EXIT );
-			m_uiInformation = ( *m_pInformationVec )[ m_INFORMATION__INDEX_GAME_OVER ];
+			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GAME_OVER ];
 		}
 	}
 
 	if( SelectExit() ){
 		m_wpSound->PlaySE( enSE_EXIT );
-		m_uiInformation = ( *m_pInformationVec )[ m_INFORMATION__INDEX_GAME_OVER ];
+		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GAME_OVER ];
 	}
 
 }

@@ -2,6 +2,8 @@
 #define SCENE_ASSEMBLE_H_
 
 
+class clsMENU_WINDOW_ASSEMBLE_BASE;
+
 #include "File.h"
 
 #include "SceneBase.h"
@@ -116,7 +118,6 @@ private:
 	int									m_iMessageNum;
 
 	//メッセボックスの選択肢.
-//	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
 	bool									m_isMessageBoxYes;
 
 	//色の棒.
@@ -125,7 +126,6 @@ private:
 
 	clsSPRITE2D_CENTER* m_pColorGagesBone[ clsROBO_STATUS::enCOLOR_GAGE_size ];
 	clsSprite2D* m_pColorGages[ clsROBO_STATUS::enCOLOR_GAGE_size ];
-//	unsigned int m_uiColorChangeNum;//ローカル変数.
 	std::unique_ptr< clsUiText > m_upColorTexts[ clsROBO_STATUS::enCOLOR_GAGE_size ];//RとかGとか書いてる.
 	std::unique_ptr< clsUiText > m_upColorNumText;//色1と色2とか書く.
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upSelectColor;//選択中の色を表す.
@@ -145,7 +145,12 @@ private:
 	::Effekseer::Handle m_ehHibana;
 
 
-
+	//メニュー.
+	std::unique_ptr< clsMENU_WINDOW_ASSEMBLE_BASE > m_upMenu;
+	//メニューから受け取った情報を照合する.
+	std::vector<unsigned int> m_vecuiInformationDataArray;
+	//メニューの動き.
+	void MenuUpdate( enSCENE &enNextScene );
 
 #if _DEBUG
 	//デバック゛テキストの表示.
