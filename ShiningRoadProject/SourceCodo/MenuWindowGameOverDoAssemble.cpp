@@ -82,7 +82,7 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::RenderProduct()
 	m_wpFont->Render( iTextRow ++ );
 
 	//‘g‚Ý‚È‚¨‚·?.
-	const D3DXVECTOR2 vPOS_ASSEMBLE_LOCAL = { 150.0f, 70.0f };
+	const D3DXVECTOR2 vPOS_ASSEMBLE_LOCAL = { 120.0f, 70.0f };
 	const D3DXVECTOR3 vPOS_ASSEMBLE = SetPosFromWindow( vPOS_ASSEMBLE_LOCAL );
 	const float fSCALE_ASSEMBLE = 36;
 	m_wpFont->SetPos( vPOS_ASSEMBLE );

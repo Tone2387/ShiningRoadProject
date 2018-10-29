@@ -1,8 +1,8 @@
-#include "MenuWindowAssembleBackTitle.h"
+#include "MenuWindowAssembleTakeOff.h"
 #include "PtrGroup.h"
 
 
-clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::clsMENU_WINDOW_ASSEMBLE_BACK_TITLE(
+clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::clsMENU_WINDOW_ASSEMBLE_TAKE_OFF(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
@@ -13,14 +13,14 @@ clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::clsMENU_WINDOW_ASSEMBLE_BACK_TITLE(
 	Open( vTHIS_WINDOW_SIZE );
 }
 
-clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::~clsMENU_WINDOW_ASSEMBLE_BACK_TITLE()
+clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::~clsMENU_WINDOW_ASSEMBLE_TAKE_OFF()
 {
 }
 
 
 
 
-void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
+void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 {
 	const int iSELECT_NUM_MAX = 1;//選択肢の最大は何?.
 
@@ -49,7 +49,7 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
 	if( SelectEnter() ){
 		if( m_iSelectNum == 0 ){
 			m_wpSound->PlaySE( enSE_ENTER );
-			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GO_TITLE ];
+			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GO_MISSION ];
 		}
 		else if( m_iSelectNum == 1 ){
 			m_wpSound->PlaySE( enSE_EXIT );
@@ -64,10 +64,10 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
 
 }
 
-void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::RenderProduct()
+void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::RenderProduct()
 {
 	const int iYES_INDEX = 4;
-	const int iQUESTION_INDEX = 2;
+	const int iQUESTION_INDEX = 1;
 	
 	//yes.
 	const D3DXVECTOR2 vPOS_YES_LOCAL = { 150.0f, 250.0f };
@@ -84,7 +84,7 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::RenderProduct()
 	m_wpFont->SetPos( vPOS_NO );
 	m_wpFont->Render( iTextRow ++ );
 
-	//タイトルに戻る.
+	//出撃する.
 	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 150.0f, 70.0f };
 	const D3DXVECTOR3 vPOS_CONTINUE = SetPosFromWindow( vPOS_CONTINUE_LOCAL );
 	const float fSCALE_CONTINUE = 36;
@@ -107,7 +107,7 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::RenderProduct()
 
 }
 
-bool clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::CreateNextWindowProduct( 
+bool clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::CreateNextWindowProduct( 
 	clsMENU_WINDOW_BASE** ppOutNextWindow, 
 	clsMENU_WINDOW_BASE* const pParentWindow )
 {

@@ -1,5 +1,6 @@
 #include "MenuWindowGameOverContinue.h"
 #include "PtrGroup.h"
+//ƒƒjƒ…[‚ğŒÄ‚Ño‚·‚½‚ß.
 #include "MenuWindowGameOverDoAssemble.h"
 
 
