@@ -3,6 +3,7 @@
 
 
 #include "MenuWindowBase.h"
+#include "SceneGameOverInformation.h"
 
 class clsMENU_WINDOW_GAME_OVER_BASE : public clsMENU_WINDOW_BASE
 {
@@ -14,23 +15,7 @@ public:
 
 	virtual ~clsMENU_WINDOW_GAME_OVER_BASE();
 
-protected:
 
-
-	enum enSE : int
-	{
-		enSE_CURSOL_MOVE = 0,
-		enSE_ENTER,
-		enSE_EXIT,
-		enSE_MISSION_START,
-		enSE_WIN_APP,
-		enSE_WIN_DISAPP,
-	};
-
-	//ìnÇ∑èÓïÒÇÃìYÇ¶éö.
-	const char m_INFORMATION__INDEX_GAME_OVER;
-	const char m_INFORMATION__INDEX_CONTINUE;
-	const char m_INFORMATION__INDEX_ASSEMBLE;
 
 private:
 

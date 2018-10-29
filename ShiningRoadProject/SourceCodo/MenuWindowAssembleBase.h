@@ -13,7 +13,7 @@ public:
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec );
 
-	~clsMENU_WINDOW_ASSEMBLE_BASE();
+	virtual ~clsMENU_WINDOW_ASSEMBLE_BASE();
 
 private:
 

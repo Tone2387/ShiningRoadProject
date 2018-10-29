@@ -131,6 +131,7 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowAssembleBackTitle.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowAssembleBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowGameOverBase.cpp" />
@@ -235,6 +236,7 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
+    <ClInclude Include="SourceCodo\MenuWindowAssembleBackTitle.h" />
     <ClInclude Include="SourceCodo\MenuWindowAssembleBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowGameOverBase.h" />

@@ -49,11 +49,11 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::UpdateProduct()
 		m_wpSound->PlaySE( enSE_ENTER );
 		//ÉAÉZÉìÉuÉãÇµÇ»Ç®Ç∑.
 		if( m_iSelectNum == 0 ){
-			m_uiInformation = ( *m_pInformationVec )[ m_INFORMATION__INDEX_ASSEMBLE ];
+			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_ASSEMBLE ];
 		}
 		//ÇªÇÃÇ‹Ç‹êÌÇ§.
 		else if( m_iSelectNum == 1 ){
-			m_uiInformation = ( *m_pInformationVec )[ m_INFORMATION__INDEX_CONTINUE ];
+			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CONTINUE ];
 		}
 	}
 
