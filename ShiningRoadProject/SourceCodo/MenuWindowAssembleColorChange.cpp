@@ -160,6 +160,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 
 void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 {
+	int iTextRow;
 //	const int iYES_INDEX = 4;
 //	const int iQUESTION_INDEX = 1;
 //	
@@ -178,23 +179,17 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 //	m_wpFont->SetPos( vPOS_NO );
 //	m_wpFont->Render( iTextRow ++ );
 //
-//	//出撃する.
-//	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 150.0f, 70.0f };
-//	const D3DXVECTOR3 vPOS_CONTINUE = SetPosFromWindow( vPOS_CONTINUE_LOCAL );
-//	const float fSCALE_CONTINUE = 36;
-//	iTextRow = iQUESTION_INDEX;
-//	m_wpFont->SetPos( vPOS_CONTINUE );
-//	m_wpFont->SetScale( fSCALE_CONTINUE );
-//	m_wpFont->Render( iTextRow ++ );
 
 
-	const D3DXVECTOR3 vBONE_POS = { 380.0f, 130.0f, 0.0f };
+	//画像.
+	const D3DXVECTOR2 vBONE_POS_LOCAL = { 180.0f, 100.0f };
+	const D3DXVECTOR3 vBONE_POS = SetPosFromWindow( vBONE_POS_LOCAL );
 	const float fBONE_OFFSET_Y = fCOLOR_GAGE_SIZE_BASE + 20.0f;
 	const float fBONE_OFFSET_Y_2 =  24.0f;//パーツのベースと装甲の合間の追加オフセット.
 
 	for( unsigned int i=0; i<m_vecupColorBone.size(); i++ ){
 		m_vecupColorBone[i]->SetPos( vBONE_POS );
-		m_vecupColorBone[i]->AddPos( { 0.0f, fBONE_OFFSET_Y, 0.0f } );
+		m_vecupColorBone[i]->AddPos( { 0.0f, fBONE_OFFSET_Y * static_cast<float>( i ), 0.0f } );
 		if( i >= clsROBO_STATUS::enCOLOR_GAGE_ARMOR_R ){
 			m_vecupColorBone[i]->AddPos( { 0.0f, fBONE_OFFSET_Y_2, 0.0f } );
 		}
@@ -211,16 +206,33 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 		m_vecupColorGage[i]->Render();
 	}
 
+	//----- Text -----//.
+	//RGB.
+	const float fSCALE_RGB = 24.0f;
+	const int iRGB_INDEX = 8;
+	iTextRow = iRGB_INDEX;
+	m_wpFont->SetScale( fSCALE_RGB );
+	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
+		const D3DXVECTOR2 vPOS_AGB_LOCAL = { m_vecupColorBone[i]->GetPos().x, m_vecupColorBone[i]->GetPos().y };
+		const D3DXVECTOR3 vPOS_AGB = SetPosFromWindow( vPOS_AGB_LOCAL );
+		m_wpFont->SetPos( vPOS_AGB );
+		const D3DXVECTOR3 vADD_POS = { -50.0f, 0.0f, 0.0f };
+		m_wpFont->AddPos( vADD_POS );
+		m_wpFont->Render( iTextRow ++ );
+		if( i >= clsROBO_STATUS::enCOLOR_GAGE_ARMOR_R ){
+			iTextRow = iRGB_INDEX;
+		}
+	}
 
 
 	///カーソル移動.
 	if( m_iSelectNum == enSELECT_NUM_BACK ){
-		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*3.0f, 32.0f, 0.0f };
+		const D3DXVECTOR3 vCURSOR_SCALE = { fCOLOR_GAGE_SIZE_BASE, fCOLOR_GAGE_SIZE_BASE, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
-		m_upCursor->SetPos( m_vecupColorBone[ m_iSelectNum ]->GetPos() );
+//		m_upCursor->SetPos( m_vecupColorBone[ m_iSelectNum ]->GetPos() );
 	}
 	else{
-		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*2.1f, 32.0f, 0.0f };
+		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*2.1f, fCOLOR_GAGE_SIZE_BASE, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
 		m_upCursor->SetPos( m_vecupColorBone[ m_iSelectNum ]->GetPos() );
 	}

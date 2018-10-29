@@ -2,6 +2,8 @@
 #define SCENE_ASSEMBLE_H_
 
 
+class clsMENU_WINDOW_ASSEMBLE_BASE;
+
 #include "File.h"
 
 #include "SceneBase.h"
@@ -143,7 +145,12 @@ private:
 	::Effekseer::Handle m_ehHibana;
 
 
-
+	//メニュー.
+	std::unique_ptr< clsMENU_WINDOW_ASSEMBLE_BASE > m_upMenu;
+	//メニューから受け取った情報を照合する.
+	std::vector<unsigned int> m_vecuiInformationDataArray;
+	//メニューの動き.
+	void MenuUpdate( enSCENE &enNextScene );
 
 #if _DEBUG
 	//デバック゛テキストの表示.
