@@ -1,11 +1,13 @@
-#include "MenuWindowTitleBase.h"
-#include "SoundManagerTitle.h"
+#include "MenuWindowAssembleBase.h"
+#include "SoundManagerAssemble.h"
+
 
 namespace{
 	const float fBACK_ALPHA = 0.75f;
 }
 
-clsMENU_WINDOW_TITLE_BASE::clsMENU_WINDOW_TITLE_BASE(		
+
+clsMENU_WINDOW_ASSEMBLE_BASE::clsMENU_WINDOW_ASSEMBLE_BASE(		
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
@@ -17,7 +19,12 @@ clsMENU_WINDOW_TITLE_BASE::clsMENU_WINDOW_TITLE_BASE(
 	SetAlphaBack( fBACK_ALPHA );
 }
 
-clsMENU_WINDOW_TITLE_BASE::~clsMENU_WINDOW_TITLE_BASE()
+clsMENU_WINDOW_ASSEMBLE_BASE::~clsMENU_WINDOW_ASSEMBLE_BASE()
 {
 }
+
+
+
+
+
 

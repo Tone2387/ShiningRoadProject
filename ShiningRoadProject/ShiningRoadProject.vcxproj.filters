@@ -363,8 +363,8 @@
     <ClCompile Include="SourceCodo\MenuWindowTitleBase.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\SceneAssembleInformation.cpp">
-      <Filter>Tahara\Scene</Filter>
+    <ClCompile Include="SourceCodo\MenuWindowAssembleBase.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -654,6 +654,12 @@
       <Filter>Tahara\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneGameOverInformation.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowAssembleBase.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneAssembleInformation.h">
       <Filter>Tahara\Scene</Filter>
     </ClInclude>
   </ItemGroup>

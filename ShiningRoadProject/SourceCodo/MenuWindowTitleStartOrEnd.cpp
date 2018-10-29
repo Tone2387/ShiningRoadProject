@@ -60,7 +60,7 @@ void clsMENU_WINDOW_TITLE_START_OR_END::UpdateProduct()
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_WIN_DIS_APP );
+		m_wpSound->PlaySE( enSE_WIN_DISAPP );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_MENU ];
 	}
 

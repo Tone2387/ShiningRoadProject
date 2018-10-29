@@ -145,23 +145,6 @@ private:
 	::Effekseer::Handle m_ehHibana;
 
 
-	//âπÇÃà¯êî.
-	enum enBGM : int
-	{
-		enBGM_RENGOKU0 = 0,
-		enBGM_MAOU0,
-		enBGM_MAOU2,
-	};
-
-	enum enSE : int
-	{
-		enSE_CURSOL_MOVE = 0,
-		enSE_ENTER,
-		enSE_EXIT,
-		enSE_MISSION_START,
-		enSE_WIN_APP,
-		enSE_WIN_DISAPP,
-	};
 
 
 #if _DEBUG

@@ -1,5 +1,6 @@
 #include "SceneAssemble.h"
 #include "WindowBox.h"
+#include "SceneAssembleInformation.h"
 
 using namespace std;
 

@@ -131,6 +131,7 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowAssembleBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowGameOverBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowGameOverContinue.cpp" />
@@ -161,7 +162,6 @@
     <ClCompile Include="SourceCodo\RoboCommand.cpp" />
     <ClCompile Include="SourceCodo\RoboStatus.cpp" />
     <ClCompile Include="SourceCodo\SceneAssemble.cpp" />
-    <ClCompile Include="SourceCodo\SceneAssembleInformation.cpp" />
     <ClCompile Include="SourceCodo\SceneBase.cpp" />
     <ClCompile Include="SourceCodo\SceneEnding.cpp" />
     <ClCompile Include="SourceCodo\SceneGameOver.cpp" />
@@ -235,6 +235,7 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
+    <ClInclude Include="SourceCodo\MenuWindowAssembleBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowGameOverBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowGameOverContinue.h" />
@@ -266,6 +267,7 @@
     <ClInclude Include="SourceCodo\RoboCommand.h" />
     <ClInclude Include="SourceCodo\RoboStatus.h" />
     <ClInclude Include="SourceCodo\SceneAssemble.h" />
+    <ClInclude Include="SourceCodo\SceneAssembleInformation.h" />
     <ClInclude Include="SourceCodo\SceneBase.h" />
     <ClInclude Include="SourceCodo\SceneEnding.h" />
     <ClInclude Include="SourceCodo\SceneGameOver.h" />
