@@ -350,7 +350,10 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 		m_pColorGages[i] = new clsSprite2D;
 		m_pColorGages[i]->Create( m_wpDevice, m_wpContext, sCOLOR_GAGE_PATH, ss );
 		m_pColorGages[i]->SetPos( m_pColorGagesBone[i]->GetPos() );
-		m_pColorGages[i]->AddPos( { COLOR_GAGE_SIZE_BONE.w * fPOS_RATE, COLOR_GAGE_SIZE.h * fPOS_RATE, 0.0f } );
+		m_pColorGages[i]->AddPos( { 
+			COLOR_GAGE_SIZE_BONE.w * fPOS_RATE, 
+			COLOR_GAGE_SIZE.h * fPOS_RATE, 
+			0.0f } );
 		m_pColorGages[i]->SetAlpha( fCOLOR_GAGE_ALPHA );
 	}
 	//êFî†ÇÃtext.
