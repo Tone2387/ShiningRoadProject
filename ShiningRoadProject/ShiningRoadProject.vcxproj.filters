@@ -372,6 +372,9 @@
     <ClCompile Include="SourceCodo\MenuWindowAssembleTakeOff.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowAssembleColorChange.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -672,6 +675,9 @@
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\MenuWindowAssembleTakeOff.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowAssembleColorChange.h">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
   </ItemGroup>
