@@ -666,6 +666,8 @@ void clsSCENE_ASSEMBLE::RenderUi()
 
 	//ƒ{ƒ^ƒ“‚Ìà–¾.
 	assert( m_wpFont );
+	const D3DXVECTOR4 vFONT_TEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
+	m_wpFont->SetColor( vFONT_TEXT_COLOR );
 	m_wpFont->SetPos( vFONT_BUTTON_POS );
 	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
 	m_wpFont->Render( iFONT_BUTTON_LINE );

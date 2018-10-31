@@ -181,12 +181,12 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 //
 
 
-	//画像.
+	//ゲージ画像.
 	const D3DXVECTOR2 vBONE_POS_LOCAL = { 180.0f, 100.0f };
 	const D3DXVECTOR3 vBONE_POS = SetPosFromWindow( vBONE_POS_LOCAL );
 	const float fBONE_OFFSET_Y = fCOLOR_GAGE_SIZE_BASE + 20.0f;
 	const float fBONE_OFFSET_Y_2 =  24.0f;//パーツのベースと装甲の合間の追加オフセット.
-
+	//骨.
 	for( unsigned int i=0; i<m_vecupColorBone.size(); i++ ){
 		m_vecupColorBone[i]->SetPos( vBONE_POS );
 		m_vecupColorBone[i]->AddPos( { 0.0f, fBONE_OFFSET_Y * static_cast<float>( i ), 0.0f } );
@@ -195,7 +195,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 		}
 		m_vecupColorBone[i]->Render();
 	}
-
+	//ゲージ本体.
 	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
 		m_vecupColorGage[i]->SetPos( m_vecupColorBone[i]->GetPos() );
 		m_vecupColorGage[i]->SetScale( { 
@@ -206,37 +206,60 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 		m_vecupColorGage[i]->Render();
 	}
 
-	//----- Text -----//.
+
+	//カーソルの為の座標配列.
+	D3DXVECTOR3 vCURSOL_POS_ARRAY[ enSELECT_NUM_size ];
+
+
+	//----- Text座標を決定する -----//.
 	//RGB.
 	const float fSCALE_RGB = 24.0f;
 	const int iRGB_INDEX = 8;
-	iTextRow = iRGB_INDEX;
-	m_wpFont->SetScale( fSCALE_RGB );
 	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
-		const D3DXVECTOR2 vPOS_AGB_LOCAL = { m_vecupColorBone[i]->GetPos().x, m_vecupColorBone[i]->GetPos().y };
-		const D3DXVECTOR3 vPOS_AGB = SetPosFromWindow( vPOS_AGB_LOCAL );
-		m_wpFont->SetPos( vPOS_AGB );
 		const D3DXVECTOR3 vADD_POS = { -50.0f, 0.0f, 0.0f };
-		m_wpFont->AddPos( vADD_POS );
-		m_wpFont->Render( iTextRow ++ );
-		if( i >= clsROBO_STATUS::enCOLOR_GAGE_ARMOR_R ){
-			iTextRow = iRGB_INDEX;
-		}
+		const D3DXVECTOR3 vPOS_AGB = { m_vecupColorBone[i]->GetPos().x, m_vecupColorBone[i]->GetPos().y, 0.0f };
+
+		//「 R,G,B,R,G,B 」の座標を覚える.
+		vCURSOL_POS_ARRAY[i] = vADD_POS + vPOS_AGB;
 	}
 
+	//「戻る」の座標を覚える.
+	if( enSELECT_NUM_BACK > 0 ){
+		vCURSOL_POS_ARRAY[ enSELECT_NUM_BACK ] = vCURSOL_POS_ARRAY[ enSELECT_NUM_BACK - 1 ];
+		vCURSOL_POS_ARRAY[ enSELECT_NUM_BACK ] += D3DXVECTOR3( 0.0f, fBONE_OFFSET_Y, 0.0f );
+	}
 
 	///カーソル移動.
 	if( m_iSelectNum == enSELECT_NUM_BACK ){
-		const D3DXVECTOR3 vCURSOR_SCALE = { fCOLOR_GAGE_SIZE_BASE, fCOLOR_GAGE_SIZE_BASE, 0.0f };
-		m_upCursor->SetScale( vCURSOR_SCALE );
-//		m_upCursor->SetPos( m_vecupColorBone[ m_iSelectNum ]->GetPos() );
-	}
-	else{
 		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*2.1f, fCOLOR_GAGE_SIZE_BASE, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
-		m_upCursor->SetPos( m_vecupColorBone[ m_iSelectNum ]->GetPos() );
 	}
+	else{
+		const D3DXVECTOR3 vCURSOR_SCALE = { fCOLOR_GAGE_SIZE_BASE, fCOLOR_GAGE_SIZE_BASE, 0.0f };
+		m_upCursor->SetScale( vCURSOR_SCALE );
+	}
+	m_upCursor->SetPos( vCURSOL_POS_ARRAY[ m_iSelectNum ] );
 	m_upCursor->Render();
+
+	//----- Text描画 -----//.
+	//RGB.
+	iTextRow = iRGB_INDEX;
+	m_wpFont->SetScale( fSCALE_RGB );
+	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
+		//R, G, B, の表示をを繰り返す.
+		if( iTextRow >= iRGB_INDEX + clsROBO_STATUS::enCOLOR_GAGE_ARMOR_R ){
+			iTextRow =  iRGB_INDEX;
+		}
+	
+		m_wpFont->SetPos( vCURSOL_POS_ARRAY[i] );
+		m_wpFont->Render( iTextRow ++ );
+	}
+
+	//戻る( RGBの下段 ).
+	m_wpFont->SetPos( vCURSOL_POS_ARRAY[ enSELECT_NUM_BACK ] );
+	m_wpFont->Render( iTextRow );
+
+
 
 }
 
