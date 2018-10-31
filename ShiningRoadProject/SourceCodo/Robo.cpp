@@ -251,10 +251,7 @@ void clsRobo::Boost()
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
 	m_iMoveStopFrame = m_iBoostTopSpeedFrame;
 
-	const enAnimNoLeg iAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
-
-	if (iAnimNo > enAnimNoLegBoostEnd + 1 ||
-		iAnimNo < enAnimNoLegBoostStart - 1)//脚パーツのアニメーションがブースター系統以外か?.
+	if (!IsLegPartsAnimBoost())
 	{
 		//ブースターアニメーションではなかった.
 		AnimChangeLeg(enAnimNoLegBoostStart);//ブースターに切り替え.
@@ -1452,7 +1449,8 @@ void clsRobo::AnimUpdateLeg()
 	{
 		if (!m_bBoost)
 		{
-			if (m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpDown)
+			if (!IsLegPartsAnimBoost() &&
+				m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpDown)
 			{
 				iChangeAnimNo = enAnimNoLegJumpDown;
 			}
@@ -1752,6 +1750,20 @@ void clsRobo::AnimUpdateWeaponR()
 	{
 		AnimChangeWeaponR(iChangeAnimNo, dAnimStartTime);
 	}
+}
+
+const bool clsRobo::IsLegPartsAnimBoost()
+{
+	const enAnimNoLeg enAnimNo = static_cast<enAnimNoLeg>(m_pMesh->GetPartsAnimNo(enPARTS::LEG));
+
+	if (enAnimNo < enAnimNoLegBoostEnd + 1 &&
+		enAnimNo > enAnimNoLegBoostStart - 1)//脚パーツのアニメーションがブースター系統以外か?.
+	{
+		//ブースターアニメーションではなかった.
+		return true;
+	}
+
+	return false;
 }
 
 void clsRobo::AnimChangeLeg(enAnimNoLeg enChangeAnimNo, double dAnimTime)

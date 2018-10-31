@@ -261,6 +261,8 @@ private:
 	void AnimUpdateWeaponL();
 	void AnimUpdateWeaponR();
 
+	const bool IsLegPartsAnimBoost();//脚パーツのアニメーションがブースター関係ならtrue.
+
 	void AnimChangeLeg(enAnimNoLeg enChangeAnimNo, double dAnimTime = 0.0);
 	void AnimChangeCore(enAnimNoCore enChangeAnimNo, double dAnimTime = 0.0);
 	void AnimChangeHead(enAnimNoHead enChangeAnimNo, double dAnimTime = 0.0);
