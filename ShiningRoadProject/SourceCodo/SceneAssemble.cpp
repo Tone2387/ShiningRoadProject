@@ -140,8 +140,9 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
 
-	m_wpSound->PlayBGM( enBGM_RENGOKU0 );
-
+	if( m_wpSound ){
+		m_wpSound->PlayBGM( enBGM_RENGOKU0 );
+	}
 
 	//îwåi.
 	SPRITE_STATE ss;
