@@ -87,48 +87,8 @@ const float fARROW_POS_PARTS_OFFSET_Y_RATE_PARTS_MAX = ( 70.0f + 18.0f );
 
 
 
-//メッセボックス.
-const float fBOX_ALPHA = 0.75f;
-const D3DXVECTOR3 vBOX_POS = { WND_W/2, WND_H/2, 0.0f };//シーン移動.
-const D3DXVECTOR3 vBOX_SIZE = { WND_W/2, WND_H/2, 0.0f };
+//色替えメニュー座標.
 const D3DXVECTOR3 vBOX_POS_COLOR = { 380.0f, WND_H/2, 0.0f };//色替え.
-const D3DXVECTOR3 vBOX_SIZE_COLOR = { 678.0f, 500.0f, 0.0f };
-const float fBOX_BIG_SPD_W = 60.0f;
-const float fBOX_BIG_SPD_H = 40.0f;
-const clsLINE_BOX::encBEFOR_CHANGE encBOX_APPEAR_CHANGE_MODE = clsLINE_BOX::encBEFOR_CHANGE::WIDTH;
-const float fBOX_SMALL_SPD_RATE = 1.0 / 16.0f;
-const clsLINE_BOX::encBEFOR_CHANGE encBOX_DISAPPEAR_CHANGE_MODE = clsLINE_BOX::encBEFOR_CHANGE::BOTH;
-const int iBOX_MESSAGE_LINE_GO_MISSION = 1;
-const int iBOX_MESSAGE_LINE_BACK_TITLE = iBOX_MESSAGE_LINE_GO_MISSION + 1;
-const int iBOX_MESSAGE_LINE_COLOR_CHANGE = iBOX_MESSAGE_LINE_BACK_TITLE + 1;
-
-
-//色ゲージ枠.
-const char sCOLOR_GAGE_PATH_BONE[] = "Data\\Image\\AssembleUi\\ColorGageBone.png";
-const WHSIZE_FLOAT COLOR_GAGE_SIZE_BONE = { 480.0f, 32.0f };
-const D3DXVECTOR3 vCOLOR_GAGE_POS_BONE  = { 420.0f, 240.0f, 0.0f };
-const float fCOLOR_GAGE_OFFSET_BONE = COLOR_GAGE_SIZE_BONE.h + 20.0f;
-const float fCOLOR_GAGE_OFFSET_BONE_2 =  24.0f;//パーツのベースと装甲の合間の追加オフセット.
-//ゲージ本編.
-const char sCOLOR_GAGE_PATH[] = "Data\\Image\\AssembleUi\\ColorGage.png";
-const WHSIZE_FLOAT COLOR_GAGE_SIZE = { 32.0f, 32.0f };
-const float fCOLOR_GAGE_ALPHA = 0.5f;
-const D3DXVECTOR3 vCOLOR_GAGE_COLOR[] = {
-	{ 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f },
-	{ 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f },
-};
-
-//YesNo.
-//文字.
-const int iMESSAGEBOX_YES_NO_INDEX_YES = 4;
-const int iMESSAGEBOX_YES_NO_INDEX_NO = 5;
-const D3DXVECTOR3 iMESSAGEBOX_YES_NO_YES_POS = { 525.0f, 450.0f, 0.0f };
-const D3DXVECTOR3 iMESSAGEBOX_YES_NO_NO_POS  = { 725.0f, 450.0f, 0.0f };
-const float fMESSAGE_BOX_YES_NO_SCALE = 18.0f;
-//スプライト.
-const D3DXVECTOR3 vMESSAGE_BOX_YES_NO_SCALE = { 2.5f, 1.25f, 0.0f };
-const D3DXVECTOR3 vMESSAGE_BOX_YES_NO_OFFSET_POS_YES = { 29.0f, 11.0f, 0.0f };
-const D3DXVECTOR3 vMESSAGE_BOX_YES_NO_OFFSET_POS_NO  = { 20.0f, 11.0f, 0.0f };
 
 
 //日本語UI.
@@ -138,43 +98,7 @@ const D3DXVECTOR3 vFONT_BUTTON_POS = { 650.0f, 40.0f, 0.0f };
 const float fFONT_BUTTON_SCALE = 14.0f;
 const int iFONT_BUTTON_LINE = 0;
 
-//出撃メッセージ.
-const D3DXVECTOR3 vFONT_MESSAGE_BOX_TITLE_POS = { 480.0f, 230.0f, 0.0f };
-const float fFONT_MESSAGE_BOX_TITLE_SCALE = 24.0f;
 
-//色替えメッセージ.
-const D3DXVECTOR3 vFONT_MESSAGE_BOX_COLOR_CHANGE = { 250.0f, 140.0f, 0.0f };
-
-//色替えtext.
-const float fCOLOR_CHANGE_BOX_IN_TEXT_RGB_SCALE = 2.0f;
-const float COLOR_CHANGE_BOX_IN_TEXT_RGB_OFFSET_X = -30.0f;
-const float COLOR_CHANGE_BOX_IN_TEXT_RGB_OFFSET_Y = -10.0f;
-const string sCOLOR_CHANGE_BOX_IN_TEXT_RGB_TEXT[] = {
-	"R", "G", "B",
-	"R", "G", "B",
-}; 
-
-const float fCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_SCALE = 2.5f;
-D3DXVECTOR2 vCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_POS = { 60.0f, 190.0f };
-float fCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_POS_ADD_Y = fCOLOR_GAGE_OFFSET_BONE * 3 + fCOLOR_GAGE_OFFSET_BONE_2; 
-const string sCOLOR_CHANGE_BOX_IN_TEXT_COLOR1_2_TEXT[] = {
-	"Color1", "Color2"
-};
-
-const char sCOLOR_CHANGE_BOX_IN_SELECT_COLOR_PATH[] = "Data\\Image\\AssembleUi\\ColorSelect.png"; 
-const WHSIZE_FLOAT COLOR_CHANGE_BOX_IN_SELECT_COLOR_SIZE = { 24.0f, 24.0f };
-
-//色の戻るテキスト.
-//本体.
-const D3DXVECTOR3 vCOLOR_CHANGE_BACK_TEXT_POS = { 90.0f, 560.0f, 0.0f };
-const float fCOLOR_CHANGE_BACK_TEXT_SCALE = 18.0f;
-const int iCOLOR_CHANGE_BACK_TEXT_NUMBER = 6;
-//背景.
-const D3DXVECTOR3 vCOLOR_CHANGE_BACK_TEXT_BACK_COLOR_POS = { 112.0f, 570.0f, 0.0f };
-
-//色の選択肢の数.
-const char cCOLOR_CHANGE_INDEX_MAX = clsROBO_STATUS::enCOLOR_GAGE_size + 1;
-const char cCOLOR_CHANGE_INDEX_DIS_WINDOW = clsROBO_STATUS::enCOLOR_GAGE_size;
 
 //ズーム限界.
 const float fZOOM_RIMIT_MIN = -100.0f;
@@ -186,13 +110,12 @@ const float fZOOM_RIMIT_MAX = 35.0f;
 //========== 組み換えクラス ==========//
 //================================//
 clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
-	,m_pAsmModel( nullptr )
+	,m_spAsmModel( nullptr )
 	,m_pViewPortPartsWindow( nullptr )
 	,m_pViewPortRoboWindow( nullptr )
-	,m_pSelectParts( nullptr )
 	,m_fDistanceAssembleModel( 0.0f )
+	,m_enSelectMode( clsASSEMBLE_UI::enSELECT_MODE::PARTS )
 {
-	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::PARTS;
 
 }
 
@@ -201,7 +124,7 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 
 	SAFE_DELETE( m_pViewPortRoboWindow );
 	SAFE_DELETE( m_pViewPortPartsWindow );
-	SAFE_DELETE( m_pAsmModel );
+	SAFE_DELETE( m_spAsmModel );
 
 	for( unsigned int i=0; i<m_vspFile.size(); i++ ){
 		if( m_vspFile[i] == nullptr ) continue;
@@ -211,7 +134,6 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 	m_vspFile.clear();
 	m_vspFile.shrink_to_fit();
 
-	m_pSelectParts = nullptr;
 }
 
 void clsSCENE_ASSEMBLE::CreateProduct()
@@ -264,12 +186,12 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	m_upUI->Create( m_wpDevice, m_wpContext, partsData );
 
 	//モデルさん作成.
-	assert( m_pAsmModel == nullptr );
-	m_pAsmModel = new clsASSEMBLE_MODEL;
-	m_pAsmModel->Create( m_wpResource, m_wpRoboStatus );
-	m_pAsmModel->SetPos( vINIT_ROBO_POS );
-	m_pAsmModel->SetRot( vINIT_ROBO_ROT );
-	m_pAsmModel->SetScale( fINIT_ROBO_SCALE );
+	assert( m_spAsmModel == nullptr );
+	m_spAsmModel = new clsASSEMBLE_MODEL;
+	m_spAsmModel->Create( m_wpResource, m_wpRoboStatus );
+	m_spAsmModel->SetPos( vINIT_ROBO_POS );
+	m_spAsmModel->SetRot( vINIT_ROBO_ROT );
+	m_spAsmModel->SetScale( fINIT_ROBO_SCALE );
 
 	assert( m_wpCamera );
 	m_wpCamera->SetPos( vINIT_CAMERA_POS );
@@ -312,8 +234,8 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 
 	//パーツビューに置くパーツ.
-	assert( !m_pSelectParts );
-	m_pSelectParts = new clsPARTS_WINDOW_MODEL( m_wpResource, m_wpRoboStatus );
+	assert( !m_upSelectParts );
+	m_upSelectParts = make_unique< clsPARTS_WINDOW_MODEL >( m_wpResource, m_wpRoboStatus );
 
 
 	//照合用情報の作成の為のファイルデータ取得.
@@ -352,49 +274,49 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		tmpI ++;
 		if( tmpI >= iTEST_ROBO_PARTS_MODEL_MAX ) tmpI = 0;
 
-		m_pAsmModel->AttachModel( enPARTS::LEG, tmpI );
-		m_pAsmModel->AttachModel( enPARTS::CORE, tmpI );
-		m_pAsmModel->AttachModel( enPARTS::HEAD, tmpI );
-		m_pAsmModel->AttachModel( enPARTS::ARM_L, tmpI );
-		m_pAsmModel->AttachModel( enPARTS::ARM_R, tmpI );
-		m_pAsmModel->AttachModel( enPARTS::WEAPON_L, tmpI );
-		m_pAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
+		m_spAsmModel->AttachModel( enPARTS::LEG, tmpI );
+		m_spAsmModel->AttachModel( enPARTS::CORE, tmpI );
+		m_spAsmModel->AttachModel( enPARTS::HEAD, tmpI );
+		m_spAsmModel->AttachModel( enPARTS::ARM_L, tmpI );
+		m_spAsmModel->AttachModel( enPARTS::ARM_R, tmpI );
+		m_spAsmModel->AttachModel( enPARTS::WEAPON_L, tmpI );
+		m_spAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
 
 #endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
-		m_pAsmModel->SetPos( vINIT_ROBO_POS );
-		m_pAsmModel->SetRot( vINIT_ROBO_ROT );
-		m_pAsmModel->SetScale( fINIT_ROBO_SCALE );
+		m_spAsmModel->SetPos( vINIT_ROBO_POS );
+		m_spAsmModel->SetRot( vINIT_ROBO_ROT );
+		m_spAsmModel->SetScale( fINIT_ROBO_SCALE );
 
-		m_pAsmModel->SetRot( { 0.0f, 0.0f, 0.0f } );
+		m_spAsmModel->SetRot( { 0.0f, 0.0f, 0.0f } );
 
 		m_wpSound->StopAllSound();
 	}
 
 	//テストモデル移動.
 	float fff = 1.0f;
-	if( GetAsyncKeyState( 'W' ) & 0x8000 ) m_pAsmModel->AddPos( { 0.0f, fff, 0.0f } );
-	if( GetAsyncKeyState( 'S' ) & 0x8000 ) m_pAsmModel->AddPos( { 0.0f, -fff, 0.0f } );
-	if( GetAsyncKeyState( 'D' ) & 0x8000 ) m_pAsmModel->AddPos( { fff, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( 'A' ) & 0x8000 ) m_pAsmModel->AddPos( { -fff, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( 'E' ) & 0x8000 ) m_pAsmModel->AddPos( { 0.0f, 0.0f, fff } );
-	if( GetAsyncKeyState( 'Q' ) & 0x8000 ) m_pAsmModel->AddPos( { 0.0f, 0.0f, -fff } );
+	if( GetAsyncKeyState( 'W' ) & 0x8000 ) m_spAsmModel->AddPos( { 0.0f, fff, 0.0f } );
+	if( GetAsyncKeyState( 'S' ) & 0x8000 ) m_spAsmModel->AddPos( { 0.0f, -fff, 0.0f } );
+	if( GetAsyncKeyState( 'D' ) & 0x8000 ) m_spAsmModel->AddPos( { fff, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( 'A' ) & 0x8000 ) m_spAsmModel->AddPos( { -fff, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( 'E' ) & 0x8000 ) m_spAsmModel->AddPos( { 0.0f, 0.0f, fff } );
+	if( GetAsyncKeyState( 'Q' ) & 0x8000 ) m_spAsmModel->AddPos( { 0.0f, 0.0f, -fff } );
 	float rrr = 0.05f;
-	if( GetAsyncKeyState( 'T' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, rrr, 0.0f } );
-	if( GetAsyncKeyState( 'G' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, -rrr, 0.0f } );
-	if( GetAsyncKeyState( 'F' ) & 0x8000 ) m_pAsmModel->AddRot( { rrr, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( 'H' ) & 0x8000 ) m_pAsmModel->AddRot( { -rrr, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( 'R' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, 0.0f, rrr } );
-	if( GetAsyncKeyState( 'Y' ) & 0x8000 ) m_pAsmModel->AddRot( { 0.0f, 0.0f, -rrr } );
+	if( GetAsyncKeyState( 'T' ) & 0x8000 ) m_spAsmModel->AddRot( { 0.0f, rrr, 0.0f } );
+	if( GetAsyncKeyState( 'G' ) & 0x8000 ) m_spAsmModel->AddRot( { 0.0f, -rrr, 0.0f } );
+	if( GetAsyncKeyState( 'F' ) & 0x8000 ) m_spAsmModel->AddRot( { rrr, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( 'H' ) & 0x8000 ) m_spAsmModel->AddRot( { -rrr, 0.0f, 0.0f } );
+	if( GetAsyncKeyState( 'R' ) & 0x8000 ) m_spAsmModel->AddRot( { 0.0f, 0.0f, rrr } );
+	if( GetAsyncKeyState( 'Y' ) & 0x8000 ) m_spAsmModel->AddRot( { 0.0f, 0.0f, -rrr } );
 
 
 	if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
 		static int tmpLAnim = 0;
-		m_pAsmModel->PartsAnimChange( static_cast<enPARTS>( m_PartsSelect.Type ), tmpLAnim++ );
+		m_spAsmModel->PartsAnimChange( static_cast<enPARTS>( m_PartsSelect.Type ), tmpLAnim++ );
 		if( tmpLAnim >= 5 ) tmpLAnim = 0;
 	}
 	if( GetAsyncKeyState( VK_F7 ) & 0x1 ){
 		static int siCORE_ANIM_NO = 0;
-		m_pAsmModel->PartsAnimChange( enPARTS::LEG, siCORE_ANIM_NO++ );
+		m_spAsmModel->PartsAnimChange( enPARTS::LEG, siCORE_ANIM_NO++ );
 		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
 	}
 
@@ -485,10 +407,10 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	//モデル回転.
 	const float fMODEL_SPN_SPD = 0.05f;
 	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
-		m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+		m_spAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
 	}
 	if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
-		m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+		m_spAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
 	}
 	//モデルズーム.
 	const float fMODEL_MOVE_SPD = 5.0f;
@@ -513,7 +435,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_upUI->Update( 
 			m_enSelectMode,
 			m_vspFile[m_PartsSelect.Type], 
-			m_pAsmModel,
+			m_spAsmModel,
 			m_PartsSelect.Type, 
 			m_PartsSelect.Num[m_PartsSelect.Type], 
 			iSTATUS_CUT_NUM );
@@ -523,12 +445,12 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	}
 
 
-	assert( m_pAsmModel );
-	m_pAsmModel->UpDate();
+	assert( m_spAsmModel );
+	m_spAsmModel->UpDate();
 
-	assert( m_pSelectParts );
-	m_pSelectParts->SetColors( m_pAsmModel->GetColor() );
-	m_pSelectParts->Update( m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
+	assert( m_upSelectParts );
+	m_upSelectParts->SetColors( m_spAsmModel->GetColor() );
+	m_upSelectParts->Update( m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
 
 
 }
@@ -546,7 +468,7 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	PartsViewCam.Create();
 	PartsViewCam.SetPos( vPARTS_VIEW_CAM_POS );
 	PartsViewCam.SetLookPos( vPARTS_VIEW_CAM_LOOK );
-	PartsViewCam.AddPos( m_pSelectParts->GetSelectPartsHeight() );
+	PartsViewCam.AddPos( m_upSelectParts->GetSelectPartsHeight() );
 
 	//ロボ描画用.
 	clsCAMERA_ASSEMBLE RoboViewCam;
@@ -554,7 +476,7 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	RoboViewCam.SetPos( vROBO_VIEW_CAM_POS );;
 	RoboViewCam.AddPos( { 0.0f, 0.0f, m_fDistanceAssembleModel } );
 	RoboViewCam.SetLookPos( vROBO_VIEW_CAM_LOOK );
-	RoboViewCam.AddPos( m_pAsmModel->GetBonePos( enPARTS::LEG, sBONE_NAME_LEG_TO_CORE ) );
+	RoboViewCam.AddPos( m_spAsmModel->GetBonePos( enPARTS::LEG, sBONE_NAME_LEG_TO_CORE ) );
 
 
 	//背景.
@@ -607,8 +529,8 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		m_pViewPortPartsWindow, 
 		PartsViewCam.GetPos(), PartsViewCam.GetLookPos(),
 		m_pViewPortPartsWindow->Width, m_pViewPortPartsWindow->Height );
-	assert( m_pSelectParts );
-	m_pSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos(), isMessageBoxClose() );
+	assert( m_upSelectParts );
+	m_upSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos(), isMessageBoxClose() );
 
 
 	//ロボ描画.
@@ -616,15 +538,15 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		m_pViewPortRoboWindow, 
 		RoboViewCam.GetPos(), RoboViewCam.GetLookPos(),
 		m_pViewPortRoboWindow->Width, m_pViewPortRoboWindow->Height );
-	assert( m_pAsmModel );
+	assert( m_spAsmModel );
 	//パーツ選択中は選択しているパーツを光らせる.
 	if( isMessageBoxClose() )
 	{
-		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos(), 
+		m_spAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos(), 
 			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
 	}
 	else{
-		m_pAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos() );
+		m_spAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos() );
 	}
 	SetDepth( false );
 
@@ -755,17 +677,17 @@ void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )
 		return;
 	}
 
-	assert( m_pAsmModel );
+	assert( m_spAsmModel );
 	//右.
 	if( isIncrement ){
-		if( m_pAsmModel->IncrementColor( m_enColorGageIndex ) ){
+		if( m_spAsmModel->IncrementColor( m_enColorGageIndex ) ){
 			//動いたなら音を鳴らす.
 			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		}
 	}
 	//左.
 	else{
-		if( m_pAsmModel->DecrementColor( m_enColorGageIndex ) ){
+		if( m_spAsmModel->DecrementColor( m_enColorGageIndex ) ){
 			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		}
 	}
@@ -773,7 +695,7 @@ void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )
 	//色の保存.
 	for( char i=0; i<clsROBO_STATUS::enCOLOR_GAGE_size; i++ ){
 		clsROBO_STATUS::enCOLOR_GAGE tmpIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( i );
-		int iColorRank = m_pAsmModel->GetColorRank( tmpIndex );
+		int iColorRank = m_spAsmModel->GetColorRank( tmpIndex );
 		m_wpRoboStatus->SetColorRank( tmpIndex, iColorRank );
 	}
 }
@@ -819,28 +741,28 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 	{
 	case clsASSEMBLE_MODEL::LEG:
 		m_wpRoboStatus->ReceiveLeg( tmpStatus,		tmpPartsNum );
-		m_pAsmModel->AttachModel( enPARTS::LEG,		tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::LEG,		tmpPartsNum );
 		break;
 	case clsASSEMBLE_MODEL::CORE:
 		m_wpRoboStatus->ReceiveCore( tmpStatus,		tmpPartsNum );
-		m_pAsmModel->AttachModel( enPARTS::CORE,	tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::CORE,	tmpPartsNum );
 		break;
 	case clsASSEMBLE_MODEL::HEAD:
 		m_wpRoboStatus->ReceiveHead( tmpStatus,		tmpPartsNum );
-		m_pAsmModel->AttachModel( enPARTS::HEAD,	tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::HEAD,	tmpPartsNum );
 		break;
 	case clsASSEMBLE_MODEL::ARMS:
 		m_wpRoboStatus->ReceiveArms( tmpStatus,		tmpPartsNum );
-		m_pAsmModel->AttachModel( enPARTS::ARM_L,	tmpPartsNum );
-		m_pAsmModel->AttachModel( enPARTS::ARM_R,	tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::ARM_L,	tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::ARM_R,	tmpPartsNum );
 		break;
 	case clsASSEMBLE_MODEL::WEAPON_L:
 		m_wpRoboStatus->ReceiveWeaponL( tmpStatus,	tmpPartsNum );
-		m_pAsmModel->AttachModel( enPARTS::WEAPON_L,tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::WEAPON_L,tmpPartsNum );
 		break;
 	case clsASSEMBLE_MODEL::WEAPON_R:
 		m_wpRoboStatus->ReceiveWeaponR( tmpStatus,	tmpPartsNum );
-		m_pAsmModel->AttachModel( enPARTS::WEAPON_R,tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::WEAPON_R,tmpPartsNum );
 		break;
 	default:
 		break;
@@ -921,7 +843,7 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 	else if( encMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
 		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( 0 );
 		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE >(
-			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray, m_pAsmModel );
+			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray, m_spAsmModel );
 		m_upMenu->SetPos( vBOX_POS_COLOR );
 	}
 }
@@ -1078,25 +1000,25 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 //	//モデルのpos.
 //	sprintf_s( strDbgTxt, 
 //		"ModelPos : x[%f], y[%f], z[%f]",
-//		m_pAsmModel->GetPos().x, 
-//		m_pAsmModel->GetPos().y, 
-//		m_pAsmModel->GetPos().z );
+//		m_spAsmModel->GetPos().x, 
+//		m_spAsmModel->GetPos().y, 
+//		m_spAsmModel->GetPos().z );
 //	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 //
 //	sprintf_s( strDbgTxt, 
 //		"ModelRot : x[%f], y[%f], z[%f]",
-//		m_pAsmModel->GetRot().x, 
-//		m_pAsmModel->GetRot().y, 
-//		m_pAsmModel->GetRot().z );
+//		m_spAsmModel->GetRot().x, 
+//		m_spAsmModel->GetRot().y, 
+//		m_spAsmModel->GetRot().z );
 //	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 //
 //	//各パーツのpos.
 //	for( UCHAR ucNo=0; ucNo<static_cast<UCHAR>( enPARTS::MAX ); ucNo++ ){
 //		sprintf_s( strDbgTxt, 
 //			"PartsPos : x[%f], y[%f], z[%f]",
-//			m_pAsmModel->GetPartsPos( ucNo ).x, 
-//			m_pAsmModel->GetPartsPos( ucNo ).y, 
-//			m_pAsmModel->GetPartsPos( ucNo ).z );
+//			m_spAsmModel->GetPartsPos( ucNo ).x, 
+//			m_spAsmModel->GetPartsPos( ucNo ).y, 
+//			m_spAsmModel->GetPartsPos( ucNo ).z );
 //		m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 //	}
 //

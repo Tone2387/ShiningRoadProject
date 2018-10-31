@@ -13,7 +13,6 @@ class clsMENU_WINDOW_ASSEMBLE_BASE;
 #include "AssembleUi.h"
 
 #include "PartsWindowModel.h"
-class clsWINDOW_BOX;
 
 
 //================================//
@@ -28,19 +27,6 @@ public:
 
 
 private:
-
-
-	//どのパーツを選んでるの?.
-	struct PARTS_SELECT
-	{
-		short Type;	//パーツの種類( 脚、コア等 ).
-		short Num[clsASSEMBLE_MODEL::ENUM_SIZE];	//パーツ番号.
-
-		PARTS_SELECT()
-		:Num()
-		,Type( 0 )
-		{}
-	}m_PartsSelect;
 
 
 	void CreateProduct() final;
@@ -90,6 +76,23 @@ private:
 	//色替え( 左右キーを押された ).
 	void AddRoboColor( const bool isIncrement );
 
+private:
+
+
+	//どのパーツを選んでるの?.
+	struct PARTS_SELECT
+	{
+		short Type;	//パーツの種類( 脚、コア等 ).
+		short Num[clsASSEMBLE_MODEL::ENUM_SIZE];	//パーツ番号.
+
+		PARTS_SELECT()
+		:Num()
+		,Type( 0 )
+		{}
+	}m_PartsSelect;
+
+
+
 	//パーツ選択中かそれ以外か.
 	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
 
@@ -102,10 +105,10 @@ private:
 	std::unique_ptr< clsSprite2D > m_upBack;
 
 	//お着換えするモデル.
-	clsASSEMBLE_MODEL*	m_pAsmModel;
+	clsASSEMBLE_MODEL*	m_spAsmModel;
 
 	//選択中パーツ.
-	clsPARTS_WINDOW_MODEL* m_pSelectParts;
+	std::unique_ptr< clsPARTS_WINDOW_MODEL > m_upSelectParts;
 
 	//矢印.
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upArrow;
