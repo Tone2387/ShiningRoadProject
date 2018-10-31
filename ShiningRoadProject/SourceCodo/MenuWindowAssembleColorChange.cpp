@@ -213,8 +213,8 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	iTextRow = iRGB_INDEX;
 	m_wpFont->SetScale( fSCALE_RGB );
 	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
-		const D3DXVECTOR2 vPOS_AGB_LOCAL = { m_vecupColorBone[i]->GetPos().x, m_vecupColorBone[i]->GetPos().y };
-		const D3DXVECTOR3 vPOS_AGB = SetPosFromWindow( vPOS_AGB_LOCAL );
+		const D3DXVECTOR3 vPOS_AGB = { m_vecupColorBone[i]->GetPos().x, m_vecupColorBone[i]->GetPos().y, 0.0f };
+//		const D3DXVECTOR3 vPOS_AGB = SetPosFromWindow( vPOS_AGB_LOCAL );
 		m_wpFont->SetPos( vPOS_AGB );
 		const D3DXVECTOR3 vADD_POS = { -50.0f, 0.0f, 0.0f };
 		m_wpFont->AddPos( vADD_POS );

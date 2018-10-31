@@ -70,7 +70,7 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::RenderProduct()
 	const int iQUESTION_INDEX = 1;
 	
 	//yes.
-	const D3DXVECTOR2 vPOS_YES_LOCAL = { 150.0f, 250.0f };
+	const D3DXVECTOR2 vPOS_YES_LOCAL = { 180.0f, 250.0f };
 	const D3DXVECTOR3 vPOS_YES = SetPosFromWindow( vPOS_YES_LOCAL );
 	const float fSCALE = 24;
 	int iTextRow = iYES_INDEX;
@@ -79,13 +79,13 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::RenderProduct()
 	m_wpFont->Render( iTextRow ++ );
 
 	//no.
-	const D3DXVECTOR2 vPOS_NO_LOCAL = { 370.0f, 250.0f };
+	const D3DXVECTOR2 vPOS_NO_LOCAL = { 400.0f, 250.0f };
 	const D3DXVECTOR3 vPOS_NO = SetPosFromWindow( vPOS_NO_LOCAL );
 	m_wpFont->SetPos( vPOS_NO );
 	m_wpFont->Render( iTextRow ++ );
 
 	//èoåÇÇ∑ÇÈ.
-	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 150.0f, 70.0f };
+	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 70.0f, 70.0f };
 	const D3DXVECTOR3 vPOS_CONTINUE = SetPosFromWindow( vPOS_CONTINUE_LOCAL );
 	const float fSCALE_CONTINUE = 36;
 	iTextRow = iQUESTION_INDEX;

@@ -89,7 +89,7 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::RenderProduct()
 	m_wpFont->Render( iTextRow ++ );
 
 	//コンティニュー?.
-	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 150.0f, 70.0f };
+	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 160.0f, 70.0f };
 	const D3DXVECTOR3 vPOS_CONTINUE = SetPosFromWindow( vPOS_CONTINUE_LOCAL );
 	const float fSCALE_CONTINUE = 36;
 	m_wpFont->SetPos( vPOS_CONTINUE );
