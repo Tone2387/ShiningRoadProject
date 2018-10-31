@@ -1243,57 +1243,57 @@ void clsSCENE_ASSEMBLE::MenuUpdate( enSCENE &enNextScene )
 			break;
 
 		case enINFORMATION_INDEX_COLOR_1_R_INCREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
 			AddRoboColor( true );
 			break;
 		case enINFORMATION_INDEX_COLOR_1_R_DECREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
 			AddRoboColor( false );
 			break;
 
 		case enINFORMATION_INDEX_COLOR_1_G_INCREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
 			AddRoboColor( true );
 			break;
 		case enINFORMATION_INDEX_COLOR_1_G_DECREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
 			AddRoboColor( false );
 			break;
 
 		case enINFORMATION_INDEX_COLOR_1_B_INCREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
 			AddRoboColor( true );
 			break;
 		case enINFORMATION_INDEX_COLOR_1_B_DECREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
 			AddRoboColor( false );
 			break;
 
 
 		case enINFORMATION_INDEX_COLOR_2_R_INCREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
 			AddRoboColor( true );											
 			break;															
 		case enINFORMATION_INDEX_COLOR_2_R_DECREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
 			AddRoboColor( false );											
 			break;															
 																			
 		case enINFORMATION_INDEX_COLOR_2_G_INCREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
 			AddRoboColor( true );											
 			break;															
 		case enINFORMATION_INDEX_COLOR_2_G_DECREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
 			AddRoboColor( false );											
 			break;															
 																			
 		case enINFORMATION_INDEX_COLOR_2_B_INCREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
 			AddRoboColor( true );											
 			break;															
 		case enINFORMATION_INDEX_COLOR_2_B_DECREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
 			AddRoboColor( false );
 			break;
 
@@ -1303,7 +1303,7 @@ void clsSCENE_ASSEMBLE::MenuUpdate( enSCENE &enNextScene )
 		}
 	}
 
-	//( Œ©‚½–Ú‚ª )Á‚¦‚½‚ç( ƒƒ‚ƒŠ‚©‚ç‚à )Á‚¦‚é.
+	//Á‚¦‚é‹–‰Â‚ªo‚½‚çÁ‚¦‚é.
 	if( m_upMenu->isDeletePermission() ){
 		m_upMenu.reset( nullptr );
 	}
