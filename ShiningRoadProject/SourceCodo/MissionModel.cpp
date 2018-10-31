@@ -44,7 +44,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 	int iReturn = 0;			//戻り値.
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 	int iColNum = 0;			//m_iColNumに格納する当たり判定の数.
-	int tmpIndex;				//m_vecpPartsの添え字.
+	int tmpIndex;				//m_vpPartsの添え字.
 	const BONE_SET INIT_BONE_SET;//初期化用.
 	 
 	switch( enColParts )
@@ -52,7 +52,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 	case enCOL_PARTS_LEG:
 		tmpIndex = static_cast< int >( enPARTS::LEG );
 		//ボーンがあるだけ繰り返し.
-		while( m_vecpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
+		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
@@ -65,7 +65,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 		break;
 	case enCOL_PARTS_CORE:
 		tmpIndex = static_cast< int >( enPARTS::CORE );
-		if( m_vecpParts[ tmpIndex ]->ExistsBone( sBONE_NAME_COL_CORE ) ){
+		if( m_vpParts[ tmpIndex ]->ExistsBone( sBONE_NAME_COL_CORE ) ){
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
 			m_vColStates[ m_iColStateIndex ].sName = sBONE_NAME_COL_CORE;
@@ -76,7 +76,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 		break;
 	case enCOL_PARTS_HEAD:
 		tmpIndex = static_cast< int >( enPARTS::HEAD );
-		if( m_vecpParts[ tmpIndex ]->ExistsBone( sBONE_NAME_COL_HEAD ) ){
+		if( m_vpParts[ tmpIndex ]->ExistsBone( sBONE_NAME_COL_HEAD ) ){
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
 			m_vColStates[ m_iColStateIndex ].sName = sBONE_NAME_COL_HEAD;
@@ -88,7 +88,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 	case enCOL_PARTS_ARMS:
 		//左腕.
 		tmpIndex = static_cast< int >( enPARTS::ARM_L );
-		while( m_vecpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
+		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
@@ -102,7 +102,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 		//右腕.
 		tmpIndex = static_cast< int >( enPARTS::ARM_R );
 		iColNum = 0;
-		while( m_vecpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
+		while( m_vpParts[ tmpIndex ]->ExistsBone( OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT ).c_str() ) )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
@@ -191,29 +191,29 @@ void clsMISSION_MODEL::SetPartsRotate(const enPARTS PartsNum, const D3DXVECTOR3 
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	m_vecpParts[cTmpNum]->SetRotation(vRot);
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->SetRotation(vRot);
 }
 
 //腕の角度を武器も模写する.
 D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(const enPARTS PartsNum, const char* strBoneRootName, const char* strBoneEndName)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
-	//return m_vecpParts[cTmpNum]->m_pMesh->ExistsBone(sBoneName);
+	//return m_vpParts[cTmpNum]->m_pMesh->ExistsBone(sBoneName);
 
 	std::string strBoneRoot;
 	std::string strBoneEnd;
 
 	//ボーンのベクトルを出す( ローカル ).
 	D3DXVECTOR3 vVecLocal =
-		m_vecpParts[cTmpNum]->GetBonePos(strBoneEndName, true) -
-		m_vecpParts[cTmpNum]->GetBonePos(strBoneRootName, true);
+		m_vpParts[cTmpNum]->GetBonePos(strBoneEndName, true) -
+		m_vpParts[cTmpNum]->GetBonePos(strBoneRootName, true);
 	D3DXVec3Normalize(&vVecLocal, &vVecLocal);
 
 	//ボーンのベクトルを出す( ワールド ).
 	D3DXVECTOR3 vVecWorld =
-		m_vecpParts[cTmpNum]->GetBonePos(strBoneEndName) -
-		m_vecpParts[cTmpNum]->GetBonePos(strBoneRootName);
+		m_vpParts[cTmpNum]->GetBonePos(strBoneEndName) -
+		m_vpParts[cTmpNum]->GetBonePos(strBoneRootName);
 	D3DXVec3Normalize(&vVecWorld, &vVecWorld);
 
 	//ベクトルから回転値を求める.
@@ -233,62 +233,62 @@ void clsMISSION_MODEL::SetPartsAnimNo(const enPARTS PartsNum, const int iAnimInd
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	m_vecpParts[cTmpNum]->SetAnimChange(iAnimIndex, dAnimTime);
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->SetAnimChange(iAnimIndex, dAnimTime);
 }
 
 void clsMISSION_MODEL::SetPartsAnimSpeed(const enPARTS PartsNum, const double dAnimSpeed)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	m_vecpParts[cTmpNum]->SetAnimSpeed(dAnimSpeed);
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->SetAnimSpeed(dAnimSpeed);
 }
 
 void clsMISSION_MODEL::SetPartsAnimNormal(const enPARTS PartsNum, const bool bAnimTimeInit)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	m_vecpParts[cTmpNum]->AnimNormal(bAnimTimeInit);
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->AnimNormal(bAnimTimeInit);
 }
 
 void clsMISSION_MODEL::SetPartsAnimReverce(const enPARTS PartsNum, const bool bAnimTimeInit)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	m_vecpParts[cTmpNum]->AnimReverce(bAnimTimeInit);
+	assert(m_vpParts[cTmpNum]);
+	m_vpParts[cTmpNum]->AnimReverce(bAnimTimeInit);
 }
 
 const int clsMISSION_MODEL::GetPartsAnimNo(const enPARTS PartsNum)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	return m_vecpParts[cTmpNum]->GetAnimNo();
+	assert(m_vpParts[cTmpNum]);
+	return m_vpParts[cTmpNum]->GetAnimNo();
 }
 
 const bool clsMISSION_MODEL::IsPartsAnimEnd(const enPARTS PartsNum)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	return m_vecpParts[cTmpNum]->IsAnimTimeEnd();
+	assert(m_vpParts[cTmpNum]);
+	return m_vpParts[cTmpNum]->IsAnimTimeEnd();
 }
 
 const double clsMISSION_MODEL::GetPartsAnimNowTime(const enPARTS PartsNum)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	return m_vecpParts[cTmpNum]->GetAnimTime();
+	assert(m_vpParts[cTmpNum]);
+	return m_vpParts[cTmpNum]->GetAnimTime();
 }
 
 const bool clsMISSION_MODEL::IsPartsAnimReverce(const enPARTS PartsNum)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 
-	assert(m_vecpParts[cTmpNum]);
-	return m_vecpParts[cTmpNum]->IsAnimReverce();
+	assert(m_vpParts[cTmpNum]);
+	return m_vpParts[cTmpNum]->IsAnimReverce();
 }

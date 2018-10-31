@@ -29,16 +29,16 @@ void clsPARTS_WINDOW_MODEL_FOR_ARMS::Render(
 {
 	bool bRender;
 
-	for( UINT i=0; i<m_vecpParts.size(); i++ ){
-		assert( m_vecpParts[i] );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
 		//•`‰æ‚·‚é‚©‚µ‚È‚¢‚©‚ðŒˆ‚ß‚é.
 		bRender = isRender( RenderParts, i );
 		//ƒ‚ƒfƒ‹˜AŒ‹.
 		SetPos( GetPos() );
-		m_vecpParts[i]->ModelUpdate( m_vecpParts[i]->m_Trans );
+		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 		//•`‰æ.
 		if( !bRender ) continue;
-		m_vecpParts[i]->ModelRender( mView, mProj, vLight, vEye, m_vecvColor[0], m_vecvColor[1] );
+		m_vpParts[i]->ModelRender( mView, mProj, vLight, vEye, m_vecvColor[0], m_vecvColor[1] );
 	}
 }
 

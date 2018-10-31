@@ -163,7 +163,7 @@ protected:
 
 	//パーツの数分のポインタ.
 //	clsPARTS_BASE**	m_wppParts;
-	std::vector< clsPARTS_BASE* >	m_vecpParts;
+	std::vector< clsPARTS_BASE* >	m_vpParts;
 
 
 	//色の配列.

@@ -52,7 +52,7 @@ const int iCOLOR_GRADATION_MIN = 1;
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
 	,m_upPartsFactory( nullptr )
-	,m_vecpParts()
+	,m_vpParts()
 	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
 	,m_iColorRank()
@@ -67,15 +67,15 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 
 clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 {
-	for( unsigned int i=0; i<m_vecpParts.size(); i++ ){
-		if( m_vecpParts[i] != nullptr ){
-			m_vecpParts[i]->DetatchModel();
-			delete m_vecpParts[i];
-			m_vecpParts[i] = nullptr;
+	for( unsigned int i=0; i<m_vpParts.size(); i++ ){
+		if( m_vpParts[i] != nullptr ){
+			m_vpParts[i]->DetatchModel();
+			delete m_vpParts[i];
+			m_vpParts[i] = nullptr;
 		}
 	}
-	m_vecpParts.clear();
-	m_vecpParts.shrink_to_fit();
+	m_vpParts.clear();
+	m_vpParts.shrink_to_fit();
 
 //	SAFE_DELETE( m_upPartsFactory );
 	if( m_upPartsFactory ){
@@ -90,16 +90,16 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene )
 {
 	assert( !m_upPartsFactory );
-	assert( !m_vecpParts.size() );
+	assert( !m_vpParts.size() );
 	assert( !m_wpResource );
 
 	m_wpResource = pResource;
 
 	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
-	m_vecpParts.resize( ucPARTS_MAX, nullptr );
+	m_vpParts.resize( ucPARTS_MAX, nullptr );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_vecpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
+		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
 	//最後にクリアした状態にする.
@@ -146,7 +146,7 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 	AttachModel( enPARTS::WEAPON_R, pStatus->GetPartsNum( enPARTS::WEAPON_R ) );
 
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_vecpParts[i]->PartsAnimChange( 0 );
+		m_vpParts[i]->PartsAnimChange( 0 );
 	}
 
 
@@ -166,9 +166,9 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 
 void clsASSEMBLE_MODEL::UpDate()
 {
-	for( UINT i=0; i<m_vecpParts.size(); i++ ){
-		assert( m_vecpParts[i] );
-		m_vecpParts[i]->Update();
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->Update();
 	}
 	UpdateProduct();
 
@@ -190,11 +190,11 @@ void clsASSEMBLE_MODEL::Render(
 	D3DXVECTOR4 vTmpColorArmor;
 
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
-	m_vecpParts[ucLEG]->SetPosition( m_Trans.vPos );
+	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
 
 	//モデルの足元.
-	D3DXVECTOR3 vLegPosPositionBase = m_vecpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
-	D3DXVECTOR3 vLegPosNull = m_vecpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_NULL );
+	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
+	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_NULL );
 	const float fADD_POS_Y = vLegPosPositionBase.y - vLegPosNull.y;
 
 
@@ -202,20 +202,20 @@ void clsASSEMBLE_MODEL::Render(
 
 #endif
 
-	for( UINT i=0; i<m_vecpParts.size(); i++ ){
-		assert( m_vecpParts[i] );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
 		unsigned int uiMaskNum = 0;
 		vTmpColorBase = CreateColor( AlphaParts, i, uiMaskNum ++ );
 		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++ );
 		SetPartsFormalPos();
-		m_vecpParts[i]->ModelUpdate( m_vecpParts[i]->m_Trans );
+		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 //		ModelUpdate();
-		m_vecpParts[i]->ModelRender( 
+		m_vpParts[i]->ModelRender( 
 			mView, mProj, vLight, vEye, 
 			vTmpColorBase, vTmpColorArmor, true );
 
 		//ボーン位置を教え込ませる.
-		m_vecpParts[i]->UpdateBonePosPreviosFrame();
+		m_vpParts[i]->UpdateBonePosPreviosFrame();
 	}
 
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
@@ -299,17 +299,17 @@ void clsASSEMBLE_MODEL::AttachModel(
 	const SKIN_ENUM_TYPE PartsNum )
 {
 	UCHAR ucParts = static_cast<UCHAR>( enParts );
-	assert( m_vecpParts[ucParts] );
-	m_vecpParts[ucParts]->DetatchModel();
-	m_vecpParts[ucParts]->AttachModel( 
+	assert( m_vpParts[ucParts] );
+	m_vpParts[ucParts]->DetatchModel();
+	m_vpParts[ucParts]->AttachModel( 
 		m_wpResource->GetPartsModels( enParts, PartsNum ) );
-	m_vecpParts[ucParts]->SetAnimSpeed( m_dAnimSpd );
+	m_vpParts[ucParts]->SetAnimSpeed( m_dAnimSpd );
 	
 	//パーツ名を教える( ボーンが無いよ用 ).
 	clsOPERATION_STRING OprtStr;
 	string tmpName = sPARTS_NAME[ucParts];						//どのパーツ?.
 	tmpName = OprtStr.ConsolidatedNumber( tmpName, PartsNum );	//そのパーツの何番?.
-	m_vecpParts[ucParts]->SetPartsName( tmpName );				//名前教える.
+	m_vpParts[ucParts]->SetPartsName( tmpName );				//名前教える.
 //	AnimReSet();
 
 
@@ -337,8 +337,8 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePosPreviosFrame(
 	const int enBoneName,
 	int iVecNum ) const
 {
-	if( enParts < static_cast<enPARTS_INDEX>( m_vecpParts.size() ) ){
-		return m_vecpParts[ enParts ]->GetBonePosPreviosFrame( enBoneName, iVecNum );
+	if( enParts < static_cast<enPARTS_INDEX>( m_vpParts.size() ) ){
+		return m_vpParts[ enParts ]->GetBonePosPreviosFrame( enBoneName, iVecNum );
 	}
 
 	return D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
@@ -351,45 +351,45 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 {
 	m_Trans.vPos = vPos;
 
-	for( UINT i=0; i<m_vecpParts.size(); i++ ){
-		assert( m_vecpParts[i] );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
 //		m_wppParts[i]->SetPosition( m_Trans.vPos );
 	}
 
 	//モデルの基点.
-	m_vecpParts[ucLEG]->SetPosition( m_Trans.vPos );
+	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
 
 
-	m_vecpParts[ucCORE]->SetPosition( 
- 		m_vecpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_TO_CORE ) 
+	m_vpParts[ucCORE]->SetPosition( 
+ 		m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_TO_CORE ) 
 //		+ D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f )
 		);
-//	m_vecpParts[ucCORE]->AddPosition( D3DXVECTOR3( 0.0f, -fADD_POS_Y*5, 0.0f ) );
+//	m_vpParts[ucCORE]->AddPosition( D3DXVECTOR3( 0.0f, -fADD_POS_Y*5, 0.0f ) );
 
-	m_vecpParts[ucHEAD]->SetPosition( 
-		m_vecpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_HEAD ) );
+	m_vpParts[ucHEAD]->SetPosition( 
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_HEAD ) );
 
-	m_vecpParts[ucARM_L]->SetPosition( 
-		m_vecpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_ARM_L ) );
+	m_vpParts[ucARM_L]->SetPosition( 
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_ARM_L ) );
 
-	m_vecpParts[ucARM_R]->SetPosition( 
-		m_vecpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_ARM_R ) );
+	m_vpParts[ucARM_R]->SetPosition( 
+		m_vpParts[ucCORE]->GetBonePos( sBONE_NAME_CORE_TO_ARM_R ) );
 
-	m_vecpParts[ucWEAPON_L]->SetPosition( 
-		m_vecpParts[ucARM_L]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
+	m_vpParts[ucWEAPON_L]->SetPosition( 
+		m_vpParts[ucARM_L]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
 										   
-	m_vecpParts[ucWEAPON_R]->SetPosition( 
-		m_vecpParts[ucARM_R]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
+	m_vpParts[ucWEAPON_R]->SetPosition( 
+		m_vpParts[ucARM_R]->GetBonePos( sBONE_NAME_ARM_TO_WEAPON ) );
 
 	//武器の角度.
-	FitJointModel( m_vecpParts[ucWEAPON_L], m_vecpParts[ucARM_L],
+	FitJointModel( m_vpParts[ucWEAPON_L], m_vpParts[ucARM_L],
 		sBONE_NAME_ARM_WEAPON_VEC_ROOT, sBONE_NAME_ARM_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
-	FitJointModel( m_vecpParts[ucWEAPON_R], m_vecpParts[ucARM_R],
+	FitJointModel( m_vpParts[ucWEAPON_R], m_vpParts[ucARM_R],
 		sBONE_NAME_ARM_WEAPON_VEC_ROOT, sBONE_NAME_ARM_WEAPON_VEC_END );
 
 
-	m_vecpParts[ucWEAPON_L]->AddRotation( { m_vecpParts[ucARM_L]->GetRotation().x, 0.0f, 0.0f } );
-	m_vecpParts[ucWEAPON_R]->AddRotation( { m_vecpParts[ucARM_R]->GetRotation().x, 0.0f, 0.0f } );
+	m_vpParts[ucWEAPON_L]->AddRotation( { m_vpParts[ucARM_L]->GetRotation().x, 0.0f, 0.0f } );
+	m_vpParts[ucWEAPON_R]->AddRotation( { m_vpParts[ucARM_R]->GetRotation().x, 0.0f, 0.0f } );
 
 
 
@@ -417,9 +417,9 @@ void clsASSEMBLE_MODEL::SetRot( const D3DXVECTOR3 &vRot )
 	m_Trans.fYaw	= tmpRot.y;
 	m_Trans.fRoll	= tmpRot.z;
 
-	for( UCHAR i=0; i<m_vecpParts.size(); i++ ){
-		assert( m_vecpParts[i] );
-		m_vecpParts[i]->SetRotation( tmpRot );
+	for( UCHAR i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->SetRotation( tmpRot );
 	}
 }
 void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
@@ -435,9 +435,9 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetRot() const
 void clsASSEMBLE_MODEL::SetScale( const float fScale )
 {
 	m_Trans.vScale = { fScale, fScale, fScale };
-	for( UINT i=0; i<m_vecpParts.size(); i++ ){
-		assert( m_vecpParts[i] );
-		m_vecpParts[i]->SetScale( fScale );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->SetScale( fScale );
 	}
 }
 
@@ -446,9 +446,9 @@ void clsASSEMBLE_MODEL::SetScale( const float fScale )
 void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 {
 	m_dAnimSpd = dSpd;
-	for( UCHAR i=0; i<m_vecpParts.size(); i++ ){
-		assert( m_vecpParts[i] );
-		m_vecpParts[i]->SetAnimSpeed( m_dAnimSpd );
+	for( UCHAR i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->SetAnimSpeed( m_dAnimSpd );
 	}
 }
 
@@ -463,8 +463,8 @@ int clsASSEMBLE_MODEL::GetPartsNum( const enPARTS_TYPES enPartsType )
 bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex )
 {
 	char cPartsIndex = static_cast<char>( enParts );
-	assert( m_vecpParts[ cPartsIndex ] );
-	return m_vecpParts[ cPartsIndex ]->PartsAnimChange( iIndex );
+	assert( m_vpParts[ cPartsIndex ] );
+	return m_vpParts[ cPartsIndex ]->PartsAnimChange( iIndex );
 }
 
 
@@ -477,8 +477,8 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos(
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
 	char cTmpNum = static_cast<char>( enParts );
 
-	assert( m_vecpParts[ cTmpNum ] );
-	vReturn = m_vecpParts[ cTmpNum ]->GetBonePos( sBoneName );
+	assert( m_vpParts[ cTmpNum ] );
+	vReturn = m_vpParts[ cTmpNum ]->GetBonePos( sBoneName );
 
 	return vReturn;
 }
@@ -488,7 +488,7 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos(
 bool clsASSEMBLE_MODEL::ExistsBone( const enPARTS enParts, const char* sBoneName )
 {
 	char cTmpNum = static_cast<char>( enParts );
-	return m_vecpParts[ cTmpNum ]->m_pMesh->ExistsBone( sBoneName );
+	return m_vpParts[ cTmpNum ]->m_pMesh->ExistsBone( sBoneName );
 }
 
 
@@ -548,8 +548,8 @@ void clsASSEMBLE_MODEL::FitJointModel(
 //アニメーションリセット.
 void clsASSEMBLE_MODEL::AnimReSet()
 {
-	for( UINT i=0; i<m_vecpParts.size(); i++ ){
-		m_vecpParts[i]->PartsAnimChange( 0 );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		m_vpParts[i]->PartsAnimChange( 0 );
 	}
 }
 
@@ -651,9 +651,9 @@ void clsASSEMBLE_MODEL::UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorG
 
 void clsASSEMBLE_MODEL::ModelUpdate()
 {
-	for( UINT i=0; i<m_vecpParts.size(); i++ ){
-		assert( m_vecpParts[i] );
-		m_vecpParts[i]->ModelUpdate( m_vecpParts[i]->m_Trans );
+	for( UINT i=0; i<m_vpParts.size(); i++ ){
+		assert( m_vpParts[i] );
+		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 	}
 }
 
@@ -698,8 +698,8 @@ int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorG
 //各パーツのpos.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
 {
-	assert( m_vecpParts[ucParts] );
-	return m_vecpParts[ucParts]->GetPosition();
+	assert( m_vpParts[ucParts] );
+	return m_vpParts[ucParts]->GetPosition();
 }
 #endif//#if _DEBUG
 
