@@ -223,8 +223,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	m_wpCamera->Update();
 
 	//フラッシュする瞬間.
-	clsCAMERA_TITLE* pCam = (clsCAMERA_TITLE*)m_wpCamera;//ゴリ押しでごめんなさい.
-	if( pCam->isFlash() ){
+	if( static_cast<clsCAMERA_TITLE*>( m_wpCamera )->isFlash() ){
 		const float fNEW_ALPHA = 1.0f;
 		m_wpSound->PlayBGM( enBGM_MAOU3 );
 		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
@@ -232,6 +231,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_upLogo->SetAlpha( fNEW_ALPHA );
 		m_wpFont->SetAlpha( fNEW_ALPHA );
 	}
+
 
 	if( isCanControl ){
 		//メニューが開いているなら.
