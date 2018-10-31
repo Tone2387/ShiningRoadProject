@@ -36,6 +36,9 @@ public:
 	D3DXVECTOR3 m_vAcceleDir;//加速方向.
 	int m_iMoveReverseDirInertia;//逆方向に進むときにかかる力.
 
+	bool m_bStopComMove;
+	bool m_bStopComRot;
+
 	bool m_bRotation;//旋回中か?.
 
 	float m_fRotSpeed;//旋回速度.
@@ -86,7 +89,7 @@ public:
 	int m_iWeaponNumMax;
 
 	bool Shot();
-	bool Reload();
+	bool IsNeedReload();
 
 	HitState BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere);
 	bool Damage(HitState);//ダメージと衝撃力.
@@ -180,6 +183,8 @@ protected:
 	void ShotSwich(const int iWeaponNum);//複数ある武器から使用する武器を決める.
 
 private:
+	bool m_bStopComShot;
+
 	bool m_bMoveAcceleOlder;//移動速度加算を行ったかどうか.
 	bool m_bRotAcceleOlder;//回転速度加算を行ったかどうか.
 

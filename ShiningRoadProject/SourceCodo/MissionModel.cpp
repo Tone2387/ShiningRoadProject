@@ -229,6 +229,42 @@ D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(const enPARTS PartsNum, const char*
 	return vRot;
 }
 
+D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(
+	const enPARTS PartsNum,
+	const int enBoneRootName,
+	const int enBoneEndName,
+	const int iVecNum)
+{
+	char cTmpNum = static_cast<char>(PartsNum);
+
+	std::string strBoneRoot;
+	std::string strBoneEnd;
+
+	//ボーンのベクトルを出す( ローカル ).
+	D3DXVECTOR3 vVecLocal =
+		m_vpParts[cTmpNum]->GetBonePosPreviosFrame(enBoneEndName, iVecNum) -
+		m_vpParts[cTmpNum]->GetBonePosPreviosFrame(enBoneRootName, iVecNum);
+	D3DXVec3Normalize(&vVecLocal, &vVecLocal);
+
+	//ボーンのベクトルを出す( ワールド ).
+	D3DXVECTOR3 vVecWorld =
+		m_vpParts[cTmpNum]->GetBonePosPreviosFrame(enBoneEndName, iVecNum) -
+		m_vpParts[cTmpNum]->GetBonePosPreviosFrame(enBoneRootName, iVecNum);
+	D3DXVec3Normalize(&vVecWorld, &vVecWorld);
+
+	//ベクトルから回転値を求める.
+	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
+	//	vRot.x = atanf( vVec.y );//このゲームの仕様なら正解( 2018/06/19(火)現在 )( つまりゴリ押し ).
+	vRot.x = atan2f(vVecLocal.y, -vVecLocal.z);//.
+	vRot.y = atan2f(-vVecWorld.x, -vVecWorld.z);//( 何故、マイナスがかかっていたり、X,Zが入れ替わっているのかといえば、0度でモデルがこっちを向くから ).
+
+	vRot.x = GuardDirOver(vRot.x);
+	vRot.y = GuardDirOver(vRot.y);
+	//	vRot.z = GuardDirOver( vRot.z );
+
+	return vRot;
+}
+
 void clsMISSION_MODEL::SetPartsAnimNo(const enPARTS PartsNum, const int iAnimIndex, const double dAnimTime)
 {
 	char cTmpNum = static_cast<char>(PartsNum);

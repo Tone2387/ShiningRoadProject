@@ -154,6 +154,9 @@ public:
 	~clsRobo();
 
 private:
+	bool m_bStopComShotL;
+	bool m_bStopComShotR;
+
 	D3DXVECTOR3 m_vMoveDirforBoost;
 
 	//右腕ブースターエフェクト.
@@ -262,6 +265,9 @@ private:
 	void AnimUpdateWeaponR();
 
 	const bool IsLegPartsAnimBoost();//脚パーツのアニメーションがブースター関係ならtrue.
+
+	const bool IsArmLPartsAnimReload();//左腕パーツのアニメーションがリロード関係ならtrue.
+	const bool IsArmRPartsAnimReload();//右腕パーツのアニメーションがリロード関係ならtrue.
 
 	void AnimChangeLeg(enAnimNoLeg enChangeAnimNo, double dAnimTime = 0.0);
 	void AnimChangeCore(enAnimNoCore enChangeAnimNo, double dAnimTime = 0.0);

@@ -48,6 +48,12 @@ public:
 		const char* strBoneRootName, 
 		const char* strBoneEndName);
 
+	D3DXVECTOR3 GetDirfromBone(
+		const enPARTS PartsNum,
+		const int enBoneRootName,
+		const int enBoneEndName,
+		const int iVecNum = 0);
+
 	//“–‚½‚è”»’è‚ÌÀ•W‚Ì”z—ñ‚ğ‚·‚×‚Ä•Ô‚·.
 	std::shared_ptr< std::vector< D3DXVECTOR3 > > GetColPosPtr();
 

@@ -16,7 +16,7 @@ struct WeaponState
 	
 	int iStablity;//Robo‚ÍArm‚ÌÆ€¸“x‚Æ‚ÌŒvZŒ‹‰Ê‚ğ“ü‚ê‚Ä‚­‚¾‚³‚¢.
 
-	int MagazineReloadTime;
+	int iMagazineReloadTime;
 	int iBulletNumMax;
 };
 
@@ -55,7 +55,10 @@ private:
 	int m_iRemainingBullet;
 
 	int m_iReloadCnt;
+	int m_iMagazineReloadCnt;
 	int m_iLockTime;
+
+	bool m_bNeedReload;
 
 	clsPOINTER_GROUP* m_pPtrGroup;
 };
