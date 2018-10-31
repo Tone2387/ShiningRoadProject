@@ -837,7 +837,8 @@ float clsFont::GetFineCharactorRate(
 	case '/':
 	case '(':
 	case ')':
-		fReturn = 0.5f;
+	case '1':
+		fReturn = fSLENDER_RATE;
 		*outfAddLeft = fDEFAULT_RATE - fReturn;
 		break;
 

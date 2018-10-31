@@ -574,9 +574,11 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum )
 	return m_vecvColor[ uiMaskNum ];
 }
 
-void clsASSEMBLE_MODEL::IncrementColor( 
+bool clsASSEMBLE_MODEL::IncrementColor( 
 	const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
 {
+	bool isChange = false;
+
 	m_iColorRank[ enColorGage ] ++;
 	if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
@@ -584,12 +586,19 @@ void clsASSEMBLE_MODEL::IncrementColor(
 	else if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
 	}
+	else{
+		isChange = true;
+	}
 
 	UpdateColor( enColorGage );
+
+	return isChange;
 }
-void clsASSEMBLE_MODEL::DecrementColor( 
+bool clsASSEMBLE_MODEL::DecrementColor( 
 	const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
 {
+	bool isChange = false;
+
 	m_iColorRank[ enColorGage ] --;
 	if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
@@ -597,8 +606,13 @@ void clsASSEMBLE_MODEL::DecrementColor(
 	else if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
 	}
+	else{
+		isChange = true;
+	}
 
 	UpdateColor( enColorGage );
+
+	return isChange;
 }
 
 void clsASSEMBLE_MODEL::UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )

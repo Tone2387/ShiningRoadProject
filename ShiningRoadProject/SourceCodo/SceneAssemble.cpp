@@ -552,27 +552,28 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			}
 		}
 
-		//モデル回転.
-		const float fMODEL_SPN_SPD = 0.05f;
-		if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
-			m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+	}
+
+	//モデル回転.
+	const float fMODEL_SPN_SPD = 0.05f;
+	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+		m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+	}
+	if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+		m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+	}
+	//モデルズーム.
+	const float fMODEL_MOVE_SPD = 5.0f;
+	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+		m_fDistanceAssembleModel += fMODEL_MOVE_SPD;
+		if( m_fDistanceAssembleModel > fZOOM_RIMIT_MAX ){
+			m_fDistanceAssembleModel = fZOOM_RIMIT_MAX;
 		}
-		if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
-			m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
-		}
-		//モデルズーム.
-		const float fMODEL_MOVE_SPD = 5.0f;
-		if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
-			m_fDistanceAssembleModel += fMODEL_MOVE_SPD;
-			if( m_fDistanceAssembleModel > fZOOM_RIMIT_MAX ){
-				m_fDistanceAssembleModel = fZOOM_RIMIT_MAX;
-			}
-		}
-		if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
-			m_fDistanceAssembleModel -= fMODEL_MOVE_SPD;
-			if( m_fDistanceAssembleModel < fZOOM_RIMIT_MIN ){
-				m_fDistanceAssembleModel = fZOOM_RIMIT_MIN;
-			}
+	}
+	if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+		m_fDistanceAssembleModel -= fMODEL_MOVE_SPD;
+		if( m_fDistanceAssembleModel < fZOOM_RIMIT_MIN ){
+			m_fDistanceAssembleModel = fZOOM_RIMIT_MIN;
 		}
 	}
 
@@ -982,11 +983,16 @@ void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )
 	assert( m_pAsmModel );
 	//右.
 	if( isIncrement ){
-		m_pAsmModel->IncrementColor( m_enColorGageIndex );
+		if( m_pAsmModel->IncrementColor( m_enColorGageIndex ) ){
+			//動いたなら音を鳴らす.
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		}
 	}
 	//左.
 	else{
-		m_pAsmModel->DecrementColor( m_enColorGageIndex );
+		if( m_pAsmModel->DecrementColor( m_enColorGageIndex ) ){
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		}
 	}
 
 	//色の保存.
@@ -1157,6 +1163,7 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( 0 );
 		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE >(
 			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray, m_pAsmModel );
+		m_upMenu->SetPos( vBOX_POS_COLOR );
 	}
 }
 //メッセボックス消す.
@@ -1242,57 +1249,57 @@ void clsSCENE_ASSEMBLE::MenuUpdate( enSCENE &enNextScene )
 			break;
 
 		case enINFORMATION_INDEX_COLOR_1_R_INCREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
 			AddRoboColor( true );
 			break;
 		case enINFORMATION_INDEX_COLOR_1_R_DECREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
 			AddRoboColor( false );
 			break;
 
 		case enINFORMATION_INDEX_COLOR_1_G_INCREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
 			AddRoboColor( true );
 			break;
 		case enINFORMATION_INDEX_COLOR_1_G_DECREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
 			AddRoboColor( false );
 			break;
 
 		case enINFORMATION_INDEX_COLOR_1_B_INCREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
 			AddRoboColor( true );
 			break;
 		case enINFORMATION_INDEX_COLOR_1_B_DECREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
 			AddRoboColor( false );
 			break;
 
 
 		case enINFORMATION_INDEX_COLOR_2_R_INCREMENT:
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
 			AddRoboColor( true );											
 			break;															
 		case enINFORMATION_INDEX_COLOR_2_R_DECREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_R;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_R;
 			AddRoboColor( false );											
 			break;															
 																			
 		case enINFORMATION_INDEX_COLOR_2_G_INCREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
 			AddRoboColor( true );											
 			break;															
 		case enINFORMATION_INDEX_COLOR_2_G_DECREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_G;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_G;
 			AddRoboColor( false );											
 			break;															
 																			
 		case enINFORMATION_INDEX_COLOR_2_B_INCREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
 			AddRoboColor( true );											
 			break;															
 		case enINFORMATION_INDEX_COLOR_2_B_DECREMENT:						
-			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_BASE_B;
+			m_enColorGageIndex = clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_ARMOR_B;
 			AddRoboColor( false );
 			break;
 
@@ -1302,7 +1309,7 @@ void clsSCENE_ASSEMBLE::MenuUpdate( enSCENE &enNextScene )
 		}
 	}
 
-	//( 見た目が )消えたら( メモリからも )消える.
+	//消える許可が出たら消える.
 	if( m_upMenu->isDeletePermission() ){
 		m_upMenu.reset( nullptr );
 	}
