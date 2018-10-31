@@ -50,7 +50,6 @@ private:
 
 	//コントローラ操作.
 	//カーソル移動.
-	void MoveCursor();//カーソル移動の共通動作.
 	void MoveCursorUp();
 	void MoveCursorDown();
 	void MoveCursorRight();
@@ -112,28 +111,14 @@ private:
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upArrow;
 
 
-	//メッセボックス.
-	std::unique_ptr< clsWINDOW_BOX >	m_upBox;
-	//メッセの行数を表す.
-	int									m_iMessageNum;
-
-	//メッセボックスの選択肢.
-	bool									m_isMessageBoxYes;
-
-	//色の棒.
-	
+	//どの色を変えるかのフラグ.
 	clsROBO_STATUS::enCOLOR_GAGE m_enColorGageIndex;
-
-	clsSPRITE2D_CENTER* m_pColorGagesBone[ clsROBO_STATUS::enCOLOR_GAGE_size ];
-	clsSprite2D* m_pColorGages[ clsROBO_STATUS::enCOLOR_GAGE_size ];
-	std::unique_ptr< clsUiText > m_upColorTexts[ clsROBO_STATUS::enCOLOR_GAGE_size ];//RとかGとか書いてる.
-	std::unique_ptr< clsUiText > m_upColorNumText;//色1と色2とか書く.
-	std::unique_ptr< clsSPRITE2D_CENTER > m_upSelectColor;//選択中の色を表す.
 
 
 	//UI.
-	clsASSEMBLE_UI*		m_pUI;
+	std::unique_ptr< clsASSEMBLE_UI	>	m_upUI;
 
+	//パーツのステータスを受け取り、このシーン中保持する.
 	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
 
 
