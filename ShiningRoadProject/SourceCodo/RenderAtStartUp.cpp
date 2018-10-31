@@ -94,15 +94,15 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 	SPRITE_STATE ss;
 	ss.Disp = INIT_DISP_GAGE;
 
-	m_vupGage.resize( cGAGE_MAX );
+	m_vecupGage.resize( cGAGE_MAX );
 	for( char i=0; i<cGAGE_MAX; i++ ){
-		m_vupGage[i] = make_unique< clsSPRITE2D_CENTER >();
-		m_vupGage[i]->Create( m_wpDevice, m_wpContext, cGAGE_PATH, ss );
+		m_vecupGage[i] = make_unique< clsSPRITE2D_CENTER >();
+		m_vecupGage[i]->Create( m_wpDevice, m_wpContext, cGAGE_PATH, ss );
 
-		m_vupGage[i]->SetScale( 0.0f );
+		m_vecupGage[i]->SetScale( 0.0f );
 
 		float tmp = 1.0f - ( fGAGE_ALPHA_OFFSET * static_cast<float>( i ) );
-		m_vupGage[i]->SetAlpha( tmp );
+		m_vecupGage[i]->SetAlpha( tmp );
 	}
 
 
@@ -136,23 +136,23 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 #ifdef _DEBUG
 	ss.Disp = INIT_DISP;
 	ss.Anim = INIT_ANIM;
-	m_vupRogo.reserve( cSPRITE_MAX );
+	m_vecupRogo.reserve( cSPRITE_MAX );
 	for( char i=0; i<cSPRITE_MAX; i++ ){
-		m_vupRogo.push_back( nullptr );
-		m_vupRogo[i] = make_unique< clsSPRITE2D_CENTER >();
-		m_vupRogo[i]->Create( m_wpDevice, m_wpContext, cIMAGE_PATH, ss );
+		m_vecupRogo.push_back( nullptr );
+		m_vecupRogo[i] = make_unique< clsSPRITE2D_CENTER >();
+		m_vecupRogo[i]->Create( m_wpDevice, m_wpContext, cIMAGE_PATH, ss );
 
 	//	m_upRogo->SetPos( vINIT_POS );
 		float tmpY;
 		if( i%2 )	tmpY = -128.0f;
 		else		tmpY = WND_H * 0.5f;
-		m_vupRogo[i]->SetPos( { -128.0f, tmpY, 0.0f } );//256size.
-		m_vupRogo[i]->AddPos( { 96.0f*i, 32.0f*i, 0.0f } );
-		m_vupRogo[i]->SetAnim( { static_cast<float>( i % 3 ), static_cast<float>( i % 2 ) } );
+		m_vecupRogo[i]->SetPos( { -128.0f, tmpY, 0.0f } );//256size.
+		m_vecupRogo[i]->AddPos( { 96.0f*i, 32.0f*i, 0.0f } );
+		m_vecupRogo[i]->SetAnim( { static_cast<float>( i % 3 ), static_cast<float>( i % 2 ) } );
 		float tmpAlpha;
 		if( i%2 )	tmpAlpha = 0.75f;
 		else		tmpAlpha = 0.5f;
-		m_vupRogo[i]->SetAlpha( tmpAlpha );
+		m_vecupRogo[i]->SetAlpha( tmpAlpha );
 	}
 #endif//#ifdef _DEBUG
 
@@ -170,22 +170,22 @@ clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 		m_upText.reset( nullptr );
 	}
 
-	for( unsigned int i=0; i<m_vupGage.size(); i++ ){
-		if( m_vupGage[i] ){
-			m_vupGage[i].reset( nullptr );
+	for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
+		if( m_vecupGage[i] ){
+			m_vecupGage[i].reset( nullptr );
 		}
 	}
-	m_vupGage.clear();
-	m_vupGage.shrink_to_fit();
+	m_vecupGage.clear();
+	m_vecupGage.shrink_to_fit();
 
 #ifdef _DEBUG
-	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
-		if( m_vupRogo[i] ){
-			m_vupRogo[i].reset( nullptr );
+	for( unsigned int i=0; i<m_vecupRogo.size(); i++ ){
+		if( m_vecupRogo[i] ){
+			m_vecupRogo[i].reset( nullptr );
 		}
 	}
-	m_vupRogo.clear();
-	m_vupRogo.shrink_to_fit();
+	m_vecupRogo.clear();
+	m_vecupRogo.shrink_to_fit();
 #endif//#ifdef _DEBUG
 
 	if( m_upLineBox ){
@@ -241,8 +241,8 @@ void clsRENDER_AT_START_UP::Loop()
 void clsRENDER_AT_START_UP::Update()
 {
 #ifdef _DEBUG
-	for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
-		m_vupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
+	for( unsigned int i=0; i<m_vecupRogo.size(); i++ ){
+		m_vecupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
 	}
 #endif//#ifdef _DEBUG
 
@@ -300,21 +300,21 @@ void clsRENDER_AT_START_UP::Render( bool isLoop )
 
 	if( isLoop ){
 #ifdef _DEBUG
-		for( unsigned int i=0; i<m_vupRogo.size(); i++ ){
-			m_vupRogo[i]->Render();
+		for( unsigned int i=0; i<m_vecupRogo.size(); i++ ){
+			m_vecupRogo[i]->Render();
 		}
 
 #endif//#ifdef _DEBUG
 		m_upGageBox->Render();
 
-		for( unsigned int i=0; i<m_vupGage.size(); i++ ){
+		for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
 			//ògÇÃíÜÇæÇØï`âÊÇ∑ÇÈ.
-			if( m_vupGage[i]->GetPos().x < m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) ||
-				m_vupGage[i]->GetPos().x > m_upGageBox->GetPos().x + ( m_upGageBox->GetSize().x * 0.5f ) )
+			if( m_vecupGage[i]->GetPos().x < m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) ||
+				m_vecupGage[i]->GetPos().x > m_upGageBox->GetPos().x + ( m_upGageBox->GetSize().x * 0.5f ) )
 			{
 				continue;
 			}
-			m_vupGage[i]->Render();
+			m_vecupGage[i]->Render();
 		}
 
 		m_upLineBox->Render();
@@ -345,12 +345,12 @@ void clsRENDER_AT_START_UP::FinishLoad()
 	m_upText->SetPos( { fTEXT_POS_X_COMPLETE, vTEXT_POS.y } );
 
 	//é◊ñÇÇ»ìzÇÕè¡Ç∑.
-	for( unsigned int i=0; i<m_vupGage.size(); i++ ){
-		m_vupGage[i]->SetAlpha( 0.0f );
+	for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
+		m_vecupGage[i]->SetAlpha( 0.0f );
 	}
 	//ì_ñ≈Ç≥ÇπÇÈÇÃÇÕàÍÇ¬Ç≈è\ï™.
-	m_vupGage[0]->SetPos( { m_upGageBox->GetPos().x, m_upGageBox->GetPos().y, 0.0f } );
-	m_vupGage[0]->SetScale( { m_upGageBox->GetSize().x, m_upGageBox->GetSize().y, 0.0f } );
+	m_vecupGage[0]->SetPos( { m_upGageBox->GetPos().x, m_upGageBox->GetPos().y, 0.0f } );
+	m_vecupGage[0]->SetScale( { m_upGageBox->GetSize().x, m_upGageBox->GetSize().y, 0.0f } );
 
 }
 
@@ -418,11 +418,11 @@ void clsRENDER_AT_START_UP::BiggerGageBoxV()
 		m_iTimer = 0;
 
 		//ÉQÅ[ÉWÇÃèâä˙âª.
-		for( unsigned int i=0; i<m_vupGage.size(); i++ ){
-			m_vupGage[i]->SetScale( {
+		for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
+			m_vecupGage[i]->SetScale( {
 				m_upGageBox->GetSize().x / fGAGE_SIZE_RATE - fLINE_WIDTH, m_upGageBox->GetSize().y, 0.0f } );
-			m_vupGage[i]->SetPos( {
-				WND_W - ( m_vupGage[i]->GetScale().x * static_cast<float>( i ) ), 
+			m_vecupGage[i]->SetPos( {
+				WND_W - ( m_vecupGage[i]->GetScale().x * static_cast<float>( i ) ), 
 				m_upGageBox->GetPos().y, 
 				0.0f } );
 		}
@@ -434,10 +434,10 @@ void clsRENDER_AT_START_UP::UpdateLoadMsg()
 {
 //	if( m_iTimer >= iSTOP_TIME_SHORT ){ 
 		//ÉQÅ[ÉWÇÃìÆÇ´.
-		for( unsigned int i=0; i<m_vupGage.size(); i++ ){
-			m_vupGage[i]->AddPos( { m_vupGage[i]->GetScale().x, 0.0f, 0.0f } );
-			if( m_vupGage[i]->GetPos().x > WND_W ){
-				m_vupGage[i]->SetPos( { 
+		for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
+			m_vecupGage[i]->AddPos( { m_vecupGage[i]->GetScale().x, 0.0f, 0.0f } );
+			if( m_vecupGage[i]->GetPos().x > WND_W ){
+				m_vecupGage[i]->SetPos( { 
 					m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) + fLINE_WIDTH, 
 					m_upGageBox->GetPos().y,
 					0.0f } );
@@ -551,8 +551,8 @@ void clsRENDER_AT_START_UP::Complete()
 	m_upBlack->Update();
 
 	//ÉQÅ[ÉWì_ñ≈.
-	if( m_vupGage[0]->GetAlpha() )	m_vupGage[0]->SetAlpha( 0.0f );
-	else							m_vupGage[0]->SetAlpha( 1.0f );
+	if( m_vecupGage[0]->GetAlpha() )m_vecupGage[0]->SetAlpha( 0.0f );
+	else							m_vecupGage[0]->SetAlpha( 1.0f );
 	
 	//à√ì]Ç™èIÇÌÇÍÇŒèIÇÌÇÈ.
 	if( m_upBlack->isDarkEnd() ){

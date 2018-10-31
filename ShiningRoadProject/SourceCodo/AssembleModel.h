@@ -151,6 +151,8 @@ protected:
 	//色.
 	void UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 
+protected:
+
 	double m_dAnimSpd;
 
 	TRANSFORM m_Trans;
@@ -161,7 +163,7 @@ protected:
 
 	//パーツの数分のポインタ.
 //	clsPARTS_BASE**	m_wppParts;
-	std::vector< clsPARTS_BASE* >	m_vpParts;
+	std::vector< clsPARTS_BASE* >	m_vecpParts;
 
 
 	//色の配列.
