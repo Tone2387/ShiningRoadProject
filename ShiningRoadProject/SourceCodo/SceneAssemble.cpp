@@ -552,27 +552,28 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			}
 		}
 
-		//モデル回転.
-		const float fMODEL_SPN_SPD = 0.05f;
-		if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
-			m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+	}
+
+	//モデル回転.
+	const float fMODEL_SPN_SPD = 0.05f;
+	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+		m_pAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+	}
+	if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+		m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+	}
+	//モデルズーム.
+	const float fMODEL_MOVE_SPD = 5.0f;
+	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+		m_fDistanceAssembleModel += fMODEL_MOVE_SPD;
+		if( m_fDistanceAssembleModel > fZOOM_RIMIT_MAX ){
+			m_fDistanceAssembleModel = fZOOM_RIMIT_MAX;
 		}
-		if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
-			m_pAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
-		}
-		//モデルズーム.
-		const float fMODEL_MOVE_SPD = 5.0f;
-		if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
-			m_fDistanceAssembleModel += fMODEL_MOVE_SPD;
-			if( m_fDistanceAssembleModel > fZOOM_RIMIT_MAX ){
-				m_fDistanceAssembleModel = fZOOM_RIMIT_MAX;
-			}
-		}
-		if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
-			m_fDistanceAssembleModel -= fMODEL_MOVE_SPD;
-			if( m_fDistanceAssembleModel < fZOOM_RIMIT_MIN ){
-				m_fDistanceAssembleModel = fZOOM_RIMIT_MIN;
-			}
+	}
+	if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+		m_fDistanceAssembleModel -= fMODEL_MOVE_SPD;
+		if( m_fDistanceAssembleModel < fZOOM_RIMIT_MIN ){
+			m_fDistanceAssembleModel = fZOOM_RIMIT_MIN;
 		}
 	}
 
@@ -982,11 +983,16 @@ void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )
 	assert( m_pAsmModel );
 	//右.
 	if( isIncrement ){
-		m_pAsmModel->IncrementColor( m_enColorGageIndex );
+		if( m_pAsmModel->IncrementColor( m_enColorGageIndex ) ){
+			//動いたなら音を鳴らす.
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		}
 	}
 	//左.
 	else{
-		m_pAsmModel->DecrementColor( m_enColorGageIndex );
+		if( m_pAsmModel->DecrementColor( m_enColorGageIndex ) ){
+			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		}
 	}
 
 	//色の保存.

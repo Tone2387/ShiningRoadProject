@@ -98,8 +98,11 @@ public:
 	//パーツの色指定.
 	void SetPartsColor( const D3DXVECTOR4 &vColor, const unsigned int uiMaskNum );
 	D3DXVECTOR4 GetPartsColor( const unsigned int uiMaskNum );
-	void IncrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
-	void DecrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
+
+	//可能なら( 範囲内なら )trueを返す.
+	bool IncrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
+	bool DecrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
+
 	//0.0f～1.0fで返す.
 	float GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 	std::vector< D3DXVECTOR4 > GetColor();
