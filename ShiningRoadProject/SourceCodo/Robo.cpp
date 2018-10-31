@@ -30,7 +30,7 @@ enum enAnimNoLeg
 	enAnimNoLegBoostEnd,
 	enAnimNoLegJumpStart,
 	enAnimNoLegJumpUp,
-	//enAnimNoLegJump,
+	enAnimNoLegJump,
 	enAnimNoLegJumpDown,
 	enAnimNoLegJumpEnd,
 	enAnimNoLegDown
@@ -208,7 +208,7 @@ void clsRobo::RoboInit(
 		WS[i].BState.iLineEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_LOCUS);
 		WS[i].iReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOAD_TIME);
 		
-		WS[i].MagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
+		WS[i].iMagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
 		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE)* g_fDistanceReference;
 		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
 		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
@@ -524,15 +524,15 @@ bool clsRobo::IsEnelgyRamaining(const int iConsumption)
 
 void clsRobo::UpdatePosfromBone()
 {
-	m_vCenterPos = m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
+	m_vCenterPos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_CORE, clsPARTS_CORE::enCORE_BONE_POSITIONS_JENERATOR);
 
-	m_vLockRangePos = m_pMesh->GetBonePos(enPARTS::HEAD, "Center");
+	m_vLockRangePos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD, clsPARTS_HEAD::enHEAD_BONE_POSITIONS_CENTER);
 
-	m_v_vMuzzlePos[enWeaponLHand] = m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleEnd");
-	m_v_vShotDir[enWeaponLHand] = m_v_vMuzzlePos[enWeaponLHand] - m_pMesh->GetBonePos(enPARTS::WEAPON_L, "MuzzleRoot");
+	m_v_vMuzzlePos[enWeaponLHand] = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_L, clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_END);
+	m_v_vShotDir[enWeaponLHand] = m_v_vMuzzlePos[enWeaponLHand] - m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_L, clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_ROOT);
 
-	m_v_vMuzzlePos[enWeaponRHand] = m_pMesh->GetBonePos(enPARTS::WEAPON_R, "MuzzleEnd");
-	m_v_vShotDir[enWeaponRHand] = m_v_vMuzzlePos[enWeaponRHand] - m_pMesh->GetBonePos(enPARTS::WEAPON_R, "MuzzleRoot");
+	m_v_vMuzzlePos[enWeaponRHand] = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_R, clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_END);
+	m_v_vShotDir[enWeaponRHand] = m_v_vMuzzlePos[enWeaponRHand] - m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_R, clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_ROOT);
 
 	for (int i = 0; i < enWeaponTypeSize; i++)
 	{
@@ -551,13 +551,13 @@ void clsRobo::ShotLWeapon()
 			EnelgyConsumption(m_v_pWeapons[enWeaponLHand]->GetShotEN());
 
 			//射撃アニメ処理.
-
+			AnimChangeArmL(enAnimNoArmWeaponShot);
 
 		}
 
 		else
 		{
-			if (Reload())
+			if (IsNeedReload())
 			{
 				//リロードアニメ処理.
 			}
@@ -577,11 +577,12 @@ void clsRobo::ShotRWeapon()
 			EnelgyConsumption(m_v_pWeapons[enWeaponRHand]->GetShotEN());
 
 			//射撃アニメ処理.
+			AnimChangeArmR(enAnimNoArmWeaponShot);
 		}
 
 		else
 		{
-			if (Reload())
+			if (IsNeedReload())
 			{
 				//リロードアニメ処理.
 			}
@@ -802,7 +803,7 @@ void clsRobo::PlayFrontBoostEfc()
 		std::string strBoostRootNameTmp = "";
 		std::string strBoostEndNameTmp = "";
 
-		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
 		for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
@@ -814,7 +815,7 @@ void clsRobo::PlayFrontBoostEfc()
 			strBoostEndNameTmp = strBoostEndName;
 			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
-			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_L, strBoostRootName.c_str(), strBoostEndName.c_str());
+			vRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_L, strBoostRootName.c_str(), strBoostEndName.c_str());
 			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_L, strBoostEndNameTmp.c_str());
 
 			if (!m_wpEffects->isPlay(m_v_LHandFrontBoostEfc[i]))
@@ -827,7 +828,7 @@ void clsRobo::PlayFrontBoostEfc()
 				m_wpEffects->SetPosition(m_v_LHandFrontBoostEfc[i], vPosEndTmp);
 			}
 
-			m_wpEffects->SetRotation(m_v_LHandFrontBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetRotation(m_v_LHandFrontBoostEfc[i], vRotTmp);
 		}
 
 		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
@@ -839,7 +840,7 @@ void clsRobo::PlayFrontBoostEfc()
 			strBoostEndNameTmp = strBoostEndName;
 			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
-			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_R, strBoostRootName.c_str(), strBoostEndName.c_str());
+			vRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_R, strBoostRootName.c_str(), strBoostEndName.c_str());
 
 			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_R, strBoostEndNameTmp.c_str());
 			if (!m_wpEffects->isPlay(m_v_RHandFrontBoostEfc[i]))
@@ -851,7 +852,7 @@ void clsRobo::PlayFrontBoostEfc()
 			{
 				m_wpEffects->SetPosition(m_v_RHandFrontBoostEfc[i], vPosEndTmp);
 			}
-			m_wpEffects->SetRotation(m_v_RHandFrontBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetRotation(m_v_RHandFrontBoostEfc[i], vRotTmp);
 			
 		}
 	}
@@ -1856,7 +1857,9 @@ m_fBoostRisingAccele(0.0f),
 m_iQuickInterbal(0),
 m_wpResource(nullptr),
 m_wpEffects(nullptr),
-m_wpSound(nullptr)
+m_wpSound(nullptr),
+m_bStopComShotL(false),
+m_bStopComShotR(false)
 {
 	
 }
