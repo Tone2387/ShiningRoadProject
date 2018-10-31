@@ -87,26 +87,26 @@ void clsSCENE_ENDING::CreateProduct()
 	int iScrollSize = iTextNum - iAlphaSize;
 
 	//スクロール.
-	m_vupTextStateScroll.resize( iScrollSize );
-	for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
-		m_vupTextStateScroll[i] = make_unique< TEXT_STATE >();
-		m_vupTextStateScroll[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_X_FILE_DATA_INDEX );
-		m_vupTextStateScroll[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_Y_FILE_DATA_INDEX );
-		m_vupTextStateScroll[i]->fScale = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iSCALE_FILE_DATA_INDEX );
-		m_vupTextStateScroll[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iALPHA_FILE_DATA_INDEX );
+	m_vecupTextStateScroll.resize( iScrollSize );
+	for( unsigned int i=0; i<m_vecupTextStateScroll.size(); i++ ){
+		m_vecupTextStateScroll[i] = make_unique< TEXT_STATE >();
+		m_vecupTextStateScroll[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_X_FILE_DATA_INDEX );
+		m_vecupTextStateScroll[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_Y_FILE_DATA_INDEX );
+		m_vecupTextStateScroll[i]->fScale = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iSCALE_FILE_DATA_INDEX );
+		m_vecupTextStateScroll[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iALPHA_FILE_DATA_INDEX );
 	}
 
 	//最後に表示する番号.
 	m_iGoScrollIndex = iAlphaSize - 1;
 
 	//透過.
-	m_vupTextStateAlpha.resize( iAlphaSize );
-	for( unsigned int i=0; i<m_vupTextStateAlpha.size(); i++ ){
-		m_vupTextStateAlpha[i] = make_unique< TEXT_STATE >();
-		m_vupTextStateAlpha[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ), iPOS_X_FILE_DATA_INDEX );
-		m_vupTextStateAlpha[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ), iPOS_Y_FILE_DATA_INDEX );
-		m_vupTextStateAlpha[i]->fScale = File.GetDataFloat( static_cast<int>( i ), iSCALE_FILE_DATA_INDEX );
-		m_vupTextStateAlpha[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ), iALPHA_FILE_DATA_INDEX );
+	m_vecupTextStateAlpha.resize( iAlphaSize );
+	for( unsigned int i=0; i<m_vecupTextStateAlpha.size(); i++ ){
+		m_vecupTextStateAlpha[i] = make_unique< TEXT_STATE >();
+		m_vecupTextStateAlpha[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ), iPOS_X_FILE_DATA_INDEX );
+		m_vecupTextStateAlpha[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ), iPOS_Y_FILE_DATA_INDEX );
+		m_vecupTextStateAlpha[i]->fScale = File.GetDataFloat( static_cast<int>( i ), iSCALE_FILE_DATA_INDEX );
+		m_vecupTextStateAlpha[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ), iALPHA_FILE_DATA_INDEX );
 	}
 
 	File.Close();
@@ -149,17 +149,17 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 		}
 
 		//終わり.
-		if( m_uiSpriteCnt == m_vupTextStateAlpha.size() ){
+		if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() ){
 		}
 		//スクロール.
 		else if( m_isScroll ){
-			for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
-				m_vupTextStateScroll[i]->vPos.y += fScrollSpd;
+			for( unsigned int i=0; i<m_vecupTextStateScroll.size(); i++ ){
+				m_vecupTextStateScroll[i]->vPos.y += fScrollSpd;
 			}
 			//スクロール終了.
-			const unsigned int uiSCROLL_LAST_INDEX = m_vupTextStateScroll.size() - 1;
-			const float fSCROLL_END_POS = m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale * -2.0f;
-			if( m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
+			const unsigned int uiSCROLL_LAST_INDEX = m_vecupTextStateScroll.size() - 1;
+			const float fSCROLL_END_POS = m_vecupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale * -2.0f;
+			if( m_vecupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
 				fSCROLL_END_POS )
 			{
 				m_iIntervalCnt = 0;
@@ -186,7 +186,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 			bool bAddAlphaReturn;
 			for( unsigned int i=0; i<m_uiRenderTextNum; i++ ){
-				bAddAlphaReturn = AddAlphaState( m_vupTextStateAlpha[ m_uiSpriteCnt + i ].get(), fAlpha );
+				bAddAlphaReturn = AddAlphaState( m_vecupTextStateAlpha[ m_uiSpriteCnt + i ].get(), fAlpha );
 			}
 
 			//透過値変更.AddAlphaState//->fAlpha + fAlpha 
@@ -196,7 +196,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 				if( m_isSpriteAlphaAppear ){
 					m_isSpriteAlphaAppear = false;
 					//終われるようにする( サンキューの描画完了 ).
-					if( m_uiSpriteCnt == m_vupTextStateAlpha.size() + iOFFSET_END ){ 
+					if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() + iOFFSET_END ){ 
 						m_isSpriteAlphaAppear = true;
 						m_isCanGoTitle = true;
 					}
@@ -261,20 +261,20 @@ void clsSCENE_ENDING::RenderUi()
 #endif//#ifdef CENTER_SPRITE_RENDER
 	int iTextIndex = 0;
 
-	for( unsigned int i=0; i<m_vupTextStateAlpha.size(); i++  ){
-		assert( m_vupTextStateAlpha[i] );
-		m_wpFont->SetPos(	m_vupTextStateAlpha[i]->vPos );
-		m_wpFont->SetScale(	m_vupTextStateAlpha[i]->fScale );
-		m_wpFont->SetAlpha(	m_vupTextStateAlpha[i]->fAlpha );
+	for( unsigned int i=0; i<m_vecupTextStateAlpha.size(); i++  ){
+		assert( m_vecupTextStateAlpha[i] );
+		m_wpFont->SetPos(	m_vecupTextStateAlpha[i]->vPos );
+		m_wpFont->SetScale(	m_vecupTextStateAlpha[i]->fScale );
+		m_wpFont->SetAlpha(	m_vecupTextStateAlpha[i]->fAlpha );
 		m_wpFont->Render( iTextIndex );
 		iTextIndex ++;
 	}
 
-	for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
-		assert( m_vupTextStateScroll[i] );
-		m_wpFont->SetPos(	m_vupTextStateScroll[i]->vPos );
-		m_wpFont->SetScale(	m_vupTextStateScroll[i]->fScale );
-		m_wpFont->SetAlpha(	m_vupTextStateScroll[i]->fAlpha );
+	for( unsigned int i=0; i<m_vecupTextStateScroll.size(); i++ ){
+		assert( m_vecupTextStateScroll[i] );
+		m_wpFont->SetPos(	m_vecupTextStateScroll[i]->vPos );
+		m_wpFont->SetScale(	m_vecupTextStateScroll[i]->fScale );
+		m_wpFont->SetAlpha(	m_vecupTextStateScroll[i]->fAlpha );
 		m_wpFont->Render( iTextIndex );
 		iTextIndex ++;
 	}

@@ -80,7 +80,7 @@ protected:
 		std::vector<D3DXVECTOR3> vecvBoosterBackEnd;
 		std::vector<D3DXVECTOR3> vecvBoosterSideRoot;
 		std::vector<D3DXVECTOR3> vecvBoosterSideEnd;
-		std::vector<D3DXVECTOR3> Joint;
+		std::vector<D3DXVECTOR3> vecvJoint;
 		D3DXVECTOR3				 vJunctionWeapon;
 		D3DXVECTOR3				 vWeaponVec;
 	}	m_BonePositions;

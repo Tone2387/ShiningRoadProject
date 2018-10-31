@@ -45,7 +45,7 @@ bool clsFILE::Open( const string &sFileName )
 	m_sFileName = sFileName;
 
 	//メモリ確保.
-	m_vvsData.reserve( uiRESERVE_SIZE_ROW );
+	m_DataSet.reserve( uiRESERVE_SIZE_ROW );
 
 	//ファイルを開く.
 	ifstream ifs( m_sFileName );
@@ -67,23 +67,23 @@ bool clsFILE::Open( const string &sFileName )
 				break;
 			}
 			
-			m_vvsData.push_back( vsINIT_LINE );					//一行増やす.
-			m_vvsData[uiIndexRow].reserve( uiRESERVE_SIZE_COL );//メモリ確保.
+			m_DataSet.push_back( vsINIT_LINE );					//一行増やす.
+			m_DataSet[uiIndexRow].reserve( uiRESERVE_SIZE_COL );//メモリ確保.
 			
 			getline( ifs, sBuff );					//仮のデータに一行を突っ込む.
-			m_vvsData[uiIndexRow].push_back( "" );	//本データにさっき作った仮データを突っ込む猶予を作る.
-			m_vvsData[uiIndexRow][0] = sBuff;		//突っ込む.
-			m_vvsData[uiIndexRow] = Split( m_vvsData[uiIndexRow][0], cDELIMITER );//一行として突っ込んだデータを区切り文字を基準に分解する.
+			m_DataSet[uiIndexRow].push_back( "" );	//本データにさっき作った仮データを突っ込む猶予を作る.
+			m_DataSet[uiIndexRow][0] = sBuff;		//突っ込む.
+			m_DataSet[uiIndexRow] = Split( m_DataSet[uiIndexRow][0], cDELIMITER );//一行として突っ込んだデータを区切り文字を基準に分解する.
 
 			//余分なメモリをポイする.
-			m_vvsData[uiIndexRow].shrink_to_fit();
+			m_DataSet[uiIndexRow].shrink_to_fit();
 
 			uiIndexRow ++;
 		}
 	}
 
 	//余分なメモリをポイする.
-	m_vvsData.shrink_to_fit();
+	m_DataSet.shrink_to_fit();
 
 	m_bUsing = true;
 
@@ -93,12 +93,12 @@ bool clsFILE::Open( const string &sFileName )
 
 void clsFILE::Close()
 {
-	for( unsigned int i=0; i<m_vvsData.size(); i++ ){
-		m_vvsData[i].clear();
-		m_vvsData[i].shrink_to_fit();
+	for( unsigned int i=0; i<m_DataSet.size(); i++ ){
+		m_DataSet[i].clear();
+		m_DataSet[i].shrink_to_fit();
 	}
-	m_vvsData.clear();
-	m_vvsData.shrink_to_fit();
+	m_DataSet.clear();
+	m_DataSet.shrink_to_fit();
 
 	m_sFileName = "";
 	
@@ -114,11 +114,11 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 		return sERROR;
 	}
 	//範囲内?.
-	if( iRow >= static_cast<int>( m_vvsData.size() ) ){
+	if( iRow >= static_cast<int>( m_DataSet.size() ) ){
 		return sERROR;
 	}
-	for( unsigned int i=0; i<m_vvsData.size(); i++ ){
-		if( iCol >= static_cast<int>( m_vvsData[i].size() ) ){
+	for( unsigned int i=0; i<m_DataSet.size(); i++ ){
+		if( iCol >= static_cast<int>( m_DataSet[i].size() ) ){
 			return sERROR;
 		}
 	}
@@ -134,13 +134,13 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 	if( iRow == MyFile::ERR_LINE ){
 		string sData;
 		//全文連結.
-		for( unsigned int i=0; i<m_vvsData.size(); i++ ){
+		for( unsigned int i=0; i<m_DataSet.size(); i++ ){
 			//改行( 最初は無視 ).
 			if( i ){
 				sData += '\n';
 			}
-			for( unsigned int j=0; j<m_vvsData[i].size(); j++ ){
-				sData += m_vvsData[i][j];
+			for( unsigned int j=0; j<m_DataSet[i].size(); j++ ){
+				sData += m_DataSet[i][j];
 //				sData += cDELIMITER;	//区切り文字.
 			}
 		}
@@ -151,15 +151,15 @@ string clsFILE::GetDataString( const int iRow, const int iCol ) const
 	if( iCol == MyFile::ERR_LINE ){
 		string sData;
 		//一行連結.
-		for( unsigned int i=0; i<m_vvsData[iRow].size(); i++ ){
-			sData += m_vvsData[iRow][i];
+		for( unsigned int i=0; i<m_DataSet[iRow].size(); i++ ){
+			sData += m_DataSet[iRow][i];
 //			sData += cDELIMITER;
 		}
 		return sData;
 	}
 
 	//指定部分を返す.
-	return m_vvsData[iRow][iCol];
+	return m_DataSet[iRow][iCol];
 }
 
 int clsFILE::GetDataInt(
@@ -220,15 +220,15 @@ double clsFILE::GetDataDouble(
 //何行あるか.
 unsigned int clsFILE::GetSizeRow() const
 {
-	return m_vvsData.size();
+	return m_DataSet.size();
 }
 
 //その行は何列あるか.
 unsigned int clsFILE::GetSizeCol( unsigned int uiRow ) const
 {
 	//範囲外は許さない.
-	if( uiRow >= m_vvsData.size() ) return 0;
-	return m_vvsData[uiRow].size();
+	if( uiRow >= m_DataSet.size() ) return 0;
+	return m_DataSet[uiRow].size();
 }
 
 

@@ -105,7 +105,7 @@ void clsPARTS_ARM_BASE::CreateProduct()
 	{
 		iJointNum ++;
 	}
-	m_BonePositions.Joint.resize( iJointNum, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
+	m_BonePositions.vecvJoint.resize( iJointNum, D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 
 
 
@@ -149,8 +149,8 @@ D3DXVECTOR3 clsPARTS_ARM_BASE::GetBonePosPreviosFrame(
 		return m_BonePositions.vecvBoosterSideEnd[ iVecNum ];
 
 	case enARMS_BONE_POSITIONS_JOINT:
-		IntOverGuird( &iVecNum, 0, m_BonePositions.Joint.size() );
-		return m_BonePositions.Joint[ iVecNum ];
+		IntOverGuird( &iVecNum, 0, m_BonePositions.vecvJoint.size() );
+		return m_BonePositions.vecvJoint[ iVecNum ];
 
 	case enARMS_BONE_POSITIONS_JUNCTION_WEAPON:
 		return m_BonePositions.vJunctionWeapon;
@@ -199,8 +199,8 @@ void clsPARTS_ARM_BASE::UpdateBonePosPreviosFrame()
 	}
 
 	//ä÷êﬂ.
-	for( int i=0; i<m_BonePositions.Joint.size(); i++ ){
-		m_BonePositions.Joint[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBONE_NAME_ARM_JOINT, i, m_iDIGIT_JOINT_NUM ).c_str() );
+	for( int i=0; i<m_BonePositions.vecvJoint.size(); i++ ){
+		m_BonePositions.vecvJoint[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBONE_NAME_ARM_JOINT, i, m_iDIGIT_JOINT_NUM ).c_str() );
 	}
 
 

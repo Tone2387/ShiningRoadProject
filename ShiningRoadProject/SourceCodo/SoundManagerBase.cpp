@@ -39,12 +39,12 @@ const bool bLOOP_INIT = false;
 
 clsSOUND_MANAGER_BASE::clsSOUND_MANAGER_BASE( const HWND hWnd )
 	:m_hWnd( hWnd )
-	,m_vvupBgm()
-	,m_vvupSe()
-	,m_dqbLoopBgm()
-	,m_dqbLoopSe()
-	,m_viBgmNum()
-	,m_viSeNum()
+	,m_BgmSet()
+	,m_SeSet()
+	,m_dqisLoopBgm()
+	,m_dqisLoopSe()
+	,m_veciBgmNum()
+	,m_veciSeNum()
 	,m_uiRESERVE_SIZE_BGM( uiRESERVE_SIZE_BGM )
 	,m_uiRESERVE_SIZE_SE( uiRESERVE_SIZE_SE )	
 {
@@ -55,43 +55,43 @@ clsSOUND_MANAGER_BASE::~clsSOUND_MANAGER_BASE()
 	StopAllSound();
 
 	//サウンドクラス.
-	for( unsigned int i=0; i<m_vvupSe.size(); i++ ){
-		for( unsigned int j=0; j<m_vvupSe[i].size(); j++ ){
-			if( m_vvupSe[i][j] ){
-				m_vvupSe[i][j]->Close();
-				m_vvupSe[i][j].reset();
-				m_vvupSe[i][j] = nullptr;
+	for( unsigned int i=0; i<m_SeSet.size(); i++ ){
+		for( unsigned int j=0; j<m_SeSet[i].size(); j++ ){
+			if( m_SeSet[i][j] ){
+				m_SeSet[i][j]->Close();
+				m_SeSet[i][j].reset();
+				m_SeSet[i][j] = nullptr;
 			}
 		}
-		m_vvupSe[i].clear();
-		m_vvupSe[i].shrink_to_fit();
+		m_SeSet[i].clear();
+		m_SeSet[i].shrink_to_fit();
 	}
-	m_vvupSe.clear();
-	m_vvupSe.shrink_to_fit();
+	m_SeSet.clear();
+	m_SeSet.shrink_to_fit();
 
-	for( unsigned int i=0; i<m_vvupBgm.size(); i++ ){
-		for( unsigned int j=0; j<m_vvupBgm[i].size(); j++ ){
-			if( m_vvupBgm[i][j] ){
-				m_vvupBgm[i][j]->Close();
-				m_vvupBgm[i][j].reset();
-				m_vvupBgm[i][j] = nullptr;
+	for( unsigned int i=0; i<m_BgmSet.size(); i++ ){
+		for( unsigned int j=0; j<m_BgmSet[i].size(); j++ ){
+			if( m_BgmSet[i][j] ){
+				m_BgmSet[i][j]->Close();
+				m_BgmSet[i][j].reset();
+				m_BgmSet[i][j] = nullptr;
 			}
 		}
-		m_vvupBgm[i].clear();
-		m_vvupBgm[i].shrink_to_fit();
+		m_BgmSet[i].clear();
+		m_BgmSet[i].shrink_to_fit();
 	}
-	m_vvupBgm.clear();
-	m_vvupBgm.shrink_to_fit();
+	m_BgmSet.clear();
+	m_BgmSet.shrink_to_fit();
 
-	m_dqbLoopBgm.clear();
-	m_dqbLoopBgm.shrink_to_fit();
-	m_dqbLoopSe.clear();
-	m_dqbLoopSe.shrink_to_fit();
+	m_dqisLoopBgm.clear();
+	m_dqisLoopBgm.shrink_to_fit();
+	m_dqisLoopSe.clear();
+	m_dqisLoopSe.shrink_to_fit();
 
-	m_viBgmNum.clear();
-	m_viBgmNum.shrink_to_fit();
-	m_viSeNum.clear();
-	m_viSeNum.shrink_to_fit();
+	m_veciBgmNum.clear();
+	m_veciBgmNum.shrink_to_fit();
+	m_veciSeNum.clear();
+	m_veciSeNum.shrink_to_fit();
 
 
 
@@ -114,22 +114,22 @@ void clsSOUND_MANAGER_BASE::Create()
 	string SeDataPath  = tmpDataPass + sSE_PASS;
 
 	//BGM.
-	CreateSound( m_vvupBgm, m_dqbLoopBgm, uiRESERVE_SIZE_BGM, BgmDataPath, sSUB_PASS_BGM, m_viBgmNum );
+	CreateSound( m_BgmSet, m_dqisLoopBgm, uiRESERVE_SIZE_BGM, BgmDataPath, sSUB_PASS_BGM, m_veciBgmNum );
 	//SE.
-	CreateSound( m_vvupSe,  m_dqbLoopSe,  uiRESERVE_SIZE_SE,  SeDataPath,  sSUB_PASS_SE,  m_viSeNum );
+	CreateSound( m_SeSet,  m_dqisLoopSe,  uiRESERVE_SIZE_SE,  SeDataPath,  sSUB_PASS_SE,  m_veciSeNum );
 }
 
 //毎フレーム一回使う.
 void clsSOUND_MANAGER_BASE::UpdateLoop()
 {
 	//ループ再生.
-	for( unsigned int i=0; i<m_vvupBgm.size(); i++ ){
+	for( unsigned int i=0; i<m_BgmSet.size(); i++ ){
 		//ループする必要ある?.
-		if( !m_dqbLoopBgm[i] ){
+		if( !m_dqisLoopBgm[i] ){
 			continue;
 		}
 		//存在する?.
-		if( !m_vvupBgm[i][0] ){
+		if( !m_BgmSet[i][0] ){
 			continue;
 		}
 		//止まっているなら.
@@ -139,11 +139,11 @@ void clsSOUND_MANAGER_BASE::UpdateLoop()
 		}		
 	}
 
-	for( unsigned int i=0; i<m_vvupSe.size(); i++ ){
-		if( !m_dqbLoopSe[i] ){
+	for( unsigned int i=0; i<m_SeSet.size(); i++ ){
+		if( !m_dqisLoopSe[i] ){
 			continue;
 		}
-		if( !m_vvupSe[i][0] ){
+		if( !m_SeSet[i][0] ){
 			continue;
 		}
 		if( IsStoppedSE( i ) ){
@@ -155,11 +155,11 @@ void clsSOUND_MANAGER_BASE::UpdateLoop()
 //すべて停止.
 void clsSOUND_MANAGER_BASE::StopAllSound()
 {
-	for( unsigned int i=0; i<m_vvupBgm.size(); i++ ){
+	for( unsigned int i=0; i<m_BgmSet.size(); i++ ){
 		StopBGM( i );
 	}
 
-	for( unsigned int i=0; i<m_vvupSe.size(); i++ ){
+	for( unsigned int i=0; i<m_SeSet.size(); i++ ){
 		StopSE( i );
 	}
 }
@@ -250,27 +250,27 @@ void clsSOUND_MANAGER_BASE::CreateSoundData(
 //再生関数.
 bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify )
 {
-	return Play( m_vvupBgm, m_dqbLoopBgm, m_viBgmNum, bgmNo, bNotify );
+	return Play( m_BgmSet, m_dqisLoopBgm, m_veciBgmNum, bgmNo, bNotify );
 }
 //停止関数.
 bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo )
 {
-	return Stop( m_vvupBgm, m_dqbLoopBgm, bgmNo );
+	return Stop( m_BgmSet, m_dqisLoopBgm, bgmNo );
 }
 //音の停止を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
 {
-	return IsStopped( m_vvupBgm, bgmNo );
+	return IsStopped( m_BgmSet, bgmNo );
 }
 //音の再生中を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
 {
-	return IsPlaying( m_vvupBgm, bgmNo );
+	return IsPlaying( m_BgmSet, bgmNo );
 }
 //巻き戻し関数(再生位置初期化).
 bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
 {
-	return SeekToStart( m_vvupBgm, bgmNo );
+	return SeekToStart( m_BgmSet, bgmNo );
 }
 
 
@@ -278,27 +278,27 @@ bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
 //再生関数.
 bool clsSOUND_MANAGER_BASE::PlaySE( const int seNo, const bool bNotify )
 {
-	return Play( m_vvupSe, m_dqbLoopSe, m_viSeNum, seNo, bNotify );
+	return Play( m_SeSet, m_dqisLoopSe, m_veciSeNum, seNo, bNotify );
 }
 //停止関数.
 bool clsSOUND_MANAGER_BASE::StopSE( const int seNo )
 {
-	return Stop( m_vvupSe, m_dqbLoopSe, seNo );
+	return Stop( m_SeSet, m_dqisLoopSe, seNo );
 }
 //音の停止を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
 {
-	return IsStopped( m_vvupSe, seNo );
+	return IsStopped( m_SeSet, seNo );
 }
 //音の再生中を確認する関数.
 bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
 {
-	return IsPlaying( m_vvupSe, seNo );
+	return IsPlaying( m_SeSet, seNo );
 }
 //巻き戻し関数(再生位置初期化).
 bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
 {
-	return SeekToStart( m_vvupSe, seNo );
+	return SeekToStart( m_SeSet, seNo );
 }
 
 
@@ -317,7 +317,7 @@ bool clsSOUND_MANAGER_BASE::Play(
 	return vpSound[No]->Play( bNotify );
 #else//#if 0
 
-	//そのNoの音の何番目を鳴らすか?( ここでm_viBgmNum、m_viSeNumの使い方が変わる ).
+	//そのNoの音の何番目を鳴らすか?( ここでm_veciBgmNum、m_veciSeNumの使い方が変わる ).
 	viNum[No] ++;
 	if( static_cast<unsigned int>( viNum[No] ) >= vpSound[No].size() ){
 		viNum[No] = 0;

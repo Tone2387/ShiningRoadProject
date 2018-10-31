@@ -33,22 +33,22 @@ clsBUILDING::clsBUILDING(
 
 
 
-	m_vvTop.resize( 1 );
-	m_vvTop.reserve( iRESURVE_NUM );
-	for( unsigned int Row=0; Row<m_vvTop.size(); Row++ ){
-		m_vvTop[ Row ].resize( 1 );
-		m_vvTop[ Row ].reserve( iRESURVE_NUM );
+	m_vecvecTop.resize( 1 );
+	m_vecvecTop.reserve( iRESURVE_NUM );
+	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ ){
+		m_vecvecTop[ Row ].resize( 1 );
+		m_vecvecTop[ Row ].reserve( iRESURVE_NUM );
 	}
 	m_upTop = make_unique< clsSprite >();
 	m_upTop->Create( pDevice11, pContext11, sTEX_NAME_TOP );
 
 
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum++  ){
-		m_vvSide[ SideNum ].resize( 12 );
-		m_vvSide[ SideNum ].reserve( iRESURVE_NUM );
-		for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ ){
-			m_vvSide[ SideNum ][ Row ].resize( 12 );
-			m_vvSide[ SideNum ][ Row ].reserve( iRESURVE_NUM );
+		m_vecvecSideArray[ SideNum ].resize( 12 );
+		m_vecvecSideArray[ SideNum ].reserve( iRESURVE_NUM );
+		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
+			m_vecvecSideArray[ SideNum ][ Row ].resize( 12 );
+			m_vecvecSideArray[ SideNum ][ Row ].reserve( iRESURVE_NUM );
 		}
 	}
 	m_upSide = make_unique< clsSprite >();
@@ -91,8 +91,8 @@ void clsBUILDING::Update()
 	//上面.
 	{
 		const int iEND_LOOP = 1;
-		unsigned int uiROW = m_vvTop.size();
-		unsigned int uiCOL = m_vvTop[0].size();
+		unsigned int uiROW = m_vecvecTop.size();
+		unsigned int uiCOL = m_vecvecTop[0].size();
 #if 0
 		//同じものを繰り返さないためのチェック用配列.
 		vector<unsigned int> vuiRow;
@@ -141,10 +141,10 @@ void clsBUILDING::Update()
 	}
 	//側面.
 	{
-		unsigned int uiROW_Z = m_vvSide[ enWD_SOUTH ].size();
-		unsigned int uiCOL_Z = m_vvSide[ enWD_SOUTH ][0].size();
-		unsigned int uiROW_X = m_vvSide[ enWD_EAST ].size();
-		unsigned int uiCOL_X = m_vvSide[ enWD_EAST ][0].size();
+		unsigned int uiROW_Z = m_vecvecSideArray[ enWD_SOUTH ].size();
+		unsigned int uiCOL_Z = m_vecvecSideArray[ enWD_SOUTH ][0].size();
+		unsigned int uiROW_X = m_vecvecSideArray[ enWD_EAST ].size();
+		unsigned int uiCOL_X = m_vecvecSideArray[ enWD_EAST ][0].size();
 		//タイルの目標数を作る.
 		SetTileNumTargetSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
 		//目標の数に合わせてタイルを増減する.
@@ -169,24 +169,24 @@ void clsBUILDING::Render(
 #ifdef _DEBUG
 	m_upBox->Render( mView, mProj, vLight, vEye );
 #else//#ifdef _DEBUG
-	for( unsigned int Row=0; Row<m_vvTop.size(); Row++ )
+	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ )
 	{
-		for( unsigned int Col=0; Col<m_vvTop[ Row ].size(); Col++ ){
-			m_upTop->SetPos( m_vvTop[ Row ][ Col ].vPos );
-			m_upTop->SetRot( m_vvTop[ Row ][ Col ].vRot );
-			m_upTop->SetScale( m_vvTop[ Row ][ Col ].vScale );
+		for( unsigned int Col=0; Col<m_vecvecTop[ Row ].size(); Col++ ){
+			m_upTop->SetPos( m_vecvecTop[ Row ][ Col ].vPos );
+			m_upTop->SetRot( m_vecvecTop[ Row ][ Col ].vRot );
+			m_upTop->SetScale( m_vecvecTop[ Row ][ Col ].vScale );
 			m_upTop->Render( mView, mProj, vEye );
 		}
 	}
 
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum++  )
 	{
-		for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ )
+		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ )
 		{
-			for( unsigned int Col=0; Col<m_vvSide[ SideNum ][ Row ].size(); Col++ ){
-				m_upSide->SetPos( m_vvSide[ SideNum ][ Row ][ Col ].vPos );
-				m_upSide->SetRot( m_vvSide[ SideNum ][ Row ][ Col ].vRot );
-				m_upSide->SetScale( m_vvSide[ SideNum ][ Row ][ Col ].vScale );
+			for( unsigned int Col=0; Col<m_vecvecSideArray[ SideNum ][ Row ].size(); Col++ ){
+				m_upSide->SetPos( m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos );
+				m_upSide->SetRot( m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot );
+				m_upSide->SetScale( m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale );
 				m_upSide->Render( mView, mProj, vEye );
 			}
 		}
@@ -204,18 +204,18 @@ void clsBUILDING::SetTileNumTargetTop( unsigned int& puiRow, unsigned int& puiCo
 {
 	//----- 数を合わせる -----//.
 
-	if( !m_vvTop.size() ){
+	if( !m_vecvecTop.size() ){
 		return;
 	}
-	for( unsigned int i=0; i<m_vvTop.size(); i++ ){
-		if( !m_vvTop[i].size() ){
+	for( unsigned int i=0; i<m_vecvecTop.size(); i++ ){
+		if( !m_vecvecTop[i].size() ){
 			return;
 		}
 	}
 
-	m_vvTop[ 0 ][ 0 ].vScale.x = m_Trans.vScale.x / m_vvTop[ 0 ].size();
-	m_vvTop[ 0 ][ 0 ].vScale.y = m_Trans.vScale.z / m_vvTop.size();
-	D3DXVECTOR3 vScale = m_vvTop[0][0].vScale;
+	m_vecvecTop[ 0 ][ 0 ].vScale.x = m_Trans.vScale.x / m_vecvecTop[ 0 ].size();
+	m_vecvecTop[ 0 ][ 0 ].vScale.y = m_Trans.vScale.z / m_vecvecTop.size();
+	D3DXVECTOR3 vScale = m_vecvecTop[0][0].vScale;
 
 	if( vScale.y > vTILE_SIZE_MAX.y ){
 		puiRow ++;	
@@ -243,30 +243,30 @@ void clsBUILDING::SetTileNumTop( const unsigned int uiROW, const unsigned int ui
 	//----- 個数 -----//.
 	//縦.
 	//足りないから増やす.
-	if( m_vvTop.size() < uiROW ){
+	if( m_vecvecTop.size() < uiROW ){
 		vector< TRANSFORM > tmpInit;
-		m_vvTop.push_back( tmpInit );//行を増やす.
-		const unsigned int uiNEW_ROW_NUM = m_vvTop.size() - 1;
-		m_vvTop[ uiNEW_ROW_NUM ].resize( m_vvTop[0].size() );//増やした行の列の数をそろえる.
-		m_vvTop[ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
+		m_vecvecTop.push_back( tmpInit );//行を増やす.
+		const unsigned int uiNEW_ROW_NUM = m_vecvecTop.size() - 1;
+		m_vecvecTop[ uiNEW_ROW_NUM ].resize( m_vecvecTop[0].size() );//増やした行の列の数をそろえる.
+		m_vecvecTop[ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
 	}
 	//多いから減らす.
-	else if( m_vvTop.size() > uiROW ){
-		const unsigned int uiDELETE_RAW_NUM = m_vvTop.size() - 1;
-		m_vvTop.pop_back();//行を減らす.
+	else if( m_vecvecTop.size() > uiROW ){
+		const unsigned int uiDELETE_RAW_NUM = m_vecvecTop.size() - 1;
+		m_vecvecTop.pop_back();//行を減らす.
 	}
 	//横.
 	//足りないから増やす.
-	if( m_vvTop[0].size() < uiCOL ){
+	if( m_vecvecTop[0].size() < uiCOL ){
 		TRANSFORM tmpInit;
-		for( unsigned int Row=0; Row<m_vvTop.size(); Row++ ){
-			m_vvTop[ Row ].push_back( tmpInit );
+		for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ ){
+			m_vecvecTop[ Row ].push_back( tmpInit );
 		}
 	}
 	//多いから減らす.
-	else if( m_vvTop[0].size() > uiCOL ){
-		for( unsigned int Row=0; Row<m_vvTop.size(); Row++ ){
-			m_vvTop[ Row ].pop_back();
+	else if( m_vecvecTop[0].size() > uiCOL ){
+		for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ ){
+			m_vecvecTop[ Row ].pop_back();
 		}
 	}
 }
@@ -278,36 +278,36 @@ void clsBUILDING::SetTransformTop()
 
 	//----- トランスフォームを整える -----//.
 	//上面.
-	for( unsigned int Row=0; Row<m_vvTop.size(); Row++ )
+	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ )
 	{
-		for( unsigned int Col=0; Col<m_vvTop[ Row ].size(); Col++ ){
+		for( unsigned int Col=0; Col<m_vecvecTop[ Row ].size(); Col++ ){
 			//大きさをそろえる.
-			m_vvTop[ Row ][ Col ].vScale.x = m_Trans.vScale.x / m_vvTop[ Row ].size();
-			m_vvTop[ Row ][ Col ].vScale.y = m_Trans.vScale.z / m_vvTop.size();
+			m_vecvecTop[ Row ][ Col ].vScale.x = m_Trans.vScale.x / m_vecvecTop[ Row ].size();
+			m_vecvecTop[ Row ][ Col ].vScale.y = m_Trans.vScale.z / m_vecvecTop.size();
 			//中心寄せ.
-			m_vvTop[ Row ][ Col ].vPos = m_Trans.vPos;
+			m_vecvecTop[ Row ][ Col ].vPos = m_Trans.vPos;
 			//左寄せ.	
-			m_vvTop[ Row ][ Col ].vPos.x -= m_Trans.vScale.x * fHALF;				//板の真ん中が端に来る.
-			m_vvTop[ Row ][ Col ].vPos.x += m_vvTop[ Row ][ Col ].vScale.x * fHALF;	//板の半分だけずらす.
+			m_vecvecTop[ Row ][ Col ].vPos.x -= m_Trans.vScale.x * fHALF;				//板の真ん中が端に来る.
+			m_vecvecTop[ Row ][ Col ].vPos.x += m_vecvecTop[ Row ][ Col ].vScale.x * fHALF;	//板の半分だけずらす.
 			//順番に貼る.		
-			m_vvTop[ Row ][ Col ].vPos.x += ( m_Trans.vScale.x / ( m_vvTop[ Row ].size() ) ) * Col;
+			m_vecvecTop[ Row ][ Col ].vPos.x += ( m_Trans.vScale.x / ( m_vecvecTop[ Row ].size() ) ) * Col;
 			//下寄せ.	
-			m_vvTop[ Row ][ Col ].vPos.z -= m_Trans.vScale.z * fHALF;
-			m_vvTop[ Row ][ Col ].vPos.z += m_vvTop[ Row ][ Col ].vScale.y * fHALF;
+			m_vecvecTop[ Row ][ Col ].vPos.z -= m_Trans.vScale.z * fHALF;
+			m_vecvecTop[ Row ][ Col ].vPos.z += m_vecvecTop[ Row ][ Col ].vScale.y * fHALF;
 			//順番に貼る.		
-			m_vvTop[ Row ][ Col ].vPos.z += ( m_Trans.vScale.z / ( m_vvTop.size() ) ) * Row;
+			m_vecvecTop[ Row ][ Col ].vPos.z += ( m_Trans.vScale.z / ( m_vecvecTop.size() ) ) * Row;
 			//共通.			   
-			m_vvTop[ Row ][ Col ].vPos.y += m_Trans.vScale.y;
-			m_vvTop[ Row ][ Col ].vRot = { 0.0f, 0.0f, 0.0f };
-			m_vvTop[ Row ][ Col ].vRot.x = m_Trans.vRot.y;
-			m_vvTop[ Row ][ Col ].vRot.x += static_cast<float>( M_PI_2 );
-			m_vvTop[ Row ][ Col ].vRot.y -= static_cast<float>( M_PI_2 );
-			m_vvTop[ Row ][ Col ].vRot.z -= static_cast<float>( M_PI_2 + M_PI );
+			m_vecvecTop[ Row ][ Col ].vPos.y += m_Trans.vScale.y;
+			m_vecvecTop[ Row ][ Col ].vRot = { 0.0f, 0.0f, 0.0f };
+			m_vecvecTop[ Row ][ Col ].vRot.x = m_Trans.vRot.y;
+			m_vecvecTop[ Row ][ Col ].vRot.x += static_cast<float>( M_PI_2 );
+			m_vecvecTop[ Row ][ Col ].vRot.y -= static_cast<float>( M_PI_2 );
+			m_vecvecTop[ Row ][ Col ].vRot.z -= static_cast<float>( M_PI_2 + M_PI );
 
 			//本体の回転に応じて移動.
 			float fTheta, fDistance;
-			GetTileTheta( m_vvTop[ Row ][ Col ], m_Trans, &fTheta, &fDistance );
-			GetTilePosForRotation( &m_vvTop[ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
+			GetTileTheta( m_vecvecTop[ Row ][ Col ], m_Trans, &fTheta, &fDistance );
+			GetTilePosForRotation( &m_vecvecTop[ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
 		}
 	}
 }
@@ -321,11 +321,11 @@ void clsBUILDING::SetTileNumTargetSide(
 	//----- 数を合わせる -----//.
 
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum++  ){
-		if( !m_vvSide[ SideNum ].size() ){
+		if( !m_vecvecSideArray[ SideNum ].size() ){
 			return;
 		}
-		for( unsigned int i=0; i<m_vvSide[ SideNum ].size(); i++ ){
-			if( !m_vvSide[ SideNum ][i].size() ){
+		for( unsigned int i=0; i<m_vecvecSideArray[ SideNum ].size(); i++ ){
+			if( !m_vecvecSideArray[ SideNum ][i].size() ){
 				return;
 			}
 		}
@@ -333,9 +333,9 @@ void clsBUILDING::SetTileNumTargetSide(
 
 	//========== 南北 ==========//.
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
-		m_vvSide[ SideNum ][ 0 ][ 0 ].vScale.x = m_Trans.vScale.x / m_vvSide[ SideNum ][ 0 ].size();
-		m_vvSide[ SideNum ][ 0 ][ 0 ].vScale.y = m_Trans.vScale.y / m_vvSide[ SideNum ].size();
-		D3DXVECTOR3 vScale = m_vvSide[ SideNum ][0][0].vScale;
+		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.x = m_Trans.vScale.x / m_vecvecSideArray[ SideNum ][ 0 ].size();
+		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.y = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
+		D3DXVECTOR3 vScale = m_vecvecSideArray[ SideNum ][0][0].vScale;
 
 		if( vScale.y > vTILE_SIZE_MAX.y ){
 			puiRowZ ++;
@@ -357,9 +357,9 @@ void clsBUILDING::SetTileNumTargetSide(
 	}
 	//========== 東西 ==========//.
 	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
-		m_vvSide[ SideNum ][ 0 ][ 0 ].vScale.x = m_Trans.vScale.z / m_vvSide[ SideNum ][ 0 ].size();
-		m_vvSide[ SideNum ][ 0 ][ 0 ].vScale.y = m_Trans.vScale.y / m_vvSide[ SideNum ].size();
-		D3DXVECTOR3 vScale = m_vvSide[ SideNum ][0][0].vScale;
+		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.x = m_Trans.vScale.z / m_vecvecSideArray[ SideNum ][ 0 ].size();
+		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.y = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
+		D3DXVECTOR3 vScale = m_vecvecSideArray[ SideNum ][0][0].vScale;
 
 		if( vScale.y > vTILE_SIZE_MAX.y ){
 			puiRowX ++;
@@ -390,30 +390,30 @@ void clsBUILDING::SetTileNumSide(
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
 		//----- 縦 -----//.
 		//足りないから増やす.
-		if( m_vvSide[ SideNum ].size() < uiROW_Z ){
+		if( m_vecvecSideArray[ SideNum ].size() < uiROW_Z ){
 			vector< TRANSFORM > tmpInit;
-			m_vvSide[ SideNum ].push_back( tmpInit );
-			const unsigned int uiNEW_ROW_NUM = m_vvSide[ SideNum ].size() - 1;
-			m_vvSide[ SideNum ][ uiNEW_ROW_NUM ].resize( m_vvSide[ SideNum ][0].size() );
-			m_vvSide[ SideNum ][ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
+			m_vecvecSideArray[ SideNum ].push_back( tmpInit );
+			const unsigned int uiNEW_ROW_NUM = m_vecvecSideArray[ SideNum ].size() - 1;
+			m_vecvecSideArray[ SideNum ][ uiNEW_ROW_NUM ].resize( m_vecvecSideArray[ SideNum ][0].size() );
+			m_vecvecSideArray[ SideNum ][ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
 		}
 		//多いから減らす.
-		else if( m_vvSide[ SideNum ].size() > uiROW_Z ){
-			const unsigned int uiDELETE_RAW_NUM = m_vvSide[ SideNum ].size() - 1;
-			m_vvSide[ SideNum ].pop_back();
+		else if( m_vecvecSideArray[ SideNum ].size() > uiROW_Z ){
+			const unsigned int uiDELETE_RAW_NUM = m_vecvecSideArray[ SideNum ].size() - 1;
+			m_vecvecSideArray[ SideNum ].pop_back();
 		}
 		//----- 横 -----//.
 		//足りないから増やす.
-		if( m_vvSide[ SideNum ][0].size() < uiCOL_Z ){
+		if( m_vecvecSideArray[ SideNum ][0].size() < uiCOL_Z ){
 			TRANSFORM tmpInit;
-			for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ ){
-				m_vvSide[ SideNum ][ Row ].push_back( tmpInit );
+			for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
+				m_vecvecSideArray[ SideNum ][ Row ].push_back( tmpInit );
 			}			
 		}
 		//多いから減らす.
-		else if( m_vvSide[ SideNum ][0].size() > uiCOL_Z ){
-			for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ ){
-				m_vvSide[ SideNum ][ Row ].pop_back();
+		else if( m_vecvecSideArray[ SideNum ][0].size() > uiCOL_Z ){
+			for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
+				m_vecvecSideArray[ SideNum ][ Row ].pop_back();
 			}
 		}
 	}
@@ -421,30 +421,30 @@ void clsBUILDING::SetTileNumSide(
 	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
 		//----- 縦 -----//.
 		//足りないから増やす.
-		if( m_vvSide[ SideNum ].size() < uiROW_X ){
+		if( m_vecvecSideArray[ SideNum ].size() < uiROW_X ){
 			vector< TRANSFORM > tmpInit;
-			m_vvSide[ SideNum ].push_back( tmpInit );
-			const unsigned int uiNEW_ROW_NUM = m_vvSide[ SideNum ].size() - 1;
-			m_vvSide[ SideNum ][ uiNEW_ROW_NUM ].resize( m_vvSide[ SideNum ][0].size() );
-			m_vvSide[ SideNum ][ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
+			m_vecvecSideArray[ SideNum ].push_back( tmpInit );
+			const unsigned int uiNEW_ROW_NUM = m_vecvecSideArray[ SideNum ].size() - 1;
+			m_vecvecSideArray[ SideNum ][ uiNEW_ROW_NUM ].resize( m_vecvecSideArray[ SideNum ][0].size() );
+			m_vecvecSideArray[ SideNum ][ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
 		}
 		//多いから減らす.
-		else if( m_vvSide[ SideNum ].size() > uiROW_X ){
-			const unsigned int uiDELETE_RAW_NUM = m_vvSide[ SideNum ].size() - 1;
-			m_vvSide[ SideNum ].pop_back();
+		else if( m_vecvecSideArray[ SideNum ].size() > uiROW_X ){
+			const unsigned int uiDELETE_RAW_NUM = m_vecvecSideArray[ SideNum ].size() - 1;
+			m_vecvecSideArray[ SideNum ].pop_back();
 		}
 		//----- 横 -----//.
 		//足りないから増やす.
-		if( m_vvSide[ SideNum ][0].size() < uiCOL_X ){
+		if( m_vecvecSideArray[ SideNum ][0].size() < uiCOL_X ){
 			TRANSFORM tmpInit;
-			for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ ){
-				m_vvSide[ SideNum ][ Row ].push_back( tmpInit );
+			for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
+				m_vecvecSideArray[ SideNum ][ Row ].push_back( tmpInit );
 			}			
 		}
 		//多いから減らす.
-		else if( m_vvSide[ SideNum ][0].size() > uiCOL_X ){
-			for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ ){
-				m_vvSide[ SideNum ][ Row ].pop_back();
+		else if( m_vecvecSideArray[ SideNum ][0].size() > uiCOL_X ){
+			for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
+				m_vecvecSideArray[ SideNum ][ Row ].pop_back();
 			}
 		}
 	}
@@ -467,67 +467,67 @@ void clsBUILDING::SetTransformSide()
 	//南北.
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  )
 	{
-		for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ )
+		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ )
 		{
-			for( unsigned int Col=0; Col<m_vvSide[ SideNum ][ Row ].size(); Col++ ){
+			for( unsigned int Col=0; Col<m_vecvecSideArray[ SideNum ][ Row ].size(); Col++ ){
 				//大きさをそろえる.
-				m_vvSide[ SideNum ][ Row ][ Col ].vScale.x	 = m_Trans.vScale.x / m_vvSide[ SideNum ][ Row ].size();
-				m_vvSide[ SideNum ][ Row ][ Col ].vScale.y	 = m_Trans.vScale.y / m_vvSide[ SideNum ].size();
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.x	 = m_Trans.vScale.x / m_vecvecSideArray[ SideNum ][ Row ].size();
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.y	 = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
 				//中心寄せ.
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos		 = m_Trans.vPos;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos		 = m_Trans.vPos;
 				//各面に寄せる.
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos		+= vOFFSET_SIDE[ SideNum ];
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos		+= vOFFSET_SIDE[ SideNum ];
 				//左寄せ.
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.x	-= m_Trans.vScale.x * fHALF;
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.x	+= m_vvSide[ SideNum ][ Row ][ Col ].vScale.x * fHALF;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.x	-= m_Trans.vScale.x * fHALF;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.x	+= m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.x * fHALF;
 				//順番に貼る.		
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.x	+= ( m_Trans.vScale.x / ( m_vvSide[ SideNum ][ Row ].size() ) ) * Col;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.x	+= ( m_Trans.vScale.x / ( m_vecvecSideArray[ SideNum ][ Row ].size() ) ) * Col;
 				//下寄せ.	
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.y	+= m_vvSide[ SideNum ][ Row ][ Col ].vScale.y * fHALF;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.y	+= m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.y * fHALF;
 				//順番に貼る.		
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.y	+= ( m_Trans.vScale.y / ( m_vvSide[ SideNum ].size() ) ) * Row;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.y	+= ( m_Trans.vScale.y / ( m_vecvecSideArray[ SideNum ].size() ) ) * Row;
 				//共通.
-				m_vvSide[ SideNum ][ Row ][ Col ].vRot		 = m_Trans.vRot;
-				m_vvSide[ SideNum ][ Row ][ Col ].vRot.y	+= static_cast<float>( M_PI_2 * SideNum + M_PI );
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot		 = m_Trans.vRot;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot.y	+= static_cast<float>( M_PI_2 * SideNum + M_PI );
 			
 				//本体の回転に応じて移動.
 				float fTheta, fDistance;
-				GetTileTheta( m_vvSide[ SideNum ][ Row ][ Col ], m_Trans, &fTheta, &fDistance );
-				GetTilePosForRotation( &m_vvSide[ SideNum ][ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
+				GetTileTheta( m_vecvecSideArray[ SideNum ][ Row ][ Col ], m_Trans, &fTheta, &fDistance );
+				GetTilePosForRotation( &m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
 			}
 		}
 	}
 	//東西.
 	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  )
 	{
-		for( unsigned int Row=0; Row<m_vvSide[ SideNum ].size(); Row++ )
+		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ )
 		{
-			for( unsigned int Col=0; Col<m_vvSide[ SideNum ][ Row ].size(); Col++ )
+			for( unsigned int Col=0; Col<m_vecvecSideArray[ SideNum ][ Row ].size(); Col++ )
 			{
 				//大きさをそろえる.
-				m_vvSide[ SideNum ][ Row ][ Col ].vScale.x	 = m_Trans.vScale.z / m_vvSide[ SideNum ][ Row ].size();
-				m_vvSide[ SideNum ][ Row ][ Col ].vScale.y	 = m_Trans.vScale.y / m_vvSide[ SideNum ].size();
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.x	 = m_Trans.vScale.z / m_vecvecSideArray[ SideNum ][ Row ].size();
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.y	 = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
 				//中心寄せ.
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos		 = m_Trans.vPos;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos		 = m_Trans.vPos;
 				//各面に寄せる.
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos		+= vOFFSET_SIDE[ SideNum ];
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos		+= vOFFSET_SIDE[ SideNum ];
 				//左寄せ.
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.z	-= m_Trans.vScale.z * fHALF;
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.z	+= m_vvSide[ SideNum ][ Row ][ Col ].vScale.x * fHALF;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.z	-= m_Trans.vScale.z * fHALF;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.z	+= m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.x * fHALF;
 				//順番に貼る.		
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.z	+= ( m_Trans.vScale.z / ( m_vvSide[ SideNum ][ Row ].size() ) ) * Col;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.z	+= ( m_Trans.vScale.z / ( m_vecvecSideArray[ SideNum ][ Row ].size() ) ) * Col;
 				//下寄せ.	
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.y	+= m_vvSide[ SideNum ][ Row ][ Col ].vScale.y * fHALF;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.y	+= m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.y * fHALF;
 				//順番に貼る.		
-				m_vvSide[ SideNum ][ Row ][ Col ].vPos.y	+= ( m_Trans.vScale.y / ( m_vvSide[ SideNum ].size() ) ) * Row;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.y	+= ( m_Trans.vScale.y / ( m_vecvecSideArray[ SideNum ].size() ) ) * Row;
 				//共通.
-				m_vvSide[ SideNum ][ Row ][ Col ].vRot		 = m_Trans.vRot;
-				m_vvSide[ SideNum ][ Row ][ Col ].vRot.y	+= static_cast<float>( M_PI_2 * SideNum + M_PI );
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot		 = m_Trans.vRot;
+				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot.y	+= static_cast<float>( M_PI_2 * SideNum + M_PI );
 			
 				//本体の回転に応じて移動.
 				float fTheta, fDistance;
-				GetTileTheta( m_vvSide[ SideNum ][ Row ][ Col ], m_Trans, &fTheta, &fDistance );
-				GetTilePosForRotation( &m_vvSide[ SideNum ][ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
+				GetTileTheta( m_vecvecSideArray[ SideNum ][ Row ][ Col ], m_Trans, &fTheta, &fDistance );
+				GetTilePosForRotation( &m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
 			}
 		}
 	}

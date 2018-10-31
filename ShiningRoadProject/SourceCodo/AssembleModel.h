@@ -151,6 +151,8 @@ protected:
 	//êF.
 	void UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 
+protected:
+
 	double m_dAnimSpd;
 
 	TRANSFORM m_Trans;

@@ -11,7 +11,7 @@
 using namespace std;
 
 
-#define DEBUG_SPRITE_NAME m_vupStatusText[0]
+#define DEBUG_SPRITE_NAME m_vecupStatusText[0]
 
 
 //----- パーツカテゴリ -----//.
@@ -255,11 +255,11 @@ clsASSEMBLE_UI::clsASSEMBLE_UI( clsFont* const pFont )
 	//表示する文字列のセット.
 	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
 		//表示ステータスの数をそろえる.
-		m_vsStatusNameBox[i].resize( iOPEN_STATUS_NUM[i] );
+		m_vecsStatusNameBoxArray[i].resize( iOPEN_STATUS_NUM[i] );
 
 		//ステータス名文字列をセット.
 		for( int j=0; j<iOPEN_STATUS_NUM[i]; j++ ){
-			m_vsStatusNameBox[i][j] = tmpStatusNamePtr[i][j];
+			m_vecsStatusNameBoxArray[i][j] = tmpStatusNamePtr[i][j];
 		}
 	}
 
@@ -279,40 +279,40 @@ clsASSEMBLE_UI::~clsASSEMBLE_UI()
 	}
 #endif//#if _DEBUG
 
-	for( unsigned int i=0; i<m_vupStatusNumText.size(); i++ ){
-		if( m_vupStatusNumText[i] ){
-			m_vupStatusNumText[i].reset( nullptr );
+	for( unsigned int i=0; i<m_vecupStatusNumText.size(); i++ ){
+		if( m_vecupStatusNumText[i] ){
+			m_vecupStatusNumText[i].reset( nullptr );
 		}
 	}
-	m_vupStatusNumText.clear();
-	m_vupStatusNumText.shrink_to_fit();
+	m_vecupStatusNumText.clear();
+	m_vecupStatusNumText.shrink_to_fit();
 
-	for( unsigned int i=0; i<m_vupStatusText.size(); i++ ){
-		if( m_vupStatusText[i] ){
-			m_vupStatusText[i].reset( nullptr );
+	for( unsigned int i=0; i<m_vecupStatusText.size(); i++ ){
+		if( m_vecupStatusText[i] ){
+			m_vecupStatusText[i].reset( nullptr );
 		}
 	}
 
-	m_vupStatusText.clear();
-	m_vupStatusText.shrink_to_fit();
+	m_vecupStatusText.clear();
+	m_vecupStatusText.shrink_to_fit();
 
-	m_pArrow.clear();
-	m_pArrow.shrink_to_fit();
+	m_vecupArrow.clear();
+	m_vecupArrow.shrink_to_fit();
 
 
-	m_vupPartsType.clear();
-	m_vupPartsType.shrink_to_fit();
+	m_vecupPartsType.clear();
+	m_vecupPartsType.shrink_to_fit();
 
 
 
 	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
-		m_vsStatusNameBox[i].clear();
-		m_vsStatusNameBox[i].shrink_to_fit();
+		m_vecsStatusNameBoxArray[i].clear();
+		m_vecsStatusNameBoxArray[i].shrink_to_fit();
 	}
 
 	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
-		m_vupPartsIcon[i].clear();
-		m_vupPartsIcon[i].shrink_to_fit();
+		m_vecupPartsIconArray[i].clear();
+		m_vecupPartsIconArray[i].shrink_to_fit();
 	}
 
 	m_iStatusNum = 0;
@@ -334,18 +334,18 @@ void clsASSEMBLE_UI::Create(
 	string tmpString;
 
 	//パーツ項目初期化.
-	assert( m_vupPartsType.size() == 0 );
+	assert( m_vecupPartsType.size() == 0 );
 	SPRITE_STATE ss;
 	ss.Disp = PARTS_TYPE_SIZE;
-	m_vupPartsType.resize( enPARTS_TYPE_SIZE );
-	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
-		m_vupPartsType[i] = make_unique< clsSprite2D >();
+	m_vecupPartsType.resize( enPARTS_TYPE_SIZE );
+	for( unsigned int i=0; i<m_vecupPartsType.size(); i++ ){
+		m_vecupPartsType[i] = make_unique< clsSprite2D >();
 
 		tmpString = sPATH_PARTS_TYPE + sPATH_PARTS_TYPE_CHILDREN[i];
-		m_vupPartsType[i]->Create( pDevice, pContext, tmpString.c_str(), ss );
+		m_vecupPartsType[i]->Create( pDevice, pContext, tmpString.c_str(), ss );
 
-		m_vupPartsType[i]->SetPos( vINIT_POS_PARTS_TYPE );
-		m_vupPartsType[i]->AddPos( { fOFFSET_POS_X_PARTS_TYPE * static_cast<float>( i ), 0.0f, 0.0f } );
+		m_vecupPartsType[i]->SetPos( vINIT_POS_PARTS_TYPE );
+		m_vecupPartsType[i]->AddPos( { fOFFSET_POS_X_PARTS_TYPE * static_cast<float>( i ), 0.0f, 0.0f } );
 	}
 
 	//選択中パーツ項目.
@@ -359,22 +359,22 @@ void clsASSEMBLE_UI::Create(
 	ss.Disp = PARTS_ICON_SIZE;
 	for( int i=0; i<enPARTS_TYPE_SIZE; i++ )
 	{
-		assert( m_vupPartsIcon[i].size() == 0 );
-		m_vupPartsIcon[i].resize( data[i] );
+		assert( m_vecupPartsIconArray[i].size() == 0 );
+		m_vecupPartsIconArray[i].resize( data[i] );
 		for( int j=0; j<data[i]; j++ ){
-			m_vupPartsIcon[i][j] = make_unique< clsSprite2D >();
+			m_vecupPartsIconArray[i][j] = make_unique< clsSprite2D >();
 
 			tmpString = sPATH_PARTS_ICON_ROOT + sPATH_PARTS_ICON_PARTS[i] + "\\" + sPATH_PARTS_ICON_PARTS[i];
 			tmpString = OprtStr.ConsolidatedNumber( tmpString, j );//ディレクトリ番号番号連結.
 			tmpString += sPATH_PARTS_ICON_END;//ファイル名.
 
 			//アイコン画像が見つからなければNODATA画像を読み込む.
-			if( FAILED( m_vupPartsIcon[i][j]->Create( pDevice, pContext, tmpString.c_str(), ss ) ) ){
-				m_vupPartsIcon[i][j]->Create( pDevice, pContext, sNO_DATA_FILE_NAME.c_str(), ss );
+			if( FAILED( m_vecupPartsIconArray[i][j]->Create( pDevice, pContext, tmpString.c_str(), ss ) ) ){
+				m_vecupPartsIconArray[i][j]->Create( pDevice, pContext, sNO_DATA_FILE_NAME.c_str(), ss );
 			}
 
-			m_vupPartsIcon[i][j]->SetPos( vINIT_POS_PARTS_ICON );
-			m_vupPartsIcon[i][j]->AddPos( { 0.0f, ( fPARTS_ICON_OFFSET + PARTS_ICON_SIZE.h ) * static_cast<float>( j ), 0.0f } );
+			m_vecupPartsIconArray[i][j]->SetPos( vINIT_POS_PARTS_ICON );
+			m_vecupPartsIconArray[i][j]->AddPos( { 0.0f, ( fPARTS_ICON_OFFSET + PARTS_ICON_SIZE.h ) * static_cast<float>( j ), 0.0f } );
 		}
 	}
 	//選択中各パーツアイコン.
@@ -441,31 +441,31 @@ void clsASSEMBLE_UI::Create(
 
 
 	//ステータス項目.
-	assert( !m_vupStatusText.size() );
-	m_vupStatusText.resize( iSTATUS_NUM_MAX );
+	assert( !m_vecupStatusText.size() );
+	m_vecupStatusText.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-		m_vupStatusText[i] = make_unique< clsUiText >();
-		m_vupStatusText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
-		m_vupStatusText[i]->SetPos( vTEXT_POS_STATUS );
-		m_vupStatusText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vecupStatusText[i] = make_unique< clsUiText >();
+		m_vecupStatusText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
+		m_vecupStatusText[i]->SetPos( vTEXT_POS_STATUS );
+		m_vecupStatusText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
 	}
-	m_vupStatusText.shrink_to_fit();
+	m_vecupStatusText.shrink_to_fit();
 
 	//ステータス値.
-	assert( !m_vupStatusNumText.size() );
-	assert( !m_vupStatusNumTextNow.size() );
-	m_vupStatusNumText.resize( iSTATUS_NUM_MAX );
-	m_vupStatusNumTextNow.resize( iSTATUS_NUM_MAX );
+	assert( !m_vecupStatusNumText.size() );
+	assert( !m_vecupStatusNumTextNow.size() );
+	m_vecupStatusNumText.resize( iSTATUS_NUM_MAX );
+	m_vecupStatusNumTextNow.resize( iSTATUS_NUM_MAX );
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-		m_vupStatusNumText[i] = make_unique< clsUiText >();
-		m_vupStatusNumText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
-		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
-		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vecupStatusNumText[i] = make_unique< clsUiText >();
+		m_vecupStatusNumText[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
+		m_vecupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vecupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
 
-		m_vupStatusNumTextNow[i] = make_unique< clsUiText >();
-		m_vupStatusNumTextNow[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
-		m_vupStatusNumTextNow[i]->SetPos( vTEXT_POS_STATUS_NUM );
-		m_vupStatusNumTextNow[i]->AddPos( { fTEXT_POS_YX_OFFSET_STATUS_NOW, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vecupStatusNumTextNow[i] = make_unique< clsUiText >();
+		m_vecupStatusNumTextNow[i]->Create( pContext, WND_W, WND_H, fTEXT_SCALE_STATUS );
+		m_vecupStatusNumTextNow[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vecupStatusNumTextNow[i]->AddPos( { fTEXT_POS_YX_OFFSET_STATUS_NOW, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
 	}
 
 	//パーツ名.
@@ -539,9 +539,9 @@ void clsASSEMBLE_UI::Update(
 
 	//選択中を示す半透明の板表示.
 	assert( m_upPartsTypeSelect );
-	m_upPartsTypeSelect->SetPos( m_vupPartsType[ iPartsType ]->GetPos() );
+	m_upPartsTypeSelect->SetPos( m_vecupPartsType[ iPartsType ]->GetPos() );
 	assert( m_upPartsNumSelect );
-	m_upPartsNumSelect->SetPos( m_vupPartsIcon[ iPartsType ][ iPartsNum ]->GetPos() );
+	m_upPartsNumSelect->SetPos( m_vecupPartsIconArray[ iPartsType ][ iPartsNum ]->GetPos() );
 
 	//先への布石.
 	int iOldStausNum = m_iStatusNum;
@@ -551,19 +551,19 @@ void clsASSEMBLE_UI::Update(
 	m_iStatusNum = iOPEN_STATUS_NUM[ iPartsType ];//ステータスが何行あるかを取得.
 
 	//ステータス項目,数値.
-	assert( m_vupStatusText[ iPartsType ] );
-	assert( m_vupStatusNumText[ iPartsType ] );
+	assert( m_vecupStatusText[ iPartsType ] );
+	assert( m_vecupStatusNumText[ iPartsType ] );
 	const int iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW =  m_iStatusNum - 1;
 	for( int i=0; i<iSTATUS_NUM_MAX; i++ ){
-		m_vupStatusText[i]->SetPos( vTEXT_POS_STATUS );
-		m_vupStatusText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-		m_vupStatusText[i]->AddPos( { 0.0f, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
-		m_vupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
-		m_vupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-		m_vupStatusNumText[i]->AddPos( { 0.0f, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
-		m_vupStatusNumTextNow[i]->SetPos( vTEXT_POS_STATUS_NUM );
-		m_vupStatusNumTextNow[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
-		m_vupStatusNumTextNow[i]->AddPos( { fTEXT_POS_YX_OFFSET_STATUS_NOW, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
+		m_vecupStatusText[i]->SetPos( vTEXT_POS_STATUS );
+		m_vecupStatusText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vecupStatusText[i]->AddPos( { 0.0f, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
+		m_vecupStatusNumText[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vecupStatusNumText[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vecupStatusNumText[i]->AddPos( { 0.0f, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
+		m_vecupStatusNumTextNow[i]->SetPos( vTEXT_POS_STATUS_NUM );
+		m_vecupStatusNumTextNow[i]->AddPos( { 0.0f, fTEXT_POS_Y_OFFSET_STATUS * static_cast<float>( i ) } );
+		m_vecupStatusNumTextNow[i]->AddPos( { fTEXT_POS_YX_OFFSET_STATUS_NOW, -INIT_SIZE_STATUS_WINDOW.h * static_cast<float>( iOFFSET_RATE_STATUS_TEXT_FOR_STATUS_WINDOW ) } );
 	}
 	
 	//ステータスの数の差によるずれを修正.
@@ -581,8 +581,8 @@ void clsASSEMBLE_UI::Update(
 	StatusNumOverGuard();
 
 	//飛び出さない.
-	if( static_cast< unsigned int >( m_iStatusNum ) > m_vupStatusText.size() ||
-		static_cast< unsigned int >( m_iStatusNum ) > m_vupStatusNumText.size() )
+	if( static_cast< unsigned int >( m_iStatusNum ) > m_vecupStatusText.size() ||
+		static_cast< unsigned int >( m_iStatusNum ) > m_vecupStatusNumText.size() )
 	{
 		m_iStatusNum = 0;
 	}
@@ -595,8 +595,8 @@ void clsASSEMBLE_UI::Update(
 	//ステータスウィンドウの文字列.
 	for( int i=0; i<iOPEN_STATUS_NUM[iPartsType]; i++ ){
 		//ステータス名セット.
-		assert( m_vupStatusText[i] );
-		m_vupStatusText[i]->SetText( m_vsStatusNameBox[ iPartsType ][i].c_str() );
+		assert( m_vecupStatusText[i] );
+		m_vecupStatusText[i]->SetText( m_vecsStatusNameBoxArray[ iPartsType ][i].c_str() );
 
 		//色替えの為.
 		int iBefor, iAfter;
@@ -607,19 +607,19 @@ void clsASSEMBLE_UI::Update(
 		D3DXVECTOR4 vColor = GetStatusColor( iBefor, iAfter,iPartsType, i );
 
 		//ステータス数値セット.
-		assert( m_vupStatusNumText[i] );
-		m_vupStatusNumText[i]->SetText( 
+		assert( m_vecupStatusNumText[i] );
+		m_vecupStatusNumText[i]->SetText( 
 			spFile->GetDataString( iPartsNum, i + iStatusCutNum ).c_str() );
-		m_vupStatusNumText[i]->SetColor( vColor );
+		m_vecupStatusNumText[i]->SetColor( vColor );
 		//今のステータス.
-		assert( m_vupStatusNumTextNow[i] );
+		assert( m_vecupStatusNumTextNow[i] );
 		string tmpString = 
 			spFile->GetDataString( 
 				pModel->GetPartsNum( static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( iPartsType ) ),
 				i + iStatusCutNum )
 			+ sSTATUS_TEXT_MIDWAY;
-		m_vupStatusNumTextNow[i]->SetText( tmpString.c_str() );
-//		m_vupStatusNumTextNow[i]->SetColor( vColor );
+		m_vecupStatusNumTextNow[i]->SetText( tmpString.c_str() );
+//		m_vecupStatusNumTextNow[i]->SetColor( vColor );
 	}
 
 	//日本語説明文を調整.
@@ -639,15 +639,15 @@ void clsASSEMBLE_UI::Render(
 {
 
 	//パーツカテゴリ.
-	for( unsigned int i=0; i<m_vupPartsType.size(); i++ ){
-		assert( m_vupPartsType[i] );
-		m_vupPartsType[i]->Render();
+	for( unsigned int i=0; i<m_vecupPartsType.size(); i++ ){
+		assert( m_vecupPartsType[i] );
+		m_vecupPartsType[i]->Render();
 	}
 
 	//パーツアイコン.
-	for( unsigned int j=0; j<m_vupPartsIcon[ iPartsType ].size(); j++ ){
-		assert( m_vupPartsIcon[ iPartsType ][j] );
-		m_vupPartsIcon[ iPartsType ][j]->Render();
+	for( unsigned int j=0; j<m_vecupPartsIconArray[ iPartsType ].size(); j++ ){
+		assert( m_vecupPartsIconArray[ iPartsType ][j] );
+		m_vecupPartsIconArray[ iPartsType ][j]->Render();
 	}
 
 	assert( m_upHeader );
@@ -740,12 +740,12 @@ void clsASSEMBLE_UI::RenderPartsState(
 
 		//数値.
 		for( int i=0; i<m_iStatusNum; i++ ){
-			assert( m_vupStatusText[i] );
-			m_vupStatusText[i]->Render();
-			assert( m_vupStatusNumText[i] );
-			m_vupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
-			assert( m_vupStatusNumTextNow[i] );
-			m_vupStatusNumTextNow[i]->Render( clsUiText::enPOS::RIGHT );
+			assert( m_vecupStatusText[i] );
+			m_vecupStatusText[i]->Render();
+			assert( m_vecupStatusNumText[i] );
+			m_vecupStatusNumText[i]->Render( clsUiText::enPOS::RIGHT );
+			assert( m_vecupStatusNumTextNow[i] );
+			m_vecupStatusNumTextNow[i]->Render( clsUiText::enPOS::RIGHT );
 		}
 
 

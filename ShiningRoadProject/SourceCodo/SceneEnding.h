@@ -35,9 +35,9 @@ private:
 	bool AddAlphaState( TEXT_STATE* const pTextState, const float fAlpha );
 
 	//そのばで透過する文字用のステータス.
-	std::vector< std::unique_ptr< TEXT_STATE > > m_vupTextStateAlpha;
+	std::vector< std::unique_ptr< TEXT_STATE > > m_vecupTextStateAlpha;
 	//スクロールする文字用のステータス.
-	std::vector< std::unique_ptr< TEXT_STATE > > m_vupTextStateScroll;
+	std::vector< std::unique_ptr< TEXT_STATE > > m_vecupTextStateScroll;
 
 	unsigned int	m_uiSpriteCnt;
 	bool			m_isSpriteAlphaAppear;
