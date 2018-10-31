@@ -249,7 +249,33 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 
 
 
-	//説明文とcolor1, 2.
+	//----- 説明文とcolor1, 2 -----//.
+	//メニューのタイトル.
+	const D3DXVECTOR2 vTITLE_POS_LOCAL = { 130.0f, 20.0f };
+	const D3DXVECTOR3 vTITLE_POS = SetPosFromWindow( vTITLE_POS_LOCAL );
+	m_wpFont->SetPos( vTITLE_POS );
+
+	const float fTITLE_TEXT_SCALE = 36;
+	m_wpFont->SetScale( fTITLE_TEXT_SCALE );
+
+	const int iMENU_TITLE_TEXT_INDEX = 3;
+	m_wpFont->Render( iMENU_TITLE_TEXT_INDEX );
+
+	//color1.
+	const D3DXVECTOR2 vCOLOR1_POS_LOCAL = { 20.0f, 85.0f };
+	const D3DXVECTOR3 vCOLOR1_POS = SetPosFromWindow( vCOLOR1_POS_LOCAL );
+	m_wpFont->SetPos( vCOLOR1_POS );
+
+	const float fCOLOR1_TEXT_SCALE = 18;
+	m_wpFont->SetScale( fCOLOR1_TEXT_SCALE );
+
+	int iColorTextIndex = 6;
+	m_wpFont->Render( iColorTextIndex ++ );
+
+	//color2.
+	const D3DXVECTOR3 vCOLOR2_POS_ADD = { 0.0f, 180.0f, 0.0f };
+	m_wpFont->AddPos( vCOLOR2_POS_ADD );
+	m_wpFont->Render( iColorTextIndex ++ );
 
 }
 
