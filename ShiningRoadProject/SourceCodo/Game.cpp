@@ -138,7 +138,7 @@ void clsGAME::Create()
 	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
 	SwitchScene( GET_STATUS_DATA_INIT_SCENE, true );
 	//最初のシーンはタイトルを指定する.
-	SwitchScene( START_UP_SCENE, true );
+	SwitchScene( START_UP_SCENE );
 
 }
 
@@ -208,8 +208,8 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	SAFE_DELETE( m_spSound );
 
 	//サウンド.
-	m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
-	if( m_spSound ){
+	if( !bStartUp ){
+		m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
 		m_spSound->Create();
 	}
 	m_spPtrGroup->UpdateSoundPtr( m_spSound );

@@ -14,7 +14,7 @@ const int iINTERVAL_CNT = 120;
 const char* sSTAFF_ROLL_STATUS_DATA_PATH = "Data\\FileData\\Tahara\\EndingStaffRollTransform.csv";
 const char* sFONT_TEXT_PATH_ENDING = "Data\\Font\\Text\\TextEnding.csv";
 
-const string sSCROLL_START_NUM_TEXT = "フリー音源　使用サイト";
+const string sSCROLL_START_NUM_TEXT = "ー　フリー音源　使用サイト　ー";
 
 
 const int iPOS_X_FILE_DATA_INDEX = 0;
@@ -83,6 +83,7 @@ void clsSCENE_ENDING::CreateProduct()
 			break;
 		}
 	}
+	assert( iAlphaSize >= 0 );
 
 	int iScrollSize = iTextNum - iAlphaSize;
 
