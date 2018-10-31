@@ -1157,6 +1157,7 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( 0 );
 		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE >(
 			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray, m_pAsmModel );
+		m_upMenu->SetPos( vBOX_POS_COLOR );
 	}
 }
 //メッセボックス消す.

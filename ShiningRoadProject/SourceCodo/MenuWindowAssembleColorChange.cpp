@@ -160,25 +160,6 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 
 void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 {
-	int iTextRow;
-//	const int iYES_INDEX = 4;
-//	const int iQUESTION_INDEX = 1;
-//	
-//	//yes.
-//	const D3DXVECTOR2 vPOS_YES_LOCAL = { 150.0f, 250.0f };
-//	const D3DXVECTOR3 vPOS_YES = SetPosFromWindow( vPOS_YES_LOCAL );
-//	const float fSCALE = 24;
-//	int iTextRow = iYES_INDEX;
-//	m_wpFont->SetPos( vPOS_YES );
-//	m_wpFont->SetScale( fSCALE );
-//	m_wpFont->Render( iTextRow ++ );
-//
-//	//no.
-//	const D3DXVECTOR2 vPOS_NO_LOCAL = { 370.0f, 250.0f };
-//	const D3DXVECTOR3 vPOS_NO = SetPosFromWindow( vPOS_NO_LOCAL );
-//	m_wpFont->SetPos( vPOS_NO );
-//	m_wpFont->Render( iTextRow ++ );
-//
 
 
 	//ゲージ画像.
@@ -230,20 +211,27 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	}
 
 	///カーソル移動.
+	m_upCursor->SetPos( vCURSOL_POS_ARRAY[ m_iSelectNum ] );
+	//「戻る」.
 	if( m_iSelectNum == enSELECT_NUM_BACK ){
 		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*2.1f, fCOLOR_GAGE_SIZE_BASE, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
+		const D3DXVECTOR3 vCURSOR_SCALE_ADD = { 1.0625f, 1.25f, 0.0f };
+		m_upCursor->AddScale( vCURSOR_SCALE_ADD );
+		const D3DXVECTOR3 vCURSOL_ADD_POS = { 0.0f, -5.0f, 0.0f };
+		m_upCursor->AddPos( vCURSOL_ADD_POS );
 	}
 	else{
 		const D3DXVECTOR3 vCURSOR_SCALE = { fCOLOR_GAGE_SIZE_BASE, fCOLOR_GAGE_SIZE_BASE, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
+		const D3DXVECTOR3 vCURSOR_SCALE_ADD = { 0.875f, 0.975f, 0.0f };
+		m_upCursor->AddScale( vCURSOR_SCALE_ADD );
 	}
-	m_upCursor->SetPos( vCURSOL_POS_ARRAY[ m_iSelectNum ] );
 	m_upCursor->Render();
 
 	//----- Text描画 -----//.
 	//RGB.
-	iTextRow = iRGB_INDEX;
+	int iTextRow = iRGB_INDEX;
 	m_wpFont->SetScale( fSCALE_RGB );
 	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
 		//R, G, B, の表示をを繰り返す.
@@ -260,6 +248,8 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	m_wpFont->Render( iTextRow );
 
 
+
+	//説明文とcolor1, 2.
 
 }
 
