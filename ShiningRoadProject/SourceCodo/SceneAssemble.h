@@ -122,7 +122,7 @@ private:
 	std::unique_ptr< clsASSEMBLE_UI	>	m_upUI;
 
 	//パーツのステータスを受け取り、このシーン中保持する.
-	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
+	std::vector< std::shared_ptr< clsFILE > >	m_vecspFile;
 
 
 	//右スティックでモデルに近づく距離.

@@ -102,15 +102,15 @@ private:
 
 
 	//サウンドクラス.
-	SOUND_SET m_vvupBgm;
-	SOUND_SET m_vvupSe;
+	SOUND_SET m_BgmSet;
+	SOUND_SET m_SeSet;
 	//ループ再生するかのフラグ.
-	std::deque<bool> m_dqbLoopBgm;
-	std::deque<bool> m_dqbLoopSe;
+	std::deque<bool> m_dqisLoopBgm;
+	std::deque<bool> m_dqisLoopSe;
 	//音を同時再生用に何個作る?のフラグ( 起動時のみ ).
 	//兼、次に再生するのは何番目かを指すフラグ.
-	std::vector<int> m_viBgmNum;
-	std::vector<int> m_viSeNum;
+	std::vector<int> m_veciBgmNum;
+	std::vector<int> m_veciSeNum;
 
 
 	//リザーブのサイズ.

@@ -126,13 +126,13 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 	SAFE_DELETE( m_pViewPortPartsWindow );
 	SAFE_DELETE( m_spAsmModel );
 
-	for( unsigned int i=0; i<m_vspFile.size(); i++ ){
-		if( m_vspFile[i] == nullptr ) continue;
-		m_vspFile[i]->Close();
-		m_vspFile[i].reset();
+	for( unsigned int i=0; i<m_vecspFile.size(); i++ ){
+		if( m_vecspFile[i] == nullptr ) continue;
+		m_vecspFile[i]->Close();
+		m_vecspFile[i].reset();
 	}
-	m_vspFile.clear();
-	m_vspFile.shrink_to_fit();
+	m_vecspFile.clear();
+	m_vecspFile.shrink_to_fit();
 
 }
 
@@ -167,16 +167,16 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 
 	//パーツのステータス読み込み.
 	UCHAR ucFileMax = clsASSEMBLE_MODEL::ENUM_SIZE;
-	m_vspFile.resize( ucFileMax ); 
-	for( UCHAR i=0; i<m_vspFile.size(); i++ ){
-		if( m_vspFile[i] != nullptr ){
+	m_vecspFile.resize( ucFileMax ); 
+	for( UCHAR i=0; i<m_vecspFile.size(); i++ ){
+		if( m_vecspFile[i] != nullptr ){
 			assert( !"m_spFile[i]は作成済みです" );
 			continue;
 		}
-		m_vspFile[i] = make_shared< clsFILE >();
-		m_vspFile[i]->Open( sPARTS_STATUS_PASS[i] );
+		m_vecspFile[i] = make_shared< clsFILE >();
+		m_vecspFile[i]->Open( sPARTS_STATUS_PASS[i] );
 
-		partsData[i] = m_vspFile[i]->GetSizeRow();
+		partsData[i] = m_vecspFile[i]->GetSizeRow();
 	}
 
 
@@ -431,10 +431,10 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	assert( m_upUI );
 	m_upUI->Input( m_wpXInput, m_wpDxInput );
 	if( isMessageBoxClose() ){
-		assert( m_vspFile[m_PartsSelect.Type] );
+		assert( m_vecspFile[m_PartsSelect.Type] );
 		m_upUI->Update( 
 			m_enSelectMode,
-			m_vspFile[m_PartsSelect.Type], 
+			m_vecspFile[m_PartsSelect.Type], 
 			m_spAsmModel,
 			m_PartsSelect.Type, 
 			m_PartsSelect.Num[m_PartsSelect.Type], 
@@ -498,11 +498,11 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		m_upArrow->AddPos( { fARROW_POS_TYPE_OFFSET_X, 0.0f, 0.0f } );
 		m_upArrow->AddRot( { 0.0f, 0.0f, fARROW_ROLL_ADD } );
 	}
-	//各パーツ.m_vspFile
+	//各パーツ.m_vecspFile
 	m_upArrow->SetPos( vARROW_POS_PARTS );
 	m_upArrow->SetRot( { 0.0f, 0.0f, fARROW_ROLL_PARTS } );
 	//今選択しているパーツの最大数.
-	const float fPARTS_MAX = static_cast<float>( m_vspFile[ m_PartsSelect.Type ]->GetSizeRow() );
+	const float fPARTS_MAX = static_cast<float>( m_vecspFile[ m_PartsSelect.Type ]->GetSizeRow() );
 	for( char i=0; i<cARROW_FOR_MAX_NUM; i++ ){
 		m_upArrow->Render();
 		m_upArrow->AddPos( { 0.0f, fARROW_POS_PARTS_OFFSET_Y, 0.0f } );
@@ -577,7 +577,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 		m_PartsSelect.Num[m_PartsSelect.Type] --;
 
 		m_PartsSelect.Num[m_PartsSelect.Type] = 
-			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vecspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
@@ -598,7 +598,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 		m_PartsSelect.Num[m_PartsSelect.Type] ++;
 
 		m_PartsSelect.Num[m_PartsSelect.Type] = 
-			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vspFile[m_PartsSelect.Type]->GetSizeRow() );
+			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vecspFile[m_PartsSelect.Type]->GetSizeRow() );
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
@@ -720,15 +720,15 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 //	m_wpSound->PlaySE( enSE_ENTER );
 
 	//ステータスが何項目あるのか.
-	const int iStatusSize = m_vspFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
+	const int iStatusSize = m_vecspFile[ m_PartsSelect.Type ]->GetSizeCol() - iSTATUS_CUT_NUM;
 
 	//引数用変数.
 	vector<int> tmpStatus;
 	tmpStatus.reserve( iStatusSize );
 	for( int i=0; i<iStatusSize; i++ ){
-		//m_vspFile[]の添え字はどのパーツか、である.
+		//m_vecspFile[]の添え字はどのパーツか、である.
 		tmpStatus.push_back( 
-			m_vspFile[ m_PartsSelect.Type ]->
+			m_vecspFile[ m_PartsSelect.Type ]->
 				GetDataInt( m_PartsSelect.Num[m_PartsSelect.Type], i + iSTATUS_CUT_NUM ) );
 		//GetDataInt()の第一引数は、そのパーツ部位の何番目の行を参照すればよいのか.
 		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
@@ -1059,7 +1059,7 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 
 //	//テスト用に数値を出す.
 //	string tmpsString;
-//	tmpsString = m_vspFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num[m_PartsSelect.Type] );
+//	tmpsString = m_vecspFile[m_PartsSelect.Type]->GetDataString( m_PartsSelect.Num[m_PartsSelect.Type] );
 //	const char* tmpcString = tmpsString.c_str();
 //	sprintf_s( strDbgTxt, 
 //		tmpcString );
