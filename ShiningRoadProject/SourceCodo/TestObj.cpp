@@ -17,9 +17,9 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup)
 {
 	RoboInit(pPtrGroup, pPtrGroup->GetRoboStatus());
 
-	m_v_Spheres.resize(1);
+	/*m_v_Spheres.resize(1);
 	m_v_Spheres[0].vCenter = &m_vCenterPos;
-	m_v_Spheres[0].fRadius = 0.1f;
+	m_v_Spheres[0].fRadius = 0.1f;*/
 
 	//m_HP = m_MaxHP = 5;
 }
