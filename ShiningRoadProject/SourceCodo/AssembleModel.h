@@ -120,7 +120,7 @@ public:
 protected:
 
 	//Œp³æ‚Åg‚Á‚Ä‚Ë.
-	virtual void CreateProduct();
+	virtual void CreateProduct( clsROBO_STATUS* const pStatus );
 	virtual void UpdateProduct();
 
 

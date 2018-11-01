@@ -21,7 +21,7 @@ clsMISSION_MODEL::~clsMISSION_MODEL()
 {
 }
 
-void clsMISSION_MODEL::CreateProduct()
+void clsMISSION_MODEL::CreateProduct( clsROBO_STATUS* const pStatus )
 {
 	CreateColStateBones();
 	FixBoneStates();
