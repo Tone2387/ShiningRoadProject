@@ -9,102 +9,104 @@
 using namespace std;
 
 
-//要素数は<clsSCENE_ASSEMBLE::ENUM_SIZE>.
-const string sPARTS_STATUS_PASS[] =
-{
-	"Data\\RoboParts\\Leg\\RoboPartsData.csv",
-	"Data\\RoboParts\\Core\\RoboPartsData.csv",
-	"Data\\RoboParts\\Head\\RoboPartsData.csv",
-	"Data\\RoboParts\\Arms\\RoboPartsData.csv",
-	"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
-	"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
-};
+namespace{
 
-//モデルさんの初期位置.
-//const D3DXVECTOR3 vINIT_ROBO_POS = { 52.0f, -35.0f, 17.0f };
-//const D3DXVECTOR3 vINIT_ROBO_ROT = { 6.03318501f, 0.649538994f, 6.18318605f };
-const D3DXVECTOR3 vINIT_ROBO_POS = { 0.0f, 0.0f, 0.0f };
-const D3DXVECTOR3 vINIT_ROBO_ROT = { 0.0f, static_cast<float>( M_PI_4 ) * 0.5f, 0.0f };
-const float fINIT_ROBO_SCALE = 0.75f;
+	//要素数は<clsSCENE_ASSEMBLE::ENUM_SIZE>.
+	const string sPARTS_STATUS_PASS[] =
+	{
+		"Data\\RoboParts\\Leg\\RoboPartsData.csv",
+		"Data\\RoboParts\\Core\\RoboPartsData.csv",
+		"Data\\RoboParts\\Head\\RoboPartsData.csv",
+		"Data\\RoboParts\\Arms\\RoboPartsData.csv",
+		"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
+		"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
+	};
 
-//カメラの初期位置.
-const D3DXVECTOR3 vINIT_CAMERA_POS = { 0.0f, 0.0f, -100.0f };
-const D3DXVECTOR3 vINIT_CAMERA_LOOK_POS = { 0.0f, 0.0f, 0.0f };
+	//モデルさんの初期位置.
+	//const D3DXVECTOR3 vINIT_ROBO_POS = { 52.0f, -35.0f, 17.0f };
+	//const D3DXVECTOR3 vINIT_ROBO_ROT = { 6.03318501f, 0.649538994f, 6.18318605f };
+	const D3DXVECTOR3 vINIT_ROBO_POS = { 0.0f, 0.0f, 0.0f };
+	const D3DXVECTOR3 vINIT_ROBO_ROT = { 0.0f, static_cast<float>( M_PI_4 ) * 0.5f, 0.0f };
+	const float fINIT_ROBO_SCALE = 0.75f;
 
-
-//ステータスの、CSVから削る行数.
-const int iSTATUS_CUT_NUM = 2;//番号と名前.
-
-//----- パーツウィンドウ用 -----//.
-//ビューポート.
-const FLOAT INIT_VP_PARTS_W = 576.0f;
-const FLOAT INIT_VP_PARTS_H = 482.0f;
-const FLOAT INIT_VP_PARTS_X = 153.0f;
-const FLOAT INIT_VP_PARTS_Y = 176.0f;
-const FLOAT INIT_VP_PARTS_MIN =	0.0f;
-const FLOAT INIT_VP_PARTS_MAX =	1.0f;
-//カメラ.
-const D3DXVECTOR3 vPARTS_VIEW_CAM_POS  = { 0.0f, 0.0f, -100.0f };
-const D3DXVECTOR3 vPARTS_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
-//----- パーツウィンドウ用 -----//.
-
-//----- ロボウィンドウ用 -----//.
-//ビューポート.
-const FLOAT INIT_VP_ROBO_W = 490.0f;
-const FLOAT INIT_VP_ROBO_H = 570.0f;
-const FLOAT INIT_VP_ROBO_X = 753.0f;
-const FLOAT INIT_VP_ROBO_Y = 87.0f;
-const FLOAT INIT_VP_ROBO_MIN =	0.0f;
-const FLOAT INIT_VP_ROBO_MAX =	1.0f;
-//カメラ.
-const D3DXVECTOR3 vROBO_VIEW_CAM_POS  = { 0.0f, 10.0f, -100.0f };
-const D3DXVECTOR3 vROBO_VIEW_CAM_LOOK = { 0.0f,-10.0f, 0.0f };
-//----- ロボウィンドウ用 -----//.
-
-//----- 背景 -----//.
-const char* sBACK_SPRITE_PATH = "Data\\Image\\AssembleUi\\AssembleBack.png";
-const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
-
-//----- 背景 -----//.
+	//カメラの初期位置.
+	const D3DXVECTOR3 vINIT_CAMERA_POS = { 0.0f, 0.0f, -100.0f };
+	const D3DXVECTOR3 vINIT_CAMERA_LOOK_POS = { 0.0f, 0.0f, 0.0f };
 
 
-////----- 矢印 -----//.
-//m_upArrow
-const WHSIZE_FLOAT ARROW_DISP = { 14.0f, 36.0f };
-const char* sPATH_ARROW = "Data\\Image\\AssembleUi\\Arrow.png";
-const char cARROW_FOR_MAX_NUM = 2;
+	//ステータスの、CSVから削る行数.
+	const int iSTATUS_CUT_NUM = 2;//番号と名前.
 
-const D3DXVECTOR3 vARROW_POS_TYPE = { -6.0f + 32.0f - ( ARROW_DISP.w * 0.5f ), 122.0f, 0.0f };
-const float fARROW_POS_TYPE_OFFSET_X = 6.0f + 6.0f * 120.0f;
-const float fARROW_ROLL_ADD = static_cast<float>( M_PI );
+	//----- パーツウィンドウ用 -----//.
+	//ビューポート.
+	const FLOAT INIT_VP_PARTS_W = 576.0f;
+	const FLOAT INIT_VP_PARTS_H = 482.0f;
+	const FLOAT INIT_VP_PARTS_X = 153.0f;
+	const FLOAT INIT_VP_PARTS_Y = 176.0f;
+	const FLOAT INIT_VP_PARTS_MIN =	0.0f;
+	const FLOAT INIT_VP_PARTS_MAX =	1.0f;
+	//カメラ.
+	const D3DXVECTOR3 vPARTS_VIEW_CAM_POS  = { 0.0f, 0.0f, -100.0f };
+	const D3DXVECTOR3 vPARTS_VIEW_CAM_LOOK = { 0.0f, 0.0f, 0.0f };
+	//----- パーツウィンドウ用 -----//.
 
-const float fARROW_ROLL_PARTS = static_cast<float>( M_PI_2 );
-const D3DXVECTOR3 vARROW_POS_PARTS = { 83.0f, 172.0f - ARROW_DISP.w * 0.5f, 0.0f };
-const float fARROW_POS_PARTS_OFFSET_Y = ( 4.0f );
-const float fARROW_POS_PARTS_OFFSET_Y_RATE_PARTS_MAX = ( 70.0f + 18.0f );
-////----- 矢印 終わり -----//.
+	//----- ロボウィンドウ用 -----//.
+	//ビューポート.
+	const FLOAT INIT_VP_ROBO_W = 490.0f;
+	const FLOAT INIT_VP_ROBO_H = 570.0f;
+	const FLOAT INIT_VP_ROBO_X = 753.0f;
+	const FLOAT INIT_VP_ROBO_Y = 87.0f;
+	const FLOAT INIT_VP_ROBO_MIN =	0.0f;
+	const FLOAT INIT_VP_ROBO_MAX =	1.0f;
+	//カメラ.
+	const D3DXVECTOR3 vROBO_VIEW_CAM_POS  = { 0.0f, 10.0f, -100.0f };
+	const D3DXVECTOR3 vROBO_VIEW_CAM_LOOK = { 0.0f,-10.0f, 0.0f };
+	//----- ロボウィンドウ用 -----//.
+
+	//----- 背景 -----//.
+	const char* sBACK_SPRITE_PATH = "Data\\Image\\AssembleUi\\AssembleBack.png";
+	const D3DXVECTOR3 vBACK_POS = { 0.0f, 0.0f, 0.0f };
+
+	//----- 背景 -----//.
 
 
+	////----- 矢印 -----//.
+	//m_upArrow
+	const WHSIZE_FLOAT ARROW_DISP = { 14.0f, 36.0f };
+	const char* sPATH_ARROW = "Data\\Image\\AssembleUi\\Arrow.png";
+	const char cARROW_FOR_MAX_NUM = 2;
 
+	const D3DXVECTOR3 vARROW_POS_TYPE = { -6.0f + 32.0f - ( ARROW_DISP.w * 0.5f ), 122.0f, 0.0f };
+	const float fARROW_POS_TYPE_OFFSET_X = 6.0f + 6.0f * 120.0f;
+	const float fARROW_ROLL_ADD = static_cast<float>( M_PI );
 
-//色替えメニュー座標.
-const D3DXVECTOR3 vBOX_POS_COLOR = { 380.0f, WND_H/2, 0.0f };//色替え.
-
-
-//日本語UI.
-const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
-//ボタン説明.
-const D3DXVECTOR3 vFONT_BUTTON_POS = { 650.0f, 40.0f, 0.0f };
-const float fFONT_BUTTON_SCALE = 14.0f;
-const int iFONT_BUTTON_LINE = 0;
+	const float fARROW_ROLL_PARTS = static_cast<float>( M_PI_2 );
+	const D3DXVECTOR3 vARROW_POS_PARTS = { 83.0f, 172.0f - ARROW_DISP.w * 0.5f, 0.0f };
+	const float fARROW_POS_PARTS_OFFSET_Y = ( 4.0f );
+	const float fARROW_POS_PARTS_OFFSET_Y_RATE_PARTS_MAX = ( 70.0f + 18.0f );
+	////----- 矢印 終わり -----//.
 
 
 
-//ズーム限界.
-const float fZOOM_RIMIT_MIN = -100.0f;
-const float fZOOM_RIMIT_MAX = 64.0f;
+
+	//色替えメニュー座標.
+	const D3DXVECTOR3 vBOX_POS_COLOR = { 380.0f, WND_H/2, 0.0f };//色替え.
 
 
+	//日本語UI.
+	const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
+	//ボタン説明.
+	const D3DXVECTOR3 vFONT_BUTTON_POS = { 650.0f, 40.0f, 0.0f };
+	const float fFONT_BUTTON_SCALE = 14.0f;
+	const int iFONT_BUTTON_LINE = 0;
+
+
+
+	//ズーム限界.
+	const float fZOOM_RIMIT_MIN = -100.0f;
+	const float fZOOM_RIMIT_MAX = 64.0f;
+
+}
 
 //================================//
 //========== 組み換えクラス ==========//

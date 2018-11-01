@@ -11,16 +11,19 @@
 
 using namespace std;
 
-const unsigned int uiRESERVE_SIZE_ROW = 64;//ベクターの初期最大サイズ( 行 ).
-const unsigned int uiRESERVE_SIZE_COL = 32;//ベクターの初期最大サイズ( 行のカンマ区切りの数 ).
+namespace{
 
-const char cDELIMITER = ',';//区切り文字.
+	const unsigned int uiRESERVE_SIZE_ROW = 64;//ベクターの初期最大サイズ( 行 ).
+	const unsigned int uiRESERVE_SIZE_COL = 32;//ベクターの初期最大サイズ( 行のカンマ区切りの数 ).
+
+	const char cDELIMITER = ',';//区切り文字.
 	
-const string sERROR = "THIS_IS_ERROR";//エラー用文字列.
+	const string sERROR = "THIS_IS_ERROR";//エラー用文字列.
 
-//初期化用データ作成( プッシュバック用 ).
-const vector<string> vsINIT_LINE;
+	//初期化用データ作成( プッシュバック用 ).
+	const vector<string> vsINIT_LINE;
 
+}
 
 clsFILE::clsFILE() :
 	m_bUsing( false )

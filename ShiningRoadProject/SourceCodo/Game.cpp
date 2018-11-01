@@ -2,18 +2,22 @@
 
 using namespace std;
 
-const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
+namespace{
+
+	const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
 
 
-//起動時の初期シーン.
-#define START_UP_SCENE enSCENE::TITLE
-//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
-#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
+	//起動時の初期シーン.
+	#define START_UP_SCENE enSCENE::TITLE
+	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
+	#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
 
-const unsigned char cSTART_UP_MUSIC_NO = 0;
+	const unsigned char cSTART_UP_MUSIC_NO = 0;
 
-//画面の初期化色.
-const float g_fClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+	//画面の初期化色.
+	const float g_fClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+
+}
 
 
 clsGAME::clsGAME( 

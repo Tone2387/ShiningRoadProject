@@ -3,26 +3,30 @@
 
 using namespace std;
 
-//ライト方向.
-const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -2.0f };
-//カメラのより具合.
-const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );
-//描画限界距離.
-const float fRENDER_LIMIT = 640.0f;//150.0f.
+namespace{
+
+	//ライト方向.
+	const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -2.0f };
+	//カメラのより具合.
+	const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );
+	//描画限界距離.
+	const float fRENDER_LIMIT = 640.0f;//150.0f.
 
 
-#define XINPUT_ENTER  ( XINPUT_START | XINPUT_B )
-#define XINPUT_EXIT  ( XINPUT_A )
+	#define XINPUT_ENTER  ( XINPUT_START | XINPUT_B )
+	#define XINPUT_EXIT  ( XINPUT_A )
 
-//ボタンのホールドフレーム.
-const int iHOLD_FREAM = 30;
-const int iHOLD_FREAM_FIRST = 6;
-const int iHOLD_FREAM_FIRST_STEP = 1;
+	//ボタンのホールドフレーム.
+	const int iHOLD_FREAM = 30;
+	const int iHOLD_FREAM_FIRST = 6;
+	const int iHOLD_FREAM_FIRST_STEP = 1;
 
 #if _DEBUG
-const D3DXVECTOR4 vDEBUG_TEXT_COLOR( 1.0f, 1.0f, 1.0f, 1.0f );
-const float fDEBUG_TEXT_SIZE = 50.0f;
+	const D3DXVECTOR4 vDEBUG_TEXT_COLOR( 1.0f, 1.0f, 1.0f, 1.0f );
+	const float fDEBUG_TEXT_SIZE = 50.0f;
 #endif//#if _DEBUG
+}
+
 
 //================================//
 //========== 基底クラス ==========//

@@ -2,53 +2,59 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-struct INIT_DATA
-{
-	D3DXVECTOR3 vPos;
-	D3DXVECTOR3 vLook;
-	D3DXVECTOR3 vRot;
-};
+namespace{
+	struct INIT_DATA
+	{
+		D3DXVECTOR3 vPos;
+		D3DXVECTOR3 vLook;
+		D3DXVECTOR3 vRot;
+	};
 
-//----- ç≈èâ -----//.
-const INIT_DATA START_INIT_DATA = 
-{
-//	{ 8.963961f, 26.0f, 32.168831f },
-	{ 8.963961f, 6.0f, 32.168831f },
-//	{ 8.963961f, 27.0f, 50.0f },
-	{ 8.963961f, 11.0f, 50.0f },
-	{ 0.0f, 0.0f, 0.0f }
-};
-const float fSTART_MOVE_SPD_INIT = -7.5f;
-const float fSTART_MOVE_ACC_INIT = 0.5f + 0.25f + 0.125f + 0.0625f;//0.5 0.25 0.125 0.0625 0.03125
-const float fSTART_ROT_Y = -0.29f;
+	//----- ç≈èâ -----//.
+	const INIT_DATA START_INIT_DATA = 
+	{
+	//	{ 8.963961f, 26.0f, 32.168831f },
+		{ 8.963961f, 6.0f, 32.168831f },
+	//	{ 8.963961f, 27.0f, 50.0f },
+		{ 8.963961f, 11.0f, 50.0f },
+		{ 0.0f, 0.0f, 0.0f }
+	};
+	const float fSTART_MOVE_SPD_INIT = -7.5f;
+	const float fSTART_MOVE_ACC_INIT = 0.5f + 0.25f + 0.125f + 0.0625f;//0.5 0.25 0.125 0.0625 0.03125
+	const float fSTART_ROT_Y = -0.29f;
 
-const float fSTART_END_SPD = 0.03125f * 2.0f;
-const float fSTART_CRAB_POWER = -24.0f;
-const float fSTART_ADVANC_POWER = 24.0f;
-//----- ç≈èâ -----//.
+	const float fSTART_END_SPD = 0.03125f * 2.0f;
+	const float fSTART_CRAB_POWER = -24.0f;
+	const float fSTART_ADVANC_POWER = 24.0f;
+	//----- ç≈èâ -----//.
 
-//----- âÒì]äJén -----//.
-const INIT_DATA SPN_START_INIT_DATA = 
-{
-	{ -25.0253143f, 6.0f,			-81.9894485f },
-	{ -29.6926422f, 30.8750f,		3.60752869f },
-	{ 0.0f,			0.0544727743f,	0.0f }
-};
-//----- âÒì]äJén -----//.
+	//----- âÒì]äJén -----//.
+	const INIT_DATA SPN_START_INIT_DATA = 
+	{
+		{ -25.0253143f, 6.0f,			-81.9894485f },
+		{ -29.6926422f, 30.8750f,		3.60752869f },
+		{ 0.0f,			0.0544727743f,	0.0f }
+	};
+	//----- âÒì]äJén -----//.
 
-//----- âÒì] -----//.
-const D3DXVECTOR3 vSPN_INIT_LOOK = { 0.0f, 30.875f, 0.0f };
-const D3DXVECTOR3 vSPN_MOVE_SPD = { 0.0f, 0.0f, 0.0f };
-const D3DXVECTOR3 vSPN_MOVE_ACC = { 0.000001f, 0.0f, 0.0005f };//0.0005.
-const float fSPN_SPN_SPD_LIMIT = 0.0008f;
-//----- âÒì] -----//.
+	//----- âÒì] -----//.
+	const D3DXVECTOR3 vSPN_INIT_LOOK = { 0.0f, 30.875f, 0.0f };
+	const D3DXVECTOR3 vSPN_MOVE_SPD = { 0.0f, 0.0f, 0.0f };
+	const D3DXVECTOR3 vSPN_MOVE_ACC = { 0.000001f, 0.0f, 0.0005f };//0.0005.
+	const float fSPN_SPN_SPD_LIMIT = 0.0008f;
+	//----- âÒì] -----//.
 
-//----- âÒì]íÜÉYÅ[ÉÄÇ‡Ç«Ç´ -----//.
-const float fSPN_ZOOM_CHANGE_SPD = 0.1f;//0.1
-//----- âÒì]íÜÉYÅ[ÉÄÇ‡Ç«Ç´ -----//.
+	//----- âÒì]íÜÉYÅ[ÉÄÇ‡Ç«Ç´ -----//.
+	const float fSPN_ZOOM_CHANGE_SPD = 0.1f;//0.1
+	//----- âÒì]íÜÉYÅ[ÉÄÇ‡Ç«Ç´ -----//.
 
 
-const float fYAW_OFFSET = static_cast<float>( M_PI_4 ) * ( 0.5f - 0.0625f );
+	const float fYAW_OFFSET = static_cast<float>( M_PI_4 ) * ( 0.5f - 0.0625f );
+
+}
+
+
+
 
 clsCAMERA_TITLE::clsCAMERA_TITLE()
 	:m_enMode( enMODE::START )

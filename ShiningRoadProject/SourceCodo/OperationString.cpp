@@ -2,7 +2,11 @@
 
 using namespace std;
 
+namespace{
+
 #define LOCAL_OF_THIS_PROJECT "japanese"
+
+}
 
 clsOPERATION_STRING::clsOPERATION_STRING()
 {

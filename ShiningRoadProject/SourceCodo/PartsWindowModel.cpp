@@ -2,48 +2,50 @@
 
 using namespace std;
 
-//受け取る選択肢.
-const short SELECT_TYPE_LEG		= 0;
-const short SELECT_TYPE_CORE	= 1;
-const short SELECT_TYPE_HEAD	= 2;
-const short SELECT_TYPE_ARMS	= 3;
-const short SELECT_TYPE_WEP_L	= 4;
-const short SELECT_TYPE_WEP_R	= 5;
+namespace{
 
-//モデル回転速度.
-const float fSPN_SPD = 3.14f * 1.5f / 180.0f;
+	//受け取る選択肢.
+	const short SELECT_TYPE_LEG		= 0;
+	const short SELECT_TYPE_CORE	= 1;
+	const short SELECT_TYPE_HEAD	= 2;
+	const short SELECT_TYPE_ARMS	= 3;
+	const short SELECT_TYPE_WEP_L	= 4;
+	const short SELECT_TYPE_WEP_R	= 5;
 
-//各パーツの中心位置ボーン名( 添え字は上記「受け取る選択肢」 ).
-const string sBONE_NAME_PARTS_CENTER[] =
-{
-	"JunctionCore",
-	"Jenerator",
-	"Center",
-	"null",
-	"MuzzleRoot",
-	"MuzzleRoot"
-};
-//腕の下端.
-const string sBONE_NAME_PARTS_ARM_HAND = "JunctionWeapon";
-//武器の端.
-const char* sBONE_NAME_PARTS_WEP_ROOT = "null";
-const char* sBONE_NAME_PARTS_WEP_END = "MuzzleEnd";
+	//モデル回転速度.
+	const float fSPN_SPD = 3.14f * 1.5f / 180.0f;
 
+	//各パーツの中心位置ボーン名( 添え字は上記「受け取る選択肢」 ).
+	const string sBONE_NAME_PARTS_CENTER[] =
+	{
+		"JunctionCore",
+		"Jenerator",
+		"Center",
+		"null",
+		"MuzzleRoot",
+		"MuzzleRoot"
+	};
+	//腕の下端.
+	const string sBONE_NAME_PARTS_ARM_HAND = "JunctionWeapon";
+	//武器の端.
+	const char* sBONE_NAME_PARTS_WEP_ROOT = "null";
+	const char* sBONE_NAME_PARTS_WEP_END = "MuzzleEnd";
 
-//カメラに渡すvec3の補正( 添え字は上記「受け取る選択肢」{ 「SELECT_TYPE_WEP_L」まで } ).
-const D3DXVECTOR3 vCAM_OFFSET[4] =
-{
-	D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
-	D3DXVECTOR3( 0.0f, 0.0f, 30.0f ),
-	D3DXVECTOR3( 0.0f, 0.0f, 50.0f ),
-	D3DXVECTOR3( 0.0f, 0.0f, 0.0f )
-};
+	//カメラに渡すvec3の補正( 添え字は上記「受け取る選択肢」{ 「SELECT_TYPE_WEP_L」まで } ).
+	const D3DXVECTOR3 vCAM_OFFSET[4] =
+	{
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
+		D3DXVECTOR3( 0.0f, 0.0f, 30.0f ),
+		D3DXVECTOR3( 0.0f, 0.0f, 50.0f ),
+		D3DXVECTOR3( 0.0f, 0.0f, 0.0f )
+	};
 
-//マスク.
-const int iMASK_ARMOR = 0;
-const int iMASK_BASE = 0;
-const int iMASK_MAX = 2;
+	//マスク.
+	const int iMASK_ARMOR = 0;
+	const int iMASK_BASE = 0;
+	const int iMASK_MAX = 2;
 
+}
 
 
 clsPARTS_WINDOW_MODEL::clsPARTS_WINDOW_MODEL( clsResource* const pResource, clsROBO_STATUS* const pStatus )

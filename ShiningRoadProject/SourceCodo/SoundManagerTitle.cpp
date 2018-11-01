@@ -2,9 +2,12 @@
 
 using namespace std;
 
-//このシーンのファイルにつなげるファイル名.
-const string sDATA_PASS = "Title";
+namespace{
 
+	//このシーンのファイルにつなげるファイル名.
+	const string sDATA_PASS = "Title";
+
+}
 
 clsSOUND_MANAGER_TITLE::clsSOUND_MANAGER_TITLE( const HWND hWnd )	: clsSOUND_MANAGER_BASE( hWnd )
 {

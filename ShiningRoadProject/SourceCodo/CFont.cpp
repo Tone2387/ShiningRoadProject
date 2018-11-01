@@ -11,24 +11,28 @@
 
 using namespace std;
 
-//フォントのパス.
-const char* sFONT_STYLE_PATH = "Data\\Font\\FontType\\Makinas-Scrap-5.otf";//Makinas-Scrap-5.otf.//aozora.ttf.
+namespace{
 
 //#define sFONT_NAME "あおぞら明朝 Medium"
 #define sFONT_NAME "マキナス Scrap 5"
 
 #define FONT_SHADER		"Shader\\FontText.hlsl"
 
-const int iFULL_MESSAGE_NUMBER = -1;//デフォルト引数.
+	//フォントのパス.
+	const char* sFONT_STYLE_PATH = "Data\\Font\\FontType\\Makinas-Scrap-5.otf";//Makinas-Scrap-5.otf.//aozora.ttf.
 
 
-const int iFONT_SIZE = 32;
-const float fFONT_MARGIN_X = 2.0f;//4.0f.
-const float fFONT_MARGIN_Y = 8.0f;//4.0f.
+	const int iFULL_MESSAGE_NUMBER = -1;//デフォルト引数.
 
-//Createしていないときの行数.
-const int iERROR_TEXT_ROW_NUM = -1;
 
+	const int iFONT_SIZE = 32;
+	const float fFONT_MARGIN_X = 2.0f;//4.0f.
+	const float fFONT_MARGIN_Y = 8.0f;//4.0f.
+
+	//Createしていないときの行数.
+	const int iERROR_TEXT_ROW_NUM = -1;
+
+}
 
 clsFont::clsFont( 
 	ID3D11Device* const pDevice, 

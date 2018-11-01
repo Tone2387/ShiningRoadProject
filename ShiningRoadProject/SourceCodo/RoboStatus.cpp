@@ -12,25 +12,28 @@
 
 using namespace std;
 
-const int iCOLOR_RANK_INIT = 16;
+namespace{
+
+	const int iCOLOR_RANK_INIT = 16;
 
 
-const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\RoboStatusCsvData\\RoboStatusHero.csv";
-const int iFILE_VAR_ROW = 0;//àÍçsÇµÇ©ë∂ç›ÇµÇ»Ç¢.
-const int iFILE_INDEX_LEG			= 0;
-const int iFILE_INDEX_CORE			= 1;
-const int iFILE_INDEX_HEAD			= 2;
-const int iFILE_INDEX_ARM_L			= 3;
-const int iFILE_INDEX_ARM_R			= 4;
-const int iFILE_INDEX_WEAPON_L		= 5;
-const int iFILE_INDEX_WEAPON_R		= 6;
-const int iFILE_INDEX_COLOR_ARMOR_R = 7;
-const int iFILE_INDEX_COLOR_ARMOR_G = 8;
-const int iFILE_INDEX_COLOR_ARMOR_B = 9;
-const int iFILE_INDEX_COLOR_BASE_R	= 10;
-const int iFILE_INDEX_COLOR_BASE_G	= 11;
-const int iFILE_INDEX_COLOR_BASE_B	= 12;
+	const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\RoboStatusCsvData\\RoboStatusHero.csv";
+	const int iFILE_VAR_ROW = 0;//àÍçsÇµÇ©ë∂ç›ÇµÇ»Ç¢.
+	const int iFILE_INDEX_LEG			= 0;
+	const int iFILE_INDEX_CORE			= 1;
+	const int iFILE_INDEX_HEAD			= 2;
+	const int iFILE_INDEX_ARM_L			= 3;
+	const int iFILE_INDEX_ARM_R			= 4;
+	const int iFILE_INDEX_WEAPON_L		= 5;
+	const int iFILE_INDEX_WEAPON_R		= 6;
+	const int iFILE_INDEX_COLOR_ARMOR_R = 7;
+	const int iFILE_INDEX_COLOR_ARMOR_G = 8;
+	const int iFILE_INDEX_COLOR_ARMOR_B = 9;
+	const int iFILE_INDEX_COLOR_BASE_R	= 10;
+	const int iFILE_INDEX_COLOR_BASE_G	= 11;
+	const int iFILE_INDEX_COLOR_BASE_B	= 12;
 
+}
 
 
 

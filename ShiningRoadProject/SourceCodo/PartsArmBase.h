@@ -6,20 +6,20 @@
 
 //----- 腕 -----//.
 //ブースター( 00 ～ xx ).
-#define sBONE_NAME_ARM_BOOSTER_FRONT_ROOT		"BoosterFrontRoot"
-#define sBONE_NAME_ARM_BOOSTER_FRONT_END		"BoosterFrontEnd"
-#define sBONE_NAME_ARM_BOOSTER_BACK_ROOT		"BoosterBackRoot"
-#define sBONE_NAME_ARM_BOOSTER_BACK_END			"BoosterBackEnd"
-#define sBONE_NAME_ARM_BOOSTER_SIDE_ROOT		"BoosterSideRoot"
-#define sBONE_NAME_ARM_BOOSTER_SIDE_END			"BoosterSideEnd"
+#define sBONE_NAME_ARM_BOOSTER_FRONT_ROOT	"BoosterFrontRoot"
+#define sBONE_NAME_ARM_BOOSTER_FRONT_END	"BoosterFrontEnd"
+#define sBONE_NAME_ARM_BOOSTER_BACK_ROOT	"BoosterBackRoot"
+#define sBONE_NAME_ARM_BOOSTER_BACK_END		"BoosterBackEnd"
+#define sBONE_NAME_ARM_BOOSTER_SIDE_ROOT	"BoosterSideRoot"
+#define sBONE_NAME_ARM_BOOSTER_SIDE_END		"BoosterSideEnd"
 //連結部分のボーン名.
-#define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
+#define sBONE_NAME_ARM_TO_WEAPON			"JunctionWeapon"
 //武器の回転情報確定に使う.
-#define sBONE_NAME_ARM_WEAPON_VEC_ROOT	 sBONE_NAME_ARM_TO_WEAPON	
-#define sBONE_NAME_ARM_WEAPON_VEC_END	 "WeaponVec"		
+#define sBONE_NAME_ARM_WEAPON_VEC_ROOT		sBONE_NAME_ARM_TO_WEAPON	
+#define sBONE_NAME_ARM_WEAPON_VEC_END		"WeaponVec"		
 
 //関節( 00 ～ xx ).
-#define sBONE_NAME_ARM_JOINT		"Joint"
+#define sBONE_NAME_ARM_JOINT				"Joint"
 
 
 class clsPARTS_ARM_BASE : public clsPARTS_BASE
