@@ -45,6 +45,8 @@ private:
 	//キャンセル.
 	void Exit();
 
+	//メニューの動き.
+	void MenuUpdate( enSCENE &enNextScene );
 
 	//メッセボックス出現.//引数は開きたい窓.
 	void AppearMessageBox( const clsASSEMBLE_UI::enSELECT_MODE encMode );
@@ -75,6 +77,9 @@ private:
 
 	//色替え( 左右キーを押された ).
 	void AddRoboColor( const bool isIncrement );
+
+	//右スティックの動き( ロボの回転 ).
+	void MoveRightStick();
 
 private:
 
@@ -125,9 +130,9 @@ private:
 	std::vector< std::shared_ptr< clsFILE > >	m_vecspFile;
 
 
-	//右スティックでモデルに近づく距離.
-	float m_fDistanceAssembleModel;
-		
+	//右スティックの移動.
+	D3DXVECTOR3 m_vRoboViewOffsetPos;
+
 
 	//エフェクト.
 	::Effekseer::Handle m_ehHibana;
@@ -137,8 +142,9 @@ private:
 	std::unique_ptr< clsMENU_WINDOW_ASSEMBLE_BASE > m_upMenu;
 	//メニューから受け取った情報を照合する.
 	std::vector<unsigned int> m_vecuiInformationDataArray;
-	//メニューの動き.
-	void MenuUpdate( enSCENE &enNextScene );
+
+
+
 
 #if _DEBUG
 	//デバック゛テキストの表示.
