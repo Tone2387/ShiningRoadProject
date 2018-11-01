@@ -22,7 +22,8 @@ public:
 	//ボーンに必要な情報.
 	struct BONE_SET
 	{
-		std::string sName;
+		int			iBoneNum;
+		int			iVecNum;
 		int			iParts;//何のパーツか(enPARTSをキャストしてこの変数に入れる).
 	};
 
@@ -57,7 +58,7 @@ public:
 	//当たり判定の座標の配列をすべて返す.
 	std::vector< clsObject::SPHERE > GetColState();
 
-	void GetColPosPtr();
+	void GetColPosPtr(clsROBO_STATUS* const pStatus);
 
 	//指定したパーツの回転値を変更する.
 	void SetPartsRotate(const enPARTS PartsNum, const D3DXVECTOR3 vRot);

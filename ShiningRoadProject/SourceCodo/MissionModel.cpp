@@ -56,7 +56,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
-			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT );
+			m_vColStates[m_iColStateIndex].iBoneNum = clsASSEMBLE_MODEL::enPARTS_INDEX_LEG;
 
 			m_iColStateIndex ++;	
 			iColNum ++;
@@ -68,7 +68,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 		if( m_vpParts[ tmpIndex ]->ExistsBone( sBONE_NAME_COL_CORE ) ){
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
-			m_vColStates[ m_iColStateIndex ].sName = sBONE_NAME_COL_CORE;
+			m_vColStates[m_iColStateIndex].iBoneNum = clsASSEMBLE_MODEL::enPARTS_INDEX_CORE;
 
 			m_iColStateIndex ++;	
 			m_iColNum[ enColParts ] = iReturn = 1;
@@ -79,7 +79,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 		if( m_vpParts[ tmpIndex ]->ExistsBone( sBONE_NAME_COL_HEAD ) ){
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
-			m_vColStates[ m_iColStateIndex ].sName = sBONE_NAME_COL_HEAD;
+			m_vColStates[m_iColStateIndex].iBoneNum = clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD;
 
 			m_iColStateIndex ++;	
 			m_iColNum[ enColParts ] = iReturn = 1;
@@ -92,7 +92,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
-			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT );
+			m_vColStates[m_iColStateIndex].iBoneNum = clsASSEMBLE_MODEL::enPARTS_INDEX_ARM_L;
 
 			m_iColStateIndex ++;	
 			iColNum ++;
@@ -106,7 +106,7 @@ int clsMISSION_MODEL::CreateColStateBone( const enCOL_PARTS enColParts )
 		{
 			m_vColStates.push_back( INIT_BONE_SET );
 			m_vColStates[ m_iColStateIndex ].iParts = tmpIndex;
-			m_vColStates[ m_iColStateIndex ].sName = OprtStr.ConsolidatedNumber( sBONE_NAME_COL_JOINT, iColNum, cBONE_NAME_NUM_DIGIT_JOINT );
+			m_vColStates[m_iColStateIndex].iBoneNum = clsASSEMBLE_MODEL::enPARTS_INDEX_ARM_R;
 
 			m_iColStateIndex ++;	
 			iColNum ++;
@@ -165,7 +165,7 @@ vector< clsObject::SPHERE > clsMISSION_MODEL::GetColState()
 }
 
 //当たり判定の座標の配列をすべて返す.
-void clsMISSION_MODEL::GetColPosPtr()
+void clsMISSION_MODEL::GetColPosPtr(clsROBO_STATUS* const pStatus)
 {
 	for( int i=0; i<m_iColMax; i++ ){
 		//ボーンの座標を取得.
