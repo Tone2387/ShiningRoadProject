@@ -2,72 +2,83 @@
 
 using namespace std;
 
-//==============================================================.
-#ifdef _DEBUG
-const WHSIZE_FLOAT INIT_DISP = { 256, 256 };
-const WHSIZE_FLOAT INIT_ANIM = { 3, 2 };
 
-const D3DXVECTOR3 vINIT_POS = { WND_W * 0.5f, WND_H * 0.5f, 0.0f };
-const D3DXVECTOR3 vUPDATE_ROT = { 0.0f, 0.0f, 0.0625f };
+namespace{
+	//==============================================================.
+	#ifdef _DEBUG
+	const WHSIZE_FLOAT INIT_DISP = { 256, 256 };
+	const WHSIZE_FLOAT INIT_ANIM = { 3, 2 };
 
-const char* cIMAGE_PATH = "Data\\Image\\StartUp\\Gear.png";
-//歯車数.
-const char cSPRITE_MAX = 16;
-#endif//#ifdef _DEBUG
-//==============================================================.
+	const D3DXVECTOR3 vINIT_POS = { WND_W * 0.5f, WND_H * 0.5f, 0.0f };
+	const D3DXVECTOR3 vUPDATE_ROT = { 0.0f, 0.0f, 0.0625f };
 
-
-
-//==============================================================.
-//初期位置.
-const D3DXVECTOR3 vINIT_LINE_BOX_POS = { WND_W * 0.5f, WND_H * 0.5f, 0.0f };
-const D3DXVECTOR3 vINIT_GAGE_BOX_POS = { WND_W * 0.5f, WND_H * 0.75f, 0.0f };
+	const char* cIMAGE_PATH = "Data\\Image\\StartUp\\Gear.png";
+	//歯車数.
+	const char cSPRITE_MAX = 16;
+	#endif//#ifdef _DEBUG
+	//==============================================================.
 
 
-//待機時間.
-const int iSTOP_TIME_SHORT = 6;
-const int iSTOP_TIME_LONG = 60;
 
-//箱が大きくなる度数.
-const float fLINE_BOX_ADD_SIZE = 128.0f;
-const float fGAGE_BOX_ADD_SIZE = 64.0f;
-
-//最終的な箱の大きさ.
-const D3DXVECTOR3 vLINE_BOX_SIZE = { WND_W - 32.0f, WND_H - 32.0f, 0.0f };
-const D3DXVECTOR3 vGAGE_BOX_SIZE = { 720.0f, 64.0f, 0.0f };
+	//==============================================================.
+	//初期位置.
+	const D3DXVECTOR3 vINIT_LINE_BOX_POS = { WND_W * 0.5f, WND_H * 0.5f, 0.0f };
+	const D3DXVECTOR3 vINIT_GAGE_BOX_POS = { WND_W * 0.5f, WND_H * 0.75f, 0.0f };
 
 
-//ゲージ本体のパス.
-const char* cGAGE_PATH = "Data\\Image\\StartUp\\LodeGage.png";
-//ゲージ本体の数.
-const char cGAGE_MAX = 16;
-//ゲージ本体の透過率.
-const float fGAGE_ALPHA_OFFSET = 1.0f / static_cast<float>( cGAGE_MAX );
-//ゲージサイズ.
-const WHSIZE_FLOAT INIT_DISP_GAGE = { 1.0f, 1.0f };
-//ゲージは枠の何分割?.
-const float fGAGE_SIZE_RATE = 64.0f;
-//線の太さ( ゲージを少し細くする ).
-const float fLINE_WIDTH = 1.0f;
+	//待機時間.
+	const int iSTOP_TIME_SHORT = 6;
+	const int iSTOP_TIME_LONG = 60;
 
-//==============================================================.
+	//箱が大きくなる度数.
+	const float fLINE_BOX_ADD_SIZE = 128.0f;
+	const float fGAGE_BOX_ADD_SIZE = 64.0f;
 
-//ロード中文字.
-const float fTEXT_SIZE = 8.0f;
-const D3DXVECTOR2 vTEXT_POS = { 270.0f, WND_H * 0.5f + 30.0f };
-const string sTEXT_MESSAGE = "Now Loading...";
-const int iFLASH_RATE = 15;//点滅間隔.
+	//最終的な箱の大きさ.
+	const D3DXVECTOR3 vLINE_BOX_SIZE = { WND_W - 32.0f, WND_H - 32.0f, 0.0f };
+	const D3DXVECTOR3 vGAGE_BOX_SIZE = { 720.0f, 64.0f, 0.0f };
 
 
-const string sCOMPLETE_MESSAGE = "Complete!";
-const float fTEXT_POS_X_COMPLETE = 386.0f;
+	//ゲージ本体のパス.
+	const char* cGAGE_PATH = "Data\\Image\\StartUp\\LodeGage.png";
+	//ゲージ本体の数.
+	const char cGAGE_MAX = 16;
+	//ゲージ本体の透過率.
+	const float fGAGE_ALPHA_OFFSET = 1.0f / static_cast<float>( cGAGE_MAX );
+	//ゲージサイズ.
+	const WHSIZE_FLOAT INIT_DISP_GAGE = { 1.0f, 1.0f };
+	//ゲージは枠の何分割?.
+	const float fGAGE_SIZE_RATE = 64.0f;
+	//線の太さ( ゲージを少し細くする ).
+	const float fLINE_WIDTH = 1.0f;
 
-//==============================================================.
+	//==============================================================.
 
-const char* sBLACK_PATH = "Data\\Image\\BlackScreen.png";
+	//ロード中文字.
+	const float fTEXT_SIZE = 8.0f;
+	const D3DXVECTOR2 vTEXT_POS = { 270.0f, WND_H * 0.5f + 30.0f };
+	const string sTEXT_MESSAGE = "Now Loading...";
+	const int iFLASH_RATE = 15;//点滅間隔.
 
-//==============================================================.
 
+	const string sCOMPLETE_MESSAGE = "Complete!";
+	const float fTEXT_POS_X_COMPLETE = 386.0f;
+
+	//==============================================================.
+
+	const char* sBLACK_PATH = "Data\\Image\\BlackScreen.png";
+
+	//==============================================================.
+
+	//ロゴ.
+	const WHSIZE_FLOAT LOGO_SIZE = { 960.0f, 640.0f };
+	const float fLOGO_SCALE_RATE = 0.5f;
+	const D3DXVECTOR3 vLOGO_SCALE = { LOGO_SIZE.w * fLOGO_SCALE_RATE, LOGO_SIZE.h * fLOGO_SCALE_RATE, 0.0f };
+	const char* sLOGO_PATH = "Data\\Image\\TitleUi\\TitleLogo.png";
+
+
+
+}
 
 clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(	
 	ID3D11Device*			 const pDevice,
@@ -132,6 +143,16 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 		m_upText->Create( pContext, WND_W, WND_H, fTEXT_SIZE );
 		m_upText->SetPos( vTEXT_POS );
 	}
+
+	if( !m_upLogo ){
+		m_upLogo = make_unique< clsSPRITE2D_CENTER >();
+		ss.Disp = LOGO_SIZE;
+		m_upLogo->Create( pDevice, pContext, sLOGO_PATH, ss );
+		const D3DXVECTOR3 vLOGO_POS = { static_cast<float>( WND_W ) * 0.5f, 250.0f, 0.0f };
+		m_upLogo->SetPos( vLOGO_POS );
+		m_upLogo->SetScale( { 0.0f, LOGO_SIZE.h, 0.0f } );
+	}
+
 
 #ifdef _DEBUG
 	ss.Disp = INIT_DISP;
@@ -305,6 +326,7 @@ void clsRENDER_AT_START_UP::Render( bool isLoop )
 		}
 
 #endif//#ifdef _DEBUG
+
 		m_upGageBox->Render();
 
 		for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
@@ -318,6 +340,8 @@ void clsRENDER_AT_START_UP::Render( bool isLoop )
 		}
 
 		m_upLineBox->Render();
+
+		m_upLogo->Render();
 
 		m_upText->Render();
 
@@ -384,8 +408,14 @@ void clsRENDER_AT_START_UP::BiggerLineBoxH()
 
 	m_upLineBox->AddSize( { fLINE_BOX_ADD_SIZE, 0.0f, 0.0f } );
 
+	m_upLogo->SetScale( { 
+		vLOGO_SCALE.x * ( m_upLineBox->GetSize().x / vLINE_BOX_SIZE.x ) / LOGO_SIZE.w, 
+		vLOGO_SCALE.y / LOGO_SIZE.h, 
+		0.0f } );
+
 	if( m_upLineBox->GetSize().x >= vLINE_BOX_SIZE.x ){
 		m_upLineBox->SetSize( { vLINE_BOX_SIZE.x, vLINE_BOX_SIZE.y, 1.0f } );
+		m_upLogo->SetScale( { vLOGO_SCALE.x / LOGO_SIZE.w, vLOGO_SCALE.y / LOGO_SIZE.h, 0.0f } );
 		m_enMode = enMODE::GAGE_H;
 		m_iTimer = 0;
 	}
