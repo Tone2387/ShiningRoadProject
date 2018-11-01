@@ -16,11 +16,24 @@ const char* sFONT_TEXT_PATH_ENDING = "Data\\Font\\Text\\TextEnding.csv";
 
 const string sSCROLL_START_NUM_TEXT = "ー　フリー音源　使用サイト　ー";
 
-
+//.
 const int iPOS_X_FILE_DATA_INDEX = 0;
 const int iPOS_Y_FILE_DATA_INDEX = 1;
 const int iSCALE_FILE_DATA_INDEX = 2;
 const int iALPHA_FILE_DATA_INDEX = 3;
+
+
+//黒背景.
+const char sBLACK_BACK_PATH[] = "Data\\Image\\BlackScreen.png";
+const WHSIZE_FLOAT BLACK_BACK_SIZE = { 1.0f, 1.0f };
+const D3DXVECTOR3 vBLACK_BACK_SCALE = { static_cast<float>( WND_W ), static_cast<float>( WND_H ), 0.0f };
+//ロゴ.
+const char sLOGO_PATH[] = "Data\\Image\\TitleUi\\TitleLogo.png";
+const WHSIZE_FLOAT LOGO_SIZE = { 960.0f, 640.0f };
+const D3DXVECTOR3 vLOGO_POS = { static_cast<float>( WND_W ) * 0.5f, static_cast<float>( WND_H ) * 0.5f, 0.0f };
+const D3DXVECTOR3 vLOGO_COLOR = { 1.0f, 1.0f, 1.0f };
+const float fLOGO_ALPHA = 0.375f;
+
 
 struct STAFF_TEXT_RENDER_NUM
 {
@@ -112,7 +125,29 @@ void clsSCENE_ENDING::CreateProduct()
 
 	File.Close();
 
-	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
+//	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
+
+	//背景.
+	SPRITE_STATE ss;
+	ss.Disp = BLACK_BACK_SIZE;
+	assert( !m_upBack );
+	m_upBack = make_unique< clsSprite2D >();
+	m_upBack->Create( m_wpDevice, m_wpContext, sBLACK_BACK_PATH, ss );
+	m_upBack->SetPos( { 0.0f, 0.0f, 0.0f } );
+	m_upBack->SetScale( vBLACK_BACK_SCALE );
+
+
+	//ロゴ.
+	ss.Disp = LOGO_SIZE;
+	assert( !m_upLogo );
+	m_upLogo = make_unique< clsSPRITE2D_CENTER >();	
+	m_upLogo->Create( m_wpDevice, m_wpContext, sLOGO_PATH, ss );
+	m_upLogo->SetPos( vLOGO_POS );
+	m_upLogo->SetColor( vLOGO_COLOR );
+	m_upLogo->SetAlpha( fLOGO_ALPHA );
+
+
+
 
 	m_wpCamera->SetPos( { 0.0f, 500.0f, -1.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
@@ -252,14 +287,21 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-	m_upStage->Render( m_mView, m_mProj, m_vLight, vCamPos );
+//	m_upStage->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }
 
 void clsSCENE_ENDING::RenderUi()
 {
+	assert( m_upBack );
+	m_upBack->Render();
+
+	assert( m_upLogo );
+	m_upLogo->Render();
+
 #ifdef CENTER_SPRITE_RENDER
 	g_upTex->Render();
 #endif//#ifdef CENTER_SPRITE_RENDER
+
 	int iTextIndex = 0;
 
 	for( unsigned int i=0; i<m_vecupTextStateAlpha.size(); i++  ){

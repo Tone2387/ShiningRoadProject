@@ -116,7 +116,7 @@ bool clsMENU_WINDOW_GAME_OVER_CONTINUE::CreateNextWindowProduct(
 	clsMENU_WINDOW_BASE** ppOutNextWindow, 
 	clsMENU_WINDOW_BASE* const pParentWindow ) 
 {
-//	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_CONTINUE( m_pPtrGroup, pParentWindow, m_puiInformationArray );
+//	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_CONTINUE( m_pPtrGroup, pParentWindow, m_pInformationVec );
 	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE( m_pPtrGroup, pParentWindow, m_pInformationVec );
 
 	if( *ppOutNextWindow ){

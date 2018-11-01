@@ -120,7 +120,7 @@ public:
 protected:
 
 	//継承先で使ってね.
-	virtual void CreateProduct();
+	virtual void CreateProduct( clsROBO_STATUS* const pStatus );
 	virtual void UpdateProduct();
 
 
@@ -162,7 +162,6 @@ protected:
 	std::unique_ptr< clsFACTORY_PARTS >	m_upPartsFactory;
 
 	//パーツの数分のポインタ.
-//	clsPARTS_BASE**	m_wppParts;
 	std::vector< clsPARTS_BASE* >	m_vpParts;
 
 

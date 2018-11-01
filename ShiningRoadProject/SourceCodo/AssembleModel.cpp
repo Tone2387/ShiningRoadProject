@@ -109,7 +109,7 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 
 	Init( pStatus );
 
-	CreateProduct();
+	CreateProduct( pStatus );
 
 #if _DEBUG
 	float fRATE = 2.5f;
@@ -129,7 +129,7 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 
 }
 
-void clsASSEMBLE_MODEL::CreateProduct()
+void clsASSEMBLE_MODEL::CreateProduct( clsROBO_STATUS* const pStatus )
 {
 }
 

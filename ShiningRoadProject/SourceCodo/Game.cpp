@@ -208,9 +208,12 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	SAFE_DELETE( m_spSound );
 
 	//ƒTƒEƒ“ƒh.
+
 	if( !bStartUp ){
 		m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
-		m_spSound->Create();
+		if( m_spSound ){
+			m_spSound->Create();
+		}
 	}
 	m_spPtrGroup->UpdateSoundPtr( m_spSound );
 

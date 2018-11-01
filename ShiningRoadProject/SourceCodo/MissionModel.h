@@ -90,7 +90,7 @@ private:
 	int CreateColStateBone( const enCOL_PARTS enColParts );
 
 	//CreateŠÖ”‚Ì’†‚É‚ ‚é.
-	void CreateProduct() override;
+	void CreateProduct( clsROBO_STATUS* const pStatus ) override;
 
 	//ƒ{[ƒ“î•ñ.
 	std::vector< BONE_SET > m_vColStates;
