@@ -102,7 +102,7 @@ const int iFONT_BUTTON_LINE = 0;
 
 //ズーム限界.
 const float fZOOM_RIMIT_MIN = -100.0f;
-const float fZOOM_RIMIT_MAX = 35.0f;
+const float fZOOM_RIMIT_MAX = 64.0f;
 
 
 
@@ -113,8 +113,8 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_spAsmModel( nullptr )
 	,m_pViewPortPartsWindow( nullptr )
 	,m_pViewPortRoboWindow( nullptr )
-	,m_fDistanceAssembleModel( 0.0f )
 	,m_enSelectMode( clsASSEMBLE_UI::enSELECT_MODE::PARTS )
+	,m_vRoboViewOffsetPos( { 0.0f, 0.0f, 0.0f } )
 {
 
 }
@@ -338,12 +338,13 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 #endif//#if _DEBUG
 
 
-	if( m_upMenu ){
-		MenuUpdate( enNextScene );
-	}
-	else{
-		//操作.
-		if( isCanControl ){
+	//操作.
+	if( isCanControl )
+	{
+		if( m_upMenu ){
+			MenuUpdate( enNextScene );
+		}
+		else{
 			//選択肢.
 			if( isPressHoldRight()	)MoveCursorRight();
 			if( isPressHoldLeft()	)MoveCursorLeft();
@@ -401,32 +402,12 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 					}
 				}
 			}
-		}
 
+		}
 	}
 
-	//モデル回転.
-	const float fMODEL_SPN_SPD = 0.05f;
-	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
-		m_spAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
-	}
-	if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
-		m_spAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
-	}
-	//モデルズーム.
-	const float fMODEL_MOVE_SPD = 5.0f;
-	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
-		m_fDistanceAssembleModel += fMODEL_MOVE_SPD;
-		if( m_fDistanceAssembleModel > fZOOM_RIMIT_MAX ){
-			m_fDistanceAssembleModel = fZOOM_RIMIT_MAX;
-		}
-	}
-	if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
-		m_fDistanceAssembleModel -= fMODEL_MOVE_SPD;
-		if( m_fDistanceAssembleModel < fZOOM_RIMIT_MIN ){
-			m_fDistanceAssembleModel = fZOOM_RIMIT_MIN;
-		}
-	}
+	//右スティックの動き( ロボの回転 ).
+	MoveRightStick();
 
 
 	assert( m_upUI );
@@ -456,10 +437,71 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 }
 
+//右スティックの動き( ロボの回転 ).
+void clsSCENE_ASSEMBLE::MoveRightStick()
+{
+	//スティックを押し込んでいるならカメラ移動.
+	if( m_wpXInput->isPressStay( XINPUT_RSTICK ) ){
+		const float fOFFSET_LIMIT_X = 25.0f;
+		const float fOFFSET_LIMIT_Y_UP = 25.0f;
+		const float fOFFSET_LIMIT_Y_DOWN = 50.0f;
+		const float fMODEL_MOVE_SPD = 1.5f;
+		if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+			m_vRoboViewOffsetPos.x += fMODEL_MOVE_SPD;
+			if( m_vRoboViewOffsetPos.x > fOFFSET_LIMIT_X ){
+				m_vRoboViewOffsetPos.x = fOFFSET_LIMIT_X;
+			}
+		}
+		if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+			m_vRoboViewOffsetPos.x -= fMODEL_MOVE_SPD;
+			if( m_vRoboViewOffsetPos.x < -fOFFSET_LIMIT_X ){
+				m_vRoboViewOffsetPos.x = -fOFFSET_LIMIT_X;
+			}
+		}
+		if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+			m_vRoboViewOffsetPos.y += fMODEL_MOVE_SPD;
+			if( m_vRoboViewOffsetPos.y > fOFFSET_LIMIT_Y_UP ){
+				m_vRoboViewOffsetPos.y = fOFFSET_LIMIT_Y_UP;
+			}
+		}
+		if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+			m_vRoboViewOffsetPos.y -= fMODEL_MOVE_SPD;
+			if( m_vRoboViewOffsetPos.y < -fOFFSET_LIMIT_Y_DOWN ){
+				m_vRoboViewOffsetPos.y = -fOFFSET_LIMIT_Y_DOWN;
+			}
+		}
+	}
+	//押し込んでいないなら回転とズーム.
+	else{
+		//モデル回転.
+		const float fMODEL_SPN_SPD = 0.05f;
+		if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+			m_spAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+		}
+		if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+			m_spAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+		}
+		//モデルズーム.
+		const float fMODEL_MOVE_SPD = 5.0f;
+		if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+			m_vRoboViewOffsetPos.z += fMODEL_MOVE_SPD;
+			if( m_vRoboViewOffsetPos.z > fZOOM_RIMIT_MAX ){
+				m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MAX;
+			}
+		}
+		if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+			m_vRoboViewOffsetPos.z -= fMODEL_MOVE_SPD;
+			if( m_vRoboViewOffsetPos.z < fZOOM_RIMIT_MIN ){
+				m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MIN;
+			}
+		}
+	}
+}
+
+
+
 void clsSCENE_ASSEMBLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-
-
 }
 
 void clsSCENE_ASSEMBLE::RenderUi()
@@ -475,9 +517,10 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	clsCAMERA_ASSEMBLE RoboViewCam;
 	RoboViewCam.Create();
 	RoboViewCam.SetPos( vROBO_VIEW_CAM_POS );;
-	RoboViewCam.AddPos( { 0.0f, 0.0f, m_fDistanceAssembleModel } );
+//	RoboViewCam.AddPos( { 0.0f, 0.0f, m_fDistanceAssembleModel } );
 	RoboViewCam.SetLookPos( vROBO_VIEW_CAM_LOOK );
 	RoboViewCam.AddPos( m_spAsmModel->GetBonePos( enPARTS::LEG, sBONE_NAME_LEG_TO_CORE ) );
+	RoboViewCam.AddPos( m_vRoboViewOffsetPos, true );
 
 
 	//背景.
