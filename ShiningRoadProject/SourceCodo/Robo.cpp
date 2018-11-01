@@ -227,6 +227,14 @@ void clsRobo::RoboInit(
 
 	SetBoostEffect();
 
+	//std::vector<D3DXVECTOR3> v_vColPos = *m_pMesh->GetColPosPtr();
+
+	/*Tmp.vCenter = &m_vCenterPos;
+	Tmp.fRadius = 0.1f;
+
+	m_v_Spheres.resize(Tmp);
+	m_v_Spheres.shrink_to_fit();*/
+
 	//m_fLockRange = 500.0f;//ロックオン距離.
 	m_fLockCircleRadius = 500.0f;//ロックオン判定の半径.
 
@@ -542,6 +550,11 @@ void clsRobo::UpdatePosfromBone()
 
 void clsRobo::ShotLWeapon()
 {
+	if (m_bStopComShotL)
+	{
+		return;
+	}
+
 	ShotSwich(enWeaponLHand);
 	if (IsEnelgyRamaining(m_v_pWeapons[enWeaponLHand]->GetShotEN()))
 	{
@@ -568,6 +581,11 @@ void clsRobo::ShotLWeapon()
 
 void clsRobo::ShotRWeapon()
 {
+	if (m_bStopComShotR)
+	{
+		return;
+	}
+
 	ShotSwich(enWeaponRHand);
 	if (IsEnelgyRamaining(m_v_pWeapons[enWeaponRHand]->GetShotEN()))
 	{
@@ -1424,6 +1442,8 @@ void clsRobo::AnimUpdateLeg()
 		if (m_bGround)
 		{
 			iChangeAnimNo = enAnimNoLegJumpEnd;
+			m_bStopComMove = true;
+			m_bStopComRot = true;
 		}
 
 		break;
@@ -1432,6 +1452,8 @@ void clsRobo::AnimUpdateLeg()
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
 		{
 			iChangeAnimNo = enAnimNoLegWait;
+			m_bStopComMove = false;
+			m_bStopComRot = false;
 		}
 
 		break;
@@ -1567,6 +1589,7 @@ void clsRobo::AnimUpdateArmL()
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
 		{
 			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+			m_bStopComShotL = false;
 		}
 
 		break;
@@ -1580,6 +1603,7 @@ void clsRobo::AnimUpdateArmL()
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
 		{
 			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+			m_bStopComShotL = false;
 		}
 
 		break;
@@ -1634,6 +1658,7 @@ void clsRobo::AnimUpdateArmR()
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
 		{
 			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+			m_bStopComShotR = false;
 		}
 
 		break;
@@ -1647,6 +1672,7 @@ void clsRobo::AnimUpdateArmR()
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
 		{
 			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+			m_bStopComShotR = false;
 		}
 
 		break;

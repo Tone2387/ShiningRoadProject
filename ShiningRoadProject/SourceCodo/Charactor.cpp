@@ -27,7 +27,7 @@ void clsCharactor::SetMoveDeceleSpeed(const int iMoveStopFrame)//Œ¸‘¬.
 
 void clsCharactor::AddMoveAccele(const float fAngle, const float fPush)
 {
-	if (!m_bStopComMove)
+	if (m_bStopComMove)
 	{
 		return;
 	}
@@ -203,7 +203,7 @@ void clsCharactor::SetRotDir(float fAngle)
 
 void clsCharactor::AddRotAccele(const float fAngle, const float fPush)
 {
-	if (!m_bStopComRot)
+	if (m_bStopComRot)
 	{
 		return;
 	}

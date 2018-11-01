@@ -147,19 +147,38 @@ int clsMISSION_MODEL::GetColNum( const enCOL_PARTS enColParts )
 	return -1;
 }
 
+vector< clsObject::SPHERE > clsMISSION_MODEL::GetColState()
+{
+	vector< clsObject::SPHERE > v_Sphere;
+
+	/*v_Sphere.resize(m_iColMax);
+
+	for (int i = 0; i<m_iColMax; i++){
+
+		v_Sphere[i].vCenter = &m_vvColPos[i];
+		v_Sphere[i].fRadius = &GetRobo
+
+
+	}*/
+
+	return v_Sphere;
+}
+
 //当たり判定の座標の配列をすべて返す.
-shared_ptr< vector< D3DXVECTOR3 > > clsMISSION_MODEL::GetColPosPtr()
+void clsMISSION_MODEL::GetColPosPtr()
 {
 	for( int i=0; i<m_iColMax; i++ ){
 		//ボーンの座標を取得.
-		m_vvColPos[i] = GetBonePos( 
+		/*m_vvColPos[i] = GetBonePos( 
 			static_cast< enPARTS >( m_vColStates[i].iParts ), 
-			m_vColStates[i].sName.c_str() );
+			m_vColStates[i].sName.c_str() );*/
+
+		//m_vvColPos[i] = GetBonePosPreviosFrame(static_cast<clsASSEMBLE_MODEL::enPARTS_INDEX>(m_vColStates[i].iParts), ;
+		
+		
 	}
 
-	shared_ptr< vector< D3DXVECTOR3 > > spvvReturn( &m_vvColPos );
-
-	return spvvReturn;
+	//shared_ptr< vector< D3DXVECTOR3 > > spvvReturn( &m_vvColPos );
 }
 
 int clsMISSION_MODEL::GetSimilarityNameBoneNum(const enPARTS PartsNum, const char* strBoneName)

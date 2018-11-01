@@ -18,13 +18,13 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 
 	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
 
-	clsObject::SPHERE Tmp;
+	/*clsObject::SPHERE Tmp;
 
 	Tmp.vCenter = &m_vCenterPos;
 	Tmp.fRadius = 0.1f;
 
 	m_v_Spheres.push_back(Tmp);
-	m_v_Spheres.shrink_to_fit();
+	m_v_Spheres.shrink_to_fit();*/
 
 	m_vCamPosDivia = m_Trans.vPos - m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
 }

@@ -55,7 +55,9 @@ public:
 		const int iVecNum = 0);
 
 	//当たり判定の座標の配列をすべて返す.
-	std::shared_ptr< std::vector< D3DXVECTOR3 > > GetColPosPtr();
+	std::vector< clsObject::SPHERE > GetColState();
+
+	void GetColPosPtr();
 
 	//指定したパーツの回転値を変更する.
 	void SetPartsRotate(const enPARTS PartsNum, const D3DXVECTOR3 vRot);
