@@ -4,18 +4,20 @@
 
 using namespace std;
 
-const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide.png";
-const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop.png";
+
+namespace{
+	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide.png";
+	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop.png";
 
 
-const int iRESURVE_NUM = 256;
+	const int iRESURVE_NUM = 256;
 
-const D3DXVECTOR3 vTILE_SIZE_MIN = { 25.0f, 25.0f, 1.0f };
-const D3DXVECTOR3 vTILE_SIZE_MAX = { 30.0f, 30.0f, 1.0f };
+	const D3DXVECTOR3 vTILE_SIZE_MIN = { 25.0f, 25.0f, 1.0f };
+	const D3DXVECTOR3 vTILE_SIZE_MAX = { 30.0f, 30.0f, 1.0f };
 
-//ë§ñ ÇÃforï∂ÇÃëùâ¡ó .
-const int iSIDE_TILE_COUNT_NUM = 2;
-
+	//ë§ñ ÇÃforï∂ÇÃëùâ¡ó .
+	const int iSIDE_TILE_COUNT_NUM = 2;
+}
 
 clsBUILDING::clsBUILDING( 
 		ID3D11Device* const pDevice11,

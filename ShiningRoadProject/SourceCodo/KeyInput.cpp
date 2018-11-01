@@ -8,25 +8,34 @@
 
 using namespace std;
 
+
+namespace{
+
 #ifdef IS_ALL_KEY
-const unsigned short enKEY_size = 256;
+
+	const unsigned short enKEY_size = 256;
+
 #else//#ifdef IS_ALL_KEY
-//使うキー.
-enum enKEY : unsigned char
-{
-	enKEY_UP = 0,
-	enKEY_DOWN,
-	enKEY_RIGHT,
-	enKEY_LEFT,
 
-	enKEY_Z,
-	enKEY_SPACE,
+	//使うキー.
+	enum enKEY : unsigned char
+	{
+		enKEY_UP = 0,
+		enKEY_DOWN,
+		enKEY_RIGHT,
+		enKEY_LEFT,
 
-	enKEY_ESCAPE,
+		enKEY_Z,
+		enKEY_SPACE,
 
-	enKEY_size
-};
+		enKEY_ESCAPE,
+
+		enKEY_size
+	};
+
 #endif//#ifdef IS_ALL_KEY
+
+}
 
 
 clsKEY_INPUT::clsKEY_INPUT()

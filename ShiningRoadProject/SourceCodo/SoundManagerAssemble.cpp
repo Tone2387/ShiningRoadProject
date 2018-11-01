@@ -2,9 +2,12 @@
 
 using namespace std;
 
-//このシーンのファイルにつなげるファイル名.
-const string sDATA_PASS = "Assemble";
+namespace{
 
+	//このシーンのファイルにつなげるファイル名.
+	const string sDATA_PASS = "Assemble";
+
+}
 
 clsSOUND_MANAGER_ASSEMBLE::clsSOUND_MANAGER_ASSEMBLE( const HWND hWnd )	: clsSOUND_MANAGER_BASE( hWnd )
 {

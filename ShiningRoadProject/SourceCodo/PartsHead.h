@@ -5,7 +5,7 @@
 #include "PartsBase.h"
 
 //----- “ª -----//.
-#define sBONE_NAME_HEAD_CENTER		"Center"
+#define sBONE_NAME_HEAD_CENTER "Center"
 
 
 class clsPARTS_HEAD : public clsPARTS_BASE

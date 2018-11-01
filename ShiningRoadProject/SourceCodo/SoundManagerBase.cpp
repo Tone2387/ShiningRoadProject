@@ -7,34 +7,38 @@
 
 using namespace std;
 
-const unsigned int uiRESERVE_SIZE_BGM = 16;
-const unsigned int uiRESERVE_SIZE_SE = 256;
-const unsigned int uiRESURVE_SIZE_MAX = 8;	//同時再生数.
+namespace{
+
+	const unsigned int uiRESERVE_SIZE_BGM = 16;
+	const unsigned int uiRESERVE_SIZE_SE = 256;
+	const unsigned int uiRESURVE_SIZE_MAX = 8;	//同時再生数.
 
 
-//添え字.
-const char cALIAS_NUM = 0;	//エイリアス名.
-const char cPATH_NUM = 1;	//音声データのファイルパス.
-const char cVOLUME_NUM = 2;	//最大音量.
-const char cMAX_NUM = 3;	//同時再生可能数.
+	//添え字.
+	const char cALIAS_NUM = 0;	//エイリアス名.
+	const char cPATH_NUM = 1;	//音声データのファイルパス.
+	const char cVOLUME_NUM = 2;	//最大音量.
+	const char cMAX_NUM = 3;	//同時再生可能数.
 
-//ファイルクラスのパス用.
-const string sDATA_PASS = "Data\\Sound\\Data\\";
-const string sBGM_PASS = "BGM.csv";
-const string sSE_PASS = "SE.csv";
-const string sSUB_PASS_BGM = "BGM\\";
-const string sSUB_PASS_SE = "SE\\";
+	//ファイルクラスのパス用.
+	const string sDATA_PASS = "Data\\Sound\\Data\\";
+	const string sBGM_PASS = "BGM.csv";
+	const string sSE_PASS = "SE.csv";
+	const string sSUB_PASS_BGM = "BGM\\";
+	const string sSUB_PASS_SE = "SE\\";
 
-//サウンドクラスへ指示を出す際にvectorの範囲を超えていたら、だめですとおしかりをくれるマクロ.
-#define SOUND_NUMBER_OVER_SHECK(no,vp) \
-if( (no) >= static_cast<int>( (vp).size() ) ){\
-	assert( !"指定された番号のBGMは存在しません" );\
-	return false;\
-}
+	//サウンドクラスへ指示を出す際にvectorの範囲を超えていたら、だめですとおしかりをくれるマクロ.
+	#define SOUND_NUMBER_OVER_SHECK(no,vp) \
+	if( (no) >= static_cast<int>( (vp).size() ) ){\
+		assert( !"指定された番号のBGMは存在しません" );\
+		return false;\
+	}
 	
 
-//ループフラグの初期化.
-const bool bLOOP_INIT = false;
+	//ループフラグの初期化.
+	const bool bLOOP_INIT = false;
+
+}
 
 
 clsSOUND_MANAGER_BASE::clsSOUND_MANAGER_BASE( const HWND hWnd )

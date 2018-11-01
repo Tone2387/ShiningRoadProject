@@ -2,51 +2,56 @@
 
 #include "OperationString.h"
 
+using namespace std;
+
 //legのモデルの足元がおかしい場合.
 #define LEG_MODEL_POSITION_BASE_Y_OFFSET
 
+
+namespace{
+
 #if _DEBUG
 #include "CharaStatic.h"
-	//足元.
-	std::unique_ptr<clsCharaStatic> m_upFoot;
-	std::unique_ptr<clsCharaStatic> m_upFootNull;
+		//足元.
+		std::unique_ptr<clsCharaStatic> m_upFoot;
+		std::unique_ptr<clsCharaStatic> m_upFootNull;
 
 #endif//#if _DEBUG
 
-using namespace std;
 
-//配列の添え字.
-const UCHAR ucLEG = static_cast<UCHAR>( enPARTS::LEG );
-const UCHAR ucCORE = static_cast<UCHAR>( enPARTS::CORE );
-const UCHAR ucHEAD = static_cast<UCHAR>( enPARTS::HEAD );
-const UCHAR ucARM_L = static_cast<UCHAR>( enPARTS::ARM_L );
-const UCHAR ucARM_R = static_cast<UCHAR>( enPARTS::ARM_R );
-const UCHAR ucWEAPON_L = static_cast<UCHAR>( enPARTS::WEAPON_L );
-const UCHAR ucWEAPON_R = static_cast<UCHAR>( enPARTS::WEAPON_R );
+	//配列の添え字.
+	const UCHAR ucLEG = static_cast<UCHAR>( enPARTS::LEG );
+	const UCHAR ucCORE = static_cast<UCHAR>( enPARTS::CORE );
+	const UCHAR ucHEAD = static_cast<UCHAR>( enPARTS::HEAD );
+	const UCHAR ucARM_L = static_cast<UCHAR>( enPARTS::ARM_L );
+	const UCHAR ucARM_R = static_cast<UCHAR>( enPARTS::ARM_R );
+	const UCHAR ucWEAPON_L = static_cast<UCHAR>( enPARTS::WEAPON_L );
+	const UCHAR ucWEAPON_R = static_cast<UCHAR>( enPARTS::WEAPON_R );
 
-//パーツ種類の数.
-const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
-//パーツ名を渡すため.
-const string sPARTS_NAME[ucPARTS_MAX] =
-{
-	"Leg", "Core", "Head", "ArmL", "ArmR", "WeaponL", "WeaponR"
-};
-
+	//パーツ種類の数.
+	const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
+	//パーツ名を渡すため.
+	const string sPARTS_NAME[ucPARTS_MAX] =
+	{
+		"Leg", "Core", "Head", "ArmL", "ArmR", "WeaponL", "WeaponR"
+	};
 
 
-const double dANIM_SPD = 0.016;
+
+	const double dANIM_SPD = 0.016;
 
 
-//パーツ透過値.
-const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
-const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
+	//パーツ透過値.
+	const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
+	const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
 
-//色変更のマスク種類.
-const int iMASK_MAX_NUM = 2;
+	//色変更のマスク種類.
+	const int iMASK_MAX_NUM = 2;
 
-//色の段階.gradation
-const int iCOLOR_GRADATION_MAX = 16;
-const int iCOLOR_GRADATION_MIN = 1;
+	//色の段階.gradation
+	const int iCOLOR_GRADATION_MAX = 16;
+	const int iCOLOR_GRADATION_MIN = 1;
+}
 
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()

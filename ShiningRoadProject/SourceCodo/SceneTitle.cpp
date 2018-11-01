@@ -7,34 +7,37 @@
 using namespace std;
 
 
-const float fROBO_SCALE = 0.5f;
-const float fBACK_SCALE = 1.0f;
+namespace{
 
-//ロゴ.
-const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
-const WHSIZE_FLOAT INIT_LOGO_SIZE = { 960.0f, 640.0f };
-const D3DXVECTOR3 vINIT_LOGO_POS = { 53.0f, 75.0f, 0.0f };
-const float fINIT_LOGO_SCALE = 0.682451844f;
-//ロボ.
-const float fROBO_YAW = static_cast<float>( M_PI_4 ) * 0.75f;
+	const float fROBO_SCALE = 0.5f;
+	const float fBACK_SCALE = 1.0f;
 
-//フラッシュ.
-const char* sFLASH_PATH = "Data\\Image\\TitleUi\\Flash.png";
-const float fFLASH_DOWN = -0.05f;
+	//ロゴ.
+	const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
+	const WHSIZE_FLOAT INIT_LOGO_SIZE = { 960.0f, 640.0f };
+	const D3DXVECTOR3 vINIT_LOGO_POS = { 53.0f, 75.0f, 0.0f };
+	const float fINIT_LOGO_SCALE = 0.682451844f;
+	//ロボ.
+	const float fROBO_YAW = static_cast<float>( M_PI_4 ) * 0.75f;
+
+	//フラッシュ.
+	const char* sFLASH_PATH = "Data\\Image\\TitleUi\\Flash.png";
+	const float fFLASH_DOWN = -0.05f;
 
 
-////日本語UI.
-const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
+	////日本語UI.
+	const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
 
-//ボタンを押してね.
-const float fPLESS_START_SCALE = 16.0f;
-const D3DXVECTOR3 vPLESS_START_POS = {
-	300, 
-	static_cast<float>( WND_H ) * 0.75f ,
-	0.0f
-};
-const int iPLESS_START_MESSAGE_INDEX = 0;
+	//ボタンを押してね.
+	const float fPLESS_START_SCALE = 16.0f;
+	const D3DXVECTOR3 vPLESS_START_POS = {
+		300, 
+		static_cast<float>( WND_H ) * 0.75f ,
+		0.0f
+	};
+	const int iPLESS_START_MESSAGE_INDEX = 0;
 
+}
 
 //================================//
 //========== タイトルクラス ==========//

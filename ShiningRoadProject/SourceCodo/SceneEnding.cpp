@@ -2,54 +2,56 @@
 #include "File.h"
 using namespace std;
 
-//つけていると背景に真ん中がわかるものを出す.
+namespace{
+
+	//つけていると背景に真ん中がわかるものを出す.
 //#define CENTER_SPRITE_RENDER
 #ifdef CENTER_SPRITE_RENDER
-unique_ptr<clsSprite2D> g_upTex;
+	unique_ptr<clsSprite2D> g_upTex;
 #endif//#ifdef CENTER_SPRITE_RENDER
 
-const int iINTERVAL_CNT = 120;
+	const int iINTERVAL_CNT = 120;
 
 
-const char* sSTAFF_ROLL_STATUS_DATA_PATH = "Data\\FileData\\Tahara\\EndingStaffRollTransform.csv";
-const char* sFONT_TEXT_PATH_ENDING = "Data\\Font\\Text\\TextEnding.csv";
+	const char* sSTAFF_ROLL_STATUS_DATA_PATH = "Data\\FileData\\Tahara\\EndingStaffRollTransform.csv";
+	const char* sFONT_TEXT_PATH_ENDING = "Data\\Font\\Text\\TextEnding.csv";
 
-const string sSCROLL_START_NUM_TEXT = "ー　フリー音源　使用サイト　ー";
+	const string sSCROLL_START_NUM_TEXT = "ー　フリー音源　使用サイト　ー";
 
-//.
-const int iPOS_X_FILE_DATA_INDEX = 0;
-const int iPOS_Y_FILE_DATA_INDEX = 1;
-const int iSCALE_FILE_DATA_INDEX = 2;
-const int iALPHA_FILE_DATA_INDEX = 3;
-
-
-//黒背景.
-const char sBLACK_BACK_PATH[] = "Data\\Image\\BlackScreen.png";
-const WHSIZE_FLOAT BLACK_BACK_SIZE = { 1.0f, 1.0f };
-const D3DXVECTOR3 vBLACK_BACK_SCALE = { static_cast<float>( WND_W ), static_cast<float>( WND_H ), 0.0f };
-//ロゴ.
-const char sLOGO_PATH[] = "Data\\Image\\TitleUi\\TitleLogo.png";
-const WHSIZE_FLOAT LOGO_SIZE = { 960.0f, 640.0f };
-const D3DXVECTOR3 vLOGO_POS = { static_cast<float>( WND_W ) * 0.5f, static_cast<float>( WND_H ) * 0.5f, 0.0f };
-const D3DXVECTOR3 vLOGO_COLOR = { 1.0f, 1.0f, 1.0f };
-const float fLOGO_ALPHA = 0.375f;
+	//.
+	const int iPOS_X_FILE_DATA_INDEX = 0;
+	const int iPOS_Y_FILE_DATA_INDEX = 1;
+	const int iSCALE_FILE_DATA_INDEX = 2;
+	const int iALPHA_FILE_DATA_INDEX = 3;
 
 
-struct STAFF_TEXT_RENDER_NUM
-{
-	unsigned int uiIndex;//何番の時に.
-	unsigned int uiNum;	//いくつ同時に描画する?.
-};
+	//黒背景.
+	const char sBLACK_BACK_PATH[] = "Data\\Image\\BlackScreen.png";
+	const WHSIZE_FLOAT BLACK_BACK_SIZE = { 1.0f, 1.0f };
+	const D3DXVECTOR3 vBLACK_BACK_SCALE = { static_cast<float>( WND_W ), static_cast<float>( WND_H ), 0.0f };
+	//ロゴ.
+	const char sLOGO_PATH[] = "Data\\Image\\TitleUi\\TitleLogo.png";
+	const WHSIZE_FLOAT LOGO_SIZE = { 960.0f, 640.0f };
+	const D3DXVECTOR3 vLOGO_POS = { static_cast<float>( WND_W ) * 0.5f, static_cast<float>( WND_H ) * 0.5f, 0.0f };
+	const D3DXVECTOR3 vLOGO_COLOR = { 1.0f, 1.0f, 1.0f };
+	const float fLOGO_ALPHA = 0.375f;
 
-const int iSTAFF_TEXT_RENDER_NUM_MAX = 3;
-const STAFF_TEXT_RENDER_NUM STAFF_ROLL_PROGRAMR = { 1, 3 };
-const STAFF_TEXT_RENDER_NUM STAFF_ROLL_GRAPHICR = { 4, 2 };
-const STAFF_TEXT_RENDER_NUM STAFF_ROLL_SPECIAL =  { 6, 2 };
-const STAFF_TEXT_RENDER_NUM STAFF_TEXT_NUM_ARRAY[ iSTAFF_TEXT_RENDER_NUM_MAX ]=
-{ STAFF_ROLL_PROGRAMR, STAFF_ROLL_GRAPHICR, STAFF_ROLL_SPECIAL };
 
-//const float fSCROLL_END_POS_Y = 1;
+	struct STAFF_TEXT_RENDER_NUM
+	{
+		unsigned int uiIndex;//何番の時に.
+		unsigned int uiNum;	//いくつ同時に描画する?.
+	};
 
+	const int iSTAFF_TEXT_RENDER_NUM_MAX = 3;
+	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_PROGRAMR = { 1, 3 };
+	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_GRAPHICR = { 4, 2 };
+	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_SPECIAL =  { 6, 2 };
+	const STAFF_TEXT_RENDER_NUM STAFF_TEXT_NUM_ARRAY[ iSTAFF_TEXT_RENDER_NUM_MAX ]=
+	{ STAFF_ROLL_PROGRAMR, STAFF_ROLL_GRAPHICR, STAFF_ROLL_SPECIAL };
+
+	//const float fSCROLL_END_POS_Y = 1;
+}
 
 //================================//
 //========== エンディングクラス ==========//

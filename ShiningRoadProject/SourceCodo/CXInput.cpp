@@ -3,18 +3,22 @@
 #include <math.h>
 
 
-//スティックの倒し具合.
-const float fSLOPE_MAX = 1.0f;
-const float fSLOPE_MIN = 0.0f;
+namespace{
 
-//十字キーが押されている扱いする倒し具合.
-const float fSLOPE_PRESS = 0.85f;
+	//スティックの倒し具合.
+	const float fSLOPE_MAX = 1.0f;
+	const float fSLOPE_MIN = 0.0f;
 
-//日吉君のDxInputとのすり合わせ( スティックの角度を[0～360]->[-180～180]にする ).
+	//十字キーが押されている扱いする倒し具合.
+	const float fSLOPE_PRESS = 0.85f;
+
+	//日吉君のDxInputとのすり合わせ( スティックの角度を[0～360]->[-180～180]にする ).
 #ifdef HIYOSHI_DX_INPUT
-//DIFF : difference = 差.
-const float fDIFF_HIYOSHI_DX_INPUT_DIR = static_cast<float>( M_PI );
+	//DIFF : difference = 差.
+	const float fDIFF_HIYOSHI_DX_INPUT_DIR = static_cast<float>( M_PI );
 #endif//#ifdef HIYOSHI_DX_INPUT
+
+}
 
 
 clsXInput::clsXInput()

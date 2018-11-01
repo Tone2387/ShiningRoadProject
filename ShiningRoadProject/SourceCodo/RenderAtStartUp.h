@@ -78,6 +78,9 @@ private:
 
 	std::unique_ptr< clsBLACK_SCREEN > m_upBlack;
 
+	//ロゴ.
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
+
 	//ロード中メッセージ.
 	std::unique_ptr< clsUiText > m_upText;
 	std::string m_sLodeMsg;
