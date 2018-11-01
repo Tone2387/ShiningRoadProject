@@ -162,7 +162,6 @@ protected:
 	std::unique_ptr< clsFACTORY_PARTS >	m_upPartsFactory;
 
 	//パーツの数分のポインタ.
-//	clsPARTS_BASE**	m_wppParts;
 	std::vector< clsPARTS_BASE* >	m_vpParts;
 
 

@@ -5,7 +5,7 @@
 #include "SceneBase.h"
 #include "CameraEnding.h"
 
-#include "Stage.h"
+//#include "Stage.h"
 
 
 //================================//
@@ -53,7 +53,14 @@ private:
 	//スタッフロール透過文字の同時表示数.
 	unsigned int m_uiRenderTextNum;
 
-	std::unique_ptr< clsStage >	m_upStage;//テスト用.
+//	std::unique_ptr< clsStage >	m_upStage;//テスト用.
+
+
+
+
+
+	std::unique_ptr< clsSprite2D > m_upBack;
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
 
 #if _DEBUG
 	//デバック゛テキストの表示.
