@@ -7,7 +7,6 @@
 #include "PartsArmR.h"
 #include "PartsWeapon.h"
 
-#include "File.h"
 #include "OperationString.h"
 
 using namespace std;
@@ -17,52 +16,39 @@ namespace{
 	const int iCOLOR_RANK_INIT = 16;
 
 
-	const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\RoboStatusCsvData\\RoboStatusHero.csv";
-	const int iFILE_VAR_ROW = 0;//一行しか存在しない.
-	const int iFILE_INDEX_LEG			= 0;
-	const int iFILE_INDEX_CORE			= 1;
-	const int iFILE_INDEX_HEAD			= 2;
-	const int iFILE_INDEX_ARM_L			= 3;
-	const int iFILE_INDEX_ARM_R			= 4;
-	const int iFILE_INDEX_WEAPON_L		= 5;
-	const int iFILE_INDEX_WEAPON_R		= 6;
-	const int iFILE_INDEX_COLOR_ARMOR_R = 7;
-	const int iFILE_INDEX_COLOR_ARMOR_G = 8;
-	const int iFILE_INDEX_COLOR_ARMOR_B = 9;
-	const int iFILE_INDEX_COLOR_BASE_R	= 10;
-	const int iFILE_INDEX_COLOR_BASE_G	= 11;
-	const int iFILE_INDEX_COLOR_BASE_B	= 12;
 
 }
 
 
 
 clsROBO_STATUS::clsROBO_STATUS()
-{
+	:m_iFILE_VAR_ROW( 0 )//一行しか存在しない.
+	,m_iFILE_INDEX_COL_LEG( 0 )
+	,m_iFILE_INDEX_COL_CORE( 1 )
+	,m_iFILE_INDEX_COL_HEAD( 2 )
+	,m_iFILE_INDEX_COL_ARM_L( 3 )
+	,m_iFILE_INDEX_COL_ARM_R( 4 )
+	,m_iFILE_INDEX_COL_WEAPON_L( 5 )
+	,m_iFILE_INDEX_COL_WEAPON_R( 6 )
+	,m_iFILE_INDEX_COL_COLOR_ARMOR_R( 7 )
+	,m_iFILE_INDEX_COL_COLOR_ARMOR_G( 8 )
+	,m_iFILE_INDEX_COL_COLOR_ARMOR_B( 9 )
+	,m_iFILE_INDEX_COL_COLOR_BASE_R( 10 )
+	,m_iFILE_INDEX_COL_COLOR_BASE_G( 11 )
+	,m_iFILE_INDEX_COL_COLOR_BASE_B( 12 )
+{	 
 	Clear();
 
-	clsFILE File;
-	bool isOpened = File.Open( sROBO_STATUS_HERO_PATH );
 
-	if( !isOpened ){
-		ERR_MSG( 
-			sROBO_STATUS_HERO_PATH, 
-			"データがありません。\
-			ドライブからデータをDLして、以下のパスに入れてください" );
-	}
-
-	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
+	UCHAR tmpSize = sizeof( m_RoboStateData.ucPartsModelNum ) / sizeof( m_RoboStateData.ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
-		m_ucPartsModelNumHero[i] = File.GetDataInt( iFILE_VAR_ROW, static_cast<int>( i ) );
-		m_ucPartsModelNum[i] = m_ucPartsModelNumHero[i];
+		m_RoboStateData.ucPartsModelNum[i] = 0;
 	}
 
 	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
-		m_iColorRankHero[i] = File.GetDataInt( iFILE_VAR_ROW, static_cast<int>( i ) + iFILE_INDEX_COLOR_ARMOR_R );
-		m_iColorRank[i] = m_iColorRankHero[i];
+		m_RoboStateData.iColorRank[i] = iCOLOR_RANK_INIT;
 	}
 
-	File.Close();
 }
 
 clsROBO_STATUS::~clsROBO_STATUS()
@@ -85,15 +71,15 @@ void clsROBO_STATUS::Clear()
 		m_iRoboHp[i] = 0;
 	}
 	
-//	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
+//	UCHAR tmpSize = sizeof( m_RoboStateData.ucPartsModelNum ) / sizeof( m_RoboStateData.ucPartsModelNum[0] );
 //	for( UCHAR i=0; i<tmpSize; i++ ){
-//		m_ucPartsModelNum[i] = 0;
-////		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];//ヒーローに手は出さない.
+//		m_RoboStateData.ucPartsModelNum[i] = 0;
+////		m_ucPartsModelNumHero[i] = m_RoboStateData.ucPartsModelNum[i];//ヒーローに手は出さない.
 //	}
 //
 //	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
-//		m_iColorRank[i] = iCOLOR_RANK_INIT;
-////		m_iColorRankHero[i] = m_iColorRank[i];
+//		m_RoboStateData.iColorRank[i] = iCOLOR_RANK_INIT;
+////		m_iColorRankHero[i] = m_RoboStateData.iColorRank[i];
 //	}
 
 }
@@ -139,51 +125,9 @@ int clsROBO_STATUS::GetWeaponState(
 //パーツ番号を返す( いま装備しているパーツが何番か ).
 UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType )
 {
-	return m_ucPartsModelNum[ static_cast<int>( PartsType ) ];
+	return m_RoboStateData.ucPartsModelNum[ static_cast<int>( PartsType ) ];
 }
 
-
-//クリア画面で使う : タイトル用の初期化用.
-void clsROBO_STATUS::SaveHeroData()
-{
-	const string InitString;
-	clsOPERATION_STRING OprtStr;
-	clsFILE::FILE_DATA FileData;
-	clsFILE File;
-	const int iOUT_DATA_ROW_SIZE = 1 + iFILE_VAR_ROW;
-	const int iOUT_DATA_COL_SIZE = 1 + iFILE_INDEX_COLOR_BASE_B;
-	File.CreateFileDataForOutPut( FileData, iOUT_DATA_ROW_SIZE, iOUT_DATA_COL_SIZE );
-
-	int iFileDataIndex = 0;
-
-	UCHAR tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
-	for( UCHAR i=0; i<tmpSize; i++ ){
-		m_ucPartsModelNumHero[i] = m_ucPartsModelNum[i];
-		FileData[0][ iFileDataIndex++ ] = OprtStr.ConsolidatedNumber( InitString, m_ucPartsModelNumHero[i] );
-	}
-	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
-		m_iColorRankHero[i] = m_iColorRank[i];
-		FileData[0][ iFileDataIndex++ ] = OprtStr.ConsolidatedNumber( InitString, m_iColorRankHero[i] );
-	}
-
-
-	File.Open( sROBO_STATUS_HERO_PATH );
-	File.OutPutCsv( FileData );
-	File.Close();
-}
-
-//AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
-void clsROBO_STATUS::LodeHeroData()
-{
-	int tmpSize = sizeof( m_ucPartsModelNum ) / sizeof( m_ucPartsModelNum[0] );
-	for( int i=0; i<tmpSize; i++ ){
-		m_ucPartsModelNum[i] = m_ucPartsModelNumHero[i];
-	}
-	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
-		m_iColorRank[i] = m_iColorRankHero[i];
-	}
-
-}
 
 
 //データの受け取り.
@@ -202,7 +146,7 @@ void clsROBO_STATUS::ReceiveLeg( const vector<int> &LegDatas, const ASSEMBLE_SCE
 
 	m_iRoboState[enROBO_STATE::COL_SIZE_LEG] = LegDatas[clsPARTS_LEG::COL_SIZE];//当たり判定サイズ.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::LEG ) ] = static_cast<UCHAR>( PartsNum );
+	m_RoboStateData.ucPartsModelNum[ static_cast<int>( enPARTS::LEG ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveCore( const vector<int> &CoreDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -223,7 +167,7 @@ void clsROBO_STATUS::ReceiveCore( const vector<int> &CoreDatas, const ASSEMBLE_S
 
 	m_iRoboState[enROBO_STATE::COL_SIZE_CORE]	= CoreDatas[clsPARTS_CORE::COL_SIZE];	//当たり判定サイズ.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::CORE ) ] = static_cast<UCHAR>( PartsNum );
+	m_RoboStateData.ucPartsModelNum[ static_cast<int>( enPARTS::CORE ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveHead( const vector<int> &HeadDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -240,7 +184,7 @@ void clsROBO_STATUS::ReceiveHead( const vector<int> &HeadDatas, const ASSEMBLE_S
 
 	m_iRoboState[enROBO_STATE::COL_SIZE_HEAD]= HeadDatas[clsPARTS_HEAD::COL_SIZE];	//当たり判定サイズ.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::HEAD ) ] = static_cast<UCHAR>( PartsNum );
+	m_RoboStateData.ucPartsModelNum[ static_cast<int>( enPARTS::HEAD ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveArms( const vector<int> &ArmsDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -258,8 +202,8 @@ void clsROBO_STATUS::ReceiveArms( const vector<int> &ArmsDatas, const ASSEMBLE_S
 
 	m_iRoboState[enROBO_STATE::COL_SIZE_ARMS] = ArmsDatas[clsPARTS_ARM_BASE::COL_SIZE]; //当たり判定サイズ.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::ARM_L ) ] = static_cast<UCHAR>( PartsNum );
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::ARM_R ) ] = static_cast<UCHAR>( PartsNum );
+	m_RoboStateData.ucPartsModelNum[ static_cast<int>( enPARTS::ARM_L ) ] = static_cast<UCHAR>( PartsNum );
+	m_RoboStateData.ucPartsModelNum[ static_cast<int>( enPARTS::ARM_R ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -286,7 +230,7 @@ void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas, const ASSE
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::SE_FIER]		= WeaponLDatas[clsPARTS_WEAPON::SE_FIER];	//発射SE.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::SE_HIT]		= WeaponLDatas[clsPARTS_WEAPON::SE_HIT];	//着弾のSE.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_L ) ] = static_cast<UCHAR>( PartsNum );
+	m_RoboStateData.ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_L ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum )
@@ -313,7 +257,7 @@ void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSE
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::SE_FIER]	= WeaponRDatas[clsPARTS_WEAPON::SE_FIER];	//発射SE.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::SE_HIT]		= WeaponRDatas[clsPARTS_WEAPON::SE_HIT];	//着弾のSE.
 
-	m_ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_R ) ] = static_cast<UCHAR>( PartsNum );
+	m_RoboStateData.ucPartsModelNum[ static_cast<int>( enPARTS::WEAPON_R ) ] = static_cast<UCHAR>( PartsNum );
 }
 
 
@@ -324,7 +268,7 @@ void clsROBO_STATUS::SetColorRank(
 {
 	assert( enColorNum >= 0  );
 	assert( enColorNum < enCOLOR_GAGE_size );
-	m_iColorRank[ enColorNum ] = iColorRate;
+	m_RoboStateData.iColorRank[ enColorNum ] = iColorRate;
 }
 
 
@@ -332,5 +276,5 @@ int clsROBO_STATUS::GetColorRank( const enCOLOR_GAGE enColorNum )
 {
 	assert( enColorNum >= 0  );
 	assert( enColorNum < enCOLOR_GAGE_size );
-	return m_iColorRank[ enColorNum ];
+	return m_RoboStateData.iColorRank[ enColorNum ];
 }

@@ -124,17 +124,23 @@ public:
 	//パーツ番号を返す( いま装備しているパーツが何番か ).//#define SKIN_ENUM_TYPE UCHAR.
 	UCHAR GetPartsNum( const enPARTS PartsType );
 
-	//クリア画面で使う : タイトル用の初期化用のデータを用意する : クリアしたロボを覚えておく.
-	void SaveHeroData();
-
-	//AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
-	void LodeHeroData();
 
 	//色フラグのやり取り.
 	void SetColorRank( const enCOLOR_GAGE enColorNum, const int iColorRate );
 	int GetColorRank( const enCOLOR_GAGE enColorNum );
 
 protected:
+
+	//シーンをまたいで必要なロボのデータ.
+	struct ROBO_STATE_DATA
+	{
+		//パーツ番号の配列.
+		UCHAR ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
+
+		//色の段階.
+		int iColorRank[ enCOLOR_GAGE_size ];
+	}	m_RoboStateData;
+
 
 	//HPを持つパーツ.
 	enum enHAVE_HP_PARTS
@@ -156,14 +162,21 @@ protected:
 	//ロボのHPを後で合算するための変数.
 	int m_iRoboHp[ enHAVE_HP_PARTS_SIZE ];
 
-	//パーツ番号の配列.
-	UCHAR m_ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
-	//タイトル用.
-	UCHAR m_ucPartsModelNumHero[ static_cast<int>( enPARTS::MAX ) ];
+	const int m_iFILE_VAR_ROW;
+	const int m_iFILE_INDEX_COL_LEG;
+	const int m_iFILE_INDEX_COL_CORE;
+	const int m_iFILE_INDEX_COL_HEAD;
+	const int m_iFILE_INDEX_COL_ARM_L;
+	const int m_iFILE_INDEX_COL_ARM_R;
+	const int m_iFILE_INDEX_COL_WEAPON_L;
+	const int m_iFILE_INDEX_COL_WEAPON_R;
+	const int m_iFILE_INDEX_COL_COLOR_ARMOR_R;
+	const int m_iFILE_INDEX_COL_COLOR_ARMOR_G;
+	const int m_iFILE_INDEX_COL_COLOR_ARMOR_B;
+	const int m_iFILE_INDEX_COL_COLOR_BASE_R;
+	const int m_iFILE_INDEX_COL_COLOR_BASE_G;
+	const int m_iFILE_INDEX_COL_COLOR_BASE_B;
 
-	//色の段階.
-	int m_iColorRank[ enCOLOR_GAGE_size ];
-	int m_iColorRankHero[ enCOLOR_GAGE_size ];
 
 };
 #endif//#ifndef ROBO_STATUS_H_
