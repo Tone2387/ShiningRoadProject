@@ -7,15 +7,12 @@
 #include "PartsArmR.h"
 #include "PartsWeapon.h"
 
-#include "OperationString.h"
 
 using namespace std;
 
 namespace{
 
 	const int iCOLOR_RANK_INIT = 16;
-
-
 
 }
 
@@ -71,16 +68,6 @@ void clsROBO_STATUS::Clear()
 		m_iRoboHp[i] = 0;
 	}
 	
-//	UCHAR tmpSize = sizeof( m_RoboStateData.ucPartsModelNum ) / sizeof( m_RoboStateData.ucPartsModelNum[0] );
-//	for( UCHAR i=0; i<tmpSize; i++ ){
-//		m_RoboStateData.ucPartsModelNum[i] = 0;
-////		m_ucPartsModelNumHero[i] = m_RoboStateData.ucPartsModelNum[i];//ƒq[ƒ[‚ÉŽè‚Ío‚³‚È‚¢.
-//	}
-//
-//	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
-//		m_RoboStateData.iColorRank[i] = iCOLOR_RANK_INIT;
-////		m_iColorRankHero[i] = m_RoboStateData.iColorRank[i];
-//	}
 
 }
 

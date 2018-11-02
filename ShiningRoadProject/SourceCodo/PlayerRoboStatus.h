@@ -17,10 +17,9 @@ public:
 	void LodeHeroData();
 
 private:
+
+//	//クリアデータ( タイトルで必要 ).
 	ROBO_STATE_DATA m_RoboStateDataHero;
-//	//タイトル用.
-//	UCHAR m_ucPartsModelNumHero[ static_cast<int>( enPARTS::MAX ) ];
-//	int m_iColorRankHero[ enCOLOR_GAGE_size ];
 
 };
 

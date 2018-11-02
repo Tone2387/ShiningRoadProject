@@ -4,7 +4,6 @@
 
 #include "Global.h"
 
-//#include <vector>
 
 //アセンブルシーンでの選択肢の型.
 using ASSEMBLE_SCENE_SELECT_TYPE = short;
@@ -32,20 +31,6 @@ public:
 
 		enCOLOR_GAGE_size
 	};
-
-	//まっさらにする( アセンブルシーンでの初期化として使う ).
-	void Clear();
-
-	//データの受け取り.
-	//これらの関数でデータを受け取る前にClear()しておくこと.
-	//第一引数 : 攻撃力などのパラメータ群.
-	//第二引数 : モデル番号.
-	void ReceiveLeg(	const std::vector<int> &LegDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveCore(	const std::vector<int> &CoreDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveHead(	const std::vector<int> &HeadDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveArms(	const std::vector<int> &ArmsDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveWeaponL(const std::vector<int> &WeaponLDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveWeaponR(const std::vector<int> &WeaponRDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
 	 
 	//ロボのステータス配列の引数.
 	enum enROBO_STATE : UCHAR
@@ -116,6 +101,21 @@ public:
 	};
 
 
+	//まっさらにする( アセンブルシーンでの初期化として使う ).
+	void Clear();
+
+	//データの受け取り.
+	//これらの関数でデータを受け取る前にClear()しておくこと.
+	//第一引数 : 攻撃力などのパラメータ群.
+	//第二引数 : モデル番号.
+	void ReceiveLeg(	const std::vector<int> &LegDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveCore(	const std::vector<int> &CoreDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveHead(	const std::vector<int> &HeadDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveArms(	const std::vector<int> &ArmsDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveWeaponL(const std::vector<int> &WeaponLDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveWeaponR(const std::vector<int> &WeaponRDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+
+
 	//ロボの情報を吐き出す.
 	int GetRoboState( const enROBO_STATE enStateNum );
 	//武器の情報を吐き出す.
@@ -142,26 +142,7 @@ protected:
 	}	m_RoboStateData;
 
 
-	//HPを持つパーツ.
-	enum enHAVE_HP_PARTS
-	{
-		LEG = 0,
-		CORE,
-		HEAD,
-		ARMS,
-
-		enHAVE_HP_PARTS_SIZE
-	};
-
-	//ロボット本体のパラメータ.
-	int m_iRoboState[enROBO_STATE_SIZE];
-
-	//武器のパラメータ.
-	int m_iWeaponState[ enWEAPON_NUM_SIZE ][ enWEAPON_STATE_SIZE ];
-
-	//ロボのHPを後で合算するための変数.
-	int m_iRoboHp[ enHAVE_HP_PARTS_SIZE ];
-
+	//継承クラスで使う.
 	const int m_iFILE_VAR_ROW;
 	const int m_iFILE_INDEX_COL_LEG;
 	const int m_iFILE_INDEX_COL_CORE;
@@ -177,6 +158,29 @@ protected:
 	const int m_iFILE_INDEX_COL_COLOR_BASE_G;
 	const int m_iFILE_INDEX_COL_COLOR_BASE_B;
 
+
+
+private:
+
+	//HPを持つパーツ.
+	enum enHAVE_HP_PARTS
+	{
+		LEG = 0,
+		CORE,
+		HEAD,
+		ARMS,
+
+		enHAVE_HP_PARTS_SIZE
+	};
+
+	//ロボット本体のパラメータ.
+	int m_iRoboState[ enROBO_STATE_SIZE ];
+
+	//武器のパラメータ.
+	int m_iWeaponState[ enWEAPON_NUM_SIZE ][ enWEAPON_STATE_SIZE ];
+
+	//ロボのHPを後で合算するための変数.
+	int m_iRoboHp[ enHAVE_HP_PARTS_SIZE ];
 
 };
 #endif//#ifndef ROBO_STATUS_H_

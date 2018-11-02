@@ -40,15 +40,18 @@ clsPLAYER_ROBO_STATUS::~clsPLAYER_ROBO_STATUS()
 }
 
 
-//クリア画面で使う : タイトル用の初期化用.
+//クリア画面で使う : タイトル用の初期化用のデータを用意する : クリアしたロボを覚えておく.
 void clsPLAYER_ROBO_STATUS::SaveHeroData()
 {
 	const string InitString;
-	clsOPERATION_STRING OprtStr;
-	clsFILE::FILE_DATA FileData;
-	clsFILE File;
 	const int iOUT_DATA_ROW_SIZE = 1 + m_iFILE_VAR_ROW;
 	const int iOUT_DATA_COL_SIZE = 1 + m_iFILE_INDEX_COL_COLOR_BASE_B;
+
+	clsOPERATION_STRING OprtStr;
+	//出力用.
+	clsFILE File;
+	clsFILE::FILE_DATA FileData;
+
 	File.CreateFileDataForOutPut( FileData, iOUT_DATA_ROW_SIZE, iOUT_DATA_COL_SIZE );
 
 	int iFileDataIndex = 0;
@@ -64,6 +67,7 @@ void clsPLAYER_ROBO_STATUS::SaveHeroData()
 	}
 
 
+	//ファイル出力.
 	File.Open( sROBO_STATUS_HERO_PATH );
 	File.OutPutCsv( FileData );
 	File.Close();
