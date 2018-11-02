@@ -4,7 +4,7 @@ using namespace std;
 
 namespace{
 
-	//つけていると背景に真ん中がわかるものを出す.
+//つけていると背景に真ん中がわかるものを出す.
 //#define CENTER_SPRITE_RENDER
 #ifdef CENTER_SPRITE_RENDER
 	unique_ptr<clsSprite2D> g_upTex;
