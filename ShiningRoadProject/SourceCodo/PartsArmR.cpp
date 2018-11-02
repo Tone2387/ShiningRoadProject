@@ -12,7 +12,7 @@ clsPARTS_ARM_R::~clsPARTS_ARM_R()
 
 
 //çÏê¨éû.
-void clsPARTS_ARM_R::CreateProduct()
+void clsPARTS_ARM_R::InitProduct()
 {
 }
 

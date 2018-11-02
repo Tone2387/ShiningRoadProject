@@ -10,7 +10,7 @@ clsPARTS_WEAPON::~clsPARTS_WEAPON()
 }
 
 //çÏê¨éû.
-void clsPARTS_WEAPON::CreateProduct()
+void clsPARTS_WEAPON::InitProduct()
 {
 }
 

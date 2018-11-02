@@ -22,8 +22,6 @@ public:
 	clsPARTS_BASE();
 	virtual ~clsPARTS_BASE();
 	
-	//作成時.
-	void Create();
 	//毎フレーム.
 	void Update();
 	//描画.
@@ -35,6 +33,11 @@ public:
 		const D3DXVECTOR4& vColorBase = { 1.0f, 1.0f, 1.0f, 1.0f },
 		const D3DXVECTOR4& vColorArmor = { 1.0f, 1.0f, 1.0f, 1.0f },
 		const bool isAlpha = false );
+
+
+	//Attach直後に使う( Attachしたモデルのボーンの数やパーツ名などを取得 ).
+	void Init();
+
 
 	//直前のフレームのボーンの座標を持ってくる.
 	virtual D3DXVECTOR3 GetBonePosPreviosFrame( const int enBoneName, int iVecNum = 0 ) = 0;
@@ -65,7 +68,7 @@ public:
 
 protected:
 	//----- 各パーツごとの関数 -----//.
-	virtual void CreateProduct() = 0;//各シーンのCreate.
+	virtual void InitProduct() = 0;//各シーンのInit.
 	virtual void UpdateProduct() = 0;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 

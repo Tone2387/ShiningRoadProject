@@ -88,7 +88,7 @@ protected:
 
 private:
 	//----- 各パーツごとの関数 -----//.
-	virtual void CreateProduct() override;//各シーンのCreate.
+	virtual void InitProduct() override;//各シーンのInit.
 	virtual void UpdateProduct() override;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 

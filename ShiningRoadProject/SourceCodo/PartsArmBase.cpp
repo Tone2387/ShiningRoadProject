@@ -14,7 +14,7 @@ clsPARTS_ARM_BASE::~clsPARTS_ARM_BASE()
 }
 
 //çÏê¨éû.
-void clsPARTS_ARM_BASE::CreateProduct()
+void clsPARTS_ARM_BASE::InitProduct()
 {
 	clsOPERATION_STRING OprtStr;
 

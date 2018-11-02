@@ -52,6 +52,7 @@ public:
 		enLEG_BONE_POSITIONS_JUNCTION_CORE,
 		enLEG_BONE_POSITIONS_SOLE,
 		enLEG_BONE_POSITIONS_POSITION_BASE,
+		enLEG_BONE_POSITIONS_NULL,
 			  
 		enLEG_BONE_POSITIONS_size
 	};
@@ -66,7 +67,7 @@ public:
 
 private:
 	//----- 各パーツごとの関数 -----//.
-	void CreateProduct() final;//各シーンのCreate.
+	void InitProduct() final;//各シーンのInit.
 	void UpdateProduct() final;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 
@@ -78,6 +79,7 @@ private:
 		D3DXVECTOR3				 vJunctionCore;
 		std::vector<D3DXVECTOR3> vecvSole;
 		D3DXVECTOR3				 vPositionBase;
+		D3DXVECTOR3				 vNull;
 	}	m_BonePositions;
 
 
