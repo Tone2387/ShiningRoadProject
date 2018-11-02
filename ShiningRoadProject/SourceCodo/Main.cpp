@@ -283,6 +283,10 @@ void clsMain::Loop()
 			//アプリケーション処理はここから飛ぶ.
 			isExitApp = AppMain();
 		}
+#ifdef STARTUP_FULLSCREEN_
+		if( GetAsyncKeyState( VK_F4 ) & 0x1 )ChangeWindowMode();
+#endif//#ifdef STARTUP_FULLSCREEN_
+
 	}
 	//アプリケーションの終了.
 	timeEndPeriod( 1 );	//解除.
@@ -609,3 +613,61 @@ void clsMain::SetViewPort10( D3D11_VIEWPORT* const Vp )
 };
 
 
+#ifdef STARTUP_FULLSCREEN_
+HRESULT clsMain::ChangeWindowMode()
+{
+	if( !m_pSwapChain ) return E_FAIL;
+
+	HRESULT hr = E_FAIL;
+
+	DXGI_SWAP_CHAIN_DESC desc;
+	hr = m_pSwapChain->GetDesc( &desc );
+	if( FAILED( hr ) ) return E_FAIL;
+
+	BOOL isFullScreen;
+
+	//フルスクリーン情報取得.
+	hr = m_pSwapChain->GetFullscreenState( &isFullScreen, NULL );
+	if( FAILED( hr ) ) return E_FAIL;
+
+	//フルスクリーンのon, offを逆転する.
+	hr = m_pSwapChain->SetFullscreenState( !isFullScreen, NULL );
+	if( FAILED( hr ) ) return E_FAIL;
+
+	ShowWindow( m_hWnd, SW_SHOW );
+//	UpdateWindow( m_hWnd );
+
+//	ChangeWindowModeOptimization( 0, 0 );
+
+	return S_OK;
+}
+
+//HRESULT clsMain::ChangeWindowModeOptimization( const UINT Width, const UINT Height )
+//{
+//	HRESULT hr = E_FAIL;
+//
+//	if( !m_pSwapChain ) return E_FAIL;
+//
+//	DXGI_SWAP_CHAIN_DESC desc;
+//	hr = m_pSwapChain->GetDesc( &desc );
+//	if( FAILED( hr ) ) return E_FAIL;
+//
+//	//ターゲットビュー解除.
+//	m_pDeviceContext->OMSetRenderTargets( 0, NULL, NULL );
+//	SAFE_RELEASE( m_pBackBuffer_DSTexDSV );
+//	SAFE_RELEASE( m_pBackBuffer_TexRTV );
+//
+//	//スワップチェーンのバックバッファサイズ、フォーマット、およびバッファー数を変更する.
+//	//アプリケーションウィンドウのサイズが変更されたときに呼び出す必要がある.
+//	hr = m_pSwapChain->ResizeBuffers( desc.BufferCount, Width, Height, desc.BufferDesc.Format, desc.Flags );
+//	if( FAILED( hr ) ) return E_FAIL;
+//
+//	hr = CreateRenderTargetView( &desc );
+//	if( FAILED( hr ) ) return E_FAIL;
+//
+//
+//
+//
+//	return S_OK;
+//}
+#endif//#ifdef STARTUP_FULLSCREEN_

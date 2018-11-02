@@ -1,6 +1,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 //警告についてのコード分析を無効にする.4005:再定義.
 #pragma warning( disable:4005 )
+
+//これがついていると起動時にフルスクリーンになる.
+//#define STARTUP_FULLSCREEN_
+
 //============================================================
 //	インクルード.
 //============================================================
@@ -138,4 +142,9 @@ private:
 	D3D11_VIEWPORT* m_spViewPort11;
 
 
+#ifdef STARTUP_FULLSCREEN_
+	HRESULT ChangeWindowMode();
+//	//表示モード切替最適化.
+//	HRESULT ChangeWindowModeOptimization( const UINT Width, const UINT Height );
+#endif//#ifdef STARTUP_FULLSCREEN_
 };
