@@ -144,6 +144,8 @@ void clsRobo::RoboInit(
 	m_pMesh = new clsMISSION_MODEL;
 
 	m_pMesh->Create(m_wpResource, pRobo);
+	
+	m_v_Spheres = m_pMesh->GetColState(pRobo);
 
 	m_Trans.vPos.y = 10.0f;
 
