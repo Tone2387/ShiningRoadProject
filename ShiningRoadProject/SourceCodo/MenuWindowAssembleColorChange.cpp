@@ -179,6 +179,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	//ÉQÅ[ÉWñ{ëÃ.
 	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
 		m_vecupColorGage[i]->SetPos( m_vecupColorBone[i]->GetPos() );
+		//åªèÛÇÃÉçÉ{ÇÃêFÇ…çáÇÌÇπÇƒÉQÅ[ÉWÇâ°Ç…êLèkÇ≥ÇπÇÈ.
 		m_vecupColorGage[i]->SetScale( { 
 			m_wpAssembleModel->GetColorGradation( 
 				static_cast<clsROBO_STATUS::enCOLOR_GAGE>( i ) ) * ( BONE_SIZE.w / GAGE_SIZE.w ),

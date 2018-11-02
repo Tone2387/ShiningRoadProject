@@ -198,9 +198,6 @@
     <ClCompile Include="SourceCodo\Object.cpp">
       <Filter>Hiyosi\Object</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\RoboStatus.cpp">
-      <Filter>Tahara\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\SceneBase.cpp">
       <Filter>Tahara\Scene</Filter>
     </ClCompile>
@@ -381,6 +378,9 @@
     <ClCompile Include="SourceCodo\PlayerRoboStatus.cpp">
       <Filter>Tahara\Parts</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\RoboStatusBase.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -493,9 +493,6 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Object.h">
       <Filter>Hiyosi\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\RoboStatus.h">
-      <Filter>Tahara\Parts</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneBase.h">
       <Filter>Tahara\Scene</Filter>
@@ -690,6 +687,9 @@
       <Filter>Tahara\Parts</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\PlayerRoboStatus.h">
+      <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboStatusBase.h">
       <Filter>Tahara\Parts</Filter>
     </ClInclude>
   </ItemGroup>

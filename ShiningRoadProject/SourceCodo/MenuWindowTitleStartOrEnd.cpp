@@ -3,6 +3,13 @@
 //#include "UiText.h"
 
 
+namespace{
+
+	const int iSELECT_NUM_YES_INDEX = 0;
+
+}
+
+
 
 
 clsMENU_WINDOW_TITLE_START_OR_END::clsMENU_WINDOW_TITLE_START_OR_END(		
@@ -85,12 +92,12 @@ void clsMENU_WINDOW_TITLE_START_OR_END::RenderProduct()
 	m_wpFont->Render( iTextRow ++ );
 
 	///ƒJ[ƒ\ƒ‹ˆÚ“®.
-	if( m_iSelectNum == 0 ){
+	if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*5.0f, 32.0f, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
 		m_upCursor->SetPos( vPOS_START );
 	}
-	else if( m_iSelectNum == 1 ){
+	else{
 		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*4.0f, 32.0f, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
 		m_upCursor->SetPos( vPOS_EXIT );

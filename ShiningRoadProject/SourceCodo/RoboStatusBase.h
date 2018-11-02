@@ -4,7 +4,6 @@
 
 #include "Global.h"
 
-//#include <vector>
 
 //アセンブルシーンでの選択肢の型.
 using ASSEMBLE_SCENE_SELECT_TYPE = short;
@@ -32,20 +31,6 @@ public:
 
 		enCOLOR_GAGE_size
 	};
-
-	//まっさらにする( アセンブルシーンでの初期化として使う ).
-	void Clear();
-
-	//データの受け取り.
-	//これらの関数でデータを受け取る前にClear()しておくこと.
-	//第一引数 : 攻撃力などのパラメータ群.
-	//第二引数 : モデル番号.
-	void ReceiveLeg(	const std::vector<int> &LegDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveCore(	const std::vector<int> &CoreDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveHead(	const std::vector<int> &HeadDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveArms(	const std::vector<int> &ArmsDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveWeaponL(const std::vector<int> &WeaponLDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveWeaponR(const std::vector<int> &WeaponRDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
 	 
 	//ロボのステータス配列の引数.
 	enum enROBO_STATE : UCHAR
@@ -116,6 +101,21 @@ public:
 	};
 
 
+	//まっさらにする( アセンブルシーンでの初期化として使う ).
+	void Clear();
+
+	//データの受け取り.
+	//これらの関数でデータを受け取る前にClear()しておくこと.
+	//第一引数 : 攻撃力などのパラメータ群.
+	//第二引数 : モデル番号.
+	void ReceiveLeg(	const std::vector<int> &LegDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveCore(	const std::vector<int> &CoreDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveHead(	const std::vector<int> &HeadDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveArms(	const std::vector<int> &ArmsDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveWeaponL(const std::vector<int> &WeaponLDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveWeaponR(const std::vector<int> &WeaponRDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+
+
 	//ロボの情報を吐き出す.
 	int GetRoboState( const enROBO_STATE enStateNum );
 	//武器の情報を吐き出す.
@@ -124,17 +124,49 @@ public:
 	//パーツ番号を返す( いま装備しているパーツが何番か ).//#define SKIN_ENUM_TYPE UCHAR.
 	UCHAR GetPartsNum( const enPARTS PartsType );
 
-	//クリア画面で使う : タイトル用の初期化用のデータを用意する : クリアしたロボを覚えておく.
-	void SaveHeroData();
-
-	//AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
-	void LodeHeroData();
 
 	//色フラグのやり取り.
 	void SetColorRank( const enCOLOR_GAGE enColorNum, const int iColorRate );
 	int GetColorRank( const enCOLOR_GAGE enColorNum );
 
 protected:
+
+
+	//継承先で外部からデータを読み込ませる.
+	virtual void LoadFileData( const char* sFilePath ) = 0;
+
+protected:
+
+	//シーンをまたいで必要なロボのデータ.
+	struct ROBO_STATE_DATA
+	{
+		//パーツ番号の配列.
+		UCHAR ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
+
+		//色の段階.
+		int iColorRank[ enCOLOR_GAGE_size ];
+	}	m_RoboStateData;
+
+
+	//継承クラスで使う.
+	const int m_iFILE_VAR_ROW;
+	const int m_iFILE_INDEX_COL_LEG;
+	const int m_iFILE_INDEX_COL_CORE;
+	const int m_iFILE_INDEX_COL_HEAD;
+	const int m_iFILE_INDEX_COL_ARM_L;
+	const int m_iFILE_INDEX_COL_ARM_R;
+	const int m_iFILE_INDEX_COL_WEAPON_L;
+	const int m_iFILE_INDEX_COL_WEAPON_R;
+	const int m_iFILE_INDEX_COL_COLOR_ARMOR_R;
+	const int m_iFILE_INDEX_COL_COLOR_ARMOR_G;
+	const int m_iFILE_INDEX_COL_COLOR_ARMOR_B;
+	const int m_iFILE_INDEX_COL_COLOR_BASE_R;
+	const int m_iFILE_INDEX_COL_COLOR_BASE_G;
+	const int m_iFILE_INDEX_COL_COLOR_BASE_B;
+
+
+
+private:
 
 	//HPを持つパーツ.
 	enum enHAVE_HP_PARTS
@@ -148,22 +180,13 @@ protected:
 	};
 
 	//ロボット本体のパラメータ.
-	int m_iRoboState[enROBO_STATE_SIZE];
+	int m_iRoboState[ enROBO_STATE_SIZE ];
 
 	//武器のパラメータ.
 	int m_iWeaponState[ enWEAPON_NUM_SIZE ][ enWEAPON_STATE_SIZE ];
 
 	//ロボのHPを後で合算するための変数.
 	int m_iRoboHp[ enHAVE_HP_PARTS_SIZE ];
-
-	//パーツ番号の配列.
-	UCHAR m_ucPartsModelNum[ static_cast<int>( enPARTS::MAX ) ];
-	//タイトル用.
-	UCHAR m_ucPartsModelNumHero[ static_cast<int>( enPARTS::MAX ) ];
-
-	//色の段階.
-	int m_iColorRank[ enCOLOR_GAGE_size ];
-	int m_iColorRankHero[ enCOLOR_GAGE_size ];
 
 };
 #endif//#ifndef ROBO_STATUS_H_
