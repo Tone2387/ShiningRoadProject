@@ -105,6 +105,7 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 	m_vpParts.resize( ucPARTS_MAX, nullptr );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
+		m_vpParts[i]->Create();
 	}
 
 	//ç≈å„Ç…ÉNÉäÉAÇµÇΩèÛë‘Ç…Ç∑ÇÈ.
