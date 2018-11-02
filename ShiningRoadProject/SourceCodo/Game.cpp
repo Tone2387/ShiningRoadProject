@@ -109,7 +109,7 @@ void clsGAME::Create()
 	m_spEffect->Create( m_wpDevice, m_wpContext );
 
 	assert( !m_spRoboStatus );
-	m_spRoboStatus = new clsPLAYER_ROBO_STATUS;
+	m_spRoboStatus = new clsROBO_STATUS_PLAYER;
 
 	//ˆÃ“].
 	SPRITE_STATE ss;

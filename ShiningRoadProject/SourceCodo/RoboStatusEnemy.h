@@ -4,11 +4,11 @@
 #include "RoboStatusBase.h"
 
 
-class clsENEMY_ROBO_STATUS : public clsROBO_STATUS
+class clsROBO_STATUS_ENEMY : public clsROBO_STATUS
 {
 public:
-	clsENEMY_ROBO_STATUS();
-	~clsENEMY_ROBO_STATUS();
+	clsROBO_STATUS_ENEMY();
+	~clsROBO_STATUS_ENEMY();
 
 private:
 	//外部からデータを読み込む.

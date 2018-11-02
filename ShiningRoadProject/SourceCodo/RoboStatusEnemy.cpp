@@ -1,4 +1,4 @@
-#include "EnemyRoboStatus.h"
+#include "RoboStatusEnemy.h"
 
 
 #include "File.h"
@@ -12,19 +12,19 @@ namespace{
 }
 
 
-clsENEMY_ROBO_STATUS::clsENEMY_ROBO_STATUS()
+clsROBO_STATUS_ENEMY::clsROBO_STATUS_ENEMY()
 {
 	LoadFileData( sROBO_STATUS_ENEMY_PATH );
 }
 
-clsENEMY_ROBO_STATUS::~clsENEMY_ROBO_STATUS()
+clsROBO_STATUS_ENEMY::~clsROBO_STATUS_ENEMY()
 {
 }
 
 
 
 //外部からデータを読み込む.
-void clsENEMY_ROBO_STATUS::LoadFileData( const char* sFilePath )
+void clsROBO_STATUS_ENEMY::LoadFileData( const char* sFilePath )
 {
 	clsFILE File;
 	bool isOpened = File.Open( sFilePath );

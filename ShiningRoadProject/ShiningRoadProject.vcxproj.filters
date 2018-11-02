@@ -88,6 +88,9 @@
     <Filter Include="Tahara\UI\MenuWindows">
       <UniqueIdentifier>{6af2db03-c7ce-40c6-98b0-c2e8c1567870}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\RoboStatus">
+      <UniqueIdentifier>{120158e7-95a4-4ad1-a974-3015f672629a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\CameraMission.cpp">
@@ -372,14 +375,14 @@
     <ClCompile Include="SourceCodo\MenuWindowAssembleColorChange.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\EnemyRoboStatus.cpp">
-      <Filter>Tahara\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\PlayerRoboStatus.cpp">
-      <Filter>Tahara\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\RoboStatusBase.cpp">
-      <Filter>Tahara\Parts</Filter>
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboStatusPlayer.cpp">
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboStatusEnemy.cpp">
+      <Filter>Tahara\RoboStatus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -683,14 +686,14 @@
     <ClInclude Include="SourceCodo\MenuWindowAssembleColorChange.h">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\EnemyRoboStatus.h">
-      <Filter>Tahara\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\PlayerRoboStatus.h">
-      <Filter>Tahara\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\RoboStatusBase.h">
-      <Filter>Tahara\Parts</Filter>
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboStatusPlayer.h">
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboStatusEnemy.h">
+      <Filter>Tahara\RoboStatus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

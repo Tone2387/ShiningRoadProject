@@ -3,11 +3,11 @@
 
 #include "RoboStatusBase.h"
 
-class clsPLAYER_ROBO_STATUS : public clsROBO_STATUS
+class clsROBO_STATUS_PLAYER : public clsROBO_STATUS
 {
 public:
-	clsPLAYER_ROBO_STATUS();
-	~clsPLAYER_ROBO_STATUS();
+	clsROBO_STATUS_PLAYER();
+	~clsROBO_STATUS_PLAYER();
 
 
 	//クリア画面で使う : タイトル用の初期化用のデータを用意する : クリアしたロボを覚えておく.

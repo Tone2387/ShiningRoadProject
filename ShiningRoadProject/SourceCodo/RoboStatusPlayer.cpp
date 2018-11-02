@@ -1,4 +1,4 @@
-#include "PlayerRoboStatus.h"
+#include "RoboStatusPlayer.h"
 
 #include "File.h"
 #include "OperationString.h"
@@ -10,18 +10,18 @@ namespace{
 	const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\RoboStatusCsvData\\RoboStatusHero.csv";
 }
 
-clsPLAYER_ROBO_STATUS::clsPLAYER_ROBO_STATUS()
+clsROBO_STATUS_PLAYER::clsROBO_STATUS_PLAYER()
 {
 	LoadFileData( sROBO_STATUS_HERO_PATH );
 }
 
-clsPLAYER_ROBO_STATUS::~clsPLAYER_ROBO_STATUS()
+clsROBO_STATUS_PLAYER::~clsROBO_STATUS_PLAYER()
 {
 }
 
 
 //外部からデータを読み込む.
-void clsPLAYER_ROBO_STATUS::LoadFileData( const char* sFilePath )
+void clsROBO_STATUS_PLAYER::LoadFileData( const char* sFilePath )
 {
 	clsFILE File;
 	bool isOpened = File.Open( sFilePath );
@@ -48,7 +48,7 @@ void clsPLAYER_ROBO_STATUS::LoadFileData( const char* sFilePath )
 
 
 //クリア画面で使う : タイトル用の初期化用のデータを用意する : クリアしたロボを覚えておく.
-void clsPLAYER_ROBO_STATUS::SaveHeroData()
+void clsROBO_STATUS_PLAYER::SaveHeroData()
 {
 	const string InitString;
 	const int iOUT_DATA_ROW_SIZE = 1 + m_iFILE_VAR_ROW;
@@ -81,7 +81,7 @@ void clsPLAYER_ROBO_STATUS::SaveHeroData()
 }
 
 //AssembleModelでのタイトル画面での初期化でAssembleModelのInitの前に使う.
-void clsPLAYER_ROBO_STATUS::LodeHeroData()
+void clsROBO_STATUS_PLAYER::LodeHeroData()
 {
 	int tmpSize = sizeof( m_RoboStateData.ucPartsModelNum ) / sizeof( m_RoboStateData.ucPartsModelNum[0] );
 	for( int i=0; i<tmpSize; i++ ){
