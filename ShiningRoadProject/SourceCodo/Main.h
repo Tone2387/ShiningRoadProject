@@ -3,7 +3,7 @@
 #pragma warning( disable:4005 )
 
 //これがついていると起動時にフルスクリーンになる.
-#define STARTUP_FULLSCREEN_
+//#define STARTUP_FULLSCREEN_
 
 //============================================================
 //	インクルード.

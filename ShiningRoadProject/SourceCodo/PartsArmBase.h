@@ -71,6 +71,10 @@ public:
 
 protected:
 
+	//----- 各パーツごとの関数 -----//.
+	virtual void InitProduct() override;//各シーンのInit.
+	virtual void UpdateProduct() override;//各シーンのUpdate.
+	//----- 各パーツごとの関数 -----//.
 
 	struct ARMS_BONE_POSITIONS
 	{
@@ -87,10 +91,6 @@ protected:
 
 
 private:
-	//----- 各パーツごとの関数 -----//.
-	virtual void InitProduct() override;//各シーンのInit.
-	virtual void UpdateProduct() override;//各シーンのUpdate.
-	//----- 各パーツごとの関数 -----//.
 
 
 };
