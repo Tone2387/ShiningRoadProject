@@ -294,15 +294,12 @@ bool clsEnemyBase::IsJump()
 
 		m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
 
-		/*if (m_pTarget->GetPosition().y < m_UpdateState.fVerDis)
-		{*/
 		float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 			
-		if (abs(fDist) < m_UpdateState.fVerDis)
+		if (fDist < m_UpdateState.fVerDis)
 		{
 			return true;
 		}
-		/*}*/
 	}
 
 	return false;
