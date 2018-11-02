@@ -235,6 +235,7 @@ void clsMain::Loop()
 //	thread thStartUpRender( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
 	thread thStartUpRender( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
 
+
 	//メッシュ読み込み関数をまとめたもの.
 	ReadMesh();
 
@@ -513,6 +514,7 @@ HRESULT clsMain::InitD3D()
 	m_pDeviceContext->RSSetState( pIr );
 	SAFE_RELEASE( pIr );
 
+
 	return S_OK;
 }
 
@@ -544,7 +546,14 @@ void clsMain::DestroyD3D()
 		m_upGame.reset( nullptr );
 	}
 
+
 #endif //#ifdef Tahara
+
+#ifdef STARTUP_FULLSCREEN_
+	//フルスクリーンならWindowModeへ.
+	SetWindowMode();
+#endif//#ifdef STARTUP_FULLSCREEN_
+
 
 	SAFE_DELETE( m_spViewPort10 );
 	SAFE_RELEASE( m_pBackBuffer_DSTexDSV );
