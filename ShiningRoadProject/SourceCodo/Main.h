@@ -3,7 +3,7 @@
 #pragma warning( disable:4005 )
 
 //これがついていると起動時にフルスクリーンになる.
-//#define STARTUP_FULLSCREEN_
+#define STARTUP_FULLSCREEN_
 
 //============================================================
 //	インクルード.
@@ -144,6 +144,7 @@ private:
 
 #ifdef STARTUP_FULLSCREEN_
 	HRESULT ChangeWindowMode();
+	void SetWindowMode();
 //	//表示モード切替最適化.
 //	HRESULT ChangeWindowModeOptimization( const UINT Width, const UINT Height );
 #endif//#ifdef STARTUP_FULLSCREEN_
