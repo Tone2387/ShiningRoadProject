@@ -787,7 +787,7 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 	{
 	case clsASSEMBLE_MODEL::LEG:
 		m_wpRoboStatus->ReceiveLeg( tmpStatus,		tmpPartsNum );
-		m_spAsmModel->AttachModel( enPARTS::LEG,		tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::LEG,	tmpPartsNum );
 		break;
 	case clsASSEMBLE_MODEL::CORE:
 		m_wpRoboStatus->ReceiveCore( tmpStatus,		tmpPartsNum );
