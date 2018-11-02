@@ -635,12 +635,43 @@ HRESULT clsMain::ChangeWindowMode()
 	if( FAILED( hr ) ) return E_FAIL;
 
 	ShowWindow( m_hWnd, SW_SHOW );
-//	UpdateWindow( m_hWnd );
+	UpdateWindow( m_hWnd );
 
 //	ChangeWindowModeOptimization( 0, 0 );
 
 	return S_OK;
 }
+
+void clsMain::SetWindowMode()
+{
+	if( !m_pSwapChain ) return;
+
+	HRESULT hr = E_FAIL;
+
+	DXGI_SWAP_CHAIN_DESC desc;
+	hr = m_pSwapChain->GetDesc( &desc );
+	if( FAILED( hr ) ) return;
+
+	BOOL isFullScreen;
+
+	//フルスクリーン情報取得.
+	hr = m_pSwapChain->GetFullscreenState( &isFullScreen, NULL );
+	if( FAILED( hr ) ) return;
+
+	//Windowモードなら.
+	if( !isFullScreen ){
+		return;
+	}
+
+	//フルスクリーンのon, offを逆転する.
+	hr = m_pSwapChain->SetFullscreenState( !isFullScreen, NULL );
+	if( FAILED( hr ) ) return;
+
+	ShowWindow( m_hWnd, SW_SHOW );
+	UpdateWindow( m_hWnd );
+
+}
+
 
 //HRESULT clsMain::ChangeWindowModeOptimization( const UINT Width, const UINT Height )
 //{

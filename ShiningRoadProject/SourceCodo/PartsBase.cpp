@@ -12,6 +12,7 @@ clsPARTS_BASE::clsPARTS_BASE()
 {	
 	D3DXVECTOR3 vINIT_SCALE = { 1.0f, 1.0f, 1.0f };
 	m_Trans.vScale = vINIT_SCALE;
+	m_sPartsName = "NoName";
 }
 
 clsPARTS_BASE::~clsPARTS_BASE()
@@ -23,7 +24,6 @@ clsPARTS_BASE::~clsPARTS_BASE()
 //çÏê¨éû.
 void clsPARTS_BASE::Init()
 {
-	m_sPartsName = "NoName";
 	InitProduct();
 }
 

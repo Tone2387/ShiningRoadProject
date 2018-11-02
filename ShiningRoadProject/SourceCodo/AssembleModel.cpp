@@ -7,15 +7,16 @@ using namespace std;
 //leg‚Ìƒ‚ƒfƒ‹‚Ì‘«Œ³‚ª‚¨‚©‚µ‚¢ê‡.
 #define LEG_MODEL_POSITION_BASE_Y_OFFSET
 
+#if _DEBUG
+#include "CharaStatic.h"
+#endif//#if _DEBUG
 
 namespace{
 
 #if _DEBUG
-#include "CharaStatic.h"
 		//‘«Œ³.
 		std::unique_ptr<clsCharaStatic> m_upFoot;
 		std::unique_ptr<clsCharaStatic> m_upFootNull;
-
 #endif//#if _DEBUG
 
 

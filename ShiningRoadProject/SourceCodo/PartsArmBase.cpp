@@ -177,7 +177,7 @@ void clsPARTS_ARM_BASE::UpdateBonePosPreviosFrame()
 	//ëOï˚.
 	string sBoneNameRoot = sBONE_NAME_ARM_BOOSTER_FRONT_ROOT;
 	string sBoneNameEnd	 = sBONE_NAME_ARM_BOOSTER_FRONT_END;
-	for( int i=0; i<m_BonePositions.vecvBoosterFontEnd.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvBoosterFontEnd.size(); i++ ){
 		m_BonePositions.vecvBoosterFontRoot[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameRoot, i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 		m_BonePositions.vecvBoosterFontEnd[i]  = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameEnd , i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 	}
@@ -185,7 +185,7 @@ void clsPARTS_ARM_BASE::UpdateBonePosPreviosFrame()
 	//å„ï˚.
 	sBoneNameRoot = sBONE_NAME_ARM_BOOSTER_BACK_ROOT;
 	sBoneNameEnd  = sBONE_NAME_ARM_BOOSTER_BACK_END;
-	for( int i=0; i<m_BonePositions.vecvBoosterBackRoot.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvBoosterBackRoot.size(); i++ ){
 		m_BonePositions.vecvBoosterBackRoot[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameRoot, i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 		m_BonePositions.vecvBoosterBackEnd[i]  = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameEnd , i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 	}
@@ -193,13 +193,13 @@ void clsPARTS_ARM_BASE::UpdateBonePosPreviosFrame()
 	//â°.
 	sBoneNameRoot = sBONE_NAME_ARM_BOOSTER_SIDE_ROOT;
 	sBoneNameEnd  = sBONE_NAME_ARM_BOOSTER_SIDE_END;
-	for( int i=0; i<m_BonePositions.vecvBoosterSideRoot.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvBoosterSideRoot.size(); i++ ){
 		m_BonePositions.vecvBoosterSideRoot[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameRoot, i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 		m_BonePositions.vecvBoosterSideEnd[i]  = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameEnd , i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 	}
 
 	//ä÷êﬂ.
-	for( int i=0; i<m_BonePositions.vecvJoint.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvJoint.size(); i++ ){
 		m_BonePositions.vecvJoint[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBONE_NAME_ARM_JOINT, i, m_iDIGIT_JOINT_NUM ).c_str() );
 	}
 
