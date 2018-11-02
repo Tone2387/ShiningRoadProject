@@ -43,6 +43,8 @@ void clsTestObj::ActionProduct()
 
 	LockChara();
 
+	m_pAI->Update();
+
 	m_pAI->SearchTarget(m_v_pEnemys);
 
 	if (g_bAction)
