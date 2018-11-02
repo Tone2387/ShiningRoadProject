@@ -115,10 +115,10 @@ private:
 	//パーツ表示用のウィンドウ.
 	D3D11_VIEWPORT m_ViewPortPartsWindow;
 
-	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsType;		//パーツカテゴリ.
+	std::vector< std::unique_ptr< clsSprite2D > >	m_vecupPartsType;		//パーツカテゴリ.
 	std::unique_ptr< clsSprite2D >					m_upPartsTypeSelect;//選択中( 半透明 ).
 
-	std::vector< std::unique_ptr< clsSprite2D > >	m_vupPartsIcon[ enPARTS_TYPE_SIZE ];	//各パーツのUI.
+	std::vector< std::unique_ptr< clsSprite2D > >	m_vecupPartsIconArray[ enPARTS_TYPE_SIZE ];	//各パーツのUI.
 	std::unique_ptr< clsSprite2D >					m_upPartsNumSelect;	//選択中( 半透明 ).
 
 	std::unique_ptr< clsSprite2D >					m_upStatusWindow;	//ステータスが表示される.
@@ -129,13 +129,13 @@ private:
 	std::unique_ptr< clsSprite2D > m_upHeader;//画面上部の帯.
 	std::unique_ptr< clsSprite2D > m_upFooter;//画面下部の帯.
 
-	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_pArrow;//矢印.
+	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vecupArrow;//矢印.
 
 	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
 
-	std::vector< std::unique_ptr< clsUiText > > m_vupStatusText;	//ステータス文字( 項目名 ).
-	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumText;	//今見ているパーツのステータス値.
-	std::vector< std::unique_ptr< clsUiText > > m_vupStatusNumTextNow;	//現在の装備のステータス値.
+	std::vector< std::unique_ptr< clsUiText > > m_vecupStatusText;	//ステータス文字( 項目名 ).
+	std::vector< std::unique_ptr< clsUiText > > m_vecupStatusNumText;	//今見ているパーツのステータス値.
+	std::vector< std::unique_ptr< clsUiText > > m_vecupStatusNumTextNow;	//現在の装備のステータス値.
 
 
 	std::unique_ptr< clsUiText > m_upPartsNameText;//パーツ名.
@@ -150,7 +150,7 @@ private:
 	//ステータスの数( 行数 ).
 	int m_iStatusNum;
 	//ステータスの名前を格納している.
-	std::vector< std::string > m_vsStatusNameBox[enPARTS_TYPE_SIZE];
+	std::vector< std::string > m_vecsStatusNameBoxArray[ enPARTS_TYPE_SIZE ];
 
 	//ステータスの表示フラグ.
 	bool	m_isDispStatus;

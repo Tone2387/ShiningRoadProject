@@ -39,6 +39,9 @@ public:
 	void SetPos( const D3DXVECTOR3 &vPos );
 	D3DXVECTOR3 GetPos();
 	D3DXVECTOR3 GetPosLast();
+	void AddPos( const D3DXVECTOR3 &vPos ){
+		SetPos( m_vPos + vPos );
+	}
 
 	void SetScale( const float fScale );
 	float GetScale();
@@ -122,7 +125,7 @@ private:
 	//最後の文字の座標.
 	D3DXVECTOR3	m_vPosLast;
 
-	std::vector< std::string > 		m_sTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
+	std::vector< std::string > 		m_vecsTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
 
 	//読み込んだテキストの数( Createしていないと-1が返る ).
 	int m_iTextRow;
@@ -132,8 +135,8 @@ private:
 	DESIGNVECTOR		m_Design;
 
 	//テクスチャ関連.
-	std::vector< ID3D11Texture2D* >							m_vpTex2D;//[ TEXT_H ];//2Ｄテクスチャ.
-	std::vector< std::vector< ID3D11ShaderResourceView* > > m_vvpAsciiTexture;//[ TEXT_H ][ TEXT_W ]; //テクスチャ.
+	std::vector< ID3D11Texture2D* >							m_vecpTex2D;//[ TEXT_H ];//2Ｄテクスチャ.
+	std::vector< std::vector< ID3D11ShaderResourceView* > > m_vecvecpAsciiTexture;//[ TEXT_H ][ TEXT_W ]; //テクスチャ.
 
 
 	ID3D11Device*			m_pDevice;

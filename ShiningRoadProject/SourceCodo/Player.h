@@ -40,4 +40,5 @@ private:
 	D3DXVECTOR3 m_vCamTargetPos;
 	D3DXVECTOR3 m_vLookTargetPos;
 	D3DXVECTOR3 m_vLockRange;
+	D3DXVECTOR3 m_vCamPosDivia;//自機の位置からカメラ位置までの差.
 };

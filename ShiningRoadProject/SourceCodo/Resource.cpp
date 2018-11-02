@@ -6,40 +6,46 @@
 
 
 using namespace std;
-//パーツディレクトリのパス.
-const string sPARTS_PASS = "Data\\RoboParts\\";
-//各パーツのディレクトリのパス.
-const string sLEG_PASS		= sPARTS_PASS + "Leg\\Leg";
-const string sCORE_PASS		= sPARTS_PASS + "Core\\Core";
-const string sHEAD_PASS		= sPARTS_PASS + "Head\\Head";
-const string sARML_PASS		= sPARTS_PASS + "Arms\\Arms";//腕が左右同じなのに分けているのは仕様変更の可能性があるため.
-const string sARMR_PASS		= sPARTS_PASS + "Arms\\Arms";
-const string sWEAPON_PASS	= sPARTS_PASS + "Weapon\\Weapon";
-//上記に数字を挟んだうえでくっつけるモデル名.
-const string sLEG_NAME		= "\\Leg";
-const string sCORE_NAME		= "\\Core";
-const string sHEAD_NAME		= "\\Head";
-const string sARML_NAME		= "\\ArmL";
-const string sARMR_NAME		= "\\ArmR";
-const string sWEAPON_NAME	= "\\Weapon";
 
-//extension = 拡張子.
-const string sEXTENSION_X = ".X";//上記のパスとこれの間に数字を挟んで使う.
+namespace{
 
-const UCHAR ucARM_NUM = 2;//腕の本数.
+	//パーツディレクトリのパス.
+	const string sPARTS_PASS = "Data\\RoboParts\\";
+	//各パーツのディレクトリのパス.
+	const string sLEG_PASS		= sPARTS_PASS + "Leg\\Leg";
+	const string sCORE_PASS		= sPARTS_PASS + "Core\\Core";
+	const string sHEAD_PASS		= sPARTS_PASS + "Head\\Head";
+	const string sARML_PASS		= sPARTS_PASS + "Arms\\Arms";//腕が左右同じなのに分けているのは仕様変更の可能性があるため.
+	const string sARMR_PASS		= sPARTS_PASS + "Arms\\Arms";
+	const string sWEAPON_PASS	= sPARTS_PASS + "Weapon\\Weapon";
+	//上記に数字を挟んだうえでくっつけるモデル名.
+	const string sLEG_NAME		= "\\Leg";
+	const string sCORE_NAME		= "\\Core";
+	const string sHEAD_NAME		= "\\Head";
+	const string sARML_NAME		= "\\ArmL";
+	const string sARMR_NAME		= "\\ArmR";
+	const string sWEAPON_NAME	= "\\Weapon";
+
+	//extension = 拡張子.
+	const string sEXTENSION_X = ".X";//上記のパスとこれの間に数字を挟んで使う.
+
+	const UCHAR ucARM_NUM = 2;//腕の本数.
 
 
-//データファイルのパス.
-const string sDATA_PASS_ROOT = "Data\\RoboParts\\";
-const string sDATA_PASS_MID[] =
-{
-	"Leg",
-	"Core",
-	"Head",
-	"Arms",
-	"Weapon"
-};
-const string sDATA_PASS_END	 = "\\RoboPartsData.csv";
+	//データファイルのパス.
+	const string sDATA_PASS_ROOT = "Data\\RoboParts\\";
+	const string sDATA_PASS_MID[] =
+	{
+		"Leg",
+		"Core",
+		"Head",
+		"Arms",
+		"Weapon"
+	};
+	const string sDATA_PASS_END	 = "\\RoboPartsData.csv";
+
+}
+
 
 
 clsResource::clsResource()

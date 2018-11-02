@@ -88,6 +88,9 @@
     <Filter Include="Tahara\UI\MenuWindows">
       <UniqueIdentifier>{6af2db03-c7ce-40c6-98b0-c2e8c1567870}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\RoboStatus">
+      <UniqueIdentifier>{120158e7-95a4-4ad1-a974-3015f672629a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\CameraMission.cpp">
@@ -197,9 +200,6 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\Object.cpp">
       <Filter>Hiyosi\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\RoboStatus.cpp">
-      <Filter>Tahara\Parts</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\SceneBase.cpp">
       <Filter>Tahara\Scene</Filter>
@@ -363,6 +363,27 @@
     <ClCompile Include="SourceCodo\MenuWindowTitleBase.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowAssembleBase.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowAssembleBackTitle.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowAssembleTakeOff.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowAssembleColorChange.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboStatusBase.cpp">
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboStatusPlayer.cpp">
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboStatusEnemy.cpp">
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -475,9 +496,6 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Object.h">
       <Filter>Hiyosi\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\RoboStatus.h">
-      <Filter>Tahara\Parts</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneBase.h">
       <Filter>Tahara\Scene</Filter>
@@ -652,6 +670,30 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneGameOverInformation.h">
       <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowAssembleBase.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneAssembleInformation.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowAssembleBackTitle.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowAssembleTakeOff.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowAssembleColorChange.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboStatusBase.h">
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboStatusPlayer.h">
+      <Filter>Tahara\RoboStatus</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboStatusEnemy.h">
+      <Filter>Tahara\RoboStatus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

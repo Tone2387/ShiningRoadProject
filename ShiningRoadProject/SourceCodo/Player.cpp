@@ -18,13 +18,15 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 
 	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
 
-	clsObject::SPHERE Tmp;
+	/*clsObject::SPHERE Tmp;
 
 	Tmp.vCenter = &m_vCenterPos;
 	Tmp.fRadius = 0.1f;
 
 	m_v_Spheres.push_back(Tmp);
-	m_v_Spheres.shrink_to_fit();
+	m_v_Spheres.shrink_to_fit();*/
+
+	m_vCamPosDivia = m_Trans.vPos - m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
 }
 
 void clsPlayer::ActionProduct()
@@ -172,11 +174,13 @@ void clsPlayer::UpdateCamTargetPos()
 	{
 		fCamAxisXTmp = -fCamPosX;
 	}
+
+	D3DXVECTOR3 vCamCenter = m_Trans.vPos + m_vCamPosDivia;
 	
 	D3DXVECTOR3 vCamAxis =
 	{
 		0.0f,
-		m_vCenterPos.y - m_vLockRangePos.y,
+		vCamCenter.y - m_vLockRangePos.y,
 		fCamSpaceTmp
 	};
 
@@ -191,7 +195,7 @@ void clsPlayer::UpdateCamTargetPos()
 	//====================================================
 	//カメラが少し遅れてついてくるように.
 	//カメラが現在目的としている位置を算出.
-	const D3DXVECTOR3 vCamTargetPos = m_vCenterPos - vCamAxis;
+	const D3DXVECTOR3 vCamTargetPos = vCamCenter - vCamAxis;
 
 	//現在位置を取得し、現在位置と目的の位置の差から移動量を計算する.
 	vCamPosTmp = m_vCamTargetPos;//現在位置を取得

@@ -1,8 +1,9 @@
 #include "Sprite.h"
 
-//シェーダファイル名(ディレクトリも含む)(\\).
-const char SHADER_NAME[] = "Shader\\Mesh.hlsl";
-
+namespace{
+	//シェーダファイル名(ディレクトリも含む)(\\).
+	const char SHADER_NAME[] = "Shader\\Mesh.hlsl";
+}
 
 //============================================================
 //コンストラクタ.

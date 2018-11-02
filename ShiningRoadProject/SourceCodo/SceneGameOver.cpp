@@ -5,30 +5,33 @@
 
 using namespace std;
 
-//const char* sMISSION_FAILED_SPRITE_PATH = "Data\\Image\\GameOverUi\\MissionFailed.png";
-//const WHSIZE_FLOAT MISSION_FAILED_SPRITE_SIZE = { 512.0f, 128.0f };
-//const D3DXVECTOR3 vMISSION_FAILED_SPRITE_POS = { static_cast<float>( WND_W/2 ), static_cast<float>( WND_H/2 ), 0.0f };
+namespace{
+
+	//const char* sMISSION_FAILED_SPRITE_PATH = "Data\\Image\\GameOverUi\\MissionFailed.png";
+	//const WHSIZE_FLOAT MISSION_FAILED_SPRITE_SIZE = { 512.0f, 128.0f };
+	//const D3DXVECTOR3 vMISSION_FAILED_SPRITE_POS = { static_cast<float>( WND_W/2 ), static_cast<float>( WND_H/2 ), 0.0f };
 
 
-const char* sFONT_TEXT_PATH_GAME_OVER = "Data\\Font\\Text\\TextGameOver.csv";
+	const char* sFONT_TEXT_PATH_GAME_OVER = "Data\\Font\\Text\\TextGameOver.csv";
 
-const char sBLACK_BACK_IMAGE_PATH[] = "Data\\Image\\BlackScreen.png";
-const WHSIZE_FLOAT whBLACK_BACK_SIZE = { 1.0f, 1.0f };
-const D3DXVECTOR3 vBLACK_BACK_SCALE = { WND_W, WND_H, 1.0f };
+	const char sBLACK_BACK_IMAGE_PATH[] = "Data\\Image\\BlackScreen.png";
+	const WHSIZE_FLOAT whBLACK_BACK_SIZE = { 1.0f, 1.0f };
+	const D3DXVECTOR3 vBLACK_BACK_SCALE = { WND_W, WND_H, 1.0f };
 
-//選択.
-const char sSELECT_SPRITE_PATH[] = "Data\\Image\\AssembleUi\\SelectStatus.png";
-const D3DXVECTOR3 vSELECT_SPRITE_SCALE_YES = { 95.0f, 42.0f, 0.0f };
-const D3DXVECTOR3 vSELECT_SPRITE_SCALE_NO  = { 65.0f, 42.0f, 0.0f };
-const float fSELECT_SPRITE_ALPHA = 0.75f;
-const D3DXVECTOR3 vSELECT_SPRITE_POS_YES = { 510.0f, 450.0f, 0.0f };
-const D3DXVECTOR3 vSELECT_SPRITE_POS_NO  = { 720.0f, 450.0f, 0.0f };
+	//選択.
+	const char sSELECT_SPRITE_PATH[] = "Data\\Image\\AssembleUi\\SelectStatus.png";
+	const D3DXVECTOR3 vSELECT_SPRITE_SCALE_YES = { 95.0f, 42.0f, 0.0f };
+	const D3DXVECTOR3 vSELECT_SPRITE_SCALE_NO  = { 65.0f, 42.0f, 0.0f };
+	const float fSELECT_SPRITE_ALPHA = 0.75f;
+	const D3DXVECTOR3 vSELECT_SPRITE_POS_YES = { 510.0f, 450.0f, 0.0f };
+	const D3DXVECTOR3 vSELECT_SPRITE_POS_NO  = { 720.0f, 450.0f, 0.0f };
 
 
-//テキスト.
-const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
-const D3DXVECTOR4 vTEXT_COLOR_GAME_OVER = { 1.0f, 0.0625f, 0.0625f, 1.0f };
+	//テキスト.
+	const D3DXVECTOR4 vTEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
+	const D3DXVECTOR4 vTEXT_COLOR_GAME_OVER = { 1.0f, 0.0625f, 0.0625f, 1.0f };
 
+}
 
 //================================//
 //========== ゲームオーバークラス ==========//

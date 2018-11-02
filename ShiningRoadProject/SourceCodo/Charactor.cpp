@@ -27,6 +27,11 @@ void clsCharactor::SetMoveDeceleSpeed(const int iMoveStopFrame)//Œ¸‘¬.
 
 void clsCharactor::AddMoveAccele(const float fAngle, const float fPush)
 {
+	if (m_bStopComMove)
+	{
+		return;
+	}
+
 	if (!IsMoveControl())
 	{
 		return;//Å‚‘¬‚ð’´‚¦‚Ä‚¢‚é.
@@ -198,6 +203,11 @@ void clsCharactor::SetRotDir(float fAngle)
 
 void clsCharactor::AddRotAccele(const float fAngle, const float fPush)
 {
+	if (m_bStopComRot)
+	{
+		return;
+	}
+
 	if (!IsRotControl())
 	{
 		return;//Å‚‘¬‚ð’´‚¦‚Ä‚¢‚é.
@@ -375,7 +385,7 @@ bool clsCharactor::Shot()
 	return m_v_pWeapons[m_iWeaponNum]->Shot();
 }
 
-bool clsCharactor::Reload()
+bool clsCharactor::IsNeedReload()
 {
 	return m_v_pWeapons[m_iWeaponNum]->IsNeedReload();
 }
@@ -717,6 +727,9 @@ clsCharactor::clsCharactor() :
 	m_iMaxHP( 0 ),
 	m_bDeadFlg( false ),
 	m_bMoving( false ),
+	m_bStopComMove(false),
+	m_bStopComRot(false),
+	m_bStopComShot(false),
 	m_fMoveSpeedMax( 0.0f ),
 	m_iTopMoveSpeedFrame( 0 ),
 	m_fMoveAccele( 0.0f ),

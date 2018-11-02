@@ -25,7 +25,12 @@ clsEnemyBase::~clsEnemyBase()
 
 void clsEnemyBase::Update()
 {
-	if (m_UpdateState.iProcessCnt < 0)
+	if (m_UpdateState.iMoveUpdateCnt >= 0)
+	{
+		m_UpdateState.iMoveUpdateCnt--;
+	}
+
+	if (m_UpdateState.iProcessCnt >= 0)
 	{
 		m_UpdateState.iProcessCnt--;
 	}
@@ -127,6 +132,8 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 
 	if (m_pTarget)
 	{
+		fPush = 1.0f;
+
 		if (m_UpdateState.iMoveUpdateCnt < 0)
 		{
 			MoveState MoveStatus = m_MoveData.v_MoveState[m_UpdateState.iMoveCategoryNo];
@@ -196,17 +203,16 @@ bool clsEnemyBase::SetRotate(float& fPush, float& fAngle)
 
 	if (m_pTarget)
 	{
-		const float fPushFull = 1.0f;
-
-		const float fVecX = m_pTarget->GetPosition().x - m_pChara->GetPosition().x;
-		const float fVecZ = m_pTarget->GetPosition().z - m_pChara->GetPosition().z;
-
-		float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
-
-		ObjRollOverGuard(&fRot);
-
 		if (m_UpdateState.iProcessCnt < 0)
 		{
+			const float fPushFull = 1.0f;
+
+			const float fVecX = m_pTarget->GetPosition().x - m_pChara->GetPosition().x;
+			const float fVecZ = m_pTarget->GetPosition().z - m_pChara->GetPosition().z;
+
+			float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+
+			ObjRollOverGuard(&fRot);
 			if (fRot > 0)
 			{
 				m_UpdateState.fRotDir = fPushFull;
@@ -216,12 +222,12 @@ bool clsEnemyBase::SetRotate(float& fPush, float& fAngle)
 			{
 				m_UpdateState.fRotDir = -fPushFull;
 			}
-		}
-		
-		fPush = m_UpdateState.fRotDir;
-		fAngle = fRot;
 
-		return true;
+			fPush = m_UpdateState.fRotDir;
+			fAngle = fRot;
+
+			return true;
+		}
 	}
 
 	return false;
@@ -288,15 +294,15 @@ bool clsEnemyBase::IsJump()
 
 		m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
 
-		if (m_pTarget->GetPosition().y < m_UpdateState.fVerDis)
-		{
-			float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
+		/*if (m_pTarget->GetPosition().y < m_UpdateState.fVerDis)
+		{*/
+		float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 			
-			if (fDist < m_UpdateState.fVerDis)
-			{
-				return true;
-			}
+		if (abs(fDist) < m_UpdateState.fVerDis)
+		{
+			return true;
 		}
+		/*}*/
 	}
 
 	return false;

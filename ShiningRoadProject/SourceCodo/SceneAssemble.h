@@ -2,6 +2,8 @@
 #define SCENE_ASSEMBLE_H_
 
 
+class clsMENU_WINDOW_ASSEMBLE_BASE;
+
 #include "File.h"
 
 #include "SceneBase.h"
@@ -11,7 +13,6 @@
 #include "AssembleUi.h"
 
 #include "PartsWindowModel.h"
-class clsWINDOW_BOX;
 
 
 //================================//
@@ -28,19 +29,6 @@ public:
 private:
 
 
-	//どのパーツを選んでるの?.
-	struct PARTS_SELECT
-	{
-		short Type;	//パーツの種類( 脚、コア等 ).
-		short Num[clsASSEMBLE_MODEL::ENUM_SIZE];	//パーツ番号.
-
-		PARTS_SELECT()
-		:Num()
-		,Type( 0 )
-		{}
-	}m_PartsSelect;
-
-
 	void CreateProduct() final;
 	void UpdateProduct( enSCENE &enNextScene ) final;
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
@@ -48,7 +36,6 @@ private:
 
 	//コントローラ操作.
 	//カーソル移動.
-	void MoveCursor();//カーソル移動の共通動作.
 	void MoveCursorUp();
 	void MoveCursorDown();
 	void MoveCursorRight();
@@ -58,6 +45,8 @@ private:
 	//キャンセル.
 	void Exit();
 
+	//メニューの動き.
+	void MenuUpdate( enSCENE &enNextScene );
 
 	//メッセボックス出現.//引数は開きたい窓.
 	void AppearMessageBox( const clsASSEMBLE_UI::enSELECT_MODE encMode );
@@ -89,6 +78,26 @@ private:
 	//色替え( 左右キーを押された ).
 	void AddRoboColor( const bool isIncrement );
 
+	//右スティックの動き( ロボの回転 ).
+	void MoveRightStick();
+
+private:
+
+
+	//どのパーツを選んでるの?.
+	struct PARTS_SELECT
+	{
+		short Type;	//パーツの種類( 脚、コア等 ).
+		short Num[clsASSEMBLE_MODEL::ENUM_SIZE];	//パーツ番号.
+
+		PARTS_SELECT()
+		:Num()
+		,Type( 0 )
+		{}
+	}m_PartsSelect;
+
+
+
 	//パーツ選択中かそれ以外か.
 	clsASSEMBLE_UI::enSELECT_MODE m_enSelectMode;
 
@@ -101,67 +110,40 @@ private:
 	std::unique_ptr< clsSprite2D > m_upBack;
 
 	//お着換えするモデル.
-	clsASSEMBLE_MODEL*	m_pAsmModel;
+	clsASSEMBLE_MODEL*	m_spAsmModel;
 
 	//選択中パーツ.
-	clsPARTS_WINDOW_MODEL* m_pSelectParts;
+	std::unique_ptr< clsPARTS_WINDOW_MODEL > m_upSelectParts;
 
 	//矢印.
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upArrow;
 
 
-	//メッセボックス.
-	std::unique_ptr< clsWINDOW_BOX >	m_upBox;
-	//メッセの行数を表す.
-	int									m_iMessageNum;
-
-	//メッセボックスの選択肢.
-//	std::unique_ptr< clsSPRITE2D_CENTER >	m_upYesNo;
-	bool									m_isMessageBoxYes;
-
-	//色の棒.
-	
+	//どの色を変えるかのフラグ.
 	clsROBO_STATUS::enCOLOR_GAGE m_enColorGageIndex;
-
-	clsSPRITE2D_CENTER* m_pColorGagesBone[ clsROBO_STATUS::enCOLOR_GAGE_size ];
-	clsSprite2D* m_pColorGages[ clsROBO_STATUS::enCOLOR_GAGE_size ];
-//	unsigned int m_uiColorChangeNum;//ローカル変数.
-	std::unique_ptr< clsUiText > m_upColorTexts[ clsROBO_STATUS::enCOLOR_GAGE_size ];//RとかGとか書いてる.
-	std::unique_ptr< clsUiText > m_upColorNumText;//色1と色2とか書く.
-	std::unique_ptr< clsSPRITE2D_CENTER > m_upSelectColor;//選択中の色を表す.
 
 
 	//UI.
-	clsASSEMBLE_UI*		m_pUI;
+	std::unique_ptr< clsASSEMBLE_UI	>	m_upUI;
 
-	std::vector< std::shared_ptr< clsFILE > >	m_vspFile;
+	//パーツのステータスを受け取り、このシーン中保持する.
+	std::vector< std::shared_ptr< clsFILE > >	m_vecspFile;
 
 
-	//右スティックでモデルに近づく距離.
-	float m_fDistanceAssembleModel;
-		
+	//右スティックの移動.
+	D3DXVECTOR3 m_vRoboViewOffsetPos;
+
 
 	//エフェクト.
 	::Effekseer::Handle m_ehHibana;
 
 
-	//音の引数.
-	enum enBGM : int
-	{
-		enBGM_RENGOKU0 = 0,
-		enBGM_MAOU0,
-		enBGM_MAOU2,
-	};
+	//メニュー.
+	std::unique_ptr< clsMENU_WINDOW_ASSEMBLE_BASE > m_upMenu;
+	//メニューから受け取った情報を照合する.
+	std::vector<unsigned int> m_vecuiInformationDataArray;
 
-	enum enSE : int
-	{
-		enSE_CURSOL_MOVE = 0,
-		enSE_ENTER,
-		enSE_EXIT,
-		enSE_MISSION_START,
-		enSE_WIN_APP,
-		enSE_WIN_DISAPP,
-	};
+
 
 
 #if _DEBUG

@@ -68,11 +68,13 @@ private:
 	//連結.Concatenation : 連結
 	std::string ConcForOutPut( const FILE_DATA &data ) const;
 
+private:
+
 	//ファイルパス.
 	std::string m_sFileName;
 
 	//二次元配列として考えます.
-	FILE_DATA m_vvsData;
+	FILE_DATA m_DataSet;
 
 	bool m_bUsing;//使用中ならtrue.
 

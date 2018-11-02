@@ -2,9 +2,12 @@
 
 using namespace std;
 
-//このシーンのファイルにつなげるファイル名.
-const string sDATA_PASS = "GameOver";
+namespace{
 
+	//このシーンのファイルにつなげるファイル名.
+	const string sDATA_PASS = "GameOver";
+
+}
 
 clsSOUND_MANAGER_GAME_OVER::clsSOUND_MANAGER_GAME_OVER( const HWND hWnd )	: clsSOUND_MANAGER_BASE( hWnd )
 {

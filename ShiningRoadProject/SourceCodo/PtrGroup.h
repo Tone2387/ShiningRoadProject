@@ -8,7 +8,7 @@
 #include "Effects.h"
 #include "SoundManagerBase.h"
 #include "Camera.h"
-#include "RoboStatus.h"
+#include "RoboStatusPlayer.h"
 #include "BlackScreen.h"
 #include "CFont.h"
 
@@ -26,7 +26,7 @@ public:
 		clsResource* const pResource,
 		clsEffects* const pEffects,
 		clsSOUND_MANAGER_BASE* const pSound,
-		clsROBO_STATUS* const pRoboStatus,
+		clsROBO_STATUS_PLAYER* const pRoboStatus,
 		clsBLACK_SCREEN* const pBlack,
 		clsFont* const pFont );
 	~clsPOINTER_GROUP();
@@ -47,7 +47,7 @@ public:
 	clsEffects*	GetEffects() const;
 	clsSOUND_MANAGER_BASE*	GetSound() const;
 	clsCAMERA_BASE*	GetCamera() const;
-	clsROBO_STATUS* GetRoboStatus() const;
+	clsROBO_STATUS_PLAYER* GetRoboStatus() const;
 	clsBLACK_SCREEN* GetBlackScreen() const;
 	clsFont* GetFont() const;
 
@@ -74,7 +74,7 @@ private:
 	clsCAMERA_BASE*		m_wpCamera;
 
 	//( シーンをまたぐ )ロボットのステータス.
-	clsROBO_STATUS*		m_wpRoboStatus;
+	clsROBO_STATUS_PLAYER*		m_wpRoboStatus;
 
 	//暗転用黒スプライト.
 	clsBLACK_SCREEN*	m_wpBlackScreen;

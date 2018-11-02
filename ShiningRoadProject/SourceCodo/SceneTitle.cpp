@@ -7,34 +7,37 @@
 using namespace std;
 
 
-const float fROBO_SCALE = 0.5f;
-const float fBACK_SCALE = 1.0f;
+namespace{
 
-//ロゴ.
-const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
-const WHSIZE_FLOAT INIT_LOGO_SIZE = { 960.0f, 640.0f };
-const D3DXVECTOR3 vINIT_LOGO_POS = { 53.0f, 75.0f, 0.0f };
-const float fINIT_LOGO_SCALE = 0.682451844f;
-//ロボ.
-const float fROBO_YAW = static_cast<float>( M_PI_4 ) * 0.75f;
+	const float fROBO_SCALE = 0.5f;
+	const float fBACK_SCALE = 1.0f;
 
-//フラッシュ.
-const char* sFLASH_PATH = "Data\\Image\\TitleUi\\Flash.png";
-const float fFLASH_DOWN = -0.05f;
+	//ロゴ.
+	const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
+	const WHSIZE_FLOAT INIT_LOGO_SIZE = { 960.0f, 640.0f };
+	const D3DXVECTOR3 vINIT_LOGO_POS = { 53.0f, 75.0f, 0.0f };
+	const float fINIT_LOGO_SCALE = 0.682451844f;
+	//ロボ.
+	const float fROBO_YAW = static_cast<float>( M_PI_4 ) * 0.75f;
+
+	//フラッシュ.
+	const char* sFLASH_PATH = "Data\\Image\\TitleUi\\Flash.png";
+	const float fFLASH_DOWN = -0.05f;
 
 
-////日本語UI.
-const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
+	////日本語UI.
+	const char* sFONT_TEXT_PATH_TITLE = "Data\\Font\\Text\\TextTitle.csv";
 
-//ボタンを押してね.
-const float fPLESS_START_SCALE = 16.0f;
-const D3DXVECTOR3 vPLESS_START_POS = {
-	300, 
-	static_cast<float>( WND_H ) * 0.75f ,
-	0.0f
-};
-const int iPLESS_START_MESSAGE_INDEX = 0;
+	//ボタンを押してね.
+	const float fPLESS_START_SCALE = 16.0f;
+	const D3DXVECTOR3 vPLESS_START_POS = {
+		300, 
+		static_cast<float>( WND_H ) * 0.75f ,
+		0.0f
+	};
+	const int iPLESS_START_MESSAGE_INDEX = 0;
 
+}
 
 //================================//
 //========== タイトルクラス ==========//
@@ -56,18 +59,25 @@ void clsSCENE_TITLE::CreateProduct()
 
 	m_wpSound->PlaySE( enSE_BOMBER );
 
-	//プレスB.
+
+
+	//textUI.
 	assert( m_wpFont );
 	m_wpFont->SetPos( vPLESS_START_POS );
 	m_wpFont->SetAlpha( 0.0f );
 	m_wpFont->SetScale( fPLESS_START_SCALE );
 
+
+	//最後にクリアした状態にする.
+	//ロボモデルを作る前にクリアしたロボの情報を得る.
+	m_wpRoboStatus->LodeHeroData();
 	//モデルさん作成.
 	assert( !m_pRoboModel );
 	m_pRoboModel = new clsASSEMBLE_MODEL;
-	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus, true );
+	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus );
 	m_pRoboModel->SetRot( { 0.0f, fROBO_YAW, 0.0f } );
 	m_pRoboModel->SetScale( fROBO_SCALE );
+
 
 	//ロゴ.
 	assert( !m_upLogo );
@@ -223,8 +233,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	m_wpCamera->Update();
 
 	//フラッシュする瞬間.
-	clsCAMERA_TITLE* pCam = (clsCAMERA_TITLE*)m_wpCamera;//ゴリ押しでごめんなさい.
-	if( pCam->isFlash() ){
+	if( static_cast<clsCAMERA_TITLE*>( m_wpCamera )->isFlash() ){
 		const float fNEW_ALPHA = 1.0f;
 		m_wpSound->PlayBGM( enBGM_MAOU3 );
 		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
@@ -232,6 +241,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		m_upLogo->SetAlpha( fNEW_ALPHA );
 		m_wpFont->SetAlpha( fNEW_ALPHA );
 	}
+
 
 	if( isCanControl ){
 		//メニューが開いているなら.

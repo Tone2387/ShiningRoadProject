@@ -2,41 +2,56 @@
 #include "File.h"
 using namespace std;
 
+namespace{
+
 //つけていると背景に真ん中がわかるものを出す.
 //#define CENTER_SPRITE_RENDER
 #ifdef CENTER_SPRITE_RENDER
-unique_ptr<clsSprite2D> g_upTex;
+	unique_ptr<clsSprite2D> g_upTex;
 #endif//#ifdef CENTER_SPRITE_RENDER
 
-const int iINTERVAL_CNT = 120;
+	const int iINTERVAL_CNT = 120;
 
 
-const char* sSTAFF_ROLL_STATUS_DATA_PATH = "Data\\FileData\\Tahara\\EndingStaffRollTransform.csv";
-const char* sFONT_TEXT_PATH_ENDING = "Data\\Font\\Text\\TextEnding.csv";
+	const char* sSTAFF_ROLL_STATUS_DATA_PATH = "Data\\FileData\\Tahara\\EndingStaffRollTransform.csv";
+	const char* sFONT_TEXT_PATH_ENDING = "Data\\Font\\Text\\TextEnding.csv";
 
-const string sSCROLL_START_NUM_TEXT = "フリー音源　使用サイト";
+	const string sSCROLL_START_NUM_TEXT = "ー　フリー音源　使用サイト　ー";
+
+	//.
+	const int iPOS_X_FILE_DATA_INDEX = 0;
+	const int iPOS_Y_FILE_DATA_INDEX = 1;
+	const int iSCALE_FILE_DATA_INDEX = 2;
+	const int iALPHA_FILE_DATA_INDEX = 3;
 
 
-const int iPOS_X_FILE_DATA_INDEX = 0;
-const int iPOS_Y_FILE_DATA_INDEX = 1;
-const int iSCALE_FILE_DATA_INDEX = 2;
-const int iALPHA_FILE_DATA_INDEX = 3;
+	//黒背景.
+	const char sBLACK_BACK_PATH[] = "Data\\Image\\BlackScreen.png";
+	const WHSIZE_FLOAT BLACK_BACK_SIZE = { 1.0f, 1.0f };
+	const D3DXVECTOR3 vBLACK_BACK_SCALE = { static_cast<float>( WND_W ), static_cast<float>( WND_H ), 0.0f };
+	//ロゴ.
+	const char sLOGO_PATH[] = "Data\\Image\\TitleUi\\TitleLogo.png";
+	const WHSIZE_FLOAT LOGO_SIZE = { 960.0f, 640.0f };
+	const D3DXVECTOR3 vLOGO_POS = { static_cast<float>( WND_W ) * 0.5f, static_cast<float>( WND_H ) * 0.5f, 0.0f };
+	const D3DXVECTOR3 vLOGO_COLOR = { 1.0f, 1.0f, 1.0f };
+	const float fLOGO_ALPHA = 0.375f;
 
-struct STAFF_TEXT_RENDER_NUM
-{
-	unsigned int uiIndex;//何番の時に.
-	unsigned int uiNum;	//いくつ同時に描画する?.
-};
 
-const int iSTAFF_TEXT_RENDER_NUM_MAX = 3;
-const STAFF_TEXT_RENDER_NUM STAFF_ROLL_PROGRAMR = { 1, 3 };
-const STAFF_TEXT_RENDER_NUM STAFF_ROLL_GRAPHICR = { 4, 2 };
-const STAFF_TEXT_RENDER_NUM STAFF_ROLL_SPECIAL =  { 6, 2 };
-const STAFF_TEXT_RENDER_NUM STAFF_TEXT_NUM_ARRAY[ iSTAFF_TEXT_RENDER_NUM_MAX ]=
-{ STAFF_ROLL_PROGRAMR, STAFF_ROLL_GRAPHICR, STAFF_ROLL_SPECIAL };
+	struct STAFF_TEXT_RENDER_NUM
+	{
+		unsigned int uiIndex;//何番の時に.
+		unsigned int uiNum;	//いくつ同時に描画する?.
+	};
 
-//const float fSCROLL_END_POS_Y = 1;
+	const int iSTAFF_TEXT_RENDER_NUM_MAX = 3;
+	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_PROGRAMR = { 1, 3 };
+	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_GRAPHICR = { 4, 2 };
+	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_SPECIAL =  { 6, 2 };
+	const STAFF_TEXT_RENDER_NUM STAFF_TEXT_NUM_ARRAY[ iSTAFF_TEXT_RENDER_NUM_MAX ]=
+	{ STAFF_ROLL_PROGRAMR, STAFF_ROLL_GRAPHICR, STAFF_ROLL_SPECIAL };
 
+	//const float fSCROLL_END_POS_Y = 1;
+}
 
 //================================//
 //========== エンディングクラス ==========//
@@ -83,35 +98,58 @@ void clsSCENE_ENDING::CreateProduct()
 			break;
 		}
 	}
+	assert( iAlphaSize >= 0 );
 
 	int iScrollSize = iTextNum - iAlphaSize;
 
 	//スクロール.
-	m_vupTextStateScroll.resize( iScrollSize );
-	for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
-		m_vupTextStateScroll[i] = make_unique< TEXT_STATE >();
-		m_vupTextStateScroll[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_X_FILE_DATA_INDEX );
-		m_vupTextStateScroll[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_Y_FILE_DATA_INDEX );
-		m_vupTextStateScroll[i]->fScale = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iSCALE_FILE_DATA_INDEX );
-		m_vupTextStateScroll[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iALPHA_FILE_DATA_INDEX );
+	m_vecupTextStateScroll.resize( iScrollSize );
+	for( unsigned int i=0; i<m_vecupTextStateScroll.size(); i++ ){
+		m_vecupTextStateScroll[i] = make_unique< TEXT_STATE >();
+		m_vecupTextStateScroll[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_X_FILE_DATA_INDEX );
+		m_vecupTextStateScroll[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iPOS_Y_FILE_DATA_INDEX );
+		m_vecupTextStateScroll[i]->fScale = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iSCALE_FILE_DATA_INDEX );
+		m_vecupTextStateScroll[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ) + iAlphaSize, iALPHA_FILE_DATA_INDEX );
 	}
 
 	//最後に表示する番号.
 	m_iGoScrollIndex = iAlphaSize - 1;
 
 	//透過.
-	m_vupTextStateAlpha.resize( iAlphaSize );
-	for( unsigned int i=0; i<m_vupTextStateAlpha.size(); i++ ){
-		m_vupTextStateAlpha[i] = make_unique< TEXT_STATE >();
-		m_vupTextStateAlpha[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ), iPOS_X_FILE_DATA_INDEX );
-		m_vupTextStateAlpha[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ), iPOS_Y_FILE_DATA_INDEX );
-		m_vupTextStateAlpha[i]->fScale = File.GetDataFloat( static_cast<int>( i ), iSCALE_FILE_DATA_INDEX );
-		m_vupTextStateAlpha[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ), iALPHA_FILE_DATA_INDEX );
+	m_vecupTextStateAlpha.resize( iAlphaSize );
+	for( unsigned int i=0; i<m_vecupTextStateAlpha.size(); i++ ){
+		m_vecupTextStateAlpha[i] = make_unique< TEXT_STATE >();
+		m_vecupTextStateAlpha[i]->vPos.x = File.GetDataFloat( static_cast<int>( i ), iPOS_X_FILE_DATA_INDEX );
+		m_vecupTextStateAlpha[i]->vPos.y = File.GetDataFloat( static_cast<int>( i ), iPOS_Y_FILE_DATA_INDEX );
+		m_vecupTextStateAlpha[i]->fScale = File.GetDataFloat( static_cast<int>( i ), iSCALE_FILE_DATA_INDEX );
+		m_vecupTextStateAlpha[i]->fAlpha = File.GetDataFloat( static_cast<int>( i ), iALPHA_FILE_DATA_INDEX );
 	}
 
 	File.Close();
 
-	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
+//	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
+
+	//背景.
+	SPRITE_STATE ss;
+	ss.Disp = BLACK_BACK_SIZE;
+	assert( !m_upBack );
+	m_upBack = make_unique< clsSprite2D >();
+	m_upBack->Create( m_wpDevice, m_wpContext, sBLACK_BACK_PATH, ss );
+	m_upBack->SetPos( { 0.0f, 0.0f, 0.0f } );
+	m_upBack->SetScale( vBLACK_BACK_SCALE );
+
+
+	//ロゴ.
+	ss.Disp = LOGO_SIZE;
+	assert( !m_upLogo );
+	m_upLogo = make_unique< clsSPRITE2D_CENTER >();	
+	m_upLogo->Create( m_wpDevice, m_wpContext, sLOGO_PATH, ss );
+	m_upLogo->SetPos( vLOGO_POS );
+	m_upLogo->SetColor( vLOGO_COLOR );
+	m_upLogo->SetAlpha( fLOGO_ALPHA );
+
+
+
 
 	m_wpCamera->SetPos( { 0.0f, 500.0f, -1.0f } );
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 0.0f } );
@@ -149,17 +187,17 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 		}
 
 		//終わり.
-		if( m_uiSpriteCnt == m_vupTextStateAlpha.size() ){
+		if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() ){
 		}
 		//スクロール.
 		else if( m_isScroll ){
-			for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
-				m_vupTextStateScroll[i]->vPos.y += fScrollSpd;
+			for( unsigned int i=0; i<m_vecupTextStateScroll.size(); i++ ){
+				m_vecupTextStateScroll[i]->vPos.y += fScrollSpd;
 			}
 			//スクロール終了.
-			const unsigned int uiSCROLL_LAST_INDEX = m_vupTextStateScroll.size() - 1;
-			const float fSCROLL_END_POS = m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale * -2.0f;
-			if( m_vupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
+			const unsigned int uiSCROLL_LAST_INDEX = m_vecupTextStateScroll.size() - 1;
+			const float fSCROLL_END_POS = m_vecupTextStateScroll[ uiSCROLL_LAST_INDEX ]->fScale * -2.0f;
+			if( m_vecupTextStateScroll[ uiSCROLL_LAST_INDEX ]->vPos.y < 
 				fSCROLL_END_POS )
 			{
 				m_iIntervalCnt = 0;
@@ -186,7 +224,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 			bool bAddAlphaReturn;
 			for( unsigned int i=0; i<m_uiRenderTextNum; i++ ){
-				bAddAlphaReturn = AddAlphaState( m_vupTextStateAlpha[ m_uiSpriteCnt + i ].get(), fAlpha );
+				bAddAlphaReturn = AddAlphaState( m_vecupTextStateAlpha[ m_uiSpriteCnt + i ].get(), fAlpha );
 			}
 
 			//透過値変更.AddAlphaState//->fAlpha + fAlpha 
@@ -196,7 +234,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 				if( m_isSpriteAlphaAppear ){
 					m_isSpriteAlphaAppear = false;
 					//終われるようにする( サンキューの描画完了 ).
-					if( m_uiSpriteCnt == m_vupTextStateAlpha.size() + iOFFSET_END ){ 
+					if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() + iOFFSET_END ){ 
 						m_isSpriteAlphaAppear = true;
 						m_isCanGoTitle = true;
 					}
@@ -251,30 +289,37 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 void clsSCENE_ENDING::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-	m_upStage->Render( m_mView, m_mProj, m_vLight, vCamPos );
+//	m_upStage->Render( m_mView, m_mProj, m_vLight, vCamPos );
 }
 
 void clsSCENE_ENDING::RenderUi()
 {
+	assert( m_upBack );
+	m_upBack->Render();
+
+	assert( m_upLogo );
+	m_upLogo->Render();
+
 #ifdef CENTER_SPRITE_RENDER
 	g_upTex->Render();
 #endif//#ifdef CENTER_SPRITE_RENDER
+
 	int iTextIndex = 0;
 
-	for( unsigned int i=0; i<m_vupTextStateAlpha.size(); i++  ){
-		assert( m_vupTextStateAlpha[i] );
-		m_wpFont->SetPos(	m_vupTextStateAlpha[i]->vPos );
-		m_wpFont->SetScale(	m_vupTextStateAlpha[i]->fScale );
-		m_wpFont->SetAlpha(	m_vupTextStateAlpha[i]->fAlpha );
+	for( unsigned int i=0; i<m_vecupTextStateAlpha.size(); i++  ){
+		assert( m_vecupTextStateAlpha[i] );
+		m_wpFont->SetPos(	m_vecupTextStateAlpha[i]->vPos );
+		m_wpFont->SetScale(	m_vecupTextStateAlpha[i]->fScale );
+		m_wpFont->SetAlpha(	m_vecupTextStateAlpha[i]->fAlpha );
 		m_wpFont->Render( iTextIndex );
 		iTextIndex ++;
 	}
 
-	for( unsigned int i=0; i<m_vupTextStateScroll.size(); i++ ){
-		assert( m_vupTextStateScroll[i] );
-		m_wpFont->SetPos(	m_vupTextStateScroll[i]->vPos );
-		m_wpFont->SetScale(	m_vupTextStateScroll[i]->fScale );
-		m_wpFont->SetAlpha(	m_vupTextStateScroll[i]->fAlpha );
+	for( unsigned int i=0; i<m_vecupTextStateScroll.size(); i++ ){
+		assert( m_vecupTextStateScroll[i] );
+		m_wpFont->SetPos(	m_vecupTextStateScroll[i]->vPos );
+		m_wpFont->SetScale(	m_vecupTextStateScroll[i]->fScale );
+		m_wpFont->SetAlpha(	m_vecupTextStateScroll[i]->fAlpha );
 		m_wpFont->Render( iTextIndex );
 		iTextIndex ++;
 	}

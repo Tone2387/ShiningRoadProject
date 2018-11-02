@@ -1,6 +1,10 @@
 #include "Sprite2DCenter.h"
 
-const float fROT_MAX = static_cast<float>( D3DX_PI * 2.0 );
+namespace{
+
+	const float fROT_MAX = static_cast<float>( D3DX_PI * 2.0 );
+
+}
 
 clsSPRITE2D_CENTER::clsSPRITE2D_CENTER()
 {

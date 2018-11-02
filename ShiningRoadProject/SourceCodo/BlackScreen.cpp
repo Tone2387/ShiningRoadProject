@@ -1,9 +1,11 @@
 #include "BlackScreen.h"
 
-const float fDARK_RIMIT = 1.0f;//ˆÃ“]ŒÀŠE.
-const float fDAWN_RIMIT = 0.0f;//–¾“]ŒÀŠE.
+namespace{
 
+	const float fDARK_RIMIT = 1.0f;//ˆÃ“]ŒÀŠE.
+	const float fDAWN_RIMIT = 0.0f;//–¾“]ŒÀŠE.
 
+}
 
 clsBLACK_SCREEN::clsBLACK_SCREEN()
 	:m_enState( enSTATE::NEUTRAL )

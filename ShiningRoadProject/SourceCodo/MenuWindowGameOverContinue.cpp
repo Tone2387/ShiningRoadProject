@@ -1,9 +1,13 @@
 #include "MenuWindowGameOverContinue.h"
 #include "PtrGroup.h"
-//#include "UiText.h"
+//メニューを呼び出すため.
 #include "MenuWindowGameOverDoAssemble.h"
 
+namespace{
 
+	const int iSELECT_NUM_YES_INDEX = 0;
+
+}
 
 
 clsMENU_WINDOW_GAME_OVER_CONTINUE::clsMENU_WINDOW_GAME_OVER_CONTINUE(
@@ -49,7 +53,7 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 	}
 
 	if( SelectEnter() ){
-		if( m_iSelectNum == 0 ){
+		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 			//次を開く.
 			if( CreateNextWindow( &m_pNextWindow ) ){
 				m_wpSound->PlaySE( enSE_ENTER );
@@ -58,15 +62,15 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 				Operation( false );
 			}
 		}
-		else if( m_iSelectNum == 1 ){
+		else{
 			m_wpSound->PlaySE( enSE_EXIT );
-			m_uiInformation = ( *m_pInformationVec )[ m_INFORMATION__INDEX_GAME_OVER ];
+			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GAME_OVER ];
 		}
 	}
 
 	if( SelectExit() ){
 		m_wpSound->PlaySE( enSE_EXIT );
-		m_uiInformation = ( *m_pInformationVec )[ m_INFORMATION__INDEX_GAME_OVER ];
+		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GAME_OVER ];
 	}
 
 }
@@ -89,7 +93,7 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::RenderProduct()
 	m_wpFont->Render( iTextRow ++ );
 
 	//コンティニュー?.
-	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 150.0f, 70.0f };
+	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 75.0f, 70.0f };
 	const D3DXVECTOR3 vPOS_CONTINUE = SetPosFromWindow( vPOS_CONTINUE_LOCAL );
 	const float fSCALE_CONTINUE = 36;
 	m_wpFont->SetPos( vPOS_CONTINUE );
@@ -97,12 +101,12 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::RenderProduct()
 	m_wpFont->Render( iTextRow ++ );
 
 	///カーソル移動.
-	if( m_iSelectNum == 0 ){
+	if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*3.0f, 32.0f, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
 		m_upCursor->SetPos( vPOS_YES );
 	}
-	else if( m_iSelectNum == 1 ){
+	else{
 		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*2.1f, 32.0f, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
 		m_upCursor->SetPos( vPOS_NO );
@@ -116,7 +120,7 @@ bool clsMENU_WINDOW_GAME_OVER_CONTINUE::CreateNextWindowProduct(
 	clsMENU_WINDOW_BASE** ppOutNextWindow, 
 	clsMENU_WINDOW_BASE* const pParentWindow ) 
 {
-//	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_CONTINUE( m_pPtrGroup, pParentWindow, m_puiInformationArray );
+//	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_CONTINUE( m_pPtrGroup, pParentWindow, m_pInformationVec );
 	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE( m_pPtrGroup, pParentWindow, m_pInformationVec );
 
 	if( *ppOutNextWindow ){

@@ -132,7 +132,7 @@ protected:
 	clsEffects*				m_wpEffects;
 	clsSOUND_MANAGER_BASE*	m_wpSound;
 	clsCAMERA_BASE*			m_wpCamera;	
-	clsROBO_STATUS*			m_wpRoboStatus;
+	clsROBO_STATUS_PLAYER*	m_wpRoboStatus;
 	clsBLACK_SCREEN*		m_wpBlackScreen;
 	clsFont*				m_wpFont;
 

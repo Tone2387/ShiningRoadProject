@@ -2,43 +2,57 @@
 
 #include "OperationString.h"
 
+using namespace std;
+
 //legのモデルの足元がおかしい場合.
 #define LEG_MODEL_POSITION_BASE_Y_OFFSET
 
-using namespace std;
+#if _DEBUG
+#include "CharaStatic.h"
+#endif//#if _DEBUG
 
-//配列の添え字.
-const UCHAR ucLEG = static_cast<UCHAR>( enPARTS::LEG );
-const UCHAR ucCORE = static_cast<UCHAR>( enPARTS::CORE );
-const UCHAR ucHEAD = static_cast<UCHAR>( enPARTS::HEAD );
-const UCHAR ucARM_L = static_cast<UCHAR>( enPARTS::ARM_L );
-const UCHAR ucARM_R = static_cast<UCHAR>( enPARTS::ARM_R );
-const UCHAR ucWEAPON_L = static_cast<UCHAR>( enPARTS::WEAPON_L );
-const UCHAR ucWEAPON_R = static_cast<UCHAR>( enPARTS::WEAPON_R );
+namespace{
 
-//パーツ種類の数.
-const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
-//パーツ名を渡すため.
-const string sPARTS_NAME[ucPARTS_MAX] =
-{
-	"Leg", "Core", "Head", "ArmL", "ArmR", "WeaponL", "WeaponR"
-};
+#if _DEBUG
+		//足元.
+		std::unique_ptr<clsCharaStatic> m_upFoot;
+		std::unique_ptr<clsCharaStatic> m_upFootNull;
+#endif//#if _DEBUG
 
 
+	//配列の添え字.
+	const UCHAR ucLEG = static_cast<UCHAR>( enPARTS::LEG );
+	const UCHAR ucCORE = static_cast<UCHAR>( enPARTS::CORE );
+	const UCHAR ucHEAD = static_cast<UCHAR>( enPARTS::HEAD );
+	const UCHAR ucARM_L = static_cast<UCHAR>( enPARTS::ARM_L );
+	const UCHAR ucARM_R = static_cast<UCHAR>( enPARTS::ARM_R );
+	const UCHAR ucWEAPON_L = static_cast<UCHAR>( enPARTS::WEAPON_L );
+	const UCHAR ucWEAPON_R = static_cast<UCHAR>( enPARTS::WEAPON_R );
 
-const double dANIM_SPD = 0.016;
+	//パーツ種類の数.
+	const UCHAR	ucPARTS_MAX = static_cast<UCHAR>( enPARTS::MAX );
+	//パーツ名を渡すため.
+	const string sPARTS_NAME[ucPARTS_MAX] =
+	{
+		"Leg", "Core", "Head", "ArmL", "ArmR", "WeaponL", "WeaponR"
+	};
 
 
-//パーツ透過値.
-const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
-const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
 
-//色変更のマスク種類.
-const int iMASK_MAX_NUM = 2;
+	const double dANIM_SPD = 0.016;
 
-//色の段階.gradation
-const int iCOLOR_GRADATION_MAX = 16;
-const int iCOLOR_GRADATION_MIN = 1;
+
+	//パーツ透過値.
+	const D3DXVECTOR4 vCOLOR_NORMAL = { 1.0f, 1.0f, 1.0f, 1.0f };
+	const D3DXVECTOR4 vCOLOR_ALPHA =  { 10.0f, 10.0f, 0.0f, 0.65f };
+
+	//色変更のマスク種類.
+	const int iMASK_MAX_NUM = 2;
+
+	//色の段階.gradation
+	const int iCOLOR_GRADATION_MAX = 16;
+	const int iCOLOR_GRADATION_MIN = 1;
+}
 
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
@@ -79,7 +93,9 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 
 
 
-void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene )
+void clsASSEMBLE_MODEL::Create( 
+	clsResource* const pResource, 
+	clsROBO_STATUS* const pStatus )
 {
 	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
@@ -94,17 +110,30 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
-	//最後にクリアした状態にする.
-	if( isTitleScene ){
-		pStatus->LodeHeroData();
-	}	
 
 	Init( pStatus );
 
-	CreateProduct();
+	CreateProduct( pStatus );
+
+#if _DEBUG
+	float fRATE = 2.5f;
+	//足元.
+	m_upFoot = make_unique<clsCharaStatic>();
+	m_upFoot->AttachModel(
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
+	m_upFoot->AddRotationZ( static_cast<float>( M_PI ) );
+	m_upFoot->SetScale( 0.25f / fRATE );
+
+	m_upFootNull = make_unique<clsCharaStatic>();
+	m_upFootNull->AttachModel(
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
+	m_upFootNull->AddRotationZ( static_cast<float>( M_PI ) );
+	m_upFootNull->SetScale( { 0.125f / fRATE, 0.5f / fRATE, 0.125f / fRATE } );
+#endif//#if _DEBUG
+
 }
 
-void clsASSEMBLE_MODEL::CreateProduct()
+void clsASSEMBLE_MODEL::CreateProduct( clsROBO_STATUS* const pStatus )
 {
 }
 
@@ -136,6 +165,11 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 		UpdateColor( tmpIndex );
 	}
 
+
+	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
+		m_vpParts[i]->Init();
+	}
+
 //	AnimReSet();
 }
 
@@ -146,7 +180,10 @@ void clsASSEMBLE_MODEL::UpDate()
 		m_vpParts[i]->Update();
 	}
 	UpdateProduct();
+
+
 }
+
 void clsASSEMBLE_MODEL::UpdateProduct()
 {
 }
@@ -162,9 +199,15 @@ void clsASSEMBLE_MODEL::Render(
 	D3DXVECTOR4 vTmpColorArmor;
 
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
+	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
+
 	//モデルの足元.
-	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
-	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( "null" );
+//	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
+//	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_NULL );
+
+	D3DXVECTOR3 vLegPosPositionBase = GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_POSITION_BASE );
+	D3DXVECTOR3 vLegPosNull =GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_NULL );
+
 	const float fADD_POS_Y = vLegPosPositionBase.y - vLegPosNull.y;
 
 
@@ -183,11 +226,26 @@ void clsASSEMBLE_MODEL::Render(
 		m_vpParts[i]->ModelRender( 
 			mView, mProj, vLight, vEye, 
 			vTmpColorBase, vTmpColorArmor, true );
+
+		//ボーン位置を教え込ませる.
+		m_vpParts[i]->UpdateBonePosPreviosFrame();
 	}
 
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
 	m_Trans.vPos -= D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
 #endif//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
+
+
+#if _DEBUG
+	m_upFootNull->SetPosition( vLegPosNull );
+	m_upFootNull->UpdatePos();
+	m_upFootNull->Render( mView, mProj, vLight, vEye, { 10.0f, 0.0f, 0.0f, 0.5f }, true );
+	
+	m_upFoot->SetPosition( m_Trans.vPos );
+	m_upFoot->UpdatePos();
+	m_upFoot->Render( mView, mProj, vLight, vEye, { 0.0f, 10.0f, 0.0f, 0.5f }, true );
+	
+#endif//#if _DEBUG
 
 }
 
@@ -285,6 +343,22 @@ void clsASSEMBLE_MODEL::AttachModel(
 }
 
 
+
+//直前のフレームでの、指定パーツの指定ボーンの座標を返す.
+D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePosPreviosFrame( 
+	const enPARTS_INDEX enParts, 
+	const int enBoneName,
+	int iVecNum ) const
+{
+	if( enParts < static_cast<enPARTS_INDEX>( m_vpParts.size() ) ){
+		return m_vpParts[ enParts ]->GetBonePosPreviosFrame( enBoneName, iVecNum );
+	}
+
+	return D3DXVECTOR3( 0.0f, 0.0f, 0.0f );
+}
+
+
+
 //トランスフォーム.
 void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 {
@@ -322,9 +396,9 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 
 	//武器の角度.
 	FitJointModel( m_vpParts[ucWEAPON_L], m_vpParts[ucARM_L],
-		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
+		sBONE_NAME_ARM_WEAPON_VEC_ROOT, sBONE_NAME_ARM_WEAPON_VEC_END );//ArmLJunctionWeapon.ArmLJunctionCore
 	FitJointModel( m_vpParts[ucWEAPON_R], m_vpParts[ucARM_R],
-		sBONE_NAME_WEAPON_VEC_ROOT, sBONE_NAME_WEAPON_VEC_END );
+		sBONE_NAME_ARM_WEAPON_VEC_ROOT, sBONE_NAME_ARM_WEAPON_VEC_END );
 
 
 	m_vpParts[ucWEAPON_L]->AddRotation( { m_vpParts[ucARM_L]->GetRotation().x, 0.0f, 0.0f } );
@@ -513,9 +587,11 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum )
 	return m_vecvColor[ uiMaskNum ];
 }
 
-void clsASSEMBLE_MODEL::IncrementColor( 
+bool clsASSEMBLE_MODEL::IncrementColor( 
 	const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
 {
+	bool isChange = false;
+
 	m_iColorRank[ enColorGage ] ++;
 	if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
@@ -523,12 +599,19 @@ void clsASSEMBLE_MODEL::IncrementColor(
 	else if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
 	}
+	else{
+		isChange = true;
+	}
 
 	UpdateColor( enColorGage );
+
+	return isChange;
 }
-void clsASSEMBLE_MODEL::DecrementColor( 
+bool clsASSEMBLE_MODEL::DecrementColor( 
 	const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
 {
+	bool isChange = false;
+
 	m_iColorRank[ enColorGage ] --;
 	if( m_iColorRank[ enColorGage ] < iCOLOR_GRADATION_MIN ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MIN;
@@ -536,8 +619,13 @@ void clsASSEMBLE_MODEL::DecrementColor(
 	else if( m_iColorRank[ enColorGage ] > iCOLOR_GRADATION_MAX ){
 		m_iColorRank[ enColorGage ] = iCOLOR_GRADATION_MAX;
 	}
+	else{
+		isChange = true;
+	}
 
 	UpdateColor( enColorGage );
+
+	return isChange;
 }
 
 void clsASSEMBLE_MODEL::UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )

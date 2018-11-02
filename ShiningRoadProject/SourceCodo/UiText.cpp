@@ -2,10 +2,14 @@
 
 using namespace std;
 
-//シェーダファイル名(パスも含む).
-const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
+namespace{
 
-const char* sFILE_PATH = "Data\\Image\\Font.png";
+	//シェーダファイル名(パスも含む).
+	const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
+
+	const char* sFILE_PATH = "Data\\Image\\Font.png";
+
+}
 
 //============================================================
 //	定数.

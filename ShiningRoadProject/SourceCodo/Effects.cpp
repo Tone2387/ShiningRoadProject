@@ -5,40 +5,45 @@
 
 using namespace std;
 
-//エフェクト管理用インスタンス最大数.
-//最大描画スプライト数.(やばいならint型にする)
-const /*int32_t*/ int g_RenderSpriteMax = 1024 * 4;
-const int g_EffectInstanceMax = g_RenderSpriteMax;
+namespace{
 
-const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
+	//エフェクト管理用インスタンス最大数.
+	//最大描画スプライト数.(やばいならint型にする)
+	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 4;
+	const int g_EffectInstanceMax = g_RenderSpriteMax;
 
-const string sFILE_PATH = "Data\\Effekseer\\tex\\";
+	const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
 
-const int uiEFFECT_FILE_NAME_INDEX = 0;//ファイル名が格納されているインデックス.
-//const int uiMAX_PLAY_INDEX = 1;//最大再生数.
+	const string sFILE_PATH = "Data\\Effekseer\\tex\\";
+
+	const int uiEFFECT_FILE_NAME_INDEX = 0;//ファイル名が格納されているインデックス.
+	//const int uiMAX_PLAY_INDEX = 1;//最大再生数.
 
 
-const int iRESURVE_SIZE_EFFECTS_MAX = 64;
+	const int iRESURVE_SIZE_EFFECTS_MAX = 64;
 
-////エフェクトファイルのリスト.
-//const wchar_t g_strFileNameList[ clsEffects::enEFFECTS_MAX ][128] =
-//{
-//	L"Data\\Effekseer\\tex\\asiato.efk",
-//	L"Data\\Effekseer\\tex\\arbia_kougeki.efk",
-//	L"Data\\Effekseer\\tex\\syougekiha.efk",
-//	L"Data\\Effekseer\\tex\\kougeki.efk",
-//
-//	L"Data\\Effekseer\\tex\\Teki_kougeki.efk",
-//	L"Data\\Effekseer\\tex\\yarare.efk",
-//	L"Data\\Effekseer\\tex\\bikkuri.efk",
-//
-//	L"Data\\Effekseer\\tex\\hibana.efk",
-//
-//	L"Data\\Effekseer\\tex\\takara_hasira.efk",
-//	L"Data\\Effekseer\\tex\\takara_nakami.efk",
-//
-//	L"Data\\Effekseer\\tex\\tobira_sunabokori.efk",
-//};
+	////エフェクトファイルのリスト.
+	//const wchar_t g_strFileNameList[ clsEffects::enEFFECTS_MAX ][128] =
+	//{
+	//	L"Data\\Effekseer\\tex\\asiato.efk",
+	//	L"Data\\Effekseer\\tex\\arbia_kougeki.efk",
+	//	L"Data\\Effekseer\\tex\\syougekiha.efk",
+	//	L"Data\\Effekseer\\tex\\kougeki.efk",
+	//
+	//	L"Data\\Effekseer\\tex\\Teki_kougeki.efk",
+	//	L"Data\\Effekseer\\tex\\yarare.efk",
+	//	L"Data\\Effekseer\\tex\\bikkuri.efk",
+	//
+	//	L"Data\\Effekseer\\tex\\hibana.efk",
+	//
+	//	L"Data\\Effekseer\\tex\\takara_hasira.efk",
+	//	L"Data\\Effekseer\\tex\\takara_nakami.efk",
+	//
+	//	L"Data\\Effekseer\\tex\\tobira_sunabokori.efk",
+	//};
+
+}
+
 
 
 clsEffects::clsEffects()
@@ -49,8 +54,8 @@ clsEffects::clsEffects()
 	m_pSound = nullptr;
 	m_pXA2 = nullptr;
 	m_pXA2Master = nullptr;
-	for( unsigned int i=0; i<m_vpEffect.size(); i++ ){
-		m_vpEffect[i] = nullptr;
+	for( unsigned int i=0; i<m_vecpEffect.size(); i++ ){
+		m_vecpEffect[i] = nullptr;
 	}
 }
 
@@ -95,11 +100,11 @@ HRESULT clsEffects::Destroy()
 HRESULT clsEffects::ReleaseData()
 {
 	//エフェクトの破棄.
-	for( unsigned int i=0; i<m_vpEffect.size(); i++ ){
-		ES_SAFE_RELEASE( m_vpEffect[i] );
+	for( unsigned int i=0; i<m_vecpEffect.size(); i++ ){
+		ES_SAFE_RELEASE( m_vecpEffect[i] );
 	}
-	m_vpEffect.clear();
-	m_vpEffect.shrink_to_fit();
+	m_vecpEffect.clear();
+	m_vecpEffect.shrink_to_fit();
 
 	return S_OK;
 }
@@ -181,9 +186,8 @@ HRESULT clsEffects::LoadData()
 	clsOPERATION_STRING OprtStr;
 
 	//エフェクトの読込.
-//	m_vpEffect.reserve( iRESURVE_SIZE_EFFECTS_MAX );
-	m_vpEffect.resize( upFile->GetSizeRow() );
-	for( unsigned int i=0; i<m_vpEffect.size(); i++ ){
+	m_vecpEffect.resize( upFile->GetSizeRow() );
+	for( unsigned int i=0; i<m_vecpEffect.size(); i++ ){
 		//パスを作る.
 		tmpString = sFILE_PATH + upFile->GetDataString( i, uiEFFECT_FILE_NAME_INDEX );
 
@@ -191,7 +195,7 @@ HRESULT clsEffects::LoadData()
 		const wchar_t *tmpPath = OprtStr.CreateWcharPtrFromCharPtr( tmpString.c_str() );
 
 		//作成.
-		m_vpEffect[i] =
+		m_vecpEffect[i] =
 			::Effekseer::Effect::Create( 
 				m_pManager, 
 				(const EFK_CHAR*)( tmpPath ) );
@@ -199,9 +203,9 @@ HRESULT clsEffects::LoadData()
 		//作ったものは消す.
 		delete[] tmpPath;
 
-		assert( m_vpEffect[i] );
+		assert( m_vecpEffect[i] );
 //		//エラー.
-//		if( m_vpEffect[i] == nullptr ){
+//		if( m_vecpEffect[i] == nullptr ){
 //			char strMsg[128];
 //			wsprintf( strMsg, "clsEffects::LoadData()\n%ls",
 //				tmpPath );
@@ -210,7 +214,6 @@ HRESULT clsEffects::LoadData()
 //			return E_FAIL;
 //		}
 	}
-//	m_vpEffect.shrink_to_fit();
 
 	upFile->Close();
 	upFile.reset( nullptr );

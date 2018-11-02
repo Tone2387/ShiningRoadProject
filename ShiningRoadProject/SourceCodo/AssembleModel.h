@@ -6,21 +6,7 @@
 
 #include "Resource.h"
 
-#include "RoboStatus.h"
-
-//足元の基点のボーン名.
-#define sBONE_NAME_LEG_POSITION_BASE "PositionBase"
-
-//連結部分のボーン名.
-#define sBONE_NAME_LEG_TO_CORE		"JunctionCore"
-#define sBONE_NAME_CORE_TO_HEAD		"JunctionHead"
-#define sBONE_NAME_CORE_TO_ARM_L	"JunctionArmL"
-#define sBONE_NAME_CORE_TO_ARM_R	"JunctionArmR"
-#define sBONE_NAME_ARM_TO_WEAPON	"JunctionWeapon"
-
-//武器の回転情報確定に使う.
-#define sBONE_NAME_WEAPON_VEC_ROOT	 "JunctionWeapon"	//"WeaponVecRoot"
-#define sBONE_NAME_WEAPON_VEC_END	 "WeaponVec"		//"WeaponVecEnd"
+#include "RoboStatusBase.h"
 
 
 
@@ -44,8 +30,23 @@ public:
 		ENUM_SIZE
 	};
 
+	//m_vpPartsの添え字.
+	enum enPARTS_INDEX : int
+	{
+		enPARTS_INDEX_LEG = 0,
+		enPARTS_INDEX_CORE,
+		enPARTS_INDEX_HEAD,
+		enPARTS_INDEX_ARM_L,
+		enPARTS_INDEX_ARM_R,
+		enPARTS_INDEX_WEAPON_L,
+		enPARTS_INDEX_WEAPON_R,
+
+		enPARTS_INDEX_size
+	};
+
+
 	//アセンブルシーンの各関数内で使います.
-	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene = false );
+	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus );
 	void UpDate();
 	virtual void Render(
 		const D3DXMATRIX& mView, 
@@ -59,6 +60,15 @@ public:
 
 	//モデルつけ変え.
 	void AttachModel( const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum );
+
+
+	//直前のフレームでの、指定パーツの指定ボーンの座標を返す.
+	D3DXVECTOR3 GetBonePosPreviosFrame( 
+		const enPARTS_INDEX enParts, 
+		const int enBoneName,
+		int iVecNum = 0 ) const;
+
+
 
 	//トランスフォーム.
 	void SetPos( const D3DXVECTOR3 &vPos );
@@ -88,8 +98,11 @@ public:
 	//パーツの色指定.
 	void SetPartsColor( const D3DXVECTOR4 &vColor, const unsigned int uiMaskNum );
 	D3DXVECTOR4 GetPartsColor( const unsigned int uiMaskNum );
-	void IncrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
-	void DecrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
+
+	//可能なら( 範囲内なら )trueを返す.
+	bool IncrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
+	bool DecrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
+
 	//0.0f～1.0fで返す.
 	float GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 	std::vector< D3DXVECTOR4 > GetColor();
@@ -101,12 +114,13 @@ public:
 #if _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
+
 #endif//#if _DEBUG
 
 protected:
 
 	//継承先で使ってね.
-	virtual void CreateProduct();
+	virtual void CreateProduct( clsROBO_STATUS* const pStatus );
 	virtual void UpdateProduct();
 
 
@@ -137,6 +151,8 @@ protected:
 	//色.
 	void UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 
+protected:
+
 	double m_dAnimSpd;
 
 	TRANSFORM m_Trans;
@@ -146,7 +162,6 @@ protected:
 	std::unique_ptr< clsFACTORY_PARTS >	m_upPartsFactory;
 
 	//パーツの数分のポインタ.
-//	clsPARTS_BASE**	m_wppParts;
 	std::vector< clsPARTS_BASE* >	m_vpParts;
 
 

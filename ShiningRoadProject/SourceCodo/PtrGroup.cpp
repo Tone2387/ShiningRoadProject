@@ -10,7 +10,7 @@ clsPOINTER_GROUP::clsPOINTER_GROUP(
 	clsResource* const pResource,
 	clsEffects* const pEffects,
 	clsSOUND_MANAGER_BASE* const pSound,
-	clsROBO_STATUS* const pRoboStatus,
+	clsROBO_STATUS_PLAYER* const pRoboStatus,
 	clsBLACK_SCREEN* const pBlack,
 	clsFont* const pFont )
 		:m_wpDevice( pDevice )
@@ -112,7 +112,7 @@ clsCAMERA_BASE*	clsPOINTER_GROUP::GetCamera() const
 }
 
 //( シーンをまたぐ )ロボットのステータス.
-clsROBO_STATUS* clsPOINTER_GROUP::GetRoboStatus() const
+clsROBO_STATUS_PLAYER* clsPOINTER_GROUP::GetRoboStatus() const
 {
 	return m_wpRoboStatus;
 }

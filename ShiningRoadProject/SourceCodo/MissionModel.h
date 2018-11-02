@@ -22,7 +22,7 @@ public:
 	//ボーンに必要な情報.
 	struct BONE_SET
 	{
-		std::string sName;
+		int			iBoneNum;
 		int			iParts;//何のパーツか(enPARTSをキャストしてこの変数に入れる).
 	};
 
@@ -48,8 +48,16 @@ public:
 		const char* strBoneRootName, 
 		const char* strBoneEndName);
 
+	D3DXVECTOR3 GetDirfromBone(
+		const enPARTS PartsNum,
+		const int enBoneRootName,
+		const int enBoneEndName,
+		const int iVecNum = 0);
+
 	//当たり判定の座標の配列をすべて返す.
-	std::shared_ptr< std::vector< D3DXVECTOR3 > > GetColPosPtr();
+	std::vector< clsObject::SPHERE > GetColState(clsROBO_STATUS* const pStatus);
+
+	void UpdateColPos();
 
 	//指定したパーツの回転値を変更する.
 	void SetPartsRotate(const enPARTS PartsNum, const D3DXVECTOR3 vRot);
@@ -71,6 +79,60 @@ public:
 	//指定したパーツのアニメーション再生状態を渡す true:逆再生.
 	const bool IsPartsAnimReverce(const enPARTS PartsNum);
 
+	//前フレームのボーン位置を受け取るための関数群.
+	//脚パーツ.
+	const D3DXVECTOR3 GetBonePosLegBoosterRoot(const int);
+	const D3DXVECTOR3 GetBonePosLegBoosterEnd(const int);
+
+	const D3DXVECTOR3 GetBonePosLegJoint(const int);
+
+	const D3DXVECTOR3 GetBonePosLegSole(const int);
+
+	//頭パーツ.
+	const D3DXVECTOR3 GetBonePosHeadCenter();
+
+	//コアパーツ.
+	const D3DXVECTOR3 GetBonePosCoreBoosterRoot(const int);
+	const D3DXVECTOR3 GetBonePosCoreBoosterEnd(const int);
+
+	const D3DXVECTOR3 GetBonePosCoreJenerator();
+	
+	//左腕パーツ.
+	const D3DXVECTOR3 GetBonePosArmLBoostFrontRoot(const int);
+	const D3DXVECTOR3 GetBonePosArmLBoostFrontEnd(const int);
+
+	const D3DXVECTOR3 GetBonePosArmLBoostSideRoot(const int);
+	const D3DXVECTOR3 GetBonePosArmLBoostSideEnd(const int);
+
+	const D3DXVECTOR3 GetBonePosArmLBoostBackRoot(const int);
+	const D3DXVECTOR3 GetBonePosArmLBoostBackEnd(const int);
+
+	const D3DXVECTOR3 GetBonePosArmLJoint(const int);
+
+	//右腕パーツ.
+	const D3DXVECTOR3 GetBonePosArmRBoostFrontRoot(const int);
+	const D3DXVECTOR3 GetBonePosArmRBoostFrontEnd(const int);
+
+	const D3DXVECTOR3 GetBonePosArmRBoostSideRoot(const int);
+	const D3DXVECTOR3 GetBonePosArmRBoostSideEnd(const int);
+
+	const D3DXVECTOR3 GetBonePosArmRBoostBackRoot(const int);
+	const D3DXVECTOR3 GetBonePosArmRBoostBackEnd(const int);
+
+	const D3DXVECTOR3 GetBonePosArmRJoint(const int);
+
+	//左武器パーツ.
+	const D3DXVECTOR3 GetBonePosWeaponLMuzzleRoot();
+	const D3DXVECTOR3 GetBonePosWeaponLMuzzleEnd();
+
+	const D3DXVECTOR3 GetBonePosWeaponLCartridgeInjection();
+
+	//右武器パーツ.
+	const D3DXVECTOR3 GetBonePosWeaponRMuzzleRoot();
+	const D3DXVECTOR3 GetBonePosWeaponRMuzzleEnd();
+
+	const D3DXVECTOR3 GetBonePosWeaponRCartridgeInjection();
+
 private:
 
 	//引数のパーツの当たり判定の情報作成.
@@ -84,7 +146,7 @@ private:
 	int CreateColStateBone( const enCOL_PARTS enColParts );
 
 	//Create関数の中にある.
-	void CreateProduct() override;
+	void CreateProduct( clsROBO_STATUS* const pStatus ) override;
 
 	//ボーン情報.
 	std::vector< BONE_SET > m_vColStates;

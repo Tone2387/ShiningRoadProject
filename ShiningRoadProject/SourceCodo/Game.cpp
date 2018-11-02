@@ -2,18 +2,22 @@
 
 using namespace std;
 
-const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
+namespace{
+
+	const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
 
 
-//起動時の初期シーン.
-#define START_UP_SCENE enSCENE::TITLE
-//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
-#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
+	//起動時の初期シーン.
+	#define START_UP_SCENE enSCENE::TITLE
+	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
+	#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
 
-const unsigned char cSTART_UP_MUSIC_NO = 0;
+	const unsigned char cSTART_UP_MUSIC_NO = 0;
 
-//画面の初期化色.
-const float g_fClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+	//画面の初期化色.
+	const float g_fClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+
+}
 
 
 clsGAME::clsGAME( 
@@ -105,7 +109,7 @@ void clsGAME::Create()
 	m_spEffect->Create( m_wpDevice, m_wpContext );
 
 	assert( !m_spRoboStatus );
-	m_spRoboStatus = new clsROBO_STATUS;
+	m_spRoboStatus = new clsROBO_STATUS_PLAYER;
 
 	//暗転.
 	SPRITE_STATE ss;
@@ -138,7 +142,7 @@ void clsGAME::Create()
 	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
 	SwitchScene( GET_STATUS_DATA_INIT_SCENE, true );
 	//最初のシーンはタイトルを指定する.
-	SwitchScene( START_UP_SCENE, true );
+	SwitchScene( START_UP_SCENE );
 
 }
 
@@ -208,9 +212,12 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	SAFE_DELETE( m_spSound );
 
 	//サウンド.
-	m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
-	if( m_spSound ){
-		m_spSound->Create();
+
+	if( !bStartUp ){
+		m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
+		if( m_spSound ){
+			m_spSound->Create();
+		}
 	}
 	m_spPtrGroup->UpdateSoundPtr( m_spSound );
 

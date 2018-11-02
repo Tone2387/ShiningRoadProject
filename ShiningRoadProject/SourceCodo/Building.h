@@ -96,9 +96,9 @@ private:
 	//ñ{ëÃ.
 	TRANSFORM m_Trans;
 	//è„ñ .
-	std::vector< std::vector< TRANSFORM > > m_vvTop;
+	std::vector< std::vector< TRANSFORM > > m_vecvecTop;
 	//ë§ñ .
-	std::vector< std::vector< TRANSFORM > > m_vvSide[ enWALL_DIRECTION_size ];
+	std::vector< std::vector< TRANSFORM > > m_vecvecSideArray[ enWALL_DIRECTION_size ];
 
 
 	std::unique_ptr< clsObjStaticMesh > m_upBox;

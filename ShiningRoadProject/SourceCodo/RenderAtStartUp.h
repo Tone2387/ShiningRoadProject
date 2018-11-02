@@ -68,15 +68,18 @@ private:
 	int m_iTimer;//モードの、待機時間.
 
 #ifdef _DEBUG
-	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupRogo;
+	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vecupRogo;
 #endif//#ifdef _DEBUG
 
 	std::unique_ptr< clsLINE_BOX > m_upLineBox;
 	std::unique_ptr< clsLINE_BOX > m_upGageBox;
 
-	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vupGage;//ゲージ本体.
+	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vecupGage;//ゲージ本体.
 
 	std::unique_ptr< clsBLACK_SCREEN > m_upBlack;
+
+	//ロゴ.
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
 
 	//ロード中メッセージ.
 	std::unique_ptr< clsUiText > m_upText;

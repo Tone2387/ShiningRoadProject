@@ -7,12 +7,13 @@
 #include <string.h>
 
 
-// シェーダ名(ディレクトリも含む)
-const char SHADER_NAME[] = "Shader\\MeshSkin.hlsl";
-//マスクテクスチャパス.
-const char sMASK_PATH_0[] = "mask0.png";
-const char sMASK_PATH_1[] = "mask1.png";
-
+namespace{
+	// シェーダ名(ディレクトリも含む)
+	const char SHADER_NAME[] = "Shader\\MeshSkin.hlsl";
+	//マスクテクスチャパス.
+	const char sMASK_PATH_0[] = "mask0.png";
+	const char sMASK_PATH_1[] = "mask1.png";
+}
 
 // フレームを作成する.
 HRESULT MY_HIERARCHY::CreateFrame( LPCSTR Name, LPD3DXFRAME *ppNewFrame )

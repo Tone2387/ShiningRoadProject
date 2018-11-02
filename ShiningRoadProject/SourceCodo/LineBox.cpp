@@ -3,19 +3,24 @@
 using namespace std;
 
 
-const char LINE_MAX = 2;
-const char JOINT_MAX = 4;
+namespace{
 
-const char* sLINE_PATH = "Data\\Image\\StartUp\\UiLineBody.png";
-const char* sJOINT_PATH = "Data\\Image\\StartUp\\UiLineJoint.png";
+	const char LINE_MAX = 2;
+	const char JOINT_MAX = 4;
 
-const WHSIZE_FLOAT SS_DISP = { 1.0f, 1.0f };
-const WHSIZE_FLOAT SS_ANIM = { 1.0f, 1.0f };
+	const char* sLINE_PATH = "Data\\Image\\StartUp\\UiLineBody.png";
+	const char* sJOINT_PATH = "Data\\Image\\StartUp\\UiLineJoint.png";
 
-//Šp‚Ì‰ñ“]Šp.
-const float fROT_ROLL = static_cast< float >( 3.14 * 0.5 );
+	const WHSIZE_FLOAT SS_DISP = { 1.0f, 1.0f };
+	const WHSIZE_FLOAT SS_ANIM = { 1.0f, 1.0f };
 
-const float fSCALE = 16.0f;
+	//Šp‚Ì‰ñ“]Šp.
+	const float fROT_ROLL = static_cast< float >( 3.14 * 0.5 );
+
+	const float fSCALE = 16.0f;
+
+}
+
 
 clsLINE_BOX::clsLINE_BOX(		
 	ID3D11Device* const pDevice11,

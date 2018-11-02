@@ -77,6 +77,7 @@ public:
 		ModelUpdate();
 		m_pMesh->Render(mView, mProj, vLight, vEye);
 		UpdatePosfromBone();
+		m_pMesh->UpdateColPos();
 	}
 
 	void UpdateCollsion();
@@ -154,6 +155,9 @@ public:
 	~clsRobo();
 
 private:
+	bool m_bStopComShotL;
+	bool m_bStopComShotR;
+
 	D3DXVECTOR3 m_vMoveDirforBoost;
 
 	//右腕ブースターエフェクト.
@@ -199,11 +203,80 @@ private:
 
 	int GetBoostEfcNum(enPARTS PartsNum,const char* strBoostPosition);
 
+	enum enAnimNoLeg
+	{
+		enAnimNoLegWait = 0,
+		enAnimNoLegWalkStart,
+		enAnimNoLegWalkRight,
+		enAnimNoLegWalkLeft,
+		enAnimNoLegWalkEndRight,
+		enAnimNoLegWalkEndLeft,
+		enAnimNoLegBoostStart,
+		enAnimNoLegBoost,
+		enAnimNoLegBoostEnd,
+		enAnimNoLegJumpStart,
+		enAnimNoLegJumpUp,
+		enAnimNoLegJump,
+		enAnimNoLegJumpDown,
+		enAnimNoLegJumpEnd,
+		enAnimNoLegDown
+	};
+
+	enum enAnimNoArm
+	{
+		enAnimNoArmWait = 0,
+		enAnimNoArmWeaponHoldStart,
+		enAnimNoArmWeaponHoldAct,
+		enAnimNoArmWeaponShot,
+		enAnimNoArmWeaponHoldEnd,
+		enAnimNoArmWeaponReload,
+		enAnimNoArmDown,
+	};
+
+	enum enAnimNoCore
+	{
+		enAnimNoCoreWait = 0,
+		enAnimNoCoreDown,
+		enAnimNoCoreRadiatorOpen,
+		enAnimNoCoreRadiatorAct,
+		enAnimNoCoreRadiatorClose
+	};
+
+	enum enAnimNoHead
+	{
+		enAnimNoHeadWait = 0,
+		enAnimNoHeadDown
+	};
+
+	enum enAnimNoWeapon
+	{
+		enAnimNoWeaponWait = 0,
+		enAnimNoWeaponShot,
+		enAnimNoWeaponReload
+	};
+
 	void AnimUpdate();
+
 	void AnimUpdateLeg();
 	void AnimUpdateCore();
+	void AnimUpdateHead();
 	void AnimUpdateArmL();
 	void AnimUpdateArmR();
+	void AnimUpdateWeaponL();
+	void AnimUpdateWeaponR();
+
+	const bool IsLegPartsAnimBoost();//脚パーツのアニメーションがブースター関係ならtrue.
+
+	const bool IsArmLPartsAnimReload();//左腕パーツのアニメーションがリロード関係ならtrue.
+	const bool IsArmRPartsAnimReload();//右腕パーツのアニメーションがリロード関係ならtrue.
+
+	void AnimChangeLeg(enAnimNoLeg enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeCore(enAnimNoCore enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeHead(enAnimNoHead enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeArmL(enAnimNoArm enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeArmR(enAnimNoArm enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeWeaponL(enAnimNoWeapon enChangeAnimNo, double dAnimTime = 0.0);
+	void AnimChangeWeaponR(enAnimNoWeapon enChangeAnimNo, double dAnimTime = 0.0);
 
 //太原の書き足した分.
 #ifdef Tahara

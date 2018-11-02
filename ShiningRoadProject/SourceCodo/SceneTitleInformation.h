@@ -18,7 +18,7 @@ enum enSE : int
 	enSE_BOMBER,
 
 	enSE_WIN_APP,
-	enSE_WIN_DIS_APP
+	enSE_WIN_DISAPP
 };
 
 //ƒƒjƒ…[‚©‚çŽó‚¯Žæ‚Á‚½î•ñ‚ðÆ‡‚·‚é.

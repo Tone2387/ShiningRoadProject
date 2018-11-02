@@ -5,7 +5,7 @@
 #include "SceneBase.h"
 #include "CameraEnding.h"
 
-#include "Stage.h"
+//#include "Stage.h"
 
 
 //================================//
@@ -35,9 +35,9 @@ private:
 	bool AddAlphaState( TEXT_STATE* const pTextState, const float fAlpha );
 
 	//そのばで透過する文字用のステータス.
-	std::vector< std::unique_ptr< TEXT_STATE > > m_vupTextStateAlpha;
+	std::vector< std::unique_ptr< TEXT_STATE > > m_vecupTextStateAlpha;
 	//スクロールする文字用のステータス.
-	std::vector< std::unique_ptr< TEXT_STATE > > m_vupTextStateScroll;
+	std::vector< std::unique_ptr< TEXT_STATE > > m_vecupTextStateScroll;
 
 	unsigned int	m_uiSpriteCnt;
 	bool			m_isSpriteAlphaAppear;
@@ -53,7 +53,14 @@ private:
 	//スタッフロール透過文字の同時表示数.
 	unsigned int m_uiRenderTextNum;
 
-	std::unique_ptr< clsStage >	m_upStage;//テスト用.
+//	std::unique_ptr< clsStage >	m_upStage;//テスト用.
+
+
+
+
+
+	std::unique_ptr< clsSprite2D > m_upBack;
+	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
 
 #if _DEBUG
 	//デバック゛テキストの表示.

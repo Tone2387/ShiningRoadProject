@@ -2,11 +2,13 @@
 
 using namespace std;
 
-const char* sFILE_NAME = "Data\\Image\\AssembleUi\\BoxBack.png";
+namespace{
 
-const char LINE_MAX = 2;
-const char JOINT_MAX = 4;
+	const char* sFILE_NAME = "Data\\Image\\AssembleUi\\BoxBack.png";
 
+	const char LINE_MAX = 2;
+	const char JOINT_MAX = 4;
+}
 
 
 

@@ -116,6 +116,7 @@
     <ClCompile Include="SourceCodo\Enemy.cpp" />
     <ClCompile Include="SourceCodo\EnemyCharactor.cpp" />
     <ClCompile Include="SourceCodo\EnemyRobo.cpp" />
+    <ClCompile Include="SourceCodo\RoboStatusEnemy.cpp" />
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
     <ClCompile Include="SourceCodo\FactoryScene.cpp" />
@@ -131,6 +132,10 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\LineBox.cpp" />
     <ClCompile Include="SourceCodo\Main.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowAssembleBackTitle.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowAssembleBase.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowAssembleColorChange.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowAssembleTakeOff.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowGameOverBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowGameOverContinue.cpp" />
@@ -153,13 +158,14 @@
     <ClCompile Include="SourceCodo\PartsWindowModel.cpp" />
     <ClCompile Include="SourceCodo\PartsWindowModelForArms.cpp" />
     <ClCompile Include="SourceCodo\Player.cpp" />
+    <ClCompile Include="SourceCodo\RoboStatusPlayer.cpp" />
     <ClCompile Include="SourceCodo\PtrGroup.cpp" />
     <ClCompile Include="SourceCodo\Ray.cpp" />
     <ClCompile Include="SourceCodo\RenderAtStartUp.cpp" />
     <ClCompile Include="SourceCodo\Resource.cpp" />
     <ClCompile Include="SourceCodo\Robo.cpp" />
     <ClCompile Include="SourceCodo\RoboCommand.cpp" />
-    <ClCompile Include="SourceCodo\RoboStatus.cpp" />
+    <ClCompile Include="SourceCodo\RoboStatusBase.cpp" />
     <ClCompile Include="SourceCodo\SceneAssemble.cpp" />
     <ClCompile Include="SourceCodo\SceneBase.cpp" />
     <ClCompile Include="SourceCodo\SceneEnding.cpp" />
@@ -218,6 +224,7 @@
     <ClInclude Include="SourceCodo\Enemy.h" />
     <ClInclude Include="SourceCodo\EnemyCharactor.h" />
     <ClInclude Include="SourceCodo\EnemyRobo.h" />
+    <ClInclude Include="SourceCodo\RoboStatusEnemy.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
     <ClInclude Include="SourceCodo\FactoryScene.h" />
@@ -234,6 +241,10 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\LineBox.h" />
     <ClInclude Include="SourceCodo\Main.h" />
+    <ClInclude Include="SourceCodo\MenuWindowAssembleBackTitle.h" />
+    <ClInclude Include="SourceCodo\MenuWindowAssembleBase.h" />
+    <ClInclude Include="SourceCodo\MenuWindowAssembleColorChange.h" />
+    <ClInclude Include="SourceCodo\MenuWindowAssembleTakeOff.h" />
     <ClInclude Include="SourceCodo\MenuWindowBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowGameOverBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowGameOverContinue.h" />
@@ -257,14 +268,16 @@
     <ClInclude Include="SourceCodo\PartsWindowModel.h" />
     <ClInclude Include="SourceCodo\PartsWindowModelForArms.h" />
     <ClInclude Include="SourceCodo\Player.h" />
+    <ClInclude Include="SourceCodo\RoboStatusPlayer.h" />
     <ClInclude Include="SourceCodo\PtrGroup.h" />
     <ClInclude Include="SourceCodo\Ray.h" />
     <ClInclude Include="SourceCodo\RenderAtStartUp.h" />
     <ClInclude Include="SourceCodo\Resource.h" />
     <ClInclude Include="SourceCodo\Robo.h" />
     <ClInclude Include="SourceCodo\RoboCommand.h" />
-    <ClInclude Include="SourceCodo\RoboStatus.h" />
+    <ClInclude Include="SourceCodo\RoboStatusBase.h" />
     <ClInclude Include="SourceCodo\SceneAssemble.h" />
+    <ClInclude Include="SourceCodo\SceneAssembleInformation.h" />
     <ClInclude Include="SourceCodo\SceneBase.h" />
     <ClInclude Include="SourceCodo\SceneEnding.h" />
     <ClInclude Include="SourceCodo\SceneGameOver.h" />

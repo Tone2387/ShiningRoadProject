@@ -108,7 +108,7 @@ public:
 	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) const 
 	{
 		return m_pManager->Play(
-			m_vpEffect[EfcType], vPos.x, vPos.y, vPos.z );
+			m_vecpEffect[EfcType], vPos.x, vPos.y, vPos.z );
 	};
 	//一時停止.
 	void Paused( const ::Effekseer::Handle handle, const bool bFlag ) const 
@@ -225,7 +225,7 @@ private:
 
 
 	//エフェクトの種類ごとに必要.
-	std::vector< ::Effekseer::Effect* >	m_vpEffect;
+	std::vector< ::Effekseer::Effect* >	m_vecpEffect;
 
 
 };

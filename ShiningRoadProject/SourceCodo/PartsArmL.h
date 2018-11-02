@@ -6,7 +6,7 @@
 
 
 
-class clsPARTS_ARM_L : public clsPARTS_BASE
+class clsPARTS_ARM_L : public clsPARTS_ARM_BASE
 {
 public:
 	clsPARTS_ARM_L();
@@ -14,7 +14,7 @@ public:
 
 private:
 	//----- 各パーツごとの関数 -----//.
-	void CreateProduct() final;//各シーンのCreate.
+	void InitProduct() final;//各シーンのInit.
 	void UpdateProduct() final;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 
