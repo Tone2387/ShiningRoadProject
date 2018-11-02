@@ -90,7 +90,7 @@ private:
 	clsSOUND_MANAGER_BASE* m_spSound;
 
 	//( シーンをまたぐ )ロボットのステータス.
-	clsROBO_STATUS*		m_spRoboStatus;
+	clsPLAYER_ROBO_STATUS*		m_spRoboStatus;
 
 	//暗幕を作ろう.
 	clsBLACK_SCREEN*	m_spBlackScreen;

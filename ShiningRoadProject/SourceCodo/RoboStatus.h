@@ -7,7 +7,6 @@
 //#include <vector>
 
 //アセンブルシーンでの選択肢の型.
-//#define ASSEMBLE_SCENE_SELECT_TYPE short 
 using ASSEMBLE_SCENE_SELECT_TYPE = short;
 
 
@@ -18,7 +17,7 @@ class clsROBO_STATUS
 {
 public:
 	clsROBO_STATUS();
-	~clsROBO_STATUS();
+	virtual ~clsROBO_STATUS();
 
 	//色の棒.
 	enum enCOLOR_GAGE : char
@@ -41,12 +40,12 @@ public:
 	//これらの関数でデータを受け取る前にClear()しておくこと.
 	//第一引数 : 攻撃力などのパラメータ群.
 	//第二引数 : モデル番号.
-	void ReceiveLeg( const std::vector<int> &LegDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveCore( const std::vector<int> &CoreDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveHead( const std::vector<int> &HeadDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveArms( const std::vector<int> &ArmsDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveWeaponL( const std::vector<int> &WeaponLDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
-	void ReceiveWeaponR( const std::vector<int> &WeaponRDatas, const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveLeg(	const std::vector<int> &LegDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveCore(	const std::vector<int> &CoreDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveHead(	const std::vector<int> &HeadDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveArms(	const std::vector<int> &ArmsDatas,		const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveWeaponL(const std::vector<int> &WeaponLDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
+	void ReceiveWeaponR(const std::vector<int> &WeaponRDatas,	const ASSEMBLE_SCENE_SELECT_TYPE PartsNum );
 	 
 	//ロボのステータス配列の引数.
 	enum enROBO_STATE : UCHAR
@@ -135,7 +134,7 @@ public:
 	void SetColorRank( const enCOLOR_GAGE enColorNum, const int iColorRate );
 	int GetColorRank( const enCOLOR_GAGE enColorNum );
 
-private:
+protected:
 
 	//HPを持つパーツ.
 	enum enHAVE_HP_PARTS

@@ -9,7 +9,6 @@
 //	インクルード.
 //============================================================
 #include "Global.h"
-#include "MyMacro.h"
 
 #if _DEBUG
 #include "DebugText.h"
@@ -148,4 +147,5 @@ private:
 //	//表示モード切替最適化.
 //	HRESULT ChangeWindowModeOptimization( const UINT Width, const UINT Height );
 #endif//#ifdef STARTUP_FULLSCREEN_
+
 };
