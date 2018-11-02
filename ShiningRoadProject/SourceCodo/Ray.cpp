@@ -1,10 +1,14 @@
 #include "Ray.h"
 
-//シェーダファイル名(ディレクトリも含む)(\\).
-const char SHADER_NAME[] = "Shader\\Ray.hlsl";
-//エントリーポイント名(ディレクトリも含む)(\\).
-const char ENT_VER_NAME[] = "VS";
-const char ENT_PIX_NAME[] = "PS";
+namespace{
+
+	//シェーダファイル名(ディレクトリも含む)(\\).
+	const char SHADER_NAME[] = "Shader\\Ray.hlsl";
+	//エントリーポイント名(ディレクトリも含む)(\\).
+	const char ENT_VER_NAME[] = "VS";
+	const char ENT_PIX_NAME[] = "PS";
+}
+
 
 clsRay::clsRay()
 {
