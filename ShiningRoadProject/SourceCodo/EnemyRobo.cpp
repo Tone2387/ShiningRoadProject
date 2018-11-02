@@ -57,9 +57,28 @@ bool clsEnemyRobo::IsBoostRising()
 
 	if (!m_bENSaving)
 	{
-		if (IsJump())
+		if (m_pTarget)
 		{
-			return true;
+			MoveState MoveStatus = m_MoveData.v_MoveState[m_UpdateState.iMoveCategoryNo];
+
+			int iVerDestDis = MoveStatus.iVerDistance;
+
+			int iRandMax = 0;
+			iRandMax = MoveStatus.iVerDistRandMax;
+
+			if (iRandMax != 0)//0‚¾‚ÆŽ~‚Ü‚é‚Ì‚Å–hŽ~.
+			{
+				iVerDestDis += (rand() % (iRandMax * 2)) - iRandMax;
+			}
+
+			m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
+
+			float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
+
+			if (fDist < m_UpdateState.fVerDis)
+			{
+				return true;
+			}
 		}
 	}
 
