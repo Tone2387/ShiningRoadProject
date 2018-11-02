@@ -46,7 +46,7 @@ public:
 
 
 	//アセンブルシーンの各関数内で使います.
-	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene = false );
+	void Create( clsResource* const pResource, clsROBO_STATUS* const pStatus );
 	void UpDate();
 	virtual void Render(
 		const D3DXMATRIX& mView, 

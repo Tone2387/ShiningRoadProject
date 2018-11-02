@@ -93,7 +93,9 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 
 
 
-void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* const pStatus, const bool isTitleScene )
+void clsASSEMBLE_MODEL::Create( 
+	clsResource* const pResource, 
+	clsROBO_STATUS* const pStatus )
 {
 	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
@@ -108,10 +110,6 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
-	//ÅŒã‚ÉƒNƒŠƒA‚µ‚½ó‘Ô‚É‚·‚é.
-	if( isTitleScene ){
-		pStatus->LodeHeroData();
-	}	
 
 	Init( pStatus );
 

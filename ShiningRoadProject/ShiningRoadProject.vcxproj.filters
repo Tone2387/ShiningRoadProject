@@ -375,6 +375,12 @@
     <ClCompile Include="SourceCodo\MenuWindowAssembleColorChange.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\EnemyRoboStatus.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\PlayerRoboStatus.cpp">
+      <Filter>Tahara\Parts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -679,6 +685,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\MenuWindowAssembleColorChange.h">
       <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\EnemyRoboStatus.h">
+      <Filter>Tahara\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\PlayerRoboStatus.h">
+      <Filter>Tahara\Parts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
