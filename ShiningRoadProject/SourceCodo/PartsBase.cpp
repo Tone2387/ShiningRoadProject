@@ -30,6 +30,8 @@ void clsPARTS_BASE::Init()
 //–ˆƒtƒŒ[ƒ€.
 void clsPARTS_BASE::Update()
 {
+	ModelUpdate( m_Trans );
+	UpdateBonePos();
 	UpdateProduct();
 	ModelUpdate( m_Trans );
 }

@@ -147,6 +147,7 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 	//暗転更新.
 	m_wpBlackScreen->Update();
 
+
 	//各シーンのUpdate.
 	UpdateProduct( tmpScene );
 

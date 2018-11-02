@@ -5,7 +5,7 @@
 using namespace std;
 
 //legÇÃÉÇÉfÉãÇÃë´å≥Ç™Ç®Ç©ÇµÇ¢èÍçá.
-#define LEG_MODEL_POSITION_BASE_Y_OFFSET
+//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
 
 #if _DEBUG
 #include "CharaStatic.h"
@@ -15,8 +15,9 @@ namespace{
 
 #if _DEBUG
 		//ë´å≥.
-		std::unique_ptr<clsCharaStatic> m_upFoot;
 		std::unique_ptr<clsCharaStatic> m_upFootNull;
+		std::unique_ptr<clsCharaStatic> m_upFootPosBase;
+		std::unique_ptr<clsCharaStatic> m_upFootTrasnPos;
 #endif//#if _DEBUG
 
 
@@ -118,17 +119,27 @@ void clsASSEMBLE_MODEL::Create(
 #if _DEBUG
 	float fRATE = 2.5f;
 	//ë´å≥.
-	m_upFoot = make_unique<clsCharaStatic>();
-	m_upFoot->AttachModel(
+	m_upFootTrasnPos = make_unique<clsCharaStatic>();
+	m_upFootTrasnPos->AttachModel(
 		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
-	m_upFoot->AddRotationZ( static_cast<float>( M_PI ) );
-	m_upFoot->SetScale( 0.25f / fRATE );
+	m_upFootTrasnPos->AddRotationZ( static_cast<float>( M_PI ) );
+	m_upFootTrasnPos->SetScale( 0.25f / fRATE );
+	m_upFootTrasnPos->SetScale( { m_upFootTrasnPos->GetScale().x, 0.5f, m_upFootTrasnPos->GetScale().z } );
+
+	m_upFootPosBase = make_unique<clsCharaStatic>();
+	m_upFootPosBase->AttachModel(
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
+	m_upFootPosBase->AddRotationZ( static_cast<float>( M_PI ) );
+	m_upFootPosBase->SetScale( 0.2f / fRATE );
 
 	m_upFootNull = make_unique<clsCharaStatic>();
 	m_upFootNull->AttachModel(
 		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
 	m_upFootNull->AddRotationZ( static_cast<float>( M_PI ) );
-	m_upFootNull->SetScale( { 0.125f / fRATE, 0.5f / fRATE, 0.125f / fRATE } );
+	m_upFootNull->SetScale( { 
+		0.125f / fRATE, 
+		0.5f / fRATE * 0.5f, 
+		0.125f / fRATE } );
 #endif//#if _DEBUG
 
 }
@@ -185,8 +196,7 @@ void clsASSEMBLE_MODEL::UpDate()
 }
 
 void clsASSEMBLE_MODEL::UpdateProduct()
-{
-}
+{}
 
 void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mView, 
@@ -206,7 +216,7 @@ void clsASSEMBLE_MODEL::Render(
 //	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_NULL );
 
 	D3DXVECTOR3 vLegPosPositionBase = GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_POSITION_BASE );
-	D3DXVECTOR3 vLegPosNull =GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_NULL );
+	D3DXVECTOR3 vLegPosNull			= GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_NULL );
 
 	const float fADD_POS_Y = vLegPosPositionBase.y - vLegPosNull.y;
 
@@ -214,6 +224,10 @@ void clsASSEMBLE_MODEL::Render(
 	m_Trans.vPos += D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
 
 #endif
+
+	D3DXVECTOR3 vLegPosPositionBase = GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_POSITION_BASE );
+	D3DXVECTOR3 vLegPosNull			= GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_NULL );
+
 
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
@@ -233,17 +247,21 @@ void clsASSEMBLE_MODEL::Render(
 
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
 	m_Trans.vPos -= D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
+
 #endif//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
-
-
 #if _DEBUG
 	m_upFootNull->SetPosition( vLegPosNull );
 	m_upFootNull->UpdatePos();
 	m_upFootNull->Render( mView, mProj, vLight, vEye, { 10.0f, 0.0f, 0.0f, 0.5f }, true );
 	
-	m_upFoot->SetPosition( m_Trans.vPos );
-	m_upFoot->UpdatePos();
-	m_upFoot->Render( mView, mProj, vLight, vEye, { 0.0f, 10.0f, 0.0f, 0.5f }, true );
+//	m_upFoot->SetPosition( m_Trans.vPos );
+	m_upFootPosBase->SetPosition( vLegPosPositionBase );
+	m_upFootPosBase->UpdatePos();
+	m_upFootPosBase->Render( mView, mProj, vLight, vEye, { 0.0f, 10.0f, 0.0f, 0.5f }, true );
+	
+	m_upFootTrasnPos->SetPosition( m_vpParts[0]->GetPosition() );
+	m_upFootTrasnPos->UpdatePos();
+	m_upFootTrasnPos->Render( mView, mProj, vLight, vEye, { 0.0f, 0.0f, 10.0f, 0.5f }, true );
 	
 #endif//#if _DEBUG
 
