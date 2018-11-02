@@ -56,7 +56,7 @@ clsPARTS_WINDOW_MODEL::clsPARTS_WINDOW_MODEL( clsResource* const pResource, clsR
 	m_upRoboModel->SetPos( { 0.0f, 0.0f, 0.0f } );
 
 	m_upWeapon = make_unique< clsPARTS_WEAPON >();
-	m_upWeapon->Create();
+	m_upWeapon->Init();
 	m_upWeapon->SetPosition( { 0.0f, 0.0f, 0.0f } );
 }
 

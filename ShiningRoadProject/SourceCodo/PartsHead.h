@@ -43,7 +43,7 @@ public:
 
 private:
 	//----- 各パーツごとの関数 -----//.
-	void CreateProduct() final;//各シーンのCreate.
+	void InitProduct() final;//各シーンのInit.
 	void UpdateProduct() final;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 

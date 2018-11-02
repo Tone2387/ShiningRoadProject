@@ -21,10 +21,10 @@ clsPARTS_BASE::~clsPARTS_BASE()
 
 
 //ì¬.
-void clsPARTS_BASE::Create()
+void clsPARTS_BASE::Init()
 {
 	m_sPartsName = "NoName";
-	CreateProduct();
+	InitProduct();
 }
 
 //–ˆƒtƒŒ[ƒ€.

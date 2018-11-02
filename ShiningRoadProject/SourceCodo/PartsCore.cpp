@@ -13,7 +13,7 @@ clsPARTS_CORE::~clsPARTS_CORE()
 }
 
 //çÏê¨éû.
-void clsPARTS_CORE::CreateProduct()
+void clsPARTS_CORE::InitProduct()
 {
 	clsOPERATION_STRING OprtStr;
 

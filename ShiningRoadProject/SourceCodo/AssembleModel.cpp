@@ -105,7 +105,6 @@ void clsASSEMBLE_MODEL::Create( clsResource* const pResource, clsROBO_STATUS* co
 	m_vpParts.resize( ucPARTS_MAX, nullptr );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
 		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
-		m_vpParts[i]->Create();
 	}
 
 	//ç≈å„Ç…ÉNÉäÉAÇµÇΩèÛë‘Ç…Ç∑ÇÈ.
@@ -167,6 +166,11 @@ void clsASSEMBLE_MODEL::Init( clsROBO_STATUS* const pStatus )
 		UpdateColor( tmpIndex );
 	}
 
+
+	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
+		m_vpParts[i]->Init();
+	}
+
 //	AnimReSet();
 }
 
@@ -199,8 +203,12 @@ void clsASSEMBLE_MODEL::Render(
 	m_vpParts[ucLEG]->SetPosition( m_Trans.vPos );
 
 	//ÉÇÉfÉãÇÃë´å≥.
-	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
-	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_NULL );
+//	D3DXVECTOR3 vLegPosPositionBase = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
+//	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_NULL );
+
+	D3DXVECTOR3 vLegPosPositionBase = GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_POSITION_BASE );
+	D3DXVECTOR3 vLegPosNull =GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_NULL );
+
 	const float fADD_POS_Y = vLegPosPositionBase.y - vLegPosNull.y;
 
 

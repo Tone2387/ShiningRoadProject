@@ -14,7 +14,7 @@ clsPARTS_LEG::~clsPARTS_LEG()
 }
 
 //ì¬Žž.
-void clsPARTS_LEG::CreateProduct()
+void clsPARTS_LEG::InitProduct()
 {
 	clsOPERATION_STRING OprtStr;
 
@@ -110,6 +110,9 @@ D3DXVECTOR3 clsPARTS_LEG::GetBonePosPreviosFrame(
 	case enLEG_BONE_POSITIONS_POSITION_BASE:
 		return m_BonePositions.vPositionBase;
 
+	case enLEG_BONE_POSITIONS_NULL:
+		return m_BonePositions.vNull;
+
 	default:
 		assert( !"•s³‚È’l" );
 		GetBonePosPreviosFrame( 0, iVecNum );
@@ -146,6 +149,7 @@ void clsPARTS_LEG::UpdateBonePosPreviosFrame()
 	}
 
 
+	m_BonePositions.vNull		  = this->GetBonePos( sBONE_NAME_LEG_NULL );
 	m_BonePositions.vJunctionCore = this->GetBonePos( sBONE_NAME_LEG_TO_CORE );
 	m_BonePositions.vPositionBase = this->GetBonePos( sBONE_NAME_LEG_POSITION_BASE );
 }

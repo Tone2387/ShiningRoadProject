@@ -10,7 +10,7 @@ clsPARTS_HEAD::~clsPARTS_HEAD()
 }
 
 //çÏê¨éû.
-void clsPARTS_HEAD::CreateProduct()
+void clsPARTS_HEAD::InitProduct()
 {
 }
 
