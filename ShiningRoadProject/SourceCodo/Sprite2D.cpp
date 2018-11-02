@@ -1,7 +1,10 @@
 #include "Sprite2D.h"
 
-//シェーダファイル名(ディレクトリも含む)
-const char SHADER_NAME[] = "Shader\\Sprite2D.hlsl";
+namespace{
+	//シェーダファイル名(ディレクトリも含む)
+	const char SHADER_NAME[] = "Shader\\Sprite2D.hlsl";
+}
+
 
 //コンストラクタ.
 clsSprite2D::clsSprite2D() :

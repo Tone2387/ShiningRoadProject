@@ -1,7 +1,9 @@
 #include "DX9Mesh.h"
 
-//シェーダーファイル名(ディレクトリを含む)
-const char SHADER_NAME[] = "Shader\\Mesh.hlsl";//const:後に書かれた変数を上書きさせない.
+namespace{
+	//シェーダーファイル名(ディレクトリを含む)
+	const char SHADER_NAME[] = "Shader\\Mesh.hlsl";//const:後に書かれた変数を上書きさせない.
+}
 
 //========================================================
 // コンストラクタ.
