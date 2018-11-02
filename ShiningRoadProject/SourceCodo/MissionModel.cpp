@@ -6,6 +6,15 @@ using namespace std;
 //ジョイントボーンの数字の桁数.
 const char cBONE_NAME_NUM_DIGIT_JOINT = 2;
 
+//パーツ情報受け取り用変数.
+static const char cPartsHeadNum = static_cast<char>(enPARTS::HEAD);
+static const char cPartsCoreNum = static_cast<char>(enPARTS::CORE);
+static const char cPartsArmLNum = static_cast<char>(enPARTS::ARM_L);
+static const char cPartsArmRNum = static_cast<char>(enPARTS::ARM_R);
+static const char cPartsWeaponLNum = static_cast<char>(enPARTS::WEAPON_L);
+static const char cPartsWeaponRNum = static_cast<char>(enPARTS::WEAPON_R);
+static const char cPartsLegNum = static_cast<char>(enPARTS::LEG);
+
 //当たり判定.
 const int iRESURVE_SIZE_COL = 64;
 
@@ -147,38 +156,82 @@ int clsMISSION_MODEL::GetColNum( const enCOL_PARTS enColParts )
 	return -1;
 }
 
-vector< clsObject::SPHERE > clsMISSION_MODEL::GetColState()
+vector< clsObject::SPHERE > clsMISSION_MODEL::GetColState(clsROBO_STATUS* const pStatus)
 {
 	vector< clsObject::SPHERE > v_Sphere;
 
-	/*v_Sphere.resize(m_iColMax);
+	v_Sphere.resize(m_iColMax);
 
-	for (int i = 0; i<m_iColMax; i++){
-
+	for (int i = 0; i<m_iColMax; i++)
+	{
 		v_Sphere[i].vCenter = &m_vvColPos[i];
-		v_Sphere[i].fRadius = &GetRobo
+		
+		switch (static_cast<enPARTS>(m_vColStates[i].iParts))
+		{
+		case enPARTS::LEG:
+			v_Sphere[i].fRadius = pStatus->GetRoboState(clsROBO_STATUS::COL_SIZE_LEG);
+			break;
+		case enPARTS::CORE:
+			v_Sphere[i].fRadius = pStatus->GetRoboState(clsROBO_STATUS::COL_SIZE_CORE);
+			break;
+		case enPARTS::HEAD:
+			v_Sphere[i].fRadius = pStatus->GetRoboState(clsROBO_STATUS::COL_SIZE_HEAD);
+			break;
+		case enPARTS::ARM_L:
+			v_Sphere[i].fRadius = pStatus->GetRoboState(clsROBO_STATUS::COL_SIZE_ARMS);
+			break;
+		case enPARTS::ARM_R:
+			v_Sphere[i].fRadius = pStatus->GetRoboState(clsROBO_STATUS::COL_SIZE_ARMS);
+			break;
 
-
-	}*/
+		default:
+			break;
+		}
+	}
 
 	return v_Sphere;
 }
 
 //当たり判定の座標の配列をすべて返す.
-void clsMISSION_MODEL::GetColPosPtr(clsROBO_STATUS* const pStatus)
+void clsMISSION_MODEL::UpdateColPos()
 {
+	//格納されているパーツ番号は種類が順列になっている前提.
+	int iTmpPartsNo = m_vColStates[0].iParts;
+	int iVecNum = 0;
+
 	for( int i=0; i<m_iColMax; i++ ){
+
+		if (iTmpPartsNo != m_vColStates[i].iParts)
+		{
+			iTmpPartsNo = m_vColStates[i].iParts;
+			iVecNum = 0;
+		}
+
 		//ボーンの座標を取得.
-		/*m_vvColPos[i] = GetBonePos( 
-			static_cast< enPARTS >( m_vColStates[i].iParts ), 
-			m_vColStates[i].sName.c_str() );*/
+		switch (static_cast<enPARTS>(m_vColStates[i].iParts))
+		{
+		case enPARTS::LEG:
+			m_vvColPos[i] = GetBonePosLegJoint(iVecNum);
+			break;
+		case enPARTS::CORE:
+			m_vvColPos[i] = GetBonePosCoreJenerator();
+			break;
+		case enPARTS::HEAD:
+			m_vvColPos[i] = GetBonePosHeadCenter();
+			break;
+		case enPARTS::ARM_L:
+			m_vvColPos[i] = GetBonePosArmLJoint(iVecNum);
+			break;
+		case enPARTS::ARM_R:
+			m_vvColPos[i] = GetBonePosArmRJoint(iVecNum);
+			break;
 
-		//m_vvColPos[i] = GetBonePosPreviosFrame(static_cast<clsASSEMBLE_MODEL::enPARTS_INDEX>(m_vColStates[i].iParts), ;
+		default:
+			break;
+		}
 		
-		
+		++iVecNum;
 	}
-
-	//shared_ptr< vector< D3DXVECTOR3 > > spvvReturn( &m_vvColPos );
 }
 
 int clsMISSION_MODEL::GetSimilarityNameBoneNum(const enPARTS PartsNum, const char* strBoneName)
@@ -346,4 +399,152 @@ const bool clsMISSION_MODEL::IsPartsAnimReverce(const enPARTS PartsNum)
 
 	assert(m_vpParts[cTmpNum]);
 	return m_vpParts[cTmpNum]->IsAnimReverce();
+}
+
+//前フレームのボーン位置を受け取るための関数群.
+//脚パーツ.
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosLegBoosterRoot(const int iBoneNo)
+{
+	return m_vpParts[cPartsLegNum]->GetBonePosPreviosFrame(clsPARTS_LEG::enLEG_BONE_POSITIONS_BOOSTER_ROOT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosLegBoosterEnd(const int iBoneNo)
+{
+	return m_vpParts[cPartsLegNum]->GetBonePosPreviosFrame(clsPARTS_LEG::enLEG_BONE_POSITIONS_BOOSTER_END, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosLegJoint(const int iBoneNo)
+{
+	return m_vpParts[cPartsLegNum]->GetBonePosPreviosFrame(clsPARTS_LEG::enLEG_BONE_POSITIONS_JOINT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosLegSole(const int iBoneNo)
+{
+	return m_vpParts[cPartsLegNum]->GetBonePosPreviosFrame(clsPARTS_LEG::enLEG_BONE_POSITIONS_SOLE, iBoneNo);
+}
+
+//頭パーツ.
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosHeadCenter()
+{
+	return m_vpParts[cPartsHeadNum]->GetBonePosPreviosFrame(clsPARTS_HEAD::enHEAD_BONE_POSITIONS_CENTER);
+}
+
+//コアパーツ.
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosCoreBoosterRoot(const int iBoneNo)
+{
+	return m_vpParts[cPartsCoreNum]->GetBonePosPreviosFrame(clsPARTS_CORE::enCORE_BONE_POSITIONS_BOOSTER_ROOT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosCoreBoosterEnd(const int iBoneNo)
+{
+	return m_vpParts[cPartsCoreNum]->GetBonePosPreviosFrame(clsPARTS_CORE::enCORE_BONE_POSITIONS_BOOSTER_END, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosCoreJenerator()
+{
+	return m_vpParts[cPartsCoreNum]->GetBonePosPreviosFrame(clsPARTS_CORE::enCORE_BONE_POSITIONS_JENERATOR);
+}
+
+//左腕パーツ.
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmLBoostFrontRoot(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmLNum]->GetBonePosPreviosFrame(clsPARTS_ARM_L::enARMS_BONE_POSITIONS_BOOSTER_FRONT_ROOT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmLBoostFrontEnd(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmLNum]->GetBonePosPreviosFrame(clsPARTS_ARM_L::enARMS_BONE_POSITIONS_BOOSTER_FRONT_END, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmLBoostSideRoot(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmLNum]->GetBonePosPreviosFrame(clsPARTS_ARM_L::enARMS_BONE_POSITIONS_BOOSTER_SIDE_ROOT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmLBoostSideEnd(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmLNum]->GetBonePosPreviosFrame(clsPARTS_ARM_L::enARMS_BONE_POSITIONS_BOOSTER_SIDE_END, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmLBoostBackRoot(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmLNum]->GetBonePosPreviosFrame(clsPARTS_ARM_L::enARMS_BONE_POSITIONS_BOOSTER_BACK_ROOT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmLBoostBackEnd(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmLNum]->GetBonePosPreviosFrame(clsPARTS_ARM_L::enARMS_BONE_POSITIONS_BOOSTER_BACK_END, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmLJoint(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmLNum]->GetBonePosPreviosFrame(clsPARTS_ARM_L::enARMS_BONE_POSITIONS_JOINT, iBoneNo);
+}
+
+//右腕パーツ.
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmRBoostFrontRoot(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmRNum]->GetBonePosPreviosFrame(clsPARTS_ARM_R::enARMS_BONE_POSITIONS_BOOSTER_FRONT_ROOT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmRBoostFrontEnd(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmRNum]->GetBonePosPreviosFrame(clsPARTS_ARM_R::enARMS_BONE_POSITIONS_BOOSTER_FRONT_END, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmRBoostSideRoot(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmRNum]->GetBonePosPreviosFrame(clsPARTS_ARM_R::enARMS_BONE_POSITIONS_BOOSTER_SIDE_ROOT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmRBoostSideEnd(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmRNum]->GetBonePosPreviosFrame(clsPARTS_ARM_R::enARMS_BONE_POSITIONS_BOOSTER_SIDE_END, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmRBoostBackRoot(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmRNum]->GetBonePosPreviosFrame(clsPARTS_ARM_R::enARMS_BONE_POSITIONS_BOOSTER_BACK_ROOT, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmRBoostBackEnd(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmRNum]->GetBonePosPreviosFrame(clsPARTS_ARM_R::enARMS_BONE_POSITIONS_BOOSTER_BACK_END, iBoneNo);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosArmRJoint(const int iBoneNo)
+{
+	return m_vpParts[cPartsArmRNum]->GetBonePosPreviosFrame(clsPARTS_ARM_R::enARMS_BONE_POSITIONS_JOINT, iBoneNo);
+}
+
+//左武器パーツ.
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosWeaponLMuzzleRoot()
+{
+	return m_vpParts[cPartsWeaponLNum]->GetBonePosPreviosFrame(clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_ROOT);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosWeaponLMuzzleEnd()
+{
+	return m_vpParts[cPartsWeaponLNum]->GetBonePosPreviosFrame(clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_END);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosWeaponLCartridgeInjection()
+{
+	return m_vpParts[cPartsWeaponLNum]->GetBonePosPreviosFrame(clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_CARTRIDGE_INJECTION);
+}
+
+//右武器パーツ.
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosWeaponRMuzzleRoot()
+{
+	return m_vpParts[cPartsWeaponRNum]->GetBonePosPreviosFrame(clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_ROOT);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosWeaponRMuzzleEnd()
+{
+	return m_vpParts[cPartsWeaponRNum]->GetBonePosPreviosFrame(clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_END);
+}
+
+const D3DXVECTOR3 clsMISSION_MODEL::GetBonePosWeaponRCartridgeInjection()
+{
+	return m_vpParts[cPartsWeaponRNum]->GetBonePosPreviosFrame(clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_CARTRIDGE_INJECTION);
 }

@@ -77,6 +77,7 @@ public:
 		ModelUpdate();
 		m_pMesh->Render(mView, mProj, vLight, vEye);
 		UpdatePosfromBone();
+		m_pMesh->UpdateColPos();
 	}
 
 	void UpdateCollsion();
