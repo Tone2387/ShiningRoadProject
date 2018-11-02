@@ -3,6 +3,13 @@
 //#include "UiText.h"
 
 
+namespace{
+
+	const int iSELECT_NUM_YES_INDEX = 0;
+
+}
+
+
 
 clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE(
 	clsPOINTER_GROUP* const pPtrGroup,
@@ -48,11 +55,11 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::UpdateProduct()
 		m_wpSound->PlaySE( enSE_MISSION_START );
 		m_wpSound->PlaySE( enSE_ENTER );
 		//アセンブルしなおす.
-		if( m_iSelectNum == 0 ){
+		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_ASSEMBLE ];
 		}
 		//そのまま戦う.
-		else if( m_iSelectNum == 1 ){
+		else{
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CONTINUE ];
 		}
 	}
@@ -82,7 +89,7 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::RenderProduct()
 	m_wpFont->Render( iTextRow ++ );
 
 	//組みなおす?.
-	const D3DXVECTOR2 vPOS_ASSEMBLE_LOCAL = { 120.0f, 70.0f };
+	const D3DXVECTOR2 vPOS_ASSEMBLE_LOCAL = { 35.0f, 70.0f };
 	const D3DXVECTOR3 vPOS_ASSEMBLE = SetPosFromWindow( vPOS_ASSEMBLE_LOCAL );
 	const float fSCALE_ASSEMBLE = 36;
 	m_wpFont->SetPos( vPOS_ASSEMBLE );
@@ -90,12 +97,12 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::RenderProduct()
 	m_wpFont->Render( ++ iTextRow );
 
 	///カーソル移動.
-	if( m_iSelectNum == 0 ){
+	if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*3.0f, 32.0f, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
 		m_upCursor->SetPos( vPOS_YES );
 	}
-	else if( m_iSelectNum == 1 ){
+	else{
 		const D3DXVECTOR3 vCURSOR_SCALE = { 24.0f*2.1f, 32.0f, 0.0f };
 		m_upCursor->SetScale( vCURSOR_SCALE );
 		m_upCursor->SetPos( vPOS_NO );
