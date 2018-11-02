@@ -321,6 +321,13 @@ public:
 		const bool isAlpha = false, 
 		LPD3DXANIMATIONCONTROLLER pAC=NULL );
 
+	//リソースのボーン位置がずれる対策.
+	void UpdateBonePos();
+//	void UpDateBonePosProduct( LPD3DXFRAME p );
+//	void UpDateBonePosProductProduct(
+//		SKIN_PARTS_MESH* pMesh,
+//		MYMESHCONTAINER* const pContainer );
+
 	double GetAnimSpeed()				{ return m_dAnimSpeed;		}
 	void SetAnimSpeed( double dSpeed )	{ m_dAnimSpeed = dSpeed;	}
 
@@ -375,6 +382,12 @@ public:
 	double m_dAnimTime;
 
 private:
+	//リソースのボーン位置がずれる対策.
+	void UpDateBonePosProduct( LPD3DXFRAME p );
+	void UpDateBonePosProductProduct(
+		SKIN_PARTS_MESH* pMesh,
+		MYMESHCONTAINER* const pContainer );
+
 	//ブレンドステート作成.
 	HRESULT CreateBlendState();
 	// 解放関数.

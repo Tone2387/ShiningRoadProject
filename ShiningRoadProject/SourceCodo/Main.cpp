@@ -253,7 +253,6 @@ void clsMain::Loop()
 	//	フレームレート.
 	//----------------------------------------------------------
 	float fRate		= 0.0f;	//レート.
-	float fFPS		= g_fFPS;//FPS値.
 	DWORD sync_old	= timeGetTime();	//過去時間.
 	DWORD sync_now;
 	//時間処理の為、最小単位を1ミリ秒に変更.
@@ -276,7 +275,7 @@ void clsMain::Loop()
 			DispatchMessage( &msg );
 		}
 
-		fRate = 1000.0f / fFPS;	//理想時間を算出.
+		fRate = 1000.0f / g_fFPS;	//理想時間を算出.
 
 		if( sync_now - sync_old >= fRate ){
 			sync_old = sync_now;	//現在時間に置きかえ.
