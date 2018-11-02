@@ -131,6 +131,12 @@ public:
 
 protected:
 
+
+	//継承先で外部からデータを読み込ませる.
+	virtual void LoadFileData( const char* sFilePath ) = 0;
+
+protected:
+
 	//シーンをまたいで必要なロボのデータ.
 	struct ROBO_STATE_DATA
 	{

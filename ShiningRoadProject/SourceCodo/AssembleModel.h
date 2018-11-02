@@ -6,7 +6,7 @@
 
 #include "Resource.h"
 
-#include "RoboStatus.h"
+#include "RoboStatusBase.h"
 
 
 

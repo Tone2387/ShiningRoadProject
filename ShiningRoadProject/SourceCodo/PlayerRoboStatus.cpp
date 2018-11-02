@@ -12,12 +12,23 @@ namespace{
 
 clsPLAYER_ROBO_STATUS::clsPLAYER_ROBO_STATUS()
 {
+	LoadFileData( sROBO_STATUS_HERO_PATH );
+}
+
+clsPLAYER_ROBO_STATUS::~clsPLAYER_ROBO_STATUS()
+{
+}
+
+
+//外部からデータを読み込む.
+void clsPLAYER_ROBO_STATUS::LoadFileData( const char* sFilePath )
+{
 	clsFILE File;
-	bool isOpened = File.Open( sROBO_STATUS_HERO_PATH );
+	bool isOpened = File.Open( sFilePath );
 
 	if( !isOpened ){
 		ERR_MSG( 
-			sROBO_STATUS_HERO_PATH, 
+			sFilePath, 
 			"データがありません。\
 			ドライブからデータをDLして、以下のパスに入れてください" );
 	}
@@ -32,12 +43,8 @@ clsPLAYER_ROBO_STATUS::clsPLAYER_ROBO_STATUS()
 		m_RoboStateDataHero.iColorRank[i]	= File.GetDataInt( m_iFILE_VAR_ROW, static_cast<int>( i ) + m_iFILE_INDEX_COL_COLOR_ARMOR_R );
 		m_RoboStateData.iColorRank[i]		= m_RoboStateDataHero.iColorRank[i];
 	}
-
 }
 
-clsPLAYER_ROBO_STATUS::~clsPLAYER_ROBO_STATUS()
-{
-}
 
 
 //クリア画面で使う : タイトル用の初期化用のデータを用意する : クリアしたロボを覚えておく.
@@ -85,4 +92,5 @@ void clsPLAYER_ROBO_STATUS::LodeHeroData()
 	}
 
 }
+
 

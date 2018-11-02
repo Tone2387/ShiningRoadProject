@@ -1,7 +1,7 @@
 #ifndef PLAYER_ROBO_STATUS_H_
 #define PLAYER_ROBO_STATUS_H_
 
-#include "RoboStatus.h"
+#include "RoboStatusBase.h"
 
 class clsPLAYER_ROBO_STATUS : public clsROBO_STATUS
 {
@@ -17,6 +17,9 @@ public:
 	void LodeHeroData();
 
 private:
+
+	//外部からデータを読み込む.
+	void LoadFileData( const char* sFilePath ) override;
 
 //	//クリアデータ( タイトルで必要 ).
 	ROBO_STATE_DATA m_RoboStateDataHero;
