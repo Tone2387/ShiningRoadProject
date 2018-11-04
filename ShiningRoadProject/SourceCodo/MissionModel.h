@@ -43,16 +43,14 @@ public:
 	//各パーツの当たり判定の数を返す.
 	int GetColNum( const enCOL_PARTS enColParts );
 
-	D3DXVECTOR3 GetDirfromBone(
+	const D3DXVECTOR3 GetRotfromBone(
 		const enPARTS PartsNum,
 		const char* strBoneRootName, 
 		const char* strBoneEndName);
 
-	D3DXVECTOR3 GetDirfromBone(
-		const enPARTS PartsNum,
-		const int enBoneRootName,
-		const int enBoneEndName,
-		const int iVecNum = 0);
+	const D3DXVECTOR3 GetRotfromVec(
+		D3DXVECTOR3 vRoot,
+		D3DXVECTOR3 vEnd);
 
 	//当たり判定の座標の配列をすべて返す.
 	std::vector< clsObject::SPHERE > GetColState(clsROBO_STATUS* const pStatus);

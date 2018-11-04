@@ -824,6 +824,7 @@ void clsRobo::PlayFrontBoostEfc()
 		std::string strBoostEndNameTmp = "";
 
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
 		for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
@@ -835,8 +836,10 @@ void clsRobo::PlayFrontBoostEfc()
 			strBoostEndNameTmp = strBoostEndName;
 			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
 
-			vRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_L, strBoostRootName.c_str(), strBoostEndName.c_str());
-			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_L, strBoostEndNameTmp.c_str());
+			vPosRootTmp = m_pMesh->GetBonePosArmLBoostFrontRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmLBoostFrontEnd(i);
+
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
 			if (!m_wpEffects->isPlay(m_v_LHandFrontBoostEfc[i]))
 			{
