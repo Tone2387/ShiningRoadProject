@@ -203,7 +203,8 @@ void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const enPARTS_TYPES AlphaParts )
+	const enPARTS_TYPES AlphaParts,
+	ID3D11DeviceContext* const pContext )
 {
 	D3DXVECTOR4 vTmpColorBase;
 	D3DXVECTOR4 vTmpColorArmor;
@@ -232,8 +233,8 @@ void clsASSEMBLE_MODEL::Render(
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
 		unsigned int uiMaskNum = 0;
-		vTmpColorBase = CreateColor( AlphaParts, i, uiMaskNum ++ );
-		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++ );
+		vTmpColorBase  = CreateColor( AlphaParts, i, uiMaskNum ++, pContext );
+		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++, pContext );
 		SetPartsFormalPos();
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 //		ModelUpdate();
@@ -265,6 +266,9 @@ void clsASSEMBLE_MODEL::Render(
 	
 #endif//#if _DEBUG
 
+	//ワイヤーフレーム解除.
+	ChangeWireFrame( false, pContext );
+
 }
 
 
@@ -272,7 +276,8 @@ void clsASSEMBLE_MODEL::Render(
 D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( 
 	const enPARTS_TYPES AlphaParts, 
 	const UINT uiIndex,
-	const unsigned int uiMaskNum )
+	const unsigned int uiMaskNum,
+	ID3D11DeviceContext* const pContext  )
 {
 	D3DXVECTOR4 vReturn = vCOLOR_NORMAL;
 
@@ -280,20 +285,25 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 		vReturn = m_vecvColor[ uiMaskNum ];
 	}
 
+	ChangeWireFrame( false, pContext );
+
 	switch( AlphaParts )
 	{
 	case LEG:
 		if( uiIndex == static_cast<UINT>( enPARTS::LEG ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
 	case CORE:
 		if( uiIndex == static_cast<UINT>( enPARTS::CORE ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
 	case HEAD:
 		if( uiIndex == static_cast<UINT>( enPARTS::HEAD ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
@@ -302,16 +312,19 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 		if( uiIndex == static_cast<UINT>( enPARTS::ARM_L ) ||
 			uiIndex == static_cast<UINT>( enPARTS::ARM_R ) )
 		{
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
 	case WEAPON_L:
 		if( uiIndex == static_cast<UINT>( enPARTS::WEAPON_L ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
 	case WEAPON_R:
 		if( uiIndex == static_cast<UINT>( enPARTS::WEAPON_R ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
@@ -321,6 +334,47 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 	}
 
 	return vReturn;
+}
+
+//ワイヤーフレーム切替.
+void clsASSEMBLE_MODEL::ChangeWireFrame(
+	const bool isWire,
+	ID3D11DeviceContext* const  pContext )
+{
+	if( !pContext ){
+		return;
+	}
+
+	//ラスタライズ(面の塗りつぶし方)設定.
+	D3D11_RASTERIZER_DESC rdc;
+	ZeroMemory( &rdc, sizeof( rdc ) );
+	rdc.CullMode = D3D11_CULL_BACK;
+					//D3D11_CULL_NONE :カリングを切る(正背面を描画する).
+					//D3D11_CULL_BACK :背面を描画しない.
+					//D3D11_CULL_FRONT:正面を描画しない.
+	rdc.FrontCounterClockwise	= FALSE;
+								//ポリゴンの表裏を決定するフラグ.
+								//TRUE :左回りなら前向き,右回りなら後ろ向き.
+								//FALSE:↑の逆になる.
+	rdc.DepthClipEnable	= FALSE;	//距離についてのクリッピング有効.
+
+	if( isWire ){
+		rdc.FillMode = D3D11_FILL_WIREFRAME;//ワイヤーフレーム.
+	}
+	else{
+		rdc.FillMode = D3D11_FILL_SOLID;	//塗りつぶし(ソリッド).
+	}
+
+
+	ID3D11Device* pDevice = nullptr;
+	pContext->GetDevice( &pDevice );
+	if( !pDevice ) return;
+
+	ID3D11RasterizerState* pIr	= nullptr;
+	pDevice->CreateRasterizerState( &rdc, &pIr );
+	pContext->RSSetState( pIr );
+	SAFE_RELEASE( pIr );
+
 }
 
 
