@@ -18,9 +18,8 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const enPARTS_TYPES RenderParts = enPARTS_TYPES::ENUM_SIZE/*
-		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
-		const bool isAlpha = false*/ ) final;
+		const enPARTS_TYPES RenderParts = enPARTS_TYPES::ENUM_SIZE,
+		ID3D11DeviceContext* const pContext = nullptr ) final;
 
 private:
 	void UpdateProduct() final;

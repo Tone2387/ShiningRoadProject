@@ -23,9 +23,8 @@ void clsPARTS_WINDOW_MODEL_FOR_ARMS::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const enPARTS_TYPES RenderParts/*,
-	const D3DXVECTOR4& vColor,
-	const bool isAlpha*/ )
+	const enPARTS_TYPES RenderParts,
+	ID3D11DeviceContext* const pContext )
 {
 	bool bRender;
 

@@ -585,7 +585,8 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	if( isMessageBoxClose() )
 	{
 		m_spAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos(), 
-			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
+			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ),
+			m_wpContext );
 	}
 	else{
 		m_spAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos() );

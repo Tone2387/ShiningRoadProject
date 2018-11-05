@@ -1,6 +1,9 @@
 #ifndef BUILDING_H_
 #define BUILDING_H_
 
+
+
+
 #include "Global.h"
 #include"ObjStaticMesh.h"
 #include "Sprite.h"
