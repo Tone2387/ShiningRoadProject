@@ -282,6 +282,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
+
 	//ÉTÉìÉvÉâÅ[çÏê¨.
 	if( FAILED(
 		m_pDevice11->CreateSamplerState(
@@ -326,9 +327,9 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 	D3DXMatrixTranslation( &mTrans,
 		m_vPos.x, m_vPos.y, m_vPos.z );
 
-	D3DXMatrixRotationZ( &mRoll, m_vRot.z );
-	D3DXMatrixRotationY( &mYaw, m_vRot.y );
-	D3DXMatrixRotationX( &mPitch, m_vRot.x );
+	D3DXMatrixRotationZ( &mRoll,	m_vRot.z );
+	D3DXMatrixRotationY( &mYaw,		m_vRot.y );
+	D3DXMatrixRotationX( &mPitch,	m_vRot.x );
 
 	//çáéZ.
 	mWorld = mScale * mYaw * mPitch * mRoll * mTrans;

@@ -483,8 +483,8 @@ HRESULT clsMain::InitD3D()
 	if( !m_spViewPort11 ){
 		m_spViewPort11 = new D3D11_VIEWPORT;
 	}
-	m_spViewPort11->Width	= WND_W;//幅.
-	m_spViewPort11->Height	= WND_H;//高さ.
+	m_spViewPort11->Width		= WND_W;//幅.
+	m_spViewPort11->Height		= WND_H;//高さ.
 	m_spViewPort11->MinDepth	= 0.0f;	//最小深度(手前).
 	m_spViewPort11->MaxDepth	= 1.0f;	//最大深度(奥).
 	m_spViewPort11->TopLeftX	= 0.0f;	//左上位置x.
@@ -507,7 +507,6 @@ HRESULT clsMain::InitD3D()
 								//TRUE :左回りなら前向き,右回りなら後ろ向き.
 								//FALSE:↑の逆になる.
 	rdc.DepthClipEnable	= FALSE;	//距離についてのクリッピング有効.
-//	rdc.FillMode = D3D11_FILL_WIREFRAME;
 
 	ID3D11RasterizerState* pIr	= nullptr;
 	m_pDevice->CreateRasterizerState( &rdc, &pIr );

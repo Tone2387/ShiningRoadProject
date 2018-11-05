@@ -52,8 +52,8 @@ public:
 	//スキンモデル種類.
 	enum enSKIN_MODEL : SKIN_ENUM_TYPE
 	{
-		enSkinModel_Player = 0,//二つともこんな名前だがテスト用である.
-		enSkinModel_Leg,
+//		enSkinModel_Player = 0,//二つともこんな名前だがテスト用である.
+//		enSkinModel_Leg,
 
 		enSkinModel_Max//数固定モデルのmax.
 	};

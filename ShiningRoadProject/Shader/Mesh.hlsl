@@ -252,8 +252,10 @@ VS_ItaOut	VS_Ita( float4 Pos	:	POSITION,
 //============================================================
 float4 PS_Ita( VS_ItaOut input )	:	SV_Target
 {
-	float4 color = g_texColor.Sample( g_samLinear, input.Tex );
+	float4 color = g_texColor.Sample( g_samLinear, input.Tex * 4 );
 	return color * g_vcolor;//F‚ğ•Ô‚·.
+//	float4 color = g_texColor.Sample( g_samLinear, input.Tex );
+//	return color * g_vcolor;//F‚ğ•Ô‚·.
 }
 
 
