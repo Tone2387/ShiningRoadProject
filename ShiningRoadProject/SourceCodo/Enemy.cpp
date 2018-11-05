@@ -1,4 +1,5 @@
 #include"Enemy.h"
+#include"File.h"
 
 /*clsEnemyBase::clsEnemyBase(std::vector<clsCharactor*>& v_Enemys)
 {
@@ -136,7 +137,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 
 		if (m_UpdateState.iMoveUpdateCnt < 0)
 		{
-			MoveState MoveStatus = m_MoveData.v_MoveState[m_UpdateState.iMoveCategoryNo];
+			MoveState MoveStatus = m_v_MoveState[m_UpdateState.iMoveCategoryNo];
 
 			m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 			m_UpdateState.fVerDis = 0.0f;
@@ -280,7 +281,7 @@ bool clsEnemyBase::IsJump()
 {
 	if (m_pTarget)
 	{
-		MoveState MoveStatus = m_MoveData.v_MoveState[m_UpdateState.iMoveCategoryNo];
+		MoveState MoveStatus = m_v_MoveState[m_UpdateState.iMoveCategoryNo];
 
 		int iVerDestDis = MoveStatus.iVerDistance;
 
@@ -312,10 +313,10 @@ bool clsEnemyBase::IsShot()
 		float fDis;
 		fDis = D3DXVec3Length(&(m_pTarget->GetPosition() - m_pChara->GetPosition()));
 
-		for (int i = 0; i < m_ShotData.iCategory; i++)
+		for (int i = 0; i < m_v_ShotState.size(); i++)
 		{
-			if (fDis <= m_ShotData.v_ShotState[i].iShotDisMax ||
-				fDis >= m_ShotData.v_ShotState[i].iShotDisMin)
+			if (fDis <= m_v_ShotState[i].iShotDisMax ||
+				fDis >= m_v_ShotState[i].iShotDisMin)
 			{
 				return true;
 			}
@@ -332,22 +333,86 @@ void clsEnemyBase::SetData(std::string strEnemyFolderName)
 
 void clsEnemyBase::SetBaseData(std::string strEnemyFolderName)
 {
-	m_BaseData.strEnemyFolderName = strEnemyFolderName;
+	m_BaseState.strEnemyFolderName = strEnemyFolderName;
+
+	std::string strBaseDataName = m_BaseState.strEnemyFolderName + "\\Base.csv";
+
+	clsFILE File;
+	if (File.Open(strBaseDataName))
+	{
+		m_BaseState.iMoveSwichType = File.GetDataInt(0,enBaseStateMoveSwichType);
+		m_BaseState.iProcFrame = File.GetDataInt(0, enBaseStateProcFrame);
+
+		File.Close();
+	}
 }
 
 void clsEnemyBase::SetMoveData()
 {
+	std::string strMoveDataName = m_BaseState.strEnemyFolderName + "\\Move.csv";
 
+	clsFILE File;
+	if (File.Open(strMoveDataName))
+	{
+		m_v_MoveState.resize(File.GetSizeRow());
+
+		for (int i = 0; i < m_v_MoveState.size(); i++)
+		{
+			m_v_MoveState[i].iMoveUpdateInterval = File.GetDataInt(i, enMoveStateMoveUpdateInterval);
+
+			m_v_MoveState[i].iHorDistance = File.GetDataInt(i, enMoveStateHorDistance);
+			m_v_MoveState[i].iHorDisRandMax = File.GetDataInt(i, enMoveStateHorDisRandMax);
+			m_v_MoveState[i].iMoveDir = File.GetDataInt(i, enMoveStateMoveDir);
+			m_v_MoveState[i].iMoveDirRandMax = File.GetDataInt(i, enMoveStateMoveDirRandMax);
+
+			m_v_MoveState[i].iVerDistance = File.GetDataInt(i, enMoveStateVerDistance);
+			m_v_MoveState[i].iVerDistRandMax = File.GetDataInt(i, enMoveStateVerDistRandMax);
+		}
+
+		File.Close();
+	}
 }
 
 void clsEnemyBase::SetVisibilityData()
 {
+	std::string strVisibilityDataName = m_BaseState.strEnemyFolderName + "\\Visibility.csv";
 
+	clsFILE File;
+	if (File.Open(strVisibilityDataName))
+	{
+		m_v_VisAreaState.resize(File.GetSizeRow());
+
+		for (int i = 0; i < m_v_VisAreaState.size(); i++)
+		{
+			m_v_VisAreaState[i].iVisType = File.GetDataInt(i, enVisibilityAreaVisType);
+
+			m_v_VisAreaState[i].iVisDistance = File.GetDataInt(i, enVisibilityAreaVisDistance);
+			m_v_VisAreaState[i].iVisAngle = File.GetDataInt(i, enVisibilityAreaVisAngle);
+		}
+
+		File.Close();
+	}
 }
 
 void clsEnemyBase::SetShotData()
 {
+	std::string strShotDataName = m_BaseState.strEnemyFolderName + "\\Shot.csv";
 
+	clsFILE File;
+	if (File.Open(strShotDataName))
+	{
+		m_v_ShotState.resize(File.GetSizeRow());
+
+		for (int i = 0; i < m_v_VisAreaState.size(); i++)
+		{
+			m_v_ShotState[i].iShotDisMax = File.GetDataInt(i, enShotStateShotDisMax);
+			m_v_ShotState[i].iShotDisMin = File.GetDataInt(i, enShotStateShotDisMin);
+
+			m_v_ShotState[i].iShotENLimitParcent = File.GetDataInt(i, enShotStateShotENLimitParcent);
+		}
+
+		File.Close();
+	}
 }
 
 void clsEnemyBase::UpdateProduct(){}

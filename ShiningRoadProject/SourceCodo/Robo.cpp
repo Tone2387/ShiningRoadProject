@@ -818,28 +818,18 @@ void clsRobo::PlayFrontBoostEfc()
 
 	if (m_vMoveDirforBoost.z < -0.1f)
 	{
-		std::string strBoostRootName = "BoosterFrontRoot";
-		std::string strBoostEndName = "BoosterFrontEnd";
-		std::string strBoostRootNameTmp = "";
-		std::string strBoostEndNameTmp = "";
-
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
 		for (unsigned int i = 0; i < m_v_LHandFrontBoostEfc.size(); i++)
 		{
-			//付け根の名前を生成.
-			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
-
-			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
-
 			vPosRootTmp = m_pMesh->GetBonePosArmLBoostFrontRoot(i);
 			vPosEndTmp = m_pMesh->GetBonePosArmLBoostFrontEnd(i);
 
 			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
+
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
 
 			if (!m_wpEffects->isPlay(m_v_LHandFrontBoostEfc[i]))
 			{
@@ -856,16 +846,13 @@ void clsRobo::PlayFrontBoostEfc()
 
 		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
 		{
-			//付け根の名前を生成.
-			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vPosRootTmp = m_pMesh->GetBonePosArmRBoostFrontRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmRBoostFrontEnd(i);
 
-			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
-			vRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_R, strBoostRootName.c_str(), strBoostEndName.c_str());
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
 
-			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_R, strBoostEndNameTmp.c_str());
 			if (!m_wpEffects->isPlay(m_v_RHandFrontBoostEfc[i]))
 			{
 				m_v_RHandFrontBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
@@ -906,26 +893,19 @@ void clsRobo::PlayRightBoostEfc()
 
 	if (m_vMoveDirforBoost.x < -0.1f)
 	{
-		std::string strBoostRootName = "BoosterSideRoot";
-		std::string strBoostEndName = "BoosterSideEnd";
-		std::string strBoostRootNameTmp = "";
-		std::string strBoostEndNameTmp = "";
-
-		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
 		for (unsigned int i = 0; i < m_v_RHandSideBoostEfc.size(); i++)
 		{
-			//付け根の名前を生成.
-			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vPosRootTmp = m_pMesh->GetBonePosArmRBoostSideRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmRBoostSideEnd(i);
 
-			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
-			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_R, strBoostRootName.c_str(), strBoostEndName.c_str());
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
 
-			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_R, strBoostEndNameTmp.c_str());
 			if (!m_wpEffects->isPlay(m_v_RHandSideBoostEfc[i]))
 			{
 				m_v_RHandSideBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
@@ -936,7 +916,7 @@ void clsRobo::PlayRightBoostEfc()
 				m_wpEffects->SetPosition(m_v_RHandSideBoostEfc[i], vPosEndTmp);
 			}
 
-			m_wpEffects->SetRotation(m_v_RHandSideBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetRotation(m_v_RHandSideBoostEfc[i], vRotTmp);
 			
 		}
 	}
@@ -959,26 +939,19 @@ void clsRobo::PlayLeftBoostEfc()
 
 	if (m_vMoveDirforBoost.x > 0.1f)
 	{
-		std::string strBoostRootName = "BoosterSideRoot";
-		std::string strBoostEndName = "BoosterSideEnd";
-		std::string strBoostRootNameTmp = "";
-		std::string strBoostEndNameTmp = "";
-
-		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
 		for (unsigned int i = 0; i < m_v_LHandSideBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
-			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vPosRootTmp = m_pMesh->GetBonePosArmLBoostSideRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmLBoostSideEnd(i);
 
-			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
-			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_L, strBoostRootName.c_str(), strBoostEndName.c_str());
-
-			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_L, strBoostEndNameTmp.c_str());
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
 
 			if (!m_wpEffects->isPlay(m_v_LHandSideBoostEfc[i]))
 			{
@@ -990,7 +963,7 @@ void clsRobo::PlayLeftBoostEfc()
 				m_wpEffects->SetPosition(m_v_LHandSideBoostEfc[i], vPosEndTmp);
 			}
 
-			m_wpEffects->SetRotation(m_v_LHandSideBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetRotation(m_v_LHandSideBoostEfc[i], vRotTmp);
 		}
 	}
 
@@ -1010,28 +983,20 @@ void clsRobo::PlayBackBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z > 0.1f)
+	if (m_vMoveDirforBoost.z > 0.1f)              
 	{
-		std::string strBoostRootName = "BoosterBackRoot";
-		std::string strBoostEndName = "BoosterBackEnd";
-		std::string strBoostRootNameTmp = "";
-		std::string strBoostEndNameTmp = "";
-
-		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
 		for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 		{
-			//付け根の名前を生成.
-			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vPosRootTmp = m_pMesh->GetBonePosArmLBoostBackRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmLBoostBackEnd(i);
 
-			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
-			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_L, strBoostRootName.c_str(), strBoostEndName.c_str());
-
-			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_L, strBoostEndNameTmp.c_str());
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
 
 			if (!m_wpEffects->isPlay(m_v_LHandBackBoostEfc[i]))
 			{
@@ -1043,21 +1008,17 @@ void clsRobo::PlayBackBoostEfc()
 				m_wpEffects->SetPosition(m_v_LHandBackBoostEfc[i], vPosEndTmp);
 			}
 
-			m_wpEffects->SetRotation(m_v_LHandBackBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetRotation(m_v_LHandBackBoostEfc[i], vRotTmp);
 		}
 
 		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
-			//付け根の名前を生成.
-			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vPosRootTmp = m_pMesh->GetBonePosArmRBoostBackRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmRBoostBackEnd(i);
 
-			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
-			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::ARM_R, strBoostRootName.c_str(), strBoostEndName.c_str());
-
-			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::ARM_R, strBoostEndNameTmp.c_str());
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
 
 			if (!m_wpEffects->isPlay(m_v_RHandBackBoostEfc[i]))
 			{
@@ -1068,24 +1029,19 @@ void clsRobo::PlayBackBoostEfc()
 			{
 				m_wpEffects->SetPosition(m_v_RHandBackBoostEfc[i], vPosEndTmp);
 			}
-			m_wpEffects->SetRotation(m_v_RHandBackBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetRotation(m_v_RHandBackBoostEfc[i], vRotTmp);
 		}
-
-		strBoostRootName = "BoosterRoot";
-		strBoostEndName = "BoosterEnd";
 
 		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
 		{
 			//付け根の名前を生成.
-			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vPosRootTmp = m_pMesh->GetBonePosCoreBoosterRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosCoreBoosterEnd(i);
 
-			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
-			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::CORE, strBoostRootName.c_str(), strBoostEndName.c_str());
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
 
-			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::CORE, strBoostEndNameTmp.c_str());
 			if (!m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
 			{
 				m_v_CoreBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
@@ -1095,7 +1051,7 @@ void clsRobo::PlayBackBoostEfc()
 			{
 				m_wpEffects->SetPosition(m_v_CoreBoostEfc[i], vPosEndTmp);
 			}
-			m_wpEffects->SetRotation(m_v_CoreBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetRotation(m_v_CoreBoostEfc[i], vRotTmp);
 			m_wpEffects->SetScale(m_v_CoreBoostEfc[i], 2.0f);
 
 		}
@@ -1135,26 +1091,19 @@ void clsRobo::PlayLegBoostEfc()
 
 	if (m_bBoost)
 	{
-		std::string strBoostRootName = "BoosterRoot";
-		std::string strBoostEndName = "BoosterEnd";
-		std::string strBoostRootNameTmp = "";
-		std::string strBoostEndNameTmp = "";
-
-		D3DXVECTOR3 vPosRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
 
 		for (unsigned int i = 0; i < m_v_LegBoostEfc.size(); i++)
 		{
-			//付け根の名前を生成.
-			strBoostRootNameTmp = strBoostRootName;
-			strBoostRootNameTmp = OprtStr.ConsolidatedNumber(strBoostRootNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vPosRootTmp = m_pMesh->GetBonePosLegBoosterRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosLegBoosterEnd(i);
 
-			strBoostEndNameTmp = strBoostEndName;
-			strBoostEndNameTmp = OprtStr.ConsolidatedNumber(strBoostEndNameTmp, i, g_cBONE_NAME_NUM_DIGIT_JOINT);
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
-			vPosRotTmp = m_pMesh->GetDirfromBone(enPARTS::LEG, strBoostRootName.c_str(), strBoostEndName.c_str());
-
-			vPosEndTmp = m_pMesh->GetBonePos(enPARTS::LEG, strBoostEndNameTmp.c_str());
+			vPosEndTmp += m_vMoveDir * m_fMoveSpeed;
+			vPosEndTmp.y += m_fFollPower;
 
 			if (!m_wpEffects->isPlay(m_v_LegBoostEfc[i]))
 			{
@@ -1166,7 +1115,7 @@ void clsRobo::PlayLegBoostEfc()
 				m_wpEffects->SetPosition(m_v_LegBoostEfc[i], vPosEndTmp);
 			}
 				
-			m_wpEffects->SetRotation(m_v_LegBoostEfc[i], vPosRotTmp);
+			m_wpEffects->SetRotation(m_v_LegBoostEfc[i], vRotTmp);
 		}
 	}
 
