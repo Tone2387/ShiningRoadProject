@@ -306,16 +306,16 @@ bool clsSCENE_BASE::isPressExit()
 }
 
 //ƒƒjƒ…[‘€ì‚ÉŽg‚Á‚Ä‚Ë.
-bool clsSCENE_BASE::isPressHoldRight()
+bool clsSCENE_BASE::isPressHoldRight( bool isWithStick )
 {
 	bool isPush = false;
 	if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
 		isPush = true;
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) ){
+	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDxInput->IsLSRightStay() ){
+	else if( m_wpDxInput->IsLSRightStay() && isWithStick ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
@@ -353,16 +353,16 @@ bool clsSCENE_BASE::isPressHoldRight()
 	return false;
 }
 
-bool clsSCENE_BASE::isPressHoldLeft()
+bool clsSCENE_BASE::isPressHoldLeft( bool isWithStick )
 {
 	bool isPush = false;
 	if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
 		isPush = true;
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) ){
+	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDxInput->IsLSLeftStay() ){
+	else if( m_wpDxInput->IsLSLeftStay() && isWithStick ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
@@ -400,16 +400,16 @@ bool clsSCENE_BASE::isPressHoldLeft()
 	return false;
 }
 
-bool clsSCENE_BASE::isPressHoldUp()
+bool clsSCENE_BASE::isPressHoldUp( bool isWithStick )
 {
 	bool isPush = false;
 	if( m_wpXInput->isPressStay( XINPUT_UP ) ){
 		isPush = true;
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) ){
+	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDxInput->IsLSUpStay() ){
+	else if( m_wpDxInput->IsLSUpStay() && isWithStick ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
@@ -447,16 +447,16 @@ bool clsSCENE_BASE::isPressHoldUp()
 	return false;
 }
 
-bool clsSCENE_BASE::isPressHoldDown()
+bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 {
 	bool isPush = false;
 	if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
 		isPush = true;
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) ){
+	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDxInput->IsLSDownStay() ){
+	else if( m_wpDxInput->IsLSDownStay() && isWithStick ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){

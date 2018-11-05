@@ -78,8 +78,8 @@ private:
 	//色替え( 左右キーを押された ).
 	void AddRoboColor( const bool isIncrement );
 
-	//右スティックの動き( ロボの回転 ).
-	void MoveRightStick();
+	//スティックの動き( ロボの回転 ).
+	void MoveRoboStick();
 
 private:
 

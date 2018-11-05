@@ -74,7 +74,7 @@ clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::~clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE()
 
 void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 {
-	if( SelectUp() ){
+	if( SelectUp( false ) ){
 		m_iSelectNum --;
 		if( m_iSelectNum < 0 ){
 			m_iSelectNum = 0;
@@ -83,7 +83,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		}
 	}
-	else if( SelectDown() ){
+	else if( SelectDown( false ) ){
 		m_iSelectNum ++;
 		if( m_iSelectNum >= enSELECT_NUM_size ){
 			m_iSelectNum = enSELECT_NUM_size - 1;
@@ -93,7 +93,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 		}
 	}
 
-	if( SelectRight() ){
+	if( SelectRight( false ) ){
 		//âπÇÕÉÅÉCÉìÇ…îCÇπÇÈ.
 		switch( m_iSelectNum )
 		{
@@ -118,7 +118,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 			break;
 		}
 	}
-	else if( SelectLeft() ){
+	else if( SelectLeft( false ) ){
 		//âπÇÕÉÅÉCÉìÇ…îCÇπÇÈ.
 		switch( m_iSelectNum )
 		{
