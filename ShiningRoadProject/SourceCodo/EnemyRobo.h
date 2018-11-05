@@ -34,16 +34,40 @@ private:
 		int iENLimitParcent;//è„è∏ÇÇ‚ÇﬂÇÈENécó ó¶.
 	};
 
+	enum enBoostFileOrder
+	{
+		enBoostRisingENParcent = 0,
+		enBoostENLimitParcent,
+
+		enBoostSize
+	};
+
 	struct QuickBoostApproach
 	{
 		int iDis;
 		int iENLimit;
 	};
 
+	enum enQuickBoostApproachFileOrder
+	{
+		enQuickBoostAppDis = 0,
+		enQuickBoostAppENLimit,
+
+		enQuickBoostAppSize
+	};
+
 	struct QuickTrun
 	{
 		int iDir;
 		int iENLimit;
+	};
+
+	enum enQuickTrunFileOrder
+	{
+		enQuickTrunDir = 0,
+		enQuickTrunENLimit,
+
+		enQuickTrunSize
 	};
 
 	enum enAvoidCategory
@@ -99,6 +123,14 @@ private:
 
 	bool IsShotR();
 	bool IsShotL();
+
+	virtual void SetShotData();
+
+	void SetBoostData();
+
+	void SetQuickBoostAppData();
+	void SetQuickTrunData();
+	void SetQuickAvoidData();
 
 	std::vector<ShotState> m_v_LShotState;
 	std::vector<ShotState> m_v_RShotState;

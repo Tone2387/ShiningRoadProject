@@ -491,6 +491,31 @@ clsRoboCommand* clsEnemyRobo::RShotOperation()
 	return nullptr;
 }
 
+void clsEnemyRobo::SetShotData()
+{
+
+}
+
+void clsEnemyRobo::SetBoostData()
+{
+
+}
+
+void clsEnemyRobo::SetQuickBoostAppData()
+{
+
+}
+
+void clsEnemyRobo::SetQuickTrunData()
+{
+
+}
+
+void clsEnemyRobo::SetQuickAvoidData()
+{
+
+}
+
 clsEnemyRobo::clsEnemyRobo()
 {
 	m_pComMove = new clsCommandMove;

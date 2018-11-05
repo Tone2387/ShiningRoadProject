@@ -29,7 +29,7 @@ protected:
 	void SetBaseData(std::string strEnemyFolderName);
 	void SetMoveData();
 	void SetVisibilityData();
-	void SetShotData();
+	virtual void SetShotData();
 
 	virtual void UpdateProduct();
 
