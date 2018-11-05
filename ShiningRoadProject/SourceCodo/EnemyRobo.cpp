@@ -19,21 +19,18 @@ void clsEnemyRobo::Init(
 	MSTmp.iHorDistance = 100;
 	MSTmp.iMoveDir = 0;
 	MSTmp.iMoveDirRandMax = 0;
-	MSTmp.iVerDistance = 10;
-	MSTmp.iVerDistRandMax = 2;
+	MSTmp.iVerDistance = 100;
+	MSTmp.iVerDistRandMax = 20;
 
 	m_BoostState.iENLimitParcent = 30;
 	m_BoostState.iRisingENParcent = 70;
 	m_bENSaving = false;
 
-	m_LShotData.iCategory = 1;
-	m_LShotData.v_ShotState.push_back(SSTmp);
+	m_v_LShotState.push_back(SSTmp);
 
-	m_RShotData.iCategory = 1;
-	m_RShotData.v_ShotState.push_back(SSTmp);
+	m_v_RShotState.push_back(SSTmp);
 
-	m_MoveData.iCategory = 1;
-	m_MoveData.v_MoveState.push_back(MSTmp);
+	m_v_MoveState.push_back(MSTmp);
 
 	m_v_QuickAvoidState.resize(2);
 
@@ -59,25 +56,36 @@ bool clsEnemyRobo::IsBoostRising()
 	{
 		if (m_pTarget)
 		{
-			MoveState MoveStatus = m_MoveData.v_MoveState[m_UpdateState.iMoveCategoryNo];
+			MoveState MoveStatus = m_v_MoveState[m_UpdateState.iMoveCategoryNo];
 
 			int iVerDestDis = MoveStatus.iVerDistance;
 
 			int iRandMax = 0;
 			iRandMax = MoveStatus.iVerDistRandMax;
 
+			const int iHulf = 2;
+
 			if (iRandMax != 0)//0‚¾‚ÆŽ~‚Ü‚é‚Ì‚Å–hŽ~.
 			{
-				iVerDestDis += (rand() % (iRandMax * 2)) - iRandMax;
+				iVerDestDis += (rand() % (iRandMax * iHulf)) - iRandMax;
 			}
 
 			m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
 
 			float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 
-			if (fDist < m_UpdateState.fVerDis)
+			if (fDist > -m_UpdateState.fVerDis * iHulf &&
+				fDist < m_UpdateState.fVerDis * iHulf)
 			{
 				return true;
+			}
+
+			else
+			{
+				if (fDist > 0.0f)
+				{
+					return true;
+				}
 			}
 		}
 	}
@@ -114,7 +122,7 @@ bool clsEnemyRobo::IsBoostOn()
 {
 	if (m_pTarget)
 	{
-		float fVerDis = m_pBody->GetPosition().y - m_pTarget->GetPosition().y;
+		float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
 
 		const int iHulf = 2;
 
@@ -138,7 +146,7 @@ bool clsEnemyRobo::IsBoostOff()
 {
 	if (m_pTarget)
 	{
-		float fVerDis = m_pBody->GetPosition().y - m_pTarget->GetPosition().y;
+		float fVerDis = m_pTarget->GetPosition().y - m_pBody->GetPosition().y;
 
 		const int iHulf = 2;
 
@@ -355,7 +363,7 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoDamage(QuickBoostAvoid& AvoidState, float&
 
 bool clsEnemyRobo::IsShotR()
 {
-	m_ShotData = m_RShotData;
+	m_v_ShotState = m_v_RShotState;
 
 	if (IsShot())
 	{
@@ -367,7 +375,7 @@ bool clsEnemyRobo::IsShotR()
 
 bool clsEnemyRobo::IsShotL()
 {
-	m_ShotData = m_LShotData;
+	m_v_ShotState = m_v_LShotState;
 
 	if (IsShot())
 	{

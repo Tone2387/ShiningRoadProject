@@ -100,8 +100,8 @@ private:
 	bool IsShotR();
 	bool IsShotL();
 
-	ShotData m_LShotData;
-	ShotData m_RShotData;
+	std::vector<ShotState> m_v_LShotState;
+	std::vector<ShotState> m_v_RShotState;
 
 	Boost m_BoostState;
 

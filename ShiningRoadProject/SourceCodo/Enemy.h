@@ -42,19 +42,20 @@ protected:
 	bool IsJump();
 	bool IsShot();
 
-	struct ShotState
-	{
-		int iShotDisMin;
-		int iShotDisMax;
-		int iShotENLimitParcent;
-	};
-
 	struct BaseState
 	{
 		std::string strEnemyFolderName;
 
-		int iMoveCategoryVisType;//移動ステータスを切り替える方法.
+		int iMoveSwichType;//移動ステータスを切り替える方法.
 		int iProcFrame;//視点調整を更新する時間.
+	};
+
+	enum enBaseStateFileOrder
+	{
+		enBaseStateMoveSwichType,
+		enBaseStateProcFrame,
+
+		enBaseStateSize
 	};
 
 	struct MoveState
@@ -68,6 +69,35 @@ protected:
 		int iVerDistRandMax;
 	};
 
+	enum enMoveStateFileOrder
+	{
+		enMoveStateMoveUpdateInterval,
+		enMoveStateHorDistance,
+		enMoveStateHorDisRandMax,
+		enMoveStateMoveDir,
+		enMoveStateMoveDirRandMax,
+		enMoveStateVerDistance,
+		enMoveStateVerDistRandMax,
+
+		enMoveStateSize
+	};
+
+	struct ShotState
+	{
+		int iShotDisMin;
+		int iShotDisMax;
+		int iShotENLimitParcent;
+	};
+
+	enum enShotStateFileOrder
+	{
+		enShotStateShotDisMin,
+		enShotStateShotDisMax,
+		enShotStateShotENLimitParcent,
+		
+		enShotStateSize
+	};
+
 	struct VisibilityAreaState
 	{
 		int iVisType;
@@ -75,30 +105,19 @@ protected:
 		int iVisAngle;
 	};
 
-	struct MoveData
+	enum enVisibilityAreaStateFileOrder
 	{
-		int iCategory;
-		std::vector<MoveState> v_MoveState;
+		enVisibilityAreaVisType,
+		enVisibilityAreaVisDistance,
+		enVisibilityAreaVisAngle,
+		
+		enVisibilityAreaStateSize
 	};
 
-	struct ShotData
-	{
-		int iCategory;
-		std::vector<ShotState> v_ShotState;
-	};
-
-	
-
-	struct VisibilityAreaData
-	{
-		int iCategory;
-		std::vector<VisibilityAreaState> v_VisAreaState;
-	};
-
-	BaseState m_BaseData;
-	MoveData m_MoveData;
-	VisibilityAreaData m_visAreaData;
-	ShotData m_ShotData;
+	BaseState m_BaseState;
+	std::vector<MoveState> m_v_MoveState;
+	std::vector<ShotState> m_v_ShotState;
+	std::vector<VisibilityAreaState> m_v_VisAreaState;
 
 	struct UpdateState
 	{
