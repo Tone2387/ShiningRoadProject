@@ -12,6 +12,10 @@ namespace{
 	//十字キーが押されている扱いする倒し具合.
 	const float fSLOPE_PRESS = 0.85f;
 
+	//スティックがボタンとして反応する倒し具合.
+	const SHORT sSTICK_PUSH_USE_BUTTON = static_cast<SHORT>( XINPUT_THUMB_MAX * ( 0.5f / 1.0f ) );
+
+
 	//日吉君のDxInputとのすり合わせ( スティックの角度を[0～360]->[-180～180]にする ).
 #ifdef HIYOSHI_DX_INPUT
 	//DIFF : difference = 差.
@@ -329,7 +333,6 @@ float clsXInput::GetStickSlope( const SHORT lY, const SHORT lX ) const
 //スティックの上下左右を十字キーと同等に扱う.
 bool clsXInput::isSlopeEnter( const WORD _padKey, const bool isLeft ) const
 {
-	const SHORT sPUSH = static_cast<SHORT>( XINPUT_THUMB_MAX * ( 0.9f / 1.0f ) );
 	const bool bOLD = true;
 	SHORT sX, sY, sXOld, sYOld;
 
@@ -349,22 +352,22 @@ bool clsXInput::isSlopeEnter( const WORD _padKey, const bool isLeft ) const
 	switch( _padKey )
 	{
 	case XINPUT_RIGHT://.
-		if( sX >= sPUSH && sXOld < sPUSH ){
+		if( sX >= sSTICK_PUSH_USE_BUTTON && sXOld < sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_DOWN:
-		if( sY <= -sPUSH && sYOld > -sPUSH ){
+		if( sY <= -sSTICK_PUSH_USE_BUTTON && sYOld > -sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_LEFT:
-		if( sX <= -sPUSH && sXOld > -sPUSH ){
+		if( sX <= -sSTICK_PUSH_USE_BUTTON && sXOld > -sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_UP:
-		if( sY >= sPUSH && sYOld < sPUSH ){
+		if( sY >= sSTICK_PUSH_USE_BUTTON && sYOld < sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
@@ -375,7 +378,6 @@ bool clsXInput::isSlopeEnter( const WORD _padKey, const bool isLeft ) const
 
 bool clsXInput::isSlopeStay ( const WORD _padKey, const bool isLeft ) const
 {
-	const SHORT sPUSH = static_cast<SHORT>( XINPUT_THUMB_MAX * ( 0.9f / 1.0f ) );
 	SHORT sX, sY;
 
 	if( isLeft ){
@@ -390,22 +392,22 @@ bool clsXInput::isSlopeStay ( const WORD _padKey, const bool isLeft ) const
 	switch( _padKey )
 	{
 	case XINPUT_RIGHT://.
-		if( sX >= sPUSH ){
+		if( sX >= sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_DOWN:
-		if( sY <= -sPUSH ){
+		if( sY <= -sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_LEFT:
-		if( sX <= -sPUSH ){
+		if( sX <= -sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_UP:
-		if( sY >= sPUSH ){
+		if( sY >= sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
@@ -416,7 +418,6 @@ bool clsXInput::isSlopeStay ( const WORD _padKey, const bool isLeft ) const
 
 bool clsXInput::isSlopeExit ( const WORD _padKey, const bool isLeft ) const
 {
-	const SHORT sPUSH = static_cast<SHORT>( XINPUT_THUMB_MAX * ( 0.9f / 1.0f ) );
 	const bool bOLD = true;
 	SHORT sX, sY, sXOld, sYOld;
 
@@ -436,22 +437,22 @@ bool clsXInput::isSlopeExit ( const WORD _padKey, const bool isLeft ) const
 	switch( _padKey )
 	{
 	case XINPUT_RIGHT://.
-		if( sX < sPUSH && sXOld >= sPUSH ){
+		if( sX < sSTICK_PUSH_USE_BUTTON && sXOld >= sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_DOWN:
-		if( sY > -sPUSH && sYOld <= -sPUSH ){
+		if( sY > -sSTICK_PUSH_USE_BUTTON && sYOld <= -sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_LEFT:
-		if( sX > -sPUSH && sXOld <= -sPUSH ){
+		if( sX > -sSTICK_PUSH_USE_BUTTON && sXOld <= -sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;
 	case XINPUT_UP:
-		if( sY < sPUSH && sYOld >= sPUSH ){
+		if( sY < sSTICK_PUSH_USE_BUTTON && sYOld >= sSTICK_PUSH_USE_BUTTON ){
 			return true;
 		}
 		break;

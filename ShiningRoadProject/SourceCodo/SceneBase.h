@@ -66,11 +66,11 @@ protected:
 	bool isPressEnter();
 	bool isPressExit();
 
-	//押しっぱなしで動く.
-	bool isPressHoldRight();
-	bool isPressHoldLeft();
-	bool isPressHoldUp();
-	bool isPressHoldDown();
+	//押しっぱなしで動く( trueならスティック有効 ).
+	bool isPressHoldRight( bool isWithStick = true );
+	bool isPressHoldLeft ( bool isWithStick = true );
+	bool isPressHoldUp	 ( bool isWithStick = true );
+	bool isPressHoldDown ( bool isWithStick = true );
 //	int m_iHoldFreamRight;
 //	int m_iHoldFreamLeft;
 //	int m_iHoldFreamUp;
