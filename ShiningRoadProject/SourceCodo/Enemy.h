@@ -15,7 +15,7 @@ public:
 	virtual ~clsEnemyBase();
 
 	virtual void Update();
-	virtual void SetData(std::string strEnemyFolderName);
+	void SetData(std::string strEnemyFolderName);
 	void SearchTarget(std::vector<clsCharactor*>);
 
 protected:
@@ -30,6 +30,7 @@ protected:
 	void SetMoveData();
 	void SetVisibilityData();
 	virtual void SetShotData();
+	virtual void SetDataProduct();
 
 	virtual void UpdateProduct();
 
