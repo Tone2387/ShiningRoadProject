@@ -616,6 +616,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		m_upUI->InitReadNumPartsComment();
 
 		m_PartsSelect.Num[m_PartsSelect.Type] --;
 
@@ -637,6 +638,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		m_upUI->InitReadNumPartsComment();
 
 		m_PartsSelect.Num[m_PartsSelect.Type] ++;
 
@@ -658,12 +660,12 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 	//パーツ選択.
 	if( isMessageBoxClose() ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+
 		m_PartsSelect.Type ++;
-		m_upUI->AddCommentNoForChangePartsType();
-
-
 		m_PartsSelect.Type = 
 			LoopRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
+
+		m_upUI->AddCommentNoForChangePartsType( m_PartsSelect.Type );
 	}
 }
 
@@ -672,11 +674,12 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 	//パーツを選ぶ.
 	if( isMessageBoxClose() ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
-		m_PartsSelect.Type --;
-		m_upUI->AddCommentNoForChangePartsType();
 
+		m_PartsSelect.Type --;
 		m_PartsSelect.Type = 
 			LoopRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
+
+		m_upUI->AddCommentNoForChangePartsType( m_PartsSelect.Type );
 	}
 }
 
