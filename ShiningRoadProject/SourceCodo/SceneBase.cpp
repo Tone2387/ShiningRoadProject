@@ -191,7 +191,6 @@ void clsSCENE_BASE::Render()
 	//各シーンのUIの描画.
 	SetDepth( false );
 	RenderUi();
-	SetDepth( true );
 
 	//元通りのビューポート.
 	if( m_wpViewPortUsing != m_wpViewPort11 ){
@@ -201,6 +200,8 @@ void clsSCENE_BASE::Render()
 
 	//暗転描画.
 	m_wpBlackScreen->Render();
+	SetDepth( true );
+
 
 #if _DEBUG
 	//デバッグテキスト.
