@@ -44,13 +44,15 @@ private:
 
 	struct QuickBoostApproach
 	{
+		int iUpdateTime;
 		int iDis;
 		int iENLimit;
 	};
 
 	enum enQuickBoostApproachFileOrder
 	{
-		enQuickBoostAppDis = 0,
+		enQuickBoostAppUpdateTime = 0,
+		enQuickBoostAppDis,
 		enQuickBoostAppENLimit,
 
 		enQuickBoostAppSize
@@ -58,13 +60,15 @@ private:
 
 	struct QuickTrun
 	{
+		int iUpdateTime;
 		int iDir;
 		int iENLimit;
 	};
 
 	enum enQuickTrunFileOrder
 	{
-		enQuickTrunDir = 0,
+		enQuickTrunUpdateTime = 0,
+		enQuickTrunDir,
 		enQuickTrunENLimit,
 
 		enQuickTrunSize
@@ -72,7 +76,8 @@ private:
 
 	enum enAvoidCategory
 	{
-		enAvoidLockTime = 0,
+		enAvoidUpdateTime = 0,
+		enAvoidLockTime,
 		enAvoidDamage,
 
 		enAvoidSize
@@ -80,16 +85,27 @@ private:
 
 	struct QuickBoostAvoid
 	{
-		int iAvoidNum;//回避条件カテゴリナンバー.
 		int iUpdateTime;
-		int iAvoidDir;
+		int iAvoidNum;//回避条件カテゴリナンバー.
 		int iLockTimeorDamage;
+		int iAvoidDir;
 		int iENLimit;
 
 		//以下、毎フレーム更新のための変数.
 		int iAvoidDamageUpdateTime;
 		int iDamage;
 		int iLockTime;
+	};
+
+	enum enQuickBoostAvoidFileOrder
+	{
+		QuickBoostAvoidUpdateTime = 0,
+		QuickBoostAvoidAvoidNum,
+		QuickBoostAvoidLockTimeorDamage,
+		enQuickBoostAvoidDir,
+		enQuickBoostAvoidENLimit,
+
+		enQuickBoostAvoidSize
 	};
 
 	clsRobo* m_pBody;
@@ -124,13 +140,14 @@ private:
 	bool IsShotR();
 	bool IsShotL();
 
+	virtual void SetDataProduct();
 	virtual void SetShotData();
 
 	void SetBoostData();
 
 	void SetQuickBoostAppData();
 	void SetQuickTrunData();
-	void SetQuickAvoidData();
+	void SetQuickBoostAvoidData();
 
 	std::vector<ShotState> m_v_LShotState;
 	std::vector<ShotState> m_v_RShotState;
@@ -139,7 +156,7 @@ private:
 
 	std::vector<QuickBoostApproach> m_v_QuickAppState;
 	std::vector<QuickTrun> m_v_QuickTrunState;
-	std::vector<QuickBoostAvoid> m_v_QuickAvoidState;
+	std::vector<QuickBoostAvoid> m_v_QuickBoostAvoidState;
 
 	bool m_bENSaving;
 };

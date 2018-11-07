@@ -1,4 +1,5 @@
 #include"EnemyRobo.h"
+#include"File.h"
 
 void clsEnemyRobo::Init(
 	LPSTR strEnemyFolderName,
@@ -32,19 +33,19 @@ void clsEnemyRobo::Init(
 
 	m_v_MoveState.push_back(MSTmp);
 
-	m_v_QuickAvoidState.resize(2);
+	m_v_QuickBoostAvoidState.resize(2);
 
 
-	for (unsigned int i = 0; i < m_v_QuickAvoidState.size(); i++)
+	for (unsigned int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
 	{
-		m_v_QuickAvoidState[i].iAvoidNum = i;
-		m_v_QuickAvoidState[i].iUpdateTime = 300 * (int)g_fFPS;
-		m_v_QuickAvoidState[i].iLockTimeorDamage = 5;
-		m_v_QuickAvoidState[i].iAvoidDir = 45;
+		m_v_QuickBoostAvoidState[i].iAvoidNum = i;
+		m_v_QuickBoostAvoidState[i].iUpdateTime = 300 * (int)g_fFPS;
+		m_v_QuickBoostAvoidState[i].iLockTimeorDamage = 5;
+		m_v_QuickBoostAvoidState[i].iAvoidDir = 45;
 
-		m_v_QuickAvoidState[i].iAvoidDamageUpdateTime = m_v_QuickAvoidState[i].iUpdateTime;
-		m_v_QuickAvoidState[i].iDamage = 0;
-		m_v_QuickAvoidState[i].iLockTime = m_v_QuickAvoidState[i].iLockTimeorDamage* (int)g_fFPS;
+		m_v_QuickBoostAvoidState[i].iAvoidDamageUpdateTime = m_v_QuickBoostAvoidState[i].iUpdateTime;
+		m_v_QuickBoostAvoidState[i].iDamage = 0;
+		m_v_QuickBoostAvoidState[i].iLockTime = m_v_QuickBoostAvoidState[i].iLockTimeorDamage* (int)g_fFPS;
 	}
 }
 
@@ -184,15 +185,15 @@ bool clsEnemyRobo::IsQuickTurn(float& fPush, float& fAngle)//ƒ^[ƒQƒbƒgˆÊ’u‚Ì•ûŒ
 		float fRot = atan2f(fVecX, fVecZ) - m_pBody->GetRotation().y;
 
 		int iDirHulf = 180;
-		int iDirHFull = 360;
+		int iDirFull = 360;
 
 		if (fRot > static_cast<float>D3DXToRadian(iDirHulf))
 		{
-			fRot -= static_cast<float>D3DXToRadian(iDirHFull);
+			fRot -= static_cast<float>D3DXToRadian(iDirFull);
 		}
 		else if (fRot < -static_cast<float>D3DXToRadian(iDirHulf))
 		{
-			fRot += static_cast<float>D3DXToRadian(iDirHFull);
+			fRot += static_cast<float>D3DXToRadian(iDirFull);
 		}
 
 		ObjRollOverGuard(&fRot);
@@ -257,19 +258,19 @@ bool clsEnemyRobo::IsQuickBoostAvoid(float& fPush, float& fAngle)//ƒNƒCƒbƒNƒu[ƒ
 	//‰ñ”ğğŒ‚Ç‚ê‚©‚ğ–‚½‚¹‚Î‰ñ”ğ.
 	//ğŒ‚Íæ‚É“o˜^‚³‚ê‚½‚à‚Ì‚©‚ç—Dæ‚µ‚Ä”»’è.
 
-	for (unsigned int i = 0; i < m_v_QuickAvoidState.size(); i++)
+	for (unsigned int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
 	{
-		switch (m_v_QuickAvoidState[i].iAvoidNum)//‰ñ”ğƒpƒ^[ƒ“.
+		switch (m_v_QuickBoostAvoidState[i].iAvoidNum)//‰ñ”ğƒpƒ^[ƒ“.
 		{
 		case enAvoidLockTime:
-			if (IsQuickBoostAvoidtoLockTime(m_v_QuickAvoidState[i], fPush, fAngle))//”íƒƒbƒNŠÔ.
+			if (IsQuickBoostAvoidtoLockTime(m_v_QuickBoostAvoidState[i], fPush, fAngle))//”íƒƒbƒNŠÔ.
 			{
 				return true;
 			}
 			break;
 
 		case enAvoidDamage:
-			if (IsQuickBoostAvoidtoDamage(m_v_QuickAvoidState[i], fPush,fAngle))//”íƒ_ƒ[ƒW.
+			if (IsQuickBoostAvoidtoDamage(m_v_QuickBoostAvoidState[i], fPush,fAngle))//”íƒ_ƒ[ƒW.
 			{
 				return true;
 			}
@@ -493,25 +494,121 @@ clsRoboCommand* clsEnemyRobo::RShotOperation()
 
 void clsEnemyRobo::SetShotData()
 {
+	std::string strShotLDataName = m_BaseState.strEnemyFolderName + "\\ShotL.csv";
 
+	clsFILE File;
+	if (File.Open(strShotLDataName))
+	{
+		m_v_LShotState.resize(File.GetSizeRow());
+
+		for (int i = 0; i < m_v_LShotState.size(); i++)
+		{
+			m_v_LShotState[i].iShotDisMax = File.GetDataInt(i, enShotStateShotDisMax);
+			m_v_LShotState[i].iShotDisMin = File.GetDataInt(i, enShotStateShotDisMin);
+
+			m_v_LShotState[i].iShotENLimitParcent = File.GetDataInt(i, enShotStateShotENLimitParcent);
+		}
+
+		File.Close();
+	}
+
+	std::string strShotRDataName = m_BaseState.strEnemyFolderName + "\\ShotR.csv";
+
+	if (File.Open(strShotRDataName))
+	{
+		m_v_RShotState.resize(File.GetSizeRow());
+
+		for (int i = 0; i < m_v_RShotState.size(); i++)
+		{
+			m_v_RShotState[i].iShotDisMax = File.GetDataInt(i, enShotStateShotDisMax);
+			m_v_RShotState[i].iShotDisMin = File.GetDataInt(i, enShotStateShotDisMin);
+
+			m_v_RShotState[i].iShotENLimitParcent = File.GetDataInt(i, enShotStateShotENLimitParcent);
+		}
+
+		File.Close();
+	}
 }
 
 void clsEnemyRobo::SetBoostData()
 {
+	std::string strBoostDataName = m_BaseState.strEnemyFolderName + "\\Boost.csv";
 
+	clsFILE File;
+	if (File.Open(strBoostDataName))
+	{
+		m_BoostState.iENLimitParcent = File.GetDataInt(0,enBoostENLimitParcent);
+		m_BoostState.iRisingENParcent = File.GetDataInt(0, enBoostRisingENParcent);
+
+		File.Close();
+	}
 }
 
 void clsEnemyRobo::SetQuickBoostAppData()
 {
+	std::string strQuickBoostAppDataName = m_BaseState.strEnemyFolderName + "\\QuickBoostApp.csv";
 
+	clsFILE File;
+	if (File.Open(strQuickBoostAppDataName))
+	{
+		m_v_QuickAppState.resize(File.GetSizeRow());
+
+		for (int i = 0; i < m_v_MoveState.size(); i++)
+		{
+			m_v_QuickAppState[i].iUpdateTime = File.GetDataInt(i, enQuickBoostAppUpdateTime);
+
+			m_v_QuickAppState[i].iDis = File.GetDataInt(i, enQuickBoostAppDis);
+			m_v_QuickAppState[i].iENLimit = File.GetDataInt(i, enQuickBoostAppENLimit);
+		}
+
+		File.Close();
+	}
 }
 
 void clsEnemyRobo::SetQuickTrunData()
 {
+	std::string strQuickTrunDataName = m_BaseState.strEnemyFolderName + "\\QuickTrun.csv";
 
+	clsFILE File;
+	if (File.Open(strQuickTrunDataName))
+	{
+		m_v_QuickTrunState.resize(File.GetSizeRow());
+
+		for (int i = 0; i < m_v_MoveState.size(); i++)
+		{
+			m_v_QuickTrunState[i].iUpdateTime = File.GetDataInt(i, enQuickTrunUpdateTime);
+
+			m_v_QuickTrunState[i].iDir = File.GetDataInt(i, enQuickTrunDir);
+			m_v_QuickTrunState[i].iENLimit = File.GetDataInt(i, enQuickTrunENLimit);
+		}
+
+		File.Close();
+	}
 }
 
-void clsEnemyRobo::SetQuickAvoidData()
+void clsEnemyRobo::SetQuickBoostAvoidData()
+{
+	std::string strQuickBoostAvoidDataName = m_BaseState.strEnemyFolderName + "\\QuickBoostAvoid.csv";
+
+	clsFILE File;
+	if (File.Open(strQuickBoostAvoidDataName))
+	{
+		m_v_QuickBoostAvoidState.resize(File.GetSizeRow());
+
+		for (int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
+		{
+			m_v_QuickBoostAvoidState[i].iUpdateTime;
+			m_v_QuickBoostAvoidState[i].iAvoidNum;
+			m_v_QuickBoostAvoidState[i].iLockTimeorDamage;
+			m_v_QuickBoostAvoidState[i].iAvoidDir;
+			m_v_QuickBoostAvoidState[i].iENLimit;
+		}
+
+		File.Close();
+	}
+}
+
+void clsEnemyRobo::SetDataProduct()
 {
 
 }
