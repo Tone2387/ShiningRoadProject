@@ -548,7 +548,7 @@ void clsASSEMBLE_UI::Update(
 		m_iReadNumPartsComment  += iCOMMENT_STRING_RENDER_NUM_ADD;
 	}
 
-		//選択中を示す半透明の板表示.
+	//選択中を示す半透明の板表示.
 	assert( m_upPartsTypeSelect );
 	m_upPartsTypeSelect->SetPos( m_vecupPartsType[ iPartsType ]->GetPos() );
 	assert( m_upPartsNumSelect );
