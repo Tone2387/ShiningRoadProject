@@ -6,10 +6,9 @@
 //âπÇÃà¯êî.
 enum enBGM : int
 {
-	enBGM_MAOU2 = 0,
-	enBGM_MUS0,
-	enBGM_POKET0,
-	enBGM_POKET1
+	enBGM_AMACHA0 = 0,
+	enBGM_HART2,
+	enBGM_NOVA1,
 };
 
 enum enSE : int

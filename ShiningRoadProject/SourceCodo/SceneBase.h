@@ -115,6 +115,9 @@ protected:
 	std::unique_ptr< clsDebugText >	m_upText;
 	//デバック゛テキストの表示.
 	virtual void RenderDebugText();
+	//BGMのチェック.
+	void DebugBgm();
+
 #endif//#if _DEBUG
 
 
