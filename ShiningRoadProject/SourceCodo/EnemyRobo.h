@@ -47,6 +47,9 @@ private:
 		int iUpdateTime;
 		int iDis;
 		int iENLimit;
+
+		//以下、毎フレーム更新のための変数.
+		int iQuickBoostAppUpdateCnt;
 	};
 
 	enum enQuickBoostApproachFileOrder
@@ -63,6 +66,9 @@ private:
 		int iUpdateTime;
 		int iDir;
 		int iENLimit;
+
+		//以下、毎フレーム更新のための変数.
+		int iQuickTrunUpdateCnt;
 	};
 
 	enum enQuickTrunFileOrder
@@ -86,22 +92,22 @@ private:
 	struct QuickBoostAvoid
 	{
 		int iUpdateTime;
-		int iAvoidNum;//回避条件カテゴリナンバー.
+		int iAvoidType;//回避条件カテゴリナンバー.
 		int iLockTimeorDamage;
 		int iAvoidDir;
 		int iENLimit;
 
 		//以下、毎フレーム更新のための変数.
-		int iAvoidDamageUpdateTime;
+		int iAvoidDamageUpdateCnt;
 		int iDamage;
 		int iLockTime;
 	};
 
 	enum enQuickBoostAvoidFileOrder
 	{
-		QuickBoostAvoidUpdateTime = 0,
-		QuickBoostAvoidAvoidNum,
-		QuickBoostAvoidLockTimeorDamage,
+		enQuickBoostAvoidUpdateTime = 0,
+		enQuickBoostAvoidType,
+		enQuickBoostAvoidLockTimeorDamage,
 		enQuickBoostAvoidDir,
 		enQuickBoostAvoidENLimit,
 
@@ -154,7 +160,7 @@ private:
 
 	Boost m_BoostState;
 
-	std::vector<QuickBoostApproach> m_v_QuickAppState;
+	std::vector<QuickBoostApproach> m_v_QuickBoostAppState;
 	std::vector<QuickTrun> m_v_QuickTrunState;
 	std::vector<QuickBoostAvoid> m_v_QuickBoostAvoidState;
 

@@ -38,12 +38,12 @@ void clsEnemyRobo::Init(
 
 	for (unsigned int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
 	{
-		m_v_QuickBoostAvoidState[i].iAvoidNum = i;
+		m_v_QuickBoostAvoidState[i].iAvoidType = i;
 		m_v_QuickBoostAvoidState[i].iUpdateTime = 300 * (int)g_fFPS;
 		m_v_QuickBoostAvoidState[i].iLockTimeorDamage = 5;
 		m_v_QuickBoostAvoidState[i].iAvoidDir = 45;
 
-		m_v_QuickBoostAvoidState[i].iAvoidDamageUpdateTime = m_v_QuickBoostAvoidState[i].iUpdateTime;
+		m_v_QuickBoostAvoidState[i].iAvoidDamageUpdateCnt = m_v_QuickBoostAvoidState[i].iUpdateTime;
 		m_v_QuickBoostAvoidState[i].iDamage = 0;
 		m_v_QuickBoostAvoidState[i].iLockTime = m_v_QuickBoostAvoidState[i].iLockTimeorDamage* (int)g_fFPS;
 	}
@@ -161,9 +161,8 @@ bool clsEnemyRobo::IsBoostOff()
 			}
 		}
 
-		int iENLimit = static_cast<int>(m_pBody->m_iEnelgyMax * 0.3f);//(m_MoveData.v_MoveState[m_iMoveCategoryNo].iVerMoveENLimitParcent * g_fPercentage));
-
-		if (m_pBody->m_iEnelgy < (m_pBody->m_iEnelgyMax / iHulf))//ENécó Ç™è≠Ç»Ç¢.
+		int iENLimit = static_cast<int>(m_pBody->m_iEnelgyMax * (m_BoostState.iRisingENParcent * g_fPercentage));
+		if (m_pBody->m_iEnelgy < iENLimit)//ENécó Ç™è≠Ç»Ç¢.
 		{
 			return true;
 		}
@@ -198,23 +197,29 @@ bool clsEnemyRobo::IsQuickTurn(float& fPush, float& fAngle)//É^Å[ÉQÉbÉgà íuÇÃï˚å
 
 		ObjRollOverGuard(&fRot);
 
-		if (abs(fRot) > D3DXToRadian(150))
+		for (int i = 0; i < m_v_QuickTrunState.size(); i++)
 		{
-			const float fPushFull = 1.0f;
-
-			if (fRot > 0.0f)
+			if (m_v_QuickTrunState[i].iENLimit)
 			{
-				fPush = fPushFull;
+				if (abs(fRot) > D3DXToRadian(m_v_QuickTrunState[i].iDir))
+				{
+					const float fPushFull = 1.0f;
+
+					if (fRot > 0.0f)
+					{
+						fPush = fPushFull;
+					}
+
+					else
+					{
+						fPush = -fPushFull;
+					}
+
+					fAngle = fRot;
+
+					return true;
+				}
 			}
-
-			else
-			{
-				fPush = -fPushFull;
-			}
-
-			fAngle = fRot;
-
-			return true;
 		}
 	}
 
@@ -230,20 +235,23 @@ bool clsEnemyRobo::IsQuickBoostApproach(float& fPush, float& fAngle)//ÉNÉCÉbÉNÉu
 	{
 		float fDis = D3DXVec3Length(&(m_pTarget->GetPosition() - m_pBody->GetPosition()));
 
-		if (fDis > 300.0f)
+		for (int i = 0; i < m_v_QuickBoostAppState.size(); i++)
 		{
-			fPush = 1.0f;
+			if (fDis > 300.0f)
+			{
+				fPush = 1.0f;
 
-			const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
-			const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
+				const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
+				const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
 
-			float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+				float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
 
-			ObjRollOverGuard(&fRot);
+				ObjRollOverGuard(&fRot);
 
-			fAngle = fRot;
+				fAngle = fRot;
 
-			return true;
+				return true;
+			}
 		}
 	}
 
@@ -260,7 +268,7 @@ bool clsEnemyRobo::IsQuickBoostAvoid(float& fPush, float& fAngle)//ÉNÉCÉbÉNÉuÅ[É
 
 	for (unsigned int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
 	{
-		switch (m_v_QuickBoostAvoidState[i].iAvoidNum)//âÒîÉpÉ^Å[Éì.
+		switch (m_v_QuickBoostAvoidState[i].iAvoidType)//âÒîÉpÉ^Å[Éì.
 		{
 		case enAvoidLockTime:
 			if (IsQuickBoostAvoidtoLockTime(m_v_QuickBoostAvoidState[i], fPush, fAngle))//îÌÉçÉbÉNéûä‘.
@@ -316,17 +324,12 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoLockTime(QuickBoostAvoid& AvoidState, floa
 		AvoidState.iLockTime = AvoidState.iLockTimeorDamage * static_cast<int>(g_fFPS);
 	}
 
-	else
-	{
-		int y = 0;
-	}
-
 	return false;
 }
 
 bool clsEnemyRobo::IsQuickBoostAvoidtoDamage(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
 {
-	if (AvoidState.iAvoidDamageUpdateTime > 0)
+	if (AvoidState.iAvoidDamageUpdateCnt > 0)
 	{
 		AvoidState.iDamage += m_pBody->m_iDamage;
 		if (AvoidState.iDamage > AvoidState.iLockTimeorDamage)
@@ -349,13 +352,13 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoDamage(QuickBoostAvoid& AvoidState, float&
 			return true;
 		}
 
-		AvoidState.iAvoidDamageUpdateTime--;
+		AvoidState.iAvoidDamageUpdateCnt--;
 	}
 
 	else
 	{
 
-		AvoidState.iAvoidDamageUpdateTime = AvoidState.iUpdateTime;
+		AvoidState.iAvoidDamageUpdateCnt = AvoidState.iUpdateTime;
 		AvoidState.iDamage = 0;
 	}
 
@@ -494,10 +497,10 @@ clsRoboCommand* clsEnemyRobo::RShotOperation()
 
 void clsEnemyRobo::SetShotData()
 {
-	std::string strShotLDataName = m_BaseState.strEnemyFolderName + "\\ShotL.csv";
+	std::string strShotDataName = m_BaseState.strEnemyFolderName + "\\ShotL.csv";
 
 	clsFILE File;
-	if (File.Open(strShotLDataName))
+	if (File.Open(strShotDataName))
 	{
 		m_v_LShotState.resize(File.GetSizeRow());
 
@@ -512,9 +515,9 @@ void clsEnemyRobo::SetShotData()
 		File.Close();
 	}
 
-	std::string strShotRDataName = m_BaseState.strEnemyFolderName + "\\ShotR.csv";
+	strShotDataName = m_BaseState.strEnemyFolderName + "\\ShotR.csv";
 
-	if (File.Open(strShotRDataName))
+	if (File.Open(strShotDataName))
 	{
 		m_v_RShotState.resize(File.GetSizeRow());
 
@@ -551,14 +554,14 @@ void clsEnemyRobo::SetQuickBoostAppData()
 	clsFILE File;
 	if (File.Open(strQuickBoostAppDataName))
 	{
-		m_v_QuickAppState.resize(File.GetSizeRow());
+		m_v_QuickBoostAppState.resize(File.GetSizeRow());
 
 		for (int i = 0; i < m_v_MoveState.size(); i++)
 		{
-			m_v_QuickAppState[i].iUpdateTime = File.GetDataInt(i, enQuickBoostAppUpdateTime);
+			m_v_QuickBoostAppState[i].iUpdateTime = File.GetDataInt(i, enQuickBoostAppUpdateTime);
 
-			m_v_QuickAppState[i].iDis = File.GetDataInt(i, enQuickBoostAppDis);
-			m_v_QuickAppState[i].iENLimit = File.GetDataInt(i, enQuickBoostAppENLimit);
+			m_v_QuickBoostAppState[i].iDis = File.GetDataInt(i, enQuickBoostAppDis);
+			m_v_QuickBoostAppState[i].iENLimit = File.GetDataInt(i, enQuickBoostAppENLimit);
 		}
 
 		File.Close();
@@ -597,11 +600,12 @@ void clsEnemyRobo::SetQuickBoostAvoidData()
 
 		for (int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
 		{
-			m_v_QuickBoostAvoidState[i].iUpdateTime;
-			m_v_QuickBoostAvoidState[i].iAvoidNum;
-			m_v_QuickBoostAvoidState[i].iLockTimeorDamage;
-			m_v_QuickBoostAvoidState[i].iAvoidDir;
-			m_v_QuickBoostAvoidState[i].iENLimit;
+			m_v_QuickBoostAvoidState[i].iUpdateTime = File.GetDataInt(i, enQuickBoostAvoidUpdateTime);
+
+			m_v_QuickBoostAvoidState[i].iAvoidType = File.GetDataInt(i, enQuickBoostAvoidType);
+			m_v_QuickBoostAvoidState[i].iLockTimeorDamage = File.GetDataInt(i, enQuickBoostAvoidLockTimeorDamage);
+			m_v_QuickBoostAvoidState[i].iAvoidDir = File.GetDataInt(i, enQuickBoostAvoidDir);
+			m_v_QuickBoostAvoidState[i].iENLimit = File.GetDataInt(i, enQuickBoostAvoidENLimit);
 		}
 
 		File.Close();

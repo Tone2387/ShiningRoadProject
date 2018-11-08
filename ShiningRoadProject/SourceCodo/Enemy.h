@@ -14,7 +14,7 @@ public:
 	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
-	virtual void Update();
+	void Update();
 	void SetData(std::string strEnemyFolderName);
 	void SearchTarget(std::vector<clsCharactor*>);
 

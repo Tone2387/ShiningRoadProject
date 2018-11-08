@@ -108,28 +108,28 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 	fPush = 0.0f;
 	fAngle = 0.0f;
 
-	/*switch (m_BaseData.iMoveCategoryVisType)
+	switch (m_BaseState.iMoveSwichType)
 	{
 	case 0:
 
-		m_iMoveCategoryNo++;
+		m_UpdateState.iMoveCategoryNo++;
 
-		if (m_MoveData.iCategory > m_iMoveCategoryNo)
+		if (m_UpdateState.iMoveCategoryNo >= m_v_MoveState.size())
 		{
-			m_iMoveCategoryNo = 0;
+			m_UpdateState.iMoveCategoryNo = 0;
 		}
 
 		break;
 
 	case 1:
 
-		m_iMoveCategoryNo = rand() % m_MoveData.iCategory;
+		m_UpdateState.iMoveCategoryNo = rand() % m_v_MoveState.size();
 
 		break;
 
 	default:
 		break;
-	}*/
+	}
 
 	if (m_pTarget)
 	{
