@@ -147,6 +147,10 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 	//暗転更新.
 	m_wpBlackScreen->Update();
 
+#if _DEBUG
+	//BGMのチェック.
+	DebugBgm();
+#endif//#if _DEBUG
 
 	//各シーンのUpdate.
 	UpdateProduct( tmpScene );
@@ -537,6 +541,7 @@ D3DXVECTOR3 clsSCENE_BASE::GetCameraLookPos() const
 
 
 #if _DEBUG
+
 void clsSCENE_BASE::RenderDebugText()
 {
 	//NULLチェック.
@@ -568,6 +573,28 @@ void clsSCENE_BASE::RenderDebugText()
 	//}
 
 }
+
+
+//BGMのチェック.
+void clsSCENE_BASE::DebugBgm()
+{
+	if( !m_wpSound ) return;
+	static int iBGM_DEBUG_NUMBER = 0;
+
+	if( GetAsyncKeyState( 'N' ) & 0x1 ){
+		if( iBGM_DEBUG_NUMBER > 0 )	iBGM_DEBUG_NUMBER --;
+		m_wpSound->StopAllSound();
+		m_wpSound->PlayBGM( iBGM_DEBUG_NUMBER );
+	}
+	if( GetAsyncKeyState( 'M' ) & 0x1 ){
+		iBGM_DEBUG_NUMBER ++;
+		m_wpSound->StopAllSound();
+		m_wpSound->PlayBGM( iBGM_DEBUG_NUMBER );
+	}
+
+}
+
+
 #endif //#if _DEBUG
 
 

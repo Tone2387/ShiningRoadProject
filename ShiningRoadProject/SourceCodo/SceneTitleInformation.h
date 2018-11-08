@@ -7,6 +7,8 @@ enum enBGM : int
 {
 	enBGM_MAOU1 = 0,
 	enBGM_MAOU3,
+	enBGM_AMACHA0,
+	enBGM_NOVA2,
 };
 
 enum enSE : int
