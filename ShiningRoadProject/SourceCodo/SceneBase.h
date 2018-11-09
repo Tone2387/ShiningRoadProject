@@ -2,7 +2,7 @@
 #define SCENE_BASE_H_
 
 //ついているとバックバッファではなくいったんテクスチャに描画する.
-#define RENDER_SCREEN_TEXTURE_
+//#define RENDER_SCREEN_TEXTURE_
 
 
 #include "Global.h"

@@ -19,10 +19,14 @@ namespace{
 	
 	//Å’áŒÀ‚Ì”Â‚Ì”.
 	const int iTEX_NUM_MIN = 1;
-	
+
+#ifdef _DEBUG
+	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide_.png";
+	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop_.png";
+#else//#ifdef _DEBUG
 	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide.png";
 	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop.png";
-
+#endif//#ifdef _DEBUG
 
 
 	const int iRESURVE_NUM = 256;
@@ -188,9 +192,9 @@ void clsBUILDING::Render(
 	const D3DXVECTOR3 &vLight, 
 	const D3DXVECTOR3 &vEye )
 {
-#ifdef _DEBUG
-	m_upBox->Render( mView, mProj, vLight, vEye );
-#else//#ifdef _DEBUG
+//#ifdef _DEBUG
+//	m_upBox->Render( mView, mProj, vLight, vEye );
+//#else//#ifdef _DEBUG
 	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ )
 	{
 		for( unsigned int Col=0; Col<m_vecvecTop[ Row ].size(); Col++ ){
@@ -213,7 +217,7 @@ void clsBUILDING::Render(
 			}
 		}
 	}
-#endif//#ifdef _DEBUG
+//#endif//#ifdef _DEBUG
 
 }
 
