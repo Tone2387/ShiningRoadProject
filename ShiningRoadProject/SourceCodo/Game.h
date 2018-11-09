@@ -33,8 +33,8 @@ public:
 	bool Update();
 	//毎フレーム使う.
 	void Render( 
-		ID3D11RenderTargetView *pBackBuffer_TexRTV,
-		ID3D11DepthStencilView *pBackBuffer_DSTexDSV );
+		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
+		ID3D11DepthStencilView* const pBackBuffer_DSTexDSV );
 
 
 	//ラップ関数.

@@ -1,6 +1,10 @@
 #ifndef SCENE_BASE_H_
 #define SCENE_BASE_H_
 
+//ついているとバックバッファではなくいったんテクスチャに描画する.
+//#define RENDER_SCREEN_TEXTURE_
+
+
 #include "Global.h"
 
 #if _DEBUG
@@ -35,7 +39,9 @@ public:
 	//				  指定したシーンが生成される ).
 	void Update( enSCENE &enNextScene );
 	//シーン内のオブジェクトの描画関数のまとめ.
-	void Render();
+	void Render( 
+		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
+		ID3D11DepthStencilView* const pDepthStencilView );
 	//----- 各シーン共通 -----//.
 
 
@@ -107,7 +113,6 @@ protected:
 	//----- Render用 -----//.
 
 
-//	std::unique_ptr< clsKEY_INPUT > m_upKey;
 
 	//デバッグテキストクラス.
 #if _DEBUG
@@ -153,6 +158,8 @@ private:
 	//デバッグ用シーン切り替え.
 	void DebugChangeScene( enSCENE &enNextScene ) const;
 
+private:
+
 	//暗転中に待ってくれるために必要.
 	enSCENE m_enNextScene;
 
@@ -164,9 +171,27 @@ private:
 	//診断用( 今現在使っているビューポート ).
 	D3D11_VIEWPORT* m_wpViewPortUsing;
 
-
+	//奥行on, off.
 	ID3D11DepthStencilState* m_pDepthStencilStateOn;
 	ID3D11DepthStencilState* m_pDepthStencilStateOff;
+
+#ifdef RENDER_SCREEN_TEXTURE_
+	//レンダリングテクスチャ用.
+	ID3D11Texture2D*			m_pScreenTex;
+	ID3D11RenderTargetView*		m_pScreenRTV;
+	ID3D11ShaderResourceView*	m_pScreenSRV;
+	ID3D11SamplerState*			m_pScreenSmp;
+	ID3D11VertexShader*			m_pScreenVS;
+	ID3D11PixelShader*			m_pScreenPS;
+	HRESULT CreateScreenTexture();
+	HRESULT CreateScreenShaderTexture();
+	//Rendertargetをテクスチャにする.
+	void SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView );
+	//テクスチャの内容を画面に描画.
+	void RenderWindowFromTexture( 
+		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
+		ID3D11DepthStencilView* const pDepthStencilView );
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
 };
