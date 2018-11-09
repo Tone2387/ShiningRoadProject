@@ -46,15 +46,19 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpRoboStatus(	m_wpPtrGroup->GetRoboStatus() )
 	,m_wpBlackScreen(	m_wpPtrGroup->GetBlackScreen() )
 	,m_wpFont(			m_wpPtrGroup->GetFont() )
-#if _DEBUG
-	,m_upText( nullptr )
-#endif//#if _DEBUG
-	,m_enNextScene(				enSCENE::NOTHING )
-	,m_wpViewPortUsing(			m_wpViewPort11 )
-	,m_pDepthStencilStateOn(	nullptr )
-	,m_pDepthStencilStateOff(	nullptr )
+	,m_enNextScene(		enSCENE::NOTHING )
+	,m_wpViewPortUsing(	m_wpViewPort11 )
+	,m_pDepthStencilStateOn( nullptr )
+	,m_pDepthStencilStateOff(nullptr )
+#ifdef RENDER_SCREEN_TEXTURE_	
+	,m_pScreenTex( nullptr )
+	,m_pScreenRTV( nullptr )
+	,m_pScreenSRV( nullptr )
+	,m_pScreenSmp( nullptr )
+	,m_pScreenVS( nullptr )
+	,m_pScreenPS( nullptr )
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 {
-//	m_wpViewPortUsing = m_wpViewPort11;
 }
 
 clsSCENE_BASE::~clsSCENE_BASE()
@@ -65,6 +69,15 @@ clsSCENE_BASE::~clsSCENE_BASE()
 		m_upText.reset();
 	}
 #endif//#if _DEBUG
+
+#ifdef RENDER_SCREEN_TEXTURE_	
+	SAFE_RELEASE( m_pScreenPS );
+	SAFE_RELEASE( m_pScreenVS );
+	SAFE_RELEASE( m_pScreenSmp );
+	SAFE_RELEASE( m_pScreenSRV );
+	SAFE_RELEASE( m_pScreenRTV );
+	SAFE_RELEASE( m_pScreenTex );
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 	m_wpFont->Release();
 
@@ -111,8 +124,12 @@ void clsSCENE_BASE::Create()
 	m_wpBlackScreen->SetChangeSpd( fBLACK_SCREEN_DEFAULT_SPD );
 	m_wpBlackScreen->GetBright();
 
-
-//	m_upKey = make_unique< clsKEY_INPUT >();
+#ifdef RENDER_SCREEN_TEXTURE_	
+	//描画先テクスチャ作成.
+	if( FAILED( CreateScreenTexture() ) ){
+		ERR_MSG( "描画先テクスチャ作成失敗", "" );
+	}
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
 #if _DEBUG
@@ -176,12 +193,21 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 }
 
 //シーン内のオブジェクトの描画関数のまとめ.
-void clsSCENE_BASE::Render()
+void clsSCENE_BASE::Render( 
+	ID3D11RenderTargetView* const pBackBuffer_TexRTV,
+	ID3D11DepthStencilView* const pDepthStencilView )
 {
 	//カメラ関数.
 	Camera();
 	//プロジェクション関数.
 	Proj();	
+
+
+#ifdef RENDER_SCREEN_TEXTURE_	
+	//Rendertargetをテクスチャにする.
+	SetRenderTargetTexture( pDepthStencilView );
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+
 
 	//各シーンの描画.
 	RenderProduct( m_wpCamera->GetPos() );
@@ -204,15 +230,19 @@ void clsSCENE_BASE::Render()
 
 	//暗転描画.
 	m_wpBlackScreen->Render();
-	SetDepth( true );
-
 
 #if _DEBUG
-	//デバッグテキスト.
-	SetDepth( false );	//Zテスト:OFF.
 	RenderDebugText();
-	SetDepth( true );	//Zテスト:ON.
 #endif//#if _DEBUG
+
+	SetDepth( true );	//Zテスト:ON.
+
+
+#ifdef RENDER_SCREEN_TEXTURE_	
+	//テクスチャの内容を画面に描画.
+	RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+
 
 }
 
@@ -500,7 +530,7 @@ bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 }
 
 
-//3D座標をスクリーン( 2D )座標へと変換する.dimensions(次元) conversion(変換)
+//3D座標をスクリーン( 2D )座標へと変換する conversion(変換) dimensions(次元).
 D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 {
 	D3DXVECTOR3 v2DPos;
@@ -705,3 +735,279 @@ D3D11_VIEWPORT* clsSCENE_BASE::GetViewPortMainPtr()
 	assert( m_wpViewPort11 );
 	return m_wpViewPort11;
 }
+
+
+
+
+#ifdef RENDER_SCREEN_TEXTURE_
+//レンダリングテクスチャ用.
+HRESULT clsSCENE_BASE::CreateScreenTexture()
+{
+	//テクスチャ.
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Usage				= D3D11_USAGE_DEFAULT;
+	texDesc.Format				= DXGI_FORMAT_R8G8B8A8_TYPELESS;
+	texDesc.BindFlags			= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.Width				= WND_W;
+	texDesc.Height				= WND_H;
+	texDesc.CPUAccessFlags		= 0;
+	texDesc.MipLevels			= 1;
+	texDesc.ArraySize			= 1;
+	texDesc.SampleDesc.Count	= 1;
+	texDesc.SampleDesc.Quality	= 0;
+	texDesc.MiscFlags			= 0;
+	
+	HRESULT hr = m_wpDevice->CreateTexture2D( &texDesc, nullptr, &m_pScreenTex );
+	if( FAILED( hr ) ){
+		ERR_MSG( "スクリーンテクスチャ作成失敗", "" );
+		assert( !"スクリーンテクスチャ作成失敗" );
+		return hr;
+	}
+
+	//レンダーターゲットビュー.
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+	rtvDesc.Format			= DXGI_FORMAT_R8G8B8A8_UNORM;
+	rtvDesc.ViewDimension	= D3D11_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.Buffer.ElementOffset					= 0;
+	rtvDesc.Buffer.ElementWidth						= 0;
+	rtvDesc.Buffer.FirstElement						= 0;
+	rtvDesc.Buffer.NumElements						= 0;
+	rtvDesc.Texture1D.MipSlice						= 0;
+	rtvDesc.Texture1DArray.ArraySize				= 0;
+	rtvDesc.Texture1DArray.FirstArraySlice			= 0;
+	rtvDesc.Texture1DArray.MipSlice					= 0;
+	rtvDesc.Texture2D.MipSlice						= 0;
+	rtvDesc.Texture2DArray.ArraySize				= 0;
+	rtvDesc.Texture2DArray.FirstArraySlice			= 0;
+	rtvDesc.Texture2DArray.MipSlice					= 0;
+	rtvDesc.Texture2DMS.UnusedField_NothingToDefine	= 0;
+	rtvDesc.Texture2DMSArray.ArraySize				= 0;
+	rtvDesc.Texture2DMSArray.FirstArraySlice		= 0;
+	rtvDesc.Texture3D.FirstWSlice					= 0;
+	rtvDesc.Texture3D.MipSlice						= 0;
+	rtvDesc.Texture3D.WSize							= 0;
+	
+	hr = m_wpDevice->CreateRenderTargetView( m_pScreenTex, &rtvDesc, &m_pScreenRTV );
+	if( FAILED( hr ) ){
+		ERR_MSG( "スクリーンレンダーターゲットビュー作成失敗", "" );
+		assert( !"スクリーンレンダーターゲットビュー作成失敗" );
+		return hr;
+	}
+
+	//シェーダーリソースビュー.
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory( &srvDesc, sizeof( srvDesc ) );
+	srvDesc.Format				= rtvDesc.Format;
+	srvDesc.ViewDimension		= D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels	= 1;
+
+	hr = m_wpDevice->CreateShaderResourceView( m_pScreenTex, &srvDesc, &m_pScreenSRV );
+	if( FAILED( hr ) ){
+		ERR_MSG( "スクリーンシェーダーリソースビュー作成失敗", "" );
+		assert( !"スクリーンシェーダーリソースビュー作成失敗" );
+		return hr;
+	}
+
+	//サンプラーステート.
+	D3D11_SAMPLER_DESC smpDesc;
+	ZeroMemory( &smpDesc, sizeof( smpDesc ) );
+	smpDesc.Filter			= D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	smpDesc.AddressU		= D3D11_TEXTURE_ADDRESS_WRAP;
+	smpDesc.AddressV		= D3D11_TEXTURE_ADDRESS_WRAP;
+	smpDesc.AddressW		= D3D11_TEXTURE_ADDRESS_WRAP;
+	smpDesc.ComparisonFunc	= D3D11_COMPARISON_NEVER;
+	smpDesc.MinLOD			= 0;
+	smpDesc.MaxLOD			= D3D11_FLOAT32_MAX;
+
+	hr = m_wpDevice->CreateSamplerState( &smpDesc, &m_pScreenSmp );
+	if( FAILED( hr ) ){
+		ERR_MSG( "スクリーンサンプラーステート作成失敗", "" );
+		assert( !"スクリーンサンプラーステート作成失敗" );
+		return hr;
+	}
+
+	//シェーダー.
+	hr = this->CreateScreenShaderTexture();
+	if( FAILED( hr ) ){
+		ERR_MSG( "スクリーンシェーダー作成失敗", "" );
+		assert( !"スクリーンシェーダー作成失敗" );
+		return hr;
+	}
+
+
+	return S_OK;
+}
+
+HRESULT clsSCENE_BASE::CreateScreenShaderTexture()
+{
+	const char sSHADER_NAME[] = "Shader\\Sprite2D.hlsl";
+	ID3DBlob* pCompiledShader = nullptr;
+	ID3DBlob* pErrors = nullptr;
+
+	UINT uCompileFlag = 0;
+
+#ifdef _DEBUG
+	uCompileFlag
+		= D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION; 
+#endif//#ifdef _DEBUG
+
+
+	//HLSLからバーテックスシェーダのブロブを作成.
+	if( FAILED(
+		D3DX11CompileFromFile(
+			sSHADER_NAME,	//シェーダファイル名(HLSLファイル).
+			NULL,			//マクロ定義の配列へのポインタ(未使用).
+			NULL,			//インクルードファイルを扱うインターフェースへのポインタ(未使用).
+			"VS_Main",			//シェーダエントリーポイント関数の名前.
+			"vs_5_0",		//シェーダのモデルを指定する文字列(プロファイル).
+			uCompileFlag,	//シェーダコンパイルフラグ.
+			0,				//エフェクトコンパイルフラグ(未使用).
+			NULL,			//スレッドポンプインターフェースへのポインタ(未使用).
+			&pCompiledShader,//ブロブを格納するメモリへのポインタ.
+			&pErrors,		//エラーと警告一覧を格納するメモリへのポインタ.
+			NULL ) ) )		//戻り値へのポインタ(未使用).
+	{
+		MessageBox( NULL, "hlsl(vs)読み込み失敗", "エラー", MB_OK );
+		return E_FAIL;
+	}
+	SAFE_RELEASE( pErrors );
+
+	//上記で作成したブロブから「バーテックスシェーダ」を作成.
+	if( FAILED(
+		m_wpDevice->CreateVertexShader(
+			pCompiledShader->GetBufferPointer(),
+			pCompiledShader->GetBufferSize(),
+			NULL,
+			&m_pScreenVS ) ) )//(out)バーテックスシェーダ.
+	{
+		MessageBox( NULL, "vs作成失敗", "エラー", MB_OK );
+		return E_FAIL;
+	}
+
+	SAFE_RELEASE( pCompiledShader );
+
+
+
+
+
+	//HLSLからピクセルシェーダのブロブを作成.
+	if( FAILED(
+		D3DX11CompileFromFile(
+			sSHADER_NAME,	//シェーダファイル名(HLSLファイル).
+			NULL,
+			NULL,
+			"PS_Main",			//シェーダエントリーポイント関数の名前.
+			"ps_5_0",		//シェーダのモデルを指定する文字列(プロファイル).
+			uCompileFlag,	//シェーダコンパイルフラグ.
+			0,
+			NULL,
+			&pCompiledShader,//ブロブを格納するメモリへのポインタ.
+			&pErrors,
+			NULL ) ) )
+	{
+		MessageBox( NULL, "hlsl(ps)読み込み失敗", "エラー", MB_OK );
+		return E_FAIL;
+	}
+	SAFE_RELEASE( pErrors );
+
+	//上記で作成したブロブから「ピクセルシェーダ」を作成.
+	if( FAILED(
+		m_wpDevice->CreatePixelShader(
+			pCompiledShader->GetBufferPointer(),
+			pCompiledShader->GetBufferSize(),
+			NULL,
+			&m_pScreenPS ) ) )//(out)ピクセルシェーダ.
+	{
+		MessageBox( NULL, "ps作成失敗", "エラー", MB_OK );
+		return E_FAIL;
+	}
+	SAFE_RELEASE( pCompiledShader );//ブロブ解放.
+
+	return S_OK;
+}
+
+
+//Rendertargetをテクスチャにする.
+void clsSCENE_BASE::SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView )
+{
+	//レンダーターゲットをテクスチャに.
+	float clearcolor[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	m_wpContext->OMSetRenderTargets( 1, &m_pScreenRTV, pDepthStencilView );
+	m_wpContext->ClearRenderTargetView( m_pScreenRTV, clearcolor );
+	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+}
+
+//テクスチャの内容を画面に描画.
+void clsSCENE_BASE::RenderWindowFromTexture( 
+	ID3D11RenderTargetView* const pBackBuffer_TexRTV,
+	ID3D11DepthStencilView* const pDepthStencilView )
+{
+	float clearcolor[] = { 1.5f, 0.5f, 0.5f, 1.0f };
+	m_wpContext->OMSetRenderTargets( 1, &pBackBuffer_TexRTV, pDepthStencilView );
+	m_wpContext->ClearRenderTargetView( pBackBuffer_TexRTV, clearcolor );
+	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+
+	ID3D11Buffer* pBuffer;
+	//板ポリ(四角形)の頂点を作成.
+	float tmpw = WND_W;
+	float tmph = WND_H;
+	SpriteVertex vertices[] = 
+	{
+#if 0
+		//頂点座標(x,y,z).					//UV座標( u, v ).
+		D3DXVECTOR3( 0.0f,  tmph,  0.0f ),	D3DXVECTOR2( 0.0f, 1.0f ),//頂点1(左下).
+		D3DXVECTOR3( 0.0f,  0.0f,  0.0f ),	D3DXVECTOR2( 0.0f, 0.0f ),//頂点2(左上).
+		D3DXVECTOR3( tmpw,  tmph,  0.0f ),	D3DXVECTOR2( 1.0f, 1.0f ),//頂点3(右下).
+		D3DXVECTOR3( tmpw,  0.0f,  0.0f ),	D3DXVECTOR2( 1.0f, 0.0f ),//頂点4(右上).
+#else
+		//頂点座標(x,y,z).					//UV座標( u, v ).
+		D3DXVECTOR3( tmpw,  0.0f,  0.0f ),	D3DXVECTOR2( 1.0f, 0.0f ),//頂点4(右上).
+		D3DXVECTOR3( tmpw,  tmph,  0.0f ),	D3DXVECTOR2( 1.0f, 1.0f ),//頂点3(右下).
+		D3DXVECTOR3( 0.0f,  tmph,  0.0f ),	D3DXVECTOR2( 0.0f, 1.0f ),//頂点1(左下).
+		D3DXVECTOR3( tmpw,  0.0f,  0.0f ),	D3DXVECTOR2( 1.0f, 0.0f ),//頂点4(右上).
+		D3DXVECTOR3( 0.0f,  tmph,  0.0f ),	D3DXVECTOR2( 0.0f, 1.0f ),//頂点1(左下).
+		D3DXVECTOR3( 0.0f,  0.0f,  0.0f ),	D3DXVECTOR2( 0.0f, 0.0f ),//頂点2(左上).
+#endif
+	};
+	//最大要素数を算出する.
+	UINT uVerMax = sizeof( vertices ) / sizeof( vertices[0] );
+
+	//バッファ構造体.
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory( &bd, sizeof( bd ) );
+	bd.Usage				= D3D11_USAGE_DEFAULT;				//使用法(デフォルト).
+	bd.ByteWidth			= sizeof( SpriteVertex ) * uVerMax;	//頂点サイズ(頂点*4).
+	bd.BindFlags			= D3D11_BIND_VERTEX_BUFFER;			//頂点バッファとして扱う.
+	bd.CPUAccessFlags		= 0;								//CPUからはアクセスしない.
+	bd.MiscFlags			= 0;								//その他のフラグ(未使用).
+	bd.StructureByteStride	= 0;								//構造体サイズ(未使用).
+
+	//サブリソースデータ構造体.
+	D3D11_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem	= vertices;	//板ポリの頂点をセット.
+
+	//頂点バッファの作成.
+	if( FAILED(
+		m_wpDevice->CreateBuffer(
+			&bd, &InitData, &pBuffer ) ) )
+	{
+		ERR_MSG( "バッファ作成失敗", "" );
+		assert( !"バッファ作成失敗" );
+		return ;
+	}
+	//頂点バッファをセット.
+	UINT stride = sizeof( SpriteVertex );//データ間隔.
+
+	m_wpContext->VSSetShader( m_pScreenVS, nullptr, 0 );
+	m_wpContext->PSSetShader( m_pScreenPS, nullptr, 0 );
+
+	m_wpContext->PSSetShaderResources( 0, 1, &m_pScreenSRV );
+	m_wpContext->PSSetSamplers( 0, 1, &m_pScreenSmp );
+	uint32_t offset = 0;
+	m_wpContext->IASetVertexBuffers( 0, 1, &pBuffer, &stride, &offset );
+	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+
+	m_wpContext->Draw( uVerMax, 0 );
+
+}
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
