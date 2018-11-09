@@ -438,7 +438,7 @@ void clsDebugText::RenderFont( int FontIndex, int x, int y )
 		&stride, &offset );
 
 	//•`‰æ.
-	SetBlend( true );
+//	SetBlend( true );
 	m_pDeviceContext11->Draw( 4, 0 );
 
 
