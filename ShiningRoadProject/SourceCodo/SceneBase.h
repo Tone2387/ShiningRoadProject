@@ -1,9 +1,10 @@
 #ifndef SCENE_BASE_H_
 #define SCENE_BASE_H_
 
+#ifndef _DEBUG
 //ついているとバックバッファではなくいったんテクスチャに描画する.
-//#define RENDER_SCREEN_TEXTURE_
-
+#define RENDER_SCREEN_TEXTURE_
+#endif//#ifdef _DEBUG
 
 #include "Global.h"
 

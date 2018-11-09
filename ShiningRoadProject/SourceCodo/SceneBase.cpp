@@ -930,6 +930,8 @@ HRESULT clsSCENE_BASE::CreateScreenShaderTexture()
 //Rendertargetをテクスチャにする.
 void clsSCENE_BASE::SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView )
 {
+	if( !pDepthStencilView )	return;
+
 	//レンダーターゲットをテクスチャに.
 	float clearcolor[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	m_wpContext->OMSetRenderTargets( 1, &m_pScreenRTV, pDepthStencilView );
@@ -942,6 +944,9 @@ void clsSCENE_BASE::RenderWindowFromTexture(
 	ID3D11RenderTargetView* const pBackBuffer_TexRTV,
 	ID3D11DepthStencilView* const pDepthStencilView )
 {
+	if( !pBackBuffer_TexRTV )	return;
+	if( !pDepthStencilView )	return;
+
 	float clearcolor[] = { 1.5f, 0.5f, 0.5f, 1.0f };
 	m_wpContext->OMSetRenderTargets( 1, &pBackBuffer_TexRTV, pDepthStencilView );
 	m_wpContext->ClearRenderTargetView( pBackBuffer_TexRTV, clearcolor );
@@ -964,6 +969,7 @@ void clsSCENE_BASE::RenderWindowFromTexture(
 		D3DXVECTOR3( tmpw,  0.0f,  0.0f ),	D3DXVECTOR2( 1.0f, 0.0f ),//頂点4(右上).
 		D3DXVECTOR3( tmpw,  tmph,  0.0f ),	D3DXVECTOR2( 1.0f, 1.0f ),//頂点3(右下).
 		D3DXVECTOR3( 0.0f,  tmph,  0.0f ),	D3DXVECTOR2( 0.0f, 1.0f ),//頂点1(左下).
+
 		D3DXVECTOR3( tmpw,  0.0f,  0.0f ),	D3DXVECTOR2( 1.0f, 0.0f ),//頂点4(右上).
 		D3DXVECTOR3( 0.0f,  tmph,  0.0f ),	D3DXVECTOR2( 0.0f, 1.0f ),//頂点1(左下).
 		D3DXVECTOR3( 0.0f,  0.0f,  0.0f ),	D3DXVECTOR2( 0.0f, 0.0f ),//頂点2(左上).
@@ -985,6 +991,8 @@ void clsSCENE_BASE::RenderWindowFromTexture(
 	//サブリソースデータ構造体.
 	D3D11_SUBRESOURCE_DATA InitData;
 	InitData.pSysMem	= vertices;	//板ポリの頂点をセット.
+	InitData.SysMemPitch= 0;
+	InitData.SysMemSlicePitch = 0;
 
 	//頂点バッファの作成.
 	if( FAILED(
@@ -998,8 +1006,8 @@ void clsSCENE_BASE::RenderWindowFromTexture(
 	//頂点バッファをセット.
 	UINT stride = sizeof( SpriteVertex );//データ間隔.
 
-	m_wpContext->VSSetShader( m_pScreenVS, nullptr, 0 );
-	m_wpContext->PSSetShader( m_pScreenPS, nullptr, 0 );
+	m_wpContext->VSSetShader( m_pScreenVS, NULL, 0 );
+	m_wpContext->PSSetShader( m_pScreenPS, NULL, 0 );
 
 	m_wpContext->PSSetShaderResources( 0, 1, &m_pScreenSRV );
 	m_wpContext->PSSetSamplers( 0, 1, &m_pScreenSmp );
