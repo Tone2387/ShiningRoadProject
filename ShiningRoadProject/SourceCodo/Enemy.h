@@ -42,6 +42,13 @@ protected:
 
 	bool IsJump();
 	bool IsShot();
+	
+	enum enTargetEvaluationType
+	{
+		enTargetEvaluationTypeNear = 0,
+
+		enTargetEvaluationTypeSize
+	};
 
 	struct BaseState
 	{

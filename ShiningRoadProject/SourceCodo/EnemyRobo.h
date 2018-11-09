@@ -49,7 +49,7 @@ private:
 		int iENLimit;
 
 		//以下、毎フレーム更新のための変数.
-		int iQuickBoostAppUpdateCnt;
+		int iUpdateCnt;
 	};
 
 	enum enQuickBoostApproachFileOrder
@@ -68,7 +68,7 @@ private:
 		int iENLimit;
 
 		//以下、毎フレーム更新のための変数.
-		int iQuickTrunUpdateCnt;
+		int iUpdateCnt;
 	};
 
 	enum enQuickTrunFileOrder
@@ -80,27 +80,27 @@ private:
 		enQuickTrunSize
 	};
 
-	enum enAvoidCategory
+	enum enQuickBoostAvoidType
 	{
-		enAvoidUpdateTime = 0,
-		enAvoidLockTime,
-		enAvoidDamage,
+		enQuickBoostAvoidTypeLookTime = 0,//被ロックオン時間による実行.
+		enQuickBoostAvoidTypeLookTimePriorityUpdateTime,//実行間隔を優先.
+		enQuickBoostAvoidTypeDamage,//被ダメージによる実行.
+		enQuickBoostAvoidTypeDamagePriorityUpdateTime,//実行間隔を優先.
 
-		enAvoidSize
+		enQuickBoostAvoidTypeSize
 	};
 
 	struct QuickBoostAvoid
 	{
-		int iUpdateTime;
+		int iUpdateTime;//更新間隔or実行間隔.
 		int iAvoidType;//回避条件カテゴリナンバー.
-		int iLockTimeorDamage;
-		int iAvoidDir;
-		int iENLimit;
+		int iConditions;//回避条件の許容値.
+		int iAvoidDir;//回避する方向.
+		int iENLimit;//回避時EN消費
 
 		//以下、毎フレーム更新のための変数.
-		int iAvoidDamageUpdateCnt;
-		int iDamage;
-		int iLockTime;
+		int iUpdateCnt;//更新間隔or実行間隔カウント.
+		int iConditionsCnt;//条件の蓄積.
 	};
 
 	enum enQuickBoostAvoidFileOrder
@@ -139,9 +139,16 @@ private:
 
 	bool IsQuickBoostAvoid(float& fPush, float& fAngle);//クイックブーストによる回避.
 
-	bool IsQuickBoostAvoidtoLockTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle);
-	bool IsQuickBoostAvoidtoDamage(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle);
-	void ResetAvoidtoDamage();
+	//回避条件判定関数群.
+	//被ロックオン時間(回避条件優先)
+	bool IsQuickBoostAvoidLockTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle);
+	//被ロックオン時間(実行間隔優先)
+	bool IsQuickBoostAvoidLockTimePriorityUpdateTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle);
+	//被ダメージ量(回避条件優先)
+	bool IsQuickBoostAvoidDamage(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle);
+	//被ダメージ量(実行間隔優先)
+	bool IsQuickBoostAvoidDamagePriorityUpdateTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle);
+	//void ResetAvoidtoDamage();
 
 	bool IsShotR();
 	bool IsShotL();

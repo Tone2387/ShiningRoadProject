@@ -39,13 +39,12 @@ void clsEnemyRobo::Init(
 	for (unsigned int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
 	{
 		m_v_QuickBoostAvoidState[i].iAvoidType = i;
-		m_v_QuickBoostAvoidState[i].iUpdateTime = 300 * (int)g_fFPS;
-		m_v_QuickBoostAvoidState[i].iLockTimeorDamage = 5;
+		m_v_QuickBoostAvoidState[i].iUpdateTime = 6000;
+		m_v_QuickBoostAvoidState[i].iConditions = 300;
 		m_v_QuickBoostAvoidState[i].iAvoidDir = 45;
 
-		m_v_QuickBoostAvoidState[i].iAvoidDamageUpdateCnt = m_v_QuickBoostAvoidState[i].iUpdateTime;
-		m_v_QuickBoostAvoidState[i].iDamage = 0;
-		m_v_QuickBoostAvoidState[i].iLockTime = m_v_QuickBoostAvoidState[i].iLockTimeorDamage* (int)g_fFPS;
+		m_v_QuickBoostAvoidState[i].iUpdateCnt = m_v_QuickBoostAvoidState[i].iUpdateTime;
+		m_v_QuickBoostAvoidState[i].iConditionsCnt = 0;
 	}
 }
 
@@ -131,9 +130,7 @@ bool clsEnemyRobo::IsBoostOn()
 
 		if (fVerDis > 0.0f)//ìGÇ™è„Ç…Ç¢ÇÈ.
 		{
-			int iENLimit = iHulf;//static_cast<int>(m_pBody->m_iEnelgyMax * (m_MoveData.v_MoveState[m_iMoveCategoryNo].iVerMoveENLimitParcent * g_fPercentage));
-
-			if (m_pBody->m_iEnelgy > iENLimit)//ENécó Ç™è\ï™Ç…Ç†ÇÈ.
+			if (!m_bENSaving)//ENécó Ç™è\ï™Ç…Ç†ÇÈ.
 			{
 				return true;
 			}
@@ -161,8 +158,7 @@ bool clsEnemyRobo::IsBoostOff()
 			}
 		}
 
-		int iENLimit = static_cast<int>(m_pBody->m_iEnelgyMax * (m_BoostState.iRisingENParcent * g_fPercentage));
-		if (m_pBody->m_iEnelgy < iENLimit)//ENécó Ç™è≠Ç»Ç¢.
+		if (m_bENSaving)//ENécó Ç™è≠Ç»Ç¢.
 		{
 			return true;
 		}
@@ -199,25 +195,28 @@ bool clsEnemyRobo::IsQuickTurn(float& fPush, float& fAngle)//É^Å[ÉQÉbÉgà íuÇÃï˚å
 
 		for (int i = 0; i < m_v_QuickTrunState.size(); i++)
 		{
-			if (m_v_QuickTrunState[i].iENLimit)
+			if (m_v_QuickTrunState[i].iUpdateCnt < 0)
 			{
-				if (abs(fRot) > D3DXToRadian(m_v_QuickTrunState[i].iDir))
+				if ( m_pBody->m_iEnelgy > m_v_QuickTrunState[i].iENLimit)
 				{
-					const float fPushFull = 1.0f;
-
-					if (fRot > 0.0f)
+					if (abs(fRot) > D3DXToRadian(m_v_QuickTrunState[i].iDir))
 					{
-						fPush = fPushFull;
+						if (fRot > 0.0f)
+						{
+							fPush = g_fPushMax;
+						}
+
+						else
+						{
+							fPush = -g_fPushMax;
+						}
+
+						fAngle = fRot;
+
+						m_v_QuickTrunState[i].iUpdateCnt = m_v_QuickTrunState[i].iUpdateTime;
+
+						return true;
 					}
-
-					else
-					{
-						fPush = -fPushFull;
-					}
-
-					fAngle = fRot;
-
-					return true;
 				}
 			}
 		}
@@ -237,20 +236,25 @@ bool clsEnemyRobo::IsQuickBoostApproach(float& fPush, float& fAngle)//ÉNÉCÉbÉNÉu
 
 		for (int i = 0; i < m_v_QuickBoostAppState.size(); i++)
 		{
-			if (fDis > 300.0f)
+			if (m_v_QuickBoostAppState[i].iUpdateCnt < 0)
 			{
-				fPush = 1.0f;
+				if (fDis > m_v_QuickBoostAppState[i].iDis)
+				{
+					fPush = g_fPushMax;
 
-				const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
-				const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
+					const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
+					const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
 
-				float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+					float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
 
-				ObjRollOverGuard(&fRot);
+					ObjRollOverGuard(&fRot);
 
-				fAngle = fRot;
+					fAngle = fRot;
 
-				return true;
+					m_v_QuickBoostAppState[i].iUpdateCnt = m_v_QuickBoostAppState[i].iUpdateTime;
+
+					return true;
+				}
 			}
 		}
 	}
@@ -270,15 +274,15 @@ bool clsEnemyRobo::IsQuickBoostAvoid(float& fPush, float& fAngle)//ÉNÉCÉbÉNÉuÅ[É
 	{
 		switch (m_v_QuickBoostAvoidState[i].iAvoidType)//âÒîÉpÉ^Å[Éì.
 		{
-		case enAvoidLockTime:
-			if (IsQuickBoostAvoidtoLockTime(m_v_QuickBoostAvoidState[i], fPush, fAngle))//îÌÉçÉbÉNéûä‘.
+		case enQuickBoostAvoidTypeLookTime:
+			if (IsQuickBoostAvoidLockTime(m_v_QuickBoostAvoidState[i], fPush, fAngle))//îÌÉçÉbÉNéûä‘.
 			{
 				return true;
 			}
 			break;
 
-		case enAvoidDamage:
-			if (IsQuickBoostAvoidtoDamage(m_v_QuickBoostAvoidState[i], fPush,fAngle))//îÌÉ_ÉÅÅ[ÉW.
+		case enQuickBoostAvoidTypeDamage:
+			if (IsQuickBoostAvoidDamage(m_v_QuickBoostAvoidState[i], fPush,fAngle))//îÌÉ_ÉÅÅ[ÉW.
 			{
 				return true;
 			}
@@ -292,18 +296,21 @@ bool clsEnemyRobo::IsQuickBoostAvoid(float& fPush, float& fAngle)//ÉNÉCÉbÉNÉuÅ[É
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickBoostAvoidtoLockTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
+//îÌÉçÉbÉNÉIÉìéûä‘(âÒîèåèóDêÊ)
+bool clsEnemyRobo::IsQuickBoostAvoidLockTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
 {
-	if (AvoidState.iLockTime > 0)
+	if (AvoidState.iConditionsCnt > 0)
 	{
-		AvoidState.iLockTime--;
+		AvoidState.iConditionsCnt--;
 	}
 
 	else
 	{
-		AvoidState.iLockTime = AvoidState.iLockTimeorDamage * static_cast<int>(g_fFPS);
 
-		fPush = 1.0f;
+
+		AvoidState.iConditionsCnt = AvoidState.iConditions;
+
+		fPush = g_fPushMax;
 
 		const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
 		const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
@@ -321,22 +328,70 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoLockTime(QuickBoostAvoid& AvoidState, floa
 
 	if (!m_pBody->m_bRadarWarning)
 	{
-		AvoidState.iLockTime = AvoidState.iLockTimeorDamage * static_cast<int>(g_fFPS);
+		//ÉçÉbÉNÉIÉìÇ≥ÇÍÇƒÇ¢Ç»Ç¢èÍçáÅAÉçÉbÉNÉIÉìçXêVéûä‘Çèâä˙âª.
+		AvoidState.iConditionsCnt = AvoidState.iConditions;
 	}
 
 	return false;
 }
 
-bool clsEnemyRobo::IsQuickBoostAvoidtoDamage(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
+//îÌÉçÉbÉNÉIÉìéûä‘(é¿çsä‘äuóDêÊ)
+bool clsEnemyRobo::IsQuickBoostAvoidLockTimePriorityUpdateTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
 {
-	if (AvoidState.iAvoidDamageUpdateCnt > 0)
+	if (AvoidState.iUpdateCnt > 0)
 	{
-		AvoidState.iDamage += m_pBody->m_iDamage;
-		if (AvoidState.iDamage > AvoidState.iLockTimeorDamage)
-		{
-			AvoidState.iDamage = 0;//éÛÇØÇΩÉ_ÉÅÅ[ÉWÇÃèâä˙âª.
+		AvoidState.iUpdateCnt--;
+	}
 
-			fPush = 1.0f;
+	if (AvoidState.iConditionsCnt > 0)
+	{
+		AvoidState.iConditionsCnt--;
+	}
+
+	else
+	{
+		if (AvoidState.iUpdateCnt <= 0)
+		{
+			AvoidState.iUpdateCnt = AvoidState.iUpdateTime;
+			AvoidState.iConditionsCnt = AvoidState.iConditions;
+
+			fPush = g_fPushMax;
+
+			const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
+			const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
+
+			float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+
+			fRot += static_cast<float>(D3DXToRadian(AvoidState.iAvoidDir));
+
+			ObjRollOverGuard(&fRot);
+
+			fAngle = fRot;
+
+			return true;
+		}
+	}
+
+	if (!m_pBody->m_bRadarWarning)
+	{
+		//ÉçÉbÉNÉIÉìÇ≥ÇÍÇƒÇ¢Ç»Ç¢èÍçáÅAÉçÉbÉNÉIÉìçXêVéûä‘Çèâä˙âª.
+		AvoidState.iConditionsCnt = AvoidState.iConditions;
+	}
+
+	return false;
+}
+
+//îÌÉ_ÉÅÅ[ÉWó (âÒîèåèóDêÊ)
+bool clsEnemyRobo::IsQuickBoostAvoidDamage(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
+{
+	if (AvoidState.iUpdateCnt > 0)
+	{
+		AvoidState.iConditionsCnt += m_pBody->m_iDamage;
+		if (AvoidState.iConditionsCnt > AvoidState.iConditions)
+		{
+			AvoidState.iConditionsCnt = 0;//éÛÇØÇΩÉ_ÉÅÅ[ÉWÇÃèâä˙âª.
+
+			fPush = g_fPushMax;
 
 			const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
 			const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
@@ -352,14 +407,49 @@ bool clsEnemyRobo::IsQuickBoostAvoidtoDamage(QuickBoostAvoid& AvoidState, float&
 			return true;
 		}
 
-		AvoidState.iAvoidDamageUpdateCnt--;
+		AvoidState.iUpdateCnt--;
 	}
 
 	else
 	{
+		AvoidState.iUpdateCnt = AvoidState.iUpdateTime;
+		AvoidState.iConditionsCnt = 0;
+	}
 
-		AvoidState.iAvoidDamageUpdateCnt = AvoidState.iUpdateTime;
-		AvoidState.iDamage = 0;
+	return false;
+}
+
+//îÌÉ_ÉÅÅ[ÉWó (é¿çsä‘äuóDêÊ)
+bool clsEnemyRobo::IsQuickBoostAvoidDamagePriorityUpdateTime(QuickBoostAvoid& AvoidState, float& fPush, float& fAngle)
+{
+	AvoidState.iConditionsCnt += m_pBody->m_iDamage;
+
+	if (AvoidState.iUpdateCnt <= 0)
+	{
+		if (AvoidState.iConditionsCnt > AvoidState.iConditions)
+		{
+			AvoidState.iConditionsCnt = 0;//éÛÇØÇΩÉ_ÉÅÅ[ÉWÇÃèâä˙âª.
+
+			fPush = g_fPushMax;
+
+			const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
+			const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
+
+			float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+
+			fRot += static_cast<float>(D3DXToRadian(AvoidState.iAvoidDir));
+
+			ObjRollOverGuard(&fRot);
+
+			fAngle = fRot;
+
+			return true;
+		}
+	}
+
+	else
+	{
+		AvoidState.iUpdateCnt--;
 	}
 
 	return false;
@@ -603,7 +693,7 @@ void clsEnemyRobo::SetQuickBoostAvoidData()
 			m_v_QuickBoostAvoidState[i].iUpdateTime = File.GetDataInt(i, enQuickBoostAvoidUpdateTime);
 
 			m_v_QuickBoostAvoidState[i].iAvoidType = File.GetDataInt(i, enQuickBoostAvoidType);
-			m_v_QuickBoostAvoidState[i].iLockTimeorDamage = File.GetDataInt(i, enQuickBoostAvoidLockTimeorDamage);
+			m_v_QuickBoostAvoidState[i].iConditions = File.GetDataInt(i, enQuickBoostAvoidLockTimeorDamage);
 			m_v_QuickBoostAvoidState[i].iAvoidDir = File.GetDataInt(i, enQuickBoostAvoidDir);
 			m_v_QuickBoostAvoidState[i].iENLimit = File.GetDataInt(i, enQuickBoostAvoidENLimit);
 		}

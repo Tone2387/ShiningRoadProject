@@ -310,7 +310,7 @@ void clsRobo::BoostRising()
 
 			else
 			{
-				m_fFollPower = m_fBoostMoveSpeedMax;
+				//m_fFollPower = m_fBoostMoveSpeedMax;
 			}
 
 			if (!m_bBoost)
