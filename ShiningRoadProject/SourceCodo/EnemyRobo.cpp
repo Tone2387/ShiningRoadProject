@@ -306,8 +306,6 @@ bool clsEnemyRobo::IsQuickBoostAvoidLockTime(QuickBoostAvoid& AvoidState, float&
 
 	else
 	{
-
-
 		AvoidState.iConditionsCnt = AvoidState.iConditions;
 
 		fPush = g_fPushMax;
