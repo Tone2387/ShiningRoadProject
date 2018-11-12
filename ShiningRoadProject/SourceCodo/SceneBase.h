@@ -81,10 +81,41 @@ protected:
 	bool isPressHoldLeft ( bool isWithStick = true );
 	bool isPressHoldUp	 ( bool isWithStick = true );
 	bool isPressHoldDown ( bool isWithStick = true );
-//	int m_iHoldFreamRight;
-//	int m_iHoldFreamLeft;
-//	int m_iHoldFreamUp;
-//	int m_iHoldFreamDown;
+
+	//----- Render用 -----//.
+	//深度テスト(Zテスト)　ON/OFF切替.
+	void SetDepth( const bool isOn );
+
+	//---継承先のRenderProductで使用する---.
+	void SetViewPort( 
+		D3D11_VIEWPORT* const pVp, 
+		const D3DXVECTOR3 &vCamPos, 
+		const D3DXVECTOR3 &vCamLookPos,
+		const float fWndW, const float fWndH );
+	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
+	D3D11_VIEWPORT* GetViewPortMainPtr();
+	//----- Render用 -----//.
+
+#ifdef RENDER_SCREEN_TEXTURE_	
+	//ノイズを起こす.
+	void Noise( const int iFrame );
+
+	void UpdateNoise();
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	virtual void RenderDebugText();
+	//BGMのチェック.
+	void DebugBgm();
+//	clsDebugText*	m_upText;
+	std::unique_ptr< clsDebugText >	m_upText;
+
+#endif//#if _DEBUG
+
+protected:
+
 	struct HOLD_STATE
 	{
 		int iHoldFream;
@@ -99,35 +130,18 @@ protected:
 	HOLD_STATE m_HoldUp;
 	HOLD_STATE m_HoldDown;
 
-	//----- Render用 -----//.
-	//深度テスト(Zテスト)　ON/OFF切替.
-	void SetDepth( const bool isOn );
+#ifdef RENDER_SCREEN_TEXTURE_	
+	//ノイズ.
+	int		m_iNoiseFrame;
+	int		m_iBlock;
+	float	m_fPulse;
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+
+
 	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
 	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
 
-	//---継承先のRenderProductで使用する---.
-	void SetViewPort( 
-		D3D11_VIEWPORT* const pVp, 
-		const D3DXVECTOR3 &vCamPos, 
-		const D3DXVECTOR3 &vCamLookPos,
-		const float fWndW, const float fWndH );
-	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
-	D3D11_VIEWPORT* GetViewPortMainPtr();
-	//----- Render用 -----//.
-
-
-
-	//デバッグテキストクラス.
-#if _DEBUG
-//	clsDebugText*	m_upText;
-	std::unique_ptr< clsDebugText >	m_upText;
-	//デバック゛テキストの表示.
-	virtual void RenderDebugText();
-	//BGMのチェック.
-	void DebugBgm();
-
-#endif//#if _DEBUG
 
 
 	//基底クラスのポインタは基底クラスで破棄します.

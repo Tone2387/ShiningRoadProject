@@ -12,8 +12,12 @@ cbuffer	global	: register( b0 )
 	float	g_fViewPortW	: packoffset( c5 );
 	float	g_fViewPortH	: packoffset( c6 );
 	float2	g_vUV			: packoffset( c7 );
-	float2	g_vNoiseStart	: packoffset( c9 );
-	float2	g_vNoiseEnd		: packoffset( c11 );
+	float	g_fPulse		: packoffset( c8 );
+	float	g_fPulseOffset	: packoffset( c9 );
+	int		g_iBlock		: packoffset( c10 );
+	int		g_iSeed			: packoffset( c11 );
+	float2	g_vNoiseStart	: packoffset( c12 );
+	float2	g_vNoiseEnd		: packoffset( c13 );
 };
 
 
@@ -27,7 +31,7 @@ struct VS_OUT
 //========== 関数 ==========//.
 float random( float2 TexCoord )
 {
-	return frac( sin( dot( TexCoord.xy, float2( 12.9898, 78.233 ) ) ) * 43758.5453 );
+	return frac( sin( dot( TexCoord.xy, float2( 12.9898, 78.233 ) ) + g_iSeed ) * 43758.5453 );
 }
 
 float noise( float2 st )
@@ -83,16 +87,15 @@ float4 PS_Noise( VS_OUT input ) : SV_Target
 		g_Texture.Sample( g_Sampler, input.UV );//色を返す.
 
 	//----- ノイズ -----//.
-	//ブロック.
-//	float c = noise( input.UV * 8 );
-//	color *= float4( c, c, c, 1.0f );
 	//パルス.
-	float Amount = 0;
 	float2 uv = input.UV;
-	float x = 2*uv.y;
-	uv.x += Amount*sin( 10*x )*(-(x-1)*(x-1)+1);
+	float x = 2 * uv.y;
+	uv.x += g_fPulse * sin( 10 * x + g_fPulseOffset ) * ( - ( x - 1 ) * ( x - 1 ) + 1 );
 	float4 col = g_Texture.Sample( g_Sampler, uv );
 	color = col;
+	//ブロック.
+	float c = noise( input.UV * g_iBlock );
+	color *= g_Texture.Sample( g_Sampler, input.UV * c );
 	//----- ノイズ 終了 -----//.
 
 	color *= g_vColor;
