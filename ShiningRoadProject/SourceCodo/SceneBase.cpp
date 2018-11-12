@@ -57,6 +57,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_pScreenSmp( nullptr )
 	,m_pScreenVS( nullptr )
 	,m_pScreenPS( nullptr )
+//	,m_pScreenCB( nullptr )
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 {
 }
@@ -71,6 +72,7 @@ clsSCENE_BASE::~clsSCENE_BASE()
 #endif//#if _DEBUG
 
 #ifdef RENDER_SCREEN_TEXTURE_	
+//	SAFE_RELEASE( m_pScreenCB );
 	SAFE_RELEASE( m_pScreenPS );
 	SAFE_RELEASE( m_pScreenVS );
 	SAFE_RELEASE( m_pScreenSmp );
@@ -221,6 +223,7 @@ void clsSCENE_BASE::Render(
 	//各シーンのUIの描画.
 	SetDepth( false );
 	RenderUi();
+	SetDepth( true );	//Zテスト:ON.
 
 	//元通りのビューポート.
 	if( m_wpViewPortUsing != m_wpViewPort11 ){
@@ -231,11 +234,7 @@ void clsSCENE_BASE::Render(
 	//暗転描画.
 	m_wpBlackScreen->Render();
 
-#if _DEBUG
-	RenderDebugText();
-#endif//#if _DEBUG
 
-	SetDepth( true );	//Zテスト:ON.
 
 
 #ifdef RENDER_SCREEN_TEXTURE_	
@@ -243,6 +242,11 @@ void clsSCENE_BASE::Render(
 	RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
+#if _DEBUG
+	SetDepth( false );
+	RenderDebugText();
+	SetDepth( true );	//Zテスト:ON.
+#endif//#if _DEBUG
 
 }
 
