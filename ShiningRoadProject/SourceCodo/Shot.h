@@ -74,6 +74,7 @@ private:
 	::Effekseer::Handle m_ShotEfcHandles[enEfcSize];
 
 	D3DXVECTOR3 m_vStartPos;
+	float m_fRangeMax;
 
 	BulletState m_ShotState;
 };

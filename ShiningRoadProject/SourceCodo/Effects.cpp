@@ -14,7 +14,7 @@ namespace{
 
 	const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
 
-	const string sFILE_PATH = "Data\\Effekseer\\tex\\";
+	const string sFILE_PATH = "Data\\Effekseer\\Effects\\";
 
 	const int uiEFFECT_FILE_NAME_INDEX = 0;//ファイル名が格納されているインデックス.
 	//const int uiMAX_PLAY_INDEX = 1;//最大再生数.
