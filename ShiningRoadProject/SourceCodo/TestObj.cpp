@@ -1,6 +1,6 @@
 #include"TestObject.h"
 
-const bool g_bAction = false;
+const bool g_bAction = true;
 
 clsTestObj::clsTestObj()
 	: m_pAI(nullptr)
@@ -28,7 +28,7 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup,
 	LPSTR strEnemyFolderName)
 {
 	m_pAI = new clsEnemyRobo;
-	m_pAI->Init("", this);
+	m_pAI->Init("Data\\FileData\\Hiyoshi\\Enemy1", this);
 
 	Init(pPtrGroup);
 }

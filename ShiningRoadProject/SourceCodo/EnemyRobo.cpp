@@ -11,7 +11,7 @@ void clsEnemyRobo::Init(
 	m_UpdateState.iHorDirResult = 0;
 	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 
-	ShotState SSTmp;
+	/*ShotState SSTmp;
 	SSTmp.iShotDisMax = 50.0f;
 	SSTmp.iShotDisMin = 1.0f;
 
@@ -45,7 +45,9 @@ void clsEnemyRobo::Init(
 
 		m_v_QuickBoostAvoidState[i].iUpdateCnt = m_v_QuickBoostAvoidState[i].iUpdateTime;
 		m_v_QuickBoostAvoidState[i].iConditionsCnt = 0;
-	}
+	}*/
+
+	SetData(strEnemyFolderName);
 }
 
 bool clsEnemyRobo::IsBoostRising()
@@ -658,7 +660,7 @@ void clsEnemyRobo::SetQuickBoostAppData()
 
 void clsEnemyRobo::SetQuickTrunData()
 {
-	std::string strQuickTrunDataName = m_BaseState.strEnemyFolderName + "\\QuickTrun.csv";
+	std::string strQuickTrunDataName = m_BaseState.strEnemyFolderName + "\\QuickTurn.csv";
 
 	clsFILE File;
 	if (File.Open(strQuickTrunDataName))
@@ -702,7 +704,10 @@ void clsEnemyRobo::SetQuickBoostAvoidData()
 
 void clsEnemyRobo::SetDataProduct()
 {
-
+	SetBoostData();
+	SetQuickBoostAppData();
+	SetQuickTrunData();
+	SetQuickBoostAvoidData();
 }
 
 clsEnemyRobo::clsEnemyRobo()
