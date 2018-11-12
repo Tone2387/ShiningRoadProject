@@ -87,11 +87,12 @@ float4 PS_Noise( VS_OUT input ) : SV_Target
 //	float c = noise( input.UV * 8 );
 //	color *= float4( c, c, c, 1.0f );
 	//パルス.
+	float Amount = 0;
 	float2 uv = input.UV;
 	float x = 2*uv.y;
-	uv.x += 5*sin( 10*x )*(-(x-1)*(x-1)+1);
-//	float4 col = tex2D( g_Sampler, uv );
-//	color = col;
+	uv.x += Amount*sin( 10*x )*(-(x-1)*(x-1)+1);
+	float4 col = g_Texture.Sample( g_Sampler, uv );
+	color = col;
 	//----- ノイズ 終了 -----//.
 
 	color *= g_vColor;
