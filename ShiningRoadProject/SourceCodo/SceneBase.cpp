@@ -24,6 +24,11 @@ namespace{
 	const int iHOLD_FREAM_FIRST = 6;
 	const int iHOLD_FREAM_FIRST_STEP = 1;
 
+	const int iNOISE_FRAME_RANGE_RATE = 4;
+	const int iNOISE_DOWN_RATE = 2;
+	const float fNOISE_BLOCK_RATE = 512.0f;
+	const float fNOISE_PULSE_RATE = 0.25f;
+
 #if _DEBUG
 	const D3DXVECTOR4 vDEBUG_TEXT_COLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 	const float fDEBUG_TEXT_SIZE = 50.0f;
@@ -179,8 +184,10 @@ void clsSCENE_BASE::Render(
 
 
 #ifdef RENDER_SCREEN_TEXTURE_	
-	//Rendertargetをテクスチャにする.
-	m_upScreenTexture->SetRenderTargetTexture( pDepthStencilView );
+	if( m_upScreenTexture->GetNoiseFlag() ){
+		//Rendertargetをテクスチャにする.
+		m_upScreenTexture->SetRenderTargetTexture( pDepthStencilView );
+	}
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
@@ -207,17 +214,29 @@ void clsSCENE_BASE::Render(
 	//暗転描画.
 	m_wpBlackScreen->Render();
 
+
+#ifdef RENDER_SCREEN_TEXTURE_	
+	if( m_upScreenTexture->GetNoiseFlag() ){
+		//テクスチャの内容を画面に描画.
+		m_upScreenTexture->RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
+
+		UpdateNoise();
+
+	}
+
+	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
+		Noise( 60 );
+	}
+
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+
+
 #if _DEBUG
 	SetDepth( false );
 	RenderDebugText();
 	SetDepth( true );	//Zテスト:ON.
 #endif//#if _DEBUG
 
-
-#ifdef RENDER_SCREEN_TEXTURE_	
-	//テクスチャの内容を画面に描画.
-	m_upScreenTexture->RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
-#endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 }
 
@@ -713,4 +732,38 @@ D3D11_VIEWPORT* clsSCENE_BASE::GetViewPortMainPtr()
 
 
 
+#ifdef RENDER_SCREEN_TEXTURE_	
+//ノイズを起こす.
+void clsSCENE_BASE::Noise( const int iFrame )
+{
+	assert( m_upScreenTexture );
 
+	m_iNoiseFrame = iFrame;
+
+	m_iBlock = std::sqrtf( static_cast<float>( iFrame ) ) * fNOISE_BLOCK_RATE * iNOISE_FRAME_RANGE_RATE * iNOISE_DOWN_RATE;
+	m_fPulse = std::sqrtf( static_cast<float>( iFrame ) ) * fNOISE_PULSE_RATE * iNOISE_FRAME_RANGE_RATE * iNOISE_DOWN_RATE;
+
+	m_upScreenTexture->SetNoiseFlag( true );
+
+	m_upScreenTexture->SetBlock( m_iBlock );
+	m_upScreenTexture->SetPulse( m_fPulse );
+
+}
+
+void clsSCENE_BASE::UpdateNoise()
+{
+	m_iNoiseFrame --;
+
+	if( m_iNoiseFrame <= 0 ){
+		m_upScreenTexture->SetNoiseFlag( false );
+	}
+
+	if( m_iNoiseFrame % iNOISE_FRAME_RANGE_RATE == 0 ){
+		m_iBlock /= iNOISE_DOWN_RATE;
+		m_fPulse /= iNOISE_DOWN_RATE;
+		m_upScreenTexture->SetBlock( m_iBlock );
+		m_upScreenTexture->SetPulse( m_fPulse );
+	}
+
+}
+#endif//#ifdef RENDER_SCREEN_TEXTURE_

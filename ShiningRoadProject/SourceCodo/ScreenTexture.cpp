@@ -11,12 +11,21 @@ namespace{
 		ALIGN16 float		fViewPortWidth;	//ビューポート幅.
 		ALIGN16 float		fViewPortHeight;//ビューポート高さ.
 		ALIGN16 D3DXVECTOR2	vUV;			//UV座標.
+		ALIGN16 float		fPulse;			//パルス.
+		ALIGN16 float		fPulseOffset;	
+		ALIGN16 int			iBlock;			//ブロックの分割数.
+		ALIGN16 int			iSeed;			//ブロックのseed値.
 		ALIGN16 D3DXVECTOR2	vNoiseStart;	//ノイズ範囲開始座標.
 		ALIGN16 D3DXVECTOR2	vNoiseEnd;		//ノイズ範囲終了座標.
 	};
 
 	const char sSHADER_NAME[] = "Shader\\Screen.hlsl";
 
+
+	const float fPULSE_INIT = 1.0f;
+	const float fPULSE_OFFSET_INIT = -62000.0f;
+	const float fPULSE_OFFSET_ADD = 0.75f;
+	const int iBLOCK_INIT = 256;
 }
 
 
@@ -33,6 +42,11 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_pNoisePS( nullptr )
 	,m_pConstantBuffer( nullptr )
 	,m_isNoise( true )
+	,m_iBlock( iBLOCK_INIT )
+	,m_iSeed( 0 )
+	,m_fPulse( fPULSE_INIT )
+	,m_fPulseOffset( fPULSE_OFFSET_INIT )
+	,m_fPulseOffsetAdd( fPULSE_OFFSET_ADD )
 	,m_vNoiseStart( { 0.0f, 0.0f } )
 	,m_vNoiseEnd( { 0.0f, 0.0f } )
 {
@@ -394,18 +408,35 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		m_pConstantBuffer, 0,
 		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
-		SCREEN_TEXTURE_CONSTANT_BUFFER cb;D3DXMATRIX m;
+		SCREEN_TEXTURE_CONSTANT_BUFFER cb;
+		D3DXMATRIX m;
 		D3DXMatrixIdentity( &m );
 	
 		cb.mW = m;
 		cb.fViewPortWidth = WND_W;
 		cb.fViewPortHeight= WND_H;
-//		cb.vColor = { 5.5f, 0.5f, 0.5f, 1.0f };
 		cb.vColor = { 1.0f, 1.0f, 1.0f, 0.0f };
+//		cb.vColor = { 2.0f, 0.5f, 0.5f, 1.0f };
 		cb.vUV			= { 0.0f, 0.0f };
+
+		cb.iBlock = m_iBlock;
+		cb.iSeed  = m_iSeed;
+		cb.fPulse = m_fPulse;
+		cb.fPulseOffset = m_fPulseOffset;
+
 		cb.vNoiseStart	= { 0.0f, 0.0f };
 		cb.vNoiseEnd	= { WND_W, WND_H };
 
+		m_iSeed ++;
+		const int iSEED_MAX = 32000;
+		if( m_iSeed >= iSEED_MAX ){
+			m_iSeed = 0;
+		}
+		m_fPulseOffset += m_fPulseOffsetAdd;
+		const float fPULSE_OFFSET_MAX = -fPULSE_OFFSET_INIT;
+		if( m_fPulseOffset >= fPULSE_OFFSET_MAX ){
+			m_fPulseOffset = fPULSE_OFFSET_INIT;
+		}
 	
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cb ), sizeof( cb ) );

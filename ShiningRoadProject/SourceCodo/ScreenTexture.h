@@ -24,6 +24,15 @@ public:
 	void SetNoiseFlag( const bool isNoise ){
 		m_isNoise = isNoise;
 	};
+	bool GetNoiseFlag(){
+		return m_isNoise;
+	};
+
+	void SetBlock( const int iBlock ){ m_iBlock = iBlock; };
+
+	void SetPulse( const float fPulse ){ m_fPulse = fPulse; };
+	void SetPulseOffset( const float fPulseOffset ){ m_fPulseOffset = fPulseOffset; };
+	void SetPulseOffsetAdd( const float fPulseOffsetAdd ){ m_fPulseOffsetAdd = fPulseOffsetAdd; };
 
 private:
 
@@ -34,7 +43,18 @@ private:
 private:
 
 
-	bool		m_isNoise;
+
+	//----- ノイズ -----//.
+	//フラグ.
+	bool	m_isNoise;
+	//ブロック.
+	int		m_iBlock;//分割数.
+	int		m_iSeed;
+	//パルス.
+	float	m_fPulse;
+	float	m_fPulseOffset;
+	float	m_fPulseOffsetAdd;
+	//----- ノイズ -----//.
 
 	D3DXVECTOR2 m_vNoiseStart;
 	D3DXVECTOR2 m_vNoiseEnd;
