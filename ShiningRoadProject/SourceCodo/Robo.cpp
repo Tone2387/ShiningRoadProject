@@ -4,6 +4,8 @@
 //ジョイントボーンの数字の桁数.
 const char g_cBONE_NAME_NUM_DIGIT_JOINT = 2;
 
+const int g_iBoostEfcNum = 1;
+
 const int g_iQuickInterbal = (int)g_fFPS;
 const int g_iQuickTurnFrame = (int)g_fFPS;
 
@@ -833,7 +835,7 @@ void clsRobo::PlayFrontBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_LHandFrontBoostEfc[i]))
 			{
-				m_v_LHandFrontBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+				m_v_LHandFrontBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
 			}
 
 			else
@@ -855,7 +857,7 @@ void clsRobo::PlayFrontBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_RHandFrontBoostEfc[i]))
 			{
-				m_v_RHandFrontBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+				m_v_RHandFrontBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
 			}
 
 			else
@@ -908,7 +910,7 @@ void clsRobo::PlayRightBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_RHandSideBoostEfc[i]))
 			{
-				m_v_RHandSideBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+				m_v_RHandSideBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
 			}
 
 			else
@@ -955,7 +957,7 @@ void clsRobo::PlayLeftBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_LHandSideBoostEfc[i]))
 			{
-				m_v_LHandSideBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+				m_v_LHandSideBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
 			}
 
 			else
@@ -1000,7 +1002,7 @@ void clsRobo::PlayBackBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_LHandBackBoostEfc[i]))
 			{
-				m_v_LHandBackBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+				m_v_LHandBackBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
 			}
 
 			else
@@ -1022,7 +1024,7 @@ void clsRobo::PlayBackBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_RHandBackBoostEfc[i]))
 			{
-				m_v_RHandBackBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+				m_v_RHandBackBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
 			}
 
 			else
@@ -1044,7 +1046,7 @@ void clsRobo::PlayBackBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
 			{
-				m_v_CoreBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+				m_v_CoreBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
 			}
 
 			else
@@ -1107,7 +1109,7 @@ void clsRobo::PlayLegBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_LegBoostEfc[i]))
 			{
-				m_v_LegBoostEfc[i] = m_wpEffects->Play(3, vPosEndTmp);
+				m_v_LegBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
 			}
 
 			else

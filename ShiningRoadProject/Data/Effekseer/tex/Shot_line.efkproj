@@ -10,6 +10,7 @@
             <Infinite>True</Infinite>
           </MaxGeneration>
           <LocationEffectType>1</LocationEffectType>
+          <RotationEffectType>0</RotationEffectType>
           <Life>
             <Center>20</Center>
             <Max>20</Max>
@@ -37,6 +38,7 @@
           </Fixed>
         </ScalingValues>
         <LocationAbsValues>
+          <Type>1</Type>
           <AttractiveForce>
             <Force>1</Force>
           </AttractiveForce>
@@ -66,8 +68,10 @@
         <CommonValues>
           <MaxGeneration>
             <Value>100</Value>
+            <Infinite>True</Infinite>
           </MaxGeneration>
           <LocationEffectType>1</LocationEffectType>
+          <RotationEffectType>0</RotationEffectType>
           <Life>
             <Center>20</Center>
             <Max>20</Max>
@@ -91,6 +95,7 @@
           </Fixed>
         </ScalingValues>
         <LocationAbsValues>
+          <Type>1</Type>
           <AttractiveForce>
             <Force>1</Force>
           </AttractiveForce>
@@ -138,6 +143,6 @@
   <ToolVersion>1.22</ToolVersion>
   <Version>3</Version>
   <StartFrame>10</StartFrame>
-  <EndFrame>101</EndFrame>
+  <EndFrame>80</EndFrame>
   <IsLoop>True</IsLoop>
 </EffekseerProject>

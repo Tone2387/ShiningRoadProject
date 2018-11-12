@@ -4,9 +4,8 @@
 const int g_iColNum = 1;
 
 clsShot::clsShot(clsPOINTER_GROUP* pPtrGroup)
+	: m_fRangeMax(0.0f)
 {
-	ZeroMemory(this, sizeof(clsShot));
-
 	m_wpEffect = pPtrGroup->GetEffects();
 }
 
@@ -64,6 +63,7 @@ bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 				{
 					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
+					m_wpEffect->Stop(m_ShotEfcHandles[enEfcLine]);
 					m_bShotExistFlg = false;
 					return true;
 				}
@@ -113,9 +113,10 @@ void clsShot::Move()
 		return;
 	}
 
-	if (D3DXVec3Length(&(m_Trans.vPos - m_vStartPos)) > 500.0f)
+	if (D3DXVec3Length(&(m_Trans.vPos - m_vStartPos)) > m_ShotState.fRangeMax)
 	{
 		m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
+		m_wpEffect->Stop(m_ShotEfcHandles[enEfcLine]);
 		m_bShotExistFlg = false;
 		return;
 	}
@@ -125,7 +126,6 @@ void clsShot::Move()
 	//À•W.
 	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcShot], m_Trans.vPos);
 	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcLine], m_Trans.vPos);
-
 }
 
 void clsShot::ReStart()

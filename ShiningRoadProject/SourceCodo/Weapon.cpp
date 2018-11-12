@@ -14,7 +14,11 @@ void clsWeapon::Create(WeaponState State)
 		m_ppBullet[i]->Init(m_State.BState);
 	}
 
-	Reload();
+	m_bNeedReload = false;
+	m_iRemainingBullet = m_State.iBulletNumMax;
+
+	m_iReloadCnt = m_State.iReloadTime;
+
 	LockOut();
 }
 
@@ -130,7 +134,7 @@ void clsWeapon::Reload()
 		return;
 	}
 
-	if (m_iMagazineReloadCnt < 0)
+	if (m_iMagazineReloadCnt > 0)
 	{
 		--m_iMagazineReloadCnt;
 		return;
