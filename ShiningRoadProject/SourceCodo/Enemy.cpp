@@ -45,62 +45,109 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 
 	std::vector<clsCharactor*> v_pEnemysTmp = v_pEnemys;//*m_vp_pEnemys;
 
-	for (unsigned int i = 0; i < v_pEnemysTmp.size(); i++)
+	for (int i = 0; i < v_pEnemysTmp.size(); i++)
 	{
-		if (!v_pEnemysTmp[i]->m_bDeadFlg)
+		if (v_pEnemysTmp[i]->m_bDeadFlg)
 		{
-			m_pTarget = v_pEnemysTmp[i];
+			continue;
 		}
-	}
 
-/*	for (int i = 0; i < m_visAreaData.iCategory; i++)
-	{
-		D3DXVECTOR3 vDisTmp = m_pTarget->GetPosition() - m_pTrans->vPos;
-		float fDis = D3DXVec3Length(&vDisTmp);
+		const D3DXVECTOR3 vEnemyPos = v_pEnemysTmp[i]->GetCenterPos();
 
-		if (m_visAreaData.v_VisAreaState[i].iVisDistance > fDis)
+		for (int j = 0; j < m_v_VisAreaState.size(); j++)
 		{
-			if (!m_pTarget)
+			switch (m_v_VisAreaState[i].iVisType)
 			{
-				if (m_visAreaData.v_VisAreaState[i].iVisType == 0)
+			case clsEnemyBase::enVisibilityTypeNormal:
+				if (!IsVisibilityArea(vEnemyPos, m_v_VisAreaState[j]))
 				{
-					if (true)
-					{
-						m_pTarget = v_pEnemys[0];
-						break;
-					}
+					continue;//認識タイプの認識条件を満たしてない場合は抜ける.
 				}
-
-				else
+				break;
+			case clsEnemyBase::enVisibilityTypeOutlook:
+				if (!IsVisibilityArea(vEnemyPos, m_v_VisAreaState[j]))
 				{
-					m_pTarget = v_pEnemys[0];
+					continue;//認識タイプの認識条件を満たしてない場合は抜ける.
+				}
+				break;
+			}
+
+			if (m_pTarget)
+			{
+				switch (m_BaseState.iTargetEvaluationType)
+				{
+				case clsEnemyBase::enTargetEvaluationTypeNear:
+
+					if (!IsTargetNear(vEnemyPos))
+					{
+						continue;
+					}
+
+					break;
+
+				default:
+					continue;
 					break;
 				}
 			}
 
-			else
-			{
-				if (D3DXVec3Length(&(m_pTarget->GetPosition() - m_pTrans->vPos)) > fDis)
-				{
-					if (m_visAreaData.v_VisAreaState[i].iVisType == 0)
-					{
-						if (true)
-						{
-							m_pTarget = v_pEnemys[0];
-							break;
-						}
-					}
-
-					else
-					{
-						m_pTarget = v_pEnemys[0];
-						break;
-					}
-				}
-			}
+			m_pTarget = v_pEnemysTmp[i];
 		}
-	}*/
+	}
+}
 
+bool clsEnemyBase::IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const VisibilityAreaState VisAreaState)
+{
+	D3DXVECTOR3 vDisTmp = vEnemyPos - m_pChara->m_vLockRangePos;
+	float fDis = D3DXVec3Length(&vDisTmp);
+
+	if (fDis < VisAreaState.iVisDistance)
+	{
+		//認識範囲内.
+		return true;
+	}
+
+	return false;
+}
+
+bool clsEnemyBase::IsTargetNear(const D3DXVECTOR3 vEnemyPos)
+{
+	if (!m_pTarget)
+	{
+		//ターゲットがない場合.
+		return true;
+	}
+
+	D3DXVECTOR3 vDisTarget = m_pTarget->GetCenterPos() - m_pChara->GetCenterPos();
+	D3DXVECTOR3 vDisEnemy = vEnemyPos - m_pChara->GetCenterPos();
+
+	float fDisTarget = D3DXVec3Length(&vDisTarget);
+	float fDisEnemy = D3DXVec3Length(&vDisEnemy);
+
+	if (fDisEnemy < fDisTarget)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void clsEnemyBase::SwitchMoveState()
+{
+	switch (m_BaseState.iMoveSwitchType)
+	{
+	case clsEnemyBase::enMoveSwitchTypeOrder:
+		m_UpdateState.iMoveCategoryNo++;
+		break;
+	case clsEnemyBase::enMoveSwitchTypeRandam:
+		m_UpdateState.iMoveCategoryNo = rand() % m_v_MoveState.size();
+		break;
+	}
+
+	if (m_UpdateState.iMoveCategoryNo >= m_v_MoveState.size())
+	{
+		m_UpdateState.iMoveCategoryNo = 0;
+	}
 }
 
 bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
@@ -108,28 +155,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 	fPush = 0.0f;
 	fAngle = 0.0f;
 
-	/*switch (m_BaseData.iMoveCategoryVisType)
-	{
-	case 0:
-
-		m_iMoveCategoryNo++;
-
-		if (m_MoveData.iCategory > m_iMoveCategoryNo)
-		{
-			m_iMoveCategoryNo = 0;
-		}
-
-		break;
-
-	case 1:
-
-		m_iMoveCategoryNo = rand() % m_MoveData.iCategory;
-
-		break;
-
-	default:
-		break;
-	}*/
+	SwitchMoveState();
 
 	if (m_pTarget)
 	{
@@ -328,7 +354,12 @@ bool clsEnemyBase::IsShot()
 
 void clsEnemyBase::SetData(std::string strEnemyFolderName)
 {
+	SetBaseData(strEnemyFolderName);
+	SetMoveData();
+	SetVisibilityData();
+	SetShotData();
 
+	SetDataProduct();
 }
 
 void clsEnemyBase::SetBaseData(std::string strEnemyFolderName)
@@ -340,8 +371,9 @@ void clsEnemyBase::SetBaseData(std::string strEnemyFolderName)
 	clsFILE File;
 	if (File.Open(strBaseDataName))
 	{
-		m_BaseState.iMoveSwichType = File.GetDataInt(0,enBaseStateMoveSwichType);
+		m_BaseState.iMoveSwitchType = File.GetDataInt(0,enBaseStateMoveSwichType);
 		m_BaseState.iProcFrame = File.GetDataInt(0, enBaseStateProcFrame);
+		m_BaseState.iTargetEvaluationType = File.GetDataInt(0, enBaseStateTargetEvaluationType);
 
 		File.Close();
 	}
@@ -414,5 +446,7 @@ void clsEnemyBase::SetShotData()
 		File.Close();
 	}
 }
+
+void clsEnemyBase::SetDataProduct(){}
 
 void clsEnemyBase::UpdateProduct(){}

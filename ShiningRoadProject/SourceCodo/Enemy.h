@@ -14,8 +14,8 @@ public:
 	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
-	virtual void Update();
-	virtual void SetData(std::string strEnemyFolderName);
+	void Update();
+	void SetData(std::string strEnemyFolderName);
 	void SearchTarget(std::vector<clsCharactor*>);
 
 protected:
@@ -25,35 +25,36 @@ protected:
 	clsCharactor* m_pTarget;
 
 	std::vector<clsCharactor*>* m_vp_pEnemys;
+	
+	enum enTargetEvaluationType
+	{
+		enTargetEvaluationTypeNear = 0,
 
-	void SetBaseData(std::string strEnemyFolderName);
-	void SetMoveData();
-	void SetVisibilityData();
-	void SetShotData();
+		enTargetEvaluationTypeSize
+	};
 
-	virtual void UpdateProduct();
+	enum enMoveSwitchType
+	{
+		enMoveSwitchTypeOrder = 0,
+		enMoveSwitchTypeRandam,
 
-	void SearchNear();
-
-	bool SetMoveDir(float& fPush, float& fAngle);
-	bool SetRotate(float& fPush, float& fAngle);
-	bool SetLook(float& fPush, float& fAngle);
-
-	bool IsJump();
-	bool IsShot();
+		enMoveSwitchTypeSize
+	};
 
 	struct BaseState
 	{
 		std::string strEnemyFolderName;
 
-		int iMoveSwichType;//移動ステータスを切り替える方法.
+		int iMoveSwitchType;//移動ステータスを切り替える方法.
 		int iProcFrame;//視点調整を更新する時間.
+		int iTargetEvaluationType;//ターゲット評価基準.
 	};
 
 	enum enBaseStateFileOrder
 	{
 		enBaseStateMoveSwichType,
 		enBaseStateProcFrame,
+		enBaseStateTargetEvaluationType,
 
 		enBaseStateSize
 	};
@@ -98,6 +99,15 @@ protected:
 		enShotStateSize
 	};
 
+	enum enVisibilityType
+	{
+		enVisibilityTypeNormal = 0,//壁に阻まれると視認できない.
+		enVisibilityTypeOutlook,//壁に阻まれない.
+		enVisibilityTypeAll,//無条件で認識.
+
+		enVisibilityTypeSize
+	};
+
 	struct VisibilityAreaState
 	{
 		int iVisType;
@@ -137,5 +147,26 @@ protected:
 	};
 
 	UpdateState m_UpdateState;
+
+	void SetBaseData(std::string strEnemyFolderName);
+	void SetMoveData();
+	void SetVisibilityData();
+	virtual void SetShotData();
+	virtual void SetDataProduct();
+
+	virtual void UpdateProduct();
+
+	bool SetMoveDir(float& fPush, float& fAngle);
+	void SwitchMoveState();
+	bool SetRotate(float& fPush, float& fAngle);
+	bool SetLook(float& fPush, float& fAngle);
+
+	bool IsJump();
+	bool IsShot();
+
+	bool IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const VisibilityAreaState VisAreaState);
+
+	//ターゲット評価関数.
+	bool IsTargetNear(const D3DXVECTOR3 vEnemyPos);
 };
 
