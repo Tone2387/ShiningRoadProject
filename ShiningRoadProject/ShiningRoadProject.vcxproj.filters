@@ -384,6 +384,9 @@
     <ClCompile Include="SourceCodo\RoboStatusEnemy.cpp">
       <Filter>Tahara\RoboStatus</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\ScreenTexture.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -695,6 +698,9 @@
     <ClInclude Include="SourceCodo\RoboStatusEnemy.h">
       <Filter>Tahara\RoboStatus</Filter>
     </ClInclude>
+    <ClInclude Include="SourceCodo\ScreenTexture.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\DebugText.hlsl">
@@ -716,6 +722,9 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="Shader\FontText.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Screen.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
