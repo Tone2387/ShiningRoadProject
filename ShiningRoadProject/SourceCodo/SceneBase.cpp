@@ -962,7 +962,7 @@ void clsSCENE_BASE::RenderWindowFromTexture(
 	float tmph = WND_H;
 	SpriteVertex vertices[] = 
 	{
-#if 0
+#if 1
 		//頂点座標(x,y,z).					//UV座標( u, v ).
 		D3DXVECTOR3( 0.0f,  tmph,  0.0f ),	D3DXVECTOR2( 0.0f, 1.0f ),//頂点1(左下).
 		D3DXVECTOR3( 0.0f,  0.0f,  0.0f ),	D3DXVECTOR2( 0.0f, 0.0f ),//頂点2(左上).
@@ -1017,7 +1017,8 @@ void clsSCENE_BASE::RenderWindowFromTexture(
 	m_wpContext->PSSetSamplers( 0, 1, &m_pScreenSmp );
 	uint32_t offset = 0;
 	m_wpContext->IASetVertexBuffers( 0, 1, &pBuffer, &stride, &offset );
-	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+//	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
 	m_wpContext->Draw( uVerMax, 0 );
 
