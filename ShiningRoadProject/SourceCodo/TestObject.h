@@ -35,8 +35,11 @@ public:
 
 	void InhUpdate();//Inheritance
 
+	void SwitchMove();
+
 private:
 	clsEnemyRobo* m_pAI;
+	bool m_bAct;
 };
 
 //#endif

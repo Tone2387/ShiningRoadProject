@@ -245,30 +245,19 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	
 	if (GetAsyncKeyState('S') & 0x1)
 	{
-		if (!m_bEnemyStop)
-		{
-			m_bEnemyStop = true;
-		}
-
-		else
-		{
-			m_bEnemyStop = false;
-		}
+		m_pTestObj->SwitchMove();
 	}
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
 		m_v_pFriends[i]->Action(m_pStage);
 	}
-
-	if (!m_bEnemyStop)
+	
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
-		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
-		{
-			m_v_pEnemys[i]->Action(m_pStage);
-		}
+		m_v_pEnemys[i]->Action(m_pStage);
 	}
-
+	
 	UpdateCamTargetPos(m_pCamTar);
 
 	D3DXVECTOR3 vCamPosTmp;
