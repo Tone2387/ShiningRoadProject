@@ -1,10 +1,13 @@
 #ifndef SCENE_BASE_H_
 #define SCENE_BASE_H_
 
-#ifndef _DEBUG
+//#ifndef _DEBUG
 //ついているとバックバッファではなくいったんテクスチャに描画する.
 #define RENDER_SCREEN_TEXTURE_
-#endif//#ifdef _DEBUG
+//#endif//#ifdef _DEBUG
+
+class clsSCREEN_TEXTURE;
+
 
 #include "Global.h"
 
@@ -176,22 +179,10 @@ private:
 	ID3D11DepthStencilState* m_pDepthStencilStateOn;
 	ID3D11DepthStencilState* m_pDepthStencilStateOff;
 
+
+
 #ifdef RENDER_SCREEN_TEXTURE_
-	//レンダリングテクスチャ用.
-	ID3D11Texture2D*			m_pScreenTex;
-	ID3D11RenderTargetView*		m_pScreenRTV;
-	ID3D11ShaderResourceView*	m_pScreenSRV;
-	ID3D11SamplerState*			m_pScreenSmp;
-	ID3D11VertexShader*			m_pScreenVS;
-	ID3D11PixelShader*			m_pScreenPS;
-	HRESULT CreateScreenTexture();
-	HRESULT CreateScreenShaderTexture();
-	//Rendertargetをテクスチャにする.
-	void SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView );
-	//テクスチャの内容を画面に描画.
-	void RenderWindowFromTexture( 
-		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-		ID3D11DepthStencilView* const pDepthStencilView );
+	std::unique_ptr< clsSCREEN_TEXTURE >	m_upScreenTexture;
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
