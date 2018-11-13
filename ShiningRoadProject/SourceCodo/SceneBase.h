@@ -92,13 +92,14 @@ protected:
 		const D3DXVECTOR3 &vCamPos, 
 		const D3DXVECTOR3 &vCamLookPos,
 		const float fWndW, const float fWndH );
+
 	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
 	D3D11_VIEWPORT* GetViewPortMainPtr();
 	//----- Render用 -----//.
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 	//ノイズを起こす.
-	void Noise( const int iFrame );
+	void Noise( const int iPower );
 
 	void UpdateNoise();
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
@@ -133,7 +134,7 @@ protected:
 #ifdef RENDER_SCREEN_TEXTURE_	
 	//ノイズ.
 	int		m_iNoiseFrame;
-	int		m_iBlock;
+	float	m_fBlock;
 	float	m_fPulse;
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 

@@ -29,6 +29,10 @@ namespace{
 	const float fNOISE_BLOCK_RATE = 512.0f;
 	const float fNOISE_PULSE_RATE = 0.25f;
 
+	//何を累乗するか & 減衰率.
+	const float fNOISE_ORIGINAL = 2.0f;
+	
+
 #if _DEBUG
 	const D3DXVECTOR4 vDEBUG_TEXT_COLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 	const float fDEBUG_TEXT_SIZE = 50.0f;
@@ -221,12 +225,26 @@ void clsSCENE_BASE::Render(
 		m_upScreenTexture->RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
 
 		UpdateNoise();
-
 	}
 
 	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
 		Noise( 60 );
 	}
+//	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+//		Noise( 30 );
+//	}
+//	if( GetAsyncKeyState( 'X' ) & 0x1 ){
+//		Noise( 10 );
+//	}
+//	if( GetAsyncKeyState( 'C' ) & 0x1 ){
+//		Noise( 5 );
+//	}
+//	if( GetAsyncKeyState( 'V' ) & 0x1 ){
+//		Noise( 2 );
+//	}
+//	if( GetAsyncKeyState( 'B' ) & 0x1 ){
+//		Noise( 1 );
+//	}
 
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
@@ -734,18 +752,29 @@ D3D11_VIEWPORT* clsSCENE_BASE::GetViewPortMainPtr()
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 //ノイズを起こす.
-void clsSCENE_BASE::Noise( const int iFrame )
+void clsSCENE_BASE::Noise( const int iPower )
 {
 	assert( m_upScreenTexture );
 
-	m_iNoiseFrame = iFrame;
+//	int iBlockFrame = iFrame;
+//	const int iFRAME_MAX = 30;
+//	if( iBlockFrame > iFRAME_MAX ){
+//		iBlockFrame = iFRAME_MAX;
+//	}
 
-	m_iBlock = std::sqrtf( static_cast<float>( iFrame ) ) * fNOISE_BLOCK_RATE * iNOISE_FRAME_RANGE_RATE * iNOISE_DOWN_RATE;
-	m_fPulse = std::sqrtf( static_cast<float>( iFrame ) ) * fNOISE_PULSE_RATE * iNOISE_FRAME_RANGE_RATE * iNOISE_DOWN_RATE;
+	m_iNoiseFrame = iPower;
+
+//	//指数.
+//	const float fEXPONENT_ADD = 1.0f;
+//	m_fBlock = std::powf( fNOISE_ORIGINAL, fEXPONENT_ADD + iBlockFrame ) / 6.0f;
+//	m_fPulse = std::powf( fNOISE_ORIGINAL, fEXPONENT_ADD + iFrame ) * ( fNOISE_PULSE_RATE / fNOISE_BLOCK_RATE );
+
+	m_fBlock = std::sqrtf( static_cast<float>( m_iNoiseFrame ) ) / ( iNOISE_FRAME_RANGE_RATE * iNOISE_DOWN_RATE ) * fNOISE_BLOCK_RATE;
+	m_fPulse = std::sqrtf( static_cast<float>( m_iNoiseFrame ) ) / ( iNOISE_FRAME_RANGE_RATE * iNOISE_DOWN_RATE ) * fNOISE_PULSE_RATE;
 
 	m_upScreenTexture->SetNoiseFlag( true );
 
-	m_upScreenTexture->SetBlock( m_iBlock );
+	m_upScreenTexture->SetBlock( static_cast<int>( m_fBlock ) );
 	m_upScreenTexture->SetPulse( m_fPulse );
 
 }
@@ -754,14 +783,18 @@ void clsSCENE_BASE::UpdateNoise()
 {
 	m_iNoiseFrame --;
 
-	if( m_iNoiseFrame <= 0 ){
+	//終了.
+	if( //m_iNoiseFrame <= 0 && 
+		m_fBlock <= fNOISE_ORIGINAL 
+	){
 		m_upScreenTexture->SetNoiseFlag( false );
 	}
 
+	//ノイズ減衰.
 	if( m_iNoiseFrame % iNOISE_FRAME_RANGE_RATE == 0 ){
-		m_iBlock /= iNOISE_DOWN_RATE;
-		m_fPulse /= iNOISE_DOWN_RATE;
-		m_upScreenTexture->SetBlock( m_iBlock );
+		m_fBlock /= fNOISE_ORIGINAL;
+		m_fPulse /= fNOISE_ORIGINAL;
+		m_upScreenTexture->SetBlock( static_cast<int>( m_fBlock ) );
 		m_upScreenTexture->SetPulse( m_fPulse );
 	}
 
