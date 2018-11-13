@@ -323,7 +323,7 @@ void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pD
 	if( !pDepthStencilView )	return;
 
 	//レンダーターゲットをテクスチャに.
-	float clearcolor[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	float clearcolor[] = { 2.5f, 0.125f, 0.125f, 1.0f };
 	m_wpContext->OMSetRenderTargets( 1, &m_pRenderTargetView, pDepthStencilView );
 	m_wpContext->ClearRenderTargetView( m_pRenderTargetView, clearcolor );
 	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
