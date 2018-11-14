@@ -472,7 +472,7 @@ bool clsCharactor::Damage(HitState HitS)
 
 void clsCharactor::LockChara()
 {
-	SetLockRangeDir();
+	UpdateLookOn();
 
 	if (m_pTargetChara)
 	{
@@ -521,8 +521,8 @@ void clsCharactor::LockChara()
 			{
 				if (pCharaTmp)
 				{
-					float fPreviousDis = D3DXVec3Length(&(pCharaTmp->m_vCenterPos - m_vLockRangePos));
-					float fNowDis = D3DXVec3Length(&(m_v_pEnemys[i]->m_vCenterPos - m_vLockRangePos));
+					float fPreviousDis = D3DXVec3Length(&(pCharaTmp->m_vCenterPos - m_vLockStartingPos));
+					float fNowDis = D3DXVec3Length(&(m_v_pEnemys[i]->m_vCenterPos - m_vLockStartingPos));
 				
 					if (fNowDis < fPreviousDis)
 					{
@@ -595,7 +595,7 @@ bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
 {
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
-	D3DXVECTOR3 vTarDir = vTargetPos - m_vLockRangePos;
+	D3DXVECTOR3 vTarDir = vTargetPos - m_vLockStartingPos;
 	D3DXVec3Normalize(&vTarDir, &vTarDir);
 
 	float fDir = D3DXVec3Dot(&vTarDir, &vForword);
@@ -640,13 +640,23 @@ void clsCharactor::LockOut()
 	}
 }
 
-void clsCharactor::SetLockRangeDir()
+void clsCharactor::UpdateLookOn()
 {
-	const float fCamMoveSpeed = 0.5f;
-	const float fCamSpaceTmp = 4.0f;
-	const float fCamPosX = 1.0f;
+	UpdateLookStartingPos();
+	
+	UpdateCamPos();
 
-	D3DXVECTOR3 vTmp = {0.0f,0.0f,0.0f};
+	UpdateLookCenterPos();
+}
+
+void clsCharactor::UpdateLookStartingPos()
+{
+	m_vLockStartingPos = GetCenterPos();
+}
+
+void clsCharactor::UpdateLookCenterPos()
+{
+	D3DXVECTOR3 vTmp = { 0.0f, 0.0f, 0.0f };
 
 	D3DXMATRIX mRot;
 
@@ -661,9 +671,48 @@ void clsCharactor::SetLockRangeDir()
 
 	m_vLockRangeDir = vTmp;
 
-	m_vLockPos = m_vLockRangePos + m_vLockRangeDir * m_fLockRange;
+	m_vLockPos = m_vLockStartingPos + m_vLockRangeDir * m_fLockRange;
+	m_vLockCenterPos = m_vLockPos;
 
-	//軸ﾍﾞｸﾄﾙを用意.
+	D3DXVECTOR3 vUp = { 0.0f, 1.0f, 0.0f };
+
+	D3DXMatrixLookAtLH(&m_mThisCharaView, &m_vCamPos, &m_vLockPos, &vUp);
+}
+
+const float clsCharactor::GetLockYaw()
+{
+	D3DXVECTOR3 vLockDirForward = m_vLockStartingPos - GetVec3Dir(m_Trans.fYaw,g_vDirBack);
+
+	D3DXVECTOR3 m_vCamPosDirTmp;
+	D3DXVec3Normalize(&m_vCamPosDirTmp, &m_vCamPos);
+
+	D3DXVECTOR3 vCamDir = m_vLockStartingPos - m_vCamPosDirTmp;
+
+	D3DXVec3Normalize(&vLockDirForward, &vLockDirForward);
+	D3DXVec3Normalize(&vCamDir, &vCamDir);
+
+	float fDir = D3DXVec3Dot(&vLockDirForward, &vCamDir);
+
+	fDir = acos(fDir);
+
+	return fDir;
+}
+
+void clsCharactor::UpdateCamPos()
+{
+	const float fCamMoveSpeed = 0.5f;
+	const float fCamSpaceTmp = 4.0f;
+	const float fCamPosX = 1.0f;
+
+	D3DXMATRIX mRot;
+
+	//カメラ位置のための回転行列作成.
+	D3DXMatrixRotationYawPitchRoll(
+		&mRot,
+		m_Trans.fYaw,
+		-m_fVerLookDir,
+		m_Trans.fRoll);
+
 	float fCamAxisXTmp;
 
 	if (m_bCamPosXSwitch)
@@ -678,8 +727,8 @@ void clsCharactor::SetLockRangeDir()
 
 	D3DXVECTOR3 vCamAxis =
 	{
-		0.0f,
-		m_vCenterPos.y - m_vLockRangePos.y,
+		fCamAxisXTmp,
+		m_vCenterPos.y - m_vLockStartingPos.y,
 		fCamSpaceTmp
 	};
 
@@ -697,14 +746,15 @@ void clsCharactor::SetLockRangeDir()
 	const D3DXVECTOR3 vCamTargetPos = m_vCenterPos - vCamAxis;
 
 	//現在位置を取得し、現在位置と目的の位置の差から移動量を計算する.
-	vCamPosTmp = m_vLockRangePos;//現在位置を取得
+	vCamPosTmp = m_vLockStartingPos;//現在位置を取得
 	vCamPosTmp -= (vCamPosTmp - vCamTargetPos) * fCamMoveSpeed;
 
-	m_vLockRangePos = vCamPosTmp;
+	m_vCamPos = vCamPosTmp;
+}
 
-	D3DXVECTOR3 vUp = { 0.0f, 1.0f, 0.0f };
-
-	D3DXMatrixLookAtLH(&m_mThisCharaView, &m_vLockRangePos, &m_vLockPos, &vUp);
+const D3DXVECTOR3 clsCharactor::GetCamPos() const
+{
+	return m_vCamPos;
 }
 
 void clsCharactor::SetEnemys(std::vector<clsCharactor*> v_pEnemys)

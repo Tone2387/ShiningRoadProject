@@ -84,7 +84,7 @@ bool clsWeapon::Shot()
 			}
 
 			//UŒ‚—Í‚É‚æ‚éƒuƒŒ‚Æ‚»‚ê‚ğ—}‚¦‚é”’l.
-			float fRandMax = (m_State.iAtk / g_iMOAReference) * (m_State.iStablity * g_fPercentage);
+			/*float fRandMax = (m_State.iAtk / g_iMOAReference) * (m_State.iStablity * g_fPercentage);
 
 			if (fRandMax != 0.0f)//0‚¾‚Æ~‚Ü‚é.
 			{
@@ -99,7 +99,7 @@ bool clsWeapon::Shot()
 
 				fDirError = fmodf(static_cast<float>(rand()), (fRandMax));//•Ï“®’l‚ª‚ ‚éê‡A—”¶¬.
 				vDir.z += fDirError;//z²‚ÌŒë·.
-			}
+			}*/
 
 			for (int i = 0; i < m_State.iBulletNumMax; i++)
 			{
@@ -115,8 +115,11 @@ bool clsWeapon::Shot()
 
 	else
 	{
-		m_iMagazineReloadCnt = m_State.iMagazineReloadTime;
-		m_bNeedReload = true;
+		if (!m_bNeedReload)
+		{
+			m_iMagazineReloadCnt = m_State.iMagazineReloadTime;
+			m_bNeedReload = true;
+		}
 	}
 	
 	return false;

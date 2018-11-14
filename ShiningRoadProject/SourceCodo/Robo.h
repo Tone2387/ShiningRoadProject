@@ -203,6 +203,8 @@ private:
 
 	int GetBoostEfcNum(enPARTS PartsNum,const char* strBoostPosition);
 
+	virtual void UpdateLookStartingPos() override;
+
 	enum enAnimNoLeg
 	{
 		enAnimNoLegWait = 0,

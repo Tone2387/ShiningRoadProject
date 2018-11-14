@@ -98,7 +98,7 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 
 bool clsEnemyBase::IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const VisibilityAreaState VisAreaState)
 {
-	D3DXVECTOR3 vDisTmp = vEnemyPos - m_pChara->m_vLockRangePos;
+	D3DXVECTOR3 vDisTmp = vEnemyPos - m_pChara->m_vLockStartingPos;
 	float fDis = D3DXVec3Length(&vDisTmp);
 
 	if (fDis < VisAreaState.iVisDistance)

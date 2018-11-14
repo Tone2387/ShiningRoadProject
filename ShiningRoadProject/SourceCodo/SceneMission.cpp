@@ -399,10 +399,12 @@ void clsSCENE_MISSION::RenderUi()
 	//ロックオン関係.
 	//ロックオンフレーム.
 	vPosTmp = m_pPlayer->GetLookTargetPos();
+	//float fYaw = m_pPlayer->GetLockYaw();
 
 	vPosTmp = ConvDimPos(vPosTmp);
 
 	m_pCursorFrame->SetPos(vPosTmp);
+	//m_pCursorFrame->SetRot({ 0.0f, fYaw ,0.0f});
 	m_pCursorFrame->Render();
 
 	//ロックオンカーソル.
@@ -410,6 +412,7 @@ void clsSCENE_MISSION::RenderUi()
 
 	m_pCursor->SetScale(fTmp);
 	m_pCursor->SetPos(vPosTmp);
+	//m_pCursor->SetRot({ 0.0f, fYaw, 0.0f });
 	m_pCursor->Render();
 
 	//ロックオンカーソル内に敵を入れている間の処理.
@@ -660,6 +663,6 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 		return;
 	}
 
-	m_vCamTargetPos = pChara->m_vLockRangePos;
+	m_vCamTargetPos = pChara->GetCamPos();
 	m_vLookTargetPos = pChara->m_vLockPos;
 }
