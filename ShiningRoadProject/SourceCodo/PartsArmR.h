@@ -13,8 +13,8 @@ public:
 
 private:
 	//----- 各パーツごとの関数 -----//.
-	void InitProduct() final;//各シーンのInit.
-	void UpdateProduct() final;//各シーンのUpdate.
+	void InitProduct()	final{ clsPARTS_ARM_BASE::InitProduct(); };
+	void UpdateProduct()final{ clsPARTS_ARM_BASE::UpdateProduct(); };
 	//----- 各パーツごとの関数 -----//.
 
 };

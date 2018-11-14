@@ -37,22 +37,16 @@ public:
 	//デフォルト引数はRIGHTにすると右端が指定座標に来る.
 	void Render( const enPOS enPos = enPOS::LEFT );
 
-	void SetPos( const D3DXVECTOR2 &vPos );
-	D3DXVECTOR3 GetPos(){
-		D3DXVECTOR3 g;
-		g.x = m_vPos.x;
-		g.y = m_vPos.y;
-		g.z = 0.0f;
-		return g;
-	};
-	void AddPos( const D3DXVECTOR2 &vPos );
+	D3DXVECTOR3 GetPos()					{ return D3DXVECTOR3( m_vPos.x, m_vPos.y, 0.0f ); };
+	void SetPos( const D3DXVECTOR2 &vPos )	{ m_vPos = vPos; };
+	void AddPos( const D3DXVECTOR2 &vPos )	{ m_vPos += vPos; };
 
-	void SetScale( const float fScale );
+	void SetScale( const float fScale )		{ m_fScale = fScale; };
 
-	void SetText( const char* sText );
+	void SetText( const char* sText )		{ m_sText = sText; }
 
-	void SetColor( const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f, 1.0f } );
-	void SetAlpha( const float fAlpha );
+	void SetColor( const D3DXVECTOR4 &vColor = { 1.0f, 1.0f, 1.0f, 1.0f } )	{ m_vColor = vColor; }
+	void SetAlpha( const float fAlpha )										{ m_fAlpha = fAlpha; };
 
 private:
 

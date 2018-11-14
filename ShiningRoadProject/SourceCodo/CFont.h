@@ -36,24 +36,22 @@ public:
 
 
 
-	void SetPos( const D3DXVECTOR3 &vPos );
-	D3DXVECTOR3 GetPos();
-	D3DXVECTOR3 GetPosLast();
-	void AddPos( const D3DXVECTOR3 &vPos ){
-		SetPos( m_vPos + vPos );
-	}
+	D3DXVECTOR3 GetPos()					{ return m_vPos; }
+	D3DXVECTOR3 GetPosLast()				{ return m_vPosLast; }
+	void SetPos( const D3DXVECTOR3 &vPos )	{ m_vPos = vPos; };
+	void AddPos( const D3DXVECTOR3 &vPos )	{ SetPos( m_vPos + vPos ); }
 
-	void SetScale( const float fScale );
-	float GetScale();
+	float GetScale()					{ return m_fScale; }
+	void SetScale( const float fScale )	{ m_fScale = fScale; };
 
 	void SetColor( const D3DXVECTOR4 &vColor );
-	void SetAlpha( const float fAlpha );
+	void SetAlpha( const float fAlpha )	{ m_fAlpha = fAlpha; }
 
 	//折り返し位置.
-	void SetIndentPos( const float fPosX );
+	void SetIndentPos( const float fPosX ){ m_fIndentionPosint = fPosX; }
 	
 	//読み込んだテキストの数( Createしていないと-1が返る ).
-	int GetTextRow();
+	int GetTextRow(){ return m_iTextRow; }
 	//テキストの内容.
 	std::string GetText( const int iRow );
 

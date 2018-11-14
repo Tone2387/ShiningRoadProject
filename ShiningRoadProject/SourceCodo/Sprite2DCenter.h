@@ -13,9 +13,15 @@ public:
 		//•`‰æ(ƒŒƒ“ƒ_ƒŠƒ“ƒO)
 	void Render() override;
 
-	void SetRot( const D3DXVECTOR3 &vRot );
-	D3DXVECTOR3 GetRot();
-	void AddRot( const D3DXVECTOR3 &vRot );
+	D3DXVECTOR3 GetRot(){ return m_vRot; };
+	void SetRot( const D3DXVECTOR3 &vRot ){
+		m_vRot = vRot;
+		GuardRotOver( m_vRot );
+	};
+	void AddRot( const D3DXVECTOR3 &vRot ){
+		m_vRot += vRot;
+		GuardRotOver( m_vRot );
+	};
 
 
 protected:

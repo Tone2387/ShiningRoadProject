@@ -1,4 +1,5 @@
 #include "AssembleModel.h"
+#include "FactoryParts.h"
 
 #include "OperationString.h"
 
@@ -58,11 +59,10 @@ namespace{
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
-	,m_upPartsFactory( nullptr )
 	,m_vpParts()
 	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
-	,m_iColorRank()
+//	,m_iColorRank()
 {
 	m_dAnimSpd = dANIM_SPD;
 	m_vecvColor.resize( iMASK_MAX_NUM, vCOLOR_NORMAL );
@@ -84,10 +84,6 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 	m_vpParts.clear();
 	m_vpParts.shrink_to_fit();
 
-//	SAFE_DELETE( m_upPartsFactory );
-	if( m_upPartsFactory ){
-		m_upPartsFactory.reset( nullptr );
-	}
 
 	m_wpResource = nullptr;
 }
@@ -98,17 +94,16 @@ void clsASSEMBLE_MODEL::Create(
 	clsResource* const pResource, 
 	clsROBO_STATUS* const pStatus )
 {
-	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
 	assert( !m_wpResource );
 
 	m_wpResource = pResource;
 
-	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
+	unique_ptr< clsFACTORY_PARTS > upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
 	m_vpParts.resize( ucPARTS_MAX, nullptr );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
+		m_vpParts[i] = upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
 
@@ -191,12 +186,8 @@ void clsASSEMBLE_MODEL::UpDate()
 		m_vpParts[i]->Update();
 	}
 	UpdateProduct();
-
-
 }
 
-void clsASSEMBLE_MODEL::UpdateProduct()
-{}
 
 void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mView, 
@@ -479,14 +470,6 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 
 
 }
-void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
-{
-	SetPos( m_Trans.vPos + vVec );
-}
-D3DXVECTOR3 clsASSEMBLE_MODEL::GetPos() const
-{
-	return m_Trans.vPos;
-}
 
 
 
@@ -506,14 +489,6 @@ void clsASSEMBLE_MODEL::SetRot( const D3DXVECTOR3 &vRot )
 		assert( m_vpParts[i] );
 		m_vpParts[i]->SetRotation( tmpRot );
 	}
-}
-void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
-{
-	SetRot( D3DXVECTOR3( m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll ) + vRot );
-}
-D3DXVECTOR3 clsASSEMBLE_MODEL::GetRot() const
-{
-	return { m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll };
 }
 
 
@@ -537,11 +512,6 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 	}
 }
 
-
-int clsASSEMBLE_MODEL::GetPartsNum( const enPARTS_TYPES enPartsType )
-{
-	return m_enPartsNum[ enPartsType ];
-}
 
 
 //パーツのアニメーション変更.

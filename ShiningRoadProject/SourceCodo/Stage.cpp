@@ -2,6 +2,7 @@
 #include "File.h"
 #include "Building.h"
 #include "PtrGroup.h"
+#include "Resource.h"
 #include "ObjStaticMesh.h"
 
 using namespace std;

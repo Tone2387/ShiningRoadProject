@@ -1,8 +1,6 @@
 #include "Sprite2D.h"
 
 namespace{
-	//シェーダファイル名(ディレクトリも含む)
-	const char SHADER_NAME[] = "Shader\\Sprite2D.hlsl";
 }
 
 
@@ -28,7 +26,13 @@ clsSprite2D::clsSprite2D() :
 //デストラクタ.
 clsSprite2D::~clsSprite2D()
 {
-	Release();
+	SAFE_RELEASE( m_pTexture );
+	SAFE_RELEASE( m_pSampleLinear );
+	SAFE_RELEASE( m_pVertexBuffer );
+	SAFE_RELEASE( m_pConstantBuffer );
+	SAFE_RELEASE( m_pPixelShader );
+	SAFE_RELEASE( m_pVertexLayout );
+	SAFE_RELEASE( m_pVertexShader );
 }
 
 //初期化.
@@ -67,6 +71,9 @@ HRESULT clsSprite2D::Create(
 //======================================
 HRESULT clsSprite2D::InitShader()
 {
+	//シェーダファイル名(ディレクトリも含む)
+	const char SHADER_NAME[] = "Shader\\Sprite2D.hlsl";
+
 	ID3DBlob* pCompiledShader = NULL;
 	ID3DBlob* pErrors = NULL;
 	UINT uCompileFlag = 0;
@@ -406,29 +413,8 @@ void clsSprite2D::Render()
 }
 
 
-void clsSprite2D::Release()
-{
-	SAFE_RELEASE( m_pTexture );
-	SAFE_RELEASE( m_pSampleLinear );
-	SAFE_RELEASE( m_pVertexBuffer );
-	SAFE_RELEASE( m_pConstantBuffer );
-	SAFE_RELEASE( m_pPixelShader );
-	SAFE_RELEASE( m_pVertexLayout );
-	SAFE_RELEASE( m_pVertexShader );
-
-}
 
 
-
-void clsSprite2D::SetPos( const D3DXVECTOR3 &vPos )
-{
-	m_vPos = vPos;
-}
-
-void clsSprite2D::SetScale( const D3DXVECTOR3 &vScale )
-{
-	m_vScale = vScale;
-}
 
 void clsSprite2D::SetScale( const float &fScale, const bool withZ )
 {
@@ -439,10 +425,6 @@ void clsSprite2D::SetScale( const float &fScale, const bool withZ )
 	m_vScale.z = fScale;
 }
 
-void clsSprite2D::SetAlpha( const float fAlpha )
-{
-	m_vColor.w = fAlpha;
-}
 bool clsSprite2D::AddAlpha( const float fAlpha )
 {
 	//範囲内.
@@ -462,27 +444,8 @@ bool clsSprite2D::AddAlpha( const float fAlpha )
 
 	return isWithInRange;
 }
-float clsSprite2D::GetAlpha()
-{
-	return m_vColor.w;
-}
 
 
-D3DXVECTOR3 clsSprite2D::GetPos() const
-{
-	return m_vPos;
-}
-D3DXVECTOR3 clsSprite2D::GetScale() const
-{
-	return m_vScale;
-}
-
-
-
-void clsSprite2D::AddPos( const D3DXVECTOR3 &vPos )
-{
-	m_vPos += vPos;
-}
 
 void clsSprite2D::AddScale( const D3DXVECTOR3 &vScale )
 {

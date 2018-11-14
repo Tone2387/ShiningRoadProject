@@ -1,8 +1,6 @@
 #include "Sprite.h"
 
 namespace{
-	//シェーダファイル名(ディレクトリも含む)(\\).
-	const char SHADER_NAME[] = "Shader\\Mesh.hlsl";
 }
 
 //============================================================
@@ -72,6 +70,9 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 //============================================================
 HRESULT clsSprite::InitShader()
 {
+	//シェーダファイル名(ディレクトリも含む)(\\).
+	const char SHADER_NAME[] = "Shader\\Mesh.hlsl";
+
 	ID3DBlob* pCompiledShader = nullptr;
 	ID3DBlob* pErrors = nullptr;
 
@@ -435,50 +436,5 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 
 
 
-D3DXVECTOR3 clsSprite::GetPos()
-{
-	return m_vPos;
-}
 
-void clsSprite::SetPos( const D3DXVECTOR3& vPos )
-{
-	m_vPos = vPos;
-}
-
-void clsSprite::AddPos( const D3DXVECTOR3& vPos )
-{
-	m_vPos += vPos;
-}
-
-
-D3DXVECTOR3 clsSprite::GetRot()
-{
-	return m_vRot;
-}
-
-void clsSprite::SetRot( const D3DXVECTOR3& vRot )
-{
-	m_vRot = vRot;
-}
-
-void clsSprite::AddRot( const D3DXVECTOR3& vRot )
-{
-	m_vRot += vRot;
-}
-
-
-D3DXVECTOR3 clsSprite::GetScale()
-{
-	return m_vScale;
-}
-
-void clsSprite::SetScale( const D3DXVECTOR3& vScale )
-{
-	m_vScale = vScale;
-}
-
-void clsSprite::AddScale( const D3DXVECTOR3& vScale )
-{
-	m_vScale += vScale;
-}
 

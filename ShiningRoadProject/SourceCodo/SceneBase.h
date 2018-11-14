@@ -18,9 +18,17 @@ class clsSCREEN_TEXTURE;
 #include "CharaStatic.h"
 
 #include "PtrGroup.h"
+#include "DxInput.h"
+#include "CXInput.h"
+#include "Resource.h"
+#include "Effects.h"
+#include "SoundManagerBase.h"
+#include "Camera.h"
+#include "RoboStatusPlayer.h"
+#include "BlackScreen.h"
+#include "CFont.h"
 
 #include "Sprite2DCenter.h"
-
 #include "UiText.h"
 
 //#include "KeyInput.h"
@@ -48,10 +56,6 @@ public:
 		ID3D11DepthStencilView* const pDepthStencilView );
 	//----- 各シーン共通 -----//.
 
-
-	//メインまで送り上げる.
-	D3DXVECTOR3 GetCameraPos() const;
-	D3DXVECTOR3 GetCameraLookPos() const;
 
 protected:
 

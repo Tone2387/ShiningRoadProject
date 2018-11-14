@@ -1,7 +1,6 @@
 #include "SceneBase.h"
 #include "ScreenTexture.h"
 
-#include <Windows.h>
 
 using namespace std;
 
@@ -71,10 +70,10 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
-	m_wpFont->Release();
+	if( m_wpFont ) m_wpFont->Release();
 
 	//次のシーンに余計なエフェクトを持ち込まない.
-	m_wpEffects->StopAll();
+	if( m_wpEffects ) m_wpEffects->StopAll();
 
 	SAFE_RELEASE( m_pDepthStencilStateOff );
 	SAFE_RELEASE( m_pDepthStencilStateOn );
@@ -560,18 +559,6 @@ void clsSCENE_BASE::SetDepth( const bool isOn )
 
 
 
-D3DXVECTOR3 clsSCENE_BASE::GetCameraPos() const
-{
-	assert( m_wpCamera );
-	return m_wpCamera->GetPos();
-}
-D3DXVECTOR3 clsSCENE_BASE::GetCameraLookPos() const
-{
-	assert( m_wpCamera );
-	return m_wpCamera->GetLookPos();
-}
-
-
 
 
 #if _DEBUG
@@ -585,15 +572,15 @@ void clsSCENE_BASE::RenderDebugText()
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にだけ下にずらすか.
 
-	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	sprintf_s( strDbgTxt, 
+//		"CameraPos : x[%f], y[%f], z[%f]",
+//		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"CamLokPos : x[%f], y[%f], z[%f]",
+//		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 
 	//dbgtxty += 10;
@@ -660,11 +647,12 @@ HRESULT clsSCENE_BASE::CreateDepthStencilState()
 //カメラ関数.
 void clsSCENE_BASE::Camera()
 {
+	assert( m_wpCamera );
 	//ビュー(カメラ)変換.
 	D3DXVECTOR3 vUpVec	( 0.0f, 1.0f, 0.0f );	//上方位置.
 	D3DXMatrixLookAtLH(
 		&m_mView,	//(out)ビュー計算結果.
-		&GetCameraPos(), &GetCameraLookPos(), &vUpVec );
+		&m_wpCamera->GetPos(), &m_wpCamera->GetLookPos(), &vUpVec );
 
 }
 //プロジェクション関数.
@@ -787,15 +775,15 @@ void clsSCENE_BASE::NoiseSmall( const int iFrame )
 
 void clsSCENE_BASE::UpdateNoise()
 {
-	m_iNoiseFrame --;
+	if( m_iNoiseFrame > 0 ){
+		m_iNoiseFrame --;
+	}
 
 	switch( m_encNoise )
 	{
 	case encNOISE::BLOCK_AND_PULSE:
 		//終了.
-		if( //m_iNoiseFrame <= 0 && 
-			m_fBlock <= fNOISE_ORIGINAL 
-		){
+		if( m_fBlock <= fNOISE_ORIGINAL ){
 			m_upScreenTexture->SetNoiseFlag( false );
 			m_encNoise = encNOISE::NOTHING;
 		}
@@ -816,8 +804,5 @@ void clsSCENE_BASE::UpdateNoise()
 		}
 		break;
 	}
-
-
-
 }
 #endif//#ifdef RENDER_SCREEN_TEXTURE_

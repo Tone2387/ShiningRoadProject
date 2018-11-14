@@ -11,35 +11,30 @@
 #include "Global.h"
 
 #if _DEBUG
-#include "DebugText.h"
+class clsDX9Mesh;
+//#include "DebugText.h"
 #include "Ray.h"		//レイ表示クラス.
+
 #endif//#if _DEBUG
 
 #include "Game.h"
 
 
-#include <Windows.h>
-
 //メモリリーク検出用.
 #include <crtdbg.h>
 
-#include <D3DX11.h>
-#include <D3D11.h>
-
-#include <D3DX10.h>//「D3DX～」の定義使用時に必要.
-#include <D3D10.h>
 
 
 
-//============================================================
-//	ライブラリ.
-//============================================================
-#pragma comment( lib, "winmm.lib" )
-
-#pragma comment( lib, "d3dx11.lib" )
-#pragma comment( lib, "d3d11.lib" )
-
-#pragma comment( lib, "d3dx10.lib" )//「D3DX～」の定義使用時に必要.
+////============================================================
+////	ライブラリ.
+////============================================================
+//#pragma comment( lib, "winmm.lib" )
+//
+//#pragma comment( lib, "d3dx11.lib" )
+//#pragma comment( lib, "d3d11.lib" )
+//
+//#pragma comment( lib, "d3dx10.lib" )//「D3DX～」の定義使用時に必要.
 
 
 
@@ -114,7 +109,6 @@ private:
 
 
 	//ゲーム.
-	//clsGAME*		m_upGame;
 	std::unique_ptr< clsGAME >	m_upGame;
 
 

@@ -1,5 +1,7 @@
 #include "MenuWindowAssembleTakeOff.h"
 #include "PtrGroup.h"
+#include "SoundManagerBase.h"
+#include "CFont.h"
 
 namespace{
 
@@ -113,18 +115,4 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::RenderProduct()
 	}
 
 }
-
-bool clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-
-	return false;
-}
-
-
-
-
-
 

@@ -9,10 +9,11 @@ clsPARTS_BASE::clsPARTS_BASE()
 	:m_iDIGIT_BOOSTER_NUM( 2 )
 	,m_iDIGIT_SOLE_NUM( 1 )
 	,m_iDIGIT_JOINT_NUM( 2 )
+	,m_sPartsName( "NoName" )
 {	
 	D3DXVECTOR3 vINIT_SCALE = { 1.0f, 1.0f, 1.0f };
 	m_Trans.vScale = vINIT_SCALE;
-	m_sPartsName = "NoName";
+
 }
 
 clsPARTS_BASE::~clsPARTS_BASE()
@@ -21,39 +22,19 @@ clsPARTS_BASE::~clsPARTS_BASE()
 
 
 
-//作成時.
-void clsPARTS_BASE::Init()
-{
-	InitProduct();
-}
 
 //毎フレーム.
 void clsPARTS_BASE::Update()
 {
+#ifdef _DEBUG
 	ModelUpdate( m_Trans );
+#endif//#ifdef _DEBUG
 	UpdateBonePos();
 	UpdateProduct();
 	ModelUpdate( m_Trans );
 }
 
-//描画.
-void clsPARTS_BASE::Render(
-	const D3DXMATRIX& mView, 
-	const D3DXMATRIX& mProj, 
-	const D3DXVECTOR3& vLight, 
-	const D3DXVECTOR3& vEye,
-	const D3DXVECTOR4& vColorBase,
-	const D3DXVECTOR4& vColorArmor,
-	const bool isAlpha )
-{
-	ModelRender( mView, mProj, vLight, vEye, vColorBase, vColorArmor, isAlpha );
-}
 
-//パーツの名前を覚える.
-void clsPARTS_BASE::SetPartsName( const string &sPartsName )
-{
-	m_sPartsName = sPartsName;
-}
 
 
 D3DXVECTOR3 clsPARTS_BASE::GetBonePos( const char* sBoneName, const bool isLocalPos )
@@ -75,15 +56,3 @@ D3DXVECTOR3 clsPARTS_BASE::GetBonePos( const char* sBoneName, const bool isLocal
 	return vBonePos;
 }
 
-//ボーンが存在するか.
-bool clsPARTS_BASE::ExistsBone( const char* sBoneName )
-{
-	return m_pMesh->ExistsBone( sBoneName );
-}
-
-
-//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
-bool clsPARTS_BASE::PartsAnimChange( const int iIndex )
-{
-	return SetAnimChange( iIndex );
-}

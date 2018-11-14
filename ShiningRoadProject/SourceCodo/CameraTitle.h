@@ -10,20 +10,16 @@ public:
 	clsCAMERA_TITLE();
 	~clsCAMERA_TITLE();
 
-	void Create() final;
+	void Create() final {};
 
 	void Update() final;
 
 	//フラッシュ( ごまかし )のタイミングを教えてくれる.
 	bool isFlash();
 
-	D3DXVECTOR3 GetSpd(){
-		return m_vMoveSpd;
-	};
+	D3DXVECTOR3 GetSpd(){ return m_vMoveSpd; };
 
-	D3DXVECTOR3 GetAcc(){
-		return m_vMoveAcc;
-	};
+	D3DXVECTOR3 GetAcc(){ return m_vMoveAcc; };
 
 
 private:

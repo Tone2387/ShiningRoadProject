@@ -44,8 +44,8 @@ D3DXVECTOR3 clsPARTS_HEAD::GetBonePosPreviosFrame(
 	return vReturnPos;
 }
 
-//↑で使うためにボーン座標を記録する( Renderの直後に使う ).
-void clsPARTS_HEAD::UpdateBonePosPreviosFrame() 
-{
-	m_BonePositions.vCenter	= this->GetBonePos( sBONE_NAME_HEAD_CENTER );
-}
+////↑で使うためにボーン座標を記録する( Renderの直後に使う ).
+//void clsPARTS_HEAD::UpdateBonePosPreviosFrame() 
+//{
+//	m_BonePositions.vCenter	= this->GetBonePos( sBONE_NAME_HEAD_CENTER );
+//}

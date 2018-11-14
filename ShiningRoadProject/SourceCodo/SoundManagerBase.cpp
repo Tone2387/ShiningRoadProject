@@ -9,11 +9,6 @@ using namespace std;
 
 namespace{
 
-	const unsigned int uiRESERVE_SIZE_BGM = 16;
-	const unsigned int uiRESERVE_SIZE_SE = 256;
-	const unsigned int uiRESURVE_SIZE_MAX = 8;	//同時再生数.
-
-
 	//添え字.
 	const char cALIAS_NUM = 0;	//エイリアス名.
 	const char cPATH_NUM = 1;	//音声データのファイルパス.
@@ -51,8 +46,6 @@ clsSOUND_MANAGER_BASE::clsSOUND_MANAGER_BASE( const HWND hWnd )
 	,m_dqisLoopSe()
 	,m_veciBgmNum()
 	,m_veciSeNum()
-	,m_uiRESERVE_SIZE_BGM( uiRESERVE_SIZE_BGM )
-	,m_uiRESERVE_SIZE_SE( uiRESERVE_SIZE_SE )	
 {
 }
 
@@ -120,9 +113,9 @@ void clsSOUND_MANAGER_BASE::Create()
 	string SeDataPath  = tmpDataPass + sSE_PASS;
 
 	//BGM.
-	CreateSound( m_BgmSet, m_dqisLoopBgm, uiRESERVE_SIZE_BGM, BgmDataPath, sSUB_PASS_BGM, m_veciBgmNum );
+	CreateSound( m_BgmSet, m_dqisLoopBgm, BgmDataPath, sSUB_PASS_BGM, m_veciBgmNum );
 	//SE.
-	CreateSound( m_SeSet,  m_dqisLoopSe,  uiRESERVE_SIZE_SE,  SeDataPath,  sSUB_PASS_SE,  m_veciSeNum );
+	CreateSound( m_SeSet,  m_dqisLoopSe,  SeDataPath,  sSUB_PASS_SE,  m_veciSeNum );
 }
 
 //毎フレーム一回使う.
@@ -175,7 +168,6 @@ void clsSOUND_MANAGER_BASE::StopAllSound()
 void clsSOUND_MANAGER_BASE::CreateSound( 
 	SOUND_SET &vpSound,
 	std::deque<bool> &dqbLoop,
-	const unsigned int uiRESERVE_SIZE,
 	const string &sFilePath,
 	const string &sSubPath,
 	vector<int> &viMaxNum )
@@ -257,60 +249,60 @@ void clsSOUND_MANAGER_BASE::CreateSoundData(
 
 
 
-//----- BGM -----//
-//再生関数.
-bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify )
-{
-	return Play( m_BgmSet, m_dqisLoopBgm, m_veciBgmNum, bgmNo, bNotify );
-}
-//停止関数.
-bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo )
-{
-	return Stop( m_BgmSet, m_dqisLoopBgm, bgmNo );
-}
-//音の停止を確認する関数.
-bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
-{
-	return IsStopped( m_BgmSet, bgmNo );
-}
-//音の再生中を確認する関数.
-bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
-{
-	return IsPlaying( m_BgmSet, bgmNo );
-}
-//巻き戻し関数(再生位置初期化).
-bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
-{
-	return SeekToStart( m_BgmSet, bgmNo );
-}
+////----- BGM -----//
+////再生関数.
+//bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify )
+//{
+//	return Play( m_BgmSet, m_dqisLoopBgm, m_veciBgmNum, bgmNo, bNotify );
+//}
+////停止関数.
+//bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo )
+//{
+//	return Stop( m_BgmSet, m_dqisLoopBgm, bgmNo );
+//}
+////音の停止を確認する関数.
+//bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
+//{
+//	return IsStopped( m_BgmSet, bgmNo );
+//}
+////音の再生中を確認する関数.
+//bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
+//{
+//	return IsPlaying( m_BgmSet, bgmNo );
+//}
+////巻き戻し関数(再生位置初期化).
+//bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
+//{
+//	return SeekToStart( m_BgmSet, bgmNo );
+//}
 
 
-//----- SE -----//
-//再生関数.
-bool clsSOUND_MANAGER_BASE::PlaySE( const int seNo, const bool bNotify )
-{
-	return Play( m_SeSet, m_dqisLoopSe, m_veciSeNum, seNo, bNotify );
-}
-//停止関数.
-bool clsSOUND_MANAGER_BASE::StopSE( const int seNo )
-{
-	return Stop( m_SeSet, m_dqisLoopSe, seNo );
-}
-//音の停止を確認する関数.
-bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
-{
-	return IsStopped( m_SeSet, seNo );
-}
-//音の再生中を確認する関数.
-bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
-{
-	return IsPlaying( m_SeSet, seNo );
-}
-//巻き戻し関数(再生位置初期化).
-bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
-{
-	return SeekToStart( m_SeSet, seNo );
-}
+////----- SE -----//
+////再生関数.
+//bool clsSOUND_MANAGER_BASE::PlaySE( const int seNo, const bool bNotify )
+//{
+//	return Play( m_SeSet, m_dqisLoopSe, m_veciSeNum, seNo, bNotify );
+//}
+////停止関数.
+//bool clsSOUND_MANAGER_BASE::StopSE( const int seNo )
+//{
+//	return Stop( m_SeSet, m_dqisLoopSe, seNo );
+//}
+////音の停止を確認する関数.
+//bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
+//{
+//	return IsStopped( m_SeSet, seNo );
+//}
+////音の再生中を確認する関数.
+//bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
+//{
+//	return IsPlaying( m_SeSet, seNo );
+//}
+////巻き戻し関数(再生位置初期化).
+//bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
+//{
+//	return SeekToStart( m_SeSet, seNo );
+//}
 
 
 //----- 各関数の中身 -----//.

@@ -65,7 +65,7 @@ protected:
 	bool CreateNextWindow( clsMENU_WINDOW_BASE** ppOutNextWindow );
 
 	//このウィンドウを操作するようになるならtrue,離れるならfalse.
-	void Operation( const bool isOperation );
+	void Operation( const bool isOperation ){ m_isOperation = isOperation; };
 
 
 	//操作.

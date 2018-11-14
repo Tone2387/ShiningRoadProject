@@ -1,5 +1,7 @@
 #include "MenuWindowGameOverDoAssemble.h"
 #include "PtrGroup.h"
+#include "SoundManagerBase.h"
+#include "CFont.h"
 //#include "UiText.h"
 
 
@@ -108,13 +110,5 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::RenderProduct()
 		m_upCursor->SetPos( vPOS_NO );
 	}
 
-}
-
-bool clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-	return false;
 }
 

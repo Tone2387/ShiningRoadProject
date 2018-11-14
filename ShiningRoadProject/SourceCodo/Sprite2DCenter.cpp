@@ -197,24 +197,6 @@ void clsSPRITE2D_CENTER::Render()
 
 
 
-void clsSPRITE2D_CENTER::SetRot( const D3DXVECTOR3 &vRot )
-{
-	m_vRot = vRot;
-	GuardRotOver( m_vRot );
-}
-
-D3DXVECTOR3 clsSPRITE2D_CENTER::GetRot()
-{
-	return m_vRot;
-}
-
-void clsSPRITE2D_CENTER::AddRot( const D3DXVECTOR3 &vRot )
-{
-	m_vRot += vRot;
-	GuardRotOver( m_vRot );
-}
-	void AddRot( const float &fRot );
-
 
 
 

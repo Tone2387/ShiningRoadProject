@@ -99,24 +99,8 @@ void clsBUILDING::UpdateModel()
 	m_upBox->ModelTransUpdate();
 }
 
-
 void clsBUILDING::UpdateTile()
 {
-//	if( GetAsyncKeyState( VK_UP ) & 0x8000 )	m_Trans.vPos.z += 1.0f;
-//	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_Trans.vPos.z -= 1.0f;
-//	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 )	m_Trans.vPos.x += 1.0f;
-//	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_Trans.vPos.x -= 1.0f;
-//
-//	if( GetAsyncKeyState( 'W' ) & 0x1 )		m_Trans.vScale.z += 10.0f;
-//	if( GetAsyncKeyState( 'S' ) & 0x1 )		m_Trans.vScale.z -= 10.0f;
-//	if( GetAsyncKeyState( 'D' ) & 0x1 )		m_Trans.vScale.x += 10.0f;
-//	if( GetAsyncKeyState( 'A' ) & 0x1 )		m_Trans.vScale.x -= 10.0f;
-//	if( GetAsyncKeyState( 'E' ) & 0x1 )		m_Trans.vScale.y += 10.0f;
-//	if( GetAsyncKeyState( 'Q' ) & 0x1 )		m_Trans.vScale.y -= 10.0f;
-//
-//	if( GetAsyncKeyState( 'R' ) & 0x1 )	m_Trans.vRot.y += 0.01f;
-//	if( GetAsyncKeyState( 'F' ) & 0x1 )	m_Trans.vRot.y -= 0.01f;
-
 	UpdateModel();
 
 	//上面.
@@ -186,9 +170,6 @@ void clsBUILDING::UpdateTile()
 
 }
 
-
-
-
 void clsBUILDING::Render(
 	const D3DXMATRIX &mView, 
 	const D3DXMATRIX &mProj,
@@ -223,9 +204,6 @@ void clsBUILDING::Render(
 #endif//#ifdef _DEBUG
 
 }
-
-
-
 
 
 //タイルの目標数を作る.
@@ -353,7 +331,6 @@ void clsBUILDING::SetTransformTop()
 		}
 	}
 }
-
 
 //タイルの目標数を作る.//引数は軸方向.
 void clsBUILDING::SetTileNumTargetSide( 
@@ -604,8 +581,6 @@ void clsBUILDING::SetTransformSide()
 	}
 }
 
-
-
 //引数に入れたタイルが中心から見て何度の位置にあるか.
 float clsBUILDING::GetTileTheta( 
 	const TRANSFORM& Tile, const TRANSFORM& Center,
@@ -650,59 +625,7 @@ D3DXVECTOR3 clsBUILDING::GetTilePosForRotation(
 
 
 
-clsDX9Mesh* clsBUILDING::GetModelPtr()
-{
-	clsDX9Mesh* pReturn = m_upBox->GetStaticMesh();
-
-	return pReturn;
-}
 
 
 
-D3DXVECTOR3 clsBUILDING::GetPos()
-{
-	return m_Trans.vPos;
-}
-
-void clsBUILDING::SetPos( const D3DXVECTOR3& vPos )
-{
-	m_Trans.vPos = vPos;
-}
-
-void clsBUILDING::AddPos( const D3DXVECTOR3& vPos )
-{
-	m_Trans.vPos += vPos;
-}
-
-
-D3DXVECTOR3 clsBUILDING::GetRot()
-{
-	return m_Trans.vRot;
-}
-
-void clsBUILDING::SetRot( const D3DXVECTOR3& vRot )
-{
-	m_Trans.vRot = vRot;
-}
-
-void clsBUILDING::AddRot( const D3DXVECTOR3& vRot )
-{
-	m_Trans.vRot += vRot;
-}
-
-
-D3DXVECTOR3 clsBUILDING::GetScale()
-{
-	return m_Trans.vScale;
-}
-
-void clsBUILDING::SetScale( const D3DXVECTOR3& vScale )
-{
-	m_Trans.vScale = vScale;
-}
-
-void clsBUILDING::AddScale( const D3DXVECTOR3& vScale )
-{
-	m_Trans.vScale += vScale;
-}
 

@@ -27,6 +27,8 @@
 #include <D3DX10.h>//「D3DX～」の定義使用時に必要.
 #include <D3D10.h>
 
+#include <assert.h>
+
 #include <memory>
 
 #include <string>

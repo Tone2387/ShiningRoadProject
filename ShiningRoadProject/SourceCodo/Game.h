@@ -1,18 +1,20 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+class clsSCENE_BASE;
+class clsCAMERA_BASE;
+class clsFont;
+class clsPOINTER_GROUP;
+class clsDxInput;
+class clsXInput;
+class clsResource;
+class clsEffects;
+class clsSOUND_MANAGER_BASE;
+class clsROBO_STATUS_PLAYER;
+class clsBLACK_SCREEN;
 
-#include "FactoryScene.h"
-#include "FactoryCamera.h"
-#include "FactorySoundManager.h"
+#include "Global.h"
 
-
-#include "DxInput.h"
-#include "CXInput.h"
-
-#include "BlackScreen.h"
-
-#include <memory>
 
 //ゲームの動きはこのクラスの中で行う.
 class clsGAME
@@ -37,9 +39,6 @@ public:
 		ID3D11DepthStencilView* const pBackBuffer_DSTexDSV );
 
 
-	//ラップ関数.
-	D3DXVECTOR3 GetCameraPos() const;
-	D3DXVECTOR3 GetCameraLookPos() const;
 
 
 private:
@@ -48,28 +47,18 @@ private:
 	void SwitchScene( const enSCENE enNextScene, const bool bStartUp = false );
 
 	//シーンクラス.
-	clsSCENE_BASE*		m_upScene;
-	//シーンのファクトリ.
-	std::unique_ptr< clsSCENE_FACTORY > m_upSceneFactory;
-
+	std::unique_ptr< clsSCENE_BASE > m_upScene;
 
 	//カメラ.
 	clsCAMERA_BASE*	m_spCamera;
-	//カメラファクトリ.
-	std::unique_ptr< clsFACTORY_CAMERA > m_upCameraFactory;
-
-	//サウンドのファクトリ.
-	std::unique_ptr< clsFACTORY_SOUND_MANAGER > m_upSoundFactory;
 	
 	//フォント.
 	clsFont*			m_spFont;
-
 
 	//シーン初期化に必要なポインタのまとめ.
 	clsPOINTER_GROUP* m_spPtrGroup; 
 
 
-	//消すときdeleteしないでnullしてね.
 	HWND					m_hWnd;
 	ID3D11Device*			m_wpDevice;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_wpContext;	//デバイスコンテキスト.

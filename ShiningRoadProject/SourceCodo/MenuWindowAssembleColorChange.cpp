@@ -1,5 +1,7 @@
 #include "MenuWindowAssembleColorChange.h"
 #include "PtrGroup.h"
+#include "SoundManagerBase.h"
+#include "CFont.h"
 
 #include "AssembleModel.h"
 
@@ -279,18 +281,4 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	m_wpFont->Render( iColorTextIndex ++ );
 
 }
-
-bool clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-
-	return false;
-}
-
-
-
-
-
 

@@ -88,7 +88,6 @@ clsMain::clsMain()
 	,m_pBackBuffer_TexRTV( nullptr )
 	,m_pBackBuffer_DSTex( nullptr )
 	,m_pBackBuffer_DSTexDSV( nullptr )
-	,m_upGame( nullptr )
 	,m_spViewPort10( nullptr )
 	,m_spViewPort11( nullptr )
 {
@@ -99,7 +98,6 @@ clsMain::clsMain()
 //============================================================
 clsMain::~clsMain()
 {
-	int i=0;
 }
 
 //============================================================
@@ -540,10 +538,7 @@ void clsMain::DestroyD3D()
 #ifdef Tahara
 
 
-//	SAFE_DELETE( m_upGame );
-	if( m_upGame ){
-		m_upGame.reset( nullptr );
-	}
+	m_upGame.reset( nullptr );
 
 
 #endif //#ifdef Tahara

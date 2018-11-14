@@ -90,7 +90,8 @@ public:
 	//第一引数 : 何のパーツ?.
 	//第二引数 : そのパーツの何番目?.
 	clsD3DXSKINMESH* GetPartsModels(
-		const enPARTS enParts, const SKIN_ENUM_TYPE PartsNum );
+		const enPARTS enParts, 
+		const SKIN_ENUM_TYPE PartsNum );
 
 
 

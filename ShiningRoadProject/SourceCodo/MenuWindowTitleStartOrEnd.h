@@ -22,7 +22,7 @@ private:
 	void RenderProduct() override;
 	bool CreateNextWindowProduct( 
 		clsMENU_WINDOW_BASE** ppOutNextWindow, 
-		clsMENU_WINDOW_BASE* const pParentWindow ) override;
+		clsMENU_WINDOW_BASE* const pParentWindow ) override { return false; };
 
 
 };

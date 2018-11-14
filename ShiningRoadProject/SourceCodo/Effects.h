@@ -123,6 +123,7 @@ public:
 	//‚·‚×‚Ä’âŽ~.
 	void StopAll() const 
 	{
+		if( !m_pManager )return;
 		m_pManager->StopAllEffects();
 	}
 	

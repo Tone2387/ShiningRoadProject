@@ -1,5 +1,12 @@
 #include "FactorySoundManager.h"
 
+//#include "SoundManagerBase.h"
+
+#include "SoundManagerTitle.h"
+#include "SoundManagerAssemble.h"
+#include "SoundManagerMission.h"
+#include "SoundManagerEnding.h"
+#include "SoundManagerGameOver.h"
 
 clsSOUND_MANAGER_BASE* clsFACTORY_SOUND_MANAGER::Create( const enSCENE enNextScene, HWND const hWnd )
 {

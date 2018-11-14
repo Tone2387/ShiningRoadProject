@@ -1,5 +1,8 @@
 #include "MenuWindowGameOverContinue.h"
 #include "PtrGroup.h"
+#include "SoundManagerBase.h"
+#include "CFont.h"
+
 //ƒƒjƒ…[‚ğŒÄ‚Ño‚·‚½‚ß.
 #include "MenuWindowGameOverDoAssemble.h"
 

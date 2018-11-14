@@ -57,21 +57,19 @@ public:
 		bool isBillBoard = false );
 
 
-	D3DXVECTOR3 GetPos();
-	void SetPos( const D3DXVECTOR3& vPos );
-	void AddPos( const D3DXVECTOR3& vPos );
+	D3DXVECTOR3 GetPos()					{ return m_vPos; };
+	void SetPos( const D3DXVECTOR3& vPos )	{ m_vPos = vPos; };
+	void AddPos( const D3DXVECTOR3& vPos )	{ m_vPos += vPos; };
 
-	D3DXVECTOR3 GetRot();
-	void SetRot( const D3DXVECTOR3& vRot );
-	void AddRot( const D3DXVECTOR3& vRot );
+	D3DXVECTOR3 GetRot()					{ return m_vRot; };
+	void SetRot( const D3DXVECTOR3& vRot )	{ m_vRot = vRot; };
+	void AddRot( const D3DXVECTOR3& vRot )	{ m_vRot += vRot; };
 
-	D3DXVECTOR3 GetScale();
-	void SetScale( const D3DXVECTOR3& vScale );
-	void AddScale( const D3DXVECTOR3& vScale );
+	D3DXVECTOR3 GetScale()						{ return m_vScale; };
+	void SetScale( const D3DXVECTOR3& vScale )	{ m_vScale = vScale; };
+	void AddScale( const D3DXVECTOR3& vScale )	{ m_vScale += vScale; };
 
-	void SetSplit( const D3DXVECTOR2& vSplit ){
-		m_vSplit = vSplit;
-	}
+	void SetSplit( const D3DXVECTOR2& vSplit )	{ m_vSplit = vSplit; }
 
 
 protected:
