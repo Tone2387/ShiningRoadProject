@@ -21,12 +21,8 @@ public:
 		ID3D11DepthStencilView* const pDepthStencilView );
 
 	//true‚ÅƒmƒCƒY.
-	void SetNoiseFlag( const bool isNoise ){
-		m_isNoise = isNoise;
-	};
-	bool GetNoiseFlag(){
-		return m_isNoise;
-	};
+	void SetNoiseFlag( const bool isNoise )	{ m_isNoise = isNoise; };
+	bool GetNoiseFlag()						{ return m_isNoise; };
 
 	void SetBlock( const int iBlock ){ m_iBlock = iBlock; };
 

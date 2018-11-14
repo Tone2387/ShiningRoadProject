@@ -185,12 +185,6 @@ bool clsMENU_WINDOW_BASE::CreateNextWindow(
 
 
 
-//このウィンドウを操作するようになるならtrue,離れるならfalse.
-void clsMENU_WINDOW_BASE::Operation( const bool isOperation )
-{
-	m_isOperation = isOperation;
-}
-
 
 //このウィンドウを閉じ始めて親ウィンドウに操作を返す.
 void clsMENU_WINDOW_BASE::Close( const float fCloseSpdRate )
