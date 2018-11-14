@@ -1,5 +1,7 @@
 #include "MenuWindowAssembleColorChange.h"
 #include "PtrGroup.h"
+#include "SoundManagerBase.h"
+#include "CFont.h"
 
 #include "AssembleModel.h"
 

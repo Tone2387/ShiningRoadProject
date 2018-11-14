@@ -1,7 +1,10 @@
 #include "MenuWindowBase.h"
 #include "PtrGroup.h"
+#include "SoundManagerBase.h"
+#include "CFont.h"
 #include "UiText.h"
-
+#include "DxInput.h"
+#include "CXInput.h"
 
 
 using namespace std;

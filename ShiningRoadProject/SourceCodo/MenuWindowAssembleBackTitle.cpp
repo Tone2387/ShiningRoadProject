@@ -1,5 +1,7 @@
 #include "MenuWindowAssembleBackTitle.h"
 #include "PtrGroup.h"
+#include "SoundManagerBase.h"
+#include "CFont.h"
 
 namespace{
 

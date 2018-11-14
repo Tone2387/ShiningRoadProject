@@ -1,16 +1,24 @@
 #ifndef PTR_GROUP_H_
 #define PTR_GROUP_H_
 
+class clsDxInput;
+class clsXInput;
+class clsResource;
+class clsEffects;
+class clsSOUND_MANAGER_BASE;
+class clsCAMERA_BASE;
+class clsROBO_STATUS_PLAYER;
+class clsBLACK_SCREEN;
+class clsFont;
 
+
+#include "Global.h"
+#include "RoboStatusPlayer.h"
 #include "DxInput.h"
 #include "CXInput.h"
-#include "Resource.h"
-#include "Effects.h"
 #include "SoundManagerBase.h"
-#include "Camera.h"
-#include "RoboStatusPlayer.h"
-#include "BlackScreen.h"
-#include "CFont.h"
+#include "Effects.h"
+
 
 class clsPOINTER_GROUP
 {

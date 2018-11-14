@@ -5,7 +5,7 @@
 #include "DxInput.h"
 #include "CXInput.h"
 #include "BlackScreen.h"
-
+#include "RoboStatusPlayer.h"
 
 
 using namespace std;

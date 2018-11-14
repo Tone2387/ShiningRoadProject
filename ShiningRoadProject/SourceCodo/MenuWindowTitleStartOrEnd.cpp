@@ -1,5 +1,7 @@
 #include "MenuWindowTitleStartOrEnd.h"
 #include "PtrGroup.h"
+#include "SoundManagerBase.h"
+#include "CFont.h"
 //#include "UiText.h"
 
 
