@@ -267,6 +267,8 @@ void clsRobo::Boost()
 	{
 		//ブースターアニメーションではなかった.
 		AnimChangeLeg(enAnimNoLegBoostStart);//ブースターに切り替え.
+
+		
 	}
 
 	m_bBoost = true;
@@ -1398,8 +1400,6 @@ void clsRobo::AnimUpdateLeg()
 		if (m_bGround)
 		{
 			iChangeAnimNo = enAnimNoLegJumpEnd;
-			m_bStopComMove = true;
-			m_bStopComRot = true;
 		}
 
 		break;
@@ -1408,8 +1408,6 @@ void clsRobo::AnimUpdateLeg()
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
 		{
 			iChangeAnimNo = enAnimNoLegWait;
-			m_bStopComMove = false;
-			m_bStopComRot = false;
 		}
 
 		break;
@@ -1751,6 +1749,18 @@ const bool clsRobo::IsLegPartsAnimBoost()
 
 void clsRobo::AnimChangeLeg(enAnimNoLeg enChangeAnimNo, double dAnimTime)
 {
+	if (enChangeAnimNo == enAnimNoLegJumpEnd)
+	{
+		m_bStopComMove = true;
+		m_bStopComRot = true;
+	}
+
+	else
+	{
+		m_bStopComMove = false;
+		m_bStopComRot = false;
+	}
+
 	if (m_pMesh->IsPartsAnimReverce(enPARTS::LEG))//逆再生になっていたら.
 	{
 		m_pMesh->SetPartsAnimNormal(enPARTS::LEG);//通常再生に戻す.

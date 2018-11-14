@@ -521,8 +521,8 @@ void clsCharactor::LockChara()
 			{
 				if (pCharaTmp)
 				{
-					float fPreviousDis = D3DXVec3Length(&(pCharaTmp->m_vCenterPos - m_vCenterPos));
-					float fNowDis = D3DXVec3Length(&(m_v_pEnemys[i]->m_vCenterPos - m_vCenterPos));
+					float fPreviousDis = D3DXVec3Length(&(pCharaTmp->m_vCenterPos - m_vLockRangePos));
+					float fNowDis = D3DXVec3Length(&(m_v_pEnemys[i]->m_vCenterPos - m_vLockRangePos));
 				
 					if (fNowDis < fPreviousDis)
 					{
@@ -595,7 +595,7 @@ bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
 {
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
-	D3DXVECTOR3 vTarDir = vTargetPos - m_vCenterPos;
+	D3DXVECTOR3 vTarDir = vTargetPos - m_vLockRangePos;
 	D3DXVec3Normalize(&vTarDir, &vTarDir);
 
 	float fDir = D3DXVec3Dot(&vTarDir, &vForword);

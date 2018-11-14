@@ -1,5 +1,6 @@
 #include"Global.h"
 #include"EnemyRobo.h"
+#include"RoboStatusEnemy.h"
 
 class clsEnemyFactory
 {

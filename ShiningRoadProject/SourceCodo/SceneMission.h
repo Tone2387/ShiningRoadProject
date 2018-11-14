@@ -64,6 +64,13 @@ private:
 	void ColEShottoFBody();
 	void ColEShottoEBody();
 
+	//èdï°éûÇÃìÆçÏ.
+	void ColFtoFDuplicate();
+	void ColFtoEDuplicate();
+
+	void ColEtoFDuplicate();
+	void ColEtoEDuplicate();
+
 	bool AllEnemyDead();
 
 	bool m_bEnemyStop;
