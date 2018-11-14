@@ -35,19 +35,29 @@ public:
 		const D3DXVECTOR3 &vEye );
 
 	//ƒŒƒC—p.
-	clsDX9Mesh* GetModelPtr();
+	clsDX9Mesh* GetModelPtr(){
+#if _DEBUG
+		clsDX9Mesh* pReturn = m_upBox->GetStaticMesh();
+		return pReturn;
+#else//#if _DEBUG
+		return m_upBox->GetStaticMesh();
+#endif//#if _DEBUG
+	}
 
-	D3DXVECTOR3 GetPos();
-	void SetPos( const D3DXVECTOR3& vPos );
-	void AddPos( const D3DXVECTOR3& vPos );
+	//À•W.
+	D3DXVECTOR3 GetPos()					{ return m_Trans.vPos; }
+	void SetPos( const D3DXVECTOR3& vPos )	{ m_Trans.vPos = vPos;	this->UpdateTile(); }
+	void AddPos( const D3DXVECTOR3& vPos )	{ m_Trans.vPos += vPos; this->UpdateTile(); }
+	//‰ñ“].
+	D3DXVECTOR3 clsBUILDING::GetRot()					{ return m_Trans.vRot; }
+	void clsBUILDING::SetRot( const D3DXVECTOR3& vRot )	{ m_Trans.vRot = vRot;	this->UpdateTile(); }
+	void clsBUILDING::AddRot( const D3DXVECTOR3& vRot )	{ m_Trans.vRot += vRot; this->UpdateTile(); }
 
-	D3DXVECTOR3 GetRot();
-	void SetRot( const D3DXVECTOR3& vRot );
-	void AddRot( const D3DXVECTOR3& vRot );
 
-	D3DXVECTOR3 GetScale();
-	void SetScale( const D3DXVECTOR3& vScale );
-	void AddScale( const D3DXVECTOR3& vScale );
+	D3DXVECTOR3 GetScale()						{ return m_Trans.vScale; }
+	void SetScale( const D3DXVECTOR3& vScale )	{ m_Trans.vScale = vScale;	this->UpdateTile(); }
+	void AddScale( const D3DXVECTOR3& vScale )	{ m_Trans.vScale += vScale; this->UpdateTile(); }
+
 
 
 private:

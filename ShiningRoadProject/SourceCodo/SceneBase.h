@@ -57,10 +57,6 @@ public:
 	//----- 各シーン共通 -----//.
 
 
-	//メインまで送り上げる.
-	D3DXVECTOR3 GetCameraPos() const;
-	D3DXVECTOR3 GetCameraLookPos() const;
-
 protected:
 
 	//----- 各シーンごとの関数 -----//.

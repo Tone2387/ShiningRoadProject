@@ -559,18 +559,6 @@ void clsSCENE_BASE::SetDepth( const bool isOn )
 
 
 
-D3DXVECTOR3 clsSCENE_BASE::GetCameraPos() const
-{
-	assert( m_wpCamera );
-	return m_wpCamera->GetPos();
-}
-D3DXVECTOR3 clsSCENE_BASE::GetCameraLookPos() const
-{
-	assert( m_wpCamera );
-	return m_wpCamera->GetLookPos();
-}
-
-
 
 
 #if _DEBUG
@@ -659,11 +647,12 @@ HRESULT clsSCENE_BASE::CreateDepthStencilState()
 //カメラ関数.
 void clsSCENE_BASE::Camera()
 {
+	assert( m_wpCamera );
 	//ビュー(カメラ)変換.
 	D3DXVECTOR3 vUpVec	( 0.0f, 1.0f, 0.0f );	//上方位置.
 	D3DXMatrixLookAtLH(
 		&m_mView,	//(out)ビュー計算結果.
-		&GetCameraPos(), &GetCameraLookPos(), &vUpVec );
+		&m_wpCamera->GetPos(), &m_wpCamera->GetLookPos(), &vUpVec );
 
 }
 //プロジェクション関数.
@@ -815,8 +804,5 @@ void clsSCENE_BASE::UpdateNoise()
 		}
 		break;
 	}
-
-
-
 }
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
