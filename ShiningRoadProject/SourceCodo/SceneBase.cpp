@@ -787,15 +787,15 @@ void clsSCENE_BASE::NoiseSmall( const int iFrame )
 
 void clsSCENE_BASE::UpdateNoise()
 {
-	m_iNoiseFrame --;
+	if( m_iNoiseFrame > 0 ){
+		m_iNoiseFrame --;
+	}
 
 	switch( m_encNoise )
 	{
 	case encNOISE::BLOCK_AND_PULSE:
 		//èIóπ.
-		if( //m_iNoiseFrame <= 0 && 
-			m_fBlock <= fNOISE_ORIGINAL 
-		){
+		if( m_fBlock <= fNOISE_ORIGINAL ){
 			m_upScreenTexture->SetNoiseFlag( false );
 			m_encNoise = encNOISE::NOTHING;
 		}

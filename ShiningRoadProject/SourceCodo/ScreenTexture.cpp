@@ -415,8 +415,10 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		cb.mW = m;
 		cb.fViewPortWidth = WND_W;
 		cb.fViewPortHeight= WND_H;
-		cb.vColor = { 1.0f, 1.0f, 1.0f, 0.0f };
-		cb.vColor = { 2.0f, 2.0f, 2.0f, 0.0f };
+		cb.vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		//ブロックノイズを掛けると暗くなるので.
+		const float fNOISE_COLOR_ = 2.0f;
+		cb.vColor = { fNOISE_COLOR_, fNOISE_COLOR_, fNOISE_COLOR_, 1.0f };
 //		cb.vColor = { 2.0f, 0.5f, 0.5f, 1.0f };
 		cb.vUV			= { 0.0f, 0.0f };
 
