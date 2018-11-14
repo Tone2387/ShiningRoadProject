@@ -61,6 +61,7 @@ clsEffects::clsEffects()
 
 clsEffects::~clsEffects()
 {
+	StopAll();
 	Destroy();
 }
 

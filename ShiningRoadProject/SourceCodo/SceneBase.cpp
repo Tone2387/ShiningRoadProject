@@ -1,7 +1,6 @@
 #include "SceneBase.h"
 #include "ScreenTexture.h"
 
-#include <Windows.h>
 
 using namespace std;
 
@@ -71,10 +70,10 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
-	m_wpFont->Release();
+	if( m_wpFont ) m_wpFont->Release();
 
 	//次のシーンに余計なエフェクトを持ち込まない.
-	m_wpEffects->StopAll();
+	if( m_wpEffects ) m_wpEffects->StopAll();
 
 	SAFE_RELEASE( m_pDepthStencilStateOff );
 	SAFE_RELEASE( m_pDepthStencilStateOn );

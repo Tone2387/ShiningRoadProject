@@ -1,4 +1,12 @@
 #include "Game.h"
+#include "FactoryScene.h"
+#include "FactoryCamera.h"
+#include "FactorySoundManager.h"
+#include "DxInput.h"
+#include "CXInput.h"
+#include "BlackScreen.h"
+
+
 
 using namespace std;
 
@@ -37,10 +45,7 @@ clsGAME::clsGAME(
 		,m_spResource( nullptr )
 		,m_spEffect( nullptr )
 		,m_spSound( nullptr )
-		,m_upScene( nullptr )
-		,m_upSceneFactory( nullptr )
 		,m_spCamera( nullptr )
-		,m_upCameraFactory( nullptr )
 		,m_spRoboStatus( nullptr )
 		,m_spBlackScreen( nullptr )
 		,m_spFont( nullptr )
@@ -53,30 +58,15 @@ clsGAME::clsGAME(
 
 clsGAME::~clsGAME()
 {
-	SAFE_DELETE( m_upScene );
+	m_upScene.reset( nullptr );
 	SAFE_DELETE( m_spCamera );
-//	SAFE_DELETE( m_upCameraFactory );
-	if( m_upCameraFactory ){
-		m_upCameraFactory.reset( nullptr );
-	}
-//	SAFE_DELETE( m_upSceneFactory );
-	if( m_upSceneFactory ){
-		m_upSceneFactory.reset( nullptr );
-	}
 	SAFE_DELETE( m_spPtrGroup );
 	SAFE_DELETE( m_spFont );
 	SAFE_DELETE( m_spBlackScreen );
 	SAFE_DELETE( m_spRoboStatus );
 	SAFE_DELETE( m_spEffect );
 	SAFE_DELETE( m_spSound );
-	m_upSoundFactory.reset();
 	SAFE_DELETE( m_spXInput );
-//	if( m_spXInput != nullptr ){
-//		m_spXInput->EndProc();
-//		XInputEnable( false );
-//		delete m_spXInput;
-//		m_spXInput = nullptr;
-//	}
 	SAFE_DELETE( m_spDxInput );
 	SAFE_DELETE( m_spResource );
 
@@ -97,13 +87,6 @@ void clsGAME::Create()
 	assert( !m_spXInput );
 	m_spXInput = new clsXInput;
 
-	assert( !m_upSoundFactory );
-	m_upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
-
-	assert( !m_spSound );
-//	m_spSound = m_upSoundFactory->Create( START_UP_SCENE, m_hWnd );
-//	m_spSound->Create();
-
 	assert( !m_spEffect );
 	m_spEffect = new clsEffects;
 	m_spEffect->Create( m_wpDevice, m_wpContext );
@@ -115,12 +98,12 @@ void clsGAME::Create()
 	SPRITE_STATE ss;
 	assert( !m_spBlackScreen );
 	m_spBlackScreen = new clsBLACK_SCREEN;
-	m_spBlackScreen->Create( m_wpDevice, m_wpContext,
+	m_spBlackScreen->Create( 
+		m_wpDevice, m_wpContext,
 		cBLACK_FILE_NAME, ss );
 
 	assert( !m_spFont );
-	m_spFont = new clsFont ( 
-		m_wpDevice, m_wpContext );
+	m_spFont = new clsFont ( m_wpDevice, m_wpContext );
 
 	//引数のポインタの集合体.
 	assert( !m_spPtrGroup );
@@ -128,16 +111,14 @@ void clsGAME::Create()
 		m_wpDevice, m_wpContext, 
 		m_wpViewPort10, m_wpViewPort11,
 		m_spDxInput, m_spXInput,
-		m_spResource, m_spEffect, m_spSound,
-		m_spRoboStatus, m_spBlackScreen,
+		m_spResource, 
+		m_spEffect, 
+		m_spSound,
+		m_spRoboStatus, 
+		m_spBlackScreen,
 		m_spFont );
 
 
-	//ファクトリの作成.
-	assert( !m_upSceneFactory );
-	m_upSceneFactory = make_unique< clsSCENE_FACTORY >( m_spPtrGroup );
-	assert( !m_upCameraFactory );
-	m_upCameraFactory = make_unique< clsFACTORY_CAMERA >();
 
 	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
 	SwitchScene( GET_STATUS_DATA_INIT_SCENE, true );
@@ -207,14 +188,15 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	}
 
 	//今のシーンを消して.
-	SAFE_DELETE( m_upScene );
+//	SAFE_DELETE( m_upScene );
 	SAFE_DELETE( m_spCamera );
 	SAFE_DELETE( m_spSound );
 
 	//サウンド.
 
 	if( !bStartUp ){
-		m_spSound = m_upSoundFactory->Create( enNextScene, m_hWnd );
+		unique_ptr< clsFACTORY_SOUND_MANAGER > upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
+		m_spSound = upSoundFactory->Create( enNextScene, m_hWnd );
 		if( m_spSound ){
 			m_spSound->Create();
 		}
@@ -222,11 +204,14 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	m_spPtrGroup->UpdateSoundPtr( m_spSound );
 
 	//カメラ.
-	m_spCamera = m_upCameraFactory->Create( enNextScene );
+	//ファクトリの作成.
+	unique_ptr< clsFACTORY_CAMERA > upCameraFactory = make_unique< clsFACTORY_CAMERA >();
+	m_spCamera = upCameraFactory->Create( enNextScene );
 	m_spPtrGroup->UpdateCameraPtr( m_spCamera );
 
 	//お待ちかねのシーン本体.
-	m_upScene = m_upSceneFactory->Create( enNextScene );
+	unique_ptr< clsSCENE_FACTORY > upSceneFactory = make_unique< clsSCENE_FACTORY >( m_spPtrGroup );
+	m_upScene.reset( upSceneFactory->Create( enNextScene ) );
 
 	if( m_upScene ){
 		m_upScene->Create();//シーン初期化.
@@ -238,17 +223,6 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 }
 
 
-
-
-//ラップ関数.
-D3DXVECTOR3 clsGAME::GetCameraPos() const
-{
-	return m_upScene->GetCameraPos();
-}
-D3DXVECTOR3 clsGAME::GetCameraLookPos() const
-{
-	return m_upScene->GetCameraLookPos();
-}
 
 
 

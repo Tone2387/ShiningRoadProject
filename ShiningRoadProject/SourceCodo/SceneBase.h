@@ -18,9 +18,7 @@ class clsSCREEN_TEXTURE;
 #include "CharaStatic.h"
 
 #include "PtrGroup.h"
-
 #include "Sprite2DCenter.h"
-
 #include "UiText.h"
 
 //#include "KeyInput.h"
