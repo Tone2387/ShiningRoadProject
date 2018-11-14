@@ -112,11 +112,3 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::RenderProduct()
 
 }
 
-bool clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-	return false;
-}
-

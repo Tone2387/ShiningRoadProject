@@ -282,17 +282,3 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 
 }
 
-bool clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-
-	return false;
-}
-
-
-
-
-
-

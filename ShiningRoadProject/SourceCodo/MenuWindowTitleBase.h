@@ -16,9 +16,6 @@ public:
 
 protected:
 
-
-
-
 private:
 
 };

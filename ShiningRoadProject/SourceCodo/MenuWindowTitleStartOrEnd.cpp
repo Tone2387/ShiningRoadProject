@@ -108,14 +108,3 @@ void clsMENU_WINDOW_TITLE_START_OR_END::RenderProduct()
 
 }
 
-bool clsMENU_WINDOW_TITLE_START_OR_END::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-	return false;
-}
-
-
-
-
