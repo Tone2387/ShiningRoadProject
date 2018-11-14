@@ -5,7 +5,7 @@
 using namespace std;
 
 //legのモデルの足元がおかしい場合.
-#define LEG_MODEL_POSITION_BASE_Y_OFFSET
+//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
 
 #if _DEBUG
 #include "CharaStatic.h"
@@ -15,8 +15,9 @@ namespace{
 
 #if _DEBUG
 		//足元.
-		std::unique_ptr<clsCharaStatic> m_upFoot;
 		std::unique_ptr<clsCharaStatic> m_upFootNull;
+		std::unique_ptr<clsCharaStatic> m_upFootPosBase;
+		std::unique_ptr<clsCharaStatic> m_upFootTrasnPos;
 #endif//#if _DEBUG
 
 
@@ -118,17 +119,27 @@ void clsASSEMBLE_MODEL::Create(
 #if _DEBUG
 	float fRATE = 2.5f;
 	//足元.
-	m_upFoot = make_unique<clsCharaStatic>();
-	m_upFoot->AttachModel(
+	m_upFootTrasnPos = make_unique<clsCharaStatic>();
+	m_upFootTrasnPos->AttachModel(
 		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
-	m_upFoot->AddRotationZ( static_cast<float>( M_PI ) );
-	m_upFoot->SetScale( 0.25f / fRATE );
+	m_upFootTrasnPos->AddRotationZ( static_cast<float>( M_PI ) );
+	m_upFootTrasnPos->SetScale( 0.25f / fRATE );
+	m_upFootTrasnPos->SetScale( { m_upFootTrasnPos->GetScale().x, 0.5f, m_upFootTrasnPos->GetScale().z } );
+
+	m_upFootPosBase = make_unique<clsCharaStatic>();
+	m_upFootPosBase->AttachModel(
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
+	m_upFootPosBase->AddRotationZ( static_cast<float>( M_PI ) );
+	m_upFootPosBase->SetScale( 0.2f / fRATE );
 
 	m_upFootNull = make_unique<clsCharaStatic>();
 	m_upFootNull->AttachModel(
 		m_wpResource->GetStaticModels( clsResource::enStaticModel_Building ) );
 	m_upFootNull->AddRotationZ( static_cast<float>( M_PI ) );
-	m_upFootNull->SetScale( { 0.125f / fRATE, 0.5f / fRATE, 0.125f / fRATE } );
+	m_upFootNull->SetScale( { 
+		0.125f / fRATE, 
+		0.5f / fRATE * 0.5f, 
+		0.125f / fRATE } );
 #endif//#if _DEBUG
 
 }
@@ -185,15 +196,15 @@ void clsASSEMBLE_MODEL::UpDate()
 }
 
 void clsASSEMBLE_MODEL::UpdateProduct()
-{
-}
+{}
 
 void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mView, 
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const enPARTS_TYPES AlphaParts )
+	const enPARTS_TYPES AlphaParts,
+	ID3D11DeviceContext* const pContext )
 {
 	D3DXVECTOR4 vTmpColorBase;
 	D3DXVECTOR4 vTmpColorArmor;
@@ -206,7 +217,7 @@ void clsASSEMBLE_MODEL::Render(
 //	D3DXVECTOR3 vLegPosNull = m_vpParts[ucLEG]->GetBonePos( sBONE_NAME_LEG_NULL );
 
 	D3DXVECTOR3 vLegPosPositionBase = GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_POSITION_BASE );
-	D3DXVECTOR3 vLegPosNull =GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_NULL );
+	D3DXVECTOR3 vLegPosNull			= GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_NULL );
 
 	const float fADD_POS_Y = vLegPosPositionBase.y - vLegPosNull.y;
 
@@ -215,11 +226,15 @@ void clsASSEMBLE_MODEL::Render(
 
 #endif
 
+	D3DXVECTOR3 vLegPosPositionBase = GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_POSITION_BASE );
+	D3DXVECTOR3 vLegPosNull			= GetBonePosPreviosFrame( enPARTS_INDEX_LEG, clsPARTS_LEG::enLEG_BONE_POSITIONS_NULL );
+
+
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
 		unsigned int uiMaskNum = 0;
-		vTmpColorBase = CreateColor( AlphaParts, i, uiMaskNum ++ );
-		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++ );
+		vTmpColorBase  = CreateColor( AlphaParts, i, uiMaskNum ++, pContext );
+		vTmpColorArmor = CreateColor( AlphaParts, i, uiMaskNum ++, pContext );
 		SetPartsFormalPos();
 		m_vpParts[i]->ModelUpdate( m_vpParts[i]->m_Trans );
 //		ModelUpdate();
@@ -233,19 +248,26 @@ void clsASSEMBLE_MODEL::Render(
 
 #ifdef LEG_MODEL_POSITION_BASE_Y_OFFSET
 	m_Trans.vPos -= D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
+
 #endif//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
-
-
 #if _DEBUG
 	m_upFootNull->SetPosition( vLegPosNull );
 	m_upFootNull->UpdatePos();
 	m_upFootNull->Render( mView, mProj, vLight, vEye, { 10.0f, 0.0f, 0.0f, 0.5f }, true );
 	
-	m_upFoot->SetPosition( m_Trans.vPos );
-	m_upFoot->UpdatePos();
-	m_upFoot->Render( mView, mProj, vLight, vEye, { 0.0f, 10.0f, 0.0f, 0.5f }, true );
+//	m_upFoot->SetPosition( m_Trans.vPos );
+	m_upFootPosBase->SetPosition( vLegPosPositionBase );
+	m_upFootPosBase->UpdatePos();
+	m_upFootPosBase->Render( mView, mProj, vLight, vEye, { 0.0f, 10.0f, 0.0f, 0.5f }, true );
+	
+	m_upFootTrasnPos->SetPosition( m_vpParts[0]->GetPosition() );
+	m_upFootTrasnPos->UpdatePos();
+	m_upFootTrasnPos->Render( mView, mProj, vLight, vEye, { 0.0f, 0.0f, 10.0f, 0.5f }, true );
 	
 #endif//#if _DEBUG
+
+	//ワイヤーフレーム解除.
+	ChangeWireFrame( false, pContext );
 
 }
 
@@ -254,7 +276,8 @@ void clsASSEMBLE_MODEL::Render(
 D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor( 
 	const enPARTS_TYPES AlphaParts, 
 	const UINT uiIndex,
-	const unsigned int uiMaskNum )
+	const unsigned int uiMaskNum,
+	ID3D11DeviceContext* const pContext  )
 {
 	D3DXVECTOR4 vReturn = vCOLOR_NORMAL;
 
@@ -262,20 +285,25 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 		vReturn = m_vecvColor[ uiMaskNum ];
 	}
 
+	ChangeWireFrame( false, pContext );
+
 	switch( AlphaParts )
 	{
 	case LEG:
 		if( uiIndex == static_cast<UINT>( enPARTS::LEG ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
 	case CORE:
 		if( uiIndex == static_cast<UINT>( enPARTS::CORE ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
 	case HEAD:
 		if( uiIndex == static_cast<UINT>( enPARTS::HEAD ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
@@ -284,16 +312,19 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 		if( uiIndex == static_cast<UINT>( enPARTS::ARM_L ) ||
 			uiIndex == static_cast<UINT>( enPARTS::ARM_R ) )
 		{
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
 	case WEAPON_L:
 		if( uiIndex == static_cast<UINT>( enPARTS::WEAPON_L ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
 	case WEAPON_R:
 		if( uiIndex == static_cast<UINT>( enPARTS::WEAPON_R ) ){
+			ChangeWireFrame( true, pContext );
 			vReturn = vCOLOR_ALPHA;
 		}
 		break;
@@ -303,6 +334,47 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 	}
 
 	return vReturn;
+}
+
+//ワイヤーフレーム切替.
+void clsASSEMBLE_MODEL::ChangeWireFrame(
+	const bool isWire,
+	ID3D11DeviceContext* const  pContext )
+{
+	if( !pContext ){
+		return;
+	}
+
+	//ラスタライズ(面の塗りつぶし方)設定.
+	D3D11_RASTERIZER_DESC rdc;
+	ZeroMemory( &rdc, sizeof( rdc ) );
+	rdc.CullMode = D3D11_CULL_BACK;
+					//D3D11_CULL_NONE :カリングを切る(正背面を描画する).
+					//D3D11_CULL_BACK :背面を描画しない.
+					//D3D11_CULL_FRONT:正面を描画しない.
+	rdc.FrontCounterClockwise	= FALSE;
+								//ポリゴンの表裏を決定するフラグ.
+								//TRUE :左回りなら前向き,右回りなら後ろ向き.
+								//FALSE:↑の逆になる.
+	rdc.DepthClipEnable	= FALSE;	//距離についてのクリッピング有効.
+
+	if( isWire ){
+		rdc.FillMode = D3D11_FILL_WIREFRAME;//ワイヤーフレーム.
+	}
+	else{
+		rdc.FillMode = D3D11_FILL_SOLID;	//塗りつぶし(ソリッド).
+	}
+
+
+	ID3D11Device* pDevice = nullptr;
+	pContext->GetDevice( &pDevice );
+	if( !pDevice ) return;
+
+	ID3D11RasterizerState* pIr	= nullptr;
+	pDevice->CreateRasterizerState( &rdc, &pIr );
+	pContext->RSSetState( pIr );
+	SAFE_RELEASE( pIr );
+
 }
 
 

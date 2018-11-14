@@ -14,8 +14,8 @@ public:
 	clsEnemyBase();
 	virtual ~clsEnemyBase();
 
-	virtual void Update();
-	virtual void SetData(std::string strEnemyFolderName);
+	void Update();
+	void SetData(std::string strEnemyFolderName);
 	void SearchTarget(std::vector<clsCharactor*>);
 
 protected:
@@ -25,36 +25,38 @@ protected:
 	clsCharactor* m_pTarget;
 
 	std::vector<clsCharactor*>* m_vp_pEnemys;
-
-	void SetBaseData(std::string strEnemyFolderName);
-	void SetMoveData();
-	void SetVisibilityData();
-	void SetShotData();
-
-	virtual void UpdateProduct();
-
-	void SearchNear();
-
-	bool SetMoveDir(float& fPush, float& fAngle);
-	bool SetRotate(float& fPush, float& fAngle);
-	bool SetLook(float& fPush, float& fAngle);
-
-	bool IsJump();
-	bool IsShot();
-
-	struct ShotState
+	
+	enum enTargetEvaluationType
 	{
-		int iShotDisMin;
-		int iShotDisMax;
-		int iShotENLimitParcent;
+		enTargetEvaluationTypeNear = 0,
+
+		enTargetEvaluationTypeSize
+	};
+
+	enum enMoveSwitchType
+	{
+		enMoveSwitchTypeOrder = 0,
+		enMoveSwitchTypeRandam,
+
+		enMoveSwitchTypeSize
 	};
 
 	struct BaseState
 	{
 		std::string strEnemyFolderName;
 
-		int iMoveCategoryVisType;//移動ステータスを切り替える方法.
+		int iMoveSwitchType;//移動ステータスを切り替える方法.
 		int iProcFrame;//視点調整を更新する時間.
+		int iTargetEvaluationType;//ターゲット評価基準.
+	};
+
+	enum enBaseStateFileOrder
+	{
+		enBaseStateMoveSwichType,
+		enBaseStateProcFrame,
+		enBaseStateTargetEvaluationType,
+
+		enBaseStateSize
 	};
 
 	struct MoveState
@@ -68,6 +70,44 @@ protected:
 		int iVerDistRandMax;
 	};
 
+	enum enMoveStateFileOrder
+	{
+		enMoveStateMoveUpdateInterval,
+		enMoveStateHorDistance,
+		enMoveStateHorDisRandMax,
+		enMoveStateMoveDir,
+		enMoveStateMoveDirRandMax,
+		enMoveStateVerDistance,
+		enMoveStateVerDistRandMax,
+
+		enMoveStateSize
+	};
+
+	struct ShotState
+	{
+		int iShotDisMin;
+		int iShotDisMax;
+		int iShotENLimitParcent;
+	};
+
+	enum enShotStateFileOrder
+	{
+		enShotStateShotDisMin,
+		enShotStateShotDisMax,
+		enShotStateShotENLimitParcent,
+		
+		enShotStateSize
+	};
+
+	enum enVisibilityType
+	{
+		enVisibilityTypeNormal = 0,//壁に阻まれると視認できない.
+		enVisibilityTypeOutlook,//壁に阻まれない.
+		enVisibilityTypeAll,//無条件で認識.
+
+		enVisibilityTypeSize
+	};
+
 	struct VisibilityAreaState
 	{
 		int iVisType;
@@ -75,30 +115,19 @@ protected:
 		int iVisAngle;
 	};
 
-	struct MoveData
+	enum enVisibilityAreaStateFileOrder
 	{
-		int iCategory;
-		std::vector<MoveState> v_MoveState;
+		enVisibilityAreaVisType,
+		enVisibilityAreaVisDistance,
+		enVisibilityAreaVisAngle,
+		
+		enVisibilityAreaStateSize
 	};
 
-	struct ShotData
-	{
-		int iCategory;
-		std::vector<ShotState> v_ShotState;
-	};
-
-	
-
-	struct VisibilityAreaData
-	{
-		int iCategory;
-		std::vector<VisibilityAreaState> v_VisAreaState;
-	};
-
-	BaseState m_BaseData;
-	MoveData m_MoveData;
-	VisibilityAreaData m_visAreaData;
-	ShotData m_ShotData;
+	BaseState m_BaseState;
+	std::vector<MoveState> m_v_MoveState;
+	std::vector<ShotState> m_v_ShotState;
+	std::vector<VisibilityAreaState> m_v_VisAreaState;
 
 	struct UpdateState
 	{
@@ -118,5 +147,26 @@ protected:
 	};
 
 	UpdateState m_UpdateState;
+
+	void SetBaseData(std::string strEnemyFolderName);
+	void SetMoveData();
+	void SetVisibilityData();
+	virtual void SetShotData();
+	virtual void SetDataProduct();
+
+	virtual void UpdateProduct();
+
+	bool SetMoveDir(float& fPush, float& fAngle);
+	void SwitchMoveState();
+	bool SetRotate(float& fPush, float& fAngle);
+	bool SetLook(float& fPush, float& fAngle);
+
+	bool IsJump();
+	bool IsShot();
+
+	bool IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const VisibilityAreaState VisAreaState);
+
+	//ターゲット評価関数.
+	bool IsTargetNear(const D3DXVECTOR3 vEnemyPos);
 };
 

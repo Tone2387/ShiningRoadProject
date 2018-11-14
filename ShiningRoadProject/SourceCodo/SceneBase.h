@@ -1,6 +1,14 @@
 #ifndef SCENE_BASE_H_
 #define SCENE_BASE_H_
 
+//#ifndef _DEBUG
+//ついているとバックバッファではなくいったんテクスチャに描画する.
+#define RENDER_SCREEN_TEXTURE_
+//#endif//#ifdef _DEBUG
+
+class clsSCREEN_TEXTURE;
+
+
 #include "Global.h"
 
 #if _DEBUG
@@ -35,7 +43,9 @@ public:
 	//				  指定したシーンが生成される ).
 	void Update( enSCENE &enNextScene );
 	//シーン内のオブジェクトの描画関数のまとめ.
-	void Render();
+	void Render( 
+		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
+		ID3D11DepthStencilView* const pDepthStencilView );
 	//----- 各シーン共通 -----//.
 
 
@@ -66,15 +76,48 @@ protected:
 	bool isPressEnter();
 	bool isPressExit();
 
-	//押しっぱなしで動く.
-	bool isPressHoldRight();
-	bool isPressHoldLeft();
-	bool isPressHoldUp();
-	bool isPressHoldDown();
-//	int m_iHoldFreamRight;
-//	int m_iHoldFreamLeft;
-//	int m_iHoldFreamUp;
-//	int m_iHoldFreamDown;
+	//押しっぱなしで動く( trueならスティック有効 ).
+	bool isPressHoldRight( bool isWithStick = true );
+	bool isPressHoldLeft ( bool isWithStick = true );
+	bool isPressHoldUp	 ( bool isWithStick = true );
+	bool isPressHoldDown ( bool isWithStick = true );
+
+	//----- Render用 -----//.
+	//深度テスト(Zテスト)　ON/OFF切替.
+	void SetDepth( const bool isOn );
+
+	//---継承先のRenderProductで使用する---.
+	void SetViewPort( 
+		D3D11_VIEWPORT* const pVp, 
+		const D3DXVECTOR3 &vCamPos, 
+		const D3DXVECTOR3 &vCamLookPos,
+		const float fWndW, const float fWndH );
+
+	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
+	D3D11_VIEWPORT* GetViewPortMainPtr();
+	//----- Render用 -----//.
+
+#ifdef RENDER_SCREEN_TEXTURE_	
+	//ノイズを起こす.
+	void NoiseBig( const int iPower );
+	void NoiseSmall( const int iFrame );
+
+	void UpdateNoise();
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	virtual void RenderDebugText();
+	//BGMのチェック.
+	void DebugBgm();
+//	clsDebugText*	m_upText;
+	std::unique_ptr< clsDebugText >	m_upText;
+
+#endif//#if _DEBUG
+
+protected:
+
 	struct HOLD_STATE
 	{
 		int iHoldFream;
@@ -89,33 +132,24 @@ protected:
 	HOLD_STATE m_HoldUp;
 	HOLD_STATE m_HoldDown;
 
-	//----- Render用 -----//.
-	//深度テスト(Zテスト)　ON/OFF切替.
-	void SetDepth( const bool isOn );
+#ifdef RENDER_SCREEN_TEXTURE_	
+	enum class encNOISE{
+		NOTHING = 0,
+		BLOCK_AND_PULSE,//大ダメージ.
+		MINUTE_BLOCK,	//小刻みなダメージ.
+	}	m_encNoise;
+
+	//ノイズ.
+	int		m_iNoiseFrame;
+	float	m_fBlock;
+	float	m_fPulse;
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+
+
 	D3DXMATRIX		m_mView;	//ビュー(カメラ)行列.
 	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
 
-	//---継承先のRenderProductで使用する---.
-	void SetViewPort( 
-		D3D11_VIEWPORT* const pVp, 
-		const D3DXVECTOR3 &vCamPos, 
-		const D3DXVECTOR3 &vCamLookPos,
-		const float fWndW, const float fWndH );
-	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
-	D3D11_VIEWPORT* GetViewPortMainPtr();
-	//----- Render用 -----//.
-
-
-//	std::unique_ptr< clsKEY_INPUT > m_upKey;
-
-	//デバッグテキストクラス.
-#if _DEBUG
-//	clsDebugText*	m_upText;
-	std::unique_ptr< clsDebugText >	m_upText;
-	//デバック゛テキストの表示.
-	virtual void RenderDebugText();
-#endif//#if _DEBUG
 
 
 	//基底クラスのポインタは基底クラスで破棄します.
@@ -150,6 +184,8 @@ private:
 	//デバッグ用シーン切り替え.
 	void DebugChangeScene( enSCENE &enNextScene ) const;
 
+private:
+
 	//暗転中に待ってくれるために必要.
 	enSCENE m_enNextScene;
 
@@ -161,9 +197,15 @@ private:
 	//診断用( 今現在使っているビューポート ).
 	D3D11_VIEWPORT* m_wpViewPortUsing;
 
-
+	//奥行on, off.
 	ID3D11DepthStencilState* m_pDepthStencilStateOn;
 	ID3D11DepthStencilState* m_pDepthStencilStateOff;
+
+
+
+#ifdef RENDER_SCREEN_TEXTURE_
+	std::unique_ptr< clsSCREEN_TEXTURE >	m_upScreenTexture;
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
 };

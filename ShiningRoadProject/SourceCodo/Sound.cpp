@@ -1,7 +1,7 @@
 #include "Sound.h"
+#include "MyMacro.h"
 #include <stdio.h>
 #include <assert.h>
-
 
 
 //コンストラクタ.
@@ -50,22 +50,28 @@ bool clsSound::Open( const LPCTSTR sFName, const char* const sAlias, const HWND 
 	if( mciSendString( command, NULL, 0, m_hWnd ) == 0 ){
 		return true;
 	}
+
+	ERR_MSG( m_sAlias, "開くの失敗" );
+	m_bOpend = false;
 	return false;
 }
 
 //音声ファイルを閉じる.
 bool clsSound::Close()
 {
+	if( !m_bOpend ) return false;
+
 	//コマンド.
 	char command[STR_BUFF_MAX] = "close ";
 	strcat_s( command, sizeof( command ), m_sAlias );	//エイリアスを結合.
 														//エイリアス(ニックネームのようなもの).
 	if( mciSendString( command, NULL, 0, m_hWnd ) == 0 ){
+//		ERR_MSG( m_sAlias, "閉じるの成功" );
+		m_bOpend = false;
+		m_hWnd = nullptr;
 		return true;
 	}
-
-	m_bOpend = false;
-	m_hWnd = nullptr;
+	ERR_MSG( m_sAlias, "閉じるの失敗" );
 
 	return false;
 }
@@ -73,6 +79,8 @@ bool clsSound::Close()
 //再生関数.
 bool clsSound::Play( const bool bNotify ) const
 {
+	if( !m_bOpend ) return false;
+
 	//コマンド.
 	char command[STR_BUFF_MAX] = "play ";
 	strcat_s( command, sizeof( command ), m_sAlias );	//エイリアスを結合.
@@ -92,6 +100,8 @@ bool clsSound::Play( const bool bNotify ) const
 //停止関数.
 bool clsSound::Stop() const
 {
+	if( !m_bOpend ) return false;
+
 	//コマンド.
 	char command[STR_BUFF_MAX] = "stop ";
 	strcat_s( command, sizeof( command ), m_sAlias );	//エイリアスを結合.
@@ -100,6 +110,9 @@ bool clsSound::Stop() const
 		SeekToStart();
 		return true;
 	}
+
+//	assert( !"止めれませんでした" );
+	ERR_MSG( m_sAlias, "停止の失敗" );
 	return false;
 }
 

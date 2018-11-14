@@ -131,7 +131,8 @@ void clsROBO_STATUS::ReceiveLeg( const vector<int> &LegDatas, const ASSEMBLE_SCE
 	m_iRoboState[enROBO_STATE::TURN]	  = LegDatas[clsPARTS_LEG::TURN];		//旋回性能.
 	m_iRoboState[enROBO_STATE::JUMP_POWER]= LegDatas[clsPARTS_LEG::JUMP_POWER];	//ジャンプ力.
 
-	m_iRoboState[enROBO_STATE::COL_SIZE_LEG] = LegDatas[clsPARTS_LEG::COL_SIZE];//当たり判定サイズ.
+	m_iRoboState[enROBO_STATE::COL_SIZE_LEG]	= LegDatas[clsPARTS_LEG::COL_SIZE];//当たり判定サイズ.
+	m_iRoboState[enROBO_STATE::WALK_ANIM_SPEED] = LegDatas[clsPARTS_LEG::WALK_ANIM_SPEED];//歩行アニメ速度
 
 	m_RoboStateData.ucPartsModelNum[ static_cast<int>( enPARTS::LEG ) ] = static_cast<UCHAR>( PartsNum );
 }

@@ -38,6 +38,8 @@ namespace{
 	//ループフラグの初期化.
 	const bool bLOOP_INIT = false;
 
+	//エイリアスと番号の間,番号の後に挿入する.
+	const char sCONSOLIDATE[] = "cons";
 }
 
 
@@ -62,7 +64,7 @@ clsSOUND_MANAGER_BASE::~clsSOUND_MANAGER_BASE()
 	for( unsigned int i=0; i<m_SeSet.size(); i++ ){
 		for( unsigned int j=0; j<m_SeSet[i].size(); j++ ){
 			if( m_SeSet[i][j] ){
-				m_SeSet[i][j]->Close();
+//				m_SeSet[i][j]->Close();
 				m_SeSet[i][j].reset();
 				m_SeSet[i][j] = nullptr;
 			}
@@ -76,7 +78,7 @@ clsSOUND_MANAGER_BASE::~clsSOUND_MANAGER_BASE()
 	for( unsigned int i=0; i<m_BgmSet.size(); i++ ){
 		for( unsigned int j=0; j<m_BgmSet[i].size(); j++ ){
 			if( m_BgmSet[i][j] ){
-				m_BgmSet[i][j]->Close();
+//				m_BgmSet[i][j]->Close();
 				m_BgmSet[i][j].reset();
 				m_BgmSet[i][j] = nullptr;
 			}
@@ -196,12 +198,17 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 		//何個まで同時再生させる?.
 		for( unsigned int j=0; j<vpSound[i].size(); j++ ){
 			vpSound[i][j]= make_unique<clsSound>();
-
+			
+			//エイリアスと番号の間に挿入する.
+			vData[i].sAlias += sCONSOLIDATE;
 			//エイリアス名に数字をつなげる.
 			string tmpAlias = OprtStr.ConsolidatedNumber( vData[i].sAlias.c_str(), j );
+			//番号の後に挿入する.
+			tmpAlias += sCONSOLIDATE;
 
 			//作成.
-			vpSound[i][j]->Open( vData[i].sPath.c_str(), tmpAlias.c_str(), m_hWnd );
+			assert( vpSound[i][j]->Open( vData[i].sPath.c_str(), tmpAlias.c_str(), m_hWnd ) );
+//			vpSound[i][j]->Open( vData[i].sPath.c_str(), tmpAlias.c_str(), m_hWnd );
 			//最大音量設定.
 			vpSound[i][j]->SetMaxVolume( vData[i].iMaxVolume );
 			//現音量初期化.
@@ -312,7 +319,8 @@ bool clsSOUND_MANAGER_BASE::Play(
 	const SOUND_SET &vpSound, 
 	std::deque<bool> &dqbLoop,
 	std::vector<int> &viNum,
-	const int No, const bool bNotify )
+	const int No, 
+	const bool bNotify )
 {
 	SOUND_NUMBER_OVER_SHECK( No, vpSound );
 	dqbLoop[No] = bNotify;
@@ -321,15 +329,23 @@ bool clsSOUND_MANAGER_BASE::Play(
 	return vpSound[No]->Play( bNotify );
 #else//#if 0
 
-	//そのNoの音の何番目を鳴らすか?( ここでm_veciBgmNum、m_veciSeNumの使い方が変わる ).
-	viNum[No] ++;
-	if( static_cast<unsigned int>( viNum[No] ) >= vpSound[No].size() ){
-		viNum[No] = 0;
+	//存在しない番が来たら末尾の音を鳴らす.
+	unsigned int uiNo = static_cast<int>( No );
+	if( uiNo >= vpSound.size() ){
+		uiNo =  vpSound.size() - 1;
+//		assert( !"ない音を選ばないで" );
 	}
 
-	vpSound[No][ viNum[No] ]->SeekToStart();
 
-	return vpSound[No][ viNum[No] ]->Play( bNotify );
+	//そのNoの音の何番目を鳴らすか?( ここでm_veciBgmNum、m_veciSeNumの使い方が変わる ).
+	viNum[ uiNo ] ++;
+	if( static_cast<unsigned int>( viNum[ uiNo ] ) >= vpSound[ uiNo ].size() ){
+		viNum[ uiNo ] = 0;
+	}
+
+	vpSound[ uiNo ][ viNum[ uiNo ] ]->SeekToStart();
+
+	return vpSound[ uiNo ][ viNum[ uiNo ] ]->Play( bNotify );
 #endif//#if 0
 }
 
@@ -352,7 +368,7 @@ bool clsSOUND_MANAGER_BASE::Stop(
 			continue;
 		}
 		if( !vpSound[No][i]->Stop() ){
-			assert( !"止めれませんでした" );
+//			assert( !"止めれませんでした" );
 			return false;
 		}
 	}

@@ -213,9 +213,10 @@ float4 PS_NoTex( VS_OUT In ): SV_Target
 //============================================================
 cbuffer	Ita_Global	:	register(b2)	//レジスタを数分追加.
 {
-	matrix	g_WVP;		//ワールドから射影までの変換行列.
-	float4	g_vcolor;	//色.
-	float4	g_UV;		//UV座標.
+	matrix g_WVP;		//ワールドから射影までの変換行列.
+	float4 g_vcolor;	//色.
+	float4 g_UV;		//UV座標.
+	float4 g_Split;		//分割.
 };
 
 
@@ -252,8 +253,14 @@ VS_ItaOut	VS_Ita( float4 Pos	:	POSITION,
 //============================================================
 float4 PS_Ita( VS_ItaOut input )	:	SV_Target
 {
-	float4 color = g_texColor.Sample( g_samLinear, input.Tex );
+	float2 TexPos = input.Tex;
+	TexPos.x *= g_Split.x;
+	TexPos.y *= g_Split.y;
+	float4 color = g_texColor.Sample( g_samLinear, TexPos );
 	return color * g_vcolor;//色を返す.
+
+//	float4 color = g_texColor.Sample( g_samLinear, input.Tex );
+//	return color * g_vcolor;//色を返す.
 }
 
 

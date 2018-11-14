@@ -245,30 +245,19 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	
 	if (GetAsyncKeyState('S') & 0x1)
 	{
-		if (!m_bEnemyStop)
-		{
-			m_bEnemyStop = true;
-		}
-
-		else
-		{
-			m_bEnemyStop = false;
-		}
+		m_pTestObj->SwitchMove();
 	}
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
 		m_v_pFriends[i]->Action(m_pStage);
 	}
-
-	if (!m_bEnemyStop)
+	
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
-		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
-		{
-			m_v_pEnemys[i]->Action(m_pStage);
-		}
+		m_v_pEnemys[i]->Action(m_pStage);
 	}
-
+	
 	UpdateCamTargetPos(m_pCamTar);
 
 	D3DXVECTOR3 vCamPosTmp;
@@ -620,12 +609,17 @@ void clsSCENE_MISSION::RenderDebugText()
 		m_pTestObj->m_iEnelgy);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	/*sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+	sprintf_s(strDbgTxt,
+		"PlayerPos : x[%f], y[%f], z[%f]",
+		m_v_pFriends[0]->GetPosition().x, m_v_pFriends[0]->GetPosition().y, m_v_pFriends[0]->GetPosition().z);
+	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
+
+	sprintf_s( strDbgTxt, 
+		"EnemyPos : x[%f], y[%f], z[%f]",
+		m_v_pEnemys[0]->GetPosition().x, m_v_pEnemys[0]->GetPosition().y, m_v_pEnemys[0]->GetPosition().z);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	sprintf_s(strDbgTxt,
+	/*sprintf_s(strDbgTxt,
 		"CamPos : x[%f], y[%f], z[%f]",
 		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z);
 	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);

@@ -20,6 +20,7 @@ struct SPRITESHADER_CONSTANT_BUFFER
 	D3DXMATRIX	mWVP;		//ワールド,ビュー,射影の合成変換行列.
 	D3DXVECTOR4	vColor;		//カラー(RGBAの型に合わせる) : テクスチャの上から色を載せる(赤っぽくも見せるためとか).
 	D3DXVECTOR4	vUV;		//UV座標.
+	D3DXVECTOR4 vSplit;//何分割?.
 };
 
 ////頂点の構造体.
@@ -68,6 +69,10 @@ public:
 	void SetScale( const D3DXVECTOR3& vScale );
 	void AddScale( const D3DXVECTOR3& vScale );
 
+	void SetSplit( const D3DXVECTOR2& vSplit ){
+		m_vSplit = vSplit;
+	}
+
 
 protected:
 
@@ -81,6 +86,7 @@ protected:
 	D3DXVECTOR3		m_vRot;
 	D3DXVECTOR3		m_vScale;
 
+	D3DXVECTOR2		m_vSplit;
 
 
 

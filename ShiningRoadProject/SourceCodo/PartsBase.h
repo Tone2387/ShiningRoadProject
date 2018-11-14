@@ -34,6 +34,12 @@ public:
 		const D3DXVECTOR4& vColorArmor = { 1.0f, 1.0f, 1.0f, 1.0f },
 		const bool isAlpha = false );
 
+	//ボーン座標を現在のキャラクター位置で更新.
+	void UpdateBonePos(){
+		if( m_pMesh ){
+			m_pMesh->UpdateBonePos();
+		}
+	};
 
 	//Attach直後に使う( Attachしたモデルのボーンの数やパーツ名などを取得 ).
 	void Init();

@@ -1,6 +1,9 @@
 #ifndef BUILDING_H_
 #define BUILDING_H_
 
+
+
+
 #include "Global.h"
 #include"ObjStaticMesh.h"
 #include "Sprite.h"
@@ -18,9 +21,12 @@ public:
 		 clsDX9Mesh* const pModel );
 	~clsBUILDING();
 
+	void UpdateModel();
+
+
 	//毎フレーム使ってはいけない.
-	//.
-	void Update();
+	//TransFormを変更したときにだけ使う.
+	void UpdateTile();
 
 	void Render(
 		const D3DXMATRIX &mView, 

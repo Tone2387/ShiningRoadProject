@@ -31,7 +31,7 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 {
 	const int iSELECT_NUM_MAX = 1;//ëIëéàÇÃç≈ëÂÇÕâΩ?.
 
-	if( SelectLeft() ){
+	if( SelectLeft( false ) ){
 		m_iSelectNum --;
 		if( m_iSelectNum < 0 ){
 			m_iSelectNum = 0;
@@ -41,7 +41,7 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 		}
 	}
 
-	if( SelectRight() ){
+	if( SelectRight( false ) ){
 		m_iSelectNum ++;
 		if( m_iSelectNum > iSELECT_NUM_MAX ){
 			m_iSelectNum = iSELECT_NUM_MAX;

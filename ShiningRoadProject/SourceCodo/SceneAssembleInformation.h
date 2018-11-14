@@ -8,6 +8,9 @@ enum enBGM : int
 	enBGM_RENGOKU0 = 0,
 	enBGM_MAOU0,
 	enBGM_MAOU2,
+	enBGM_HART1,
+	enBGM_NOVA1,
+	enBGM_NOVA2,
 };
 
 enum enSE : int

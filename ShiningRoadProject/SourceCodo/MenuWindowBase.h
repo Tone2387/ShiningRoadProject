@@ -69,10 +69,10 @@ protected:
 
 
 	//ëÄçÏ.
-	bool SelectUp();
-	bool SelectDown();
-	bool SelectRight();
-	bool SelectLeft();
+	bool SelectUp	( bool isWithStick = true );
+	bool SelectDown	( bool isWithStick = true );
+	bool SelectRight( bool isWithStick = true );
+	bool SelectLeft	( bool isWithStick = true );
 	bool SelectEnter();
 	bool SelectExit();
 

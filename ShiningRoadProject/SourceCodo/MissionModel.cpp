@@ -268,7 +268,7 @@ void clsMISSION_MODEL::SetPartsRotate(const enPARTS PartsNum, const D3DXVECTOR3 
 }
 
 //腕の角度を武器も模写する.
-D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(const enPARTS PartsNum, const char* strBoneRootName, const char* strBoneEndName)
+const D3DXVECTOR3 clsMISSION_MODEL::GetRotfromBone(const enPARTS PartsNum, const char* strBoneRootName, const char* strBoneEndName)
 {
 	char cTmpNum = static_cast<char>(PartsNum);
 	//return m_vpParts[cTmpNum]->m_pMesh->ExistsBone(sBoneName);
@@ -301,27 +301,19 @@ D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(const enPARTS PartsNum, const char*
 	return vRot;
 }
 
-D3DXVECTOR3 clsMISSION_MODEL::GetDirfromBone(
-	const enPARTS PartsNum,
-	const int enBoneRootName,
-	const int enBoneEndName,
-	const int iVecNum)
+const D3DXVECTOR3 clsMISSION_MODEL::GetRotfromVec(
+	const D3DXVECTOR3 vRoot,
+	const D3DXVECTOR3 vEnd)
 {
-	char cTmpNum = static_cast<char>(PartsNum);
-
-	std::string strBoneRoot;
-	std::string strBoneEnd;
-
 	//ボーンのベクトルを出す( ローカル ).
-	D3DXVECTOR3 vVecLocal =
-		m_vpParts[cTmpNum]->GetBonePosPreviosFrame(enBoneEndName, iVecNum) -
-		m_vpParts[cTmpNum]->GetBonePosPreviosFrame(enBoneRootName, iVecNum);
+	D3DXVECTOR3 vRootLocal = vRoot - m_Trans.vPos;
+	D3DXVECTOR3 vEndLocal = vEnd - m_Trans.vPos;
+
+	D3DXVECTOR3 vVecLocal = vEndLocal - vRootLocal;
 	D3DXVec3Normalize(&vVecLocal, &vVecLocal);
 
 	//ボーンのベクトルを出す( ワールド ).
-	D3DXVECTOR3 vVecWorld =
-		m_vpParts[cTmpNum]->GetBonePosPreviosFrame(enBoneEndName, iVecNum) -
-		m_vpParts[cTmpNum]->GetBonePosPreviosFrame(enBoneRootName, iVecNum);
+	D3DXVECTOR3 vVecWorld = vEnd - vRoot;
 	D3DXVec3Normalize(&vVecWorld, &vVecWorld);
 
 	//ベクトルから回転値を求める.

@@ -59,10 +59,12 @@ public:
 		QUICK_COST,		//クイック消費エネルギー.
 		QUICK_TIME,		//クイック噴射時間.
 
+		//隠しステータス.
 		COL_SIZE_LEG,	//脚当たり判定サイズ.
 		COL_SIZE_CORE,	//コア当たり判定サイズ.
 		COL_SIZE_HEAD,	//頭当たり判定サイズ.
 		COL_SIZE_ARMS,	//腕当たり判定サイズ.
+		WALK_ANIM_SPEED,//脚歩行アニメ速度.
 
 		enROBO_STATE_SIZE
 	};
@@ -80,6 +82,7 @@ public:
 		MAGAZINE_LOAD_TIME,	//マガジン装填時間.
 		BULLETS_NUM,		//装弾数.
 
+		//隠しステータス.
 		COL_SIZE,	//弾の当たり判定サイズ.
 		EFC_BULLET,	//弾本体のエフェクト.
 		EFC_LOCUS,	//弾の軌跡のエフェクト.

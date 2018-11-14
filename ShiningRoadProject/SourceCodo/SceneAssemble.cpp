@@ -348,10 +348,10 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		}
 		else{
 			//選択肢.
-			if( isPressHoldRight()	)MoveCursorRight();
-			if( isPressHoldLeft()	)MoveCursorLeft();
-			if( isPressHoldUp()		)MoveCursorUp();
-			if( isPressHoldDown()	)MoveCursorDown();
+			if( isPressHoldRight( false ) )MoveCursorRight();
+			if( isPressHoldLeft	( false ) )MoveCursorLeft();
+			if( isPressHoldUp	( false ) )MoveCursorUp();
+			if( isPressHoldDown	( false ) )MoveCursorDown();
 			if( m_wpXInput->isPressEnter( XINPUT_B ) ||
 				GetAsyncKeyState( VK_RETURN ) & 0x1 )
 			{
@@ -408,8 +408,8 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		}
 	}
 
-	//右スティックの動き( ロボの回転 ).
-	MoveRightStick();
+	//スティックの動き( ロボの回転 ).
+	MoveRoboStick();
 
 
 	assert( m_upUI );
@@ -440,62 +440,58 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 }
 
 //右スティックの動き( ロボの回転 ).
-void clsSCENE_ASSEMBLE::MoveRightStick()
+void clsSCENE_ASSEMBLE::MoveRoboStick()
 {
-	//スティックを押し込んでいるならカメラ移動.
-	if( m_wpXInput->isPressStay( XINPUT_RSTICK ) ){
-		const float fOFFSET_LIMIT_X = 25.0f;
-		const float fOFFSET_LIMIT_Y_UP = 25.0f;
-		const float fOFFSET_LIMIT_Y_DOWN = 50.0f;
-		const float fMODEL_MOVE_SPD = 1.5f;
-		if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
-			m_vRoboViewOffsetPos.x += fMODEL_MOVE_SPD;
-			if( m_vRoboViewOffsetPos.x > fOFFSET_LIMIT_X ){
-				m_vRoboViewOffsetPos.x = fOFFSET_LIMIT_X;
-			}
-		}
-		if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
-			m_vRoboViewOffsetPos.x -= fMODEL_MOVE_SPD;
-			if( m_vRoboViewOffsetPos.x < -fOFFSET_LIMIT_X ){
-				m_vRoboViewOffsetPos.x = -fOFFSET_LIMIT_X;
-			}
-		}
-		if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
-			m_vRoboViewOffsetPos.y += fMODEL_MOVE_SPD;
-			if( m_vRoboViewOffsetPos.y > fOFFSET_LIMIT_Y_UP ){
-				m_vRoboViewOffsetPos.y = fOFFSET_LIMIT_Y_UP;
-			}
-		}
-		if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
-			m_vRoboViewOffsetPos.y -= fMODEL_MOVE_SPD;
-			if( m_vRoboViewOffsetPos.y < -fOFFSET_LIMIT_Y_DOWN ){
-				m_vRoboViewOffsetPos.y = -fOFFSET_LIMIT_Y_DOWN;
-			}
+	//左スティックはカメラ移動.
+	const float fOFFSET_LIMIT_X = 25.0f;
+	const float fOFFSET_LIMIT_Y_UP = 25.0f;
+	const float fOFFSET_LIMIT_Y_DOWN = 50.0f;
+	const float fMODEL_MOVE_SPD = 1.5f;
+	if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) ){
+		m_vRoboViewOffsetPos.x += fMODEL_MOVE_SPD;
+		if( m_vRoboViewOffsetPos.x > fOFFSET_LIMIT_X ){
+			m_vRoboViewOffsetPos.x = fOFFSET_LIMIT_X;
 		}
 	}
-	//押し込んでいないなら回転とズーム.
-	else{
-		//モデル回転.
-		const float fMODEL_SPN_SPD = 0.05f;
-		if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
-			m_spAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) ){
+		m_vRoboViewOffsetPos.x -= fMODEL_MOVE_SPD;
+		if( m_vRoboViewOffsetPos.x < -fOFFSET_LIMIT_X ){
+			m_vRoboViewOffsetPos.x = -fOFFSET_LIMIT_X;
 		}
-		if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
-			m_spAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+	}
+	if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) ){
+		m_vRoboViewOffsetPos.y += fMODEL_MOVE_SPD;
+		if( m_vRoboViewOffsetPos.y > fOFFSET_LIMIT_Y_UP ){
+			m_vRoboViewOffsetPos.y = fOFFSET_LIMIT_Y_UP;
 		}
-		//モデルズーム.
-		const float fMODEL_MOVE_SPD = 5.0f;
-		if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
-			m_vRoboViewOffsetPos.z += fMODEL_MOVE_SPD;
-			if( m_vRoboViewOffsetPos.z > fZOOM_RIMIT_MAX ){
-				m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MAX;
-			}
+	}
+	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) ){
+		m_vRoboViewOffsetPos.y -= fMODEL_MOVE_SPD;
+		if( m_vRoboViewOffsetPos.y < -fOFFSET_LIMIT_Y_DOWN ){
+			m_vRoboViewOffsetPos.y = -fOFFSET_LIMIT_Y_DOWN;
 		}
-		if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
-			m_vRoboViewOffsetPos.z -= fMODEL_MOVE_SPD;
-			if( m_vRoboViewOffsetPos.z < fZOOM_RIMIT_MIN ){
-				m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MIN;
-			}
+	}
+	//右スティックは回転とズーム.
+	//モデル回転.
+	const float fMODEL_SPN_SPD = 0.05f;
+	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+		m_spAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
+	}
+	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+		m_spAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
+	}
+	//モデルズーム.
+	const float fMODEL_ZOOM_SPD = 5.0f;
+	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+		m_vRoboViewOffsetPos.z += fMODEL_ZOOM_SPD;
+		if( m_vRoboViewOffsetPos.z > fZOOM_RIMIT_MAX ){
+			m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MAX;
+		}
+	}
+	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+		m_vRoboViewOffsetPos.z -= fMODEL_MOVE_SPD;
+		if( m_vRoboViewOffsetPos.z < fZOOM_RIMIT_MIN ){
+			m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MIN;
 		}
 	}
 }
@@ -589,7 +585,8 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	if( isMessageBoxClose() )
 	{
 		m_spAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos(), 
-			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ) );
+			static_cast< clsASSEMBLE_MODEL::enPARTS_TYPES >( m_PartsSelect.Type ),
+			m_wpContext );
 	}
 	else{
 		m_spAsmModel->Render( m_mView, m_mProj, m_vLight, RoboViewCam.GetPos() );
@@ -619,6 +616,7 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		m_upUI->InitReadNumPartsComment();
 
 		m_PartsSelect.Num[m_PartsSelect.Type] --;
 
@@ -640,6 +638,7 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 	//パーツカテゴリを選んでないならパーツを選ばせないよ.
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+		m_upUI->InitReadNumPartsComment();
 
 		m_PartsSelect.Num[m_PartsSelect.Type] ++;
 
@@ -661,12 +660,12 @@ void clsSCENE_ASSEMBLE::MoveCursorRight()
 	//パーツ選択.
 	if( isMessageBoxClose() ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+
 		m_PartsSelect.Type ++;
-		m_upUI->AddCommentNoForChangePartsType();
-
-
 		m_PartsSelect.Type = 
 			LoopRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
+
+		m_upUI->AddCommentNoForChangePartsType( m_PartsSelect.Type );
 	}
 }
 
@@ -675,11 +674,12 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 	//パーツを選ぶ.
 	if( isMessageBoxClose() ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
-		m_PartsSelect.Type --;
-		m_upUI->AddCommentNoForChangePartsType();
 
+		m_PartsSelect.Type --;
 		m_PartsSelect.Type = 
 			LoopRange( m_PartsSelect.Type, 0, clsASSEMBLE_MODEL::ENUM_SIZE );
+
+		m_upUI->AddCommentNoForChangePartsType( m_PartsSelect.Type );
 	}
 }
 
@@ -787,7 +787,7 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 	{
 	case clsASSEMBLE_MODEL::LEG:
 		m_wpRoboStatus->ReceiveLeg( tmpStatus,		tmpPartsNum );
-		m_spAsmModel->AttachModel( enPARTS::LEG,		tmpPartsNum );
+		m_spAsmModel->AttachModel( enPARTS::LEG,	tmpPartsNum );
 		break;
 	case clsASSEMBLE_MODEL::CORE:
 		m_wpRoboStatus->ReceiveCore( tmpStatus,		tmpPartsNum );

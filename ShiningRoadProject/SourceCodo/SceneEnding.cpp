@@ -81,7 +81,7 @@ void clsSCENE_ENDING::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_ENDING );
 
-	m_wpSound->PlayBGM( enBGM_MAFIA1 );
+	m_wpSound->PlayBGM( enBGM_NOVA0 );
 
 	clsFILE File;
 	File.Open( sSTAFF_ROLL_STATUS_DATA_PATH );

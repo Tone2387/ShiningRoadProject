@@ -53,7 +53,8 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const enPARTS_TYPES AlphaParts = enPARTS_TYPES::ENUM_SIZE );
+		const enPARTS_TYPES AlphaParts = enPARTS_TYPES::ENUM_SIZE,
+		ID3D11DeviceContext* const pContext = nullptr );
 
 	//モデルの初期セット.
 	void Init( clsROBO_STATUS* const pStatus );
@@ -138,7 +139,13 @@ protected:
 	D3DXVECTOR4 CreateColor( 
 		const enPARTS_TYPES AlphaParts, 
 		const UINT uiIndex,
-		const unsigned int uiMaskNum );
+		const unsigned int uiMaskNum,
+		ID3D11DeviceContext* const pContext );
+
+	//ワイヤーフレーム切替.
+	void ChangeWireFrame(
+		const bool isWire,
+		ID3D11DeviceContext* const pContext );
 
 	//アニメーションリセット.
 	void AnimReSet();

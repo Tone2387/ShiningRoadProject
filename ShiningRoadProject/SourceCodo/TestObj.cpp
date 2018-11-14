@@ -1,9 +1,8 @@
 #include"TestObject.h"
 
-const bool g_bAction = false;
-
 clsTestObj::clsTestObj()
 	: m_pAI(nullptr)
+	, m_bAct(false)
 {
 	//ZeroMemory(this, sizeof(clsTestObj));
 }
@@ -28,7 +27,7 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup,
 	LPSTR strEnemyFolderName)
 {
 	m_pAI = new clsEnemyRobo;
-	m_pAI->Init("", this);
+	m_pAI->Init("Data\\FileData\\Hiyoshi\\Enemy1", this);
 
 	Init(pPtrGroup);
 }
@@ -47,7 +46,7 @@ void clsTestObj::ActionProduct()
 
 	m_pAI->SearchTarget(m_v_pEnemys);
 
-	if (g_bAction)
+	if (m_bAct)
 	{
 		pRoboCom = m_pAI->MoveOperation(fPush, fAngle);
 
@@ -71,7 +70,7 @@ void clsTestObj::ActionProduct()
 		pRoboCom->Trigger(this, fPush, fAngle);
 	}
 
-	if (g_bAction)
+	if (m_bAct)
 	{
 		pRoboCom = m_pAI->LShotOperation();
 
@@ -150,7 +149,14 @@ void clsTestObj::ActionProduct()
 	Updata();
 }
 
-void clsTestObj::InhUpdate()
+void clsTestObj::SwitchMove()
 {
-	//m_pMesh->SetAnimSpeed(0.01);
+	if (m_bAct)
+	{
+		m_bAct = false;
+		return;
+	}
+
+	m_bAct = true;
 }
+

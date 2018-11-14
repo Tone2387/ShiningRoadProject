@@ -145,13 +145,12 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 		"Data\\Collision\\Sphere.x",
 		enSTATIC_MODEL::enStaticModel_Shpere );
 
-	CreateSkinModel(
-		"Data\\RoboParts\\Leg\\Leg0\\Leg0.x",
-		enSKIN_MODEL::enSkinModel_Player );
-	CreateSkinModel(
-		"Data\\RoboParts\\Leg\\Leg0\\Leg0.X",
-//		"Data\\hime\\hime_kougeki.x", 
-		enSKIN_MODEL::enSkinModel_Leg );
+//	CreateSkinModel(
+//		"Data\\RoboParts\\Leg\\Leg0\\Leg0.x",
+//		enSKIN_MODEL::enSkinModel_Player );
+//	CreateSkinModel(
+//		"Data\\RoboParts\\Leg\\Leg0\\Leg0.X",
+//		enSKIN_MODEL::enSkinModel_Leg );
 
 	//ÉpÅ[ÉcçÏê¨.
 	CreatePartsGroup();

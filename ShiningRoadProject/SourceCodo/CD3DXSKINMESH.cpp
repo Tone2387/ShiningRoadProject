@@ -1645,6 +1645,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 			(void*)&sg, sizeof( SHADER_GLOBAL_BONES ) );
 		m_pDeviceContext->Unmap( m_pConstantBufferBone, 0 );
 	}
+	//使用するシェーダをセット.
 	m_pDeviceContext->VSSetConstantBuffers(	2, 1, &m_pConstantBufferBone );
 	m_pDeviceContext->PSSetConstantBuffers(	2, 1, &m_pConstantBufferBone );
 	
@@ -1998,4 +1999,57 @@ bool clsD3DXSKINMESH::GetDeviaPosFromBone(char* sBoneName, D3DXVECTOR3* pOutPos,
 bool clsD3DXSKINMESH::ExistsBone( const char* sBoneName )
 {
 	return m_pD3dxMesh->ExistsBone( sBoneName );
+}
+
+
+//リソースのボーン位置がずれる対策.
+void clsD3DXSKINMESH::UpdateBonePos()
+{
+//	if (pAC == NULL)
+//	{
+		if (m_pD3dxMesh->m_pAnimController)
+		{
+			m_pD3dxMesh->m_pAnimController->AdvanceTime(m_dAnimTime, NULL);
+		}
+//	}
+
+	D3DXMATRIX m;
+	D3DXMatrixIdentity( &m );
+	m_pD3dxMesh->UpdateFrameMatrices( m_pD3dxMesh->m_pFrameRoot, &m );
+	UpDateBonePosProduct( m_pD3dxMesh->m_pFrameRoot );
+
+}
+
+void clsD3DXSKINMESH::UpDateBonePosProduct( LPD3DXFRAME p )
+{
+	MYFRAME*			pFrame	= (MYFRAME*)p;
+	SKIN_PARTS_MESH*	pPartsMesh	= pFrame->pPartsMesh;
+	MYMESHCONTAINER*	pContainer	= (MYMESHCONTAINER*)pFrame->pMeshContainer;
+
+	if( pPartsMesh != NULL )
+	{
+		UpDateBonePosProductProduct(
+			pPartsMesh,
+			pContainer );
+	}
+
+	//再帰関数.
+	//(兄弟)
+	if( pFrame->pFrameSibling != NULL )
+	{
+		UpDateBonePosProduct( pFrame->pFrameSibling );
+	}
+	//(親子)
+	if( pFrame->pFrameFirstChild != NULL )
+	{
+		UpDateBonePosProduct( pFrame->pFrameFirstChild );
+	}
+
+}
+
+void clsD3DXSKINMESH::UpDateBonePosProductProduct(
+		SKIN_PARTS_MESH* pMesh,
+		MYMESHCONTAINER* const pContainer )
+{
+	SetNewPoseMatrices( pMesh, m_iFrame, pContainer );
 }

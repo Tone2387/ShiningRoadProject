@@ -20,6 +20,7 @@ clsSprite::clsSprite()
 	m_pTexture			= nullptr;		
 	m_pSampleLinear		= nullptr;
 
+	m_vSplit = { 1.0f, 1.0f };
 }
 
 //============================================================
@@ -219,7 +220,8 @@ HRESULT clsSprite::InitShader()
 //============================================================
 HRESULT clsSprite::InitModel( const char* sTexName )
 {
-	const float itaW = 0.5075f;
+//	const float itaW = 0.5075f;
+	const float itaW = 0.5f;
 	float w, h;
 //	w = h = ( 1.0f / 8.0f );
 	w = h = 1.0f;
@@ -282,6 +284,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
+
 	//サンプラー作成.
 	if( FAILED(
 		m_pDevice11->CreateSamplerState(
@@ -326,9 +329,9 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 	D3DXMatrixTranslation( &mTrans,
 		m_vPos.x, m_vPos.y, m_vPos.z );
 
-	D3DXMatrixRotationZ( &mRoll, m_vRot.z );
-	D3DXMatrixRotationY( &mYaw, m_vRot.y );
-	D3DXMatrixRotationX( &mPitch, m_vRot.x );
+	D3DXMatrixRotationZ( &mRoll,	m_vRot.z );
+	D3DXMatrixRotationY( &mYaw,		m_vRot.y );
+	D3DXMatrixRotationX( &mPitch,	m_vRot.x );
 
 	//合算.
 	mWorld = mScale * mYaw * mPitch * mRoll * mTrans;
@@ -366,6 +369,10 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 		//カラー.
 		D3DXVECTOR4 vColor( 1.0f, 1.0f, 1.0f, 1.0f );
 		cd.vColor = vColor;
+		D3DXVECTOR4 vSplit( 1.0f, 1.0f, 1.0f, 1.0f );
+		cd.vSplit = vSplit;
+		cd.vSplit.x = m_vSplit.x;
+		cd.vSplit.y = m_vSplit.y;
 
 		//テクスチャ座標.
 		D3DXVECTOR4 texUV( 0.0f, 0.0f, 0.0f, 0.0f );

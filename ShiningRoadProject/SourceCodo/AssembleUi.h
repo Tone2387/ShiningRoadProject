@@ -80,8 +80,12 @@ public:
 	void AddStatusCommentNo( const bool isPlus );
 	//ゴリ押し気味.
 	//選択肢を横に持って行った時の調整.
-	void AddCommentNoForChangePartsType();
+	void AddCommentNoForChangePartsType( const int iPartsType );
 
+	//パーツ説明文の表示文字数を0に戻す.
+	void InitReadNumPartsComment(){
+		m_iReadNumPartsComment = 0;
+	}
 
 #if _DEBUG
 	//デバッグテキスト用.
@@ -109,7 +113,10 @@ private:
 		const int iPartsType, const int iStatusNum );
 
 
-	void StatusNumOverGuard();
+	//超えていたなら収める.
+	void StatusNumKeepRange();
+	//超えていたならループする.
+	void StatusNumLoopRange();
 
 
 	//パーツ表示用のウィンドウ.
@@ -166,11 +173,14 @@ private:
 	clsFont*	m_wpFont;
 	//パーツ、ステータスの日本語説明文の読み込み行指定.
 	int m_iReadLinePartsComment;
+	//説明文を何文字目まで表示するか.
+	int m_iReadNumPartsComment;
 
 
 #if _DEBUG
 	std::unique_ptr< clsSprite2D > m_upDegine;
 #endif//#if _DEBUG
+
 };
 
 #endif//#ifndef ASSENBLE_UI_H_

@@ -250,6 +250,7 @@ clsASSEMBLE_UI::clsASSEMBLE_UI( clsFont* const pFont )
 	,m_bStatusCommentOffset( false )
 	,m_wpFont( pFont )
 	,m_iReadLinePartsComment( 0 )
+	,m_iReadNumPartsComment( 0 )
 {
 	//次のfor文用.
 	const string* tmpStatusNamePtr[enPARTS_TYPE_SIZE] =
@@ -540,6 +541,13 @@ void clsASSEMBLE_UI::Update(
 		return;
 	}
 
+	//パーツ説明文表示文字数増加.
+	const int iCOMMENT_STRING_NUM_MAX = 200;
+	if( m_iReadNumPartsComment < iCOMMENT_STRING_NUM_MAX ){
+		const int iCOMMENT_STRING_RENDER_NUM_ADD = 4;
+		m_iReadNumPartsComment  += iCOMMENT_STRING_RENDER_NUM_ADD;
+	}
+
 	//選択中を示す半透明の板表示.
 	assert( m_upPartsTypeSelect );
 	m_upPartsTypeSelect->SetPos( m_vecupPartsType[ iPartsType ]->GetPos() );
@@ -580,8 +588,9 @@ void clsASSEMBLE_UI::Update(
 			m_iStatusCommentNo = 0;
 		}
 	}
-	//選択中ステータスを管理.
-	StatusNumOverGuard();
+
+	//超えていたならループする.
+	StatusNumLoopRange();
 
 	//飛び出さない.
 	if( static_cast< unsigned int >( m_iStatusNum ) > m_vecupStatusText.size() ||
@@ -716,7 +725,7 @@ void clsASSEMBLE_UI::RenderPartsState(
 		assert( m_wpFont );
 		m_wpFont->SetPos( vFONT_COMMENT_POS );
 		m_wpFont->SetScale( fFONT_COMMENT_SCALE );
-		m_wpFont->Render( m_iReadLinePartsComment );
+		m_wpFont->Render( m_iReadLinePartsComment, m_iReadNumPartsComment );
 
 		//ステータスを表示しないなら飛ばす.
 		if( !m_isDispStatus ) return;
@@ -814,7 +823,6 @@ bool clsASSEMBLE_UI::isCanSwitchStatusComment()
 //ステータス詳細とパーツ選択の切り替え.
 void clsASSEMBLE_UI::SwitchStatusComment()
 {
-
 	if( m_enSelectMode == enSELECT_MODE::PARTS ){
 		m_isDispStatus = true;
 		m_enSelectMode = enSELECT_MODE::STATUS;
@@ -822,6 +830,8 @@ void clsASSEMBLE_UI::SwitchStatusComment()
 	else if( m_enSelectMode == enSELECT_MODE::STATUS ){
 		m_enSelectMode = enSELECT_MODE::PARTS;
 	}
+	InitReadNumPartsComment();
+
 }
 
 //指定.
@@ -842,6 +852,8 @@ void clsASSEMBLE_UI::AddStatusCommentNo( const bool isPlus )
 {
 	if( !m_isDispStatus ) return;
 
+	InitReadNumPartsComment();
+
 	if( isPlus ){
 		m_iStatusCommentNo ++;
 	}
@@ -850,24 +862,56 @@ void clsASSEMBLE_UI::AddStatusCommentNo( const bool isPlus )
 	}
 }
 
-void clsASSEMBLE_UI::StatusNumOverGuard()
+void clsASSEMBLE_UI::StatusNumKeepRange()
 {
 	if( m_iStatusCommentNo >= m_iStatusNum )m_iStatusCommentNo = m_iStatusNum - 1;
 	else if( m_iStatusCommentNo < 0 )		m_iStatusCommentNo = 0;
 
 }
+void clsASSEMBLE_UI::StatusNumLoopRange()
+{
+	if( m_iStatusCommentNo >= m_iStatusNum )m_iStatusCommentNo = 0;
+	else if( m_iStatusCommentNo < 0 )		m_iStatusCommentNo = m_iStatusNum - 1;
+
+}
+
+
 //ゴリ押し気味.
 //選択肢を横に持って行った時の調整.
-void clsASSEMBLE_UI::AddCommentNoForChangePartsType()
+void clsASSEMBLE_UI::AddCommentNoForChangePartsType( const int iPartsType )
 {
 //	m_iStatusCommentNo += m_iStatusNum;
 	m_bStatusCommentOffset = true;
+	InitReadNumPartsComment();
+
+	//ステータスが何行あるかを取得.
+	int iStatusNumOld = m_iStatusNum;
+	m_iStatusNum = iOPEN_STATUS_NUM[ iPartsType ];
+
+#if 0
+	//ステ項目が増えたときに時に選択カーソルが上に上がるのを防ぐ.
+	if( m_iStatusNum > iStatusNumOld ){
+		m_iStatusCommentNo += m_iStatusNum - iStatusNumOld;
+	}
+	//逆に減ったときは下がるのを防ぐ.
+	else if( m_iStatusNum < iStatusNumOld ){
+		m_iStatusCommentNo -= iStatusNumOld - m_iStatusNum;
+	}
+#else
+	//差分を追加する.
+	if( m_iStatusNum != iStatusNumOld ){
+		m_iStatusCommentNo += m_iStatusNum - iStatusNumOld;
+	}
+#endif
+
+	//超えていたなら収める.
+	StatusNumKeepRange();
 }
 
 
 D3DXVECTOR4 clsASSEMBLE_UI::GetStatusColor( 
-	const int iBefore, const int iAfter,
-	const int iPartsType, const int iStatusNum )
+	const int iBefore,		const int iAfter,
+	const int iPartsType,	const int iStatusNum )
 {
 	const D3DXVECTOR4 vRED		= { 1.0f, 0.5f, 0.5f, 1.0f };
 	const D3DXVECTOR4 vBLUE		= { 0.5f, 0.5f, 1.0f, 1.0f };

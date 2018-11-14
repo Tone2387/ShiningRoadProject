@@ -1,19 +1,45 @@
 #include "Building.h"
+
+
+
 #define _USE_MATH_DEFINES
 #include <math.h>
+
+
+
+//下が生きているなら複数枚の板を貼るのをシェーダーに任せずに各板の座標をこのクラスが保持する.
+//#define BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+
+
 
 using namespace std;
 
 
 namespace{
+	
+	//最低限の板の数.
+	const int iTEX_NUM_MIN = 1;
+
+#ifdef _DEBUG
+	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide_.png";
+	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop_.png";
+#else//#ifdef _DEBUG
 	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide.png";
 	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop.png";
+#endif//#ifdef _DEBUG
 
 
 	const int iRESURVE_NUM = 256;
 
-	const D3DXVECTOR3 vTILE_SIZE_MIN = { 25.0f, 25.0f, 1.0f };
-	const D3DXVECTOR3 vTILE_SIZE_MAX = { 30.0f, 30.0f, 1.0f };
+//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+//	const D3DXVECTOR3 vTILE_SIZE_MIN = { 25.0f, 25.0f, 1.0f };
+//	const D3DXVECTOR3 vTILE_SIZE_MAX = { 30.0f, 30.0f, 1.0f };
+//#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+//	const D3DXVECTOR3 vTILE_SIZE_MIN = { 2.5f, 2.5f, 1.0f };
+//	const D3DXVECTOR3 vTILE_SIZE_MAX = { 3.0f, 3.0f, 1.0f };
+//#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+	const D3DXVECTOR3 vTILE_SIZE_MIN = { 2.5f, 2.5f, 1.0f };
+	const D3DXVECTOR3 vTILE_SIZE_MAX = { 3.0f, 3.0f, 1.0f };
 
 	//側面のfor文の増加量.
 	const int iSIDE_TILE_COUNT_NUM = 2;
@@ -35,10 +61,10 @@ clsBUILDING::clsBUILDING(
 
 
 
-	m_vecvecTop.resize( 1 );
+	m_vecvecTop.resize( iTEX_NUM_MIN );
 	m_vecvecTop.reserve( iRESURVE_NUM );
 	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ ){
-		m_vecvecTop[ Row ].resize( 1 );
+		m_vecvecTop[ Row ].resize( iTEX_NUM_MIN );
 		m_vecvecTop[ Row ].reserve( iRESURVE_NUM );
 	}
 	m_upTop = make_unique< clsSprite >();
@@ -46,10 +72,10 @@ clsBUILDING::clsBUILDING(
 
 
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum++  ){
-		m_vecvecSideArray[ SideNum ].resize( 12 );
+		m_vecvecSideArray[ SideNum ].resize( iTEX_NUM_MIN );
 		m_vecvecSideArray[ SideNum ].reserve( iRESURVE_NUM );
 		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
-			m_vecvecSideArray[ SideNum ][ Row ].resize( 12 );
+			m_vecvecSideArray[ SideNum ][ Row ].resize( iTEX_NUM_MIN );
 			m_vecvecSideArray[ SideNum ][ Row ].reserve( iRESURVE_NUM );
 		}
 	}
@@ -64,9 +90,17 @@ clsBUILDING::~clsBUILDING()
 	m_wpContext = nullptr;
 }
 
+void clsBUILDING::UpdateModel()
+{
+	m_upBox->SetPosition( m_Trans.vPos );
+	m_upBox->SetRotation( m_Trans.vRot );
+	m_upBox->SetScale( m_Trans.vScale );
+
+	m_upBox->ModelTransUpdate();
+}
 
 
-void clsBUILDING::Update()
+void clsBUILDING::UpdateTile()
 {
 //	if( GetAsyncKeyState( VK_UP ) & 0x8000 )	m_Trans.vPos.z += 1.0f;
 //	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_Trans.vPos.z -= 1.0f;
@@ -83,12 +117,7 @@ void clsBUILDING::Update()
 //	if( GetAsyncKeyState( 'R' ) & 0x1 )	m_Trans.vRot.y += 0.01f;
 //	if( GetAsyncKeyState( 'F' ) & 0x1 )	m_Trans.vRot.y -= 0.01f;
 
-
-	m_upBox->SetPosition( m_Trans.vPos );
-	m_upBox->SetRotation( m_Trans.vRot );
-	m_upBox->SetScale( m_Trans.vScale );
-
-	m_upBox->ModelTransUpdate();
+	UpdateModel();
 
 	//上面.
 	{
@@ -155,8 +184,6 @@ void clsBUILDING::Update()
 		SetTransformSide();
 	}
 
-
-
 }
 
 
@@ -219,11 +246,13 @@ void clsBUILDING::SetTileNumTargetTop( unsigned int& puiRow, unsigned int& puiCo
 	m_vecvecTop[ 0 ][ 0 ].vScale.y = m_Trans.vScale.z / m_vecvecTop.size();
 	D3DXVECTOR3 vScale = m_vecvecTop[0][0].vScale;
 
+#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+
 	if( vScale.y > vTILE_SIZE_MAX.y ){
 		puiRow ++;	
 	}
 	else if( vScale.y < vTILE_SIZE_MIN.y ){
-		if( puiRow > 1 ){
+		if( puiRow > iTEX_NUM_MIN ){
 			puiRow --;
 		}
 	}
@@ -232,16 +261,22 @@ void clsBUILDING::SetTileNumTargetTop( unsigned int& puiRow, unsigned int& puiCo
 		puiCol ++;	
 	}
 	else if( vScale.x < vTILE_SIZE_MIN.x ){
-		if( puiCol > 1 ){
+		if( puiCol > iTEX_NUM_MIN ){
 			puiCol --;
 		}
 	}
+#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 
+	puiRow = static_cast<int>( vScale.y / vTILE_SIZE_MAX.y );
+	puiCol = static_cast<int>( vScale.x / vTILE_SIZE_MAX.x );
+
+#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 }
 
 //目標の数に合わせてタイルを増減する.
 void clsBUILDING::SetTileNumTop( const unsigned int uiROW, const unsigned int uiCOL )
 {
+#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 	//----- 個数 -----//.
 	//縦.
 	//足りないから増やす.
@@ -271,6 +306,11 @@ void clsBUILDING::SetTileNumTop( const unsigned int uiROW, const unsigned int ui
 			m_vecvecTop[ Row ].pop_back();
 		}
 	}
+#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+	m_upTop->SetSplit( D3DXVECTOR2(
+		static_cast<float>( uiCOL ),
+		static_cast<float>( uiROW ) ) );
+#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 }
 
 //タイルを並べる.
@@ -339,11 +379,12 @@ void clsBUILDING::SetTileNumTargetSide(
 		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.y = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
 		D3DXVECTOR3 vScale = m_vecvecSideArray[ SideNum ][0][0].vScale;
 
+#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 		if( vScale.y > vTILE_SIZE_MAX.y ){
 			puiRowZ ++;
 		}
 		else if( vScale.y < vTILE_SIZE_MIN.y ){
-			if( puiRowZ > 1 ){
+			if( puiRowZ > iTEX_NUM_MIN ){
 				puiRowZ --;
 			}
 		}
@@ -352,10 +393,16 @@ void clsBUILDING::SetTileNumTargetSide(
 			puiColZ ++;
 		}
 		else if( vScale.x < vTILE_SIZE_MIN.x ){
-			if( puiColZ > 1 ){
+			if( puiColZ > iTEX_NUM_MIN ){
 				puiColZ --;
 			}
 		}
+#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+
+	puiRowZ = static_cast<int>( vScale.y / vTILE_SIZE_MAX.y );
+	puiColZ = static_cast<int>( vScale.x / vTILE_SIZE_MAX.x );
+
+#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 	}
 	//========== 東西 ==========//.
 	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
@@ -363,11 +410,12 @@ void clsBUILDING::SetTileNumTargetSide(
 		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.y = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
 		D3DXVECTOR3 vScale = m_vecvecSideArray[ SideNum ][0][0].vScale;
 
+#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 		if( vScale.y > vTILE_SIZE_MAX.y ){
 			puiRowX ++;
 		}
 		else if( vScale.y < vTILE_SIZE_MIN.y ){
-			if( puiRowX > 1 ){
+			if( puiRowX > iTEX_NUM_MIN ){
 				puiRowX --;
 			}
 		}
@@ -376,10 +424,16 @@ void clsBUILDING::SetTileNumTargetSide(
 			puiColX ++;
 		}
 		else if( vScale.x < vTILE_SIZE_MIN.x ){
-			if( puiColX > 1 ){
+			if( puiColX > iTEX_NUM_MIN ){
 				puiColX --;
 			}
 		}
+#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+
+	puiRowX = static_cast<int>( vScale.y / vTILE_SIZE_MAX.y );
+	puiColX = static_cast<int>( vScale.x / vTILE_SIZE_MAX.x );
+
+#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 	}
 }
 
@@ -388,6 +442,7 @@ void clsBUILDING::SetTileNumSide(
 	const unsigned int uiROW_Z, const unsigned int uiCOL_Z,
 	const unsigned int uiROW_X, const unsigned int uiCOL_X )
 {
+#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 	//========== 南北 ==========//.
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
 		//----- 縦 -----//.
@@ -450,6 +505,20 @@ void clsBUILDING::SetTileNumSide(
 			}
 		}
 	}
+#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+	//========== 南北 ==========//.
+	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
+		m_upSide->SetSplit( D3DXVECTOR2(
+			static_cast<float>( uiCOL_Z ),
+			static_cast<float>( uiROW_Z ) ) );
+	}
+	//========== 東西 ==========//.
+	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
+		m_upSide->SetSplit( D3DXVECTOR2(
+			static_cast<float>( uiCOL_X ),
+			static_cast<float>( uiROW_X ) ) );
+	}
+#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 
 }
 
@@ -500,7 +569,7 @@ void clsBUILDING::SetTransformSide()
 		}
 	}
 	//東西.
-	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  )
+	for( int SideNum=enWD_EAST; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  )
 	{
 		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ )
 		{
