@@ -69,10 +69,6 @@ clsCAMERA_TITLE::~clsCAMERA_TITLE()
 {
 }
 
-void clsCAMERA_TITLE::Create()
-{
-}
-
 void clsCAMERA_TITLE::Update()
 {
 	//“ñ“_ŠÔ‚Ì‹——£( 2ü ).

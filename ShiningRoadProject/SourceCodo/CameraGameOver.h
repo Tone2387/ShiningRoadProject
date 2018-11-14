@@ -11,8 +11,8 @@ public:
 	~clsCAMERA_GAMEOVER();
 
 
-	void Create() final;
-	void Update() final;
+	void Create() final {};
+	void Update() final {};
 
 private:
 
