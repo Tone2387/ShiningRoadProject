@@ -12,7 +12,8 @@ namespace{
 }
 
 
-clsROBO_STATUS_ENEMY::clsROBO_STATUS_ENEMY()
+clsROBO_STATUS_ENEMY::clsROBO_STATUS_ENEMY( const int iRow )
+	:m_iFILE_ROW( iRow )
 {
 	LoadFileData( sROBO_STATUS_ENEMY_PATH );
 }
@@ -38,11 +39,11 @@ void clsROBO_STATUS_ENEMY::LoadFileData( const char* sFilePath )
 
 	UCHAR tmpSize = sizeof( m_RoboStateData.ucPartsModelNum ) / sizeof( m_RoboStateData.ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
-		m_RoboStateData.ucPartsModelNum[i] = File.GetDataInt( m_iFILE_VAR_ROW, static_cast<int>( i ) );
+		m_RoboStateData.ucPartsModelNum[i] = File.GetDataInt( m_iFILE_ROW, static_cast<int>( i ) );
 	}
 
 	for( char i=0; i<enCOLOR_GAGE_size; i++ ){
-		m_RoboStateData.iColorRank[i]	= File.GetDataInt( m_iFILE_VAR_ROW, static_cast<int>( i ) + m_iFILE_INDEX_COL_COLOR_ARMOR_R );
+		m_RoboStateData.iColorRank[i]	= File.GetDataInt( m_iFILE_ROW, static_cast<int>( i ) + m_iFILE_INDEX_COL_COLOR_ARMOR_R );
 	}
 }
 

@@ -7,12 +7,17 @@
 class clsROBO_STATUS_ENEMY : public clsROBO_STATUS
 {
 public:
-	clsROBO_STATUS_ENEMY();
+	//引数は何行目を読み込むかを表す.
+	clsROBO_STATUS_ENEMY( const int iRow = 0 );
 	~clsROBO_STATUS_ENEMY();
 
 private:
 	//外部からデータを読み込む.
 	void LoadFileData( const char* sFilePath ) override;
+
+private:
+	//csvデータの何行目を読み込むか.
+	const int m_iFILE_ROW;
 
 };
 

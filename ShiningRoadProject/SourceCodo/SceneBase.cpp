@@ -59,9 +59,13 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpBlackScreen(	m_wpPtrGroup->GetBlackScreen() )
 	,m_wpFont(			m_wpPtrGroup->GetFont() )
 	,m_enNextScene(		enSCENE::NOTHING )
+	,m_encNoise(		encNOISE::NOTHING )
 	,m_wpViewPortUsing(	m_wpViewPort11 )
 	,m_pDepthStencilStateOn( nullptr )
 	,m_pDepthStencilStateOff(nullptr )
+	,m_iNoiseFrame( 0 )
+	,m_fBlock( 0.0f )
+	,m_fPulse( 0.0f )
 {
 }
 
@@ -227,24 +231,12 @@ void clsSCENE_BASE::Render(
 		UpdateNoise();
 	}
 
-	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
-		Noise( 60 );
+	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+		NoiseBig( 60 );
 	}
-//	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-//		Noise( 30 );
-//	}
-//	if( GetAsyncKeyState( 'X' ) & 0x1 ){
-//		Noise( 10 );
-//	}
-//	if( GetAsyncKeyState( 'C' ) & 0x1 ){
-//		Noise( 5 );
-//	}
-//	if( GetAsyncKeyState( 'V' ) & 0x1 ){
-//		Noise( 2 );
-//	}
-//	if( GetAsyncKeyState( 'B' ) & 0x1 ){
-//		Noise( 1 );
-//	}
+	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
+		NoiseSmall( 10 );
+	}
 
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
@@ -752,7 +744,7 @@ D3D11_VIEWPORT* clsSCENE_BASE::GetViewPortMainPtr()
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 //ノイズを起こす.
-void clsSCENE_BASE::Noise( const int iPower )
+void clsSCENE_BASE::NoiseBig( const int iPower )
 {
 	assert( m_upScreenTexture );
 
@@ -777,26 +769,55 @@ void clsSCENE_BASE::Noise( const int iPower )
 	m_upScreenTexture->SetBlock( static_cast<int>( m_fBlock ) );
 	m_upScreenTexture->SetPulse( m_fPulse );
 
+	m_encNoise = encNOISE::BLOCK_AND_PULSE;
+}
+void clsSCENE_BASE::NoiseSmall( const int iFrame )
+{
+	assert( m_upScreenTexture );
+
+	m_upScreenTexture->SetNoiseFlag( true );
+	m_iNoiseFrame = iFrame;
+
+	const int iNOISE_SMALL_BLOCK = 512;
+	m_upScreenTexture->SetBlock( iNOISE_SMALL_BLOCK );
+	m_upScreenTexture->SetPulse( 0.0f );
+
+	m_encNoise = encNOISE::MINUTE_BLOCK;
 }
 
 void clsSCENE_BASE::UpdateNoise()
 {
 	m_iNoiseFrame --;
 
-	//終了.
-	if( //m_iNoiseFrame <= 0 && 
-		m_fBlock <= fNOISE_ORIGINAL 
-	){
-		m_upScreenTexture->SetNoiseFlag( false );
+	switch( m_encNoise )
+	{
+	case encNOISE::BLOCK_AND_PULSE:
+		//終了.
+		if( //m_iNoiseFrame <= 0 && 
+			m_fBlock <= fNOISE_ORIGINAL 
+		){
+			m_upScreenTexture->SetNoiseFlag( false );
+			m_encNoise = encNOISE::NOTHING;
+		}
+
+		//ノイズ減衰.
+		if( m_iNoiseFrame % iNOISE_FRAME_RANGE_RATE == 0 ){
+			m_fBlock /= fNOISE_ORIGINAL;
+			m_fPulse /= fNOISE_ORIGINAL;
+			m_upScreenTexture->SetBlock( static_cast<int>( m_fBlock ) );
+			m_upScreenTexture->SetPulse( m_fPulse );
+		}
+		break;
+
+	case encNOISE::MINUTE_BLOCK:
+		if( m_iNoiseFrame <= 0 ){
+			m_upScreenTexture->SetNoiseFlag( false );
+			m_encNoise = encNOISE::NOTHING;
+		}
+		break;
 	}
 
-	//ノイズ減衰.
-	if( m_iNoiseFrame % iNOISE_FRAME_RANGE_RATE == 0 ){
-		m_fBlock /= fNOISE_ORIGINAL;
-		m_fPulse /= fNOISE_ORIGINAL;
-		m_upScreenTexture->SetBlock( static_cast<int>( m_fBlock ) );
-		m_upScreenTexture->SetPulse( m_fPulse );
-	}
+
 
 }
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
