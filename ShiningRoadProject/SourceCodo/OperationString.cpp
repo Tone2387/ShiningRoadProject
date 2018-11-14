@@ -1,10 +1,10 @@
 #include "OperationString.h"
 
+#define LOCAL_OF_THIS_PROJECT "japanese"
 using namespace std;
 
 namespace{
 
-#define LOCAL_OF_THIS_PROJECT "japanese"
 
 }
 

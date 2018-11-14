@@ -32,7 +32,10 @@ public:
 		const D3DXVECTOR3& vEye,
 		const D3DXVECTOR4& vColorBase = { 1.0f, 1.0f, 1.0f, 1.0f },
 		const D3DXVECTOR4& vColorArmor = { 1.0f, 1.0f, 1.0f, 1.0f },
-		const bool isAlpha = false );
+		const bool isAlpha = false )
+	{
+		ModelRender( mView, mProj, vLight, vEye, vColorBase, vColorArmor, isAlpha );
+	};
 
 	//ボーン座標を現在のキャラクター位置で更新.
 	void UpdateBonePos(){
@@ -42,7 +45,7 @@ public:
 	};
 
 	//Attach直後に使う( Attachしたモデルのボーンの数やパーツ名などを取得 ).
-	void Init();
+	void Init(){ InitProduct(); };
 
 
 	//直前のフレームのボーンの座標を持ってくる.
@@ -56,21 +59,17 @@ public:
 
 
 	//アニメーション変更.//変更できるならtrue, 変更できないならfalseが返る.
-	bool PartsAnimChange( const int iIndex );
+	bool PartsAnimChange( const int iIndex ){ return SetAnimChange( iIndex ); };
 
 	//パーツの名前を覚える.
-	void SetPartsName( const std::string &sPartsName );
+	void SetPartsName( const std::string &sPartsName ){ m_sPartsName = sPartsName; };
 
 	//ボーンが存在するならtrue.
-	bool ExistsBone( const char* sBoneName );
+	bool ExistsBone( const char* sBoneName ){ return m_pMesh->ExistsBone( sBoneName ); };
 
-	void AddPosition( const D3DXVECTOR3& vPos ){
-		SetPosition( GetPosition() + vPos );
-	}
+	void AddPosition( const D3DXVECTOR3& vPos ){ SetPosition( GetPosition() + vPos ); }
 
-	void AddRotation( const D3DXVECTOR3& vRot ){
-		SetRotation( GetRotation() + vRot );
-	};
+	void AddRotation( const D3DXVECTOR3& vRot ){ SetRotation( GetRotation() + vRot ); };
 
 protected:
 	//----- 各パーツごとの関数 -----//.
