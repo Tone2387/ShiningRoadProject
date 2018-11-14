@@ -62,7 +62,7 @@ clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	,m_vpParts()
 	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
-	,m_iColorRank()
+//	,m_iColorRank()
 {
 	m_dAnimSpd = dANIM_SPD;
 	m_vecvColor.resize( iMASK_MAX_NUM, vCOLOR_NORMAL );
@@ -186,12 +186,8 @@ void clsASSEMBLE_MODEL::UpDate()
 		m_vpParts[i]->Update();
 	}
 	UpdateProduct();
-
-
 }
 
-void clsASSEMBLE_MODEL::UpdateProduct()
-{}
 
 void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mView, 
@@ -474,14 +470,6 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 
 
 }
-void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
-{
-	SetPos( m_Trans.vPos + vVec );
-}
-D3DXVECTOR3 clsASSEMBLE_MODEL::GetPos() const
-{
-	return m_Trans.vPos;
-}
 
 
 
@@ -501,14 +489,6 @@ void clsASSEMBLE_MODEL::SetRot( const D3DXVECTOR3 &vRot )
 		assert( m_vpParts[i] );
 		m_vpParts[i]->SetRotation( tmpRot );
 	}
-}
-void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
-{
-	SetRot( D3DXVECTOR3( m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll ) + vRot );
-}
-D3DXVECTOR3 clsASSEMBLE_MODEL::GetRot() const
-{
-	return { m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll };
 }
 
 
@@ -532,11 +512,6 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 	}
 }
 
-
-int clsASSEMBLE_MODEL::GetPartsNum( const enPARTS_TYPES enPartsType )
-{
-	return m_enPartsNum[ enPartsType ];
-}
 
 
 //パーツのアニメーション変更.

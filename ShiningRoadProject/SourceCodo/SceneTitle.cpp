@@ -364,15 +364,15 @@ void clsSCENE_TITLE::RenderDebugText()
 		m_wpXInput->GetLStickTheta() );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	sprintf_s( strDbgTxt, 
+//		"CameraPos : x[%f], y[%f], z[%f]",
+//		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"CamLokPos : x[%f], y[%f], z[%f]",
+//		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	sprintf_s( strDbgTxt, 
 		"CamRot : x[%f], y[%f], z[%f]",

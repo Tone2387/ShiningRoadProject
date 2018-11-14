@@ -77,19 +77,19 @@ public:
 
 
 	//トランスフォーム.
-	void SetPos( const D3DXVECTOR3 &vPos );
-	void AddPos( const D3DXVECTOR3 &vVec );
-	D3DXVECTOR3 GetPos() const;
+	void SetPos( const D3DXVECTOR3 &vPos );//ボーン位置に各パーツを合わせる作業もしている.
+	void AddPos( const D3DXVECTOR3 &vVec )	{ SetPos( m_Trans.vPos + vVec ); }
+	D3DXVECTOR3 GetPos() const				{ return m_Trans.vPos; }
 
 	void SetRot( const D3DXVECTOR3 &vRot );
-	void AddRot( const D3DXVECTOR3 &vRot );
-	D3DXVECTOR3 GetRot() const;
+	void AddRot( const D3DXVECTOR3 &vRot )	{ SetRot( D3DXVECTOR3( m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll ) + vRot ); }
+	D3DXVECTOR3 GetRot() const				{ return { m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll }; }
 
 	void SetScale( const float fScale );
 
 	void SetAnimSpd( const double &dSpd );
 
-	int GetPartsNum( const enPARTS_TYPES enParts );
+	int GetPartsNum( const enPARTS_TYPES enPartsType ){ return m_enPartsNum[ enPartsType ]; }
 
 	//パーツのアニメーション変更.
 	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
@@ -127,7 +127,7 @@ protected:
 
 	//継承先で使ってね.
 	virtual void CreateProduct( clsROBO_STATUS* const pStatus );
-	virtual void UpdateProduct();
+	virtual void UpdateProduct(){};
 
 
 	//パーツをボーンの位置( 正式な場所 )に合わせる( +武器の角度を腕に合わせる ).
