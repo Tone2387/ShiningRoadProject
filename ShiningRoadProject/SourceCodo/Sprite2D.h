@@ -57,15 +57,17 @@ public:
 	virtual void Render();
 
 
-	void SetPos( const D3DXVECTOR3 &vPos );
-	D3DXVECTOR3 GetPos() const;
-	void AddPos( const D3DXVECTOR3 &vPos );		//ˆø”‚ğ‰ÁZ‚·‚é.
+	D3DXVECTOR3 GetPos()					{ return m_vPos; };
+	void SetPos( const D3DXVECTOR3& vPos )	{ m_vPos = vPos; };
+	void AddPos( const D3DXVECTOR3& vPos )	{ m_vPos += vPos; };
 
 
-	void SetScale( const D3DXVECTOR3 &vScale );
+	void SetScale( const D3DXVECTOR3 &vScale ) { m_vScale = vScale; };
 	void SetScale( const float &fScale, 
 		const bool withZ = false );	//X‚ÆY‚ğ“™‚µ‚¢”{—¦‚Å‘‚¯‚é.
-	D3DXVECTOR3 GetScale() const;
+
+	D3DXVECTOR3 GetScale() const { return m_vScale; }
+
 	void AddScale( const D3DXVECTOR3 &vScale );	//ˆø””{‚É‚·‚é.
 	void AddScale( const float &fScale, const bool withZ = false );
 
@@ -73,11 +75,11 @@ public:
 	void SetColor( const D3DXVECTOR3& vColor );
 	D3DXVECTOR3 GetColor();
 
+	float GetAlpha()					{ return m_vColor.w; };
 	//‘æ“ñˆø”‚ğtrue‚É‚·‚é‚ÆZ‚É‚à‰e‹¿‚·‚é.		
-	void SetAlpha( const float fAlpha );
+	void SetAlpha( const float fAlpha ) { m_vColor.w = fAlpha; }
 	//”ÍˆÍ‚ğover‚·‚é‚Æfalse‚ª•Ô‚Á‚Ä‚­‚é.
 	bool AddAlpha( const float fAlpha );
-	float GetAlpha();
 
 
 
@@ -95,7 +97,6 @@ protected:
 	HRESULT CreateTexture( const char* const fileName,
 		ID3D11ShaderResourceView** pTex );
 
-	void Release();
 
 
 	//«ƒ‚ƒfƒ‹‚Ìí—Ş‚²‚Æ‚É—pˆÓ.

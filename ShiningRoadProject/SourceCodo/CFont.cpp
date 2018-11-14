@@ -5,7 +5,6 @@
 #include "File.h"
 //#include "OperationString.h"
 
-#include <assert.h>
 
 
 
@@ -576,8 +575,6 @@ void clsFont::Release()
 
 	m_iTextRow = iERROR_TEXT_ROW_NUM;
 }
-
-
 //							↓段( 何行目? )	　		↓文字数.
 void clsFont::Render( const int iTextRow, const int iCharNum )
 {
@@ -699,52 +696,12 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 		m_pContext->Draw( 4, 0 );
 	}
 }
-
-
-
-void clsFont::SetPos( const D3DXVECTOR3 &vPos )
-{
-	m_vPos = vPos;
-}
-
-D3DXVECTOR3 clsFont::GetPos()
-{
-	return m_vPos;
-}
-
-
-void clsFont::SetScale( const float fScale )
-{
-	m_fScale = fScale;
-}
-
-float clsFont::GetScale()
-{
-	return m_fScale;
-}
 	 
 void clsFont::SetColor( const D3DXVECTOR4 &vColor )
 {
 	const float fNOT_ALPHA = 1.0f;
 	m_vColor = vColor;
 	m_vColor.w = fNOT_ALPHA;
-}
-
-void clsFont::SetAlpha( const float fAlpha )
-{
-	m_fAlpha = fAlpha;
-}
-
-//折り返し位置.
-void clsFont::SetIndentPos( const float fPosX )
-{
-	m_fIndentionPosint = fPosX;
-}
-
-//読み込んだテキストの数( Createしていないと-1が返る ).
-int clsFont::GetTextRow()
-{
-	return m_iTextRow;
 }
 
 void clsFont::SetBlend( const bool isAlpha )
@@ -760,11 +717,6 @@ void clsFont::SetBlend( const bool isAlpha )
 	}
 }
 
-D3DXVECTOR3 clsFont::GetPosLast()
-{
-	return m_vPosLast;
-}
-
 //テキストの内容.
 std::string clsFont::GetText( const int iRow )
 {
@@ -772,7 +724,6 @@ std::string clsFont::GetText( const int iRow )
 
 	return m_vecsTextData[ iRow ];
 }
-
 
 //文字を細くする倍率を返す( 問題ないなら1.0f ).
 //第二引数は( 全角で )何文字目か.
@@ -854,7 +805,6 @@ float clsFont::GetFineCharactorRate(
 
 	return fReturn;
 }
-
 
 clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType( const int iTextRow, const int iCharNum )
 {

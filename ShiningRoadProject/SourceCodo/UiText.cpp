@@ -507,34 +507,7 @@ void clsUiText::RenderFont( const int FontIndex, const float x, const float y, c
 
 }
 
-void clsUiText::SetPos( const D3DXVECTOR2 &vPos )
-{
-	m_vPos = vPos;
-}
-
-void clsUiText::AddPos( const D3DXVECTOR2 &vPos )
-{
-	m_vPos += vPos;
-}
-
-void clsUiText::SetScale( const float fScale )
-{
-	m_fScale = fScale;
-}
 
 
-void clsUiText::SetText( const char* sText )
-{
-	m_sText = sText;
-}
 
 
-void clsUiText::SetColor( const D3DXVECTOR4 &vColor )
-{
-	m_vColor = vColor;
-}
-
-void clsUiText::SetAlpha( const float fAlpha )
-{
-	m_fAlpha = fAlpha;
-}
