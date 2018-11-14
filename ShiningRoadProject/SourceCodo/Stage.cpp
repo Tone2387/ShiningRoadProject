@@ -79,9 +79,11 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	}
 	file.Close();
 
-	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
-		for( int j=0; j<100; j++ ){
-			m_vpBuilding[i]->Update();
+	const int iBUILDING_UPDATE_TILE_NUM = 100;
+	for( unsigned int i=0; i<m_vpBuilding.size(); i++ )
+	{
+		for( int j=0; j<iBUILDING_UPDATE_TILE_NUM; j++ ){
+			m_vpBuilding[i]->UpdateTile();
 		}
 	}
 }
@@ -133,5 +135,5 @@ void clsStage::SetStageObjTransform(const int iObjNo)
 		return;
 	}
 
-	m_vpBuilding[iObjNo]->Update();
+	m_vpBuilding[iObjNo]->UpdateModel();
 }

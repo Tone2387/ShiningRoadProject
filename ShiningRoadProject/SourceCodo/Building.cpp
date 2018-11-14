@@ -90,9 +90,17 @@ clsBUILDING::~clsBUILDING()
 	m_wpContext = nullptr;
 }
 
+void clsBUILDING::UpdateModel()
+{
+	m_upBox->SetPosition( m_Trans.vPos );
+	m_upBox->SetRotation( m_Trans.vRot );
+	m_upBox->SetScale( m_Trans.vScale );
+
+	m_upBox->ModelTransUpdate();
+}
 
 
-void clsBUILDING::Update()
+void clsBUILDING::UpdateTile()
 {
 //	if( GetAsyncKeyState( VK_UP ) & 0x8000 )	m_Trans.vPos.z += 1.0f;
 //	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_Trans.vPos.z -= 1.0f;
@@ -109,12 +117,7 @@ void clsBUILDING::Update()
 //	if( GetAsyncKeyState( 'R' ) & 0x1 )	m_Trans.vRot.y += 0.01f;
 //	if( GetAsyncKeyState( 'F' ) & 0x1 )	m_Trans.vRot.y -= 0.01f;
 
-
-	m_upBox->SetPosition( m_Trans.vPos );
-	m_upBox->SetRotation( m_Trans.vRot );
-	m_upBox->SetScale( m_Trans.vScale );
-
-	m_upBox->ModelTransUpdate();
+	UpdateModel();
 
 	//ã–Ê.
 	{
@@ -192,9 +195,9 @@ void clsBUILDING::Render(
 	const D3DXVECTOR3 &vLight, 
 	const D3DXVECTOR3 &vEye )
 {
-//#ifdef _DEBUG
-//	m_upBox->Render( mView, mProj, vLight, vEye );
-//#else//#ifdef _DEBUG
+#ifdef _DEBUG
+	m_upBox->Render( mView, mProj, vLight, vEye );
+#else//#ifdef _DEBUG
 	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ )
 	{
 		for( unsigned int Col=0; Col<m_vecvecTop[ Row ].size(); Col++ ){
@@ -217,7 +220,7 @@ void clsBUILDING::Render(
 			}
 		}
 	}
-//#endif//#ifdef _DEBUG
+#endif//#ifdef _DEBUG
 
 }
 

@@ -41,7 +41,7 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_pDefaultPS( nullptr )
 	,m_pNoisePS( nullptr )
 	,m_pConstantBuffer( nullptr )
-	,m_isNoise( true )
+	,m_isNoise( false )
 	,m_iBlock( iBLOCK_INIT )
 	,m_iSeed( 0 )
 	,m_fPulse( fPULSE_INIT )
@@ -416,6 +416,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		cb.fViewPortWidth = WND_W;
 		cb.fViewPortHeight= WND_H;
 		cb.vColor = { 1.0f, 1.0f, 1.0f, 0.0f };
+		cb.vColor = { 2.0f, 2.0f, 2.0f, 0.0f };
 //		cb.vColor = { 2.0f, 0.5f, 0.5f, 1.0f };
 		cb.vUV			= { 0.0f, 0.0f };
 
