@@ -1,14 +1,9 @@
 #ifndef FACTORY_CAMERA_H_
 #define FACTORY_CAMERA_H_
 
+class clsCAMERA_BASE;
 
-
-#include "Camera.h"
-#include "CameraTitle.h"
-#include "CameraAssemble.h"
-#include "CameraMission.h"
-#include "CameraEnding.h"
-#include "CameraGameOver.h"
+#include "Global.h"
 
 //フラグに応じてシーンごとにカメラを吐き出すクラス.
 class clsFACTORY_CAMERA

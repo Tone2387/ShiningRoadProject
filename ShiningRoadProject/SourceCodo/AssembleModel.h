@@ -1,8 +1,13 @@
 #ifndef ASSEMBLE_MODEL_H_
 #define ASSEMBLE_MODEL_H_
 
+#include "PartsLeg.h"
+#include "PartsCore.h"
+#include "PartsHead.h"
+#include "PartsArmL.h"
+#include "PartsArmR.h"
+#include "PartsWeapon.h"
 
-#include "FactoryParts.h"
 
 #include "Resource.h"
 
@@ -166,7 +171,6 @@ protected:
 
 	clsResource* m_wpResource;
 
-	std::unique_ptr< clsFACTORY_PARTS >	m_upPartsFactory;
 
 	//パーツの数分のポインタ.
 	std::vector< clsPARTS_BASE* >	m_vpParts;

@@ -1,5 +1,11 @@
 #include "FactoryCamera.h"
 
+//#include "Camera.h"
+#include "CameraTitle.h"
+#include "CameraAssemble.h"
+#include "CameraMission.h"
+#include "CameraEnding.h"
+#include "CameraGameOver.h"
 
 clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene )
 {

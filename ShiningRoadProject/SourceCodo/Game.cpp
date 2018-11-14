@@ -6,6 +6,10 @@
 #include "CXInput.h"
 #include "BlackScreen.h"
 #include "RoboStatusPlayer.h"
+#include "PtrGroup.h"
+#include "Resource.h"
+#include "SceneBase.h"
+#include "CFont.h"
 
 
 using namespace std;
@@ -210,8 +214,8 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	m_spPtrGroup->UpdateCameraPtr( m_spCamera );
 
 	//お待ちかねのシーン本体.
-	unique_ptr< clsSCENE_FACTORY > upSceneFactory = make_unique< clsSCENE_FACTORY >( m_spPtrGroup );
-	m_upScene.reset( upSceneFactory->Create( enNextScene ) );
+	unique_ptr< clsFACTORY_SCENE > upSceneFactory = make_unique< clsFACTORY_SCENE >();
+	m_upScene.reset( upSceneFactory->Create( enNextScene, m_spPtrGroup ) );
 
 	if( m_upScene ){
 		m_upScene->Create();//シーン初期化.

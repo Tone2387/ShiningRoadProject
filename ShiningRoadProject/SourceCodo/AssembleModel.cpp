@@ -1,4 +1,5 @@
 #include "AssembleModel.h"
+#include "FactoryParts.h"
 
 #include "OperationString.h"
 
@@ -58,7 +59,6 @@ namespace{
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
-	,m_upPartsFactory( nullptr )
 	,m_vpParts()
 	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
@@ -84,10 +84,6 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 	m_vpParts.clear();
 	m_vpParts.shrink_to_fit();
 
-//	SAFE_DELETE( m_upPartsFactory );
-	if( m_upPartsFactory ){
-		m_upPartsFactory.reset( nullptr );
-	}
 
 	m_wpResource = nullptr;
 }
@@ -98,17 +94,16 @@ void clsASSEMBLE_MODEL::Create(
 	clsResource* const pResource, 
 	clsROBO_STATUS* const pStatus )
 {
-	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
 	assert( !m_wpResource );
 
 	m_wpResource = pResource;
 
-	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
+	unique_ptr< clsFACTORY_PARTS > upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
 	m_vpParts.resize( ucPARTS_MAX, nullptr );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
+		m_vpParts[i] = upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
 

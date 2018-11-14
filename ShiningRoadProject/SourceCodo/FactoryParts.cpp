@@ -1,6 +1,13 @@
 #include "FactoryParts.h"
 
 
+#include "PartsLeg.h"
+#include "PartsCore.h"
+#include "PartsHead.h"
+#include "PartsArmL.h"
+#include "PartsArmR.h"
+#include "PartsWeapon.h"
+
 //パーツを吐き出す.
 clsPARTS_BASE* clsFACTORY_PARTS::Create( const enPARTS enParts )
 {
