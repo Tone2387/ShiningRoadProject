@@ -22,13 +22,34 @@ public:
 
 	//trueでノイズ.
 	void SetNoiseFlag( const bool isNoise )	{ m_isNoise = isNoise; };
-	bool GetNoiseFlag()						{ return m_isNoise; };
 
 	void SetBlock( const int iBlock ){ m_iBlock = iBlock; };
 
 	void SetPulse( const float fPulse ){ m_fPulse = fPulse; };
 	void SetPulseOffset( const float fPulseOffset ){ m_fPulseOffset = fPulseOffset; };
 	void SetPulseOffsetAdd( const float fPulseOffsetAdd ){ m_fPulseOffsetAdd = fPulseOffsetAdd; };
+
+	void SetNega( const bool isNega ){ m_isNega = isNega; };
+	void SetColor( const D3DXVECTOR4& vColor ){ m_vColor = vColor; };
+
+
+	bool isNoiseFlag()		{ return m_isNoise; };
+	bool isNegaFlag()		{ return m_isNega; };
+	bool isDifferentColor(){ 
+		if( m_vColor == D3DXVECTOR4( 1.0f, 1.0f, 1.0f, 1.0f ) ){
+			return false;
+		}
+		return true; 
+	};
+	bool isUse(){
+		if( isNoiseFlag()	||
+			isNegaFlag()	||
+			isDifferentColor() )
+		{
+			return true;
+		}
+		return false;
+	}
 
 private:
 
@@ -52,8 +73,11 @@ private:
 	float	m_fPulseOffsetAdd;
 	//----- ノイズ -----//.
 
-	D3DXVECTOR2 m_vNoiseStart;
-	D3DXVECTOR2 m_vNoiseEnd;
+	//----- 画面色 -----//.
+	bool m_isNega;
+	D3DXVECTOR4 m_vColor;
+	//----- 画面色 -----//.
+
 
 
 	ID3D11Device*				m_wpDevice;

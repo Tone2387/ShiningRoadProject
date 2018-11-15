@@ -8,15 +8,12 @@ namespace{
 	{
 		ALIGN16 D3DXMATRIX	mW;				//ワールド行列.
 		ALIGN16	D3DXVECTOR4	vColor;			//アルファ値(透過で使用する)
-		ALIGN16 float		fViewPortWidth;	//ビューポート幅.
-		ALIGN16 float		fViewPortHeight;//ビューポート高さ.
-		ALIGN16 D3DXVECTOR2	vUV;			//UV座標.
+		ALIGN16 D3DXVECTOR2 vViewPort;	//ビューポート幅.
 		ALIGN16 float		fPulse;			//パルス.
 		ALIGN16 float		fPulseOffset;	
 		ALIGN16 int			iBlock;			//ブロックの分割数.
 		ALIGN16 int			iSeed;			//ブロックのseed値.
-		ALIGN16 D3DXVECTOR2	vNoiseStart;	//ノイズ範囲開始座標.
-		ALIGN16 D3DXVECTOR2	vNoiseEnd;		//ノイズ範囲終了座標.
+		ALIGN16 float		isfNega;
 	};
 
 	const char sSHADER_NAME[] = "Shader\\Screen.hlsl";
@@ -47,8 +44,8 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_fPulse( fPULSE_INIT )
 	,m_fPulseOffset( fPULSE_OFFSET_INIT )
 	,m_fPulseOffsetAdd( fPULSE_OFFSET_ADD )
-	,m_vNoiseStart( { 0.0f, 0.0f } )
-	,m_vNoiseEnd( { 0.0f, 0.0f } )
+	,m_isNega( false )
+	,m_vColor( 1.0f, 1.0f, 1.0f, 1.0f )
 {
 	assert( m_wpContext );
 	m_wpContext->GetDevice( &m_wpDevice );
@@ -413,22 +410,18 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		D3DXMatrixIdentity( &m );
 	
 		cb.mW = m;
-		cb.fViewPortWidth = WND_W;
-		cb.fViewPortHeight= WND_H;
-		cb.vColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-		//ブロックノイズを掛けると暗くなるので.
-		const float fNOISE_COLOR_ = 2.0f;
-		cb.vColor = { fNOISE_COLOR_, fNOISE_COLOR_, fNOISE_COLOR_, 1.0f };
-//		cb.vColor = { 2.0f, 0.5f, 0.5f, 1.0f };
-		cb.vUV			= { 0.0f, 0.0f };
+		cb.vColor = m_vColor;
+		cb.vViewPort.x = WND_W;
+		cb.vViewPort.y = WND_H;
 
-		cb.iBlock = m_iBlock;
-		cb.iSeed  = m_iSeed;
 		cb.fPulse = m_fPulse;
 		cb.fPulseOffset = m_fPulseOffset;
+		cb.iBlock = m_iBlock;
+		cb.iSeed  = m_iSeed;
 
-		cb.vNoiseStart	= { 0.0f, 0.0f };
-		cb.vNoiseEnd	= { WND_W, WND_H };
+		const float fNEGA = 1.0f;
+		if( m_isNega )	cb.isfNega = fNEGA;
+		else			cb.isfNega = 0.0f;
 
 		m_iSeed ++;
 		const int iSEED_MAX = 32000;

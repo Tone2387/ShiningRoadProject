@@ -191,7 +191,7 @@ void clsSCENE_BASE::Render(
 
 
 #ifdef RENDER_SCREEN_TEXTURE_	
-	if( m_upScreenTexture->GetNoiseFlag() ){
+	if( m_upScreenTexture->isUse() ){
 		//Rendertargetをテクスチャにする.
 		m_upScreenTexture->SetRenderTargetTexture( pDepthStencilView );
 	}
@@ -223,7 +223,7 @@ void clsSCENE_BASE::Render(
 
 
 #ifdef RENDER_SCREEN_TEXTURE_	
-	if( m_upScreenTexture->GetNoiseFlag() ){
+	if( m_upScreenTexture->isUse() ){
 		//テクスチャの内容を画面に描画.
 		m_upScreenTexture->RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
 
@@ -235,6 +235,17 @@ void clsSCENE_BASE::Render(
 	}
 	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
 		NoiseSmall( 10 );
+	}
+	if( GetAsyncKeyState( 'C' ) & 0x1 ){
+		static bool nega = false;
+		m_upScreenTexture->SetNega( nega );
+		nega = !nega;
+	}
+	if( GetAsyncKeyState( 'V' ) & 0x8000 ){
+		m_upScreenTexture->SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
+	}
+	if( GetAsyncKeyState( 'B' ) & 0x8000 ){
+		m_upScreenTexture->SetColor( { 0.5f, 0.5f, 1.0f, 1.0f } );
 	}
 
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
