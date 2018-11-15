@@ -24,15 +24,23 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
+
 	struct TEXT_STATE
 	{
 		D3DXVECTOR3 vPos;
 		float		fScale;
 		float		fAlpha;
 	};
-
 	//範囲をoverするとfalseが返ってくる.
-	bool AddAlphaState( TEXT_STATE* const pTextState, const float fAlpha );
+	bool AddAlphaState( TEXT_STATE* const pTextState, const float fAlpha )const;
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
+
+private:
+
 
 	//そのばで透過する文字用のステータス.
 	std::vector< std::unique_ptr< TEXT_STATE > > m_vecupTextStateAlpha;
@@ -62,10 +70,6 @@ private:
 	std::unique_ptr< clsSprite2D > m_upBack;
 	std::unique_ptr< clsSPRITE2D_CENTER > m_upLogo;
 
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
 
 	//音の引数.
 	enum enBGM : int

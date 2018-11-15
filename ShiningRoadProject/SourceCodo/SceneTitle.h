@@ -36,6 +36,12 @@ private:
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
 
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
+
 private:
 
 
@@ -69,12 +75,6 @@ private:
 
 	//テスト用エフェクト.
 	::Effekseer::Handle m_ehHibana;
-
-
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
 
 };
 #endif//#ifndef SCENE_TITLE_H_

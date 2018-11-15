@@ -325,7 +325,8 @@ void clsSCENE_ENDING::RenderUi()
 	}
 }
 
-bool clsSCENE_ENDING::AddAlphaState( TEXT_STATE* const pTextState, const float fAlpha )
+bool clsSCENE_ENDING::AddAlphaState( 
+	TEXT_STATE* const pTextState, const float fAlpha )const
 {
 	pTextState->fAlpha += fAlpha;
 

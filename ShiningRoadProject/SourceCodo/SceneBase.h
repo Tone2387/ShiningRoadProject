@@ -69,16 +69,16 @@ protected:
 	//3D座標をスクリーン( 2D )座標へと変換する.
 	//dimensions(次元) conversion(変換).
 	//戻り値は2D座標.
-	D3DXVECTOR3 ConvDimPos( const D3DXVECTOR3 &v3DPos );
+	D3DXVECTOR3 ConvDimPos( const D3DXVECTOR3 &v3DPos ) const;
 
 
 	//メニュー操作に使ってね.
-	bool isPressRight();
-	bool isPressLeft();
-	bool isPressUp();
-	bool isPressDown();
-	bool isPressEnter();
-	bool isPressExit();
+	bool isPressRight()	const;
+	bool isPressLeft()	const;
+	bool isPressUp()	const;
+	bool isPressDown()	const;
+	bool isPressEnter()	const;
+	bool isPressExit()	const;
 
 	//押しっぱなしで動く( trueならスティック有効 ).
 	bool isPressHoldRight( bool isWithStick = true );
@@ -88,7 +88,7 @@ protected:
 
 	//----- Render用 -----//.
 	//深度テスト(Zテスト)　ON/OFF切替.
-	void SetDepth( const bool isOn );
+	void SetDepth( const bool isOn )const;
 
 	//---継承先のRenderProductで使用する---.
 	void SetViewPort( 
@@ -98,7 +98,10 @@ protected:
 		const float fWndW, const float fWndH );
 
 	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
-	D3D11_VIEWPORT* GetViewPortMainPtr();
+	D3D11_VIEWPORT* GetViewPortMainPtr()const{
+		assert( m_wpViewPort11 );
+		return m_wpViewPort11;
+	};
 	//----- Render用 -----//.
 
 #ifdef RENDER_SCREEN_TEXTURE_	
