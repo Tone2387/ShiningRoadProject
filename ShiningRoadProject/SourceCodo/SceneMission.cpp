@@ -250,12 +250,12 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
-		m_v_pFriends[i]->Action(m_pStage);
+		m_v_pFriends[i]->Update(m_pStage);
 	}
 	
 	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
-		m_v_pEnemys[i]->Action(m_pStage);
+		m_v_pEnemys[i]->Update(m_pStage);
 	}
 	
 	UpdateCamTargetPos(m_pCamTar);

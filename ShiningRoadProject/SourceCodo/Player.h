@@ -16,7 +16,7 @@ public:
 
 	void Init(clsPOINTER_GROUP* const pPtrGroup);
 
-	void ActionProduct() override;
+	void Action() final;
 
 	float GetLockCircleScale();
 	D3DXVECTOR3 GetLockRangeTmp();

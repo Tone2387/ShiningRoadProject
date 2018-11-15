@@ -103,10 +103,16 @@ void clsCharactor::MoveControl()
 	}
 	
 	m_bMoving = true;
+
+	D3DXVECTOR3 vHorMoveDir = {0.0f,0.0f,0.0f};
+
+	vHorMoveDir.x = m_vMoveDir.x * m_vWallHit.x;
+	vHorMoveDir.z = m_vMoveDir.z * m_vWallHit.z;
+
 	m_Trans.vPos += m_vMoveDir * abs(m_fMoveSpeed);
 }
 
-void clsCharactor::MoveAccele(const float fPower)//いらんかも.
+void clsCharactor::MoveAccele(const float fPower)
 {
 	if (m_fMoveSpeed <= m_fMoveSpeedMax && m_fMoveSpeed > -m_fMoveSpeedMax)
 	{
@@ -241,7 +247,7 @@ void clsCharactor::LookUp(const float fAngle, const float fPush)
 
 	Spin(m_fVerLookDir, fLookDir, m_fRotSpeedMax);
 
-	const float fPitchMax = static_cast<float>D3DXToRadian(89);//90°になると視界がおかしくなるため防止.
+	const float fPitchMax = static_cast<float>D3DXToRadian(75);//90°になると視界がおかしくなるため防止.
 
 	if (abs(m_fVerLookDir) > fPitchMax)
 	{
@@ -596,6 +602,7 @@ bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
 	D3DXVECTOR3 vTarDir = vTargetPos - m_vLockStartingPos;
+	vTarDir.y = 0;
 	D3DXVec3Normalize(&vTarDir, &vTarDir);
 
 	float fDir = D3DXVec3Dot(&vTarDir, &vForword);
@@ -770,6 +777,20 @@ void clsCharactor::CharaInit(clsPOINTER_GROUP* pPointer)
 const float clsCharactor::GetRaderRange()const
 {
 	return m_fRaderRange;
+}
+
+void clsCharactor::UpdateProduct(clsStage* pStage)
+{
+	clsObject::UpdateProduct(pStage);
+
+	Move();
+	Rotate();
+
+	WeaponUpdate();
+
+	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
+	m_iDamage = 0;//毎フレーム初期化.
+	m_bRadarWarning = false;//初期化.
 }
 
 clsCharactor::clsCharactor() :

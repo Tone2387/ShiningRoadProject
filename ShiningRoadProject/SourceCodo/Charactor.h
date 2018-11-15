@@ -106,6 +106,8 @@ public:
 	
 	void WeaponUpdate();
 
+	virtual void UpdateProduct(clsStage* pStage)override;
+
 	void LockChara();
 	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
 

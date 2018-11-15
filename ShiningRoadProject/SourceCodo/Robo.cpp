@@ -368,8 +368,8 @@ void clsRobo::SetDirQuickTurn(const float fAngle)
 	{
 		if (IsRotControl())
 		{
-			float fTmp = (int)D3DX_PI * (fAngle / abs(fAngle));
-			SetRotDir(fTmp);
+			m_fQuickTrunDir = (int)D3DX_PI * (fAngle / abs(fAngle));
+			SetRotDir(m_fQuickTrunDir);
 		}
 	}
 }
@@ -394,11 +394,10 @@ void clsRobo::QuickTurn()
 	}
 }
 
-void clsRobo::Updata()
+void clsRobo::UpdateProduct(clsStage* pStage)
 {
 	PlayBoostEfc();
-	CharactorUpdate();
-	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
+	clsCharactor::UpdateProduct(pStage);
 
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
@@ -409,10 +408,7 @@ void clsRobo::Updata()
 	if (m_iQuickTrunDecStartTime > 0)//クイックターン.
 	{
 		m_fRotSpeed = m_fQuickTrunSpeedMax;
-
-		float fTmp = m_fRotDir / abs(m_fRotDir);
-		SetRotDir(fTmp);
-
+		SetRotDir(m_fQuickTrunDir);
 		m_iQuickTrunDecStartTime--;
 	}
 
@@ -452,12 +448,8 @@ void clsRobo::Updata()
 		m_iQuickInterbal--;
 	}
 
-	WeaponUpdate();
-
 	EnelgyRecovery();
-
 	UpdataLimitTime();
-
 	AnimUpdate();
 }
 

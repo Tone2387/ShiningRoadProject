@@ -28,7 +28,7 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 	m_vCamPosDivia = m_Trans.vPos - m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
 }
 
-void clsPlayer::ActionProduct()
+void clsPlayer::Action()
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
@@ -124,9 +124,6 @@ void clsPlayer::ActionProduct()
 	{
 		pRoboCom->PushBotton(this);
 	}
-
-	Updata();
-	//UpdateCamTargetPos();
 }
 
 D3DXVECTOR3 clsPlayer::GetCamTargetPos()
