@@ -44,6 +44,9 @@ namespace{
 //================================//
 clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pRoboModel( nullptr )
+	,m_fTextAlpha( 1.0f )
+	,m_iTextAlphaStopFrame( 0 )
+	,m_encTextAlphaMode( encTEXT_ALPHA_MODE::PLUS )
 {
 }
 
@@ -262,8 +265,52 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		}
 	}
 
+	TextAlphaUpdate();
+
 
 }
+
+//テキストの明滅.
+void clsSCENE_TITLE::TextAlphaUpdate()
+{
+	const float fADD_ALPHA = 0.125f * 0.125f;
+	const float fALPHA_MIN = 0.25f;
+	const float fALPHA_MAX = 1.0f;
+	const int iTEXT_ALPHA_STOP_FRAME = 60;
+
+	switch( m_encTextAlphaMode )
+	{
+	case encTEXT_ALPHA_MODE::PLUS:
+		m_fTextAlpha += fADD_ALPHA;
+		if( m_fTextAlpha > fALPHA_MAX ){
+			m_fTextAlpha = fALPHA_MAX;
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::NEXT_MINUS;
+		}
+		break;
+	case encTEXT_ALPHA_MODE::NEXT_MINUS:
+		m_iTextAlphaStopFrame ++;
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME ){
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::MINUS;
+			m_iTextAlphaStopFrame = 0;
+		}
+		break;
+	case encTEXT_ALPHA_MODE::MINUS:
+			m_fTextAlpha -= fADD_ALPHA;
+			if( m_fTextAlpha < fALPHA_MIN ){
+				m_fTextAlpha = fALPHA_MIN;
+				m_encTextAlphaMode = encTEXT_ALPHA_MODE::NEXT_PLUS;
+			}
+		break;
+	case encTEXT_ALPHA_MODE::NEXT_PLUS:
+		m_iTextAlphaStopFrame ++;
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME ){
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::PLUS;
+			m_iTextAlphaStopFrame = 0;
+		}
+		break;
+	}
+}
+
 
 //メニューの動き.
 void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
@@ -334,6 +381,7 @@ void clsSCENE_TITLE::RenderUi()
 		m_wpFont->SetPos( vPLESS_START_POS );
 		m_wpFont->SetScale( fPLESS_START_SCALE );
 		m_wpFont->SetColor( vTEXT_COLOR );
+		m_wpFont->SetAlpha( m_fTextAlpha );
 		m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
 	}
 
