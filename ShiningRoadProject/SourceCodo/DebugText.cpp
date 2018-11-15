@@ -1,9 +1,16 @@
 #include "DebugText.h"
 
-//シェーダファイル名(パスも含む).
-const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
 
-const char* FILE_PATH = "Data\\DebugText\\ascii0.png";
+namespace{
+	//シェーダファイル名(パスも含む).
+	const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
+
+	const char* FILE_PATH = "Data\\Image\\DebugText\\ascii0.png";
+
+	const float DIMENSION		= 12.0f;
+	const float WDIMENSION		= 10.0f;
+	const float TEX_DIMENSION	= 128.0f;
+}
 
 //============================================================
 //	コンストラクタ.
