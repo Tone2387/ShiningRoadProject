@@ -56,6 +56,8 @@ protected:
 	//各継承クラスのクラス名をm_sSceneNameに入れる.
 	virtual void CreateSceneName() = 0;
 
+protected:
+
 	//継承クラスで中身を入れる.
 	std::string m_sSceneName;
 
@@ -87,10 +89,10 @@ private:
 		const SOUND_SET &vpSound, 
 		std::deque<bool> &dqbLoop,
 		std::vector<int> &viNum,
-		const int No, const bool bNotify );
+		const int No, const bool bNotify ) const;
 	//停止関数.
 	bool Stop( 
-		const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No );
+		const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No ) const;
 	//音の停止を確認する関数.
 	bool IsStopped( const SOUND_SET &vpSound, const int No ) const;
 	//音の再生中を確認する関数.
@@ -99,6 +101,7 @@ private:
 	bool SeekToStart( const SOUND_SET &vpSound, const int No ) const;
 
 
+private:
 
 	//サウンドクラス.
 	SOUND_SET m_BgmSet;
