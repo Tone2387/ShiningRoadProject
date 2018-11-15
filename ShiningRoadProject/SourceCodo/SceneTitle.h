@@ -29,8 +29,21 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
+	//テキストの明滅.
+	void TextAlphaUpdate();
+
+
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
+
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
+
+private:
+
 
 	//タイトルでズンとただずむロボット君.
 	clsASSEMBLE_MODEL*	m_pRoboModel;
@@ -42,6 +55,16 @@ private:
 
 	std::unique_ptr< clsSprite2D > m_upFlash;
 
+	//push buttonの透明度.
+	float	m_fTextAlpha;
+	int		m_iTextAlphaStopFrame;
+	enum class encTEXT_ALPHA_MODE : UCHAR
+	{
+		PLUS = 0,
+		NEXT_MINUS,//マイナスの準備.
+		MINUS,
+		NEXT_PLUS
+	}	m_encTextAlphaMode;
 
 
 	std::unique_ptr< clsMENU_WINDOW_TITLE_START_OR_END > m_upMenuBox;
@@ -52,12 +75,6 @@ private:
 
 	//テスト用エフェクト.
 	::Effekseer::Handle m_ehHibana;
-
-
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
 
 };
 #endif//#ifndef SCENE_TITLE_H_

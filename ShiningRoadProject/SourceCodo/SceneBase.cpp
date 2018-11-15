@@ -261,7 +261,7 @@ void clsSCENE_BASE::Render(
 }
 
 //メニュー操作に使ってね.
-bool clsSCENE_BASE::isPressRight()
+bool clsSCENE_BASE::isPressRight()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
 		return true;
@@ -278,7 +278,7 @@ bool clsSCENE_BASE::isPressRight()
 	return false;
 }
 
-bool clsSCENE_BASE::isPressLeft()
+bool clsSCENE_BASE::isPressLeft()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
 		return true;
@@ -295,7 +295,7 @@ bool clsSCENE_BASE::isPressLeft()
 	return false;
 }
 
-bool clsSCENE_BASE::isPressUp()
+bool clsSCENE_BASE::isPressUp()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
 		return true;
@@ -312,7 +312,7 @@ bool clsSCENE_BASE::isPressUp()
 	return false;
 }
 
-bool clsSCENE_BASE::isPressDown()
+bool clsSCENE_BASE::isPressDown()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
 		return true;
@@ -329,7 +329,7 @@ bool clsSCENE_BASE::isPressDown()
 	return false;
 }
 
-bool clsSCENE_BASE::isPressEnter()
+bool clsSCENE_BASE::isPressEnter()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
 		return true;
@@ -343,7 +343,7 @@ bool clsSCENE_BASE::isPressEnter()
 	return false;
 }
 
-bool clsSCENE_BASE::isPressExit()
+bool clsSCENE_BASE::isPressExit()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
 		return true;
@@ -545,7 +545,7 @@ bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 
 
 //3D座標をスクリーン( 2D )座標へと変換する conversion(変換) dimensions(次元).
-D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
+D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )const
 {
 	D3DXVECTOR3 v2DPos;
 	D3DXMATRIX mWorld;
@@ -556,7 +556,7 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 
 
 //深度テスト(Zテスト)ON/OFF切替.
-void clsSCENE_BASE::SetDepth( const bool isOn )
+void clsSCENE_BASE::SetDepth( const bool isOn )const
 {
 	if( isOn ){
 		m_wpContext->OMSetDepthStencilState(
@@ -732,12 +732,6 @@ void clsSCENE_BASE::SetViewPort(
 
 }
 
-
-D3D11_VIEWPORT* clsSCENE_BASE::GetViewPortMainPtr()
-{
-	assert( m_wpViewPort11 );
-	return m_wpViewPort11;
-}
 
 
 

@@ -28,6 +28,12 @@ private:
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
 
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
+
+private:
 
 
 	struct MESSAGE_TEXT_STATE
@@ -71,11 +77,6 @@ private:
 	std::unique_ptr< clsSprite2D > m_upBlackBack;
 
 
-
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
 
 
 };

@@ -686,7 +686,7 @@ void clsSCENE_ASSEMBLE::MoveCursorLeft()
 
 
 //決定.
-void clsSCENE_ASSEMBLE::Enter( enSCENE &enNextScene )
+void clsSCENE_ASSEMBLE::Enter( enSCENE &enNextScene )const
 {
 	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::PARTS ){
 		m_wpSound->PlaySE( enSE_ENTER );
@@ -717,7 +717,7 @@ void clsSCENE_ASSEMBLE::Exit()
 }
 
 //色替え( 左右キーを押された ).
-void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )
+void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )const
 {
 	if( m_enColorGageIndex >= clsROBO_STATUS::enCOLOR_GAGE::enCOLOR_GAGE_size ){
 		return;
@@ -761,7 +761,7 @@ void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 }
 
 //パーツ変更.
-void clsSCENE_ASSEMBLE::AssembleParts()
+void clsSCENE_ASSEMBLE::AssembleParts()const
 {
 //	m_wpSound->PlaySE( enSE_ENTER );
 
@@ -821,7 +821,7 @@ void clsSCENE_ASSEMBLE::AssembleParts()
 
 
 //戻る.
-void clsSCENE_ASSEMBLE::TitleBack( enSCENE &enNextScene )
+void clsSCENE_ASSEMBLE::TitleBack( enSCENE &enNextScene )const
 {
 //	m_wpSound->PlaySE( enSE_EXIT );
 	enNextScene = enSCENE::TITLE;
@@ -861,10 +861,10 @@ T clsSCENE_ASSEMBLE::LoopRange( T t, const MIN min, const MAX max ) const
 }
 
 //カーソルを出撃に合わせているならtrue.
-bool clsSCENE_ASSEMBLE::isMessageBoxClose()
+bool clsSCENE_ASSEMBLE::isMessageBoxClose()const
 {
-	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ||
-		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK ||
+	if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START	||
+		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK		||
 		m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE )
 	{
 		return false;

@@ -41,7 +41,7 @@ private:
 	void MoveCursorRight();
 	void MoveCursorLeft();
 	//決定.
-	void Enter( enSCENE &enNextScene );
+	void Enter( enSCENE &enNextScene )const;
 	//キャンセル.
 	void Exit();
 
@@ -53,7 +53,7 @@ private:
 	//メッセボックス消す.
 	void DisAppearMessageBox();
 	//パーツ変更.
-	void AssembleParts();
+	void AssembleParts()const;
 	//ステータスの表示非表示切替.
 	void SwitchDispStatus();
 	//パーツ選択とステータス選択の切り替え.
@@ -62,7 +62,7 @@ private:
 	//出撃.
 	void MissionStart( enSCENE &enNextScene );
 	//タイトルに戻る.
-	void TitleBack( enSCENE &enNextScene );
+	void TitleBack( enSCENE &enNextScene )const;
 
 
 
@@ -73,13 +73,19 @@ private:
 	T LoopRange( T t, const MIN min, const MAX max ) const;
 
 	//メッセボックスが閉じているならtrue.
-	bool isMessageBoxClose();
+	bool isMessageBoxClose()const;
 
 	//色替え( 左右キーを押された ).
-	void AddRoboColor( const bool isIncrement );
+	void AddRoboColor( const bool isIncrement )const;
 
 	//スティックの動き( ロボの回転 ).
 	void MoveRoboStick();
+
+
+#if _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#if _DEBUG
 
 private:
 
@@ -88,7 +94,7 @@ private:
 	struct PARTS_SELECT
 	{
 		short Type;	//パーツの種類( 脚、コア等 ).
-		short Num[clsASSEMBLE_MODEL::ENUM_SIZE];	//パーツ番号.
+		short Num[ clsASSEMBLE_MODEL::ENUM_SIZE ];	//パーツ番号.
 
 		PARTS_SELECT()
 		:Num()
@@ -143,13 +149,6 @@ private:
 	//メニューから受け取った情報を照合する.
 	std::vector<unsigned int> m_vecuiInformationDataArray;
 
-
-
-
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
 
 };
 

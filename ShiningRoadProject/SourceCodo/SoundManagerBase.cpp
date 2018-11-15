@@ -312,7 +312,7 @@ bool clsSOUND_MANAGER_BASE::Play(
 	std::deque<bool> &dqbLoop,
 	std::vector<int> &viNum,
 	const int No, 
-	const bool bNotify )
+	const bool bNotify ) const
 {
 	SOUND_NUMBER_OVER_SHECK( No, vpSound );
 	dqbLoop[No] = bNotify;
@@ -343,7 +343,7 @@ bool clsSOUND_MANAGER_BASE::Play(
 
 //í‚é~ä÷êî.
 bool clsSOUND_MANAGER_BASE::Stop( 
-	const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No )
+	const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No ) const
 {
 	SOUND_NUMBER_OVER_SHECK( No, vpSound );
 	dqbLoop[No] = bLOOP_INIT;
