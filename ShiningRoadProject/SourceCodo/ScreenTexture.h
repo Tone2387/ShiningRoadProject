@@ -71,7 +71,7 @@ private:
 	HRESULT CreateConstantBuffer();
 
 
-	bool PlaySeProduct( const int iMin, const int iSize );
+	bool PlaySeProduct( const int iMin, const int iSize, int* const outSeNo );
 
 private:
 
@@ -90,8 +90,19 @@ private:
 
 	//音声.
 	std::unique_ptr< clsSOUND_MANAGER_NOISE >	m_upSound;
-	bool m_isPlaySeStrong;
-	bool m_isPlaySeWeak;
+	struct SE_FLAG
+	{
+		bool	isCanPlay;	//再生可能.
+		bool	isContinue;	//同じ効果音を再生する.
+		int		iContinueNo;//同じ効果音を再生するSE番号.
+		SE_FLAG()
+			:isCanPlay( false )
+			,isContinue( false )
+			,iContinueNo( 0 )
+		{}
+	};
+	SE_FLAG m_SeFlagStrong;
+	SE_FLAG m_SeFlagWeak;
 	//----- ノイズ -----//.
 
 	//----- 画面色 -----//.

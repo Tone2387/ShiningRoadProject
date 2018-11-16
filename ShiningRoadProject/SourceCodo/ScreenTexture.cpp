@@ -68,8 +68,6 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_fPulseOffsetAdd( fPULSE_OFFSET_ADD )
 	,m_isNega( false )
 	,m_vColor( 1.0f, 1.0f, 1.0f, 1.0f )
-	,m_isPlaySeStrong( false )
-	,m_isPlaySeWeak( false )
 {
 	assert( m_wpContext );
 	m_wpContext->GetDevice( &m_wpDevice );
@@ -376,7 +374,7 @@ void clsSCREEN_TEXTURE::NoiseUpdate()
 			goto PLAYING_SE_WEAK;//çƒê∂íÜÇ≈Ç†ÇÈ.
 		}
 	}
-	m_isPlaySeWeak = false;
+	m_SeFlagWeak.isCanPlay = false;
 PLAYING_SE_WEAK:;
 
 	for( int i=enSE_STRONG_A; i<enSE_STRONG_size; i++ ){
@@ -384,7 +382,7 @@ PLAYING_SE_WEAK:;
 			goto PLAYING_SE_STRONG;
 		}
 	}
-	m_isPlaySeStrong = false;
+	m_SeFlagStrong.isCanPlay = false;
 PLAYING_SE_STRONG:;
 
 
@@ -518,12 +516,23 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 //å¯â âπçƒê∂.
 bool clsSCREEN_TEXTURE::PlaySeStrong()
 {
-	if( m_isPlaySeStrong ) return false;
+	if( m_SeFlagStrong.isCanPlay ) return false;
 
-	bool isPlay = PlaySeProduct( enSE_STRONG_A, enSE_STRONG_size );
+	int iContinueNo = m_SeFlagStrong.iContinueNo;
+	bool isPlay;
+
+	if( m_SeFlagStrong.isContinue ){
+		isPlay = m_upSound->PlaySE( m_SeFlagStrong.iContinueNo );
+	}
+	else{
+		isPlay = PlaySeProduct( enSE_STRONG_A, enSE_STRONG_size, &iContinueNo );
+	}
+
 
 	if( isPlay ){
-		m_isPlaySeStrong = true;
+		m_SeFlagStrong.isCanPlay	= true;
+		m_SeFlagStrong.isContinue	= true;
+		m_SeFlagStrong.iContinueNo	= iContinueNo;
 	}
 
 	return isPlay;
@@ -531,13 +540,24 @@ bool clsSCREEN_TEXTURE::PlaySeStrong()
 
 bool clsSCREEN_TEXTURE::PlaySeWeak()
 {
-	if( m_isPlaySeStrong )	return false;
-	if( m_isPlaySeWeak )	return false;
+	if( m_SeFlagStrong.isCanPlay )	return false;
+	if( m_SeFlagWeak.isCanPlay )	return false;
 
-	bool isPlay =  PlaySeProduct( enSE_WEAK_A, enSE_WEAK_size );
+	int iContinueNo = m_SeFlagWeak.iContinueNo;
+	bool isPlay;
+
+	if( m_SeFlagWeak.isContinue ){
+		isPlay = m_upSound->PlaySE( m_SeFlagWeak.iContinueNo );
+	}
+	else{
+		isPlay = PlaySeProduct( enSE_WEAK_A, enSE_WEAK_size, &iContinueNo );
+	}
+
 
 	if( isPlay ){
-		m_isPlaySeWeak = true;
+		m_SeFlagWeak.isCanPlay	= true;
+		m_SeFlagWeak.isContinue	= true;
+		m_SeFlagWeak.iContinueNo= iContinueNo;
 	}
 
 	return isPlay;
@@ -545,7 +565,7 @@ bool clsSCREEN_TEXTURE::PlaySeWeak()
 
 
 bool clsSCREEN_TEXTURE::PlaySeProduct( 
-	const int iMin, const int iSize )
+	const int iMin, const int iSize, int* const outSeNo )
 {
 	//ÉâÉìÉ_ÉÄÇ≈ÉmÉCÉYâπçƒê∂.
 	mt19937 mt{ std::random_device{}() };
@@ -557,9 +577,9 @@ bool clsSCREEN_TEXTURE::PlaySeProduct(
 
 	uniform_int_distribution<int> dist( iMin, iMax );
 
-	auto SeNo = dist( mt );
+	*outSeNo = dist( mt );
 
-	return m_upSound->PlaySE( SeNo );
+	return m_upSound->PlaySE( *outSeNo );
 }
 
 void clsSCREEN_TEXTURE::StopSe()
@@ -567,7 +587,10 @@ void clsSCREEN_TEXTURE::StopSe()
 	//âπ.
 	m_upSound->StopAllSound();
 
-	m_isPlaySeStrong = false;
-	m_isPlaySeWeak	 = false;
+	m_SeFlagStrong.isCanPlay = false;
+	m_SeFlagWeak.isCanPlay	 = false;
+
+	m_SeFlagStrong.isContinue = false;
+	m_SeFlagWeak.isContinue	 = false;
 
 }
