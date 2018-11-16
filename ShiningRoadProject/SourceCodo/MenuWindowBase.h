@@ -1,6 +1,7 @@
 #ifndef MENU_WINDOW_BASE_H_
 #define MENU_WINDOW_BASE_H_
 
+
 class clsPOINTER_GROUP;
 class clsUiText;
 class clsFont;

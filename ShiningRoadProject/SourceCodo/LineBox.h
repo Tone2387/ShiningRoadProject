@@ -1,7 +1,9 @@
 #ifndef LINE_BOX_H_
 #define LINE_BOX_H_
 
+class clsSPRITE2D_CENTER;
 
+#include "Global.h"
 #include "Sprite2DCenter.h"
 
 //ê¸ÇÃéläp.

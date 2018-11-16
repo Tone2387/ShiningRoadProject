@@ -1,7 +1,9 @@
 #ifndef WINDOW_BOX_H_
 #define WINDOW_BOX_H_
 
+
 #include "LineBox.h"
+#include "Sprite2DCenter.h"
 
 
 class clsWINDOW_BOX : public clsLINE_BOX
