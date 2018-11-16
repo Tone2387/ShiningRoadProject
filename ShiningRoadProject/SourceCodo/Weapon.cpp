@@ -70,7 +70,7 @@ bool clsWeapon::Shot()
 				fDis = D3DXVec3Length(&(vPos - m_pTargetObj->m_vCenterPos));//ターゲットとの現在距離.
 				iTime = (int)(fDis / m_State.BState.fSpeed);//到達までの時間(だと思いたい)
 
-				fVerDevia = m_pTargetObj->m_fFollPower * iTime;//垂直方向の予測距離.
+				fVerDevia = (m_pTargetObj->m_fFollPower - g_fGravity) * iTime;//垂直方向の予測距離.
 
 				vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * static_cast<float>(iTime);//水平方向移動ベクトル * 到達予想時間 = 水平方向の予想距離.
 				vPrediction = m_pTargetObj->m_vCenterPos;//予測位置にまずはターゲットの位置を入れる.
