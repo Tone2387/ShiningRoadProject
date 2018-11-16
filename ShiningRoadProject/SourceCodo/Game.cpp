@@ -163,7 +163,7 @@ bool clsGAME::Update()
 //毎フレーム使う.
 void clsGAME::Render(		
 	ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-	ID3D11DepthStencilView* const pBackBuffer_DSTexDSV )
+	ID3D11DepthStencilView* const pBackBuffer_DSTexDSV ) const
 { 
 	assert( m_wpContext );
 	//画面のクリア.

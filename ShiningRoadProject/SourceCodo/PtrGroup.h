@@ -20,6 +20,7 @@ class clsFont;
 #include "Effects.h"
 
 
+//各シーンに必要なもののまとめ.
 class clsPOINTER_GROUP
 {
 public:
@@ -45,19 +46,19 @@ public:
 	void UpdateCameraPtr( clsCAMERA_BASE* const pCamera );
 
 	//----- ポインターを渡す -----//.
-	ID3D11Device* GetDevice() const;
-	ID3D11DeviceContext* GetContext() const;
-	D3D10_VIEWPORT* GetViewPort10() const;
-	D3D11_VIEWPORT* GetViewPort11() const;
-	clsDxInput* GetDxInput() const;
-	clsXInput* GetXInput() const;
-	clsResource* GetResource() const;
-	clsEffects*	GetEffects() const;
-	clsSOUND_MANAGER_BASE*	GetSound() const;
-	clsCAMERA_BASE*	GetCamera() const;
-	clsROBO_STATUS_PLAYER* GetRoboStatus() const;
-	clsBLACK_SCREEN* GetBlackScreen() const;
-	clsFont* GetFont() const;
+	ID3D11Device*			GetDevice()		const;
+	ID3D11DeviceContext*	GetContext()	const;
+	D3D10_VIEWPORT*			GetViewPort10() const;
+	D3D11_VIEWPORT*			GetViewPort11() const;
+	clsDxInput*				GetDxInput()	const;
+	clsXInput*				GetXInput()		const;
+	clsResource*			GetResource()	const;
+	clsEffects*				GetEffects()	const;
+	clsSOUND_MANAGER_BASE*	GetSound()		const;
+	clsCAMERA_BASE*			GetCamera()		const;
+	clsROBO_STATUS_PLAYER*	GetRoboStatus() const;
+	clsBLACK_SCREEN*		GetBlackScreen()const;
+	clsFont*				GetFont()		const;
 
 private:
 	//デバイスオブジェクト.

@@ -70,7 +70,7 @@ HRESULT clsBLEND_STATE::CreateBlendState( ID3D11Device* const pDevice )
 }
 
 
-void clsBLEND_STATE::SetBlend( const bool isAlpha )
+void clsBLEND_STATE::SetBlend( const bool isAlpha ) const
 {
 	//ç°Ç∆ìØÇ∂Ç»ÇÁÇÌÇ¥ÇÌÇ¥Ç‚ÇÁÇÒÇ≈ÇÊÇ¢.
 	if( isAlpha == m_isAlpha ){

@@ -21,7 +21,7 @@ public:
 		 clsDX9Mesh* const pModel );
 	~clsBUILDING();
 
-	void UpdateModel();
+	void UpdateModel() const;
 
 
 	//毎フレーム使ってはいけない.
@@ -32,10 +32,10 @@ public:
 		const D3DXMATRIX &mView, 
 		const D3DXMATRIX &mProj,
 		const D3DXVECTOR3 &vLight, 
-		const D3DXVECTOR3 &vEye );
+		const D3DXVECTOR3 &vEye ) const ;
 
 	//レイ用.
-	clsDX9Mesh* GetModelPtr(){
+	clsDX9Mesh* GetModelPtr() const {
 #if _DEBUG
 		clsDX9Mesh* pReturn = m_upBox->GetStaticMesh();
 		return pReturn;
@@ -45,16 +45,16 @@ public:
 	}
 
 	//座標.
-	D3DXVECTOR3 GetPos()					{ return m_Trans.vPos; }
+	D3DXVECTOR3 GetPos() const				{ return m_Trans.vPos; }
 	void SetPos( const D3DXVECTOR3& vPos )	{ m_Trans.vPos = vPos;	this->UpdateTile(); }
 	void AddPos( const D3DXVECTOR3& vPos )	{ m_Trans.vPos += vPos; this->UpdateTile(); }
 	//回転.
-	D3DXVECTOR3 clsBUILDING::GetRot()					{ return m_Trans.vRot; }
+	D3DXVECTOR3 clsBUILDING::GetRot() const				{ return m_Trans.vRot; }
 	void clsBUILDING::SetRot( const D3DXVECTOR3& vRot )	{ m_Trans.vRot = vRot;	this->UpdateTile(); }
 	void clsBUILDING::AddRot( const D3DXVECTOR3& vRot )	{ m_Trans.vRot += vRot; this->UpdateTile(); }
 
 
-	D3DXVECTOR3 GetScale()						{ return m_Trans.vScale; }
+	D3DXVECTOR3 GetScale() const				{ return m_Trans.vScale; }
 	void SetScale( const D3DXVECTOR3& vScale )	{ m_Trans.vScale = vScale;	this->UpdateTile(); }
 	void AddScale( const D3DXVECTOR3& vScale )	{ m_Trans.vScale += vScale; this->UpdateTile(); }
 
@@ -101,12 +101,13 @@ private:
 	float GetTileTheta( 
 		const TRANSFORM& Tile, const TRANSFORM& Center,
 		float* const pfTheta, float* const pfDistance ) const;
+
 	//回転に応じて座標を更新する.
 	D3DXVECTOR3 GetTilePosForRotation( 
 		D3DXVECTOR3* const vTilePos,
 		const D3DXVECTOR3& vCenterPos,
 		const float fTileTheta, 
-		const float fTileDistance );
+		const float fTileDistance ) const;
 
 
 	//本体.

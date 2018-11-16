@@ -120,10 +120,10 @@ public:
 	void SetVibPowerL( int iVibL, const int iTime, int iVibDecL = 0 );
 	void SetVibPowerR( int iVibR, const int iTime, int iVibDecR = 0 );
 
+private:
 	//èIóπèàóù.
 	void EndProc();
 
-private:
 	//êUìÆ.
 	bool SetVibration( const WORD LMotorSpd, const WORD RMotorSpd );
 
