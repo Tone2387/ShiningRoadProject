@@ -368,8 +368,8 @@ void clsRobo::SetDirQuickTurn(const float fAngle)
 	{
 		if (IsRotControl())
 		{
-			float fTmp = (int)D3DX_PI * (fAngle / abs(fAngle));
-			SetRotDir(fTmp);
+			m_fQuickTrunDir = (int)D3DX_PI * (fAngle / abs(fAngle));
+			SetRotDir(m_fQuickTrunDir);
 		}
 	}
 }
@@ -394,11 +394,10 @@ void clsRobo::QuickTurn()
 	}
 }
 
-void clsRobo::Updata()
+void clsRobo::UpdateProduct(clsStage* pStage)
 {
 	PlayBoostEfc();
-	CharactorUpdate();
-	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
+	clsCharactor::UpdateProduct(pStage);
 
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
@@ -409,6 +408,7 @@ void clsRobo::Updata()
 	if (m_iQuickTrunDecStartTime > 0)//クイックターン.
 	{
 		m_fRotSpeed = m_fQuickTrunSpeedMax;
+		SetRotDir(m_fQuickTrunDir);
 		m_iQuickTrunDecStartTime--;
 	}
 
@@ -448,12 +448,8 @@ void clsRobo::Updata()
 		m_iQuickInterbal--;
 	}
 
-	WeaponUpdate();
-
 	EnelgyRecovery();
-
 	UpdataLimitTime();
-
 	AnimUpdate();
 }
 
@@ -540,7 +536,7 @@ void clsRobo::UpdatePosfromBone()
 {
 	m_vCenterPos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_CORE, clsPARTS_CORE::enCORE_BONE_POSITIONS_JENERATOR);
 
-	m_vLockRangePos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD, clsPARTS_HEAD::enHEAD_BONE_POSITIONS_CENTER);
+	//m_vLockStartingPos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD, clsPARTS_HEAD::enHEAD_BONE_POSITIONS_CENTER);
 
 	m_v_vMuzzlePos[enWeaponLHand] = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_L, clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_END);
 	m_v_vShotDir[enWeaponLHand] = m_v_vMuzzlePos[enWeaponLHand] - m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_L, clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_ROOT);
@@ -552,6 +548,11 @@ void clsRobo::UpdatePosfromBone()
 	{
 		D3DXVec3Normalize(&m_v_vShotDir[i], &m_v_vShotDir[i]);
 	}
+}
+
+void clsRobo::UpdateLookStartingPos()
+{
+	m_vLockStartingPos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD, clsPARTS_HEAD::enHEAD_BONE_POSITIONS_CENTER);
 }
 
 void clsRobo::ShotLWeapon()

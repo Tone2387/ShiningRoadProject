@@ -44,9 +44,6 @@ public:
 		D3DXVECTOR3 vTmp;
 
 		vTmp = GetRotation();
-		//vTmp.y += static_cast<float>(D3DX_PI);
-		//ObjRollOverGuard(&vTmp.y);
-		//m_pMesh->SetRot(vTmp);
 		
 		SetRotateHeadParts();
 		SetRotateArmParts();
@@ -59,7 +56,6 @@ public:
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
 		m_pMesh->UpDate();
-		//UpdateCollsion();
 	}
 
 	void SetRotateHeadParts();
@@ -107,6 +103,7 @@ public:
 	int m_iQuickBoostDecStartTime;//残クイック噴射時間.
 
 	float m_fQuickTrunSpeedMax;
+	float m_fQuickTrunDir;
 	int m_iQuickTrunEnelgyCost;
 	int m_iQuickTrunTopSpeedTime;//最高速を保つフレーム値.
 	int m_iQuickTrunDecStartTime;//残クイック噴射時間.
@@ -144,7 +141,7 @@ public:
 	bool IsLWeaponLock();
 	bool IsRWeaponLock();
 
-	void Updata();
+	virtual void UpdateProduct(clsStage* pStage) override;
 	void UpdataQuick();
 	void UpdataLimitTime();
 	void UpdataBoost();
@@ -202,6 +199,8 @@ private:
 	void PlayLegBoostEfc();
 
 	int GetBoostEfcNum(enPARTS PartsNum,const char* strBoostPosition);
+
+	virtual void UpdateLookStartingPos() override;
 
 	enum enAnimNoLeg
 	{

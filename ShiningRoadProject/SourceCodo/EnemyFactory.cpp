@@ -5,17 +5,18 @@ const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(std::string strFol
 {
 	std::string strFileName = strFolderName + "\\Enemy.csv";
 
-	clsFILE File;
+	clsFILE EnemyTransformFile;
+	clsFILE EnemyFile;
 
-	assert(File.Open(strFileName));
+	assert(EnemyTransformFile.Open(strFileName));
 
 	std::vector<clsCharactor*> v_EnemysTmp;
 
-	v_EnemysTmp.resize(File.GetSizeRow());
+	v_EnemysTmp.resize(EnemyTransformFile.GetSizeRow());
 
 	for (int i = 0; i < v_EnemysTmp.size(); i++)
 	{
-		switch (File.GetDataInt(i,enEnemyDataFileOrderEnemyType))
+		switch (EnemyTransformFile.GetDataInt(i, enEnemyDataFileOrderEnemyType))
 		{
 		case clsEnemyFactory::enEnemyTypeMinion:
 

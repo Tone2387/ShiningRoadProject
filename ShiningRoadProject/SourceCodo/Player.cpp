@@ -1,8 +1,7 @@
 #include"Player.h"
 
 clsPlayer::clsPlayer()
-	: m_bCamPosXSwitch(false)//false:右.
-	, m_pInput(nullptr)
+	: m_pInput(nullptr)
 {
 	//ZeroMemory(this, sizeof(clsPlayer));
 }
@@ -29,7 +28,7 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 	m_vCamPosDivia = m_Trans.vPos - m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
 }
 
-void clsPlayer::ActionProduct()
+void clsPlayer::Action()
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
@@ -125,135 +124,22 @@ void clsPlayer::ActionProduct()
 	{
 		pRoboCom->PushBotton(this);
 	}
-
-	Updata();
-	UpdateCamTargetPos();
 }
 
 D3DXVECTOR3 clsPlayer::GetCamTargetPos()
 {
-	return m_vLockRangePos;
+	return m_vLockStartingPos;
 }
 
 
 D3DXVECTOR3 clsPlayer::GetLookTargetPos()
 {
-	return m_vLookTargetPos;
+	return m_vLockPos;
 }
 
 D3DXVECTOR3 clsPlayer::GetLockCenterPos()
 {
 	return m_vLockCenterPos;
-}
-
-
-void clsPlayer::UpdateCamTargetPos()
-{
-	const float fCamMoveSpeed = 0.5f;
-	const float fCamSpaceTmp = 4.0f;
-	const float fCamPosX = 1.0f;
-
-	D3DXMATRIX mRot;
-
-	//カメラ位置のための回転行列作成.
-	D3DXMatrixRotationYawPitchRoll(
-		&mRot,
-		m_Trans.fYaw,
-		-m_fVerLookDir,
-		m_Trans.fRoll);
-
-	//軸ﾍﾞｸﾄﾙを用意.
-	float fCamAxisXTmp;
-
-	if (m_bCamPosXSwitch)
-	{
-		fCamAxisXTmp = fCamPosX;
-	}
-
-	else
-	{
-		fCamAxisXTmp = -fCamPosX;
-	}
-
-	D3DXVECTOR3 vCamCenter = m_Trans.vPos + m_vCamPosDivia;
-	
-	D3DXVECTOR3 vCamAxis =
-	{
-		0.0f,
-		vCamCenter.y - m_vLockRangePos.y,
-		fCamSpaceTmp
-	};
-
-	D3DXVec3TransformCoord(&vCamAxis, &vCamAxis, &mRot);
-
-	//ﾍﾞｸﾄﾙそのものを回転状態により変換する.
-
-	D3DXVECTOR3 vCamPosTmp;
-
-	//====================================================
-	//ｶﾒﾗ追従処理 ここから.
-	//====================================================
-	//カメラが少し遅れてついてくるように.
-	//カメラが現在目的としている位置を算出.
-	const D3DXVECTOR3 vCamTargetPos = vCamCenter - vCamAxis;
-
-	//現在位置を取得し、現在位置と目的の位置の差から移動量を計算する.
-	vCamPosTmp = m_vCamTargetPos;//現在位置を取得
-	vCamPosTmp -= (vCamPosTmp - vCamTargetPos) * fCamMoveSpeed;
-
-	m_vLookTargetPos = m_vLockRangePos + m_vLockRangeDir * m_fLockRange;
-
-	D3DXVec3Normalize(&vCamAxis, &vCamAxis);
-
-	D3DXVECTOR3 vTmp = m_vCamTargetPos - m_vLockRangePos;
-
-	D3DXVECTOR3 vForward;
-
-	D3DXVec3TransformCoord(&vForward, &g_vDirForward, &mRot);
-
-	D3DXVECTOR3 vPos =
-	{
-		-fCamAxisXTmp,
-		m_vLockRangePos.y,
-		m_vLockRangePos.z
-	};
-
-	m_vCamTargetPos = vCamPosTmp;
-
-	//CenterPosTest();
-}
-
-void clsPlayer::CenterPosTest()
-{
-	/*float fX = m_vLockRangePos.x - m_vCamTargetPos.x;
-	float fZ = m_vLockRangePos.z - m_vCamTargetPos.z;
-
-	float fYaw = atan2f(fX, fZ) / 2;
-
-	D3DXMATRIX mCamRot;
-
-	//カメラ位置のための回転行列作成.
-	D3DXMatrixRotationYawPitchRoll(
-		&mCamRot,
-		fYaw,
-		-m_fLookUpDir,
-		m_Trans.fRoll);
-
-	D3DXVECTOR3 vForward;
-
-	D3DXVec3TransformCoord(&vForward, &g_vDirForward, &mCamRot);
-	m_vLockCenterPos = m_vCamTargetPos + (vForward * m_fLockRange);*/
-}
-
-D3DXVECTOR3 clsPlayer::GetLockRangeTmp()
-{
-	SetLockRangeDir();
-	D3DXVECTOR3 vX = g_vDirRight *  m_fLockCircleRadius;
-	D3DXVECTOR3 vY = g_vDirDown *  m_fLockCircleRadius;
-	D3DXVECTOR3 vZ = m_vLockRangeDir * m_fLockRange;
-
-	D3DXVECTOR3 vTmp = vX + vY + vZ;
-	return vTmp;
 }
 
 float clsPlayer::GetLockCircleScale()

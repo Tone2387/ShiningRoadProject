@@ -16,7 +16,7 @@ public:
 
 	void Init(clsPOINTER_GROUP* const pPtrGroup);
 
-	void ActionProduct() override;
+	void Action() final;
 
 	float GetLockCircleScale();
 	D3DXVECTOR3 GetLockRangeTmp();
@@ -31,11 +31,6 @@ private:
 	clsInputRobo* m_pInput;
 
 	D3DXVECTOR3 m_vLockCenterPos;
-	bool m_bCamPosXSwitch;//false:‰E.
-
-	void UpdateCamTargetPos();
-
-	void CenterPosTest();
 
 	D3DXVECTOR3 m_vCamTargetPos;
 	D3DXVECTOR3 m_vLookTargetPos;

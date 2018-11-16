@@ -70,7 +70,7 @@ bool clsWeapon::Shot()
 				fDis = D3DXVec3Length(&(vPos - m_pTargetObj->m_vCenterPos));//ターゲットとの現在距離.
 				iTime = (int)(fDis / m_State.BState.fSpeed);//到達までの時間(だと思いたい)
 
-				fVerDevia = m_pTargetObj->m_fFollPower * iTime;//垂直方向の予測距離.
+				fVerDevia = (m_pTargetObj->m_fFollPower - g_fGravity) * iTime;//垂直方向の予測距離.
 
 				vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * static_cast<float>(iTime);//水平方向移動ベクトル * 到達予想時間 = 水平方向の予想距離.
 				vPrediction = m_pTargetObj->m_vCenterPos;//予測位置にまずはターゲットの位置を入れる.
@@ -84,7 +84,7 @@ bool clsWeapon::Shot()
 			}
 
 			//攻撃力によるブレとそれを抑える数値.
-			float fRandMax = (m_State.iAtk / g_iMOAReference) * (m_State.iStablity * g_fPercentage);
+			/*float fRandMax = (m_State.iAtk / g_iMOAReference) * (m_State.iStablity * g_fPercentage);
 
 			if (fRandMax != 0.0f)//0だと止まる.
 			{
@@ -99,7 +99,7 @@ bool clsWeapon::Shot()
 
 				fDirError = fmodf(static_cast<float>(rand()), (fRandMax));//変動値がある場合、乱数生成.
 				vDir.z += fDirError;//z軸の誤差.
-			}
+			}*/
 
 			for (int i = 0; i < m_State.iBulletNumMax; i++)
 			{
@@ -115,8 +115,11 @@ bool clsWeapon::Shot()
 
 	else
 	{
-		m_iMagazineReloadCnt = m_State.iMagazineReloadTime;
-		m_bNeedReload = true;
+		if (!m_bNeedReload)
+		{
+			m_iMagazineReloadCnt = m_State.iMagazineReloadTime;
+			m_bNeedReload = true;
+		}
 	}
 	
 	return false;

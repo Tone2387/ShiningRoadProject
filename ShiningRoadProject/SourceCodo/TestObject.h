@@ -31,7 +31,7 @@ public:
 	void Init(clsPOINTER_GROUP* const pPtrGroup,
 		LPSTR strEnemyFolderName);
 
-	void ActionProduct() override;
+	void Action() final;
 
 	void InhUpdate();//Inheritance
 

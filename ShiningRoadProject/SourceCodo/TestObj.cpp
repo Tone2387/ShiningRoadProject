@@ -32,7 +32,7 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup,
 	Init(pPtrGroup);
 }
 
-void clsTestObj::ActionProduct()
+void clsTestObj::Action()
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
@@ -145,8 +145,6 @@ void clsTestObj::ActionProduct()
 
 		
 	}
-
-	Updata();
 }
 
 void clsTestObj::SwitchMove()
