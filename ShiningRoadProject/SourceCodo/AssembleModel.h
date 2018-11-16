@@ -1,15 +1,13 @@
 #ifndef ASSEMBLE_MODEL_H_
 #define ASSEMBLE_MODEL_H_
 
+#include "Resource.h"
 #include "PartsLeg.h"
 #include "PartsCore.h"
 #include "PartsHead.h"
 #include "PartsArmL.h"
 #include "PartsArmR.h"
 #include "PartsWeapon.h"
-
-
-#include "Resource.h"
 
 #include "RoboStatusBase.h"
 
@@ -92,29 +90,29 @@ public:
 	int GetPartsNum( const enPARTS_TYPES enPartsType ){ return m_enPartsNum[ enPartsType ]; }
 
 	//パーツのアニメーション変更.
-	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
+	bool PartsAnimChange( const enPARTS enParts, const int iIndex ) const;
 
 	//パーツのボーンの座標を取得.
-	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName );
+	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName ) const;
 
 	//ボーンが存在するか.
-	bool ExistsBone( const enPARTS enParts, const char* sBoneName );
+	bool ExistsBone( const enPARTS enParts, const char* sBoneName ) const;
 
 
 	//パーツの色指定.
 	void SetPartsColor( const D3DXVECTOR4 &vColor, const unsigned int uiMaskNum );
-	D3DXVECTOR4 GetPartsColor( const unsigned int uiMaskNum );
+	D3DXVECTOR4 GetPartsColor( const unsigned int uiMaskNum ) const;
 
 	//可能なら( 範囲内なら )trueを返す.
 	bool IncrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 	bool DecrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 
 	//0.0f～1.0fで返す.
-	float GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
-	std::vector< D3DXVECTOR4 > GetColor();
+	float GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const;
+	std::vector< D3DXVECTOR4 > GetColor() const { return m_vecvColor; };
 
 	//0~16で返す.
-	int GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
+	int GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const;
 
 
 #if _DEBUG
@@ -131,34 +129,32 @@ protected:
 
 
 	//パーツをボーンの位置( 正式な場所 )に合わせる( +武器の角度を腕に合わせる ).
-	void SetPartsFormalPos(){
-		SetPos( GetPos() );
-	}
+	void SetPartsFormalPos() { SetPos( GetPos() ); }
 
 	//腕の角度を武器も模写する.
 	void FitJointModel( 
 		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-		const char *RootBone, const char *EndBone );
+		const char *RootBone, const char *EndBone ) const;
 
 	//色を吐き出す.
 	D3DXVECTOR4 CreateColor( 
 		const enPARTS_TYPES AlphaParts, 
 		const UINT uiIndex,
 		const unsigned int uiMaskNum,
-		ID3D11DeviceContext* const pContext );
+		ID3D11DeviceContext* const pContext ) const;
 
 	//ワイヤーフレーム切替.
 	void ChangeWireFrame(
 		const bool isWire,
-		ID3D11DeviceContext* const pContext );
+		ID3D11DeviceContext* const pContext ) const;
 
 	//アニメーションリセット.
-	void AnimReSet();
+	void AnimReSet() const;
 
 	//回転値抑制.
 	float GuardDirOver( float &outTheta ) const;
 
-	void ModelUpdate();
+	void ModelUpdate() const;
 
 	//色.
 	void UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );

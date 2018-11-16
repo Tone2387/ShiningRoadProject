@@ -1,4 +1,5 @@
 #include "AssembleModel.h"
+
 #include "FactoryParts.h"
 
 #include "OperationString.h"
@@ -268,7 +269,7 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 	const enPARTS_TYPES AlphaParts, 
 	const UINT uiIndex,
 	const unsigned int uiMaskNum,
-	ID3D11DeviceContext* const pContext  )
+	ID3D11DeviceContext* const pContext  ) const
 {
 	D3DXVECTOR4 vReturn = vCOLOR_NORMAL;
 
@@ -330,7 +331,7 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 //ワイヤーフレーム切替.
 void clsASSEMBLE_MODEL::ChangeWireFrame(
 	const bool isWire,
-	ID3D11DeviceContext* const  pContext )
+	ID3D11DeviceContext* const  pContext ) const
 {
 	if( !pContext ){
 		return;
@@ -515,7 +516,7 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 
 
 //パーツのアニメーション変更.
-bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex )
+bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex ) const
 {
 	char cPartsIndex = static_cast<char>( enParts );
 	assert( m_vpParts[ cPartsIndex ] );
@@ -527,7 +528,7 @@ bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex
 
 //パーツのボーンの座標を取得.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( 
-	const enPARTS enParts, const char* sBoneName )
+	const enPARTS enParts, const char* sBoneName ) const
 {
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
 	char cTmpNum = static_cast<char>( enParts );
@@ -540,7 +541,7 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos(
 
 
 //ボーンが存在するか.
-bool clsASSEMBLE_MODEL::ExistsBone( const enPARTS enParts, const char* sBoneName )
+bool clsASSEMBLE_MODEL::ExistsBone( const enPARTS enParts, const char* sBoneName ) const
 {
 	char cTmpNum = static_cast<char>( enParts );
 	return m_vpParts[ cTmpNum ]->m_pMesh->ExistsBone( sBoneName );
@@ -572,7 +573,7 @@ float clsASSEMBLE_MODEL::GuardDirOver( float &outTheta ) const
 //腕の角度を武器も模写する.
 void clsASSEMBLE_MODEL::FitJointModel( 
 	clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-	const char *RootBone, const char *EndBone )
+	const char *RootBone, const char *EndBone ) const
 {
 	//ボーンのベクトルを出す( ローカル ).
 	D3DXVECTOR3 vVecLocal = 
@@ -601,7 +602,7 @@ void clsASSEMBLE_MODEL::FitJointModel(
 
 
 //アニメーションリセット.
-void clsASSEMBLE_MODEL::AnimReSet()
+void clsASSEMBLE_MODEL::AnimReSet() const
 {
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		m_vpParts[i]->PartsAnimChange( 0 );
@@ -620,7 +621,7 @@ void clsASSEMBLE_MODEL::SetPartsColor(
 	m_vecvColor[ uiMaskNum ] = vColor;
 }
 
-D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum )
+D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum ) const
 {
 	if( uiMaskNum >= m_vecvColor.size() ){
 		float fERROR_NUM = -1.0f;
@@ -704,7 +705,7 @@ void clsASSEMBLE_MODEL::UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorG
 
 
 
-void clsASSEMBLE_MODEL::ModelUpdate()
+void clsASSEMBLE_MODEL::ModelUpdate() const
 {
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
@@ -713,7 +714,8 @@ void clsASSEMBLE_MODEL::ModelUpdate()
 }
 
 
-float clsASSEMBLE_MODEL::GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+float clsASSEMBLE_MODEL::GetColorGradation( 
+	const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const
 {
 	const float fERROR = -1.0f; 
 	if( enColorGage >= clsROBO_STATUS::enCOLOR_GAGE_size ){
@@ -727,14 +729,10 @@ float clsASSEMBLE_MODEL::GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE e
 	return fReturn;
 }
 
-std::vector< D3DXVECTOR4 > clsASSEMBLE_MODEL::GetColor()
-{
-	return m_vecvColor;
-}
 
 
 //0~16で返す.
-int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const
 {
 	if( enColorGage >= clsROBO_STATUS::enCOLOR_GAGE_size ||
 		enColorGage < 0 )
