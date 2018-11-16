@@ -55,7 +55,7 @@ bool clsFILE::Open( const string &sFileName )
 	{
 		//openチェック.
 		if( !ifs ){
-			cout << "ひらけなかったよ" << endl;
+			cout << "ファイルをひらけなかったよ" << endl;
 			cin.get();
 			return false;
 		}

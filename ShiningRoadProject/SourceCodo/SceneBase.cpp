@@ -65,6 +65,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_iNoiseFrame( 0 )
 	,m_fBlock( 0.0f )
 	,m_fPulse( 0.0f )
+	,m_bStopNoiseSe( false )
 {
 }
 
@@ -99,7 +100,7 @@ clsSCENE_BASE::~clsSCENE_BASE()
 
 
 //シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
-void clsSCENE_BASE::Create()
+void clsSCENE_BASE::Create( const HWND hWnd )
 {
 	if( FAILED( CreateDepthStencilState() ) ){
 		assert( !"デプスステンシル作成失敗" );
@@ -115,7 +116,7 @@ void clsSCENE_BASE::Create()
 
 #ifdef RENDER_SCREEN_TEXTURE_
 	assert( !m_upScreenTexture );
-	m_upScreenTexture = make_unique<clsSCREEN_TEXTURE>( m_wpContext );
+	m_upScreenTexture = make_unique<clsSCREEN_TEXTURE>( hWnd, m_wpContext );
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
@@ -180,6 +181,12 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 		//ノイズが起動中なら更新( 減衰 )する.
 		m_upScreenTexture->NoiseUpdate();
 	}
+	else{
+		if( m_bStopNoiseSe ){
+			m_bStopNoiseSe = false;
+			m_upScreenTexture->StopSe();
+		}
+	}
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 	
 	//デバッグ用シーン切り替え.
@@ -238,10 +245,10 @@ void clsSCENE_BASE::Render(
 	}
 
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-		NoiseBig( 60 );
+		NoiseStrong( 60 );
 	}
 	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
-		NoiseSmall( 10 );
+		NoiseWeak( 10 );
 	}
 	if( GetAsyncKeyState( 'C' ) & 0x1 ){
 		static bool nega = false;
@@ -744,7 +751,7 @@ void clsSCENE_BASE::SetViewPort(
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 //ノイズを起こす.
-void clsSCENE_BASE::NoiseBig( const int iPower )
+void clsSCENE_BASE::NoiseStrong( const int iPower )
 {
 	assert( m_upScreenTexture );
 
@@ -769,9 +776,13 @@ void clsSCENE_BASE::NoiseBig( const int iPower )
 	m_upScreenTexture->SetBlock( static_cast<int>( m_fBlock ) );
 	m_upScreenTexture->SetPulse( m_fPulse );
 
+	m_upScreenTexture->PlaySeStrong();
+
+	m_bStopNoiseSe = true;
+
 	m_encNoise = encNOISE::BLOCK_AND_PULSE;
 }
-void clsSCENE_BASE::NoiseSmall( const int iFrame )
+void clsSCENE_BASE::NoiseWeak( const int iFrame )
 {
 	assert( m_upScreenTexture );
 
@@ -781,6 +792,10 @@ void clsSCENE_BASE::NoiseSmall( const int iFrame )
 	const int iNOISE_SMALL_BLOCK = 512;
 	m_upScreenTexture->SetBlock( iNOISE_SMALL_BLOCK );
 	m_upScreenTexture->SetPulse( 0.0f );
+
+	m_upScreenTexture->PlaySeWeak();
+
+	m_bStopNoiseSe = true;
 
 	m_encNoise = encNOISE::MINUTE_BLOCK;
 }

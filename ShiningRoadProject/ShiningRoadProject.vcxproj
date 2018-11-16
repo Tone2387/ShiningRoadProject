@@ -189,6 +189,7 @@
     <ClCompile Include="SourceCodo\SoundManagerEnding.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerMission.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerNoise.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerTitle.cpp" />
     <ClCompile Include="SourceCodo\Sprite.cpp" />
     <ClCompile Include="SourceCodo\Sprite2D.cpp" />
@@ -308,6 +309,7 @@
     <ClInclude Include="SourceCodo\SoundManagerEnding.h" />
     <ClInclude Include="SourceCodo\SoundManagerGameOver.h" />
     <ClInclude Include="SourceCodo\SoundManagerMission.h" />
+    <ClInclude Include="SourceCodo\SoundManagerNoise.h" />
     <ClInclude Include="SourceCodo\SoundManagerTitle.h" />
     <ClInclude Include="SourceCodo\Sprite.h" />
     <ClInclude Include="SourceCodo\Sprite2D.h" />

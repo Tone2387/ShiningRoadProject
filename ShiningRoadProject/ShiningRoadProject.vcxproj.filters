@@ -408,6 +408,9 @@
     <ClCompile Include="SourceCodo\AIRobo.cpp">
       <Filter>Hiyosi\AI</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerNoise.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -736,6 +739,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\AICharactor.h">
       <Filter>Hiyosi\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerNoise.h">
+      <Filter>Tahara\SoundManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

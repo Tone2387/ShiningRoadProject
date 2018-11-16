@@ -7,6 +7,13 @@
 
 using namespace std;
 
+//サウンドクラスへ指示を出す際にvectorの範囲を超えていたら、だめですとおしかりをくれるマクロ.
+#define SOUND_NUMBER_OVER_SHECK(no,vp) \
+if( (no) >= static_cast<int>( (vp).size() ) ){\
+	assert( !"指定された番号のサウンドクラスは存在しません" );\
+	return false;\
+}
+
 namespace{
 
 	//添え字.
@@ -21,14 +28,6 @@ namespace{
 	const string sSE_PASS = "SE.csv";
 	const string sSUB_PASS_BGM = "BGM\\";
 	const string sSUB_PASS_SE = "SE\\";
-
-	//サウンドクラスへ指示を出す際にvectorの範囲を超えていたら、だめですとおしかりをくれるマクロ.
-	#define SOUND_NUMBER_OVER_SHECK(no,vp) \
-	if( (no) >= static_cast<int>( (vp).size() ) ){\
-		assert( !"指定された番号のBGMは存在しません" );\
-		return false;\
-	}
-	
 
 	//ループフラグの初期化.
 	const bool bLOOP_INIT = false;
