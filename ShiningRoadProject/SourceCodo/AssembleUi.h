@@ -1,19 +1,21 @@
 #ifndef ASSENBLE_UI_H_
 #define ASSENBLE_UI_H_
 
-//#include "Global.h"
-#include "DxInput.h"
-#include "CXInput.h"
 
-#include "Sprite2DCenter.h"
-#include "UiText.h"
-#include "File.h"
-#include "CFont.h"
-#include "AssembleModel.h"
-#include <vector>
+class clsSprite2D;
+class clsSPRITE2D_CENTER;
+class clsUiText;
+class clsFILE;
+class clsFont;
+class clsASSEMBLE_MODEL;
+class clsXInput;
+class clsDxInput;
 class clsWINDOW_BOX;
 
+#include "Global.h"
 
+
+//アセンブルシーンが膨れ上がるのでこちらに隔離.
 class clsASSEMBLE_UI
 {
 public:

@@ -1,4 +1,12 @@
 #include "AssembleUi.h"
+
+#include "CXInput.h"
+#include "DxInput.h"
+#include "Sprite2DCenter.h"
+#include "UiText.h"
+#include "File.h"
+#include "CFont.h"
+#include "AssembleModel.h"
 #include "WindowBox.h"
 
 #include "OperationString.h"
