@@ -65,6 +65,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_iNoiseFrame( 0 )
 	,m_fBlock( 0.0f )
 	,m_fPulse( 0.0f )
+	,m_bStopNoiseSe( false )
 {
 }
 
@@ -181,7 +182,10 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 		m_upScreenTexture->NoiseUpdate();
 	}
 	else{
-		m_upScreenTexture->StopSe();
+		if( m_bStopNoiseSe ){
+			m_bStopNoiseSe = false;
+			m_upScreenTexture->StopSe();
+		}
 	}
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 	
@@ -774,6 +778,8 @@ void clsSCENE_BASE::NoiseStrong( const int iPower )
 
 	m_upScreenTexture->PlaySeStrong();
 
+	m_bStopNoiseSe = true;
+
 	m_encNoise = encNOISE::BLOCK_AND_PULSE;
 }
 void clsSCENE_BASE::NoiseWeak( const int iFrame )
@@ -788,6 +794,8 @@ void clsSCENE_BASE::NoiseWeak( const int iFrame )
 	m_upScreenTexture->SetPulse( 0.0f );
 
 	m_upScreenTexture->PlaySeWeak();
+
+	m_bStopNoiseSe = true;
 
 	m_encNoise = encNOISE::MINUTE_BLOCK;
 }

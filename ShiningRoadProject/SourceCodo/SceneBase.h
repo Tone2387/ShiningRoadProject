@@ -212,6 +212,7 @@ private:
 
 #ifdef RENDER_SCREEN_TEXTURE_
 	std::unique_ptr< clsSCREEN_TEXTURE >	m_upScreenTexture;
+	bool m_bStopNoiseSe;
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
