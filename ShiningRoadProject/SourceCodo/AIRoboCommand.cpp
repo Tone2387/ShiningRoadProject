@@ -2,7 +2,7 @@
 #include"File.h"
 
 void clsEnemyRobo::Init(
-	LPSTR strEnemyFolderName,
+	std::string strEnemyFolderName,
 	clsRobo* pRobo)
 {
 	m_pBody = pRobo;

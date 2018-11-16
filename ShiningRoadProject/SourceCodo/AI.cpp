@@ -447,6 +447,7 @@ void clsEnemyBase::SetShotData()
 	}
 }
 
+
 void clsEnemyBase::SetDataProduct(){}
 
 void clsEnemyBase::UpdateProduct(){}

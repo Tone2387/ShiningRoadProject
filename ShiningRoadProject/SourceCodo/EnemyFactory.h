@@ -8,7 +8,7 @@ public:
 	clsEnemyFactory();
 	~clsEnemyFactory();
 
-	const std::vector<clsCharactor*> CreateEnemy(std::string strFolderName);
+	const std::vector<clsCharactor*> CreateEnemy(clsPOINTER_GROUP* clsPtrGroup, std::string strFolderName);
 
 private:
 	enum enEnemyType
@@ -32,5 +32,8 @@ private:
 
 		enEnemyDataFileOrderSize
 	};
+
+
+	const int GetNumDigit(const int iNum);
 };
 

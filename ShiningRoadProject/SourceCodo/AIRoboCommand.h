@@ -12,7 +12,7 @@ public:
 	virtual ~clsEnemyRobo();
 
 	void Init(
-		LPSTR strEnemyFolderName,
+		std::string strEnemyFolderName,
 		clsRobo* pRobo);
 
 	clsRoboCommand* MoveOperation(float& fPower, float& fAngle);

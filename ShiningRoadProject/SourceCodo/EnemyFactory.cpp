@@ -1,14 +1,21 @@
 #include"EnemyFactory.h"
+#include"AIRobo.h"
 #include"File.h"
+#include"OperationString.h"
+#include"AIRobo.h"
+#include"RoboStatusEnemy.h"
 
-const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(std::string strFolderName)
+const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(clsPOINTER_GROUP* clsPtrGroup, std::string strFolderName)
 {
 	std::string strFileName = strFolderName + "\\Enemy.csv";
 
 	clsFILE EnemyTransformFile;
-	clsFILE EnemyFile;
+	//clsFILE EnemyFile;
+
+	clsOPERATION_STRING strOpr;
 
 	assert(EnemyTransformFile.Open(strFileName));
+	//assert(EnemyFile.Open("Data\\FileData\\Hiyoshi\\Enemy\\EnemyRoboData.csv"));
 
 	std::vector<clsCharactor*> v_EnemysTmp;
 
@@ -16,20 +23,23 @@ const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(std::string strFol
 
 	for (int i = 0; i < v_EnemysTmp.size(); i++)
 	{
-		switch (EnemyTransformFile.GetDataInt(i, enEnemyDataFileOrderEnemyType))
+		if (EnemyTransformFile.GetDataInt(i, enEnemyDataFileOrderEnemyType) == enEnemyTypeMinion)
 		{
-		case clsEnemyFactory::enEnemyTypeMinion:
 
-			break;
-		case clsEnemyFactory::enEnemyTypeRobo:
+		}
 
-			break;
+		else if (EnemyTransformFile.GetDataInt(i, enEnemyDataFileOrderEnemyType) == enEnemyTypeRobo)
+		{
+			const int iNum = EnemyTransformFile.GetDataInt(i, enEnemyDataFileOrderEnemyNum);
+			strFileName = "Data\\FileData\\Hiyoshi\\RoboAI\\Robo";
 
-		default:
+			strFileName = strOpr.ConsolidatedNumber(strFileName, iNum, GetNumDigit(iNum));
 
-			
+			clsAIRobo* clsEnemyTmp = new clsAIRobo;
 
-			break;
+			clsEnemyTmp->Init(clsPtrGroup, strFileName);
+
+			v_EnemysTmp[i] = clsEnemyTmp;
 		}
 	}
 
@@ -42,4 +52,32 @@ clsEnemyFactory::clsEnemyFactory()
 
 clsEnemyFactory::~clsEnemyFactory()
 {
+}
+
+const int clsEnemyFactory::GetNumDigit(const int iNum)
+{
+	int iResult = 0;//åãâ .
+	int iDigit = 1;//åÖêî.
+	int iNumTmp = iNum;//êîéö.
+
+	const int iDecimal = 10;//è\êiêî.
+
+	while (iResult == 0)
+	{
+		//10à»è„Ç©?.
+		if (iNumTmp < iDecimal)
+		{
+			//åÖÇämíË.
+			iResult = iDigit;
+		}
+
+		else
+		{
+			//åÖÇëùÇ‚Ç∑.
+			iNumTmp = iNumTmp / iDecimal;
+			++iDigit;
+		}
+	}
+
+	return iResult;
 }

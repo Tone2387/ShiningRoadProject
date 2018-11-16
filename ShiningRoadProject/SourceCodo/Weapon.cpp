@@ -67,39 +67,46 @@ bool clsWeapon::Shot()
 				float fDis, fVerDevia;
 				D3DXVECTOR3 vHorDevia, vPrediction;
 
-				fDis = D3DXVec3Length(&(vPos - m_pTargetObj->m_vCenterPos));//ターゲットとの現在距離.
+				fDis = D3DXVec3Length(&(vPos - m_pTargetObj->GetCenterPos()));//ターゲットとの現在距離.
 				iTime = (int)(fDis / m_State.BState.fSpeed);//到達までの時間(だと思いたい)
 
-				fVerDevia = (m_pTargetObj->m_fFollPower - g_fGravity) * iTime;//垂直方向の予測距離.
+				fVerDevia = m_pTargetObj->m_fFollPower * iTime;//垂直方向の予測距離.
 
 				vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * static_cast<float>(iTime);//水平方向移動ベクトル * 到達予想時間 = 水平方向の予想距離.
-				vPrediction = m_pTargetObj->m_vCenterPos;//予測位置にまずはターゲットの位置を入れる.
+				vPrediction = m_pTargetObj->GetCenterPos();//予測位置にまずはターゲットの位置を入れる.
 
 				vPrediction += vHorDevia;//水平のみ予測位置.
 				vPrediction.y += fVerDevia;//予測位置.
 
 				D3DXVECTOR3 vDirTmp = vPrediction - vPos;
 
-				D3DXVec3Normalize(&vDir, &vDirTmp);
+				D3DXVec3Normalize(&vDirTmp, &vDirTmp);
+
+				vDir = vDirTmp;
 			}
 
 			//攻撃力によるブレとそれを抑える数値.
-			/*float fRandMax = (m_State.iAtk / g_iMOAReference) * (m_State.iStablity * g_fPercentage);
+		/*	const float fMOA = float(m_State.iAtk) / float(g_iMOAReference);
+			const float fDirErrorPar = m_State.iStablity * g_fPercentage - 1;
+
+			float fRandMax = abs(fMOA * fDirErrorPar);
 
 			if (fRandMax != 0.0f)//0だと止まる.
 			{
 				float fDirError;//方向誤差.
 
 				//fDirError = (float)(rand() % (iRandMax * 2) - iRandMax) * g_fDistanceReference;
-				fDirError = fmodf(static_cast<float>(rand()), (fRandMax));//変動値がある場合、乱数生成.
+				fDirError = fmodf(static_cast<float>(rand()), (fRandMax * 2)) - fRandMax;//変動値がある場合、乱数生成.
 				vDir.x += fDirError;//x軸の誤差.
 
-				fDirError = fmodf(static_cast<float>(rand()), (fRandMax));//変動値がある場合、乱数生成.
+				fDirError = fmodf(static_cast<float>(rand()), (fRandMax * 2)) - fRandMax;//変動値がある場合、乱数生成.
 				vDir.y += fDirError;//y軸の誤差.
 
-				fDirError = fmodf(static_cast<float>(rand()), (fRandMax));//変動値がある場合、乱数生成.
+				fDirError = fmodf(static_cast<float>(rand()), (fRandMax * 2)) - fRandMax;//変動値がある場合、乱数生成.
 				vDir.z += fDirError;//z軸の誤差.
 			}*/
+
+			D3DXVec3Normalize(&vDir, &vDir);
 
 			for (int i = 0; i < m_State.iBulletNumMax; i++)
 			{

@@ -572,7 +572,7 @@ clsPlayer* clsSCENE_MISSION::CreatePlayer()
 clsTestObj* clsSCENE_MISSION::CreateEnemy()
 {
 	clsTestObj* pEnemy = new clsTestObj;
-	pEnemy->Init(m_wpPtrGroup, "");//4つ目の引数は効果音やエフェクトを出すために追加しました.
+	pEnemy->Init(m_wpPtrGroup, "Data\\FileData\\Hiyoshi");//4つ目の引数は効果音やエフェクトを出すために追加しました.
 
 	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
 	pEnemy->SetPosition(tmpVec3);
