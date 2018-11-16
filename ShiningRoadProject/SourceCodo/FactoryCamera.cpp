@@ -7,7 +7,7 @@
 #include "CameraEnding.h"
 #include "CameraGameOver.h"
 
-clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene )
+clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene ) const
 {
 	//指定されたシーンを作って吐き出す.
 	switch( enScene )

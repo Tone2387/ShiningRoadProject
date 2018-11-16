@@ -12,7 +12,7 @@ public:
 
 	clsSOUND_MANAGER_BASE* Create( 
 		const enSCENE enNextScene,
-		HWND const hWnd );
+		HWND const hWnd ) const;
 
 };
 

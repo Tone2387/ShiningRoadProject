@@ -14,7 +14,7 @@ public:
 	//シーンのポインタに「new」の代わりに使う.
 	clsSCENE_BASE* Create( 
 		const enSCENE enScene,
-		clsPOINTER_GROUP* const ptrGroup );
+		clsPOINTER_GROUP* const ptrGroup ) const;
 
 };
 

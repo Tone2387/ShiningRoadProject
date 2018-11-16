@@ -13,7 +13,7 @@ public:
 //	~clsFACTORY_CAMERA();
 
 	//ƒJƒƒ‰‚ğ“f‚«o‚·.
-	clsCAMERA_BASE* Create( const enSCENE enScene );
+	clsCAMERA_BASE* Create( const enSCENE enScene ) const;
 
 
 };

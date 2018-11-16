@@ -31,14 +31,14 @@ public:
 		if( isWithLook ){ m_vLook += vVec; }
 		m_vPos += vVec;
 	};
-	D3DXVECTOR3 GetPos(){ return m_vPos; };
+	D3DXVECTOR3 GetPos() const { return m_vPos; };
 
 
 	void SetLookPos( const D3DXVECTOR3& vPos )	{ m_vLook = vPos; };
 	void AddLookPos( const D3DXVECTOR3& vVec )	{ m_vLook += vVec; };
-	D3DXVECTOR3 GetLookPos()					{ return m_vLook; };
+	D3DXVECTOR3 GetLookPos() const				{ return m_vLook; };
 
-	D3DXVECTOR3 GetRot()					{ return m_vRot; };
+	D3DXVECTOR3 GetRot() const				{ return m_vRot; };
 	void SetRot( const D3DXVECTOR3 &vRot )	{ m_vRot = vRot; };
 
 protected:

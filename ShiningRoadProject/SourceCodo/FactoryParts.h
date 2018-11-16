@@ -11,7 +11,7 @@ class clsFACTORY_PARTS
 public:
 
 	//パーツを吐き出す.
-	clsPARTS_BASE* Create( const enPARTS enParts );
+	clsPARTS_BASE* Create( const enPARTS enParts ) const;
 
 };
 

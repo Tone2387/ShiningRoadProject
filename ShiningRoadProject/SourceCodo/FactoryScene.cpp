@@ -11,7 +11,7 @@
 
 clsSCENE_BASE* clsFACTORY_SCENE::Create( 
 	const enSCENE enScene,
-	clsPOINTER_GROUP* const ptrGroup )
+	clsPOINTER_GROUP* const ptrGroup ) const
 {
 	//指定されたシーンを作って吐き出す.
 	switch( enScene )
