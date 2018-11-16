@@ -647,7 +647,7 @@ void clsASSEMBLE_UI::Update(
 void clsASSEMBLE_UI::Render( 
 	enSELECT_MODE enSelect,
 	const int iPartsType, 
-	const int iPartsNum )
+	const int iPartsNum ) const
 {
 
 	//パーツカテゴリ.
@@ -715,7 +715,7 @@ void clsASSEMBLE_UI::Render(
 void clsASSEMBLE_UI::RenderPartsState( 
 	enSELECT_MODE enSelect, 
 	const int iPartsType, 
-	const int iPartsNum )//選択中パーツ番号.
+	const int iPartsNum ) const//選択中パーツ番号.
 {
 	//パーツ選択中のみ描画.
 	if( enSelect == enSELECT_MODE::PARTS ||
@@ -911,7 +911,7 @@ void clsASSEMBLE_UI::AddCommentNoForChangePartsType( const int iPartsType )
 
 D3DXVECTOR4 clsASSEMBLE_UI::GetStatusColor( 
 	const int iBefore,		const int iAfter,
-	const int iPartsType,	const int iStatusNum )
+	const int iPartsType,	const int iStatusNum ) const
 {
 	const D3DXVECTOR4 vRED		= { 1.0f, 0.5f, 0.5f, 1.0f };
 	const D3DXVECTOR4 vBLUE		= { 0.5f, 0.5f, 1.0f, 1.0f };

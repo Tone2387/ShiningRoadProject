@@ -330,7 +330,7 @@ HRESULT clsUiText::CreateBlendState()
 //============================================================
 //	透過(アルファブレンド)設定の切り替え.
 //============================================================
-void clsUiText::SetBlend( const bool isAlpha )
+void clsUiText::SetBlend( const bool isAlpha ) const
 {
 	UINT mask = 0xffffffff;	//マスク値白.
 
@@ -449,7 +449,8 @@ void clsUiText::Render( const enPOS enPos )
 //============================================================
 //フォントレンダリング関数.
 //============================================================
-void clsUiText::RenderFont( const int FontIndex, const float x, const float y, const float z )
+void clsUiText::RenderFont( 
+	const int FontIndex, const float x, const float y, const float z ) const
 {
 	//ワールド変換.
 	D3DXMATRIX mWorld, mTrans, mScale;

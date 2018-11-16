@@ -25,7 +25,7 @@ private:
 	void UpdateProduct() final;
 
 	//•`‰æ‚·‚é‚©”Û‚©‚ğ“f‚«o‚·.
-	bool isRender( const enPARTS_TYPES AlphaParts, const UINT uiIndex );
+	bool isRender( const enPARTS_TYPES AlphaParts, const UINT uiIndex ) const;
 
 };
 #endif//#ifndef PARTS_WINDOW_MODEL_FOR_ARMS_H_

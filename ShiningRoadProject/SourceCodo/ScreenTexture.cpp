@@ -315,7 +315,7 @@ HRESULT clsSCREEN_TEXTURE::CreateConstantBuffer()
 }
 
 //Rendertargetをテクスチャにする.
-void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView )
+void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView ) const
 {
 	if( !pDepthStencilView )	return;
 
@@ -326,10 +326,27 @@ void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pD
 	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 }
 
+
+//ノイズの更新.
+void clsSCREEN_TEXTURE::NoiseUpdate()
+{
+	m_iSeed ++;
+	const int iSEED_MAX = 32000;
+	if( m_iSeed >= iSEED_MAX ){
+		m_iSeed = 0;
+	}
+	m_fPulseOffset += m_fPulseOffsetAdd;
+	const float fPULSE_OFFSET_MAX = -fPULSE_OFFSET_INIT;
+	if( m_fPulseOffset >= fPULSE_OFFSET_MAX ){
+		m_fPulseOffset = fPULSE_OFFSET_INIT;
+	}
+}
+
+
 //テクスチャの内容を画面に描画.
 void clsSCREEN_TEXTURE::RenderWindowFromTexture( 
 	ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-	ID3D11DepthStencilView* const pDepthStencilView )
+	ID3D11DepthStencilView* const pDepthStencilView ) const
 {
 	if( !pBackBuffer_TexRTV )	return;
 	if( !pDepthStencilView )	return;
@@ -422,17 +439,6 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		const float fNEGA = 1.0f;
 		if( m_isNega )	cb.isfNega = fNEGA;
 		else			cb.isfNega = 0.0f;
-
-		m_iSeed ++;
-		const int iSEED_MAX = 32000;
-		if( m_iSeed >= iSEED_MAX ){
-			m_iSeed = 0;
-		}
-		m_fPulseOffset += m_fPulseOffsetAdd;
-		const float fPULSE_OFFSET_MAX = -fPULSE_OFFSET_INIT;
-		if( m_fPulseOffset >= fPULSE_OFFSET_MAX ){
-			m_fPulseOffset = fPULSE_OFFSET_INIT;
-		}
 	
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cb ), sizeof( cb ) );

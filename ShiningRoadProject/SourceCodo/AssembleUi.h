@@ -31,7 +31,7 @@ public:
 		MISSION_START,
 		TITLE_BACK,
 		COLOR_CHANGE,
-	}m_enSelectMode;
+	}	m_enSelectMode;
 
 	void Create( 
 		ID3D11Device* const pDevice, 
@@ -54,12 +54,12 @@ public:
 	void Render( 
 		enSELECT_MODE enSelect, 
 		const int iPartsType, 
-		const int iPartsNum );//選択中パーツ番号.
+		const int iPartsNum ) const;//選択中パーツ番号.
 
 	void RenderPartsState( 
 		enSELECT_MODE enSelect, 
 		const int iPartsType, 
-		const int iPartsNum );//選択中パーツ番号.
+		const int iPartsNum ) const;//選択中パーツ番号.
 
 	
 	//説明文の行指定.
@@ -83,14 +83,25 @@ public:
 	void AddCommentNoForChangePartsType( const int iPartsType );
 
 	//パーツ説明文の表示文字数を0に戻す.
-	void InitReadNumPartsComment(){
-		m_iReadNumPartsComment = 0;
-	}
+	void InitReadNumPartsComment(){ m_iReadNumPartsComment = 0; }
 
 #if _DEBUG
 	//デバッグテキスト用.
 	D3DXVECTOR3 GetUiPos();
 #endif//#if _DEBUG
+
+private:
+
+
+	D3DXVECTOR4 GetStatusColor( 
+		const int iBefore, const int iAfter,
+		const int iPartsType, const int iStatusNum ) const;
+
+
+	//超えていたなら収める.
+	void StatusNumKeepRange();
+	//超えていたならループする.
+	void StatusNumLoopRange();
 
 private:
 
@@ -106,18 +117,6 @@ private:
 	
 		enPARTS_TYPE_SIZE
 	};
-
-
-	D3DXVECTOR4 GetStatusColor( 
-		const int iBefore, const int iAfter,
-		const int iPartsType, const int iStatusNum );
-
-
-	//超えていたなら収める.
-	void StatusNumKeepRange();
-	//超えていたならループする.
-	void StatusNumLoopRange();
-
 
 	//パーツ表示用のウィンドウ.
 	D3D11_VIEWPORT m_ViewPortPartsWindow;
