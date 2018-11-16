@@ -36,12 +36,12 @@ public:
 
 
 
-	D3DXVECTOR3 GetPos()					{ return m_vPos; }
-	D3DXVECTOR3 GetPosLast()				{ return m_vPosLast; }
+	D3DXVECTOR3 GetPos()	const			{ return m_vPos; }
+	D3DXVECTOR3 GetPosLast()const			{ return m_vPosLast; }
 	void SetPos( const D3DXVECTOR3 &vPos )	{ m_vPos = vPos; };
 	void AddPos( const D3DXVECTOR3 &vPos )	{ SetPos( m_vPos + vPos ); }
 
-	float GetScale()					{ return m_fScale; }
+	float GetScale() const				{ return m_fScale; }
 	void SetScale( const float fScale )	{ m_fScale = fScale; };
 
 	void SetColor( const D3DXVECTOR4 &vColor );
@@ -51,9 +51,9 @@ public:
 	void SetIndentPos( const float fPosX ){ m_fIndentionPosint = fPosX; }
 	
 	//読み込んだテキストの数( Createしていないと-1が返る ).
-	int GetTextRow(){ return m_iTextRow; }
+	int GetTextRow() const { return m_iTextRow; }
 	//テキストの内容.
-	std::string GetText( const int iRow );
+	std::string GetText( const int iRow ) const;
 
 private:
 
@@ -68,7 +68,7 @@ private:
 	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
 	HRESULT	CreateTexture();
 
-	void SetBlend( const bool isAlpha );
+	void SetBlend( const bool isAlpha ) const;
 
 	//文字を細くする倍率を返す( 問題ないなら1.0f ).
 	//第二引数は( 全角で )何文字目か.
@@ -76,7 +76,7 @@ private:
 	float GetFineCharactorRate(
 		const int iTextRow, 
 		const int iCharNum, 
-		float* outfAddLeft );
+		float* outfAddLeft ) const;
 
 	//戻り値用列挙体.
 	enum class encCHARACTOR_TYPE : UCHAR
@@ -85,7 +85,8 @@ private:
 		JAPANESE_HEAD,//日本語先頭バイト.
 		JAPANESE_FOOT,//日本語末尾バイト.
 	};
-	encCHARACTOR_TYPE GetCharactorType( const int iTextRow, const int iCharNum );
+	encCHARACTOR_TYPE GetCharactorType( 
+		const int iTextRow, const int iCharNum ) const;
 
 
 private:

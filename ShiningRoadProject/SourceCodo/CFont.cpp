@@ -704,7 +704,7 @@ void clsFont::SetColor( const D3DXVECTOR4 &vColor )
 	m_vColor.w = fNOT_ALPHA;
 }
 
-void clsFont::SetBlend( const bool isAlpha )
+void clsFont::SetBlend( const bool isAlpha ) const
 {
 	UINT mask = 0xffffffff;	//マスク値白.
 
@@ -718,7 +718,7 @@ void clsFont::SetBlend( const bool isAlpha )
 }
 
 //テキストの内容.
-std::string clsFont::GetText( const int iRow )
+std::string clsFont::GetText( const int iRow ) const
 {
 	assert( static_cast<unsigned int>( iRow ) < m_vecsTextData.size() );
 
@@ -731,7 +731,7 @@ std::string clsFont::GetText( const int iRow )
 float clsFont::GetFineCharactorRate( 
 	const int iTextRow, 
 	const int iCharNum, 
-	float* outfAddLeft )
+	float* outfAddLeft ) const
 {
 	const float fDEFAULT_RATE	= 1.0f;
 	const float fSLENDER_RATE	= 0.5f;
@@ -806,7 +806,8 @@ float clsFont::GetFineCharactorRate(
 	return fReturn;
 }
 
-clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType( const int iTextRow, const int iCharNum )
+clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType( 
+	const int iTextRow, const int iCharNum ) const
 {
 	//次がないならそれは文末すなわち、とりあえず半角を返しておけばよい( 仮に日本語の末尾だったとしても見えないから影響しない ).
 	if( iCharNum + 1 >= static_cast<int>( m_vecsTextData[ iTextRow ].size() ) ){

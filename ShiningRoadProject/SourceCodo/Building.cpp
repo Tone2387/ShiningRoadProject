@@ -90,7 +90,7 @@ clsBUILDING::~clsBUILDING()
 	m_wpContext = nullptr;
 }
 
-void clsBUILDING::UpdateModel()
+void clsBUILDING::UpdateModel() const
 {
 	m_upBox->SetPosition( m_Trans.vPos );
 	m_upBox->SetRotation( m_Trans.vRot );
@@ -174,7 +174,7 @@ void clsBUILDING::Render(
 	const D3DXMATRIX &mView, 
 	const D3DXMATRIX &mProj,
 	const D3DXVECTOR3 &vLight, 
-	const D3DXVECTOR3 &vEye )
+	const D3DXVECTOR3 &vEye ) const
 {
 #ifdef _DEBUG
 	m_upBox->Render( mView, mProj, vLight, vEye );
@@ -608,7 +608,7 @@ float clsBUILDING::GetTileTheta(
 //‰ñ“]‚É‰‚¶‚ÄÀ•W‚ğXV‚·‚é.
 D3DXVECTOR3 clsBUILDING::GetTilePosForRotation( 
 	D3DXVECTOR3* const vTilePos, const D3DXVECTOR3& vCenterPos,
-	const float fTileTheta, const float fTileDistance )
+	const float fTileTheta, const float fTileDistance ) const
 {
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
 	if( !vTilePos ){

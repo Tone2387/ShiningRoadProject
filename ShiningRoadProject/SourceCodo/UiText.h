@@ -37,7 +37,7 @@ public:
 	//デフォルト引数はRIGHTにすると右端が指定座標に来る.
 	void Render( const enPOS enPos = enPOS::LEFT );
 
-	D3DXVECTOR3 GetPos()					{ return D3DXVECTOR3( m_vPos.x, m_vPos.y, 0.0f ); };
+	D3DXVECTOR3 GetPos() const				{ return D3DXVECTOR3( m_vPos.x, m_vPos.y, 0.0f ); };
 	void SetPos( const D3DXVECTOR2 &vPos )	{ m_vPos = vPos; };
 	void AddPos( const D3DXVECTOR2 &vPos )	{ m_vPos += vPos; };
 
@@ -54,10 +54,12 @@ private:
 	HRESULT CreateBlendState();
 
 	//フォントレンダリング関数.
-	void RenderFont( const int FontIndex, const float x, const float y, const float z );
+	void RenderFont( const int FontIndex, const float x, const float y, const float z ) const;
 
 	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool isAlpha );
+	void SetBlend( const bool isAlpha ) const;
+
+private:
 
 	//↓アプリに一つ.
 	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.

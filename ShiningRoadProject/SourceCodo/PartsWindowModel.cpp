@@ -130,7 +130,7 @@ void clsPARTS_WINDOW_MODEL::Render(
 	const D3DXMATRIX& mProj, 
 	const D3DXVECTOR3& vLight, 
 	const D3DXVECTOR3& vEye,
-	const bool isRender )
+	const bool isRender ) const
 {
 	if( !isRender ) return;
 
@@ -228,13 +228,4 @@ D3DXVECTOR3 clsPARTS_WINDOW_MODEL::GetSelectPartsHeight()
 
 	return vReturn;
 }
-
-
-//êFÇéÛÇØéÊÇÈ.
-void clsPARTS_WINDOW_MODEL::SetColors( const std::vector< D3DXVECTOR4 > vecvColors )
-{
-	m_vecvColors = vecvColors;
-}
-
-
 

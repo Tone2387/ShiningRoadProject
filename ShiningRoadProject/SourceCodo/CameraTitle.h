@@ -17,9 +17,9 @@ public:
 	//フラッシュ( ごまかし )のタイミングを教えてくれる.
 	bool isFlash();
 
-	D3DXVECTOR3 GetSpd(){ return m_vMoveSpd; };
+	D3DXVECTOR3 GetSpd() const { return m_vMoveSpd; };
 
-	D3DXVECTOR3 GetAcc(){ return m_vMoveAcc; };
+	D3DXVECTOR3 GetAcc() const { return m_vMoveAcc; };
 
 
 private:
@@ -41,7 +41,7 @@ private:
 
 		SPN_L,		//左回りで回転.
 		SPN_L_2,	//ズームもどきを加える.
-	}m_enMode;
+	}	m_enMode;
 
 	//各モードの初期化.
 	void Init( const enMODE enMode );
@@ -51,26 +51,26 @@ private:
 		const float fSpn, 
 		D3DXVECTOR3* const vPos,
 		D3DXVECTOR3* const vLook,
-		D3DXVECTOR3* const vRot );
+		D3DXVECTOR3* const vRot ) const;
 
 	//カメラ位置を中心にして見回す.
 	void Turn( const float fTurn, 
 		D3DXVECTOR3* const vPos,
 		D3DXVECTOR3* const vLook,
-		D3DXVECTOR3* const vRot );
+		D3DXVECTOR3* const vRot ) const;
 
 	//今のカメラ向きに前進.advancing
 	void Advancing( 
 		const float fMove, 
 		D3DXVECTOR3* const vPos,
 		D3DXVECTOR3* const vLook,
-		D3DXVECTOR3* const vRot );
+		D3DXVECTOR3* const vRot ) const;
 	//横平行移動.
 	void CrabWalk( 
 		const float fMove, 
 		D3DXVECTOR3* const vPos,
 		D3DXVECTOR3* const vLook,
-		D3DXVECTOR3* const vRot );
+		D3DXVECTOR3* const vRot ) const;
 
 	//視点との距離を変更.
 	void AddDistance( const float fAdd, const bool isCamMove );

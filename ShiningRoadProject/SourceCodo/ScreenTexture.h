@@ -14,11 +14,15 @@ public:
 
 
 	//Rendertargetをテクスチャにする.
-	void SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView );
+	void SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView ) const;
+	
+	//ノイズの更新.
+	void NoiseUpdate();
+	
 	//テクスチャの内容を画面に描画.
 	void RenderWindowFromTexture( 
 		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-		ID3D11DepthStencilView* const pDepthStencilView );
+		ID3D11DepthStencilView* const pDepthStencilView ) const;
 
 	//trueでノイズ.
 	void SetNoiseFlag( const bool isNoise )	{ m_isNoise = isNoise; };
@@ -33,15 +37,15 @@ public:
 	void SetColor( const D3DXVECTOR4& vColor ){ m_vColor = vColor; };
 
 
-	bool isNoiseFlag()		{ return m_isNoise; };
-	bool isNegaFlag()		{ return m_isNega; };
-	bool isDifferentColor(){ 
+	bool isNoiseFlag()const { return m_isNoise; };
+	bool isNegaFlag() const	{ return m_isNega; };
+	bool isDifferentColor() const { 
 		if( m_vColor == D3DXVECTOR4( 1.0f, 1.0f, 1.0f, 1.0f ) ){
 			return false;
 		}
 		return true; 
 	};
-	bool isUse(){
+	bool isUse() const {
 		if( isNoiseFlag()	||
 			isNegaFlag()	||
 			isDifferentColor() )

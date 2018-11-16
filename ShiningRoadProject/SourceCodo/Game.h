@@ -36,7 +36,7 @@ public:
 	//毎フレーム使う.
 	void Render( 
 		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-		ID3D11DepthStencilView* const pBackBuffer_DSTexDSV );
+		ID3D11DepthStencilView* const pBackBuffer_DSTexDSV ) const;
 
 
 
@@ -45,6 +45,8 @@ private:
 
 	//引数のシーンに切り替え.
 	void SwitchScene( const enSCENE enNextScene, const bool bStartUp = false );
+
+private:
 
 	//シーンクラス.
 	std::unique_ptr< clsSCENE_BASE > m_upScene;

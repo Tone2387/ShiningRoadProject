@@ -13,7 +13,7 @@ public:
 		ID3D11DeviceContext* const pContext );
 	~clsBLEND_STATE();
 
-	void SetBlend( const bool isAlpha );
+	void SetBlend( const bool isAlpha ) const;
 
 private:
 

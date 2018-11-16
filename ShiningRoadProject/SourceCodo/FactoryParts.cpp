@@ -9,7 +9,7 @@
 #include "PartsWeapon.h"
 
 //パーツを吐き出す.
-clsPARTS_BASE* clsFACTORY_PARTS::Create( const enPARTS enParts )
+clsPARTS_BASE* clsFACTORY_PARTS::Create( const enPARTS enParts ) const
 {
 	switch( enParts )
 	{

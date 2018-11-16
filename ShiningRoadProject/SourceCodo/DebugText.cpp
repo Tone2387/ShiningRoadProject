@@ -177,7 +177,7 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	{
 		MessageBox( NULL,
 			"フォントテクスチャ作成失敗(DebugText:Init)",
-			"error", MB_OK );
+			FILE_PATH, MB_OK );
 		return E_FAIL;
 	}
 

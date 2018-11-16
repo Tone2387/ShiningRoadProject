@@ -225,7 +225,7 @@ void clsCAMERA_TITLE::Spn(
 	const float fSpn,		
 	D3DXVECTOR3* const vPos,
 	D3DXVECTOR3* const vLook,
-	D3DXVECTOR3* const vRot )
+	D3DXVECTOR3* const vRot ) const
 {
 	vRot->y -= fSpn;
 
@@ -238,7 +238,7 @@ void clsCAMERA_TITLE::Turn(
 	const float fTurn, 
 	D3DXVECTOR3* const vPos,
 	D3DXVECTOR3* const vLook,
-	D3DXVECTOR3* const vRot )
+	D3DXVECTOR3* const vRot ) const
 {
 	vRot->y += fTurn;
 
@@ -254,7 +254,7 @@ void clsCAMERA_TITLE::Advancing(
 	const float fMove, 
 		D3DXVECTOR3* const vPos,
 		D3DXVECTOR3* const vLook,
-		D3DXVECTOR3* const vRot )
+		D3DXVECTOR3* const vRot ) const
 {
 	D3DXMATRIX mYaw;
 	D3DXMatrixRotationY( &mYaw, vRot->y );
@@ -280,7 +280,7 @@ void clsCAMERA_TITLE::CrabWalk(
 	const float fMove, 
 	D3DXVECTOR3* const vPos,
 	D3DXVECTOR3* const vLook,
-	D3DXVECTOR3* const vRot )
+	D3DXVECTOR3* const vRot ) const
 {
 	D3DXMATRIX mYaw;
 	D3DXMatrixRotationY( &mYaw, vRot->y );

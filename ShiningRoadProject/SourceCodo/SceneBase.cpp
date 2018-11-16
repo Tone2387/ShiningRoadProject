@@ -175,6 +175,13 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 		m_enNextScene = enSCENE::NOTHING;//初期化.//覚えていた忘れる.
 	}
 
+#ifdef RENDER_SCREEN_TEXTURE_	
+	if( m_upScreenTexture->isNoiseFlag() ){
+		//ノイズが起動中なら更新( 減衰 )する.
+		m_upScreenTexture->NoiseUpdate();
+	}
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+	
 	//デバッグ用シーン切り替え.
 	DebugChangeScene( enNextScene );
 }
