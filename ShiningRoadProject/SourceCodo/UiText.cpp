@@ -9,22 +9,19 @@ namespace{
 
 	const char* sFILE_PATH = "Data\\Image\\Font.png";
 
+
+	const float DIMENSION		= 12.0f;
+	const float WDIMENSION		= 10.0f;
+	const float TEX_DIMENSION	= 128.0f;
+
+	//文字同士の横の感覚.
+	const float fWIDE_DIS = 6.5f;
+
+	//右寄せ時の係数.
+	const float fRIGHT_RATE = 6.75f;
+
+	const float fERROR = -999.0f;
 }
-
-//============================================================
-//	定数.
-//============================================================
-#define DIMENSION		(12.0f)
-#define WDIMENSION		(10.0f)
-#define TEX_DIMENSION	(128.0f)
-
-//文字同士の横の感覚.
-const float fWIDE_DIS = 6.5f;
-
-//右寄せ時の係数.
-const float fRIGHT_RATE = 6.75f;
-
-const float fERROR = -999.0f;
 
 
 //============================================================
@@ -158,7 +155,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 				&bd, &InitData, &m_pVertexBuffer[cnt]) ) )
 			{
 				MessageBox( NULL,
-					"頂点バッファ作成失敗(DebugText:Init)",
+					"頂点バッファ作成失敗(UiText:Init)",
 					"error", MB_OK );
 				return E_FAIL;
 			}
@@ -178,7 +175,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 		&SamDesc, &m_pSampleLinear) ) )
 	{
 		MessageBox( NULL,
-			"サンプル作成失敗(DebugText:Init)",
+			"サンプル作成失敗(UiText:Init)",
 			"", MB_OK );
 		return E_FAIL;
 	}
@@ -192,8 +189,8 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 			&m_pAsciiTexture, NULL ) ) )
 	{
 		MessageBox( NULL,
-			"フォントテクスチャ作成失敗(DebugText:Init)",
-			"error", MB_OK );
+			"フォントテクスチャ作成失敗(UiText:Init)",
+			sFILE_PATH, MB_OK );
 		return E_FAIL;
 	}
 
@@ -208,7 +205,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 		NULL, &pCompileShader,
 		&pErrors, NULL ) ) )
 	{
-		MessageBox( NULL, "hlsl読込失敗(VS)", "DebugText:Init", MB_OK );
+		MessageBox( NULL, "hlsl読込失敗(VS)", SHADER_NAME, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -219,7 +216,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 		NULL, &m_pVertexShader ) ) )
 	{
 		SAFE_RELEASE( pCompileShader );
-		MessageBox( NULL, "バーテックスバッファ作成失敗", "DebugText:Init", MB_OK );
+		MessageBox( NULL, "バーテックスバッファ作成失敗", SHADER_NAME, MB_OK );
 		return E_FAIL;
 	}
 
@@ -240,7 +237,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 		pCompileShader->GetBufferSize(),
 		&m_pVertexLayout ) ) )
 	{
-		MessageBox( NULL, "頂点インプットレイアウト作成", "DebugText:Init", MB_OK );
+		MessageBox( NULL, "頂点インプットレイアウト作成", SHADER_NAME, MB_OK );
 		return E_FAIL;
 	}
 
@@ -251,7 +248,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 		NULL, &pCompileShader,
 		&pErrors, NULL ) ) )
 	{
-		MessageBox( NULL, "hlsl読込失敗(PS)", "DebugText:Init", MB_OK );
+		MessageBox( NULL, "hlsl読込失敗(PS)", SHADER_NAME, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -263,7 +260,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 		NULL, &m_pPixelShader ) ) )
 	{
 		SAFE_RELEASE( pCompileShader );
-		MessageBox( NULL, "ピクセルシェーダ作成失敗", "DebugText:Init", MB_OK );
+		MessageBox( NULL, "ピクセルシェーダ作成失敗", SHADER_NAME, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pCompileShader );
@@ -280,7 +277,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	if( FAILED(m_pDevice11->CreateBuffer(
 		&cb, NULL, &m_pConstantBuffer ) ) )
 	{
-		MessageBox( NULL, "コンスタントバッファ作成", "DebugText:Init", MB_OK );
+		MessageBox( NULL, "コンスタントバッファ作成", "UiText:Init", MB_OK );
 		return E_FAIL;
 	}
 
