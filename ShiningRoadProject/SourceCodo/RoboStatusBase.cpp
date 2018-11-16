@@ -110,7 +110,7 @@ int clsROBO_STATUS::GetWeaponState(
 
 
 //パーツ番号を返す( いま装備しているパーツが何番か ).
-UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType )
+UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType ) const
 {
 	return m_RoboStateData.ucPartsModelNum[ static_cast<int>( PartsType ) ];
 }
@@ -260,7 +260,7 @@ void clsROBO_STATUS::SetColorRank(
 }
 
 
-int clsROBO_STATUS::GetColorRank( const enCOLOR_GAGE enColorNum )
+int clsROBO_STATUS::GetColorRank( const enCOLOR_GAGE enColorNum ) const
 {
 	assert( enColorNum >= 0  );
 	assert( enColorNum < enCOLOR_GAGE_size );

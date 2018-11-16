@@ -77,7 +77,7 @@ void clsPARTS_LEG::UpdateProduct()
 //直前のフレームのボーンの座標を持ってくる.
 D3DXVECTOR3 clsPARTS_LEG::GetBonePosPreviosFrame( 
 	const int enBoneName, 
-	int iVecNum )
+	int iVecNum ) const
 {
 	if( iVecNum >= m_BonePositions.vecvBoosterRoot.size() ){
 		iVecNum = m_BonePositions.vecvBoosterRoot.size() - 1;

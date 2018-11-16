@@ -24,7 +24,7 @@ void clsPARTS_HEAD::UpdateProduct()
 //直前のフレームのボーンの座標を持ってくる.
 D3DXVECTOR3 clsPARTS_HEAD::GetBonePosPreviosFrame( 
 	const int enBoneName, 
-	int iVecNum )
+	int iVecNum ) const
 {
 
 	switch( enBoneName )

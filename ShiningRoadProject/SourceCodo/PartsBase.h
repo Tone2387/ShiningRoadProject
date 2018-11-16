@@ -38,7 +38,7 @@ public:
 	};
 
 	//ボーン座標を現在のキャラクター位置で更新.
-	void UpdateBonePos(){
+	void UpdateBonePos() const {
 		if( m_pMesh ){
 			m_pMesh->UpdateBonePos();
 		}
@@ -49,7 +49,7 @@ public:
 
 
 	//直前のフレームのボーンの座標を持ってくる.
-	virtual D3DXVECTOR3 GetBonePosPreviosFrame( const int enBoneName, int iVecNum = 0 ) = 0;
+	virtual D3DXVECTOR3 GetBonePosPreviosFrame( const int enBoneName, int iVecNum = 0 ) const = 0;
 	//↑で使うためにボーン座標を記録する( Renderの直後に使う ).
 	virtual void UpdateBonePosPreviosFrame() = 0;
 
@@ -65,7 +65,7 @@ public:
 	void SetPartsName( const std::string &sPartsName ){ m_sPartsName = sPartsName; };
 
 	//ボーンが存在するならtrue.
-	bool ExistsBone( const char* sBoneName ){ return m_pMesh->ExistsBone( sBoneName ); };
+	bool ExistsBone( const char* sBoneName ) const { return m_pMesh->ExistsBone( sBoneName ); };
 
 	void AddPosition( const D3DXVECTOR3& vPos ){ SetPosition( GetPosition() + vPos ); }
 
@@ -77,7 +77,7 @@ protected:
 	virtual void UpdateProduct() = 0;//各シーンのUpdate.
 	//----- 各パーツごとの関数 -----//.
 
-	void IntOverGuird( int* const i, const int start, const int end ){
+	void IntOverGuird( int* const i, const int start, const int end ) const {
 		if( *i >= end ){
 			*i = end - 1;
 		}
