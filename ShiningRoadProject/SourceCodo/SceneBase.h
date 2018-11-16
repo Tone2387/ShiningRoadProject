@@ -46,7 +46,7 @@ public:
 
 	//----- 各シーン共通 -----//.
 	//シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
-	void Create();
+	void Create( const HWND hWnd );
 	//ループ内の処理( 引数を関数内で変更すると今のシーンが破棄され、.
 	//				  指定したシーンが生成される ).
 	void Update( enSCENE &enNextScene );
@@ -106,8 +106,8 @@ protected:
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 	//ノイズを起こす.
-	void NoiseBig( const int iPower );
-	void NoiseSmall( const int iFrame );
+	void NoiseStrong( const int iPower );
+	void NoiseWeak( const int iFrame );
 
 	void UpdateNoise();
 #endif//#ifdef RENDER_SCREEN_TEXTURE_

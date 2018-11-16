@@ -1,6 +1,7 @@
 #ifndef SCREEN_TEXTURE_H_
 #define SCREEN_TEXTURE_H_
 
+class clsSOUND_MANAGER_NOISE;
 #include "Global.h"
 
 //レンダリングテクスチャ用.
@@ -9,6 +10,7 @@ class clsSCREEN_TEXTURE
 {
 public:
 	clsSCREEN_TEXTURE(
+		const HWND hWnd,
 		ID3D11DeviceContext* const pContext );
 	~clsSCREEN_TEXTURE();
 
@@ -23,6 +25,13 @@ public:
 	void RenderWindowFromTexture( 
 		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
 		ID3D11DepthStencilView* const pDepthStencilView ) const;
+
+	//効果音再生.
+	//再生出来たらtrueを返す.
+	bool PlaySeStrong();
+	bool PlaySeWeak();
+	//効果音停止.
+	void StopSe();
 
 	//trueでノイズ.
 	void SetNoiseFlag( const bool isNoise )	{ m_isNoise = isNoise; };
@@ -61,6 +70,9 @@ private:
 	HRESULT CreateShader();
 	HRESULT CreateConstantBuffer();
 
+
+	bool PlaySeProduct( const int iMin, const int iSize );
+
 private:
 
 
@@ -75,6 +87,11 @@ private:
 	float	m_fPulse;
 	float	m_fPulseOffset;
 	float	m_fPulseOffsetAdd;
+
+	//音声.
+	std::unique_ptr< clsSOUND_MANAGER_NOISE >	m_upSound;
+	bool m_isPlaySeStrong;
+	bool m_isPlaySeWeak;
 	//----- ノイズ -----//.
 
 	//----- 画面色 -----//.

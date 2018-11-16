@@ -218,7 +218,7 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	m_upScene.reset( upSceneFactory->Create( enNextScene, m_spPtrGroup ) );
 
 	if( m_upScene ){
-		m_upScene->Create();//シーン初期化.
+		m_upScene->Create( m_hWnd );//シーン初期化.
 	}
 
 

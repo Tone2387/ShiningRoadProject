@@ -1,6 +1,11 @@
 #include "ScreenTexture.h"
 
+#include "SoundManagerNoise.h"
 #include "Sprite2D.h"	
+
+#include <random>
+
+using namespace std;
 
 namespace{
 
@@ -16,6 +21,22 @@ namespace{
 		ALIGN16 float		isfNega;
 	};
 
+	enum enSE_WEAK : int{
+		enSE_WEAK_A = 0,
+		enSE_WEAK_B,
+
+		enSE_WEAK_size
+	};
+	enum enSE_STRONG : int{
+		enSE_STRONG_A = enSE_WEAK_size,
+		enSE_STRONG_B,
+		enSE_STRONG_C,
+		enSE_STRONG_D,
+		enSE_STRONG_E,
+
+		enSE_STRONG_size
+	};
+
 	const char sSHADER_NAME[] = "Shader\\Screen.hlsl";
 
 
@@ -27,6 +48,7 @@ namespace{
 
 
 clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
+	const HWND hWnd,
 	ID3D11DeviceContext* const pContext )
 	:m_wpContext( pContext )
 	,m_wpDevice( nullptr )
@@ -46,6 +68,8 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_fPulseOffsetAdd( fPULSE_OFFSET_ADD )
 	,m_isNega( false )
 	,m_vColor( 1.0f, 1.0f, 1.0f, 1.0f )
+	,m_isPlaySeStrong( false )
+	,m_isPlaySeWeak( false )
 {
 	assert( m_wpContext );
 	m_wpContext->GetDevice( &m_wpDevice );
@@ -60,6 +84,10 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 		ERR_MSG( "描画先テクスチャバッファ作成失敗", "" );
 	}
 
+	//サウンド作成.
+	m_upSound = make_unique< clsSOUND_MANAGER_NOISE >( hWnd );
+	assert( m_upSound );
+	m_upSound->Create();
 }
 
 clsSCREEN_TEXTURE::~clsSCREEN_TEXTURE()
@@ -330,6 +358,7 @@ void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pD
 //ノイズの更新.
 void clsSCREEN_TEXTURE::NoiseUpdate()
 {
+	//ポストエフェクト.
 	m_iSeed ++;
 	const int iSEED_MAX = 32000;
 	if( m_iSeed >= iSEED_MAX ){
@@ -340,6 +369,25 @@ void clsSCREEN_TEXTURE::NoiseUpdate()
 	if( m_fPulseOffset >= fPULSE_OFFSET_MAX ){
 		m_fPulseOffset = fPULSE_OFFSET_INIT;
 	}
+
+	//音.
+	for( int i=enSE_WEAK_A; i<enSE_WEAK_size; i++ ){
+		if( m_upSound->IsPlayingSE( i ) ){
+			goto PLAYING_SE_WEAK;//再生中である.
+		}
+	}
+	m_isPlaySeWeak = false;
+PLAYING_SE_WEAK:;
+
+	for( int i=enSE_STRONG_A; i<enSE_STRONG_size; i++ ){
+		if( m_upSound->IsPlayingSE( i ) ){
+			goto PLAYING_SE_STRONG;
+		}
+	}
+	m_isPlaySeStrong = false;
+PLAYING_SE_STRONG:;
+
+
 }
 
 
@@ -467,12 +515,59 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 
 
 
+//効果音再生.
+bool clsSCREEN_TEXTURE::PlaySeStrong()
+{
+	if( m_isPlaySeStrong ) return false;
+
+	bool isPlay = PlaySeProduct( enSE_STRONG_A, enSE_STRONG_size );
+
+	if( isPlay ){
+		m_isPlaySeStrong = true;
+	}
+
+	return isPlay;
+}
+
+bool clsSCREEN_TEXTURE::PlaySeWeak()
+{
+	if( m_isPlaySeStrong )	return false;
+	if( m_isPlaySeWeak )	return false;
+
+	bool isPlay =  PlaySeProduct( enSE_WEAK_A, enSE_WEAK_size );
+
+	if( isPlay ){
+		m_isPlaySeWeak = true;
+	}
+
+	return isPlay;
+}
 
 
+bool clsSCREEN_TEXTURE::PlaySeProduct( 
+	const int iMin, const int iSize )
+{
+	//ランダムでノイズ音再生.
+	mt19937 mt{ std::random_device{}() };
 
+	int iMax = iSize - 1;
+	if( iMax < iMin ){
+		iMax = iMin;
+	}
 
+	uniform_int_distribution<int> dist( iMin, iMax );
 
+	auto SeNo = dist( mt );
 
+	return m_upSound->PlaySE( SeNo );
+}
 
+void clsSCREEN_TEXTURE::StopSe()
+{
+	//音.
+	m_upSound->StopAllSound();
 
+	m_isPlaySeStrong = false;
+	m_isPlaySeWeak	 = false;
 
+}
