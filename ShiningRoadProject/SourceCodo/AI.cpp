@@ -1,4 +1,4 @@
-#include"Enemy.h"
+#include"AI.h"
 #include"File.h"
 
 /*clsEnemyBase::clsEnemyBase(std::vector<clsCharactor*>& v_Enemys)

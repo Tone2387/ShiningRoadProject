@@ -1,4 +1,4 @@
-#include"EnemyRobo.h"
+#include"AIRoboCommand.h"
 #include"File.h"
 
 void clsEnemyRobo::Init(

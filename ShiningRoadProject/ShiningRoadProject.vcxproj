@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SourceCodo\AIFactory.cpp" />
     <ClCompile Include="SourceCodo\AssembleModel.cpp" />
     <ClCompile Include="SourceCodo\AssembleUi.cpp" />
     <ClCompile Include="SourceCodo\BlackScreen.cpp" />
@@ -113,10 +114,12 @@
     <ClCompile Include="SourceCodo\DX9Mesh.cpp" />
     <ClCompile Include="SourceCodo\DxInput.cpp" />
     <ClCompile Include="SourceCodo\Effects.cpp" />
-    <ClCompile Include="SourceCodo\Enemy.cpp" />
-    <ClCompile Include="SourceCodo\EnemyCharactor.cpp" />
+    <ClCompile Include="SourceCodo\AI.cpp" />
+    <ClCompile Include="SourceCodo\AICharaCommand.cpp" />
+    <ClCompile Include="SourceCodo\AICharactor.cpp" />
     <ClCompile Include="SourceCodo\EnemyFactory.cpp" />
-    <ClCompile Include="SourceCodo\EnemyRobo.cpp" />
+    <ClCompile Include="SourceCodo\AIRoboCommand.cpp" />
+    <ClCompile Include="SourceCodo\AIRobo.cpp" />
     <ClCompile Include="SourceCodo\FriendFactory.cpp" />
     <ClCompile Include="SourceCodo\RoboStatusEnemy.cpp" />
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
@@ -197,6 +200,7 @@
     <ClCompile Include="SourceCodo\WindowBox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SourceCodo\AIFactory.h" />
     <ClInclude Include="SourceCodo\AssembleModel.h" />
     <ClInclude Include="SourceCodo\AssembleUi.h" />
     <ClInclude Include="SourceCodo\BlackScreen.h" />
@@ -224,10 +228,12 @@
     <ClInclude Include="SourceCodo\DX9Mesh.h" />
     <ClInclude Include="SourceCodo\DxInput.h" />
     <ClInclude Include="SourceCodo\Effects.h" />
-    <ClInclude Include="SourceCodo\Enemy.h" />
-    <ClInclude Include="SourceCodo\EnemyCharactor.h" />
+    <ClInclude Include="SourceCodo\AI.h" />
+    <ClInclude Include="SourceCodo\AICharaCommand.h" />
+    <ClInclude Include="SourceCodo\AICharactor.h" />
     <ClInclude Include="SourceCodo\EnemyFactory.h" />
-    <ClInclude Include="SourceCodo\EnemyRobo.h" />
+    <ClInclude Include="SourceCodo\AIRoboCommand.h" />
+    <ClInclude Include="SourceCodo\AIRobo.h" />
     <ClInclude Include="SourceCodo\FriendFactory.h" />
     <ClInclude Include="SourceCodo\RoboStatusEnemy.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />

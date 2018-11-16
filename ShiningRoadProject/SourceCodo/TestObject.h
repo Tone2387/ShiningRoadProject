@@ -14,7 +14,7 @@
 
 #include"CharaSkinMesh.h"
 #include"Robo.h"
-#include"EnemyRobo.h"
+#include"AIRoboCommand.h"
 
 //#ifdef Tahara
 //#include "PtrGroup.h"

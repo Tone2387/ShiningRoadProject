@@ -1,4 +1,4 @@
-#include"EnemyCharactor.h"
+#include"AICharaCommand.h"
 
 void clsCharactorEnemy::Init(
 	LPSTR strEnemyFolderName,

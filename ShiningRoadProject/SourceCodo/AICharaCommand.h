@@ -1,6 +1,6 @@
 #pragma once
 
-#include"Enemy.h"
+#include"AI.h"
 #include"CharactorCommand.h"
 
 class clsCharactorEnemy : public clsEnemyBase
