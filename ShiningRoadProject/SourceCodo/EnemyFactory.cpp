@@ -39,6 +39,20 @@ const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(clsPOINTER_GROUP* 
 
 			clsEnemyTmp->Init(clsPtrGroup, strFileName);
 
+			D3DXVECTOR3 vPosTmp;
+			vPosTmp.x = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderPosX);
+			vPosTmp.y = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderPosY);
+			vPosTmp.z = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderPosZ);
+
+			clsEnemyTmp->SetPosition(vPosTmp);
+
+			D3DXVECTOR3 vRotTmp;
+			vRotTmp.x = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderPitch);
+			vRotTmp.y = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderYaw);
+			vRotTmp.z = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderRoll);
+
+			clsEnemyTmp->SetRotation(vRotTmp);
+
 			v_EnemysTmp[i] = clsEnemyTmp;
 		}
 	}
