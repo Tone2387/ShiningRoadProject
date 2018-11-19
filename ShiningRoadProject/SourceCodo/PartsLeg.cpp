@@ -79,8 +79,8 @@ D3DXVECTOR3 clsPARTS_LEG::GetBonePosPreviosFrame(
 	const int enBoneName, 
 	int iVecNum ) const
 {
-	if( iVecNum >= m_BonePositions.vecvBoosterRoot.size() ){
-		iVecNum = m_BonePositions.vecvBoosterRoot.size() - 1;
+	if( iVecNum >= static_cast<int>( m_BonePositions.vecvBoosterRoot.size() ) ){
+		iVecNum =  static_cast<int>( m_BonePositions.vecvBoosterRoot.size() ) - 1;
 	}
 	else if( iVecNum < 0 ){
 		iVecNum = 0;
@@ -131,20 +131,20 @@ void clsPARTS_LEG::UpdateBonePosPreviosFrame()
 	//ブースター.
 	string sBoneNameRoot = sBONE_NAME_LEG_BOOSTER_ROOT;
 	string sBoneNameEnd	 = sBONE_NAME_LEG_BOOSTER_END;
-	for( int i=0; i<m_BonePositions.vecvBoosterRoot.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvBoosterRoot.size(); i++ ){
 		m_BonePositions.vecvBoosterRoot[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameRoot, i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 		m_BonePositions.vecvBoosterEnd[i]  = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameEnd , i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 	}
 
 	//関節.
 	string sBoneName = sBONE_NAME_LEG_JOINT;
-	for( int i=0; i<m_BonePositions.vecvJoint.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvJoint.size(); i++ ){
 		m_BonePositions.vecvJoint[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneName, i, m_iDIGIT_JOINT_NUM ).c_str() );
 	}
 
 	//足の裏.
 	sBoneName = sBONE_NAME_LEG_SOLE;
-	for( int i=0; i<m_BonePositions.vecvSole.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvSole.size(); i++ ){
 		m_BonePositions.vecvSole[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneName, i, m_iDIGIT_SOLE_NUM ).c_str() );
 	}
 

@@ -103,7 +103,7 @@ void clsPARTS_CORE::UpdateBonePosPreviosFrame()
 	clsOPERATION_STRING OprtStr;
 	string sBoneNameRoot = sBONE_NAME_CORE_BOOSTER_ROOT;
 	string sBoneNameEnd	 = sBONE_NAME_CORE_BOOSTER_END;
-	for( int i=0; i<m_BonePositions.vecvBoosterRoot.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvBoosterRoot.size(); i++ ){
 		m_BonePositions.vecvBoosterRoot[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameRoot, i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 		m_BonePositions.vecvBoosterEnd[i]  = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameEnd , i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 	}

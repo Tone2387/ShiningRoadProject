@@ -291,7 +291,6 @@ bool clsSCENE_BASE::isPressRight()const
 	}
 	return false;
 }
-
 bool clsSCENE_BASE::isPressLeft()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
@@ -308,7 +307,6 @@ bool clsSCENE_BASE::isPressLeft()const
 	}
 	return false;
 }
-
 bool clsSCENE_BASE::isPressUp()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
@@ -325,7 +323,6 @@ bool clsSCENE_BASE::isPressUp()const
 	}
 	return false;
 }
-
 bool clsSCENE_BASE::isPressDown()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
@@ -342,7 +339,6 @@ bool clsSCENE_BASE::isPressDown()const
 	}
 	return false;
 }
-
 bool clsSCENE_BASE::isPressEnter()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
@@ -356,7 +352,6 @@ bool clsSCENE_BASE::isPressEnter()const
 	}
 	return false;
 }
-
 bool clsSCENE_BASE::isPressExit()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
@@ -415,7 +410,6 @@ bool clsSCENE_BASE::isPressHoldRight( bool isWithStick )
 
 	return false;
 }
-
 bool clsSCENE_BASE::isPressHoldLeft( bool isWithStick )
 {
 	bool isPush = false;
@@ -462,7 +456,6 @@ bool clsSCENE_BASE::isPressHoldLeft( bool isWithStick )
 
 	return false;
 }
-
 bool clsSCENE_BASE::isPressHoldUp( bool isWithStick )
 {
 	bool isPush = false;
@@ -509,7 +502,6 @@ bool clsSCENE_BASE::isPressHoldUp( bool isWithStick )
 
 	return false;
 }
-
 bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 {
 	bool isPush = false;
@@ -557,7 +549,6 @@ bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 	return false;
 }
 
-
 //3D座標をスクリーン( 2D )座標へと変換する conversion(変換) dimensions(次元).
 D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )const
 {
@@ -567,7 +558,6 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )const
 	D3DXVec3Project( &v2DPos, &v3DPos, m_wpViewPort10, &m_mProj, &m_mView, &mWorld );
 	return v2DPos;
 }
-
 
 //深度テスト(Zテスト)ON/OFF切替.
 void clsSCENE_BASE::SetDepth( const bool isOn )const
