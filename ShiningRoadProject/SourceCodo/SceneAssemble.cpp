@@ -8,6 +8,8 @@
 
 using namespace std;
 
+//#include "RoboStatusEnemy.h"
+
 
 namespace{
 
@@ -118,7 +120,9 @@ clsSCENE_ASSEMBLE::clsSCENE_ASSEMBLE( clsPOINTER_GROUP* const ptrGroup ) : clsSC
 	,m_enSelectMode( clsASSEMBLE_UI::enSELECT_MODE::PARTS )
 	,m_vRoboViewOffsetPos( { 0.0f, 0.0f, 0.0f } )
 {
-
+//	clsROBO_STATUS_ENEMY* ppp;
+//	ppp = new clsROBO_STATUS_ENEMY( 0 );
+//	delete ppp;
 }
 
 clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
