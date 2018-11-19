@@ -11,104 +11,83 @@ clsPOINTER_GROUP* clsPtrGroup,
 std::string strFolderName,
 clsPlayer* pPlayer)
 {
-	std::string strFileName = strFolderName + "\\Friend.csv";
 	clsFILE TransformFile;
 	clsOPERATION_STRING strOpr;
-	assert(TransformFile.Open(strFileName));
-	std::vector<clsCharactor*> v_FriendsTmp;
-
-	v_FriendsTmp.resize(TransformFile.GetSizeRow());
-
-	for (int i = 1; i < v_FriendsTmp.size(); i++)
-	{
-		if (TransformFile.GetDataInt(i, enFriendDataFileOrderFriendType) == enFriendTypeMinion)
-		{
-
-		}
-
-		else if (TransformFile.GetDataInt(i, enFriendDataFileOrderFriendType) == enFriendTypeRobo)
-		{
-			const int iNum = TransformFile.GetDataInt(i, enFriendDataFileOrderFriendNum);
-			strFileName = "Data\\FileData\\Hiyoshi\\RoboAI\\Robo";
-
-			strFileName = strOpr.ConsolidatedNumber(strFileName, iNum, GetNumDigit(iNum));
-
-			clsAIRobo* clsFriendTmp = new clsAIRobo;
-
-			clsFriendTmp->Init(clsPtrGroup, strFileName);
-
-			D3DXVECTOR3 vPosTmp;
-			vPosTmp.x = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosX);
-			vPosTmp.y = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosY);
-			vPosTmp.z = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosZ);
-
-			clsFriendTmp->SetPosition(vPosTmp);
-
-			D3DXVECTOR3 vRotTmp;
-			vRotTmp.x = TransformFile.GetDataFloat(i, enFriendDataFileOrderPitch);
-			vRotTmp.y = TransformFile.GetDataFloat(i, enFriendDataFileOrderYaw);
-			vRotTmp.z = TransformFile.GetDataFloat(i, enFriendDataFileOrderRoll);
-
-			clsFriendTmp->SetRotation(vRotTmp);
-
-			v_FriendsTmp[i] = clsFriendTmp;
-		}
-	}
-
-	return v_FriendsTmp;
-}
-
-const std::vector<clsCharactor*> clsFriendFactory::CreateFriend(clsPOINTER_GROUP* clsPtrGroup, std::string strFolderName)
-{
-	std::string strFileName = strFolderName + "\\Friend.csv";
-
-	clsFILE TransformFile;
-	//clsFILE FriendFile;
-
-	clsOPERATION_STRING strOpr;
-
-	assert(TransformFile.Open(strFileName));
-	//assert(FriendFile.Open("Data\\FileData\\Hiyoshi\\Friend\\FriendRoboData.csv"));
 
 	std::vector<clsCharactor*> v_FriendsTmp;
 
-	v_FriendsTmp.resize(TransformFile.GetSizeRow());
+	//プレイヤー作成.
+	std::string strFileName = strFolderName + "\\Player.csv";
+	
+	assert(TransformFile.Open(strFileName));
+	
+	v_FriendsTmp.resize(1);
 
-	for (int i = 1; i < v_FriendsTmp.size(); i++)
+	clsPlayer* pPlayerTmp = new clsPlayer;
+
+	pPlayerTmp->Init(clsPtrGroup);
+
+	D3DXVECTOR3 vPosTmp;
+	vPosTmp.x = TransformFile.GetDataFloat(0, enFriendDataFileOrderPosX);
+	vPosTmp.y = TransformFile.GetDataFloat(0, enFriendDataFileOrderPosY);
+	vPosTmp.z = TransformFile.GetDataFloat(0, enFriendDataFileOrderPosZ);
+
+	pPlayerTmp->SetPosition(vPosTmp);
+
+	D3DXVECTOR3 vRotTmp;
+	vRotTmp.x = TransformFile.GetDataFloat(0, enFriendDataFileOrderPitch);
+	vRotTmp.y = TransformFile.GetDataFloat(0, enFriendDataFileOrderYaw);
+	vRotTmp.z = TransformFile.GetDataFloat(0, enFriendDataFileOrderRoll);
+
+	pPlayerTmp->SetRotation(vRotTmp);
+
+	//プレイヤーを0番目に登録.
+	v_FriendsTmp[0] = pPlayerTmp;
+
+	pPlayer = pPlayerTmp;
+
+	TransformFile.Close();
+
+	//仲間がいる場合作成.
+	strFileName = strFolderName + "\\Friend.csv";
+
+	if (TransformFile.Open(strFileName))
 	{
-		if (TransformFile.GetDataInt(i, enFriendDataFileOrderFriendType) == enFriendTypeMinion)
+		v_FriendsTmp.resize(TransformFile.GetSizeRow());
+
+		for (int i = 1; i < v_FriendsTmp.size(); i++)
 		{
+			if (TransformFile.GetDataInt(i, enFriendDataFileOrderFriendType) == enFriendTypeMinion)
+			{
 
-		}
+			}
 
-		else if (TransformFile.GetDataInt(i, enFriendDataFileOrderFriendType) == enFriendTypeRobo)
-		{
-			const int iNum = TransformFile.GetDataInt(i, enFriendDataFileOrderFriendNum);
-			strFileName = "Data\\FileData\\Hiyoshi\\RoboAI\\Robo";
+			else if (TransformFile.GetDataInt(i, enFriendDataFileOrderFriendType) == enFriendTypeRobo)
+			{
+				const int iNum = TransformFile.GetDataInt(i, enFriendDataFileOrderFriendNum);
 
-			strFileName = strOpr.ConsolidatedNumber(strFileName, iNum, GetNumDigit(iNum));
+				clsAIRobo* pFriendTmp = new clsAIRobo;
 
-			clsAIRobo* clsFriendTmp = new clsAIRobo;
+				pFriendTmp->Init(clsPtrGroup, iNum);
 
-			clsFriendTmp->Init(clsPtrGroup, strFileName);
+				vPosTmp.x = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosX);
+				vPosTmp.y = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosY);
+				vPosTmp.z = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosZ);
 
-			D3DXVECTOR3 vPosTmp;
-			vPosTmp.x = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosX);
-			vPosTmp.y = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosY);
-			vPosTmp.z = TransformFile.GetDataFloat(i, enFriendDataFileOrderPosZ);
+				pFriendTmp->SetPosition(vPosTmp);
 
-			clsFriendTmp->SetPosition(vPosTmp);
+				vRotTmp.x = TransformFile.GetDataFloat(i, enFriendDataFileOrderPitch);
+				vRotTmp.y = TransformFile.GetDataFloat(i, enFriendDataFileOrderYaw);
+				vRotTmp.z = TransformFile.GetDataFloat(i, enFriendDataFileOrderRoll);
 
-			D3DXVECTOR3 vRotTmp;
-			vRotTmp.x = TransformFile.GetDataFloat(i, enFriendDataFileOrderPitch);
-			vRotTmp.y = TransformFile.GetDataFloat(i, enFriendDataFileOrderYaw);
-			vRotTmp.z = TransformFile.GetDataFloat(i, enFriendDataFileOrderRoll);
+				pFriendTmp->SetRotation(vRotTmp);
 
-			clsFriendTmp->SetRotation(vRotTmp);
-
-			v_FriendsTmp[i] = clsFriendTmp;
+				v_FriendsTmp[i] = pFriendTmp;
+			}
 		}
 	}
+
+	TransformFile.Close();
 
 	return v_FriendsTmp;
 }
@@ -119,32 +98,4 @@ clsFriendFactory::clsFriendFactory()
 
 clsFriendFactory::~clsFriendFactory()
 {
-}
-
-const int clsFriendFactory::GetNumDigit(const int iNum)
-{
-	int iResult = 0;//結果.
-	int iDigit = 1;//桁数.
-	int iNumTmp = iNum;//数字.
-
-	const int iDecimal = 10;//十進数.
-
-	while (iResult == 0)
-	{
-		//10以上か?.
-		if (iNumTmp < iDecimal)
-		{
-			//桁を確定.
-			iResult = iDigit;
-		}
-
-		else
-		{
-			//桁を増やす.
-			iNumTmp = iNumTmp / iDecimal;
-			++iDigit;
-		}
-	}
-
-	return iResult;
 }

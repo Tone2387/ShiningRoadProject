@@ -32,8 +32,5 @@ private:
 
 		enEnemyDataFileOrderSize
 	};
-
-
-	const int GetNumDigit(const int iNum);
 };
 

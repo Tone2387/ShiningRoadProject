@@ -31,6 +31,10 @@ public:
 	//char型を内部でnewしているので、使用後は必ずdelete[]すること.
 	char* CreateCharPtrFromWcharPtr( const wchar_t *wc ) const;
 
+	//#ifdef Hiyoshi
+	const int GetNumDigit(const unsigned int iNum);
+	//#endif//#ifdef Hiyoshi
+
 private:
 
 	//数字と連結.

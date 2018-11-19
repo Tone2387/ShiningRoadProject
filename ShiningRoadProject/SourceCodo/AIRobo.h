@@ -10,7 +10,7 @@ public:
 	~clsAIRobo();
 
 	void Init(clsPOINTER_GROUP* const pPtrGroup,
-		std::string strAIFolderName);
+		unsigned int uiAINum);
 
 	void Action() final;
 	void SwitchMove();

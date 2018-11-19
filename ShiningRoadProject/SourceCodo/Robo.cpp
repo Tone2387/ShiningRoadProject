@@ -81,6 +81,9 @@ void clsRobo::RoboInit(
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
+	m_pMesh = new clsMISSION_MODEL;
+	m_pMesh->Create(m_wpResource, pRobo);
+
 	const int iHulf = 2;
 
 	m_iMaxHP = pRobo->GetRoboState(clsROBO_STATUS::HP);//HPŽó‚¯Žæ‚è.
@@ -142,10 +145,6 @@ void clsRobo::RoboInit(
 	m_fRaderRange = pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
 
 	m_fLockRange = pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
-
-	m_pMesh = new clsMISSION_MODEL;
-
-	m_pMesh->Create(m_wpResource, pRobo);
 	
 	m_v_Spheres = m_pMesh->GetColState(pRobo);
 

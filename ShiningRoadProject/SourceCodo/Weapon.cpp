@@ -82,6 +82,15 @@ bool clsWeapon::Shot()
 
 				D3DXVec3Normalize(&vDirTmp, &vDirTmp);
 
+				float fDirTmp = D3DXVec3Dot(&vDir, &vDirTmp);
+
+				fDirTmp = acos(fDirTmp);
+
+				if (fDirTmp > D3DX_PI / 2)
+				{
+					vDirTmp = -vDirTmp;
+				}
+
 				vDir = vDirTmp;
 			}
 

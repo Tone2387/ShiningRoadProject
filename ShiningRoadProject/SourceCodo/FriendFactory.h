@@ -12,12 +12,7 @@ public:
 		CreateFriend(
 		clsPOINTER_GROUP* clsPtrGroup, 
 		std::string strFolderName,
-		clsPlayer* pPlayer = nullptr);
-
-	const std::vector<clsCharactor*>
-		CreateFriend(
-		clsPOINTER_GROUP* clsPtrGroup,
-		std::string strFolderName);
+		clsPlayer* pPlayer);
 
 private:
 	enum enFriendType
@@ -41,7 +36,4 @@ private:
 
 		enFriendDataFileOrderSize
 	};
-
-
-	const int GetNumDigit(const int iNum);
 };

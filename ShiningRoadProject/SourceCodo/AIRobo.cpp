@@ -1,4 +1,11 @@
 #include"AIRobo.h"
+#include"OperationString.h"
+#include"RoboStatusEnemy.h"
+
+namespace
+{
+	const char strRoboAIFolderPath[] = "Data\\FileData\\Hiyoshi\\RoboAI\\Robo";
+};
 
 clsAIRobo::clsAIRobo()
 	: m_pAI(nullptr)
@@ -12,12 +19,20 @@ clsAIRobo::~clsAIRobo()
 }
 
 void clsAIRobo::Init(clsPOINTER_GROUP* const pPtrGroup,
-	std::string strEnemyFolderName)
+	unsigned int uiAINum)
 {
-	RoboInit(pPtrGroup, pPtrGroup->GetRoboStatus());
+	clsROBO_STATUS_ENEMY* pEnemyState;
+	pEnemyState = new clsROBO_STATUS_ENEMY(uiAINum);
+
+	RoboInit(pPtrGroup, pEnemyState);
+
+	clsOPERATION_STRING strOtr;
+	std::string strFolderName = strRoboAIFolderPath;
+
+	strFolderName = strOtr.ConsolidatedNumber(strFolderName, uiAINum, strOtr.GetNumDigit(uiAINum));
 
 	m_pAI = new clsEnemyRobo;
-	m_pAI->Init("Data\\FileData\\Hiyoshi\\Enemy1", this);
+	m_pAI->Init(strFolderName, this);
 }
 
 void clsAIRobo::Action()

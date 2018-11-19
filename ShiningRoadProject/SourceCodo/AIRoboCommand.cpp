@@ -569,7 +569,10 @@ clsRoboCommand* clsEnemyRobo::LShotOperation()
 {
 	if (IsShotL())
 	{
-		return m_pComLShot;
+		if (m_pBody->IsLWeaponLock())
+		{
+			return m_pComLShot;
+		}
 	}
 
 	return nullptr;
@@ -579,7 +582,10 @@ clsRoboCommand* clsEnemyRobo::RShotOperation()
 {
 	if (IsShotR())
 	{
-		return m_pComRShot;
+		if (m_pBody->IsRWeaponLock())
+		{
+			return m_pComRShot;
+		}	
 	}
 
 	return nullptr;

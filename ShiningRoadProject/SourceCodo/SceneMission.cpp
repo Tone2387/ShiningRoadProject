@@ -1,5 +1,9 @@
 #include "SceneMission.h"
 
+namespace
+{
+	const char strMissonFolderPath[] = "Data\\FileData\\Hiyoshi\\Misson";
+};
 
 //================================//
 //========== ミッション中クラス ==========//
@@ -233,7 +237,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 		if (!m_bCamTarChange)
 		{
 			m_bCamTarChange = true;
-			m_pCamTar = m_pTestObj;
+			m_pCamTar = m_v_pEnemys[0];
 		}
 
 		else
@@ -472,22 +476,21 @@ bool clsSCENE_MISSION::AllEnemyDead()
 
 void clsSCENE_MISSION::CreateFriends()
 {
-	m_pPlayer = CreatePlayer();
-	m_v_pFriends.push_back(m_pPlayer);
+	/*m_pPlayer = CreatePlayer();
+	m_v_pFriends.push_back(m_pPlayer);*/
+
+	clsFriendFactory clsFactory;
+
+	m_v_pFriends = clsFactory.CreateFriend(m_wpPtrGroup, strMissonFolderPath, m_pPlayer);
 
 	m_v_pFriends.shrink_to_fit();
 }
 
 void clsSCENE_MISSION::CreateEnemys()
 {
-	clsCharactor* pChara;
-
-	for (int i = 0; i < 1; i++)
-	{
-		pChara = CreateEnemy();
-
-		m_v_pEnemys.push_back(pChara);
-	}
+	clsEnemyFactory clsFactory;
+	
+	m_v_pEnemys = clsFactory.CreateEnemy(m_wpPtrGroup, strMissonFolderPath);
 
 	m_v_pEnemys.shrink_to_fit();
 }
@@ -557,6 +560,26 @@ void clsSCENE_MISSION::ColEShottoEBody()
 	}
 }
 
+void ColFtoFDuplicate()
+{
+
+}
+
+void ColFtoEDuplicate()
+{
+
+}
+
+void ColEtoFDuplicate()
+{
+
+}
+
+void ColEtoEDuplicate()
+{
+
+}
+
 clsPlayer* clsSCENE_MISSION::CreatePlayer()
 {
 	clsPlayer* pPlayer = new clsPlayer;
@@ -572,7 +595,7 @@ clsPlayer* clsSCENE_MISSION::CreatePlayer()
 clsTestObj* clsSCENE_MISSION::CreateEnemy()
 {
 	clsTestObj* pEnemy = new clsTestObj;
-	pEnemy->Init(m_wpPtrGroup, "Data\\FileData\\Hiyoshi");//4つ目の引数は効果音やエフェクトを出すために追加しました.
+	pEnemy->Init(m_wpPtrGroup, "Data\\FileData\\Hiyoshi\\Enemy");//4つ目の引数は効果音やエフェクトを出すために追加しました.
 
 	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
 	pEnemy->SetPosition(tmpVec3);
