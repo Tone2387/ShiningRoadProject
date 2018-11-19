@@ -356,6 +356,8 @@ void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pD
 //ノイズの更新.
 void clsSCREEN_TEXTURE::NoiseUpdate()
 {
+	m_upSound->UpdateLoop();
+
 	//ポストエフェクト.
 	m_iSeed ++;
 	const int iSEED_MAX = 32000;
@@ -368,21 +370,29 @@ void clsSCREEN_TEXTURE::NoiseUpdate()
 		m_fPulseOffset = fPULSE_OFFSET_INIT;
 	}
 
-	//音.
-	for( int i=enSE_WEAK_A; i<enSE_WEAK_size; i++ ){
-		if( m_upSound->IsPlayingSE( i ) ){
-			goto PLAYING_SE_WEAK;//再生中である.
+	//音再生中なら再生中フラグを立て続け、停止中なら寝かせる.
+	if( !m_SeFlagWeak.isCanPlay )
+	{
+		for( int i=enSE_WEAK_A; i<enSE_WEAK_size; i++ )
+		{
+			if( m_upSound->IsPlayingSE( i ) ){
+				goto PLAYING_SE_WEAK;//再生中である.
+			}
 		}
+		m_SeFlagWeak.isCanPlay = false;
 	}
-	m_SeFlagWeak.isCanPlay = false;
 PLAYING_SE_WEAK:;
 
-	for( int i=enSE_STRONG_A; i<enSE_STRONG_size; i++ ){
-		if( m_upSound->IsPlayingSE( i ) ){
-			goto PLAYING_SE_STRONG;
+	if( !m_SeFlagStrong.isCanPlay )
+	{
+		for( int i=enSE_STRONG_A; i<enSE_STRONG_size; i++ )
+		{
+			if( m_upSound->IsPlayingSE( i ) ){
+				goto PLAYING_SE_STRONG;
+			}
 		}
+		m_SeFlagStrong.isCanPlay = false;
 	}
-	m_SeFlagStrong.isCanPlay = false;
 PLAYING_SE_STRONG:;
 
 
@@ -579,7 +589,8 @@ bool clsSCREEN_TEXTURE::PlaySeProduct(
 
 	*outSeNo = dist( mt );
 
-	return m_upSound->PlaySE( *outSeNo );
+	const bool NOISE_LOOP = true;
+	return m_upSound->PlaySE( *outSeNo, NOISE_LOOP );
 }
 
 void clsSCREEN_TEXTURE::StopSe()
