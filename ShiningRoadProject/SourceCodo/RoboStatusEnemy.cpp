@@ -103,22 +103,22 @@ void clsROBO_STATUS_ENEMY::AttachData( const vector< unique_ptr< clsFILE > >& Pa
 //	}
 
 	tmpStatus = CreateDataForReceive( PartsFile, PartsType );
-	this->ReceiveLeg( tmpStatus,		m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
+	this->ReceiveLeg( tmpStatus,	m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
 
 	tmpStatus = CreateDataForReceive( PartsFile, PartsType );
-	this->ReceiveCore( tmpStatus,		m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
+	this->ReceiveCore( tmpStatus,	m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
 
 	tmpStatus = CreateDataForReceive( PartsFile, PartsType );
-	this->ReceiveHead( tmpStatus,		m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
+	this->ReceiveHead( tmpStatus,	m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
 
 	tmpStatus = CreateDataForReceive( PartsFile, PartsType );
-	this->ReceiveArms( tmpStatus,		m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
+	this->ReceiveArms( tmpStatus,	m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
 
 	tmpStatus = CreateDataForReceive( PartsFile, PartsType );
-	this->ReceiveWeaponL( tmpStatus,	m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
+	this->ReceiveWeaponL( tmpStatus,m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
 
 	tmpStatus = CreateDataForReceive( PartsFile, PartsType );
-	this->ReceiveWeaponR( tmpStatus,	m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
+	this->ReceiveWeaponR( tmpStatus,m_RoboStateData.ucPartsModelNum[ PartsType ++ ] );
 
 
 //	m_spAsmModel->AttachModel( enPARTS::LEG,	tmpPartsNum );
@@ -133,6 +133,7 @@ void clsROBO_STATUS_ENEMY::AttachData( const vector< unique_ptr< clsFILE > >& Pa
 
 }
 
+//ReceiveLeg()等の関数に格納するためのデータを作り、吐き出す.
 vector<int> clsROBO_STATUS_ENEMY::CreateDataForReceive( 
 	const vector< unique_ptr< clsFILE > >& PartsFile,
 	const int PartsType )

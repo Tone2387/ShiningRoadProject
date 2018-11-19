@@ -125,6 +125,7 @@ public:
 	int GetWeaponState( const enWEAPON_NUM enArmLR, const enWEAPON_STATE enStateNum ) const;
 
 	//パーツ番号を返す( いま装備しているパーツが何番か ).//#define SKIN_ENUM_TYPE UCHAR.
+	//clsASSEMBLE_MODELクラスのAttachModelの第二引数として使います.
 	UCHAR GetPartsNum( const enPARTS PartsType ) const;
 
 

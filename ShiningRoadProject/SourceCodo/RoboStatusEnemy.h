@@ -20,9 +20,10 @@ private:
 	//パーツのステータスデータを読み込む.
 	void LoadPartsData( std::vector< std::unique_ptr< clsFILE > >& PartsFile );
 
-	//読み込んだデータを取得する.
+	//読み込んだ番号のデータを取得する.
 	void AttachData( const std::vector< std::unique_ptr< clsFILE > >& PartsFile );
 
+	//ReceiveLeg()等の関数に格納するためのデータを作り、吐き出す.
 	std::vector<int> CreateDataForReceive( 
 		const std::vector< std::unique_ptr< clsFILE > >& PartsFile,
 		const int PartsType );
