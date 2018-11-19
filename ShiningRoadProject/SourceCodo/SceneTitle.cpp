@@ -44,9 +44,9 @@ namespace{
 //================================//
 clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_pRoboModel( nullptr )
-	,m_fTextAlpha( 1.0f )
+	,m_fTextAlpha( 0.0f )
 	,m_iTextAlphaStopFrame( 0 )
-	,m_encTextAlphaMode( encTEXT_ALPHA_MODE::PLUS )
+	,m_encTextAlphaMode( encTEXT_ALPHA_MODE::NEXT_MINUS )
 {
 }
 
@@ -246,12 +246,15 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	}
 
 
+	//メニューが開いているなら.
+	if( m_upMenuBox ){
+		MenuUpdate( enNextScene );
+		return;
+	}
+
 	if( isCanControl ){
-		//メニューが開いているなら.
-		if( m_upMenuBox ){
-			MenuUpdate( enNextScene );
-			return;
-		}
+
+		TextAlphaUpdate();
 
 		//音声とシーン移動.
 		if( isPressEnter() ){
@@ -265,7 +268,6 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		}
 	}
 
-	TextAlphaUpdate();
 
 
 }
@@ -276,7 +278,8 @@ void clsSCENE_TITLE::TextAlphaUpdate()
 	const float fADD_ALPHA = 0.125f * 0.125f;
 	const float fALPHA_MIN = 0.25f;
 	const float fALPHA_MAX = 1.0f;
-	const int iTEXT_ALPHA_STOP_FRAME = 60;
+	const int iTEXT_ALPHA_STOP_FRAME_PLUS = 60;
+	const int iTEXT_ALPHA_STOP_FRAME_MINUS = 0;
 
 	switch( m_encTextAlphaMode )
 	{
@@ -289,7 +292,7 @@ void clsSCENE_TITLE::TextAlphaUpdate()
 		break;
 	case encTEXT_ALPHA_MODE::NEXT_MINUS:
 		m_iTextAlphaStopFrame ++;
-		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME ){
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME_PLUS ){
 			m_encTextAlphaMode = encTEXT_ALPHA_MODE::MINUS;
 			m_iTextAlphaStopFrame = 0;
 		}
@@ -303,7 +306,7 @@ void clsSCENE_TITLE::TextAlphaUpdate()
 		break;
 	case encTEXT_ALPHA_MODE::NEXT_PLUS:
 		m_iTextAlphaStopFrame ++;
-		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME ){
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME_MINUS ){
 			m_encTextAlphaMode = encTEXT_ALPHA_MODE::PLUS;
 			m_iTextAlphaStopFrame = 0;
 		}
