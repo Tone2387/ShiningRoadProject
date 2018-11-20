@@ -8,6 +8,7 @@ using namespace std;
 
 namespace{
 	const char sROBO_STATUS_ENEMY_PATH[] = "Data\\FileData\\Hiyoshi\\RoboStatusEnemy.csv";
+
 };
 
 
