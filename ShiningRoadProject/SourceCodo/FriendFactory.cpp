@@ -23,28 +23,28 @@ clsPlayer* pPlayer)
 	
 	v_FriendsTmp.resize(1);
 
-	clsPlayer* pPlayerTmp = new clsPlayer;
+	//pPlayer = new clsPlayer;
 
-	pPlayerTmp->Init(clsPtrGroup);
+	pPlayer->Init(clsPtrGroup);
 
 	D3DXVECTOR3 vPosTmp;
 	vPosTmp.x = TransformFile.GetDataFloat(0, enFriendDataFileOrderPosX);
 	vPosTmp.y = TransformFile.GetDataFloat(0, enFriendDataFileOrderPosY);
 	vPosTmp.z = TransformFile.GetDataFloat(0, enFriendDataFileOrderPosZ);
 
-	pPlayerTmp->SetPosition(vPosTmp);
+	pPlayer->SetPosition(vPosTmp);
 
 	D3DXVECTOR3 vRotTmp;
 	vRotTmp.x = TransformFile.GetDataFloat(0, enFriendDataFileOrderPitch);
 	vRotTmp.y = TransformFile.GetDataFloat(0, enFriendDataFileOrderYaw);
 	vRotTmp.z = TransformFile.GetDataFloat(0, enFriendDataFileOrderRoll);
 
-	pPlayerTmp->SetRotation(vRotTmp);
+	pPlayer->SetRotation(vRotTmp);
 
 	//ƒvƒŒƒCƒ„[‚ğ0”Ô–Ú‚É“o˜^.
-	v_FriendsTmp[0] = pPlayerTmp;
+	v_FriendsTmp[0] = pPlayer;
 
-	pPlayer = pPlayerTmp;
+	//pPlayer = pPlayerTmp;
 
 	TransformFile.Close();
 
