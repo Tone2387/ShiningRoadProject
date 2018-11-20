@@ -476,23 +476,26 @@ bool clsSCENE_MISSION::AllEnemyDead()
 
 void clsSCENE_MISSION::CreateFriends()
 {
-	/*m_pPlayer = CreatePlayer();
-	m_v_pFriends.push_back(m_pPlayer);*/
+	m_pPlayer = CreatePlayer();
+	m_v_pFriends.push_back(m_pPlayer);
 
-	clsFriendFactory clsFactory;
+	/*clsFriendFactory clsFactory;
 
 	m_v_pFriends = clsFactory.CreateFriend(m_wpPtrGroup, strMissonFolderPath, m_pPlayer);
 
-	m_v_pFriends.shrink_to_fit();
+	m_v_pFriends.shrink_to_fit();*/
 }
 
 void clsSCENE_MISSION::CreateEnemys()
 {
-	clsEnemyFactory clsFactory;
+	m_pTestObj = CreateEnemy();
+	m_v_pEnemys.push_back(m_pTestObj);
+
+	/*clsEnemyFactory clsFactory;
 	
 	m_v_pEnemys = clsFactory.CreateEnemy(m_wpPtrGroup, strMissonFolderPath);
 
-	m_v_pEnemys.shrink_to_fit();
+	m_v_pEnemys.shrink_to_fit();*/
 }
 
 void clsSCENE_MISSION::Collison()
