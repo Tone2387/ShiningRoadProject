@@ -7,6 +7,8 @@
 #include"TestObject.h"
 #include"Stage.h"
 #include"Sprite.h"
+#include"EnemyFactory.h"
+#include"FriendFactory.h"
 
 //================================//
 //========== ミッション中クラス ==========//

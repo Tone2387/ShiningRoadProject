@@ -86,3 +86,33 @@ char* clsOPERATION_STRING::CreateCharPtrFromWcharPtr( const wchar_t *wc ) const
 	//newやりっぱなしなのでちゃんと使用先でdelete[]してね.
 	return c;
 }
+
+//#ifdef HIYOSHI
+const int clsOPERATION_STRING::GetNumDigit(const unsigned int iNum)
+{
+	int iResult = 0;//結果.
+	int iDigit = 1;//桁数.
+	unsigned int iNumTmp = iNum;//数字.
+
+	const unsigned int iDecimal = 10;//十進数.
+
+	while (iResult == 0)
+	{
+		//10以上か?.
+		if (iNumTmp < iDecimal)
+		{
+			//桁を確定.
+			iResult = iDigit;
+		}
+
+		else
+		{
+			//桁を増やす.
+			iNumTmp = iNumTmp / iDecimal;
+			++iDigit;
+		}
+	}
+
+	return iResult;
+}
+//endif

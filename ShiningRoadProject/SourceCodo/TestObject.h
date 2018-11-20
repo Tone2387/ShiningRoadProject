@@ -12,7 +12,6 @@
 //#ifndef TESTOBJECT
 //#define TESTOBJECT
 
-#include"CharaSkinMesh.h"
 #include"Robo.h"
 #include"AIRoboCommand.h"
 
@@ -29,7 +28,7 @@ public:
 	void Init(clsPOINTER_GROUP* const pPtrGroup);
 	
 	void Init(clsPOINTER_GROUP* const pPtrGroup,
-		LPSTR strEnemyFolderName);
+		std::string strEnemyFolderName);
 
 	void Action() final;
 

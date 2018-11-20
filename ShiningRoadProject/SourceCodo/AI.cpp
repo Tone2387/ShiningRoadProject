@@ -184,6 +184,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 			int iRandMax = 0;
 
 			m_UpdateState.iHorDirResult = MoveStatus.iMoveDir;
+
 			iRandMax = MoveStatus.iMoveDirRandMax;
 
 			if (iRandMax != 0)//0‚¾‚ÆŽ~‚Ü‚é‚Ì‚Å–hŽ~.
@@ -199,6 +200,11 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 
 			m_UpdateState.vHorMovePos.y = 0.0f;//‚’¼•ûŒü‚ÍŠÖŒW‚È‚¢‚Ì‚Å0‚É‚·‚é.
 
+			const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
+			const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
+
+			m_UpdateState.iHorDirResult = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+
 			m_UpdateState.iMoveUpdateCnt = MoveStatus.iMoveUpdateInterval;
 		}
 	}
@@ -208,12 +214,7 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 		return false;
 	}
 
-	const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
-	const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
-
-	float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
-
-	fRot += static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
+	float fRot = static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
 
 	ObjRollOverGuard(&fRot);
 
@@ -435,7 +436,7 @@ void clsEnemyBase::SetShotData()
 	{
 		m_v_ShotState.resize(File.GetSizeRow());
 
-		for (int i = 0; i < m_v_VisAreaState.size(); i++)
+		for (int i = 0; i < m_v_ShotState.size(); i++)
 		{
 			m_v_ShotState[i].iShotDisMax = File.GetDataInt(i, enShotStateShotDisMax);
 			m_v_ShotState[i].iShotDisMin = File.GetDataInt(i, enShotStateShotDisMin);
@@ -446,6 +447,7 @@ void clsEnemyBase::SetShotData()
 		File.Close();
 	}
 }
+
 
 void clsEnemyBase::SetDataProduct(){}
 

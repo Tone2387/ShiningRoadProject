@@ -8,7 +8,6 @@
 using namespace std;
 
 namespace{
-
 	const char sROBO_STATUS_ENEMY_PATH[] = "Data\\FileData\\Hiyoshi\\RoboStatusEnemy.csv";
 
 	//óvëfêîÇÕ<clsSCENE_ASSEMBLE::ENUM_SIZE>.
@@ -55,6 +54,7 @@ void clsROBO_STATUS_ENEMY::LoadFileData( const char* sFilePath )
 	UCHAR tmpSize = sizeof( m_RoboStateData.ucPartsModelNum ) / sizeof( m_RoboStateData.ucPartsModelNum[0] );
 	for( UCHAR i=0; i<tmpSize; i++ ){
 		m_RoboStateData.ucPartsModelNum[i] = File.GetDataInt( m_iFILE_ROW, static_cast<int>( i ) );
+
 	}
 
 	for( char i=0; i<enCOLOR_GAGE_size; i++ ){

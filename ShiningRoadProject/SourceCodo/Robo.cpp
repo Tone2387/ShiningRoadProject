@@ -81,6 +81,9 @@ void clsRobo::RoboInit(
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
+	m_pMesh = new clsMISSION_MODEL;
+	m_pMesh->Create(m_wpResource, pRobo);
+
 	const int iHulf = 2;
 
 	m_iMaxHP = pRobo->GetRoboState(clsROBO_STATUS::HP);//HP受け取り.
@@ -102,9 +105,9 @@ void clsRobo::RoboInit(
 	//エネルギー最大値.
 	m_iEnelgy = m_iEnelgyMax = pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
 	//エネルギー回復量.
-	//m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
+	m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
 
-	m_iEnelgyOutput = 50000;
+	//m_iEnelgyOutput = 250;
 
 	//浮遊時エネルギー回復量(通常エネルギーの半分).
 	m_iBoostFloatRecovery = m_iEnelgyOutput / iHulf;
@@ -142,10 +145,6 @@ void clsRobo::RoboInit(
 	m_fRaderRange = pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
 
 	m_fLockRange = pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
-
-	m_pMesh = new clsMISSION_MODEL;
-
-	m_pMesh->Create(m_wpResource, pRobo);
 	
 	m_v_Spheres = m_pMesh->GetColState(pRobo);
 
