@@ -542,7 +542,8 @@ void clsASSEMBLE_UI::Update(
 	const int iPartsNum,
 	const int iStatusCutNum )
 {
-	//パーツ選択中か、ステータス説明確認中しかやらないよ.
+	m_enSelectMode = enSelect;
+	//パーツ選択中でないし、ステータス説明確認でもないならカエレ.
 	if( enSelect != enSELECT_MODE::PARTS &&
 		enSelect != enSELECT_MODE::STATUS )
 	{
