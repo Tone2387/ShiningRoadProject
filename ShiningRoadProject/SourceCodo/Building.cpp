@@ -10,9 +10,6 @@ using namespace std;
 
 namespace{
 	
-	//最低限の板の数.
-	const int iTEX_NUM_MIN = 1;
-
 #ifdef _DEBUG
 	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide_.png";
 	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop_.png";
@@ -21,8 +18,8 @@ namespace{
 	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop.png";
 #endif//#ifdef _DEBUG
 
-
-	const int iRESURVE_NUM = 256;
+	//最低限の板の数.
+	const int iTEX_NUM_MIN = 1;
 
 	const float fTILE_SIZE_MAX_SIZE = 15.0f;
 	const D3DXVECTOR3 vTILE_SIZE_MAX = { fTILE_SIZE_MAX_SIZE, fTILE_SIZE_MAX_SIZE, 1.0f };
@@ -78,29 +75,30 @@ void clsBUILDING::UpdateTile()
 	UpdateModel();
 
 	//上面.
-	{
-		unsigned int uiROW = iTEX_NUM_MIN;
-		unsigned int uiCOL = iTEX_NUM_MIN;
-		//タイルの目標数を作る.
-		SetTileNumTargetTop( uiROW, uiCOL );
-		//目標の数に合わせてタイルを増減する.
-		SetTileNumTop( uiROW, uiCOL );
-		//タイルを並べる.
-		SetTransformTop();
-	}
+	unsigned int uiROW = iTEX_NUM_MIN;
+	unsigned int uiCOL = iTEX_NUM_MIN;
+	//タイルの目標数を作る.
+	SetTileNumTargetTop( uiROW, uiCOL );
+	//目標の数に合わせてタイルを増減する.
+	SetTileNumTop( uiROW, uiCOL );
+	//タイルを並べる.
+	SetTransformTop();
+	//座標のセット.
+	m_upTop->SetPos( m_TopTrans.vPos );
+	m_upTop->SetRot( m_TopTrans.vRot );
+	m_upTop->SetScale( m_TopTrans.vScale );
+
 	//側面.
-	{
-		unsigned int uiROW_Z = iTEX_NUM_MIN;
-		unsigned int uiCOL_Z = iTEX_NUM_MIN;
-		unsigned int uiROW_X = iTEX_NUM_MIN;
-		unsigned int uiCOL_X = iTEX_NUM_MIN;
-		//タイルの目標数を作る.
-		SetTileNumTargetSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
-		//目標の数に合わせてタイルを増減する.
-		SetTileNumSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
-		//タイルを並べる.
-		SetTransformSide();
-	}
+	unsigned int uiROW_Z = iTEX_NUM_MIN;
+	unsigned int uiCOL_Z = iTEX_NUM_MIN;
+	unsigned int uiROW_X = iTEX_NUM_MIN;
+	unsigned int uiCOL_X = iTEX_NUM_MIN;
+	//タイルの目標数を作る.
+	SetTileNumTargetSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
+	//目標の数に合わせてタイルを増減する.
+	SetTileNumSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
+	//タイルを並べる.
+	SetTransformSide();
 
 }
 
@@ -112,9 +110,6 @@ void clsBUILDING::Render(
 {
 //	m_upBox->Render( mView, mProj, vLight, vEye );
 
-	m_upTop->SetPos( m_TopTrans.vPos );
-	m_upTop->SetRot( m_TopTrans.vRot );
-	m_upTop->SetScale( m_TopTrans.vScale );
 	m_upTop->Render( mView, mProj, vEye );
 
 	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
@@ -123,7 +118,6 @@ void clsBUILDING::Render(
 		m_upSide->SetScale( m_SideTransArray[i].vScale );
 		m_upSide->Render( mView, mProj, vEye );
 	}
-
 }
 
 
