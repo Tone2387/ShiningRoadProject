@@ -69,16 +69,6 @@ private:
 		D3DXVECTOR3 vScale;
 	};
 
-	enum enWALL_DIRECTION : int
-	{
-		enWD_SOUTH = 0,
-		enWD_EAST,
-		enWD_NORTH,
-		enWD_WEST,
-
-		enWALL_DIRECTION_size
-	};
-
 	//タイルの目標数を作る.
 	void SetTileNumTargetTop( unsigned int& puiRow, unsigned int& puiCol );
 	//目標の数に合わせてタイルを増減する.
@@ -109,13 +99,24 @@ private:
 		const float fTileTheta, 
 		const float fTileDistance ) const;
 
+private:
+
+	enum enWALL_DIRECTION : int
+	{
+		enWD_SOUTH = 0,
+		enWD_EAST,
+		enWD_NORTH,
+		enWD_WEST,
+
+		enWALL_DIRECTION_size
+	};
 
 	//本体.
 	TRANSFORM m_Trans;
 	//上面.
-	std::vector< std::vector< TRANSFORM > > m_vecvecTop;
+	TRANSFORM m_TopTrans;
 	//側面.
-	std::vector< std::vector< TRANSFORM > > m_vecvecSideArray[ enWALL_DIRECTION_size ];
+	TRANSFORM m_SideTransArray[ enWALL_DIRECTION_size ];
 
 
 	std::unique_ptr< clsObjStaticMesh > m_upBox;

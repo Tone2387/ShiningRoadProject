@@ -542,7 +542,8 @@ void clsASSEMBLE_UI::Update(
 	const int iPartsNum,
 	const int iStatusCutNum )
 {
-	//パーツ選択中か、ステータス説明確認中しかやらないよ.
+	m_enSelectMode = enSelect;
+	//パーツ選択中でないし、ステータス説明確認でもないならカエレ.
 	if( enSelect != enSELECT_MODE::PARTS &&
 		enSelect != enSELECT_MODE::STATUS )
 	{
@@ -701,9 +702,6 @@ void clsASSEMBLE_UI::Render(
 		m_upPartsTypeSelect->Render();
 		assert( m_upPartsNumSelect );
 		m_upPartsNumSelect->Render();
-
-		assert( m_upPartsNameText );
-		m_upPartsNameText->Render();
 	}
 
 	assert( m_upWndBox );
@@ -729,6 +727,10 @@ void clsASSEMBLE_UI::RenderPartsState(
 	if( enSelect == enSELECT_MODE::PARTS ||
 		enSelect == enSELECT_MODE::STATUS )
 	{
+		//パーツ名.
+		assert( m_upPartsNameText );
+		m_upPartsNameText->Render();
+
 		//ステータスの説明.
 		assert( m_wpFont );
 		m_wpFont->SetPos( vFONT_COMMENT_POS );
