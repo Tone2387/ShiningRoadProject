@@ -136,7 +136,7 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 	InitSkinModel( hWnd, pDevice, pContext );
 
 	CreateStaticModel( 
-		"Data\\Stage\\kami_map.x",
+		"Data\\Stage\\Stage.X",
 		enSTATIC_MODEL::enStaticModel_StageBase );
 	CreateStaticModel(
 		"Data\\Stage\\Building.X",
