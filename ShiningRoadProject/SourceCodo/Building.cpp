@@ -31,6 +31,7 @@ namespace{
 
 	const int iRESURVE_NUM = 256;
 
+#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 //#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 //	const D3DXVECTOR3 vTILE_SIZE_MIN = { 25.0f, 25.0f, 1.0f };
 //	const D3DXVECTOR3 vTILE_SIZE_MAX = { 30.0f, 30.0f, 1.0f };
@@ -39,7 +40,9 @@ namespace{
 //	const D3DXVECTOR3 vTILE_SIZE_MAX = { 3.0f, 3.0f, 1.0f };
 //#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 	const D3DXVECTOR3 vTILE_SIZE_MIN = { 2.5f, 2.5f, 1.0f };
-	const D3DXVECTOR3 vTILE_SIZE_MAX = { 3.0f, 3.0f, 1.0f };
+#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+	const float fTILE_SIZE_MAX_SIZE = 15.0f;
+	const D3DXVECTOR3 vTILE_SIZE_MAX = { fTILE_SIZE_MAX_SIZE, fTILE_SIZE_MAX_SIZE, 1.0f };
 
 	//ë§ñ ÇÃforï∂ÇÃëùâ¡ó .
 	const int iSIDE_TILE_COUNT_NUM = 2;
@@ -176,7 +179,7 @@ void clsBUILDING::Render(
 	const D3DXVECTOR3 &vLight, 
 	const D3DXVECTOR3 &vEye ) const
 {
-#ifdef _DEBUG
+#ifndef _DEBUG
 	m_upBox->Render( mView, mProj, vLight, vEye );
 #else//#ifdef _DEBUG
 	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ )
@@ -285,9 +288,13 @@ void clsBUILDING::SetTileNumTop( const unsigned int uiROW, const unsigned int ui
 		}
 	}
 #else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+	unsigned int uiTmpCol = uiCOL;
+	if( !uiCOL )	uiTmpCol = 1; 
+	unsigned int uiTmpRow = uiROW;
+	if( !uiROW )	uiTmpRow = 1; 
 	m_upTop->SetSplit( D3DXVECTOR2(
-		static_cast<float>( uiCOL ),
-		static_cast<float>( uiROW ) ) );
+		static_cast<float>( uiTmpCol ),
+		static_cast<float>( uiTmpRow ) ) );
 #endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 }
 
@@ -485,15 +492,25 @@ void clsBUILDING::SetTileNumSide(
 #else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 	//========== ìÏñk ==========//.
 	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
+		unsigned int uiTmpCol = uiCOL_Z;
+		if( !uiTmpCol )	uiTmpCol = 1; 
+		unsigned int uiTmpRow = uiROW_Z;
+		if( !uiTmpRow )	uiTmpRow = 1; 
+
 		m_upSide->SetSplit( D3DXVECTOR2(
-			static_cast<float>( uiCOL_Z ),
-			static_cast<float>( uiROW_Z ) ) );
+			static_cast<float>( uiTmpCol ),
+			static_cast<float>( uiTmpRow ) ) );
 	}
 	//========== ìåêº ==========//.
 	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
+		unsigned int uiTmpCol = uiCOL_X;
+		if( !uiTmpCol )	uiTmpCol = 1; 
+		unsigned int uiTmpRow = uiROW_X;
+		if( !uiTmpRow )	uiTmpRow = 1; 
+
 		m_upSide->SetSplit( D3DXVECTOR2(
-			static_cast<float>( uiCOL_X ),
-			static_cast<float>( uiROW_X ) ) );
+			static_cast<float>( uiTmpCol ),
+			static_cast<float>( uiTmpRow ) ) );
 	}
 #endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 
