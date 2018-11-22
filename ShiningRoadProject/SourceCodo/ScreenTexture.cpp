@@ -21,12 +21,6 @@ namespace{
 		ALIGN16 float		isfNega;
 	};
 
-	//頂点の構造体.
-	struct SCREEN_VERTEX
-	{
-		D3DXVECTOR3 vPos;	//位置.
-		D3DXVECTOR2 vTex;	//テクスチャ座標.
-	};
 
 	enum enSE_WEAK : int{
 		enSE_WEAK_A = 0,
@@ -57,9 +51,7 @@ namespace{
 clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	const HWND hWnd,
 	ID3D11DeviceContext* const pContext )
-	:m_wpContext( pContext )
-	,m_wpDevice( nullptr )
-	,m_pTexture( nullptr )
+	:m_pTexture( nullptr )
 	,m_pRenderTargetView( nullptr )
 	,m_pShaderResourceView( nullptr )
 	,m_pSamplerState( nullptr )
@@ -76,8 +68,9 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_isNega( false )
 	,m_vColor( 1.0f, 1.0f, 1.0f, 1.0f )
 {
-	assert( m_wpContext );
-	m_wpContext->GetDevice( &m_wpDevice );
+	m_pContext = pContext;
+	assert( m_pContext );
+	m_pContext->GetDevice( &m_pDevice );
 
 	if( FAILED( CreateTexture() ) ){
 		ERR_MSG( "描画先テクスチャ作成失敗", "" );
@@ -87,6 +80,9 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	}
 	if( FAILED( CreateConstantBuffer() ) ){
 		ERR_MSG( "描画先テクスチャバッファ作成失敗", "" );
+	}
+	if( FAILED( CreateBlendState() ) ){
+		ERR_MSG( "描画先ブレンドステート作成失敗", "" );
 	}
 
 	//サウンド作成.
@@ -109,8 +105,8 @@ clsSCREEN_TEXTURE::~clsSCREEN_TEXTURE()
 
 
 
-	m_wpContext = nullptr;
-	m_wpDevice = nullptr;
+	m_pContext = nullptr;
+	m_pDevice = nullptr;
 }
 
 
@@ -131,7 +127,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	texDesc.SampleDesc.Quality	= 0;
 	texDesc.MiscFlags			= 0;
 	
-	HRESULT hr = m_wpDevice->CreateTexture2D( &texDesc, nullptr, &m_pTexture );
+	HRESULT hr = m_pDevice->CreateTexture2D( &texDesc, nullptr, &m_pTexture );
 	if( FAILED( hr ) ){
 		ERR_MSG( "スクリーンテクスチャ作成失敗", "" );
 		assert( !"スクリーンテクスチャ作成失敗" );
@@ -161,7 +157,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	rtvDesc.Texture3D.MipSlice						= 0;
 	rtvDesc.Texture3D.WSize							= 0;
 	
-	hr = m_wpDevice->CreateRenderTargetView( m_pTexture, &rtvDesc, &m_pRenderTargetView );
+	hr = m_pDevice->CreateRenderTargetView( m_pTexture, &rtvDesc, &m_pRenderTargetView );
 	if( FAILED( hr ) ){
 		ERR_MSG( "スクリーンレンダーターゲットビュー作成失敗", "" );
 		assert( !"スクリーンレンダーターゲットビュー作成失敗" );
@@ -175,7 +171,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	srvDesc.ViewDimension		= D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels	= 1;
 
-	hr = m_wpDevice->CreateShaderResourceView( m_pTexture, &srvDesc, &m_pShaderResourceView );
+	hr = m_pDevice->CreateShaderResourceView( m_pTexture, &srvDesc, &m_pShaderResourceView );
 	if( FAILED( hr ) ){
 		ERR_MSG( "スクリーンシェーダーリソースビュー作成失敗", "" );
 		assert( !"スクリーンシェーダーリソースビュー作成失敗" );
@@ -193,7 +189,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	smpDesc.MinLOD			= 0;
 	smpDesc.MaxLOD			= D3D11_FLOAT32_MAX;
 
-	hr = m_wpDevice->CreateSamplerState( &smpDesc, &m_pSamplerState );
+	hr = m_pDevice->CreateSamplerState( &smpDesc, &m_pSamplerState );
 	if( FAILED( hr ) ){
 		ERR_MSG( "スクリーンサンプラーステート作成失敗", "" );
 		assert( !"スクリーンサンプラーステート作成失敗" );
@@ -217,8 +213,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 
 	//HLSLからバーテックスシェーダのブロブを作成.
-	if( FAILED(
-		D3DX11CompileFromFile(
+	if( FAILED( D3DX11CompileFromFile(
 			sSHADER_NAME,	//シェーダファイル名(HLSLファイル).
 			NULL,			//マクロ定義の配列へのポインタ(未使用).
 			NULL,			//インクルードファイルを扱うインターフェースへのポインタ(未使用).
@@ -238,7 +233,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 	//上記で作成したブロブから「バーテックスシェーダ」を作成.
 	if( FAILED(
-		m_wpDevice->CreateVertexShader(
+		m_pDevice->CreateVertexShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			NULL,
@@ -276,7 +271,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
 	if( FAILED(
-		m_wpDevice->CreatePixelShader(
+		m_pDevice->CreatePixelShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			NULL,
@@ -310,7 +305,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
 	if( FAILED(
-		m_wpDevice->CreatePixelShader(
+		m_pDevice->CreatePixelShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			NULL,
@@ -335,7 +330,7 @@ HRESULT clsSCREEN_TEXTURE::CreateConstantBuffer()
 	cb.Usage = D3D11_USAGE_DYNAMIC;//使用方法:直接書き込み.
 
 	//コンスタントバッファ作成.
-	if( FAILED( m_wpDevice->CreateBuffer(
+	if( FAILED( m_pDevice->CreateBuffer(
 		&cb,
 		NULL,
 		&m_pConstantBuffer ) ) )
@@ -353,10 +348,10 @@ void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pD
 	if( !pDepthStencilView )	return;
 
 	//レンダーターゲットをテクスチャに.
-	float clearcolor[] = { 2.5f, 0.125f, 0.125f, 1.0f };
-	m_wpContext->OMSetRenderTargets( 1, &m_pRenderTargetView, pDepthStencilView );
-	m_wpContext->ClearRenderTargetView( m_pRenderTargetView, clearcolor );
-	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+	float clearcolor[] = { 0.125f, 0.125f, 2.5f, 1.0f };
+	m_pContext->OMSetRenderTargets( 1, &m_pRenderTargetView, pDepthStencilView );
+	m_pContext->ClearRenderTargetView( m_pRenderTargetView, clearcolor );
+	m_pContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 }
 
 
@@ -409,21 +404,21 @@ PLAYING_SE_STRONG:;
 //テクスチャの内容を画面に描画.
 void clsSCREEN_TEXTURE::RenderWindowFromTexture( 
 	ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-	ID3D11DepthStencilView* const pDepthStencilView ) const
+	ID3D11DepthStencilView* const pDepthStencilView )
 {
 	if( !pBackBuffer_TexRTV )	return;
 	if( !pDepthStencilView )	return;
 
 	float clearcolor[] = { 1.5f, 0.5f, 0.5f, 1.0f };
-	m_wpContext->OMSetRenderTargets( 1, &pBackBuffer_TexRTV, pDepthStencilView );
-	m_wpContext->ClearRenderTargetView( pBackBuffer_TexRTV, clearcolor );
-	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+	m_pContext->OMSetRenderTargets( 1, &pBackBuffer_TexRTV, pDepthStencilView );
+	m_pContext->ClearRenderTargetView( pBackBuffer_TexRTV, clearcolor );
+	m_pContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 
 	ID3D11Buffer* pBuffer;
 	//板ポリ(四角形)の頂点を作成.
 	float tmpw = WND_W;
 	float tmph = WND_H;
-	SCREEN_VERTEX vertices[] = 
+	SpriteVertex vertices[] = 
 	{
 #if 1
 		//頂点座標(x,y,z).					//UV座標( u, v ).
@@ -449,7 +444,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory( &bd, sizeof( bd ) );
 	bd.Usage				= D3D11_USAGE_DEFAULT;				//使用法(デフォルト).
-	bd.ByteWidth			= sizeof( SCREEN_VERTEX ) * uVerMax;	//頂点サイズ(頂点*4).
+	bd.ByteWidth			= sizeof( SpriteVertex ) * uVerMax;	//頂点サイズ(頂点*4).
 	bd.BindFlags			= D3D11_BIND_VERTEX_BUFFER;			//頂点バッファとして扱う.
 	bd.CPUAccessFlags		= 0;								//CPUからはアクセスしない.
 	bd.MiscFlags			= 0;								//その他のフラグ(未使用).
@@ -463,7 +458,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 
 	//頂点バッファの作成.
 	if( FAILED(
-		m_wpDevice->CreateBuffer(
+		m_pDevice->CreateBuffer(
 			&bd, &InitData, &pBuffer ) ) )
 	{
 		ERR_MSG( "バッファ作成失敗", "" );
@@ -471,17 +466,17 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		return ;
 	}
 
-	m_wpContext->VSSetShader( m_pVertexShader, NULL, 0 );
+	m_pContext->VSSetShader( m_pVertexShader, NULL, 0 );
 	if( m_isNoise ){
-		m_wpContext->PSSetShader( m_pNoisePS, NULL, 0 );
+		m_pContext->PSSetShader( m_pNoisePS, NULL, 0 );
 	}
 	else{
-		m_wpContext->PSSetShader( m_pDefaultPS, NULL, 0 );
+		m_pContext->PSSetShader( m_pDefaultPS, NULL, 0 );
 	}
 
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
-	if( SUCCEEDED( m_wpContext->Map(
+	if( SUCCEEDED( m_pContext->Map(
 		m_pConstantBuffer, 0,
 		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
@@ -505,28 +500,29 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cb ), sizeof( cb ) );
-		m_wpContext->Unmap( m_pConstantBuffer, 0 );
+		m_pContext->Unmap( m_pConstantBuffer, 0 );
 	}
 
 	//このコンスタントバッファをどのシェーダで使うか？.
-	m_wpContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
-	m_wpContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+	m_pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+	m_pContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 
 	//テクスチャをシェーダに渡す.
-	m_wpContext->PSSetShaderResources(	0, 1, &m_pShaderResourceView );
-	m_wpContext->PSSetSamplers(			0, 1, &m_pSamplerState );
+	m_pContext->PSSetShaderResources(	0, 1, &m_pShaderResourceView );
+	m_pContext->PSSetSamplers(			0, 1, &m_pSamplerState );
 
 	//頂点バッファをセット.
-	UINT stride = sizeof( SCREEN_VERTEX );//データ間隔.
+	UINT stride = sizeof( SpriteVertex );//データ間隔.
 	uint32_t offset = 0;
-	m_wpContext->IASetVertexBuffers( 0, 1, &pBuffer, &stride, &offset );
-	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
-//	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+	m_pContext->IASetVertexBuffers( 0, 1, &pBuffer, &stride, &offset );
+	m_pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+//	m_pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	m_wpContext->Draw( uVerMax, 0 );
+	SetBlend( false );
+
+	m_pContext->Draw( 4, 0 );//uVerMax.
 
 }
-
 
 
 

@@ -2,11 +2,11 @@
 #define SCREEN_TEXTURE_H_
 
 class clsSOUND_MANAGER_NOISE;
-#include "Global.h"
+#include "Common.h"
 
 //レンダリングテクスチャ用.
 //いきなりバックバッファではなくいったんここに描画する.
-class clsSCREEN_TEXTURE
+class clsSCREEN_TEXTURE : public clsCommon
 {
 public:
 	clsSCREEN_TEXTURE(
@@ -24,7 +24,7 @@ public:
 	//テクスチャの内容を画面に描画.
 	void RenderWindowFromTexture( 
 		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-		ID3D11DepthStencilView* const pDepthStencilView ) const;
+		ID3D11DepthStencilView* const pDepthStencilView );
 
 	//効果音再生.
 	//再生出来たらtrueを返す.
@@ -109,11 +109,6 @@ private:
 	bool m_isNega;
 	D3DXVECTOR4 m_vColor;
 	//----- 画面色 -----//.
-
-
-
-	ID3D11Device*				m_wpDevice;
-	ID3D11DeviceContext*		m_wpContext;
 
 
 	ID3D11Texture2D*			m_pTexture;

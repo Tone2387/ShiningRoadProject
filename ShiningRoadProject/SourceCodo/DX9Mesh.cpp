@@ -46,8 +46,8 @@ clsDX9Mesh::clsDX9Mesh()
 	:m_pMesh( nullptr )
 	,m_pMeshForRay( nullptr )
 	,m_hWnd( nullptr )
-	,m_pDevice11( nullptr )
-	,m_pDeviceContext11( nullptr )
+	,m_pDevice( nullptr )
+	,m_pContext( nullptr )
 	,m_pVertexShader( nullptr )
 	,m_pVertexLayout( nullptr )
 	,m_pPixelShader( nullptr )
@@ -100,8 +100,8 @@ clsDX9Mesh::~clsDX9Mesh()
 		SAFE_RELEASE( m_pBlendState[i] );
 	}
 
-	m_pDeviceContext11 = nullptr;
-	m_pDevice11 = nullptr;
+	m_pContext = nullptr;
+	m_pDevice = nullptr;
 	m_hWnd = nullptr;
 
 }
@@ -115,8 +115,8 @@ clsDX9Mesh::~clsDX9Mesh()
 HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPSTR fileName)
 {
 	m_hWnd = hWnd;
-	m_pDevice11 = pDevice11;
-	m_pDeviceContext11 = pContext11;
+	m_pDevice = pDevice11;
+	m_pContext = pContext11;
 	LPDIRECT3DDEVICE9	pDevice9;	//Dx9デバイスオブジェクト.
 
 	if( FAILED( CreateBlendState() ) ){
@@ -297,7 +297,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 
 			//テクスチャ作成.
 			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(
-				m_pDevice11, m_pMaterials[i].szTextureName,//テクスチャファイル名.
+				m_pDevice, m_pMaterials[i].szTextureName,//テクスチャファイル名.
 				NULL, NULL,
 				&m_pMaterials[i].pTexture, //(out)テクスチャオブジェクト.
 				NULL ) ) )
@@ -352,7 +352,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 		InitData.pSysMem = &pIndex[pAttrTable[i].FaceStart * 3];
 
 		if (FAILED(
-			m_pDevice11->CreateBuffer(
+			m_pDevice->CreateBuffer(
 			&bd, &InitData, &m_ppIndexBuffer[i])))
 		{
 			MessageBox(NULL, "インデックスバッファ作成失敗", "LoadXMesh()", MB_OK);
@@ -406,7 +406,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 		}
 
 		if (FAILED(
-			m_pDevice11->CreateBuffer(
+			m_pDevice->CreateBuffer(
 			&bd, &InitData, &m_pVertexBuffer)))
 		{
 			MessageBox(NULL, "頂点(バーテックス)バッファ作成失敗", "LoadXMesh()", MB_OK);
@@ -436,7 +436,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 
 	//サンプラー作成.
 	if (FAILED(
-		m_pDevice11->CreateSamplerState(
+		m_pDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear)))//(out)サンプラー.
 	{
 		MessageBox(NULL, "サンプラー作成失敗", "エラー", MB_OK);
@@ -492,7 +492,7 @@ HRESULT clsDX9Mesh::InitShader()
 
 	//上記で作成したブロブから「バーテックスシェーダ」を作成.
 	if (FAILED(
-		m_pDevice11->CreateVertexShader(
+		m_pDevice->CreateVertexShader(
 		pCompiledShader->GetBufferPointer(),
 		pCompiledShader->GetBufferSize(),
 		NULL,
@@ -565,7 +565,7 @@ HRESULT clsDX9Mesh::InitShader()
 	
 	//頂点インプットレイアウト作成.
 	if (FAILED(
-		m_pDevice11->CreateInputLayout(
+		m_pDevice->CreateInputLayout(
 		layout,
 		numElements,
 		pCompiledShader->GetBufferPointer(),
@@ -603,7 +603,7 @@ HRESULT clsDX9Mesh::InitShader()
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
 	if (FAILED(
-		m_pDevice11->CreatePixelShader(
+		m_pDevice->CreatePixelShader(
 		pCompiledShader->GetBufferPointer(),
 		pCompiledShader->GetBufferSize(),
 		NULL,
@@ -627,7 +627,7 @@ HRESULT clsDX9Mesh::InitShader()
 	cb.Usage = D3D11_USAGE_DYNAMIC;					//使用方法:直接の書き込み.
 
 	//コンスタントバッファ作成.
-	if (FAILED(m_pDevice11->CreateBuffer(
+	if (FAILED(m_pDevice->CreateBuffer(
 		&cb,
 		NULL,
 		&m_pConstantBuffer0)))
@@ -645,7 +645,7 @@ HRESULT clsDX9Mesh::InitShader()
 	cb.Usage = D3D11_USAGE_DYNAMIC;					//使用方法:直接の書き込み.
 
 	//コンスタントバッファ作成.
-	if (FAILED(m_pDevice11->CreateBuffer(
+	if (FAILED(m_pDevice->CreateBuffer(
 		&cb,
 		NULL,
 		&m_pConstantBuffer1)))
@@ -726,15 +726,15 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 	mWorld = mScale * mRoll * mPitch * mYaw * mTrans;//もともと.
 
 	//使用するシェーダをセット.
-	m_pDeviceContext11->VSSetShader( m_pVertexShader, NULL, 0);//頂点シェーダ.
-	m_pDeviceContext11->PSSetShader( m_pPixelShader,  NULL, 0);//ピクセルシェーダ.
+	m_pContext->VSSetShader( m_pVertexShader, NULL, 0);//頂点シェーダ.
+	m_pContext->PSSetShader( m_pPixelShader,  NULL, 0);//ピクセルシェーダ.
 
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
 	
 	//バッファ内のデータの書き換え開始時にMap.
 	if (SUCCEEDED(
-		m_pDeviceContext11->Map(
+		m_pContext->Map(
 		m_pConstantBuffer0, 0,
 		D3D11_MAP_WRITE_DISCARD,
 		0, &pData)))
@@ -776,26 +776,26 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 			sizeof(cb));//コピーするサイズ.
 
 		//バッファ内データの書き換え終了時にUnmap.
-		m_pDeviceContext11->Unmap(m_pConstantBuffer0, 0);
+		m_pContext->Unmap(m_pConstantBuffer0, 0);
 	}
 
 	//コンスタントバッファをどのシェーダで使うか?.
-	m_pDeviceContext11->VSSetConstantBuffers(
+	m_pContext->VSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer0);//頂点シェーダ.
 
-	m_pDeviceContext11->PSSetConstantBuffers(
+	m_pContext->PSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer0);//ピクセルシェーダ.
 
 	//頂点インプットレイアウトをセット.
-	m_pDeviceContext11->IASetInputLayout(m_pVertexLayout);
+	m_pContext->IASetInputLayout(m_pVertexLayout);
 
 	//プリミティブ・トポロジーをセット.
-	m_pDeviceContext11->IASetPrimitiveTopology(
+	m_pContext->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//頂点バッファをセット.
 	UINT stride = m_pMesh->GetNumBytesPerVertex();
 	UINT offset = 0;
-	m_pDeviceContext11->IASetVertexBuffers(
+	m_pContext->IASetVertexBuffers(
 		0, 1, &m_pVertexBuffer,
 		&stride, &offset);
 
@@ -810,13 +810,13 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 			continue;
 		}
 		//インデックスバッファをセット.
-		m_pDeviceContext11->IASetIndexBuffer(
+		m_pContext->IASetIndexBuffer(
 			m_ppIndexBuffer[i], DXGI_FORMAT_R32_UINT, 0);
 
 		//マテリアルの各要素をシェーダーに渡す.
 		D3D11_MAPPED_SUBRESOURCE pData1;
 		if (SUCCEEDED(
-			m_pDeviceContext11->Map(m_pConstantBuffer1, 0,
+			m_pContext->Map(m_pConstantBuffer1, 0,
 			D3D11_MAP_WRITE_DISCARD, 0, &pData1)))
 		{
 			MESHSHADER_CONSTANT_BUFFER_FIRST cb;
@@ -829,32 +829,32 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 				pData1.pData, pData1.RowPitch,
 				(void*)&cb, sizeof(MESHSHADER_CONSTANT_BUFFER_FIRST));
 
-			m_pDeviceContext11->Unmap(m_pConstantBuffer1, 0);
+			m_pContext->Unmap(m_pConstantBuffer1, 0);
 		}
 
 		//このコンスタントバッファをどのシェーダーで使うか?.
-		m_pDeviceContext11->VSSetConstantBuffers(
+		m_pContext->VSSetConstantBuffers(
 			1, 1, &m_pConstantBuffer1);
-		m_pDeviceContext11->PSSetConstantBuffers(
+		m_pContext->PSSetConstantBuffers(
 			1, 1, &m_pConstantBuffer1);
 
 		//テクスチャをシェーダーに渡す.
 		if (m_pMaterials[m_AttrID[i]].pTexture)
 		{
 			//テクスチャがあるとき.
-			m_pDeviceContext11->PSSetSamplers(
+			m_pContext->PSSetSamplers(
 				0, 1, &m_pSampleLinear);
-			m_pDeviceContext11->PSSetShaderResources(
+			m_pContext->PSSetShaderResources(
 				0, 1, &m_pMaterials[m_AttrID[i]].pTexture);
 		}
 		else
 		{
 			//テクスチャがないとき.
 			ID3D11ShaderResourceView* Nothing[1] = {0};
-			m_pDeviceContext11->PSSetShaderResources(0, 1, Nothing);
+			m_pContext->PSSetShaderResources(0, 1, Nothing);
 		}
 		//プリミティブ(ポリゴン)をレンダリング.
-		m_pDeviceContext11->DrawIndexed(
+		m_pContext->DrawIndexed(
 			m_pMaterials[m_AttrID[i]].dwNumFace * 3, 0, 0);
 	}
 }
@@ -886,7 +886,7 @@ HRESULT clsDX9Mesh::CreateBlendState()
 	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
 	{
 		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice11->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
+		if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
 			assert( !"ブレンドステートの作成に失敗" );
 			return E_FAIL;
 		}
@@ -903,10 +903,10 @@ void clsDX9Mesh::SetBlend( bool isAlpha )
 
 	if( isAlpha ){		
 		//ブレンドステートの設定.
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
+		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
 	}
 	else{
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
+		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
 	}
 }
 

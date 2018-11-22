@@ -83,8 +83,8 @@ private:
 	DWORD				m_dwNumMaterials;//マテリアル数.
 
 	//Dx11.
-	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.
-	ID3D11DeviceContext*	m_pDeviceContext11;	//デバイスコンテキスト.
+	ID3D11Device*			m_pDevice;		//デバイスオブジェクト.
+	ID3D11DeviceContext*	m_pContext;	//デバイスコンテキスト.
 	ID3D11VertexShader*		m_pVertexShader;	//頂点シェーダ.
 	ID3D11InputLayout*		m_pVertexLayout;	//頂点レイアウト.
 	ID3D11PixelShader*		m_pPixelShader;		//ピクセルシェーダ.

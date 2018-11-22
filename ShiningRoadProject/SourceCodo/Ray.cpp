@@ -36,8 +36,8 @@ clsRay::~clsRay()
 //============================================================
 HRESULT clsRay::Init( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 )
 {
-	m_pDevice11 = pDevice11;
-	m_pDeviceContext11 = pContext11;
+	m_pDevice = pDevice11;
+	m_pContext = pContext11;
 
 	if( FAILED( InitShader() ) ){
 		return E_FAIL;
@@ -73,8 +73,8 @@ void clsRay::Render( D3DXMATRIX& mView, D3DXMATRIX& mProj ) const
 	mWorld = mRot * mTran;
 
 	//使用するシェーダの登録.
-	m_pDeviceContext11->VSSetShader( m_pVertexShader, NULL, 0 );
-	m_pDeviceContext11->PSSetShader( m_pPixelShader,  NULL, 0 );
+	m_pContext->VSSetShader( m_pVertexShader, NULL, 0 );
+	m_pContext->PSSetShader( m_pPixelShader,  NULL, 0 );
 
 
 	//シェーダのコンスタントバッファに各種データを渡す.
@@ -82,7 +82,7 @@ void clsRay::Render( D3DXMATRIX& mView, D3DXMATRIX& mProj ) const
 	SHADER_CONSTANT_BUFFER cd;	//コンスタントバッファ.
 	//バッファ内のデータの書き方開始時にmap.
 	if( SUCCEEDED(
-		m_pDeviceContext11->Map(
+		m_pContext->Map(
 			m_pConstantBuffer, 0,
 			D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
@@ -100,30 +100,30 @@ void clsRay::Render( D3DXMATRIX& mView, D3DXMATRIX& mProj ) const
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cd ), sizeof( cd ) );
 
-		m_pDeviceContext11->Unmap( m_pConstantBuffer, 0 );
+		m_pContext->Unmap( m_pConstantBuffer, 0 );
 	}
 
 	//このコンスタントバッファをどのシェーダで使うか?.
-	m_pDeviceContext11->VSSetConstantBuffers(
+	m_pContext->VSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer );
-	m_pDeviceContext11->PSSetConstantBuffers(
+	m_pContext->PSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer );
 
 	//頂点バッファをセット.
 	UINT stride = sizeof( MODEL_VERTEX );	//データの間隔.
 	UINT offset = 0;
-	m_pDeviceContext11->IASetVertexBuffers(
+	m_pContext->IASetVertexBuffers(
 		0, 1, &m_pVertexBuffer, &stride, &offset );
 
 	//頂点インプットレイアウトをセット.
-	m_pDeviceContext11->IASetInputLayout( m_pVertexLayout );
+	m_pContext->IASetInputLayout( m_pVertexLayout );
 
 	//プリミティブ・トポロジーをセット.
-	m_pDeviceContext11->IASetPrimitiveTopology(
+	m_pContext->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_LINELIST );
 
 	//プリミティブをレンダリング.
-	m_pDeviceContext11->Draw( 2, 0 );
+	m_pContext->Draw( 2, 0 );
 
 }
 
@@ -167,7 +167,7 @@ HRESULT clsRay::InitShader()
 
 	//上記で作成したブロブから「バーテックスシェーダ」を作成.
 	if( FAILED(
-		m_pDevice11->CreateVertexShader(
+		m_pDevice->CreateVertexShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			NULL,
@@ -194,7 +194,7 @@ HRESULT clsRay::InitShader()
 
 	//頂点インプットレイアウトの作成.
 	if( FAILED(
-		m_pDevice11->CreateInputLayout(
+		m_pDevice->CreateInputLayout(
 			layout,
 			numElements,
 			pCompiledShader->GetBufferPointer(),
@@ -230,7 +230,7 @@ HRESULT clsRay::InitShader()
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
 	if( FAILED(
-		m_pDevice11->CreatePixelShader(
+		m_pDevice->CreatePixelShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			NULL,
@@ -255,7 +255,7 @@ HRESULT clsRay::InitShader()
 
 	//コンスタントバッファ作成.
 	if( FAILED(
-		m_pDevice11->CreateBuffer(
+		m_pDevice->CreateBuffer(
 			&cb,
 			NULL,
 			&m_pConstantBuffer ) ) )
@@ -286,7 +286,7 @@ HRESULT clsRay::InitModel()
 	D3D11_SUBRESOURCE_DATA InitData;
 	InitData.pSysMem = m_Ray.vPoint;//レイの座標をセット.
 	if( FAILED(
-		m_pDevice11->CreateBuffer(
+		m_pDevice->CreateBuffer(
 			&bd, &InitData, &m_pVertexBuffer ) ) )
 	{
 		ERR_MSG( "頂点バッファ作成失敗", "clsRay::InitLine" );

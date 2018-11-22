@@ -3,13 +3,13 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "Global.h"
+#include "Common.h"
 
 
 
 //日本語のUI用.
 //これに読み込ませる文字列データは全て全角にすること.
-class clsFont
+class clsFont : public clsCommon
 {
 public:
 
@@ -54,8 +54,6 @@ public:
 
 private:
 
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
 	//シェーダ作成.
 	HRESULT CreateShader();
 	//バーテックスシェーダ作成.
@@ -65,7 +63,6 @@ private:
 	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
 	HRESULT	CreateTexture();
 
-	void SetBlend( const bool isAlpha ) const;
 
 	//文字を細くする倍率を返す( 問題ないなら1.0f ).
 	//第二引数は( 全角で )何文字目か.
@@ -124,9 +121,6 @@ private:
 	std::vector< std::vector< ID3D11ShaderResourceView* > > m_vecvecpAsciiTexture;//[ TEXT_H ][ TEXT_W ]; //テクスチャ.
 
 
-	ID3D11Device*			m_pDevice;
-	ID3D11DeviceContext*	m_pContext;
-
 	//板ポリゴン用.
 	ID3D11VertexShader* m_pVertexShader;	//頂点シェーダー.
 	ID3D11InputLayout*	m_pVertexLayout;	//頂点レイアウト.
@@ -135,8 +129,6 @@ private:
 	ID3D11Buffer*		m_pVertexBuffer;	//頂点バッファ	.
 
 	ID3D11SamplerState* m_pSampleLinear;	//テクスチャのサンプラー.
-
-	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 };
 

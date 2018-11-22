@@ -51,9 +51,7 @@ namespace{
 clsFont::clsFont( 
 	ID3D11Device* const pDevice, 
 	ID3D11DeviceContext* const pContext )
-	:m_pDevice( pDevice )
-	,m_pContext( pContext )
-	,m_pVertexShader( nullptr )
+	:m_pVertexShader( nullptr )
 	,m_pVertexLayout( nullptr )
 	,m_pPixelShader( nullptr )
 	,m_pVertexBuffer( nullptr )
@@ -61,7 +59,6 @@ clsFont::clsFont(
 	,m_pConstantBuffer( nullptr )
 	,m_vecpTex2D()
 	,m_vecvecpAsciiTexture()
-	,m_pBlendState()
 	,m_vecsTextData()
 	,m_Design()
 	,m_fIndentionPosint( static_cast<float>( WND_W ) )
@@ -75,6 +72,9 @@ clsFont::clsFont(
 	,m_vPosLast( m_vPos )
 	,m_iTextRow( iERROR_TEXT_ROW_NUM )
 {
+	m_pDevice = pDevice;
+	m_pContext = pContext;
+
 //	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 //		m_pBlendState[i] = nullptr;
 //	}
@@ -127,44 +127,6 @@ clsFont::~clsFont()
 		ERR_MSG( "フォントリソースの破棄に失敗", "" );
 	}
 
-	m_pContext = nullptr;
-	m_pDevice = nullptr;
-}
-
-//ブレンドステート作成.
-HRESULT clsFont::CreateBlendState()
-{
-	//アルファブレンド用ブレンドステート作成.
-	//pngファイル内にアルファ情報があるので、透過するようにブレンドステートで設定する.
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );	//初期化.
-	blendDesc.IndependentBlendEnable = false;			//false:RenderTarget[0]のメンバーのみ使用する。true:RenderTarget[0～7]が使用できる(レンダーターゲット毎に独立したブレンド処理).
-	blendDesc.AlphaToCoverageEnable = false;			//true:アルファトゥカバレッジを使用する.
-
-	//表示タイプ
-//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:アルファブレンドを使用する.
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//アルファブレンドを指定.
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//アルファブレンドの反転を指定.
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成.
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//そのまま使用.
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;		//何もしない.
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ADD：加算合成.
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのデータの格納を許可する.
-
-	bool tmpBlendEnable[ enBLEND_STATE_size ];
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
-	{
-		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
-			assert( !"ブレンドステートの作成に失敗" );
-			return E_FAIL;
-		}
-	}
-
-	return S_OK;
 }
 
 
@@ -719,18 +681,6 @@ void clsFont::SetColor( const D3DXVECTOR4 &vColor )
 	m_vColor.w = fNOT_ALPHA;
 }
 
-void clsFont::SetBlend( const bool isAlpha ) const
-{
-	UINT mask = 0xffffffff;	//マスク値白.
-
-	if( isAlpha ){		
-		//ブレンドステートの設定.
-		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
-	}
-	else{
-		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
-	}
-}
 
 //テキストの内容.
 std::string clsFont::GetText( const int iRow ) const

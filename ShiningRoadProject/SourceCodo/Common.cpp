@@ -2,8 +2,8 @@
 
 clsCommon::clsCommon()
 {
-	m_pDevice11 = nullptr;
-	m_pDeviceContext11 = nullptr;
+	m_pDevice = nullptr;
+	m_pContext = nullptr;
 	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 		m_pBlendState[i] = nullptr;
 	}
@@ -20,8 +20,8 @@ clsCommon::~clsCommon()
 	}
 
 	//ここでは開放しない.
-	m_pDeviceContext11 = nullptr;
-	m_pDevice11 = nullptr;
+	m_pContext = nullptr;
+	m_pDevice = nullptr;
 };
 
 //ブレンドステート作成.
@@ -51,7 +51,7 @@ HRESULT clsCommon::CreateBlendState()
 	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
 	{
 		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice11->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
+		if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
 			assert( !"ブレンドステートの作成に失敗" );
 			return E_FAIL;
 		}
@@ -66,10 +66,10 @@ void clsCommon::SetBlend( const bool isAlpha )
 
 	if( isAlpha ){		
 		//ブレンドステートの設定.
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
+		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
 	}
 	else{
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
+		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
 	}
 }
 

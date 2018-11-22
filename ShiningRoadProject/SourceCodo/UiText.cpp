@@ -95,8 +95,8 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 		m_fKerning[i] = 10.0f;
 	}
 	//デバイスコンテキストをコピー.
-	m_pDeviceContext11 = pContext;
-	m_pDeviceContext11->GetDevice( &m_pDevice11 );
+	m_pContext = pContext;
+	m_pContext->GetDevice( &m_pDevice );
 
 	if( FAILED( CreateBlendState() ) ){
 		assert( !"Can't Create BlendState" );
@@ -139,7 +139,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 
 			D3D11_SUBRESOURCE_DATA InitData;
 			InitData.pSysMem = vertices;
-			if( FAILED( m_pDevice11->CreateBuffer(
+			if( FAILED( m_pDevice->CreateBuffer(
 				&bd, &InitData, &m_pVertexBuffer[cnt]) ) )
 			{
 				MessageBox( NULL,
@@ -159,7 +159,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	SamDesc.AddressU= D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressV= D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressW= D3D11_TEXTURE_ADDRESS_WRAP;
-	if( FAILED( m_pDevice11->CreateSamplerState(
+	if( FAILED( m_pDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear) ) )
 	{
 		MessageBox( NULL,
@@ -170,7 +170,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 
 	//フォントのテクスチャ作成.
 	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
-		m_pDevice11,
+		m_pDevice,
 		sFILE_PATH,
 		NULL, NULL,
 		&m_pAsciiTexture, NULL ) ) )
@@ -197,7 +197,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	}
 	SAFE_RELEASE( pErrors );
 
-	if( FAILED( m_pDevice11->CreateVertexShader(
+	if( FAILED( m_pDevice->CreateVertexShader(
 		pCompileShader->GetBufferPointer(),
 		pCompileShader->GetBufferSize(),
 		NULL, &m_pVertexShader ) ) )
@@ -218,7 +218,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	UINT numElements = sizeof( layout ) / sizeof( layout[0] );
 
 	//頂点インプットレイアウト作成.
-	if( FAILED( m_pDevice11->CreateInputLayout(
+	if( FAILED( m_pDevice->CreateInputLayout(
 		layout, numElements,
 		pCompileShader->GetBufferPointer(),
 		pCompileShader->GetBufferSize(),
@@ -241,7 +241,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	SAFE_RELEASE( pErrors );
 
 
-	if( FAILED( m_pDevice11->CreatePixelShader(
+	if( FAILED( m_pDevice->CreatePixelShader(
 		pCompileShader->GetBufferPointer(),
 		pCompileShader->GetBufferSize(),
 		NULL, &m_pPixelShader ) ) )
@@ -261,7 +261,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	cb.StructureByteStride = 0;
 	cb.Usage = D3D11_USAGE_DYNAMIC;
 
-	if( FAILED( m_pDevice11->CreateBuffer(
+	if( FAILED( m_pDevice->CreateBuffer(
 		&cb, NULL, &m_pConstantBuffer ) ) )
 	{
 		MessageBox( NULL, "コンスタントバッファ作成", "UiText:Init", MB_OK );
@@ -311,28 +311,28 @@ void clsUiText::Render( const enPOS enPos )
 	m_mProj = mOtho;
 
 	//プリミティブ・トポロジー.
-	m_pDeviceContext11->IASetPrimitiveTopology(
+	m_pContext->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 	//頂点インプットレイアウトをセット.
-	m_pDeviceContext11->IASetInputLayout(
+	m_pContext->IASetInputLayout(
 		m_pVertexLayout );
 
 	//使用するシェーダの登録.
-	m_pDeviceContext11->VSSetShader(
+	m_pContext->VSSetShader(
 		m_pVertexShader, NULL, 0 );
-	m_pDeviceContext11->PSSetShader(
+	m_pContext->PSSetShader(
 		m_pPixelShader, NULL, 0 );
 
 	//このコンスタントバッファを使うシェーダの登録.
-	m_pDeviceContext11->VSSetConstantBuffers(
+	m_pContext->VSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer );
-	m_pDeviceContext11->PSSetConstantBuffers(
+	m_pContext->PSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer );
 
 	//テクスチャをシェーダに渡す.
-	m_pDeviceContext11->PSSetSamplers(
+	m_pContext->PSSetSamplers(
 		0, 1, &m_pSampleLinear );
-	m_pDeviceContext11->PSSetShaderResources(
+	m_pContext->PSSetShaderResources(
 		0, 1, &m_pAsciiTexture );
 
 
@@ -402,7 +402,7 @@ void clsUiText::RenderFont(
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE	pData;
 	TEXT_CONSTANT_BUFFER		cb;
-	if( SUCCEEDED( m_pDeviceContext11->Map(
+	if( SUCCEEDED( m_pContext->Map(
 		m_pConstantBuffer, 0,
 		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
@@ -418,19 +418,19 @@ void clsUiText::RenderFont(
 
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)(&cb), sizeof(cb) );
-		m_pDeviceContext11->Unmap(
+		m_pContext->Unmap(
 			m_pConstantBuffer, 0 );
 	}
 	//バーテックスバッファをセット.
 	UINT stride = sizeof( TextVertex );
 	UINT offset = 0;
-	m_pDeviceContext11->IASetVertexBuffers(
+	m_pContext->IASetVertexBuffers(
 		0, 1, &m_pVertexBuffer[FontIndex],
 		&stride, &offset );
 
 
 	//描画.
-	m_pDeviceContext11->Draw( 4, 0 );
+	m_pContext->Draw( 4, 0 );
 
 
 
