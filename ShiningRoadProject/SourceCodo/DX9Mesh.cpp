@@ -12,7 +12,7 @@ clsDX9Mesh::clsDX9Mesh()
 	:m_pMesh( nullptr )
 	,m_pMeshForRay( nullptr )
 	,m_hWnd( nullptr )
-	,m_pD3d( nullptr )
+//	,pD3d( nullptr )
 	,m_pDevice9( nullptr )
 	,m_pDevice11( nullptr )
 	,m_pDeviceContext11( nullptr )
@@ -39,20 +39,6 @@ clsDX9Mesh::clsDX9Mesh()
 // デストラクタ.
 //========================================================
 clsDX9Mesh::~clsDX9Mesh()
-{
-	Release();
-
-
-	//オブジェクトのリリース.
-	SAFE_RELEASE(m_pDevice9);
-	SAFE_RELEASE(m_pD3d);
-}
-
-
-//============================================================
-//	解放.
-//============================================================
-HRESULT clsDX9Mesh::Release()
 {
 	SAFE_RELEASE( m_pSampleLinear );
 
@@ -83,8 +69,12 @@ HRESULT clsDX9Mesh::Release()
 	}
 
 
-	return S_OK;
+	//オブジェクトのリリース.
+	SAFE_RELEASE( m_pDevice9 );
+//	SAFE_RELEASE( pD3d );
 }
+
+
 
 
 //========================================================
@@ -96,22 +86,20 @@ HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext
 	m_pDevice11 = pDevice11;
 	m_pDeviceContext11 = pContext11;
 
-	if( FAILED( CreateBlendState() ) )
-	{
+	if( FAILED( CreateBlendState() ) ){
 		return E_FAIL;
 	}
-	if (FAILED(InitDx9(m_hWnd)))
-	{
+	if( FAILED( InitDx9( m_hWnd ) ) ){
 		return E_FAIL;
 	}
-	if (FAILED(LoadXMesh(fileName)))
-	{
+	if( FAILED( LoadXMesh( fileName ) ) ){
 		return E_FAIL;
 	}
-	if (FAILED(InitShader()))
-	{
+	if( FAILED( InitShader() ) ){
 		return E_FAIL;
 	}
+
+	SAFE_RELEASE( m_pDevice9 );
 
 	return S_OK;
 }
@@ -125,15 +113,16 @@ HRESULT clsDX9Mesh::InitDx9(HWND hWnd)
 	m_hWnd = hWnd;
 
 	//「Direct3D」オブジェクトの作成.
-	m_pD3d = Direct3DCreate9(D3D_SDK_VERSION);
-	if (m_pD3d == NULL){
-		MessageBox(NULL, "Dx9オブジェクト作成失敗", "InitDx9", MB_OK);
+	LPDIRECT3D9	pD3d;	//DX9オブジェクト.
+	pD3d = Direct3DCreate9( D3D_SDK_VERSION );
+	if( pD3d == NULL ){
+		MessageBox( NULL, "Dx9オブジェクト作成失敗", "InitDx9", MB_OK );
 		return E_FAIL;
 	}
 
 	//Direct3Dデバイスオブジェクトの作成.
 	D3DPRESENT_PARAMETERS d3dpp;
-	ZeroMemory(&d3dpp, sizeof(d3dpp));
+	ZeroMemory( &d3dpp, sizeof( d3dpp ) );
 	d3dpp.BackBufferFormat			= D3DFMT_UNKNOWN;			//バックバッファのフォーマット(デフォルト)
 	d3dpp.BackBufferCount			= 1;						//バックバッファの数.
 	d3dpp.SwapEffect				= D3DSWAPEFFECT_DISCARD;	//スワップエフェクト(デフォルト)
@@ -142,26 +131,26 @@ HRESULT clsDX9Mesh::InitDx9(HWND hWnd)
 	d3dpp.AutoDepthStencilFormat	= D3DFMT_D16;				//ステンシルのフォーマット(16bit)
 
 	//デバイス作成(HALモード:描画と頂点処理をGPUで行う)
-	if (FAILED(m_pD3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,m_hWnd,
+	if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,m_hWnd,
 		D3DCREATE_HARDWARE_VERTEXPROCESSING,
-		&d3dpp,&m_pDevice9)))
+		&d3dpp,&m_pDevice9 ) ) )
 	{
 		//デバイス作成(HALモード:描画はGPU、頂点処理をCPUで行う)
-		if (FAILED(m_pD3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd,
+		if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd,
 			D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-			&d3dpp, &m_pDevice9)))
+			&d3dpp, &m_pDevice9 ) ) )
 		{
 			MessageBox(NULL, "HALモードでデバイスを作成できません\nREFモードで再試行します", "警告", MB_OK);
 
 			//デバイス作成(REFモード:描画はCPU、頂点処理をGPUで行う)
-			if (FAILED(m_pD3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
+			if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
 				D3DCREATE_HARDWARE_VERTEXPROCESSING,
-				&d3dpp, &m_pDevice9)))
+				&d3dpp, &m_pDevice9 ) ) )
 			{
 				//デバイス作成(REFモード:描画と頂点処理をCPUで行う)
-				if (FAILED(m_pD3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
+				if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
 					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-					&d3dpp, &m_pDevice9)))
+					&d3dpp, &m_pDevice9 ) ) )
 				{
 					MessageBox(NULL, "Direct3Dデバイス作成失敗", NULL, MB_OK);
 					return E_FAIL;
@@ -169,6 +158,8 @@ HRESULT clsDX9Mesh::InitDx9(HWND hWnd)
 			}
 		}
 	}
+
+	SAFE_RELEASE( pD3d );
 
 	return S_OK;
 }
@@ -247,11 +238,11 @@ HRESULT clsDX9Mesh::LoadXMesh(LPSTR fileName)
 		{
 			m_bTexture = true;//テクスチャフラグを立てる.
 
-			char path[64] = "";
-			int path_cnt = lstrlen(fileName);
+			char path[128] = "";
+			int path_cnt = lstrlen( fileName );
 
 			//階層がある前提なのでファイルを直下に置くと死.
-			for (int k = path_cnt; k >= 0; k--)
+			for( int k = path_cnt; k >= 0; k-- )
 			{
 				if (fileName[k] == '\\')
 				{
@@ -264,21 +255,21 @@ HRESULT clsDX9Mesh::LoadXMesh(LPSTR fileName)
 				}
 			}
 
-			strcat_s(path, sizeof(path), d3dxMaterials[i].pTextureFilename);
+			strcat_s( path, sizeof( path ), d3dxMaterials[i].pTextureFilename );
 
 			//テクスチャファイルをコピー.
-			strcpy_s(m_pMaterials[i].szTextureName,
-				sizeof(m_pMaterials[i].szTextureName),
-				path);
+			strcpy_s( m_pMaterials[i].szTextureName,
+				sizeof( m_pMaterials[i].szTextureName ),
+				path );
 
 			//テクスチャ作成.
 			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(
 				m_pDevice11, m_pMaterials[i].szTextureName,//テクスチャファイル名.
 				NULL, NULL,
 				&m_pMaterials[i].pTexture, //(out)テクスチャオブジェクト.
-				NULL)))
+				NULL ) ) )
 			{
-				MessageBox(NULL, m_pMaterials[i].szTextureName, "テクスチャ作成失敗", MB_OK);
+				MessageBox( NULL, m_pMaterials[i].szTextureName, "テクスチャ作成失敗", MB_OK );
 				return E_FAIL;
 			}
 		}
@@ -694,16 +685,16 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 
 
 	//移動.
-	D3DXMatrixTranslation(&mTrans,
-		m_Trans.vPos.x, m_Trans.vPos.y, m_Trans.vPos.z);
+	D3DXMatrixTranslation( &mTrans,
+		m_Trans.vPos.x, m_Trans.vPos.y, m_Trans.vPos.z );
 
 	//合成.
 //	mWorld = mScale * mYaw * mPitch * mRoll * mTrans;//ビル.
 	mWorld = mScale * mRoll * mPitch * mYaw * mTrans;//もともと.
 
 	//使用するシェーダをセット.
-	m_pDeviceContext11->VSSetShader(m_pVertexShader, NULL, 0);//頂点シェーダ.
-	m_pDeviceContext11->PSSetShader(m_pPixelShader, NULL, 0);//ピクセルシェーダ.
+	m_pDeviceContext11->VSSetShader( m_pVertexShader, NULL, 0);//頂点シェーダ.
+	m_pDeviceContext11->PSSetShader( m_pPixelShader,  NULL, 0);//ピクセルシェーダ.
 
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
@@ -782,8 +773,7 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 	for (DWORD i = 0; i < m_NumAttr; i++)
 	{
 		//使用されていないマテリアル対策.
-		if (m_pMaterials[m_AttrID[i]].dwNumFace == 0)
-		{
+		if (m_pMaterials[m_AttrID[i]].dwNumFace == 0){
 			continue;
 		}
 		//インデックスバッファをセット.

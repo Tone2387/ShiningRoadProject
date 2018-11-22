@@ -88,8 +88,6 @@ public:
 	//透過(アルファブレンド)設定の切り替え.
 	void SetBlend( const bool isAlpha );
 
-	//解放.
-	HRESULT Release();
 
 
 	LPD3DXMESH			m_pMesh;		//メッシュオブジェクト.
@@ -115,10 +113,12 @@ private:
 	//シェーダ作成.
 	HRESULT InitShader();
 
+private:
+
 	HWND				m_hWnd;	//ウィンドウハンドル.
 
 	//Dx9.
-	LPDIRECT3D9			m_pD3d;	//DX9オブジェクト.
+//	LPDIRECT3D9			m_pD3d;	//DX9オブジェクト.
 	LPDIRECT3DDEVICE9	m_pDevice9;	//Dx9デバイスオブジェクト.
 
 	//D3DMATERIAL9*		m_pMaterials;	//マテリアル情報.
@@ -136,9 +136,9 @@ private:
 	ID3D11Buffer*			m_pConstantBuffer1;	//コンスタントバッファ1.
 //
 //
-	ID3D11Buffer*	m_pVertexBuffer;//頂点(バーテックス)バッファ.
-	ID3D11Buffer**	m_ppIndexBuffer;	//インデックスバッファ.
-	ID3D11SamplerState*			m_pSampleLinear;//テクスチャのサンプラー.//テクスチャに各種フィルタをかける.
+	ID3D11Buffer*			m_pVertexBuffer;//頂点(バーテックス)バッファ.
+	ID3D11Buffer**			m_ppIndexBuffer;//インデックスバッファ.
+	ID3D11SamplerState*		m_pSampleLinear;//テクスチャのサンプラー.//テクスチャに各種フィルタをかける.
 //
 //
 	MY_MATERIAL*	m_pMaterials;	//マテリアル構造体.
