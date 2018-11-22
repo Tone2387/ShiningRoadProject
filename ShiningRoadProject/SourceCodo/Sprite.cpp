@@ -1,6 +1,16 @@
 #include "Sprite.h"
 
 namespace{
+
+	//シェーダ内のコンスタントバッファと一致している必要あり.
+	struct SPRITESHADER_CONSTANT_BUFFER
+	{
+		D3DXMATRIX	mWVP;		//ワールド,ビュー,射影の合成変換行列.
+		D3DXVECTOR4	vColor;		//カラー(RGBAの型に合わせる) : テクスチャの上から色を載せる(赤っぽくも見せるためとか).
+		D3DXVECTOR4	vUV;		//UV座標.
+		D3DXVECTOR4 vSplit;//何分割?.
+	};
+
 }
 
 //============================================================
@@ -85,19 +95,18 @@ HRESULT clsSprite::InitShader()
 
 
 	//HLSLからバーテックスシェーダのブロブを作成.
-	if( FAILED(
-		D3DX11CompileFromFile(
-			SHADER_NAME,	//シェーダファイル名(HLSLファイル).
-			NULL,			//マクロ定義の配列へのポインタ(未使用).
-			NULL,			//インクルードファイルを扱うインターフェースへのポインタ(未使用).
-			"VS_Ita",			//シェーダエントリーポイント関数の名前.
-			"vs_5_0",		//シェーダのモデルを指定する文字列(プロファイル).
-			uCompileFlag,	//シェーダコンパイルフラグ.
-			0,				//エフェクトコンパイルフラグ(未使用).
-			NULL,			//スレッドポンプインターフェースへのポインタ(未使用).
-			&pCompiledShader,//ブロブを格納するメモリへのポインタ.
-			&pErrors,		//エラーと警告一覧を格納するメモリへのポインタ.
-			NULL ) ) )		//戻り値へのポインタ(未使用).
+	if( FAILED( D3DX11CompileFromFile(
+		SHADER_NAME,	//シェーダファイル名(HLSLファイル).
+		NULL,			//マクロ定義の配列へのポインタ(未使用).
+		NULL,			//インクルードファイルを扱うインターフェースへのポインタ(未使用).
+		"VS_Ita",			//シェーダエントリーポイント関数の名前.
+		"vs_5_0",		//シェーダのモデルを指定する文字列(プロファイル).
+		uCompileFlag,	//シェーダコンパイルフラグ.
+		0,				//エフェクトコンパイルフラグ(未使用).
+		NULL,			//スレッドポンプインターフェースへのポインタ(未使用).
+		&pCompiledShader,//ブロブを格納するメモリへのポインタ.
+		&pErrors,		//エラーと警告一覧を格納するメモリへのポインタ.
+		NULL ) ) )		//戻り値へのポインタ(未使用).
 	{
 		MessageBox( NULL, "hlsl(vs)読み込み失敗", "エラー", MB_OK );
 		return E_FAIL;
@@ -105,12 +114,11 @@ HRESULT clsSprite::InitShader()
 	SAFE_RELEASE( pErrors );
 
 	//上記で作成したブロブから「バーテックスシェーダ」を作成.
-	if( FAILED(
-		m_pDevice11->CreateVertexShader(
-			pCompiledShader->GetBufferPointer(),
-			pCompiledShader->GetBufferSize(),
-			NULL,
-			&m_pVertexShader) ) )//(out)バーテックスシェーダ.
+	if( FAILED( m_pDevice11->CreateVertexShader(
+		pCompiledShader->GetBufferPointer(),
+		pCompiledShader->GetBufferSize(),
+		NULL,
+		&m_pVertexShader) ) )//(out)バーテックスシェーダ.
 	{
 		MessageBox( NULL, "vs作成失敗", "エラー", MB_OK );
 		return E_FAIL;
@@ -140,13 +148,12 @@ HRESULT clsSprite::InitShader()
 	UINT numElements = sizeof( layout ) / sizeof( layout[0] );//.
 
 	//頂点インプットレイアウトの作成.
-	if( FAILED(
-		m_pDevice11->CreateInputLayout(
-			layout,
-			numElements,
-			pCompiledShader->GetBufferPointer(),
-			pCompiledShader->GetBufferSize(),
-			&m_pVertexLayout ) ) )//(out)頂点インプットレイアウト.
+	if( FAILED( m_pDevice11->CreateInputLayout(
+		layout,
+		numElements,
+		pCompiledShader->GetBufferPointer(),
+		pCompiledShader->GetBufferSize(),
+		&m_pVertexLayout ) ) )//(out)頂点インプットレイアウト.
 	{
 		MessageBox( NULL, "頂点インプットレイアウト作成失敗", "エラー", MB_OK );
 		return E_FAIL;
@@ -158,19 +165,18 @@ HRESULT clsSprite::InitShader()
 
 
 	//HLSLからピクセルシェーダのブロブを作成.
-	if( FAILED(
-		D3DX11CompileFromFile(
-			SHADER_NAME,	//シェーダファイル名(HLSLファイル).
-			NULL,
-			NULL,
-			"PS_Ita",			//シェーダエントリーポイント関数の名前.
-			"ps_5_0",		//シェーダのモデルを指定する文字列(プロファイル).
-			uCompileFlag,	//シェーダコンパイルフラグ.
-			0,
-			NULL,
-			&pCompiledShader,//ブロブを格納するメモリへのポインタ.
-			&pErrors,
-			NULL ) ) )
+	if( FAILED( D3DX11CompileFromFile(
+		SHADER_NAME,	//シェーダファイル名(HLSLファイル).
+		NULL,
+		NULL,
+		"PS_Ita",			//シェーダエントリーポイント関数の名前.
+		"ps_5_0",		//シェーダのモデルを指定する文字列(プロファイル).
+		uCompileFlag,	//シェーダコンパイルフラグ.
+		0,
+		NULL,
+		&pCompiledShader,//ブロブを格納するメモリへのポインタ.
+		&pErrors,
+		NULL ) ) )
 	{
 		MessageBox( NULL, "hlsl(ps)読み込み失敗", "エラー", MB_OK );
 		return E_FAIL;
@@ -178,12 +184,11 @@ HRESULT clsSprite::InitShader()
 	SAFE_RELEASE( pErrors );
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
-	if( FAILED(
-		m_pDevice11->CreatePixelShader(
-			pCompiledShader->GetBufferPointer(),
-			pCompiledShader->GetBufferSize(),
-			NULL,
-			&m_pPixelShader ) ) )//(out)ピクセルシェーダ.
+	if( FAILED( m_pDevice11->CreatePixelShader(
+		pCompiledShader->GetBufferPointer(),
+		pCompiledShader->GetBufferSize(),
+		NULL,
+		&m_pPixelShader ) ) )//(out)ピクセルシェーダ.
 	{
 		MessageBox( NULL, "ps作成失敗", "エラー", MB_OK );
 		return E_FAIL;
@@ -203,11 +208,10 @@ HRESULT clsSprite::InitShader()
 	cb.Usage		= D3D11_USAGE_DYNAMIC;	//使用方法:直接書き込み.
 
 	//コンスタントバッファ作成.
-	if( FAILED(
-		m_pDevice11->CreateBuffer(
-			&cb,
-			NULL,
-			&m_pConstantBuffer ) ) )
+	if( FAILED( m_pDevice11->CreateBuffer(
+		&cb,
+		NULL,
+		&m_pConstantBuffer ) ) )
 	{
 		MessageBox( NULL, "コンスタントバッファ作成失敗", "エラー", MB_OK );
 		return E_FAIL;
@@ -253,9 +257,8 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	InitData.pSysMem	= vertices;	//板ポリの頂点をセット.
 
 	//頂点バッファの作成.
-	if( FAILED(
-		m_pDevice11->CreateBuffer(
-			&bd, &InitData, &m_pVertexBuffer ) ) )
+	if( FAILED( m_pDevice11->CreateBuffer(
+		&bd, &InitData, &m_pVertexBuffer ) ) )
 	{
 		MessageBox( NULL, "頂点バッファ作成失敗", "エラー", MB_OK );
 		return E_FAIL;
@@ -287,23 +290,20 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 
 
 	//サンプラー作成.
-	if( FAILED(
-		m_pDevice11->CreateSamplerState(
-			&SamDesc, &m_pSampleLinear ) ) )//(out)サンプラー.
+	if( FAILED( m_pDevice11->CreateSamplerState(
+		&SamDesc, &m_pSampleLinear ) ) )//(out)サンプラー.
 	{
 		MessageBox( NULL, "サンプラ作成失敗", "エラー", MB_OK );
 		return E_FAIL;
 	}
 
 	//テクスチャ作成.
-	if( FAILED(
-		D3DX11CreateShaderResourceViewFromFile(
-			m_pDevice11,		//リソースを使用するデバイスへのポインタ.
-//			"Data\\Image\\MissonUI\\Lockon.png",	//ファイル名(パスも必要).
-			sTexName,
-			NULL, NULL,
-			&m_pTexture,	//(out)テクスチャ.
-			NULL ) ) )
+	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+		m_pDevice11,		//リソースを使用するデバイスへのポインタ.
+		sTexName,
+		NULL, NULL,
+		&m_pTexture,	//(out)テクスチャ.
+		NULL ) ) )
 	{
 		MessageBox( NULL, "テクスチャ作成失敗w", "InitModel()", MB_OK );
 		return E_FAIL;
@@ -356,10 +356,9 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 	D3D11_MAPPED_SUBRESOURCE pData;
 	SPRITESHADER_CONSTANT_BUFFER cd;	//コンスタントバッファ.
 	//バッファ内のデータの書き方開始時にmap.
-	if( SUCCEEDED(
-		m_pDeviceContext11->Map(
-			m_pConstantBuffer, 0,
-			D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
+	if( SUCCEEDED( m_pDeviceContext11->Map(
+		m_pConstantBuffer, 0,
+		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
 		//ワールド,カメラ,プロジェクション行列を渡す.
 		D3DXMATRIX m = mWorld * mView * mProj;
@@ -429,8 +428,8 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 	//プリミティブをレンダリング.
 	m_pDeviceContext11->Draw( 4, 0 );
 
-	//アルファブレンドを無効にする.
-	SetBlend( false );
+//	//アルファブレンドを無効にする.
+//	SetBlend( false );
 
 }
 
