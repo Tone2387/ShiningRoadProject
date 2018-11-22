@@ -7,13 +7,13 @@
 //============================================================
 //	インクルード.
 //============================================================
-#include "Global.h"
+#include "Common.h"
 
 #include "TextSpriteStruct.h"
 
 
 //UIとして文字を扱う.
-class clsUiText
+class clsUiText : public clsCommon
 {
 public:
 	clsUiText();
@@ -50,20 +50,13 @@ public:
 
 private:
 
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
 
 	//フォントレンダリング関数.
 	void RenderFont( const int FontIndex, const float x, const float y, const float z ) const;
 
-	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool isAlpha ) const;
 
 private:
 
-	//↓アプリに一つ.
-	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.
-	ID3D11DeviceContext*	m_pDeviceContext11;	//デバイスコンテキスト.
 
 	//↓モデルの種類ごとに用意.
 	ID3D11VertexShader*		m_pVertexShader;	//頂点シェーダ.
@@ -76,8 +69,6 @@ private:
 
 	ID3D11ShaderResourceView*	m_pAsciiTexture;//アスキーテクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
-
-	ID3D11BlendState*			m_pBlendState[ enBLEND_STATE_size ];	//ブレンドステート.
 
 
 	DWORD	m_dwWindowWidth;	//ウィンドウ幅.

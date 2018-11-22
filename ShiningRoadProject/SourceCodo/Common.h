@@ -23,9 +23,6 @@ public:
 	virtual ~clsCommon();
 
 
-	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool flg );
-
 
 
 
@@ -40,6 +37,11 @@ protected:
 
 	//ブレンドステート作成.
 	HRESULT CreateBlendState();
+
+	//透過(アルファブレンド)設定の切り替え.
+	void SetBlend( const bool flg );
+
+protected:
 
 	//↓アプリに一つ.
 	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.

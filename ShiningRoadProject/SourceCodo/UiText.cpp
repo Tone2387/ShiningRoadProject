@@ -31,9 +31,6 @@ clsUiText::clsUiText()
 	:m_vPos( { 0.0f, 0.0f } )
 	,m_fAlpha( 1.0f )
 {
-	m_pDevice11 = nullptr;		//デバイスオブジェクト.
-	m_pDeviceContext11 = nullptr;	//デバイスコンテキスト.
-
 	m_pVertexShader = nullptr;	//頂点シェーダ.
 	m_pVertexLayout = nullptr;	//頂点レイアウト.
 	m_pPixelShader = nullptr;		//ピクセルシェーダ.
@@ -45,10 +42,6 @@ clsUiText::clsUiText()
 
 	m_pAsciiTexture = nullptr;//アスキーテクスチャ.
 	m_pSampleLinear = nullptr;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		m_pBlendState[i] = nullptr;
-	}
 
 	for( int i=0; i<100; i++ ){
 		m_fKerning[i] = 0.0f;
@@ -75,9 +68,6 @@ clsUiText::~clsUiText()
 		SAFE_RELEASE( m_pVertexBuffer[i] );
 	}
 
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		SAFE_RELEASE( m_pBlendState[i] );
-	}
 
 	for( int i=0; i<100; i++ ){
 		m_fKerning[i] = 0.0f;
@@ -85,8 +75,6 @@ clsUiText::~clsUiText()
 	m_fScale = 1.0f;
 
 
-	m_pDevice11 = nullptr;		//デバイスオブジェクト.
-	m_pDeviceContext11 = nullptr;	//デバイスコンテキスト.
 
 }
 
@@ -181,12 +169,11 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	}
 
 	//フォントのテクスチャ作成.
-	if( FAILED(
-		D3DX11CreateShaderResourceViewFromFile(
-			m_pDevice11,
-			sFILE_PATH,
-			NULL, NULL,
-			&m_pAsciiTexture, NULL ) ) )
+	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+		m_pDevice11,
+		sFILE_PATH,
+		NULL, NULL,
+		&m_pAsciiTexture, NULL ) ) )
 	{
 		MessageBox( NULL,
 			"フォントテクスチャ作成失敗(UiText:Init)",
@@ -274,7 +261,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	cb.StructureByteStride = 0;
 	cb.Usage = D3D11_USAGE_DYNAMIC;
 
-	if( FAILED(m_pDevice11->CreateBuffer(
+	if( FAILED( m_pDevice11->CreateBuffer(
 		&cb, NULL, &m_pConstantBuffer ) ) )
 	{
 		MessageBox( NULL, "コンスタントバッファ作成", "UiText:Init", MB_OK );
@@ -285,60 +272,6 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 
 
 	return S_OK;
-}
-
-//ブレンドステート作成.
-HRESULT clsUiText::CreateBlendState()
-{
-	//アルファブレンド用ブレンドステート作成.
-	//pngファイル内にアルファ情報があるので、透過するようにブレンドステートで設定する.
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );	//初期化.
-	blendDesc.IndependentBlendEnable = false;			//false:RenderTarget[0]のメンバーのみ使用する。true:RenderTarget[0～7]が使用できる(レンダーターゲット毎に独立したブレンド処理).
-	blendDesc.AlphaToCoverageEnable = false;			//true:アルファトゥカバレッジを使用する.
-
-	//表示タイプ
-//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:アルファブレンドを使用する.
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//アルファブレンドを指定.
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//アルファブレンドの反転を指定.
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成.
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//そのまま使用.
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;		//何もしない.
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ADD：加算合成.
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのデータの格納を許可する.
-
-	bool tmpBlendEnable[ enBLEND_STATE_size ];
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
-	{
-		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice11->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
-			assert( !"ブレンドステートの作成に失敗" );
-			return E_FAIL;
-		}
-	}
-
-	return S_OK;
-}
-
-
-//============================================================
-//	透過(アルファブレンド)設定の切り替え.
-//============================================================
-void clsUiText::SetBlend( const bool isAlpha ) const
-{
-	UINT mask = 0xffffffff;	//マスク値白.
-
-	if( isAlpha ){		
-		//ブレンドステートの設定.
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
-	}
-	else{
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
-	}
-
 }
 
 
@@ -436,7 +369,8 @@ void clsUiText::Render( const enPOS enPos )
 //		x += m_fKerning[index];
 		x += fWIDE_DIS;
 	}
-	SetBlend( false );
+
+//	SetBlend( false );
 
 
 
@@ -494,9 +428,6 @@ void clsUiText::RenderFont(
 		0, 1, &m_pVertexBuffer[FontIndex],
 		&stride, &offset );
 
-
-	//ブレンドステートをセット.
-	SetBlend( true );
 
 	//描画.
 	m_pDeviceContext11->Draw( 4, 0 );
