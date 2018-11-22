@@ -3,6 +3,40 @@
 namespace{
 	//シェーダーファイル名(ディレクトリを含む)
 	const char SHADER_NAME[] = "Shader\\Mesh.hlsl";//const:後に書かれた変数を上書きさせない.
+
+
+	//============================================================
+	//	構造体.
+	//============================================================
+	//コンスタントバッファのアプリ側の定義(Mesh.hlsl).
+	//シェーダ内のコンスタントバッファと一致している必要あり.
+	//hlslと連動している(疑ったほうがいいシリーズ).
+	struct MESHSHADER_CONSTANT_BUFFER_ZERO
+	{
+		D3DXMATRIX	mW;			//ワールド(位置)座標行列.
+		D3DXMATRIX	mWVP;		//ワールド,ビュー,射影の合成変換行列.
+		D3DXVECTOR4 vLightDir;	//ライト方向.
+		D3DXVECTOR4	vEye;		//カメラ位置(視点位置).
+		D3DXVECTOR4 vColor;		//カラー.
+	};
+	struct MESHSHADER_CONSTANT_BUFFER_FIRST
+	{
+		D3DXVECTOR4 vAmbient;	//アンビエント.
+		D3DXVECTOR4 vDiffuse;	//ディフューズ色.
+		D3DXVECTOR4	vSpecular;	//スペキュラ色.
+	};
+
+
+	//頂点の構造体.
+	struct MeshVertex
+	{
+		D3DXVECTOR3 vPos;	//頂点座標(x,y,z).
+		D3DXVECTOR3 vNormal;//法線(陰影計算に必須).
+		D3DXVECTOR2 vTex;	//テクスチャ座標.
+	};
+
+
+
 }
 
 //========================================================
@@ -12,8 +46,6 @@ clsDX9Mesh::clsDX9Mesh()
 	:m_pMesh( nullptr )
 	,m_pMeshForRay( nullptr )
 	,m_hWnd( nullptr )
-//	,pD3d( nullptr )
-	,m_pDevice9( nullptr )
 	,m_pDevice11( nullptr )
 	,m_pDeviceContext11( nullptr )
 	,m_pVertexShader( nullptr )
@@ -58,7 +90,7 @@ clsDX9Mesh::~clsDX9Mesh()
 		SAFE_DELETE_ARRAY( m_ppIndexBuffer );
 	}
 
-	SAFE_RELEASE( m_pMaterials->pTexture );
+//	SAFE_RELEASE( m_pMaterials->pTexture );
 	SAFE_DELETE_ARRAY( m_pMaterials );
 
 	SAFE_RELEASE( m_pMesh );
@@ -68,10 +100,10 @@ clsDX9Mesh::~clsDX9Mesh()
 		SAFE_RELEASE( m_pBlendState[i] );
 	}
 
+	m_pDeviceContext11 = nullptr;
+	m_pDevice11 = nullptr;
+	m_hWnd = nullptr;
 
-	//オブジェクトのリリース.
-	SAFE_RELEASE( m_pDevice9 );
-//	SAFE_RELEASE( pD3d );
 }
 
 
@@ -85,21 +117,22 @@ HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext
 	m_hWnd = hWnd;
 	m_pDevice11 = pDevice11;
 	m_pDeviceContext11 = pContext11;
+	LPDIRECT3DDEVICE9	pDevice9;	//Dx9デバイスオブジェクト.
 
 	if( FAILED( CreateBlendState() ) ){
 		return E_FAIL;
 	}
-	if( FAILED( InitDx9( m_hWnd ) ) ){
+	if( FAILED( InitDx9( m_hWnd, &pDevice9 ) ) ){
 		return E_FAIL;
 	}
-	if( FAILED( LoadXMesh( fileName ) ) ){
+	if( FAILED( LoadXMesh( fileName, pDevice9 ) ) ){
 		return E_FAIL;
 	}
 	if( FAILED( InitShader() ) ){
 		return E_FAIL;
 	}
 
-	SAFE_RELEASE( m_pDevice9 );
+	SAFE_RELEASE( pDevice9 );
 
 	return S_OK;
 }
@@ -108,7 +141,7 @@ HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext
 //========================================================
 //Dx9初期化.
 //========================================================
-HRESULT clsDX9Mesh::InitDx9(HWND hWnd)
+HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9 )
 {
 	m_hWnd = hWnd;
 
@@ -133,24 +166,24 @@ HRESULT clsDX9Mesh::InitDx9(HWND hWnd)
 	//デバイス作成(HALモード:描画と頂点処理をGPUで行う)
 	if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,m_hWnd,
 		D3DCREATE_HARDWARE_VERTEXPROCESSING,
-		&d3dpp,&m_pDevice9 ) ) )
+		&d3dpp, pOutDevice9 ) ) )
 	{
 		//デバイス作成(HALモード:描画はGPU、頂点処理をCPUで行う)
 		if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd,
 			D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-			&d3dpp, &m_pDevice9 ) ) )
+			&d3dpp, pOutDevice9 ) ) )
 		{
 			MessageBox(NULL, "HALモードでデバイスを作成できません\nREFモードで再試行します", "警告", MB_OK);
 
 			//デバイス作成(REFモード:描画はCPU、頂点処理をGPUで行う)
 			if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
 				D3DCREATE_HARDWARE_VERTEXPROCESSING,
-				&d3dpp, &m_pDevice9 ) ) )
+				&d3dpp, pOutDevice9 ) ) )
 			{
 				//デバイス作成(REFモード:描画と頂点処理をCPUで行う)
 				if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
 					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-					&d3dpp, &m_pDevice9 ) ) )
+					&d3dpp, pOutDevice9 ) ) )
 				{
 					MessageBox(NULL, "Direct3Dデバイス作成失敗", NULL, MB_OK);
 					return E_FAIL;
@@ -167,7 +200,7 @@ HRESULT clsDX9Mesh::InitDx9(HWND hWnd)
 //========================================================
 //Xファイルからメッシュをロードする.
 //========================================================
-HRESULT clsDX9Mesh::LoadXMesh(LPSTR fileName)
+HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 {
 	//マテリアルバッファ.
 	LPD3DXBUFFER pD3DXMtrlBuffer;
@@ -176,7 +209,7 @@ HRESULT clsDX9Mesh::LoadXMesh(LPSTR fileName)
 	if (FAILED(D3DXLoadMeshFromXA(
 		fileName,			//ファイル名.
 		D3DXMESH_SYSTEMMEM,	//システムメモリに読み込み.
-		m_pDevice9, NULL,
+		pDevice9, NULL,
 		&pD3DXMtrlBuffer,	//(out)マテリアル情報.
 		NULL,
 		&m_dwNumMaterials,	//(out)マテリアル数.
@@ -192,7 +225,7 @@ HRESULT clsDX9Mesh::LoadXMesh(LPSTR fileName)
 		fileName,			//ファイル名.
 		D3DXMESH_SYSTEMMEM	//システムメモリに読み込み.
 		| D3DXMESH_32BIT, 
-		m_pDevice9, NULL, 
+		pDevice9, NULL, 
 		&pD3DXMtrlBuffer,	//(out)マテリアル情報.
 		NULL, 
 		&m_dwNumMaterials,	//(out)マテリアル数.
