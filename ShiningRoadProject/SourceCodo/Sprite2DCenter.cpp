@@ -7,8 +7,8 @@ namespace{
 }
 
 clsSPRITE2D_CENTER::clsSPRITE2D_CENTER()
+	:m_vRot( { 0.0f, 0.0f, 0.0f } )
 {
-	m_vRot = { 0.0f, 0.0f, 0.0f };
 }
 
 clsSPRITE2D_CENTER::~clsSPRITE2D_CENTER()
@@ -19,7 +19,7 @@ clsSPRITE2D_CENTER::~clsSPRITE2D_CENTER()
 //================================================
 //	モデル作成.
 //================================================
-HRESULT clsSPRITE2D_CENTER::InitModel( SPRITE_STATE ss )
+HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE ss )
 {
 	float fW = ss.Disp.w * 0.5f;	//表示スプライト幅.
 	float fH = ss.Disp.h * 0.5f;	//表示スプライト高さ.
@@ -41,7 +41,7 @@ HRESULT clsSPRITE2D_CENTER::InitModel( SPRITE_STATE ss )
 	//バッファ構造体.
 	D3D11_BUFFER_DESC bd;
 	bd.Usage = D3D11_USAGE_DEFAULT;//使用方(デフォルト)
-	bd.ByteWidth = sizeof(SpriteVertex) * uVerMax;//頂点サイズ(頂点×4)
+	bd.ByteWidth = sizeof( SpriteVertex ) * uVerMax;//頂点サイズ(頂点×4)
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;//頂点バッファとして扱う.
 	bd.CPUAccessFlags = 0;	//CPUからはアクセスしない.
 	bd.MiscFlags = 0;	//その他のフラグ(未使用)
@@ -62,7 +62,7 @@ HRESULT clsSPRITE2D_CENTER::InitModel( SPRITE_STATE ss )
 
 
 	//頂点バッファをセット.
-	UINT stride = sizeof(SpriteVertex);//データ間隔.
+	UINT stride = sizeof( SpriteVertex );//データ間隔.
 	UINT offset = 0;
 	m_pDeviceContext11->IASetVertexBuffers(
 		0, 1,
@@ -166,7 +166,7 @@ void clsSPRITE2D_CENTER::Render()
 		0, 1, &m_pConstantBuffer);
 
 	//頂点バッファをセット.
-	UINT stride = sizeof(SpriteVertex);	//データの間隔.
+	UINT stride = sizeof( SpriteVertex );	//データの間隔.
 	UINT offset = 0;
 	m_pDeviceContext11->IASetVertexBuffers(
 		0, 1, &m_pVertexBuffer, &stride, &offset);
@@ -190,8 +190,8 @@ void clsSPRITE2D_CENTER::Render()
 	//プリミティブをレンダリング.
 	m_pDeviceContext11->Draw(4, 0);
 
-	//アルファブレンドを無効にする.
-	SetBlend(false);
+//	//アルファブレンドを無効にする.
+//	SetBlend(false);
 }
 
 

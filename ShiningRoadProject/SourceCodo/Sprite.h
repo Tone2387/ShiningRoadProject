@@ -24,8 +24,7 @@
 //============================================================
 //	スプライトクラス.
 //============================================================
-class clsSprite
-	: public clsCommon
+class clsSprite : public clsCommon
 {
 public:
 	clsSprite();	//コンストラクタ.

@@ -1,6 +1,7 @@
 #include "Sprite2D.h"
 
 namespace{
+
 }
 
 
@@ -216,7 +217,7 @@ HRESULT clsSprite2D::InitShader()
 //================================================
 //	モデル作成.
 //================================================
-HRESULT clsSprite2D::InitModel( SPRITE_STATE ss )
+HRESULT clsSprite2D::InitModel( const SPRITE_STATE ss )
 {
 	float fW = ss.Disp.w;	//表示スプライト幅.
 	float fH = ss.Disp.h;	//表示スプライト高さ.
@@ -408,8 +409,8 @@ void clsSprite2D::Render()
 	//プリミティブをレンダリング.
 	m_pDeviceContext11->Draw(4, 0);
 
-	//アルファブレンドを無効にする.
-	SetBlend(false);
+//	//アルファブレンドを無効にする.
+//	SetBlend(false);
 }
 
 

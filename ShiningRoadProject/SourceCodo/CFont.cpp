@@ -17,6 +17,21 @@ namespace{
 
 #define FONT_SHADER		"Shader\\FontText.hlsl"
 
+//アラインメント設定(強制的に16バイトに設定する).
+#define ALIGN16 _declspec( align ( 16 ) )
+
+	//構造体.
+	struct FONTSHADER_CONSTANT_BUFFER
+	{
+		ALIGN16 D3DXMATRIX mW;			//位置とカメラ位置と表示画面設定.
+		ALIGN16 float ViewPortWidth;	//カラー(RGBAの型に合わせる).
+		ALIGN16 float ViewPortHeight;	//UV座標.
+		ALIGN16 float Alpha;	//透過値.
+		ALIGN16 D3DXVECTOR2 Uv;	//UV座標.
+		ALIGN16 D3DXVECTOR4 Color;	//UV座標.
+	};
+
+
 	//フォントのパス.
 	const char* sFONT_STYLE_PATH = "Data\\Font\\FontType\\Makinas-Scrap-5.otf";//Makinas-Scrap-5.otf.//aozora.ttf.
 

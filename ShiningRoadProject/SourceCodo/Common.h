@@ -1,16 +1,12 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
+#define ALIGN16	_declspec( align( 16 ) )
 
 //インクルード.
 #include "Global.h"
 
-//頂点の構造体.
-struct SpriteVertex
-{
-	D3DXVECTOR3 vPos;	//位置.
-	D3DXVECTOR2 vTex;	//テクスチャ座標.
-};
+
 
 //幅高さ構造体.
 struct WHSIZE_FLOAT
@@ -34,6 +30,13 @@ public:
 
 
 protected:
+
+	//頂点の構造体.
+	struct SpriteVertex
+	{
+		D3DXVECTOR3 vPos;	//位置.
+		D3DXVECTOR2 vTex;	//テクスチャ座標.
+	};
 
 	//ブレンドステート作成.
 	HRESULT CreateBlendState();

@@ -21,6 +21,13 @@ namespace{
 		ALIGN16 float		isfNega;
 	};
 
+	//頂点の構造体.
+	struct SCREEN_VERTEX
+	{
+		D3DXVECTOR3 vPos;	//位置.
+		D3DXVECTOR2 vTex;	//テクスチャ座標.
+	};
+
 	enum enSE_WEAK : int{
 		enSE_WEAK_A = 0,
 		enSE_WEAK_B,
@@ -416,7 +423,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	//板ポリ(四角形)の頂点を作成.
 	float tmpw = WND_W;
 	float tmph = WND_H;
-	SpriteVertex vertices[] = 
+	SCREEN_VERTEX vertices[] = 
 	{
 #if 1
 		//頂点座標(x,y,z).					//UV座標( u, v ).
@@ -442,7 +449,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory( &bd, sizeof( bd ) );
 	bd.Usage				= D3D11_USAGE_DEFAULT;				//使用法(デフォルト).
-	bd.ByteWidth			= sizeof( SpriteVertex ) * uVerMax;	//頂点サイズ(頂点*4).
+	bd.ByteWidth			= sizeof( SCREEN_VERTEX ) * uVerMax;	//頂点サイズ(頂点*4).
 	bd.BindFlags			= D3D11_BIND_VERTEX_BUFFER;			//頂点バッファとして扱う.
 	bd.CPUAccessFlags		= 0;								//CPUからはアクセスしない.
 	bd.MiscFlags			= 0;								//その他のフラグ(未使用).
@@ -510,7 +517,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	m_wpContext->PSSetSamplers(			0, 1, &m_pSamplerState );
 
 	//頂点バッファをセット.
-	UINT stride = sizeof( SpriteVertex );//データ間隔.
+	UINT stride = sizeof( SCREEN_VERTEX );//データ間隔.
 	uint32_t offset = 0;
 	m_wpContext->IASetVertexBuffers( 0, 1, &pBuffer, &stride, &offset );
 	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );

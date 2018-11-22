@@ -67,10 +67,6 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 		return E_FAIL;
 	}
 
-
-
-
-
 	return S_OK;
 }
 

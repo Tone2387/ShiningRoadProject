@@ -1,13 +1,10 @@
-#ifndef _C_FONT_H_
-#define _C_FONT_H_
+#ifndef C_FONT_H_
+#define C_FONT_H_
 
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Global.h"
 
-
-//アラインメント設定(強制的に16バイトに設定する).
-#define ALIGN16 _declspec( align ( 16 ) )
 
 
 //日本語のUI用.
@@ -91,17 +88,6 @@ private:
 
 private:
 
-	//構造体.
-	struct FONTSHADER_CONSTANT_BUFFER
-	{
-		ALIGN16 D3DXMATRIX mW;			//位置とカメラ位置と表示画面設定.
-		ALIGN16 float ViewPortWidth;	//カラー(RGBAの型に合わせる).
-		ALIGN16 float ViewPortHeight;	//UV座標.
-		ALIGN16 float Alpha;	//透過値.
-		ALIGN16 D3DXVECTOR2 Uv;	//UV座標.
-		ALIGN16 D3DXVECTOR4 Color;	//UV座標.
-	};
-
 	//頂点の構造体.
 	struct FONT_VERTEX
 	{
@@ -154,4 +140,4 @@ private:
 
 };
 
-#endif _C_FONT_H_
+#endif C_FONT_H_

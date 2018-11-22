@@ -27,12 +27,13 @@ public:
 protected:
 
 	//ƒ‚ƒfƒ‹ì¬.
-	HRESULT InitModel( SPRITE_STATE ss ) override;
-
+	HRESULT InitModel( const SPRITE_STATE ss ) override;
 
 	//‰ñ“]‚Ì”’l‚ÌŒÀŠE‚©‚ç”ò‚Ño‚È‚¢.
 	D3DXVECTOR3 GuardRotOver( D3DXVECTOR3 &vRot );
 	float GuardRotOver( float &fRot );
+
+protected:
 
 	D3DXVECTOR3 m_vRot;//‰ñ“].
 };

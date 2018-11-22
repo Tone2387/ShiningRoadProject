@@ -6,22 +6,11 @@
 
 #include "Common.h"//共通クラス.
 
-#define ALIGN16	_declspec(align(16))
 
 
 //======================================
 //	構造体.
 //======================================
-//コンスタントバッファのアプリ側の定義(Sprite2D.hlsl)
-//※シェーダ内のコンスタントバッファと一致している必要あり.
-struct SPRITE2D_CONSTANT_BUFFER
-{
-	ALIGN16 D3DXMATRIX	mW;				//ワールド行列.
-	ALIGN16	D3DXVECTOR4	vColor;			//アルファ値(透過で使用する)
-	ALIGN16 float		fViewPortWidth;	//ビューポート幅.
-	ALIGN16 float		fViewPortHeight;//ビューポート高さ.
-	ALIGN16 D3DXVECTOR2	vUV;			//UV座標.
-};
 
 //スプライト構造体.
 struct SPRITE_STATE
@@ -92,11 +81,21 @@ protected:
 	//シェーダ作成.
 	HRESULT InitShader();
 	//モデル作成.
-	virtual HRESULT InitModel( SPRITE_STATE ss );
+	virtual HRESULT InitModel( const SPRITE_STATE ss );
 	//テクスチャ作成.
 	HRESULT CreateTexture( const char* const fileName,
 		ID3D11ShaderResourceView** pTex );
 
+protected:
+
+	struct SPRITE2D_CONSTANT_BUFFER
+	{
+		ALIGN16 D3DXMATRIX	mW;				//ワールド行列.
+		ALIGN16	D3DXVECTOR4	vColor;			//アルファ値(透過で使用する)
+		ALIGN16 float		fViewPortWidth;	//ビューポート幅.
+		ALIGN16 float		fViewPortHeight;//ビューポート高さ.
+		ALIGN16 D3DXVECTOR2	vUV;			//UV座標.
+	};
 
 
 	//↓モデルの種類ごとに用意.
