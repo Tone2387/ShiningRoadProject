@@ -21,6 +21,7 @@ public:
 	clsCommon();
 	virtual ~clsCommon();
 
+
 protected:
 
 	//頂点の構造体.
@@ -39,8 +40,8 @@ protected:
 protected:
 
 	//↓アプリに一つ.
-	ID3D11Device*			m_pDevice;		//デバイスオブジェクト.
-	ID3D11DeviceContext*	m_pContext;	//デバイスコンテキスト.
+	ID3D11Device*			m_wpDevice;		//デバイスオブジェクト.
+	ID3D11DeviceContext*	m_wpContext;	//デバイスコンテキスト.
 
 	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 

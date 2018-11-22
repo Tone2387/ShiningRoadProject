@@ -52,8 +52,8 @@ HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE ss )
 	InitData.pSysMem = vertices;//板ポリの頂点をセット.
 
 	//頂点バッファの作成.
-	if (FAILED(
-		m_pDevice->CreateBuffer(
+	if( FAILED(
+		m_wpDevice->CreateBuffer(
 		&bd, &InitData, &m_pVertexBuffer)))
 	{
 		MessageBox(NULL, "頂点バッファ作成失敗", "エラー", MB_OK);
@@ -64,7 +64,7 @@ HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE ss )
 	//頂点バッファをセット.
 	UINT stride = sizeof( SpriteVertex );//データ間隔.
 	UINT offset = 0;
-	m_pContext->IASetVertexBuffers(
+	m_wpContext->IASetVertexBuffers(
 		0, 1,
 		&m_pVertexBuffer, &stride, &offset);
 
@@ -86,7 +86,7 @@ HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE ss )
 
 	//サンプラー作成.
 	if (FAILED(
-		m_pDevice->CreateSamplerState(
+		m_wpDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear)))//(out)サンプラー.
 	{
 		MessageBox(NULL, "サンプラ作成失敗", "エラー", MB_OK);
@@ -122,8 +122,8 @@ void clsSPRITE2D_CENTER::Render()
 	mWorld = mScale * mRoll * mPitch * mYaw * mTrans;
 
 	//使用するシェーダの登録.
-	m_pContext->VSSetShader(m_pVertexShader, NULL, 0);
-	m_pContext->PSSetShader(m_pPixelShader, NULL, 0);
+	m_wpContext->VSSetShader(m_pVertexShader, NULL, 0);
+	m_wpContext->PSSetShader(m_pPixelShader, NULL, 0);
 
 
 	//シェーダのコンスタントバッファに各種データを渡す.
@@ -131,7 +131,7 @@ void clsSPRITE2D_CENTER::Render()
 	SPRITE2D_CONSTANT_BUFFER cd;	//コンスタントバッファ.
 	//バッファ内のデータの書き方開始時にmap.
 	if (SUCCEEDED(
-		m_pContext->Map(
+		m_wpContext->Map(
 		m_pConstantBuffer, 0,
 		D3D11_MAP_WRITE_DISCARD, 0, &pData)))
 	{
@@ -156,39 +156,39 @@ void clsSPRITE2D_CENTER::Render()
 		memcpy_s(pData.pData, pData.RowPitch,
 			(void*)(&cd), sizeof(cd));
 
-		m_pContext->Unmap(m_pConstantBuffer, 0);
+		m_wpContext->Unmap(m_pConstantBuffer, 0);
 	}
 
 	//このコンスタントバッファをどのシェーダで使うか？.
-	m_pContext->VSSetConstantBuffers(
+	m_wpContext->VSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer);
-	m_pContext->PSSetConstantBuffers(
+	m_wpContext->PSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer);
 
 	//頂点バッファをセット.
 	UINT stride = sizeof( SpriteVertex );	//データの間隔.
 	UINT offset = 0;
-	m_pContext->IASetVertexBuffers(
+	m_wpContext->IASetVertexBuffers(
 		0, 1, &m_pVertexBuffer, &stride, &offset);
 
 	//頂点インプットレイアウトをセット.
-	m_pContext->IASetInputLayout(m_pVertexLayout);
+	m_wpContext->IASetInputLayout(m_pVertexLayout);
 
 	//プリミティブ・トポロジーをセット.
-	m_pContext->IASetPrimitiveTopology(
+	m_wpContext->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	//テクスチャをシェーダに渡す.
-	m_pContext->PSSetSamplers(
+	m_wpContext->PSSetSamplers(
 		0, 1, &m_pSampleLinear);	//サンプラ-をセット.
-	m_pContext->PSSetShaderResources(
+	m_wpContext->PSSetShaderResources(
 		0, 1, &m_pTexture);		//テクスチャをシェーダに渡す.
 
 	//アルファブレンド用ブレンドステート作成＆設定.
 	SetBlend( true );
 
 	//プリミティブをレンダリング.
-	m_pContext->Draw(4, 0);
+	m_wpContext->Draw(4, 0);
 
 //	//アルファブレンドを無効にする.
 //	SetBlend(false);

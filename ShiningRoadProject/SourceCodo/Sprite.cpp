@@ -52,8 +52,8 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 	ID3D11DeviceContext* const pContext11,
 	const char* sTexName )
 {
-	m_pDevice = pDevice11;
-	m_pContext = pContext11;
+	m_wpDevice = pDevice11;
+	m_wpContext = pContext11;
 
 	if( FAILED( CreateBlendState() ) ){
 		return E_FAIL;
@@ -110,7 +110,7 @@ HRESULT clsSprite::InitShader()
 	SAFE_RELEASE( pErrors );
 
 	//上記で作成したブロブから「バーテックスシェーダ」を作成.
-	if( FAILED( m_pDevice->CreateVertexShader(
+	if( FAILED( m_wpDevice->CreateVertexShader(
 		pCompiledShader->GetBufferPointer(),
 		pCompiledShader->GetBufferSize(),
 		NULL,
@@ -144,7 +144,7 @@ HRESULT clsSprite::InitShader()
 	UINT numElements = sizeof( layout ) / sizeof( layout[0] );//.
 
 	//頂点インプットレイアウトの作成.
-	if( FAILED( m_pDevice->CreateInputLayout(
+	if( FAILED( m_wpDevice->CreateInputLayout(
 		layout,
 		numElements,
 		pCompiledShader->GetBufferPointer(),
@@ -180,7 +180,7 @@ HRESULT clsSprite::InitShader()
 	SAFE_RELEASE( pErrors );
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
-	if( FAILED( m_pDevice->CreatePixelShader(
+	if( FAILED( m_wpDevice->CreatePixelShader(
 		pCompiledShader->GetBufferPointer(),
 		pCompiledShader->GetBufferSize(),
 		NULL,
@@ -204,7 +204,7 @@ HRESULT clsSprite::InitShader()
 	cb.Usage		= D3D11_USAGE_DYNAMIC;	//使用方法:直接書き込み.
 
 	//コンスタントバッファ作成.
-	if( FAILED( m_pDevice->CreateBuffer(
+	if( FAILED( m_wpDevice->CreateBuffer(
 		&cb,
 		NULL,
 		&m_pConstantBuffer ) ) )
@@ -253,7 +253,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	InitData.pSysMem	= vertices;	//板ポリの頂点をセット.
 
 	//頂点バッファの作成.
-	if( FAILED( m_pDevice->CreateBuffer(
+	if( FAILED( m_wpDevice->CreateBuffer(
 		&bd, &InitData, &m_pVertexBuffer ) ) )
 	{
 		MessageBox( NULL, "頂点バッファ作成失敗", "エラー", MB_OK );
@@ -264,7 +264,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	//頂点バッファをセット.
 	UINT stride = sizeof( SpriteVertex );//データ間隔.
 	UINT offset = 0;//開始位置.
-	m_pContext->IASetVertexBuffers(
+	m_wpContext->IASetVertexBuffers(
 		0, 1, 
 		&m_pVertexBuffer, &stride, &offset );
 
@@ -286,7 +286,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 
 
 	//サンプラー作成.
-	if( FAILED( m_pDevice->CreateSamplerState(
+	if( FAILED( m_wpDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear ) ) )//(out)サンプラー.
 	{
 		MessageBox( NULL, "サンプラ作成失敗", "エラー", MB_OK );
@@ -295,7 +295,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 
 	//テクスチャ作成.
 	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
-		m_pDevice,		//リソースを使用するデバイスへのポインタ.
+		m_wpDevice,		//リソースを使用するデバイスへのポインタ.
 		sTexName,
 		NULL, NULL,
 		&m_pTexture,	//(out)テクスチャ.
@@ -334,8 +334,8 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 	mWorld = mScale * mYaw * mPitch * mRoll * mTrans;
 
 	//使用するシェーダの登録.
-	m_pContext->VSSetShader( m_pVertexShader, NULL, 0 );
-	m_pContext->PSSetShader( m_pPixelShader,  NULL, 0 );
+	m_wpContext->VSSetShader( m_pVertexShader, NULL, 0 );
+	m_wpContext->PSSetShader( m_pPixelShader,  NULL, 0 );
 
 	if( isBillBoard ){
 		//ビルボード用.
@@ -352,7 +352,7 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 	D3D11_MAPPED_SUBRESOURCE pData;
 	SPRITESHADER_CONSTANT_BUFFER cd;	//コンスタントバッファ.
 	//バッファ内のデータの書き方開始時にmap.
-	if( SUCCEEDED( m_pContext->Map(
+	if( SUCCEEDED( m_wpContext->Map(
 		m_pConstantBuffer, 0,
 		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
@@ -389,32 +389,32 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cd ), sizeof( cd ) );
 
-		m_pContext->Unmap( m_pConstantBuffer, 0 );
+		m_wpContext->Unmap( m_pConstantBuffer, 0 );
 	}
 
 	//このコンスタントバッファをどのシェーダで使うか?.
-	m_pContext->VSSetConstantBuffers(
+	m_wpContext->VSSetConstantBuffers(
 		2, 1, &m_pConstantBuffer );
-	m_pContext->PSSetConstantBuffers(
+	m_wpContext->PSSetConstantBuffers(
 		2, 1, &m_pConstantBuffer );
 
 	//頂点バッファをセット.
 	UINT stride = sizeof( SpriteVertex );
 	UINT offset = 0;
-	m_pContext->IASetVertexBuffers(
+	m_wpContext->IASetVertexBuffers(
 		0, 1, &m_pVertexBuffer, &stride, &offset );
 
 	//頂点インプットレイアウトをセット.
-	m_pContext->IASetInputLayout( m_pVertexLayout );
+	m_wpContext->IASetInputLayout( m_pVertexLayout );
 
 	//プリミティブ・トポロジーをセット.
-	m_pContext->IASetPrimitiveTopology(
+	m_wpContext->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	//テクスチャをシェーダに渡す.
-	m_pContext->PSSetSamplers(
+	m_wpContext->PSSetSamplers(
 		0, 1, &m_pSampleLinear );	//サンプラーをセット.
-	m_pContext->PSSetShaderResources(
+	m_wpContext->PSSetShaderResources(
 		0, 1, &m_pTexture );		//テクスチャをシェーダに渡す.
 
 	//アルファブレンド用ブレンドステート作成&設定.
@@ -422,7 +422,7 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 
 
 	//プリミティブをレンダリング.
-	m_pContext->Draw( 4, 0 );
+	m_wpContext->Draw( 4, 0 );
 
 //	//アルファブレンドを無効にする.
 //	SetBlend( false );

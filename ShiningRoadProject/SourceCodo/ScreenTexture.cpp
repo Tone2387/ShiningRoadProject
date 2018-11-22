@@ -68,9 +68,9 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_isNega( false )
 	,m_vColor( 1.0f, 1.0f, 1.0f, 1.0f )
 {
-	m_pContext = pContext;
-	assert( m_pContext );
-	m_pContext->GetDevice( &m_pDevice );
+	m_wpContext = pContext;
+	assert( m_wpContext );
+	m_wpContext->GetDevice( &m_wpDevice );
 
 	if( FAILED( CreateTexture() ) ){
 		ERR_MSG( "描画先テクスチャ作成失敗", "" );
@@ -105,8 +105,8 @@ clsSCREEN_TEXTURE::~clsSCREEN_TEXTURE()
 
 
 
-	m_pContext = nullptr;
-	m_pDevice = nullptr;
+	m_wpContext = nullptr;
+	m_wpDevice = nullptr;
 }
 
 
@@ -127,7 +127,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	texDesc.SampleDesc.Quality	= 0;
 	texDesc.MiscFlags			= 0;
 	
-	HRESULT hr = m_pDevice->CreateTexture2D( &texDesc, nullptr, &m_pTexture );
+	HRESULT hr = m_wpDevice->CreateTexture2D( &texDesc, nullptr, &m_pTexture );
 	if( FAILED( hr ) ){
 		ERR_MSG( "スクリーンテクスチャ作成失敗", "" );
 		assert( !"スクリーンテクスチャ作成失敗" );
@@ -157,7 +157,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	rtvDesc.Texture3D.MipSlice						= 0;
 	rtvDesc.Texture3D.WSize							= 0;
 	
-	hr = m_pDevice->CreateRenderTargetView( m_pTexture, &rtvDesc, &m_pRenderTargetView );
+	hr = m_wpDevice->CreateRenderTargetView( m_pTexture, &rtvDesc, &m_pRenderTargetView );
 	if( FAILED( hr ) ){
 		ERR_MSG( "スクリーンレンダーターゲットビュー作成失敗", "" );
 		assert( !"スクリーンレンダーターゲットビュー作成失敗" );
@@ -171,7 +171,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	srvDesc.ViewDimension		= D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels	= 1;
 
-	hr = m_pDevice->CreateShaderResourceView( m_pTexture, &srvDesc, &m_pShaderResourceView );
+	hr = m_wpDevice->CreateShaderResourceView( m_pTexture, &srvDesc, &m_pShaderResourceView );
 	if( FAILED( hr ) ){
 		ERR_MSG( "スクリーンシェーダーリソースビュー作成失敗", "" );
 		assert( !"スクリーンシェーダーリソースビュー作成失敗" );
@@ -189,7 +189,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	smpDesc.MinLOD			= 0;
 	smpDesc.MaxLOD			= D3D11_FLOAT32_MAX;
 
-	hr = m_pDevice->CreateSamplerState( &smpDesc, &m_pSamplerState );
+	hr = m_wpDevice->CreateSamplerState( &smpDesc, &m_pSamplerState );
 	if( FAILED( hr ) ){
 		ERR_MSG( "スクリーンサンプラーステート作成失敗", "" );
 		assert( !"スクリーンサンプラーステート作成失敗" );
@@ -233,7 +233,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 	//上記で作成したブロブから「バーテックスシェーダ」を作成.
 	if( FAILED(
-		m_pDevice->CreateVertexShader(
+		m_wpDevice->CreateVertexShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			NULL,
@@ -271,7 +271,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
 	if( FAILED(
-		m_pDevice->CreatePixelShader(
+		m_wpDevice->CreatePixelShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			NULL,
@@ -305,7 +305,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
 	if( FAILED(
-		m_pDevice->CreatePixelShader(
+		m_wpDevice->CreatePixelShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			NULL,
@@ -330,7 +330,7 @@ HRESULT clsSCREEN_TEXTURE::CreateConstantBuffer()
 	cb.Usage = D3D11_USAGE_DYNAMIC;//使用方法:直接書き込み.
 
 	//コンスタントバッファ作成.
-	if( FAILED( m_pDevice->CreateBuffer(
+	if( FAILED( m_wpDevice->CreateBuffer(
 		&cb,
 		NULL,
 		&m_pConstantBuffer ) ) )
@@ -349,9 +349,9 @@ void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pD
 
 	//レンダーターゲットをテクスチャに.
 	float clearcolor[] = { 0.125f, 0.125f, 2.5f, 1.0f };
-	m_pContext->OMSetRenderTargets( 1, &m_pRenderTargetView, pDepthStencilView );
-	m_pContext->ClearRenderTargetView( m_pRenderTargetView, clearcolor );
-	m_pContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+	m_wpContext->OMSetRenderTargets( 1, &m_pRenderTargetView, pDepthStencilView );
+	m_wpContext->ClearRenderTargetView( m_pRenderTargetView, clearcolor );
+	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 }
 
 
@@ -410,9 +410,9 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	if( !pDepthStencilView )	return;
 
 	float clearcolor[] = { 1.5f, 0.5f, 0.5f, 1.0f };
-	m_pContext->OMSetRenderTargets( 1, &pBackBuffer_TexRTV, pDepthStencilView );
-	m_pContext->ClearRenderTargetView( pBackBuffer_TexRTV, clearcolor );
-	m_pContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+	m_wpContext->OMSetRenderTargets( 1, &pBackBuffer_TexRTV, pDepthStencilView );
+	m_wpContext->ClearRenderTargetView( pBackBuffer_TexRTV, clearcolor );
+	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 
 	ID3D11Buffer* pBuffer;
 	//板ポリ(四角形)の頂点を作成.
@@ -458,7 +458,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 
 	//頂点バッファの作成.
 	if( FAILED(
-		m_pDevice->CreateBuffer(
+		m_wpDevice->CreateBuffer(
 			&bd, &InitData, &pBuffer ) ) )
 	{
 		ERR_MSG( "バッファ作成失敗", "" );
@@ -466,17 +466,17 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		return ;
 	}
 
-	m_pContext->VSSetShader( m_pVertexShader, NULL, 0 );
+	m_wpContext->VSSetShader( m_pVertexShader, NULL, 0 );
 	if( m_isNoise ){
-		m_pContext->PSSetShader( m_pNoisePS, NULL, 0 );
+		m_wpContext->PSSetShader( m_pNoisePS, NULL, 0 );
 	}
 	else{
-		m_pContext->PSSetShader( m_pDefaultPS, NULL, 0 );
+		m_wpContext->PSSetShader( m_pDefaultPS, NULL, 0 );
 	}
 
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
-	if( SUCCEEDED( m_pContext->Map(
+	if( SUCCEEDED( m_wpContext->Map(
 		m_pConstantBuffer, 0,
 		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
@@ -500,27 +500,27 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cb ), sizeof( cb ) );
-		m_pContext->Unmap( m_pConstantBuffer, 0 );
+		m_wpContext->Unmap( m_pConstantBuffer, 0 );
 	}
 
 	//このコンスタントバッファをどのシェーダで使うか？.
-	m_pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
-	m_pContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+	m_wpContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+	m_wpContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 
 	//テクスチャをシェーダに渡す.
-	m_pContext->PSSetShaderResources(	0, 1, &m_pShaderResourceView );
-	m_pContext->PSSetSamplers(			0, 1, &m_pSamplerState );
+	m_wpContext->PSSetShaderResources(	0, 1, &m_pShaderResourceView );
+	m_wpContext->PSSetSamplers(			0, 1, &m_pSamplerState );
 
 	//頂点バッファをセット.
 	UINT stride = sizeof( SpriteVertex );//データ間隔.
 	uint32_t offset = 0;
-	m_pContext->IASetVertexBuffers( 0, 1, &pBuffer, &stride, &offset );
-	m_pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
-//	m_pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+	m_wpContext->IASetVertexBuffers( 0, 1, &pBuffer, &stride, &offset );
+	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+//	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
 	SetBlend( false );
 
-	m_pContext->Draw( 4, 0 );//uVerMax.
+	m_wpContext->Draw( 4, 0 );//uVerMax.
 
 }
 

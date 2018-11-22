@@ -72,8 +72,8 @@ clsFont::clsFont(
 	,m_vPosLast( m_vPos )
 	,m_iTextRow( iERROR_TEXT_ROW_NUM )
 {
-	m_pDevice = pDevice;
-	m_pContext = pContext;
+	m_wpDevice = pDevice;
+	m_wpContext = pContext;
 
 //	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 //		m_pBlendState[i] = nullptr;
@@ -151,7 +151,7 @@ HRESULT clsFont::CreateShader()
 	SAFE_RELEASE( pErrors );
 
 	//Vertex Shaderの作成.
-	if( FAILED( m_pDevice->CreateVertexShader(
+	if( FAILED( m_wpDevice->CreateVertexShader(
 		(pCompileShader)->GetBufferPointer(),
 		(pCompileShader)->GetBufferSize(),
 		NULL, &m_pVertexShader ) ) )	//(out)頂点シェーダー.
@@ -181,7 +181,7 @@ HRESULT clsFont::CreateShader()
 	UINT numElements_Ita = sizeof( layout_Ita ) / sizeof( layout_Ita[0] );
 
 	//頂点インプットレイアウト作成.
-	if( FAILED( m_pDevice->CreateInputLayout(layout_Ita,
+	if( FAILED( m_wpDevice->CreateInputLayout(layout_Ita,
 		numElements_Ita, pCompileShader->GetBufferPointer(),	//(out)頂点インプットレイアウト.
 		pCompileShader->GetBufferSize(), &m_pVertexLayout ) ) )
 	{
@@ -200,7 +200,7 @@ HRESULT clsFont::CreateShader()
 	SAFE_RELEASE( pErrors );
 
 	//Pixel Shaderの作成.
-	if( FAILED( m_pDevice->CreatePixelShader(
+	if( FAILED( m_wpDevice->CreatePixelShader(
 		(pCompileShader)->GetBufferPointer(),
 		(pCompileShader)->GetBufferSize(), NULL, &m_pPixelShader ) ) )	//(out)頂点.
 	{
@@ -246,7 +246,7 @@ HRESULT clsFont::CreateVertexBuffer()
 	D3D11_SUBRESOURCE_DATA InitDate;
 	InitDate.pSysMem = vertices;		//三角形の頂点をリセット.
 	//頂点バッファの作成.
-	if( FAILED( m_pDevice->CreateBuffer( &bd, &InitDate, &m_pVertexBuffer ) ) ){
+	if( FAILED( m_wpDevice->CreateBuffer( &bd, &InitDate, &m_pVertexBuffer ) ) ){
 		ERR_MSG("頂点バッファ(m_pItaVB)の作成に失敗", "InitPolygon");
 		return E_FAIL;
 	}
@@ -254,7 +254,7 @@ HRESULT clsFont::CreateVertexBuffer()
 	//頂点バッファをセット.
 	UINT stride = sizeof(FONT_VERTEX);	//頂点間のサイズ.
 	UINT offset = 0;					//オフセット値.
-	m_pContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
+	m_wpContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
 
 	//テクスチャ用サンプラー作成.
 	D3D11_SAMPLER_DESC SamDesc;
@@ -263,7 +263,7 @@ HRESULT clsFont::CreateVertexBuffer()
 	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;		//ラッピングモード（WRAP：繰り返し).
 	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	m_pDevice->CreateSamplerState( &SamDesc, &m_pSampleLinear );	//（out)サンプラー.
+	m_wpDevice->CreateSamplerState( &SamDesc, &m_pSampleLinear );	//（out)サンプラー.
 
 	return S_OK;
 }
@@ -281,7 +281,7 @@ HRESULT clsFont::CreateConstantBuffer()
 	ItaBD.Usage = D3D11_USAGE_DYNAMIC;					//使用法：直接書き込み.
 
 	//コンスタンストバッファ作成.
-	if( FAILED( m_pDevice->CreateBuffer(
+	if( FAILED( m_wpDevice->CreateBuffer(
 		&ItaBD, NULL, &m_pConstantBuffer ) ) )
 	{
 		ERR_MSG("コンスタントバッファ(Ita)の作成に失敗", "InitShader");
@@ -422,14 +422,14 @@ HRESULT clsFont::CreateTexture()
 //			}
 			
 
-			if( FAILED( m_pDevice->CreateTexture2D( &desc, 0, &m_vecpTex2D[ iTex ] ) ) ){
+			if( FAILED( m_wpDevice->CreateTexture2D( &desc, 0, &m_vecpTex2D[ iTex ] ) ) ){
 				MessageBox( 0, "テクスチャ作成失敗", "CreateTexture", MB_OK );
 				return E_FAIL;
 			}
 
 			D3D11_MAPPED_SUBRESOURCE hMappedResource;
 			if( FAILED
-				( m_pContext->Map(
+				( m_wpContext->Map(
 				m_vecpTex2D[ iTex ],
 				0,
 				D3D11_MAP_WRITE_DISCARD,
@@ -467,7 +467,7 @@ HRESULT clsFont::CreateTexture()
 				}
 			}
 
-			m_pContext->Unmap( m_vecpTex2D[ iTex ], 0 );
+			m_wpContext->Unmap( m_vecpTex2D[ iTex ], 0 );
 
 			//テクスチャ情報を取得する.
 			D3D11_TEXTURE2D_DESC texDesc;
@@ -481,7 +481,7 @@ HRESULT clsFont::CreateTexture()
 			srvDesc.Texture2D.MostDetailedMip = 0;
 			srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
 
-			if( FAILED( m_pDevice->CreateShaderResourceView(
+			if( FAILED( m_wpDevice->CreateShaderResourceView(
 				m_vecpTex2D[ iTex ], &srvDesc, &m_vecvecpAsciiTexture[ iTex ][ iCharCnt ] ) ) )
 			{
 				assert( !"テクスチャ作成失敗" );
@@ -560,9 +560,9 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 
 
 	//使用するシェーダーの登録.
-	m_pContext->VSSetShader( m_pVertexShader,	NULL, 0 );
-	m_pContext->PSSetShader( m_pPixelShader,	NULL, 0 );
-	m_pContext->GSSetShader( NULL,				NULL, 0 );
+	m_wpContext->VSSetShader( m_pVertexShader,	NULL, 0 );
+	m_wpContext->PSSetShader( m_pPixelShader,	NULL, 0 );
+	m_wpContext->GSSetShader( NULL,				NULL, 0 );
 
 	//文字列の左上を座標の位置に持ってくるために必要.
 	const D3DXVECTOR3 vOFFSET_POS = { -m_fScale, m_fScale * 0.5f, 0.0f };
@@ -620,7 +620,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 		//シェーダーのコンスタントバッファに各種データを渡す.
 		D3D11_MAPPED_SUBRESOURCE	pData;
 		FONTSHADER_CONSTANT_BUFFER	cb;
-		if( SUCCEEDED( m_pContext->Map(
+		if( SUCCEEDED( m_wpContext->Map(
 			m_pConstantBuffer, 0,
 			D3D11_MAP_WRITE_DISCARD,
 			0, &pData ) ) )
@@ -639,7 +639,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 			cb.Alpha = m_fAlpha;
 
 			memcpy_s( pData.pData, pData.RowPitch, (void*)( &cb ), sizeof( cb ) );
-			m_pContext->Unmap( m_pConstantBuffer, 0 );
+			m_wpContext->Unmap( m_pConstantBuffer, 0 );
 		}
 
 		//最後の文字の位置を取得.
@@ -649,28 +649,28 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 			0.0f );
 
 		//このコンスタントバッファを使うシェーダーの登録.
-		m_pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
-		m_pContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+		m_wpContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+		m_wpContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 
 		//バーテックスバッファをセット.
 		UINT stride = sizeof( FONT_VERTEX );
 		UINT offset = 0;
-		m_pContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
+		m_wpContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
 
 		//トポロジー.
-		m_pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+		m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 		//頂点インプットレイアウトをセット.
-		m_pContext->IASetInputLayout(m_pVertexLayout);
+		m_wpContext->IASetInputLayout(m_pVertexLayout);
 
 		//テクスチャをシェーダーに渡す.
-		m_pContext->PSSetSamplers( 0, 1, &m_pSampleLinear );
-		m_pContext->PSSetShaderResources( 0, 1, &m_vecvecpAsciiTexture[ iTextRow ][i] );
+		m_wpContext->PSSetSamplers( 0, 1, &m_pSampleLinear );
+		m_wpContext->PSSetShaderResources( 0, 1, &m_vecvecpAsciiTexture[ iTextRow ][i] );
 
 		//アルファブレンド用ブレンドステート作成.
 		SetBlend( true );
 
 		//描画.
-		m_pContext->Draw( 4, 0 );
+		m_wpContext->Draw( 4, 0 );
 	}
 }
 	 
