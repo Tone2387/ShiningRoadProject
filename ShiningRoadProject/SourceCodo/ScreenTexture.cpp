@@ -21,6 +21,7 @@ namespace{
 		ALIGN16 float		isfNega;
 	};
 
+
 	enum enSE_WEAK : int{
 		enSE_WEAK_A = 0,
 		enSE_WEAK_B,
@@ -50,9 +51,7 @@ namespace{
 clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	const HWND hWnd,
 	ID3D11DeviceContext* const pContext )
-	:m_wpContext( pContext )
-	,m_wpDevice( nullptr )
-	,m_pTexture( nullptr )
+	:m_pTexture( nullptr )
 	,m_pRenderTargetView( nullptr )
 	,m_pShaderResourceView( nullptr )
 	,m_pSamplerState( nullptr )
@@ -69,6 +68,7 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_isNega( false )
 	,m_vColor( 1.0f, 1.0f, 1.0f, 1.0f )
 {
+	m_wpContext = pContext;
 	assert( m_wpContext );
 	m_wpContext->GetDevice( &m_wpDevice );
 
@@ -80,6 +80,9 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	}
 	if( FAILED( CreateConstantBuffer() ) ){
 		ERR_MSG( "描画先テクスチャバッファ作成失敗", "" );
+	}
+	if( FAILED( CreateBlendState() ) ){
+		ERR_MSG( "描画先ブレンドステート作成失敗", "" );
 	}
 
 	//サウンド作成.
@@ -210,8 +213,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 
 	//HLSLからバーテックスシェーダのブロブを作成.
-	if( FAILED(
-		D3DX11CompileFromFile(
+	if( FAILED( D3DX11CompileFromFile(
 			sSHADER_NAME,	//シェーダファイル名(HLSLファイル).
 			NULL,			//マクロ定義の配列へのポインタ(未使用).
 			NULL,			//インクルードファイルを扱うインターフェースへのポインタ(未使用).
@@ -346,7 +348,7 @@ void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pD
 	if( !pDepthStencilView )	return;
 
 	//レンダーターゲットをテクスチャに.
-	float clearcolor[] = { 2.5f, 0.125f, 0.125f, 1.0f };
+	float clearcolor[] = { 0.125f, 0.125f, 2.5f, 1.0f };
 	m_wpContext->OMSetRenderTargets( 1, &m_pRenderTargetView, pDepthStencilView );
 	m_wpContext->ClearRenderTargetView( m_pRenderTargetView, clearcolor );
 	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
@@ -402,7 +404,7 @@ PLAYING_SE_STRONG:;
 //テクスチャの内容を画面に描画.
 void clsSCREEN_TEXTURE::RenderWindowFromTexture( 
 	ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-	ID3D11DepthStencilView* const pDepthStencilView ) const
+	ID3D11DepthStencilView* const pDepthStencilView )
 {
 	if( !pBackBuffer_TexRTV )	return;
 	if( !pDepthStencilView )	return;
@@ -516,10 +518,11 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 //	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	m_wpContext->Draw( uVerMax, 0 );
+	SetBlend( false );
+
+	m_wpContext->Draw( 4, 0 );//uVerMax.
 
 }
-
 
 
 

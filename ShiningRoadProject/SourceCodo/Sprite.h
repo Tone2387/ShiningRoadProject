@@ -10,18 +10,6 @@
 #include "Common.h"//共通クラス.
 
 
-//============================================================
-//	構造体.
-//============================================================
-//コンスタントバッファのアプリ側の定義(Simple.hlsl).
-//シェーダ内のコンスタントバッファと一致している必要あり.
-struct SPRITESHADER_CONSTANT_BUFFER
-{
-	D3DXMATRIX	mWVP;		//ワールド,ビュー,射影の合成変換行列.
-	D3DXVECTOR4	vColor;		//カラー(RGBAの型に合わせる) : テクスチャの上から色を載せる(赤っぽくも見せるためとか).
-	D3DXVECTOR4	vUV;		//UV座標.
-	D3DXVECTOR4 vSplit;//何分割?.
-};
 
 ////頂点の構造体.
 //struct SpriteVertex
@@ -36,8 +24,7 @@ struct SPRITESHADER_CONSTANT_BUFFER
 //============================================================
 //	スプライトクラス.
 //============================================================
-class clsSprite
-	: public clsCommon
+class clsSprite : public clsCommon
 {
 public:
 	clsSprite();	//コンストラクタ.
@@ -79,6 +66,7 @@ protected:
 	////モデル作成.
 	virtual HRESULT InitModel( const char* sTexName );
 
+protected:
 
 	D3DXVECTOR3		m_vPos;	//位置.
 	D3DXVECTOR3		m_vRot;
