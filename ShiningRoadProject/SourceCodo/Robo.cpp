@@ -247,9 +247,6 @@ void clsRobo::RoboInit(
 	m_pMesh->PartsAnimChange(enPARTS::ARM_L, enAnimNoArmWeaponHoldStart);
 	
 	m_pMesh->SetAnimSpd(g_dAnimSpeedReference);
-
-	SetScale(0.01f);
-	m_pMesh->SetScale(0.01f);
 }
 
 void clsRobo::Walk()
