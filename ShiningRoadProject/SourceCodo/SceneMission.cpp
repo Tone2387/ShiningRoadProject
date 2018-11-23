@@ -228,6 +228,8 @@ void clsSCENE_MISSION::CreateUI()
 //毎フレーム通る処理.
 void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 {
+	//Duplicate();
+
 	//nullならassert.
 	assert(m_pPlayer);
 	//m_pPlayer->Action(m_pStage);
@@ -249,7 +251,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	
 	if (GetAsyncKeyState('S') & 0x1)
 	{
-		m_pTestObj->SwitchMove();
+		//m_pTestObj->SwitchMove();
 	}
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
@@ -288,9 +290,6 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 //描画.
 void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-
-	//m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
-
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
 		m_v_pFriends[i]->Render(m_mView, m_mProj, m_vLight, vCamPos);
@@ -476,26 +475,28 @@ bool clsSCENE_MISSION::AllEnemyDead()
 
 void clsSCENE_MISSION::CreateFriends()
 {
-	m_pPlayer = CreatePlayer();
-	m_v_pFriends.push_back(m_pPlayer);
+	/*m_pPlayer = CreatePlayer();
+	m_v_pFriends.push_back(m_pPlayer);*/
 
-	/*clsFriendFactory clsFactory;
+	clsFriendFactory clsFactory;
+
+	m_pPlayer = new clsPlayer;
 
 	m_v_pFriends = clsFactory.CreateFriend(m_wpPtrGroup, strMissonFolderPath, m_pPlayer);
 
-	m_v_pFriends.shrink_to_fit();*/
+	m_v_pFriends.shrink_to_fit();
 }
 
 void clsSCENE_MISSION::CreateEnemys()
 {
-	m_pTestObj = CreateEnemy();
-	m_v_pEnemys.push_back(m_pTestObj);
+	/*m_pTestObj = CreateEnemy();
+	m_v_pEnemys.push_back(m_pTestObj);*/
 
-	/*clsEnemyFactory clsFactory;
+	clsEnemyFactory clsFactory;
 	
 	m_v_pEnemys = clsFactory.CreateEnemy(m_wpPtrGroup, strMissonFolderPath);
 
-	m_v_pEnemys.shrink_to_fit();*/
+	m_v_pEnemys.shrink_to_fit();
 }
 
 void clsSCENE_MISSION::Collison()
@@ -515,7 +516,7 @@ void clsSCENE_MISSION::ColFShottoFBody()
 		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
 		{
 			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
-			Tmp.iDamage = 0;
+			Tmp.iDamage = 0;//フレンドリーファイアなし.
 			m_v_pFriends[j]->Damage(Tmp);
 		}
 	}
@@ -557,30 +558,72 @@ void clsSCENE_MISSION::ColEShottoEBody()
 		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
 		{
 			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
-			Tmp.iDamage = 0;
+			Tmp.iDamage = 0;//フレンドリーファイアなし.
 			m_v_pEnemys[j]->Damage(Tmp);
 		}
 	}
 }
 
-void ColFtoFDuplicate()
+void clsSCENE_MISSION::ColFtoFDuplicate()
 {
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
+		{
+			if (i == j)
+			{
+				continue;
+			}
 
+			if (m_v_pFriends[i]->ObjectCollision(m_v_pFriends[j]->m_v_Spheres))
+			{
+				m_v_pFriends[i]->Duplicate();
+				m_v_pFriends[j]->Duplicate();
+			}
+		}
+	}
 }
 
-void ColFtoEDuplicate()
+void clsSCENE_MISSION::ColFtoEDuplicate()
 {
-
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
+		{
+			if (m_v_pFriends[i]->ObjectCollision(m_v_pEnemys[j]->m_v_Spheres))
+			{
+				m_v_pFriends[i]->Duplicate();
+				m_v_pEnemys[j]->Duplicate();
+			}
+		}
+	}
 }
 
-void ColEtoFDuplicate()
+void clsSCENE_MISSION::ColEtoEDuplicate()
 {
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
+		{
+			if (i == j)
+			{
+				continue;
+			}
 
+			if (m_v_pEnemys[i]->ObjectCollision(m_v_pEnemys[j]->m_v_Spheres))
+			{
+				m_v_pEnemys[i]->Duplicate();
+				m_v_pEnemys[j]->Duplicate();
+			}
+		}
+	}
 }
 
-void ColEtoEDuplicate()
+void clsSCENE_MISSION::Duplicate()
 {
-
+	ColFtoFDuplicate();
+	ColFtoEDuplicate();
+	ColEtoEDuplicate();
 }
 
 clsPlayer* clsSCENE_MISSION::CreatePlayer()
@@ -633,10 +676,10 @@ void clsSCENE_MISSION::RenderDebugText()
 	int iTxtY = 300;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
 
-	sprintf_s( strDbgTxt, 
+/*	sprintf_s( strDbgTxt, 
 		"EnemyEnelgy : [%d]",
 		m_pTestObj->m_iEnelgy);
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );*/
 
 	sprintf_s(strDbgTxt,
 		"PlayerPos : x[%f], y[%f], z[%f]",

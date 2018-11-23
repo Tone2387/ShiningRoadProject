@@ -728,6 +728,12 @@ const D3DXVECTOR3 clsObject::GetCenterPos()const
 	return m_vCenterPos;
 }
 
+void clsObject::Duplicate()
+{
+	SetPosition(m_vOldPos);
+	m_vMoveDir = { 0.0f, 0.0f, 0.0f };
+}
+
 clsObject::clsObject() :
 m_vOldPos({0.0f,0.0f,0.0f}),
 m_vCenterPos({ 0.0f, 0.0f, 0.0f }),//オブジェクトの中心.

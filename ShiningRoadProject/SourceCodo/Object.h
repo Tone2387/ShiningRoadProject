@@ -93,6 +93,8 @@ public:
 
 	virtual void Action();
 
+	void Duplicate();
+
 	virtual void Render(
 		const D3DXMATRIX& mView,
 		const D3DXMATRIX& mProj,
