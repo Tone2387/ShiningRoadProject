@@ -9,7 +9,7 @@ namespace
 
 clsAIRobo::clsAIRobo()
 	: m_pAI(nullptr)
-	, m_bAct(true)
+	, m_bAct(false)
 {
 }
 
@@ -75,7 +75,7 @@ void clsAIRobo::Action()
 
 	if (m_bAct)
 	{
-	/*	pRoboCom = m_pAI->LShotOperation();
+		pRoboCom = m_pAI->LShotOperation();
 
 		if (pRoboCom)
 		{
@@ -87,7 +87,7 @@ void clsAIRobo::Action()
 		if (pRoboCom)
 		{
 			pRoboCom->PushBotton(this);
-		}*/
+		}
 
 		pRoboCom = m_pAI->QuickBoostOperation(fPush, fAngle);
 
