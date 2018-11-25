@@ -108,7 +108,7 @@ public:
 
 	virtual void UpdateProduct(clsStage* pStage)override;
 
-	void LockChara();
+	void LockChara(clsStage* const pStage);
 	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
 
 	void Lock();
@@ -173,7 +173,12 @@ public:
 
 	void Jump();
 
-	bool PointIntersect(
+	const bool IsTargetWall(
+		const D3DXVECTOR3 vStartPos,
+		const D3DXVECTOR3 vEndPos,
+		clsStage* const pStage);
+
+	bool IsPointIntersect(
 		const D3DXVECTOR3 StartPos,	//基準の位置.
 		const D3DXVECTOR3 EndPos,		//標的の位置.
 		const clsDX9Mesh* pTarget		//障害物の物体.
@@ -187,6 +192,8 @@ public:
 		const D3DXVECTOR3 CenterPos, 
 		const D3DXVECTOR3 TargetPos, 
 		const float Range);//円の範囲判定.
+
+	void CharaDuplicate(clsCharactor* const pContactChara);
 
 protected:
 	void ShotSwich(const int iWeaponNum);//複数ある武器から使用する武器を決める.

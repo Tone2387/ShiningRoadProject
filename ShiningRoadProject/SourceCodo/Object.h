@@ -91,7 +91,7 @@ public:
 
 	virtual void UpdateProduct(clsStage* pStage);
 
-	virtual void Action();
+	virtual void Action(clsStage* const pStage);
 
 	virtual void Render(
 		const D3DXMATRIX& mView,

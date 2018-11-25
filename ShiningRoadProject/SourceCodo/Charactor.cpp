@@ -263,8 +263,37 @@ void clsCharactor::Jump()
 	}
 }
 
+const bool clsCharactor::IsTargetWall(
+	const D3DXVECTOR3 vStartPos,
+	const D3DXVECTOR3 vEndPos,
+	clsStage* const pStage)
+{
+	if (!pStage)return false;
+
+	std::vector<clsDX9Mesh*> vvpMeshTmp;
+	vvpMeshTmp = pStage->GetStageMeshArray();
+
+	bool bResult = false;
+	bool bHit = false;
+
+	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
+	{
+		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
+		pStage->SetStageObjTransform(i);
+
+		if (!pObjMesh)continue;
+
+		if (IsPointIntersect(vStartPos, vEndPos, pObjMesh))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 //ﾀｰｹﾞｯﾄとする位置に対してﾚｲを飛ばして、遮蔽物がないか調べる.
-bool clsCharactor::PointIntersect(
+bool clsCharactor::IsPointIntersect(
 	const D3DXVECTOR3 StartPos,	//基準の位置.
 	const D3DXVECTOR3 EndPos,		//標的の位置.
 	const clsDX9Mesh* pTarget		//障害物の物体.
@@ -476,7 +505,7 @@ bool clsCharactor::Damage(HitState HitS)
 	return false;
 }
 
-void clsCharactor::LockChara()
+void clsCharactor::LockChara(clsStage* const pStage)
 {
 	UpdateLookOn();
 
@@ -487,6 +516,11 @@ void clsCharactor::LockChara()
 			LockOut();
 			return;
 		}
+		
+		/*if (!IsTargetWall(m_vLockStartingPos, m_pTargetChara->m_vCenterPos, pStage))
+		{
+			return;
+		}*/
 
 		if (IsInLockRange(m_pTargetChara->m_vCenterPos))
 		{
@@ -757,6 +791,32 @@ void clsCharactor::UpdateCamPos()
 	vCamPosTmp -= (vCamPosTmp - vCamTargetPos) * fCamMoveSpeed;
 
 	m_vCamPos = vCamPosTmp;
+}
+
+void clsCharactor::CharaDuplicate(clsCharactor* const pContactChara)
+{
+	if (ObjectCollision(pContactChara->m_v_Spheres))
+	{
+		D3DXVECTOR3 vDir = GetPosition() - pContactChara->GetPosition();
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		vDir.y = 0.0f;
+
+		float fSpeed = abs(m_fMoveSpeed - pContactChara->m_fMoveSpeed);
+		D3DXVECTOR3 vPosTmp;
+
+		if (m_fMoveSpeed > pContactChara->m_fMoveSpeed)
+		{
+			vPosTmp = pContactChara->GetPosition() - (vDir * fSpeed);
+			pContactChara->SetPosition(vPosTmp);
+		}
+
+		else
+		{
+			vPosTmp = GetPosition() + (vDir * fSpeed);
+			SetPosition(vPosTmp);
+		}
+	}
 }
 
 const D3DXVECTOR3 clsCharactor::GetCamPos() const

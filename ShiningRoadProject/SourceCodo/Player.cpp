@@ -28,13 +28,13 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 	m_vCamPosDivia = m_Trans.vPos - m_pMesh->GetBonePos(enPARTS::CORE, "Jenerator");
 }
 
-void clsPlayer::Action()
+void clsPlayer::Action(clsStage* const pStage)
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
 
-	LockChara();
+	LockChara(pStage);
 
 	m_pInput->InputTest();
 
