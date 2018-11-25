@@ -9,7 +9,7 @@ namespace
 
 clsAIRobo::clsAIRobo()
 	: m_pAI(nullptr)
-	, m_bAct(false)
+	, m_bAct(true)
 {
 }
 
@@ -35,7 +35,7 @@ void clsAIRobo::Init(clsPOINTER_GROUP* const pPtrGroup,
 	m_pAI->Init(strFolderName, this);
 }
 
-void clsAIRobo::Action()
+void clsAIRobo::Action(clsStage* const pStage)
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
@@ -43,7 +43,7 @@ void clsAIRobo::Action()
 
 	float fPushMin = 0.5f;
 
-	LockChara();
+	LockChara(pStage);
 
 	m_pAI->Update();
 

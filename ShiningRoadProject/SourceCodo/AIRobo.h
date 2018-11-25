@@ -12,7 +12,7 @@ public:
 	void Init(clsPOINTER_GROUP* const pPtrGroup,
 		unsigned int uiAINum);
 
-	void Action() final;
+	void Action(clsStage* const pStage) final;
 	void SwitchMove();
 
 private:

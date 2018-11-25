@@ -30,7 +30,7 @@ public:
 	void Init(clsPOINTER_GROUP* const pPtrGroup,
 		std::string strEnemyFolderName);
 
-	void Action() final;
+	void Action(clsStage* const pStage) final;
 
 	void InhUpdate();//Inheritance
 

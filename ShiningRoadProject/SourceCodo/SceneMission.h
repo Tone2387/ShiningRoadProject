@@ -67,11 +67,10 @@ private:
 	void ColEShottoEBody();
 
 	//d•¡‚Ì“®ì.
+	void Duplicate();
 	void ColFtoFDuplicate();
 	void ColFtoEDuplicate();
-
 	void ColEtoFDuplicate();
-	void ColEtoEDuplicate();
 
 	bool AllEnemyDead();
 

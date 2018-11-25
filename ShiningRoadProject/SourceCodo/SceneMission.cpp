@@ -249,7 +249,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	
 	if (GetAsyncKeyState('S') & 0x1)
 	{
-		m_pTestObj->SwitchMove();
+		//m_pTestObj->SwitchMove();
 	}
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
@@ -288,7 +288,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 //•`‰æ.
 void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-
+	Duplicate();
 	//m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
@@ -476,26 +476,28 @@ bool clsSCENE_MISSION::AllEnemyDead()
 
 void clsSCENE_MISSION::CreateFriends()
 {
-	m_pPlayer = CreatePlayer();
-	m_v_pFriends.push_back(m_pPlayer);
+	/*m_pPlayer = CreatePlayer();
+	m_v_pFriends.push_back(m_pPlayer);*/
 
-	/*clsFriendFactory clsFactory;
+	clsFriendFactory clsFactory;
+
+	m_pPlayer = new clsPlayer;
 
 	m_v_pFriends = clsFactory.CreateFriend(m_wpPtrGroup, strMissonFolderPath, m_pPlayer);
 
-	m_v_pFriends.shrink_to_fit();*/
+	m_v_pFriends.shrink_to_fit();
 }
 
 void clsSCENE_MISSION::CreateEnemys()
 {
-	m_pTestObj = CreateEnemy();
-	m_v_pEnemys.push_back(m_pTestObj);
+	/*m_pTestObj = CreateEnemy();
+	m_v_pEnemys.push_back(m_pTestObj);*/
 
-	/*clsEnemyFactory clsFactory;
+	clsEnemyFactory clsFactory;
 	
 	m_v_pEnemys = clsFactory.CreateEnemy(m_wpPtrGroup, strMissonFolderPath);
 
-	m_v_pEnemys.shrink_to_fit();*/
+	m_v_pEnemys.shrink_to_fit();
 }
 
 void clsSCENE_MISSION::Collison()
@@ -563,24 +565,56 @@ void clsSCENE_MISSION::ColEShottoEBody()
 	}
 }
 
-void ColFtoFDuplicate()
+void clsSCENE_MISSION::Duplicate()
 {
-
+	ColFtoFDuplicate();
+	ColFtoEDuplicate();
+	ColEtoFDuplicate();
 }
 
-void ColFtoEDuplicate()
+void clsSCENE_MISSION::ColFtoFDuplicate()
 {
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
+		{
+			if (i == j)
+			{
+				continue;
+			}
 
+			m_v_pFriends[i]->CharaDuplicate(m_v_pFriends[j]);
+
+		}
+	}
 }
 
-void ColEtoFDuplicate()
+void clsSCENE_MISSION::ColFtoEDuplicate()
 {
-
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
+		{
+			m_v_pFriends[i]->CharaDuplicate(m_v_pEnemys[j]);
+		}
+	}
 }
 
-void ColEtoEDuplicate()
+void clsSCENE_MISSION::ColEtoFDuplicate()
 {
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
+		{
+			if (i == j)
+			{
+				continue;
+			}
 
+			m_v_pEnemys[i]->CharaDuplicate(m_v_pEnemys[j]);
+
+		}
+	}
 }
 
 clsPlayer* clsSCENE_MISSION::CreatePlayer()
@@ -633,10 +667,10 @@ void clsSCENE_MISSION::RenderDebugText()
 	int iTxtY = 300;
 	const int iOFFSET = 10;//ˆês–ˆ‚É‚Ç‚ê‚¾‚¯‰º‚É‚¸‚ç‚·‚©.
 
-	sprintf_s( strDbgTxt, 
+	/*sprintf_s( strDbgTxt, 
 		"EnemyEnelgy : [%d]",
 		m_pTestObj->m_iEnelgy);
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );*/
 
 	sprintf_s(strDbgTxt,
 		"PlayerPos : x[%f], y[%f], z[%f]",

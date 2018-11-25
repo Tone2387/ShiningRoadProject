@@ -243,6 +243,8 @@ void clsRobo::RoboInit(
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
 
+	SetScale(0.01f);
+
 	m_pMesh->PartsAnimChange(enPARTS::ARM_R, enAnimNoArmWeaponHoldStart);
 	m_pMesh->PartsAnimChange(enPARTS::ARM_L, enAnimNoArmWeaponHoldStart);
 	

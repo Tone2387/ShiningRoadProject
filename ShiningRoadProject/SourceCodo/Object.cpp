@@ -708,7 +708,7 @@ void clsObject::Update(clsStage* pStage)
 {
 	m_vOldPos = m_Trans.vPos;
 
-	Action();
+	Action(pStage);
 
 	UpdateProduct(pStage);
 }
@@ -718,7 +718,7 @@ void clsObject::UpdateProduct(clsStage* pStage)
 	WallJudge(pStage);
 }
 
-void clsObject::Action()
+void clsObject::Action(clsStage* const pStage)
 {
 
 }

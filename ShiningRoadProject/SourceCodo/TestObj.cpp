@@ -35,7 +35,7 @@ void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup,
 	Init(pPtrGroup);
 }
 
-void clsTestObj::Action()
+void clsTestObj::Action(clsStage* const pStage)
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
@@ -43,7 +43,7 @@ void clsTestObj::Action()
 
 	float fPushMin = 0.5f;
 
-	LockChara();
+	LockChara(pStage);
 
 	m_pAI->Update();
 

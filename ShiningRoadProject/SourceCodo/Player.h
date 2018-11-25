@@ -16,7 +16,7 @@ public:
 
 	void Init(clsPOINTER_GROUP* const pPtrGroup);
 
-	void Action() final;
+	void Action(clsStage* const pStage) final;
 
 	float GetLockCircleScale();
 	D3DXVECTOR3 GetLockRangeTmp();
