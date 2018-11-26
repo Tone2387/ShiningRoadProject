@@ -42,7 +42,9 @@ public:
 	//スタティックモデル種類.
 	enum enSTATIC_MODEL : UCHAR
 	{
-		enStaticModel_StageBase = 0,//ステージの土台.
+		enStaticModel_StageCollision = 0,//ステージの当たり判定.
+		enStaticModel_StageFloor,	//ステージの床と壁.
+		enStaticModel_StageCelling,	//ステージの天井.
 		enStaticModel_Building,		//ステージの障害物.
 		enStaticModel_Shpere,		//当たり判定チェック用.
 
@@ -52,8 +54,8 @@ public:
 	//スキンモデル種類.
 	enum enSKIN_MODEL : SKIN_ENUM_TYPE
 	{
-//		enSkinModel_Player = 0,//二つともこんな名前だがテスト用である.
-//		enSkinModel_Leg,
+		enSkinModel_Door = 0,//ステージのドア.
+		enSkinModel_Lia,	//ステージの天井のドア.
 
 		enSkinModel_Max//数固定モデルのmax.
 	};

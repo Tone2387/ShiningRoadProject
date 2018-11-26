@@ -1475,8 +1475,8 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 			&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
 			NULL ) ) )
 		{
-			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-			return E_FAIL;
+//			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+//			return E_FAIL;
 		}
 	}
 	//----- ベース -----//.
@@ -1491,9 +1491,6 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 				path[check+1] = '\0';
 
 				strcat_s( path, sizeof( path ), name.c_str() );
-//				strcpy_s( pAppMesh->pMaterial[i].szTextureName,
-//					sizeof( pAppMesh->pMaterial[i].szTextureName ),
-//					path );
 				name = path;
 			}
 		}
@@ -1506,8 +1503,8 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 			&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
 			NULL ) ) )
 		{
-			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-			return E_FAIL;
+//			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+//			return E_FAIL;
 		}
 	}
 

@@ -49,7 +49,8 @@ private:
 	clsASSEMBLE_MODEL*	m_pRoboModel;
 
 	//îwåi.
-	std::unique_ptr< clsCharaStatic > m_upBack;
+	std::unique_ptr< clsCharaStatic > m_upBackFloor;
+	std::unique_ptr< clsCharaStatic > m_upBackCelling;
 
 	std::unique_ptr< clsSprite2D > m_upLogo;
 
