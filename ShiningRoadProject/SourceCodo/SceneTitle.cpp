@@ -93,12 +93,19 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upLogo->SetAlpha( 0.0f );
 
 	//îwåi.
-	assert( !m_upBack );
-	m_upBack  = make_unique< clsCharaStatic >();
-	m_upBack->AttachModel( 
-		m_wpResource->GetStaticModels( clsResource::enStaticModel_StageBase ) );
-	m_upBack->SetPosition( m_pRoboModel->GetPos() );
-	m_upBack->SetScale( fBACK_SCALE );
+	assert( !m_upBackFloor );
+	m_upBackFloor  = make_unique< clsCharaStatic >();
+	m_upBackFloor->AttachModel( 
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_StageCollision ) );
+	m_upBackFloor->SetPosition( m_pRoboModel->GetPos() );
+	m_upBackFloor->SetScale( fBACK_SCALE );
+
+	assert( !m_upBackCelling );
+	m_upBackCelling  = make_unique< clsCharaStatic >();
+	m_upBackCelling->AttachModel( 
+		m_wpResource->GetStaticModels( clsResource::enStaticModel_StageCollision ) );
+	m_upBackCelling->SetPosition( m_pRoboModel->GetPos() );
+	m_upBackCelling->SetScale( fBACK_SCALE );
 
 	//Ç≤Ç‹Ç©ÇµÉtÉâÉbÉVÉÖ.
 	assert( !m_upFlash );
@@ -364,8 +371,11 @@ void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	assert( m_pRoboModel );
 	m_pRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
-	assert( m_upBack );
-	m_upBack->Render( m_mView, m_mProj, m_vLight, vCamPos );
+	assert( m_upBackFloor );
+	m_upBackFloor->Render( m_mView, m_mProj, m_vLight, vCamPos );
+
+	assert( m_upBackCelling );
+	m_upBackCelling->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 
 }

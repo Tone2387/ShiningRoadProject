@@ -136,8 +136,14 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 	InitSkinModel( hWnd, pDevice, pContext );
 
 	CreateStaticModel( 
-		"Data\\Stage\\Stage.X",
-		enSTATIC_MODEL::enStaticModel_StageBase );
+		"Data\\Stage\\StageCollision.X",
+		enSTATIC_MODEL::enStaticModel_StageCollision );
+	CreateStaticModel( 
+		"Data\\Stage\\StageFloor.X",
+		enSTATIC_MODEL::enStaticModel_StageFloor );
+	CreateStaticModel( 
+		"Data\\Stage\\StageCeling.X",
+		enSTATIC_MODEL::enStaticModel_StageCelling );
 	CreateStaticModel(
 		"Data\\Stage\\Building.X",
 		enSTATIC_MODEL::enStaticModel_Building );
@@ -145,12 +151,12 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 		"Data\\Collision\\Sphere.x",
 		enSTATIC_MODEL::enStaticModel_Shpere );
 
-//	CreateSkinModel(
-//		"Data\\RoboParts\\Leg\\Leg0\\Leg0.x",
-//		enSKIN_MODEL::enSkinModel_Player );
-//	CreateSkinModel(
-//		"Data\\RoboParts\\Leg\\Leg0\\Leg0.X",
-//		enSKIN_MODEL::enSkinModel_Leg );
+	CreateSkinModel(
+		"Data\\Stage\\Door.X",
+		enSKIN_MODEL::enSkinModel_Door );
+	CreateSkinModel(
+		"Data\\Stage\\Lia.X",
+		enSKIN_MODEL::enSkinModel_Lia );
 
 	//ÉpÅ[ÉcçÏê¨.
 	CreatePartsGroup();
