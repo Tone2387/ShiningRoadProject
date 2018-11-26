@@ -151,7 +151,7 @@ Material _01_-_Default {
  0.000000;0.000000;0.000000;;
 
  TextureFilename {
-  "test.png";
+  "weaponbazz.png";
  }
 }
 
