@@ -110,11 +110,12 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	//フォント毎にクアッド(矩形)作成.
 	float left = 0.0f, top = 0.0f, right = 0.0f, bottom = 0.0f;
 	int cnt = 0;
-	for( int k=0; k<10; k++ ){
+	for( int k=0; k<10; k++ )
+	{
 		for( int i=0; i<10; i++ ){
 			left	= k * WDIMENSION		;	
 			top		= i * DIMENSION			;
-			right	= left + m_fKerning[cnt];
+			right	= left + m_fKerning[ cnt ];
 			bottom	= top + DIMENSION		;
 
 			left	/= TEX_DIMENSION;
@@ -140,7 +141,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 			D3D11_SUBRESOURCE_DATA InitData;
 			InitData.pSysMem = vertices;
 			if( FAILED( m_wpDevice->CreateBuffer(
-				&bd, &InitData, &m_pVertexBuffer[cnt]) ) )
+				&bd, &InitData, &m_pVertexBuffer[ cnt ] ) ) )
 			{
 				MessageBox( NULL,
 					"頂点バッファ作成失敗(UiText:Init)",
@@ -164,7 +165,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	{
 		MessageBox( NULL,
 			"サンプル作成失敗(UiText:Init)",
-			"", MB_OK );
+			sFILE_PATH, MB_OK );
 		return E_FAIL;
 	}
 
@@ -264,7 +265,7 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	if( FAILED( m_wpDevice->CreateBuffer(
 		&cb, NULL, &m_pConstantBuffer ) ) )
 	{
-		MessageBox( NULL, "コンスタントバッファ作成", "UiText:Init", MB_OK );
+		MessageBox( NULL, "コンスタントバッファ作成", SHADER_NAME, MB_OK );
 		return E_FAIL;
 	}
 

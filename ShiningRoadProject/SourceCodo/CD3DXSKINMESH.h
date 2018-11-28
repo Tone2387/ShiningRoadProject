@@ -393,8 +393,8 @@ private:
 	// 解放関数.
 	HRESULT Release();
 
-	HRESULT CreateDeviceDx9( HWND hWnd, LPDIRECT3DDEVICE9* ppOutDevice9 );
-	HRESULT InitShader();
+	HRESULT CreateDeviceDx9( HWND hWnd, LPDIRECT3DDEVICE9* ppOutDevice9, const char* sErrFilePath );
+	HRESULT InitShader( const char* sErrFilePath );
 	// Xファイルからスキンメッシュを作成する.
 	HRESULT CreateFromX( CHAR* sFileName, LPDIRECT3DDEVICE9 pDevice9 );
 	HRESULT CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buffer** ppIndexBuffer );

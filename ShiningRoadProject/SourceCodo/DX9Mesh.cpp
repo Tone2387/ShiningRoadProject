@@ -112,7 +112,7 @@ clsDX9Mesh::~clsDX9Mesh()
 //========================================================
 // 初期化.
 //========================================================
-HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPSTR fileName)
+HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPSTR fileName )
 {
 	m_hWnd = hWnd;
 	m_pDevice = pDevice11;
@@ -122,13 +122,13 @@ HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext
 	if( FAILED( CreateBlendState() ) ){
 		return E_FAIL;
 	}
-	if( FAILED( InitDx9( m_hWnd, &pDevice9 ) ) ){
+	if( FAILED( InitDx9( m_hWnd, &pDevice9, fileName ) ) ){
 		return E_FAIL;
 	}
-	if( FAILED( LoadXMesh( fileName, pDevice9 ) ) ){
+	if( FAILED( LoadXMesh( fileName, pDevice9, fileName ) ) ){
 		return E_FAIL;
 	}
-	if( FAILED( InitShader() ) ){
+	if( FAILED( InitShader( fileName ) ) ){
 		return E_FAIL;
 	}
 
@@ -141,7 +141,7 @@ HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext
 //========================================================
 //Dx9初期化.
 //========================================================
-HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9 )
+HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9, const LPSTR sErrFilePath  )
 {
 	m_hWnd = hWnd;
 
@@ -149,7 +149,7 @@ HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9 )
 	LPDIRECT3D9	pD3d;	//DX9オブジェクト.
 	pD3d = Direct3DCreate9( D3D_SDK_VERSION );
 	if( pD3d == NULL ){
-		MessageBox( NULL, "Dx9オブジェクト作成失敗", "InitDx9", MB_OK );
+		MessageBox( NULL, "Dx9オブジェクト作成失敗", sErrFilePath, MB_OK );
 		return E_FAIL;
 	}
 
@@ -173,7 +173,7 @@ HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9 )
 			D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 			&d3dpp, pOutDevice9 ) ) )
 		{
-			MessageBox(NULL, "HALモードでデバイスを作成できません\nREFモードで再試行します", "警告", MB_OK);
+			MessageBox(NULL, "HALモードでデバイスを作成できません\nREFモードで再試行します", sErrFilePath, MB_OK);
 
 			//デバイス作成(REFモード:描画はCPU、頂点処理をGPUで行う)
 			if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
@@ -185,7 +185,7 @@ HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9 )
 					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 					&d3dpp, pOutDevice9 ) ) )
 				{
-					MessageBox(NULL, "Direct3Dデバイス作成失敗", NULL, MB_OK);
+					MessageBox(NULL, "Direct3Dデバイス作成失敗", sErrFilePath, MB_OK);
 					return E_FAIL;
 				}
 			}
@@ -200,7 +200,7 @@ HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9 )
 //========================================================
 //Xファイルからメッシュをロードする.
 //========================================================
-HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
+HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9, const LPSTR sErrFilePath  )
 {
 	//マテリアルバッファ.
 	LPD3DXBUFFER pD3DXMtrlBuffer;
@@ -327,7 +327,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 	if (FAILED(
 		m_pMesh->GetAttributeTable(pAttrTable,&m_NumAttr)))
 	{
-		MessageBox(NULL, "属性テーブル取得失敗", "LoadXMesh()", MB_OK);
+		MessageBox( NULL, "属性テーブル取得失敗", sErrFilePath, MB_OK );
 		return E_FAIL;
 	}
 
@@ -355,7 +355,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 			m_pDevice->CreateBuffer(
 			&bd, &InitData, &m_ppIndexBuffer[i])))
 		{
-			MessageBox(NULL, "インデックスバッファ作成失敗", "LoadXMesh()", MB_OK);
+			MessageBox( NULL, "インデックスバッファ作成失敗", sErrFilePath, MB_OK );
 			return E_FAIL;
 		}
 		//面の数をコピー.
@@ -409,7 +409,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 			m_pDevice->CreateBuffer(
 			&bd, &InitData, &m_pVertexBuffer)))
 		{
-			MessageBox(NULL, "頂点(バーテックス)バッファ作成失敗", "LoadXMesh()", MB_OK);
+			MessageBox( NULL, "頂点(バーテックス)バッファ作成失敗", sErrFilePath, MB_OK );
 			return E_FAIL;
 		}
 		pVB->Unlock();
@@ -439,7 +439,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 		m_pDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear)))//(out)サンプラー.
 	{
-		MessageBox(NULL, "サンプラー作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "サンプラー作成失敗", sErrFilePath, MB_OK);
 		return E_FAIL;
 	}
 
@@ -451,7 +451,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 //HLSLファイルを読み込みシェーダを作成する.
 //HLSL:HIGH-LEVEL-SHADER-LANGUAGE.
 //========================================================
-HRESULT clsDX9Mesh::InitShader()
+HRESULT clsDX9Mesh::InitShader( const LPSTR sErrFilePath  )
 {
 	ID3DBlob* pCompiledShader = NULL;
 	ID3DBlob* pErrors = NULL;
@@ -471,7 +471,7 @@ HRESULT clsDX9Mesh::InitShader()
 			"VS_Main", "vs_5_0",
 			uCompileFlag, 0, NULL, &pCompiledShader, &pErrors, NULL)))
 		{
-			MessageBox(NULL, "hlsl(VS_Main)読み込み失敗", "エラー", MB_OK);
+			MessageBox(NULL, "hlsl(VS_Main)読み込み失敗", sErrFilePath, MB_OK);
 			return E_FAIL;
 		}
 	}
@@ -484,7 +484,7 @@ HRESULT clsDX9Mesh::InitShader()
 			"VS_NoTex", "vs_5_0",
 			uCompileFlag, 0, NULL, &pCompiledShader, &pErrors, NULL)))
 		{
-			MessageBox(NULL, "hlsl(VS_NoTex)読み込み失敗", "エラー", MB_OK);
+			MessageBox(NULL, "hlsl(VS_NoTex)読み込み失敗", sErrFilePath, MB_OK);
 			return E_FAIL;
 		}
 	}
@@ -498,7 +498,7 @@ HRESULT clsDX9Mesh::InitShader()
 		NULL,
 		&m_pVertexShader)))//(out)バーテックスシェーダ.
 	{
-		MessageBox(NULL, "vs作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "vs作成失敗", sErrFilePath, MB_OK);
 		return E_FAIL;
 	}
 
@@ -572,7 +572,7 @@ HRESULT clsDX9Mesh::InitShader()
 		pCompiledShader->GetBufferSize(),
 		&m_pVertexLayout)))//(out)頂点インプットレイアウト.
 	{
-		MessageBox(NULL, "頂点インプットレイアウト作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "頂点インプットレイアウト作成失敗", sErrFilePath, MB_OK);
 		return E_FAIL;
 	}
 	SAFE_RELEASE(pCompiledShader);
@@ -584,7 +584,7 @@ HRESULT clsDX9Mesh::InitShader()
 			"PS_Main","ps_5_0",
 			uCompileFlag,0,NULL,&pCompiledShader,&pErrors,NULL)))
 		{
-			MessageBox(NULL, "hlsl読み込み失敗(PS_Main)", "エラー", MB_OK);
+			MessageBox(NULL, "hlsl読み込み失敗(PS_Main)", sErrFilePath, MB_OK);
 			return E_FAIL;
 		}
 	}
@@ -595,7 +595,7 @@ HRESULT clsDX9Mesh::InitShader()
 			"PS_NoTex", "ps_5_0",
 			uCompileFlag, 0, NULL, &pCompiledShader, &pErrors, NULL)))
 		{
-			MessageBox(NULL, "hlsl読み込み失敗(PS_NoTex)", "エラー", MB_OK);
+			MessageBox(NULL, "hlsl読み込み失敗(PS_NoTex)", sErrFilePath, MB_OK);
 			return E_FAIL;
 		}
 	}
@@ -609,7 +609,7 @@ HRESULT clsDX9Mesh::InitShader()
 		NULL,
 		&m_pPixelShader)))//(out)ピクセルシェーダ.
 	{
-		MessageBox(NULL, "ps作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "ps作成失敗", sErrFilePath, MB_OK);
 		return E_FAIL;
 	}
 
@@ -632,7 +632,7 @@ HRESULT clsDX9Mesh::InitShader()
 		NULL,
 		&m_pConstantBuffer0)))
 	{
-		MessageBox(NULL, "コンスタントバッファ作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "コンスタントバッファ作成失敗", sErrFilePath, MB_OK);
 		return E_FAIL;
 	}
 
@@ -650,7 +650,7 @@ HRESULT clsDX9Mesh::InitShader()
 		NULL,
 		&m_pConstantBuffer1)))
 	{
-		MessageBox(NULL, "コンスタントバッファ作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "コンスタントバッファ作成失敗", sErrFilePath, MB_OK);
 		return E_FAIL;
 	}
 

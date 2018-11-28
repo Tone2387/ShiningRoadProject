@@ -19,7 +19,7 @@ clsSPRITE2D_CENTER::~clsSPRITE2D_CENTER()
 //================================================
 //	モデル作成.
 //================================================
-HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE& ss )
+HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE& ss, const char* sErrFileName )
 {
 	float fW = ss.Disp.w * 0.5f;	//表示スプライト幅.
 	float fH = ss.Disp.h * 0.5f;	//表示スプライト高さ.
@@ -56,7 +56,7 @@ HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE& ss )
 		m_wpDevice->CreateBuffer(
 		&bd, &InitData, &m_pVertexBuffer)))
 	{
-		MessageBox(NULL, "頂点バッファ作成失敗", "エラー", MB_OK);
+		MessageBox( NULL, "頂点バッファ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -89,7 +89,7 @@ HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE& ss )
 		m_wpDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear)))//(out)サンプラー.
 	{
-		MessageBox(NULL, "サンプラ作成失敗", "エラー", MB_OK);
+		MessageBox( NULL, "サンプラ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 

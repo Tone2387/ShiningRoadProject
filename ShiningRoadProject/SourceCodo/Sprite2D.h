@@ -79,9 +79,9 @@ protected:
 
 
 	//シェーダ作成.
-	HRESULT InitShader();
+	HRESULT InitShader( const char* sErrFileName );
 	//モデル作成.
-	virtual HRESULT InitModel( const SPRITE_STATE& ss );
+	virtual HRESULT InitModel( const SPRITE_STATE& ss, const char* sErrFileName );
 	//テクスチャ作成.
 	HRESULT CreateTexture( const char* const fileName,
 		ID3D11ShaderResourceView** pTex );

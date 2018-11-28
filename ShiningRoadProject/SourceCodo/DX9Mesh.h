@@ -56,13 +56,13 @@ private:
 	HRESULT CreateBlendState();
 
 	//Dx9初期化用.
-	HRESULT InitDx9( const HWND hWnd, LPDIRECT3DDEVICE9* ppOutDevice9 );
+	HRESULT InitDx9( const HWND hWnd, LPDIRECT3DDEVICE9* ppOutDevice9, const LPSTR sErrFilePath );
 
 	//メッシュ読込.
-	HRESULT LoadXMesh( const LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 );
+	HRESULT LoadXMesh( const LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9, const LPSTR sErrFilePath  );
 
 	//シェーダ作成.
-	HRESULT InitShader();
+	HRESULT InitShader( const LPSTR sErrFilePath );
 
 private:
 

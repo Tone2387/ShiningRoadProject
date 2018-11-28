@@ -62,7 +62,7 @@ public:
 protected:
 
 	//シェーダ作成.
-	HRESULT InitShader();
+	HRESULT InitShader( const char* sErrFileName );
 	////モデル作成.
 	virtual HRESULT InitModel( const char* sTexName );
 

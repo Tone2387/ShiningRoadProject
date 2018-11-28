@@ -49,10 +49,10 @@ HRESULT clsSprite2D::Create(
 	if( FAILED( CreateBlendState() ) ){
 		return E_FAIL;
 	}
-	if( FAILED( InitShader() ) ){
+	if( FAILED( InitShader( fileName ) ) ){
 		return E_FAIL;
 	}
-	if( FAILED( InitModel( ss ) ) ){
+	if( FAILED( InitModel( ss, fileName ) ) ){
 		return E_FAIL;
 	}
 	if( FAILED( CreateTexture( fileName, &m_pTexture ) ) ){
@@ -66,7 +66,7 @@ HRESULT clsSprite2D::Create(
 //	HLSLファイルを読み込みシェーダを作成する.
 //	HLSL:HIGH-LEVEL-SHADER-LANGUAGE.
 //======================================
-HRESULT clsSprite2D::InitShader()
+HRESULT clsSprite2D::InitShader( const char* sErrFileName )
 {
 	//シェーダファイル名(ディレクトリも含む)
 	const char SHADER_NAME[] = "Shader\\Sprite2D.hlsl";
@@ -94,7 +94,7 @@ HRESULT clsSprite2D::InitShader()
 		&pErrors,		//エラーと警告一覧を格納するメモリへのポインタ.
 		NULL ) ) )		//戻り値へのポインタ(未使用)
 	{
-		MessageBox(NULL, "hlsl読込失敗", "エラー", MB_OK);
+		MessageBox(NULL, "hlsl読込失敗", sErrFileName, MB_OK);
 		return E_FAIL;
 	}
 	SAFE_RELEASE(pErrors);
@@ -106,7 +106,7 @@ HRESULT clsSprite2D::InitShader()
 		NULL,
 		&m_pVertexShader ) ) )//(out)バーテックスシェーダ.
 	{
-		MessageBox(NULL, "vs作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "vs作成失敗", sErrFileName, MB_OK);
 		return E_FAIL;
 	}
 
@@ -141,7 +141,7 @@ HRESULT clsSprite2D::InitShader()
 		pCompiledShader->GetBufferSize(),
 		&m_pVertexLayout ) ) )//(out)頂点インプットレイアウト.
 	{
-		MessageBox(NULL, "頂点インプットレイアウト作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "頂点インプットレイアウト作成失敗", sErrFileName, MB_OK);
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pCompiledShader );
@@ -161,7 +161,7 @@ HRESULT clsSprite2D::InitShader()
 		&pErrors,
 		NULL ) ) )
 	{
-		MessageBox( NULL, "hlsl(ps)読込失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(ps)読込失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -173,7 +173,7 @@ HRESULT clsSprite2D::InitShader()
 		NULL,
 		&m_pPixelShader ) ) )//(out)ピクセルシェーダ.
 	{
-		MessageBox( NULL, "ps作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "ps作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pCompiledShader );//ブロブ解放.
@@ -195,7 +195,7 @@ HRESULT clsSprite2D::InitShader()
 		NULL,
 		&m_pConstantBuffer ) ) )
 	{
-		MessageBox( NULL, "コンスタントバッファ作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "コンスタントバッファ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -207,7 +207,7 @@ HRESULT clsSprite2D::InitShader()
 //================================================
 //	モデル作成.
 //================================================
-HRESULT clsSprite2D::InitModel( const SPRITE_STATE& ss )
+HRESULT clsSprite2D::InitModel( const SPRITE_STATE& ss, const char* sErrFileName )
 {
 	float fW = ss.Disp.w;	//表示スプライト幅.
 	float fH = ss.Disp.h;	//表示スプライト高さ.
@@ -243,7 +243,7 @@ HRESULT clsSprite2D::InitModel( const SPRITE_STATE& ss )
 	if( FAILED( m_wpDevice->CreateBuffer(
 		&bd, &InitData, &m_pVertexBuffer ) ) )
 	{
-		MessageBox( NULL, "頂点バッファ作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "頂点バッファ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -275,7 +275,7 @@ HRESULT clsSprite2D::InitModel( const SPRITE_STATE& ss )
 	if( FAILED( m_wpDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear ) ) )//(out)サンプラー.
 	{
-		MessageBox( NULL, "サンプラ作成失敗", "clsSprite2D::InitModel", MB_OK );
+		MessageBox( NULL, "サンプラ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 

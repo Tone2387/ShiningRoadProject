@@ -27,7 +27,7 @@ public:
 protected:
 
 	//ƒ‚ƒfƒ‹ì¬.
-	HRESULT InitModel( const SPRITE_STATE& ss ) override;
+	HRESULT InitModel( const SPRITE_STATE& ss, const char* sErrFileName ) override;
 
 	//‰ñ“]‚Ì”’l‚ÌŒÀŠE‚©‚ç”ò‚Ño‚È‚¢.
 	D3DXVECTOR3 GuardRotOver( D3DXVECTOR3& vRot );

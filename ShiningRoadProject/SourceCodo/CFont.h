@@ -61,7 +61,7 @@ private:
 	//定数バッファ作成.
 	HRESULT CreateConstantBuffer();
 	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
-	HRESULT	CreateTexture();
+	HRESULT	CreateTexture( const char* sErrFilePath );
 
 
 	//文字を細くする倍率を返す( 問題ないなら1.0f ).
