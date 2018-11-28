@@ -18,10 +18,10 @@
 
 using namespace std;
 
+#define DEBUG_SPRITE_NAME m_vecupStatusText[0]
 
 namespace{
 
-#define DEBUG_SPRITE_NAME m_vecupStatusText[0]
 
 
 	//----- パーツカテゴリ -----//.
@@ -223,7 +223,7 @@ namespace{
 	const float fBUTTON_SET_TEST_OFFSET = -90.0f;
 	const char* sPATH_BUTONS = "Data\\Image\\Buttons.png";
 	const float INIT_DISP_BUTTON_SPRITE = 32.0f;
-	const WHSIZE_FLOAT INIT_ANIM_BUTTON_SPRITE = { 5.0f, 1.0f };
+	const WHSIZE_FLOAT INIT_ANIM_BUTTON_SPRITE = { 10.0f, 1.0f };
 	const int iBUTTON_SPRITE_NUM = 6;
 	const float fBUTTON_SPRITE_POS_Y = 32.0f;
 	const D3DXVECTOR3 vBUTTON_SPRITE_POS[ iBUTTON_SPRITE_NUM ] =
@@ -242,7 +242,7 @@ namespace{
 		{ 3.0f, 0.0f },
 		{ 2.0f, 0.0f },
 		{ 0.0f, 0.0f },
-		{ 4.0f, 0.0f },
+		{ 5.0f, 0.0f },
 	};
 	//ボタン説明文.
 	const D3DXVECTOR3 vFONT_BUTTON_POS = { fBUTTON_SET_TEST_OFFSET + 650.0f, 40.0f, 0.0f };
