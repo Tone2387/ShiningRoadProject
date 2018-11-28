@@ -14,15 +14,16 @@
 
 using namespace std;
 
+//起動時の初期シーン.
+#define START_UP_SCENE enSCENE::TITLE
+//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
+#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
+
 namespace{
 
 	const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
 
 
-	//起動時の初期シーン.
-	#define START_UP_SCENE enSCENE::TITLE
-	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
-	#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
 
 	const unsigned char cSTART_UP_MUSIC_NO = 0;
 

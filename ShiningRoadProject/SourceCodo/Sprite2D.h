@@ -39,7 +39,7 @@ public:
 		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11,
 		const char* fileName, 
-		const SPRITE_STATE ss );
+		const SPRITE_STATE& ss );
 
 
 	//描画(レンダリング)
@@ -73,7 +73,7 @@ public:
 
 
 
-	void SetAnim( const POINTFLOAT &anim );
+	void SetAnim( const POINTFLOAT& anim );
 
 protected:
 
@@ -81,13 +81,14 @@ protected:
 	//シェーダ作成.
 	HRESULT InitShader();
 	//モデル作成.
-	virtual HRESULT InitModel( const SPRITE_STATE ss );
+	virtual HRESULT InitModel( const SPRITE_STATE& ss );
 	//テクスチャ作成.
 	HRESULT CreateTexture( const char* const fileName,
 		ID3D11ShaderResourceView** pTex );
 
 protected:
 
+	//ヘッダーにいるのは継承先の為.
 	struct SPRITE2D_CONSTANT_BUFFER
 	{
 		ALIGN16 D3DXMATRIX	mW;				//ワールド行列.

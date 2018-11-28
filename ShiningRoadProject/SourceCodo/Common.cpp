@@ -48,8 +48,7 @@ HRESULT clsCommon::CreateBlendState()
 	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
 	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
 
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
-	{
+	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
 		if( FAILED( m_wpDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
 			assert( !"ブレンドステートの作成に失敗" );

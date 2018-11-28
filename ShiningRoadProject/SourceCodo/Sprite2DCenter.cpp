@@ -19,7 +19,7 @@ clsSPRITE2D_CENTER::~clsSPRITE2D_CENTER()
 //================================================
 //	モデル作成.
 //================================================
-HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE ss )
+HRESULT clsSPRITE2D_CENTER::InitModel( const SPRITE_STATE& ss )
 {
 	float fW = ss.Disp.w * 0.5f;	//表示スプライト幅.
 	float fH = ss.Disp.h * 0.5f;	//表示スプライト高さ.
@@ -201,7 +201,7 @@ void clsSPRITE2D_CENTER::Render()
 
 
 //回転の数値の限界から飛び出ない.
-D3DXVECTOR3 clsSPRITE2D_CENTER::GuardRotOver( D3DXVECTOR3 &vRot )
+D3DXVECTOR3 clsSPRITE2D_CENTER::GuardRotOver( D3DXVECTOR3& vRot )
 {
 	GuardRotOver( vRot.x );
 	GuardRotOver( vRot.y );
@@ -210,7 +210,7 @@ D3DXVECTOR3 clsSPRITE2D_CENTER::GuardRotOver( D3DXVECTOR3 &vRot )
 	return vRot;
 }
 
-float clsSPRITE2D_CENTER::GuardRotOver( float &fRot )
+float clsSPRITE2D_CENTER::GuardRotOver( float& fRot )
 {
 	//0より小さいなら一周大きくする.
 	if( fRot < 0.0f ){

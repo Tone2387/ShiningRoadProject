@@ -221,7 +221,6 @@ HRESULT clsSprite::InitShader()
 //============================================================
 HRESULT clsSprite::InitModel( const char* sTexName )
 {
-//	const float itaW = 0.5075f;
 	const float itaW = 0.5f;
 	float w, h;
 //	w = h = ( 1.0f / 8.0f );
@@ -256,7 +255,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	if( FAILED( m_wpDevice->CreateBuffer(
 		&bd, &InitData, &m_pVertexBuffer ) ) )
 	{
-		MessageBox( NULL, "頂点バッファ作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "頂点バッファ作成失敗", sTexName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -289,7 +288,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	if( FAILED( m_wpDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear ) ) )//(out)サンプラー.
 	{
-		MessageBox( NULL, "サンプラ作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "サンプラ作成失敗", sTexName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -301,7 +300,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 		&m_pTexture,	//(out)テクスチャ.
 		NULL ) ) )
 	{
-		MessageBox( NULL, "テクスチャ作成失敗w", "InitModel()", MB_OK );
+		MessageBox( NULL, "テクスチャ作成失敗w", sTexName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -383,8 +382,6 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 //		m_AnimCount ++;
 
 		cd.vUV = texUV;
-
-
 
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cd ), sizeof( cd ) );

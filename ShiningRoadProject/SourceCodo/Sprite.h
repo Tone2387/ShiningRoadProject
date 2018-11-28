@@ -93,8 +93,6 @@ protected:
 
 	int		m_AnimCount;//UVスクロール.
 
-	bool	m_bDispFlg;//表示フラグ.
-
 
 };
 
