@@ -73,16 +73,16 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	m_wpContext->GetDevice( &m_wpDevice );
 
 	if( FAILED( CreateTexture() ) ){
-		ERR_MSG( "描画先テクスチャ作成失敗", "" );
+		ERR_MSG( "描画先テクスチャ作成失敗", "clsSCREEN_TEXTURE" );
 	}
 	if( FAILED( CreateShader() ) ){
-		ERR_MSG( "描画先テクスチャシェーダー作成失敗", "" );
+		ERR_MSG( "描画先テクスチャシェーダー作成失敗", "clsSCREEN_TEXTURE" );
 	}
 	if( FAILED( CreateConstantBuffer() ) ){
-		ERR_MSG( "描画先テクスチャバッファ作成失敗", "" );
+		ERR_MSG( "描画先テクスチャバッファ作成失敗", "clsSCREEN_TEXTURE" );
 	}
 	if( FAILED( CreateBlendState() ) ){
-		ERR_MSG( "描画先ブレンドステート作成失敗", "" );
+		ERR_MSG( "描画先ブレンドステート作成失敗", "clsSCREEN_TEXTURE" );
 	}
 
 	//サウンド作成.
@@ -104,9 +104,6 @@ clsSCREEN_TEXTURE::~clsSCREEN_TEXTURE()
 	SAFE_RELEASE( m_pTexture );
 
 
-
-	m_wpContext = nullptr;
-	m_wpDevice = nullptr;
 }
 
 
@@ -129,7 +126,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	
 	HRESULT hr = m_wpDevice->CreateTexture2D( &texDesc, nullptr, &m_pTexture );
 	if( FAILED( hr ) ){
-		ERR_MSG( "スクリーンテクスチャ作成失敗", "" );
+		ERR_MSG( "スクリーンテクスチャ作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"スクリーンテクスチャ作成失敗" );
 		return hr;
 	}
@@ -159,7 +156,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	
 	hr = m_wpDevice->CreateRenderTargetView( m_pTexture, &rtvDesc, &m_pRenderTargetView );
 	if( FAILED( hr ) ){
-		ERR_MSG( "スクリーンレンダーターゲットビュー作成失敗", "" );
+		ERR_MSG( "スクリーンレンダーターゲットビュー作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"スクリーンレンダーターゲットビュー作成失敗" );
 		return hr;
 	}
@@ -173,7 +170,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 
 	hr = m_wpDevice->CreateShaderResourceView( m_pTexture, &srvDesc, &m_pShaderResourceView );
 	if( FAILED( hr ) ){
-		ERR_MSG( "スクリーンシェーダーリソースビュー作成失敗", "" );
+		ERR_MSG( "スクリーンシェーダーリソースビュー作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"スクリーンシェーダーリソースビュー作成失敗" );
 		return hr;
 	}
@@ -191,7 +188,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 
 	hr = m_wpDevice->CreateSamplerState( &smpDesc, &m_pSamplerState );
 	if( FAILED( hr ) ){
-		ERR_MSG( "スクリーンサンプラーステート作成失敗", "" );
+		ERR_MSG( "スクリーンサンプラーステート作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"スクリーンサンプラーステート作成失敗" );
 		return hr;
 	}
@@ -226,7 +223,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			&pErrors,		//エラーと警告一覧を格納するメモリへのポインタ.
 			NULL ) ) )		//戻り値へのポインタ(未使用).
 	{
-		MessageBox( NULL, "hlsl(vs)読み込み失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(vs)読み込み失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -239,7 +236,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			NULL,
 			&m_pVertexShader ) ) )//(out)バーテックスシェーダ.
 	{
-		MessageBox( NULL, "vs作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "vs作成失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 
@@ -264,7 +261,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			&pErrors,
 			NULL ) ) )
 	{
-		MessageBox( NULL, "hlsl(ps)読み込み失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(ps)読み込み失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -277,7 +274,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			NULL,
 			&m_pDefaultPS ) ) )//(out)ピクセルシェーダ.
 	{
-		MessageBox( NULL, "通常ps作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "通常ps作成失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 
@@ -298,7 +295,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			&pErrors,
 			NULL ) ) )
 	{
-		MessageBox( NULL, "hlsl(ps)読み込み失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(ps)読み込み失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -311,7 +308,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			NULL,
 			&m_pNoisePS ) ) )//(out)ピクセルシェーダ.
 	{
-		MessageBox( NULL, "ノイズps作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "ノイズps作成失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pCompiledShader );//ブロブ解放.
@@ -335,7 +332,7 @@ HRESULT clsSCREEN_TEXTURE::CreateConstantBuffer()
 		NULL,
 		&m_pConstantBuffer ) ) )
 	{
-		MessageBox( NULL, "コンスタントバッファ作成失敗", "ScreenTexture", MB_OK );
+		MessageBox( NULL, "コンスタントバッファ作成失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 
@@ -461,7 +458,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		m_wpDevice->CreateBuffer(
 			&bd, &InitData, &pBuffer ) ) )
 	{
-		ERR_MSG( "バッファ作成失敗", "" );
+		ERR_MSG( "バッファ作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"バッファ作成失敗" );
 		return ;
 	}
