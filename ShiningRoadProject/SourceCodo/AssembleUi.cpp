@@ -220,18 +220,20 @@ namespace{
 	const int iFONT_COMMENT_LINE = 5 + 8;
 
 	//ボタン.
+	const float fBUTTON_SET_TEST_OFFSET = -90.0f;
 	const char* sPATH_BUTONS = "Data\\Image\\Buttons.png";
 	const float INIT_DISP_BUTTON_SPRITE = 32.0f;
 	const WHSIZE_FLOAT INIT_ANIM_BUTTON_SPRITE = { 5.0f, 1.0f };
-	const int iBUTTON_SPRITE_NUM = 5;
+	const int iBUTTON_SPRITE_NUM = 6;
 	const float fBUTTON_SPRITE_POS_Y = 32.0f;
 	const D3DXVECTOR3 vBUTTON_SPRITE_POS[ iBUTTON_SPRITE_NUM ] =
 	{
-		{ 620.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-		{ 695.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-		{ 770.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-		{ 950.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-		{ 1110.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 615.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 695.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 775.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 950.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 1110.0f,fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 1270.0f,fBUTTON_SPRITE_POS_Y, 0.0f },
 	};
 	const POINTFLOAT vBUTTON_SPRITE_ANIM[ iBUTTON_SPRITE_NUM ] =
 	{
@@ -240,9 +242,10 @@ namespace{
 		{ 3.0f, 0.0f },
 		{ 2.0f, 0.0f },
 		{ 0.0f, 0.0f },
+		{ 4.0f, 0.0f },
 	};
 	//ボタン説明文.
-	const D3DXVECTOR3 vFONT_BUTTON_POS = { 650.0f, 40.0f, 0.0f };
+	const D3DXVECTOR3 vFONT_BUTTON_POS = { fBUTTON_SET_TEST_OFFSET + 650.0f, 40.0f, 0.0f };
 	const float fFONT_BUTTON_SCALE = 14.0f;
 	const int iFONT_BUTTON_LINE = 1;
 
