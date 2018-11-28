@@ -807,9 +807,9 @@ clsD3DXSKINMESH::clsD3DXSKINMESH(
 	ID3D11Device* const pDevice11,
 	ID3D11DeviceContext* const pContext11, 
 	const char* sFileName )
-	:m_hWnd( hWnd )
-	,m_pDevice( pDevice11 )
+	:m_pDevice( pDevice11 )
 	,m_pDeviceContext( pContext11 )
+//	,m_hWnd( hWnd )
 //	,m_pD3d9( NULL )
 //	,m_pDevice9( NULL )
 	,m_pSampleLinear( NULL )
@@ -831,7 +831,7 @@ clsD3DXSKINMESH::clsD3DXSKINMESH(
 	}
 
 	// Dx9 のデバイス関係を作成する.
-	if( FAILED( CreateDeviceDx9( m_hWnd, &pDevice9, sFileName ) ) ){
+	if( FAILED( CreateDeviceDx9( hWnd, &pDevice9, sFileName ) ) ){
 		ERR_MSG( "CreateDeviceDx9()" , sFileName );
 	}
 	// シェーダの作成.
@@ -899,7 +899,7 @@ clsD3DXSKINMESH::~clsD3DXSKINMESH()
 	// Dx11 デバイス関係.
 	m_pDeviceContext = NULL;
 	m_pDevice = NULL;
-	m_hWnd = NULL;
+//	m_hWnd = NULL;
 }
 
 
@@ -927,23 +927,23 @@ HRESULT clsD3DXSKINMESH::CreateDeviceDx9( HWND hWnd, LPDIRECT3DDEVICE9* ppOutDev
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 
 	if( FAILED( pD3d9->CreateDevice( 
-					D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd,
+					D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
 					D3DCREATE_HARDWARE_VERTEXPROCESSING,
 					&d3dpp, ppOutDevice9 ) ) )
 	{
 		if( FAILED( pD3d9->CreateDevice( 
-					D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd,
+					D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
 					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 					&d3dpp, ppOutDevice9 ) ) )
 		{
 			MessageBox( 0,"HALモードでDIRECT3Dデバイスを作成できません\nREFモードで再試行します",sErrFilePath,MB_OK);
 			if( FAILED( pD3d9->CreateDevice( 
-					D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
+					D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hWnd,
 					D3DCREATE_HARDWARE_VERTEXPROCESSING,
 					&d3dpp, ppOutDevice9 ) ) )
 			{
 				if( FAILED( pD3d9->CreateDevice( 
-					D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
+					D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hWnd,
 					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 					&d3dpp, ppOutDevice9 ) ) )
 				{

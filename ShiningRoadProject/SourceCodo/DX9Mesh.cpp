@@ -45,7 +45,7 @@ namespace{
 clsDX9Mesh::clsDX9Mesh() 
 	:m_pMesh( nullptr )
 	,m_pMeshForRay( nullptr )
-	,m_hWnd( nullptr )
+//	,m_hWnd( nullptr )
 	,m_pDevice( nullptr )
 	,m_pContext( nullptr )
 	,m_pVertexShader( nullptr )
@@ -102,7 +102,7 @@ clsDX9Mesh::~clsDX9Mesh()
 
 	m_pContext = nullptr;
 	m_pDevice = nullptr;
-	m_hWnd = nullptr;
+//	m_hWnd = nullptr;
 
 }
 
@@ -114,18 +114,18 @@ clsDX9Mesh::~clsDX9Mesh()
 //========================================================
 HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPSTR fileName )
 {
-	m_hWnd = hWnd;
+//	m_hWnd = hWnd;
 	m_pDevice = pDevice11;
 	m_pContext = pContext11;
-	LPDIRECT3DDEVICE9	pDevice9;	//Dx9デバイスオブジェクト.
+	LPDIRECT3DDEVICE9	pDevice9 = NULL;	//Dx9デバイスオブジェクト.
 
 	if( FAILED( CreateBlendState() ) ){
 		return E_FAIL;
 	}
-	if( FAILED( InitDx9( m_hWnd, &pDevice9, fileName ) ) ){
+	if( FAILED( InitDx9( hWnd, &pDevice9, fileName ) ) ){
 		return E_FAIL;
 	}
-	if( FAILED( LoadXMesh( fileName, pDevice9, fileName ) ) ){
+	if( FAILED( LoadXMesh( fileName, pDevice9 ) ) ){
 		return E_FAIL;
 	}
 	if( FAILED( InitShader( fileName ) ) ){
@@ -143,10 +143,8 @@ HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext
 //========================================================
 HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9, const LPSTR sErrFilePath  )
 {
-	m_hWnd = hWnd;
-
 	//「Direct3D」オブジェクトの作成.
-	LPDIRECT3D9	pD3d;	//DX9オブジェクト.
+	LPDIRECT3D9	pD3d = NULL;	//DX9オブジェクト.
 	pD3d = Direct3DCreate9( D3D_SDK_VERSION );
 	if( pD3d == NULL ){
 		MessageBox( NULL, "Dx9オブジェクト作成失敗", sErrFilePath, MB_OK );
@@ -164,24 +162,24 @@ HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9, const LP
 	d3dpp.AutoDepthStencilFormat	= D3DFMT_D16;				//ステンシルのフォーマット(16bit)
 
 	//デバイス作成(HALモード:描画と頂点処理をGPUで行う)
-	if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,m_hWnd,
+	if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL, hWnd,
 		D3DCREATE_HARDWARE_VERTEXPROCESSING,
 		&d3dpp, pOutDevice9 ) ) )
 	{
 		//デバイス作成(HALモード:描画はGPU、頂点処理をCPUで行う)
-		if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd,
+		if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
 			D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 			&d3dpp, pOutDevice9 ) ) )
 		{
 			MessageBox(NULL, "HALモードでデバイスを作成できません\nREFモードで再試行します", sErrFilePath, MB_OK);
 
 			//デバイス作成(REFモード:描画はCPU、頂点処理をGPUで行う)
-			if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
+			if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hWnd,
 				D3DCREATE_HARDWARE_VERTEXPROCESSING,
 				&d3dpp, pOutDevice9 ) ) )
 			{
 				//デバイス作成(REFモード:描画と頂点処理をCPUで行う)
-				if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
+				if( FAILED(pD3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hWnd,
 					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 					&d3dpp, pOutDevice9 ) ) )
 				{
@@ -200,7 +198,7 @@ HRESULT clsDX9Mesh::InitDx9( HWND hWnd, LPDIRECT3DDEVICE9* pOutDevice9, const LP
 //========================================================
 //Xファイルからメッシュをロードする.
 //========================================================
-HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9, const LPSTR sErrFilePath  )
+HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 {
 	//マテリアルバッファ.
 	LPD3DXBUFFER pD3DXMtrlBuffer;
@@ -327,7 +325,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9, const
 	if (FAILED(
 		m_pMesh->GetAttributeTable(pAttrTable,&m_NumAttr)))
 	{
-		MessageBox( NULL, "属性テーブル取得失敗", sErrFilePath, MB_OK );
+		MessageBox( NULL, "属性テーブル取得失敗", fileName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -355,7 +353,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9, const
 			m_pDevice->CreateBuffer(
 			&bd, &InitData, &m_ppIndexBuffer[i])))
 		{
-			MessageBox( NULL, "インデックスバッファ作成失敗", sErrFilePath, MB_OK );
+			MessageBox( NULL, "インデックスバッファ作成失敗", fileName, MB_OK );
 			return E_FAIL;
 		}
 		//面の数をコピー.
@@ -409,7 +407,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9, const
 			m_pDevice->CreateBuffer(
 			&bd, &InitData, &m_pVertexBuffer)))
 		{
-			MessageBox( NULL, "頂点(バーテックス)バッファ作成失敗", sErrFilePath, MB_OK );
+			MessageBox( NULL, "頂点(バーテックス)バッファ作成失敗", fileName, MB_OK );
 			return E_FAIL;
 		}
 		pVB->Unlock();
@@ -439,7 +437,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9, const
 		m_pDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear)))//(out)サンプラー.
 	{
-		MessageBox(NULL, "サンプラー作成失敗", sErrFilePath, MB_OK);
+		MessageBox(NULL, "サンプラー作成失敗", fileName, MB_OK);
 		return E_FAIL;
 	}
 

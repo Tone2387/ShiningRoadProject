@@ -457,7 +457,7 @@ private:
 	MASK_TEXTURE* m_pMaskArmor;
 
 
-	HWND m_hWnd;
+//	HWND m_hWnd;
 	// Dx9.
 //	LPDIRECT3D9			m_pD3d9;
 //	LPDIRECT3DDEVICE9	m_pDevice9;

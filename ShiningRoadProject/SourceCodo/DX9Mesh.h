@@ -59,7 +59,7 @@ private:
 	HRESULT InitDx9( const HWND hWnd, LPDIRECT3DDEVICE9* ppOutDevice9, const LPSTR sErrFilePath );
 
 	//メッシュ読込.
-	HRESULT LoadXMesh( const LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9, const LPSTR sErrFilePath  );
+	HRESULT LoadXMesh( const LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9  );
 
 	//シェーダ作成.
 	HRESULT InitShader( const LPSTR sErrFilePath );
@@ -71,7 +71,7 @@ private:
 	//Z軸ﾍﾞｸﾄﾙを用意.
 	D3DXVECTOR3 vecAxisZ;
 
-	HWND				m_hWnd;	//ウィンドウハンドル.
+//	HWND				m_hWnd;	//ウィンドウハンドル.
 
 	//Dx9.
 //	LPDIRECT3D9			m_pD3d;	//DX9オブジェクト.
