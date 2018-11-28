@@ -169,15 +169,16 @@ void clsStage::Render(
 #else//#ifdef _DEBUG
 	m_pStageFloor->Render( mView, mProj, vLight, vEye );
 	m_pStageCelling->Render( mView, mProj, vLight, vEye );
+#endif//#ifdef _DEBUG
 
 	assert( m_pLia );
 	m_pLia->ModelRender( mView, mProj, vLight, vEye );
+
 	for( int i=0; i<enDOOR_NUM_size; i++ ){
 		assert( m_pDoorArray[i] );
 		m_pDoorArray[i]->ModelUpdate( m_pDoorArray[i]->m_Trans );
 		m_pDoorArray[i]->ModelRender( mView, mProj, vLight, vEye );
 	}
-#endif//#ifdef _DEBUG
 
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye );
