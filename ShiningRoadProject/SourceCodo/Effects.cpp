@@ -10,7 +10,7 @@ namespace{
 	//エフェクト管理用インスタンス最大数.
 	//最大描画スプライト数.(やばいならint型にする)
 	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 1;
-	const int g_EffectInstanceMax = g_RenderSpriteMax;
+	const int g_EffectInstanceMax = g_RenderSpriteMax * 1;
 
 	const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
 
