@@ -9,7 +9,7 @@ namespace{
 
 	//エフェクト管理用インスタンス最大数.
 	//最大描画スプライト数.(やばいならint型にする)
-	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 4;
+	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 2;
 	const int g_EffectInstanceMax = g_RenderSpriteMax;
 
 	const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
@@ -18,9 +18,6 @@ namespace{
 
 	const int uiEFFECT_FILE_NAME_INDEX = 0;//ファイル名が格納されているインデックス.
 	//const int uiMAX_PLAY_INDEX = 1;//最大再生数.
-
-
-	const int iRESURVE_SIZE_EFFECTS_MAX = 64;
 
 	////エフェクトファイルのリスト.
 	//const wchar_t g_strFileNameList[ clsEffects::enEFFECTS_MAX ][128] =

@@ -2,8 +2,11 @@
 //警告についてのコード分析を無効にする.4005:再定義.
 #pragma warning( disable:4005 )
 
-//これがついていると起動時にフルスクリーンになる.
+//これがついていると起動時にフルスクリーンになる予定だったが無理だやめました.
 //#define STARTUP_FULLSCREEN_
+
+
+class clsGAME;
 
 //============================================================
 //	インクルード.
@@ -17,7 +20,6 @@ class clsDX9Mesh;
 
 #endif//#if _DEBUG
 
-#include "Game.h"
 
 
 //メモリリーク検出用.
@@ -37,12 +39,6 @@ class clsDX9Mesh;
 //#pragma comment( lib, "d3dx10.lib" )//「D3DX～」の定義使用時に必要.
 
 
-
-//============================================================
-//	定数.
-//============================================================
-#define WND_TITLE	"ShiningRoadProject"
-#define APR_NAME	"ShiningRoadProject"
 
 
 

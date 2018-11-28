@@ -4,17 +4,17 @@
 
 using namespace std;
 
-#define XINPUT_ENTER  ( XINPUT_START | XINPUT_B )
+#define XINPUT_ENTER ( XINPUT_START | XINPUT_B )
 #define XINPUT_EXIT  ( XINPUT_A )
 
 namespace{
 
 	//ライト方向.
-	const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -2.0f };
+	const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -0.01f };
 	//カメラのより具合.
 	const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );
 	//描画限界距離.
-	const float fRENDER_LIMIT = 640.0f;//150.0f.
+	const float fRENDER_LIMIT = 760.0f;//640.0f;.//150.0f.
 
 
 
@@ -43,29 +43,29 @@ namespace{
 //========== 基底クラス ==========//
 //================================//
 clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
-	:m_wpPtrGroup(		ptrGroup )
-	,m_wpDevice(		m_wpPtrGroup->GetDevice() )
-	,m_wpContext(		m_wpPtrGroup->GetContext() )
-	,m_wpViewPort10(	m_wpPtrGroup->GetViewPort10() )
-	,m_wpViewPort11(	m_wpPtrGroup->GetViewPort11() )
-	,m_wpDxInput(		m_wpPtrGroup->GetDxInput() )
-	,m_wpXInput(		m_wpPtrGroup->GetXInput() )
-	,m_wpResource(		m_wpPtrGroup->GetResource() )
-	,m_wpEffects(		m_wpPtrGroup->GetEffects() )
-	,m_wpSound(			m_wpPtrGroup->GetSound() )
-	,m_wpCamera(		m_wpPtrGroup->GetCamera() )
-	,m_wpRoboStatus(	m_wpPtrGroup->GetRoboStatus() )
-	,m_wpBlackScreen(	m_wpPtrGroup->GetBlackScreen() )
-	,m_wpFont(			m_wpPtrGroup->GetFont() )
-	,m_enNextScene(		enSCENE::NOTHING )
-	,m_encNoise(		encNOISE::NOTHING )
-	,m_wpViewPortUsing(	m_wpViewPort11 )
-	,m_pDepthStencilStateOn( nullptr )
-	,m_pDepthStencilStateOff(nullptr )
-	,m_iNoiseFrame( 0 )
-	,m_fBlock( 0.0f )
-	,m_fPulse( 0.0f )
-	,m_bStopNoiseSe( false )
+	:m_wpPtrGroup(				ptrGroup )
+	,m_wpDevice(				m_wpPtrGroup->GetDevice() )
+	,m_wpContext(				m_wpPtrGroup->GetContext() )
+	,m_wpViewPort10(			m_wpPtrGroup->GetViewPort10() )
+	,m_wpViewPort11(			m_wpPtrGroup->GetViewPort11() )
+	,m_wpDxInput(				m_wpPtrGroup->GetDxInput() )
+	,m_wpXInput(				m_wpPtrGroup->GetXInput() )
+	,m_wpResource(				m_wpPtrGroup->GetResource() )
+	,m_wpEffects(				m_wpPtrGroup->GetEffects() )
+	,m_wpSound(					m_wpPtrGroup->GetSound() )
+	,m_wpCamera(				m_wpPtrGroup->GetCamera() )
+	,m_wpRoboStatus(			m_wpPtrGroup->GetRoboStatus() )
+	,m_wpBlackScreen(			m_wpPtrGroup->GetBlackScreen() )
+	,m_wpFont(					m_wpPtrGroup->GetFont() )
+	,m_enNextScene(				enSCENE::NOTHING )
+	,m_encNoise(				encNOISE::NOTHING )
+	,m_wpViewPortUsing(			m_wpViewPort11 )
+	,m_pDepthStencilStateOn(	nullptr )
+	,m_pDepthStencilStateOff(	nullptr )
+	,m_iNoiseFrame(				0 )
+	,m_fBlock(					0.0f )
+	,m_fPulse(					0.0f )
+	,m_bStopNoiseSe(			false )
 {
 }
 
@@ -213,6 +213,7 @@ void clsSCENE_BASE::Render(
 
 
 	//各シーンの描画.
+	SetDepth( true );	//Zテスト:ON.
 	RenderProduct( m_wpCamera->GetPos() );
 	
 	//エフェクト描画.
@@ -224,7 +225,6 @@ void clsSCENE_BASE::Render(
 	//各シーンのUIの描画.
 	SetDepth( false );
 	RenderUi();
-	SetDepth( true );	//Zテスト:ON.
 
 	//元通りのビューポート.
 	if( m_wpViewPortUsing != m_wpViewPort11 ){
@@ -233,6 +233,7 @@ void clsSCENE_BASE::Render(
 	}
 
 	//暗転描画.
+	SetDepth( true );	//Zテスト:ON.
 	m_wpBlackScreen->Render();
 
 

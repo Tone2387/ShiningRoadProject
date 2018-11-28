@@ -21,14 +21,7 @@ using namespace std;
 
 namespace{
 
-	const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
 
-
-
-	const unsigned char cSTART_UP_MUSIC_NO = 0;
-
-	//画面の初期化色.
-	const float g_fClearColor[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
 
 }
 
@@ -100,6 +93,7 @@ void clsGAME::Create()
 	m_spRoboStatus = new clsROBO_STATUS_PLAYER;
 
 	//暗転.
+	const char* cBLACK_FILE_NAME = "Data\\Image\\BlackScreen.png";
 	SPRITE_STATE ss;
 	assert( !m_spBlackScreen );
 	m_spBlackScreen = new clsBLACK_SCREEN;
@@ -108,7 +102,7 @@ void clsGAME::Create()
 		cBLACK_FILE_NAME, ss );
 
 	assert( !m_spFont );
-	m_spFont = new clsFont ( m_wpDevice, m_wpContext );
+	m_spFont = new clsFont( m_wpDevice, m_wpContext );
 
 	//引数のポインタの集合体.
 	assert( !m_spPtrGroup );
@@ -126,7 +120,7 @@ void clsGAME::Create()
 
 
 	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
-	SwitchScene( GET_STATUS_DATA_INIT_SCENE, true );
+//	SwitchScene( GET_STATUS_DATA_INIT_SCENE, true );
 	//最初のシーンはタイトルを指定する.
 	SwitchScene( START_UP_SCENE );
 
@@ -166,10 +160,13 @@ void clsGAME::Render(
 	ID3D11RenderTargetView* const pBackBuffer_TexRTV,
 	ID3D11DepthStencilView* const pBackBuffer_DSTexDSV ) const
 { 
+	//画面の初期化色.
+	const float fCleaColorArray[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+
 	assert( m_wpContext );
 	//画面のクリア.
 	m_wpContext->ClearRenderTargetView(
-		pBackBuffer_TexRTV, g_fClearColor );
+		pBackBuffer_TexRTV, fCleaColorArray );
 	//デプスステンシルビューバックバッファ.
 	m_wpContext->ClearDepthStencilView(
 		pBackBuffer_DSTexDSV,
@@ -193,7 +190,6 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	}
 
 	//今のシーンを消して.
-//	SAFE_DELETE( m_upScene );
 	SAFE_DELETE( m_spCamera );
 	SAFE_DELETE( m_spSound );
 
@@ -221,7 +217,6 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	if( m_upScene ){
 		m_upScene->Create( m_hWnd );//シーン初期化.
 	}
-
 
 	//明転開始.
 	m_spBlackScreen->GetBright();
