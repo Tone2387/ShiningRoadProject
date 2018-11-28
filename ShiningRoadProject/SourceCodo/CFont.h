@@ -75,7 +75,7 @@ private:
 	//戻り値用列挙体.
 	enum class encCHARACTOR_TYPE : UCHAR
 	{
-		ALPHABET = 0,//半角.
+		ALPHABET = 0, //半角.
 		JAPANESE_HEAD,//日本語先頭バイト.
 		JAPANESE_FOOT,//日本語末尾バイト.
 	};
