@@ -157,7 +157,9 @@ namespace{
 	//文字.
 	const float fTEXT_SCALE_HEADER = 4.0f;
 	const D3DXVECTOR2 vTEXT_POS_OFFSET_HEADER = { 57.0f, 7.0f };//画像とのずれ.
-	const D3DXVECTOR2 vTEXT_POS_HEADER = { INIT_POS_HEADER.x + vTEXT_POS_OFFSET_HEADER.x, INIT_POS_HEADER.y + vTEXT_POS_OFFSET_HEADER.y };
+	const D3DXVECTOR2 vTEXT_POS_HEADER = { 
+		INIT_POS_HEADER.x + vTEXT_POS_OFFSET_HEADER.x, 
+		INIT_POS_HEADER.y + vTEXT_POS_OFFSET_HEADER.y };
 	const char* sHEADER_TEXT = "ASSEMBLE";
 	//----- ヘッダーとフッター 終わり -----//.
 
@@ -215,7 +217,7 @@ namespace{
 	const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
 	const float fFONT_COMMENT_SCALE = 16.0f;
 	//パーツ説明以外の行数.
-	const int iFONT_COMMENT_LINE = 4 + 8;
+	const int iFONT_COMMENT_LINE = 5 + 8;
 
 	//ボタン.
 	const char* sPATH_BUTONS = "Data\\Image\\Buttons.png";
@@ -242,7 +244,12 @@ namespace{
 	//ボタン説明文.
 	const D3DXVECTOR3 vFONT_BUTTON_POS = { 650.0f, 40.0f, 0.0f };
 	const float fFONT_BUTTON_SCALE = 14.0f;
-	const int iFONT_BUTTON_LINE = 0;
+	const int iFONT_BUTTON_LINE = 1;
+
+	//画面タイトル「ASSEMBLE」.
+	const D3DXVECTOR3 vFONT_TEXT_TITLE_POS = { 57.0f, 21.0f, 1.0f };
+	const float fFONT_TEXT_TITLE_SCALE = 32.0f;
+	const int iFONT_TEXT_TITLE_LINE = 0;
 
 }
 
@@ -679,10 +686,15 @@ void clsASSEMBLE_UI::Render(
 
 //	assert( m_upHeaderText );
 //	m_upHeaderText->Render();
-	//ボタンの説明文.
 	assert( m_wpFont );
+	//画面タイトル「ASSEMBLE」.
 	const D3DXVECTOR4 vFONT_TEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
 	m_wpFont->SetColor( vFONT_TEXT_COLOR );
+	m_wpFont->SetPos( vFONT_TEXT_TITLE_POS );
+	m_wpFont->SetScale( fFONT_TEXT_TITLE_SCALE );
+	m_wpFont->Render( iFONT_TEXT_TITLE_LINE );
+
+	//ボタンの説明文.
 	m_wpFont->SetPos( vFONT_BUTTON_POS );
 	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
 	m_wpFont->Render( iFONT_BUTTON_LINE );

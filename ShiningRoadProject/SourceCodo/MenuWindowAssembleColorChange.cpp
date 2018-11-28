@@ -198,7 +198,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	//----- Textç¿ïWÇåàíËÇ∑ÇÈ -----//.
 	//RGB.
 	const float fSCALE_RGB = 24.0f;
-	const int iRGB_INDEX = 8;
+	const int iRGB_INDEX = 9;
 	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
 		const D3DXVECTOR3 vADD_POS = { -50.0f, 0.0f, 0.0f };
 		const D3DXVECTOR3 vPOS_AGB = { m_vecupColorBone[i]->GetPos().x, m_vecupColorBone[i]->GetPos().y, 0.0f };
@@ -261,7 +261,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	const float fTITLE_TEXT_SCALE = 36;
 	m_wpFont->SetScale( fTITLE_TEXT_SCALE );
 
-	const int iMENU_TITLE_TEXT_INDEX = 3;
+	const int iMENU_TITLE_TEXT_INDEX = 4;
 	m_wpFont->Render( iMENU_TITLE_TEXT_INDEX );
 
 	//color1.
@@ -272,7 +272,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	const float fCOLOR1_TEXT_SCALE = 18;
 	m_wpFont->SetScale( fCOLOR1_TEXT_SCALE );
 
-	int iColorTextIndex = 6;
+	int iColorTextIndex = 7;
 	m_wpFont->Render( iColorTextIndex ++ );
 
 	//color2.
