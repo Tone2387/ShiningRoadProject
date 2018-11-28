@@ -9,7 +9,7 @@ namespace{
 
 	//エフェクト管理用インスタンス最大数.
 	//最大描画スプライト数.(やばいならint型にする)
-	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 2;
+	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 1;
 	const int g_EffectInstanceMax = g_RenderSpriteMax;
 
 	const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
@@ -48,9 +48,13 @@ clsEffects::clsEffects()
 //	ZeroMemory( this, sizeof( clsEffects ) );
 	m_pManager = nullptr;
 	m_pRender = nullptr;
+
+#ifdef EFFECTS_USE_XAUDIO_
 	m_pSound = nullptr;
 	m_pXA2 = nullptr;
 	m_pXA2Master = nullptr;
+#endif//#ifdef EFFECTS_USE_XAUDIO_
+
 	for( unsigned int i=0; i<m_vecpEffect.size(); i++ ){
 		m_vecpEffect[i] = nullptr;
 	}
@@ -74,20 +78,24 @@ HRESULT clsEffects::Destroy()
 	assert( m_pManager );
 	m_pManager->Destroy();
 
+#ifdef EFFECTS_USE_XAUDIO_
 	//次に音再生用インスタンスを破棄.
 	assert( m_pSound );
 	m_pSound->Destory();
+#endif//#ifdef EFFECTS_USE_XAUDIO_
 
 	//描画用インスタンスを破棄.
 	assert( m_pRender );
 	m_pRender->Destory();
 
+#ifdef EFFECTS_USE_XAUDIO_
 	//XAudio2の解放.
 	if( m_pXA2Master != nullptr ){
 		m_pXA2Master->DestroyVoice();
 		m_pXA2Master = nullptr;
 	}
 	ES_SAFE_RELEASE( m_pXA2 );
+#endif//#ifdef EFFECTS_USE_XAUDIO_
 
 	return S_OK;
 }
@@ -129,6 +137,7 @@ HRESULT clsEffects::Create( ID3D11Device* const pDevice, ID3D11DeviceContext* co
 //初期化.
 HRESULT clsEffects::Init( ID3D11Device* const pDevice, ID3D11DeviceContext* const pContext )
 {
+#ifdef EFFECTS_USE_XAUDIO_
 	//XAudio2の初期化を行う.
 	if( FAILED( XAudio2Create( &m_pXA2 ) ) ){
 		ERR_MSG( "XAudio2作成失敗", "clsEffects::Create()" );
@@ -138,6 +147,7 @@ HRESULT clsEffects::Init( ID3D11Device* const pDevice, ID3D11DeviceContext* cons
 		ERR_MSG( "MasteringVoice作成失敗", "clsEffects::Create()" );
 		return E_FAIL;
 	}
+#endif//#ifdef EFFECTS_USE_XAUDIO_
 
 	//描画用インスタンスの生成.
 	m_pRender = ::EffekseerRendererDX11::Renderer::Create(
@@ -157,6 +167,7 @@ HRESULT clsEffects::Init( ID3D11Device* const pDevice, ID3D11DeviceContext* cons
 	m_pManager->SetTextureLoader( m_pRender->CreateTextureLoader() );
 	m_pManager->SetModelLoader( m_pRender->CreateModelLoader() );
 
+#ifdef EFFECTS_USE_XAUDIO_
 	//音再生用インスタンスの生成.
 	m_pSound = ::EffekseerSound::Sound::Create( m_pXA2, 16, 16 );
 
@@ -166,6 +177,7 @@ HRESULT clsEffects::Init( ID3D11Device* const pDevice, ID3D11DeviceContext* cons
 	//音再生用インスタンスからサウンドデータの読込機能を設定.
 	//独自拡張可能、現在はファイルから読み込んでいる.
 	m_pManager->SetSoundLoader( m_pSound->CreateSoundLoader() );
+#endif//#ifdef EFFECTS_USE_XAUDIO_
 
 	return S_OK;
 }

@@ -8,11 +8,15 @@ using namespace std;
 namespace{
 
 	const char sROBO_STATUS_HERO_PATH[] = "Data\\FileData\\RoboStatusCsvData\\RoboStatusHero.csv";
+
 }
 
 clsROBO_STATUS_PLAYER::clsROBO_STATUS_PLAYER()
 {
 	LoadFileData( sROBO_STATUS_HERO_PATH );
+	vector< unique_ptr< clsFILE > > vecupFile;
+	LoadPartsData( vecupFile );
+	AttachData( vecupFile );
 }
 
 clsROBO_STATUS_PLAYER::~clsROBO_STATUS_PLAYER()
@@ -44,6 +48,9 @@ void clsROBO_STATUS_PLAYER::LoadFileData( const char* sFilePath )
 		m_RoboStateData.iColorRank[i]		= m_RoboStateDataHero.iColorRank[i];
 	}
 }
+
+
+
 
 
 

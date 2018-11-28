@@ -55,7 +55,7 @@ clsResource::clsResource()
 	,m_ppStaticModels( nullptr )
 	,m_ppSkinModels( nullptr )
 	,m_ucSkinModelMax( 0 )
-	,m_PartsNum( )
+//	,m_PartsNum()
 {
 	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
 		m_PartsNum[i] = 0;

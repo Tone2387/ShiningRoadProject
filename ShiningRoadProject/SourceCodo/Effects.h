@@ -4,6 +4,11 @@
 //警告についてのコード分析を無効にする。4005:再定義.
 #pragma warning( disable : 4005 )
 
+
+//XAudioを使用する場合は有効にする.
+//#define EFFECTS_USE_XAUDIO_
+
+
 //==================================================
 //	先にしておくべきヘッダ、ライブラリの読込.
 //==================================================
@@ -216,14 +221,18 @@ private:
 					const ::Effekseer::Matrix44* pSrcMatEfk ) const;
 
 
+private:
+
 	//エフェクトを作動させるために必要.
 	::Effekseer::Manager*			m_pManager;
 	::EffekseerRenderer::Renderer*	m_pRender;
+
+#ifdef EFFECTS_USE_XAUDIO_
 	::EffekseerSound::Sound*		m_pSound;
 	//エフェクトデータに含まれる音再生に必要.
 	IXAudio2*						m_pXA2;
 	IXAudio2MasteringVoice*			m_pXA2Master;
-
+#endif//#ifdef EFFECTS_USE_XAUDIO_
 
 	//エフェクトの種類ごとに必要.
 	std::vector< ::Effekseer::Effect* >	m_vecpEffect;
