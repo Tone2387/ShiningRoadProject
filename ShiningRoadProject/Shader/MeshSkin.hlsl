@@ -145,15 +145,19 @@ float4 PSSkin( PSSkinIn input ) : SV_Target
 	float4 mask1Color = g_TexMask1.Sample( g_SamMask1, input.Tex );
 	float4 mask2Color = g_TexMask2.Sample( g_SamMask2, input.Tex );
 
-	if( mask1Color.r >= 0.99f ||
-		mask1Color.g >= 0.99f ||
-		mask1Color.b >= 0.99f )
+	if( 
+		mask1Color.r >= 0.99f
+//		&& mask1Color.g >= 0.99f
+//		&& mask1Color.b >= 0.99f
+		)
 	{
 		RetColor *= g_vColorBase;
 	}
-	else if(mask2Color.r >= 0.99f ||
-			mask2Color.g >= 0.99f ||
-			mask2Color.b >= 0.99f )
+	else if(
+		mask2Color.r >= 0.99f
+//		&& mask2Color.g >= 0.99f
+//		&& mask2Color.b >= 0.99f
+		)
 	{
 		RetColor *= g_vColorArmor;
 	}

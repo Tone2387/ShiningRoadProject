@@ -145,7 +145,7 @@ HRESULT clsFont::CreateShader()
 		FONT_SHADER, NULL, NULL, "VS", "vs_5_0", 0, 0, NULL,
 		&pCompileShader, &pErrors, NULL ) ) )
 	{
-		assert( "ブロブ作成失敗(VS)" );
+		assert( "CFontブロブ作成失敗(VS)" );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -156,7 +156,7 @@ HRESULT clsFont::CreateShader()
 		(pCompileShader)->GetBufferSize(),
 		NULL, &m_pVertexShader ) ) )	//(out)頂点シェーダー.
 	{
-		assert( "Vertex Shader作成失敗(VS)" );
+		assert( "CFontVertex Shader作成失敗(VS)" );
 		return E_FAIL;
 	}
 
@@ -185,7 +185,7 @@ HRESULT clsFont::CreateShader()
 		numElements_Ita, pCompileShader->GetBufferPointer(),	//(out)頂点インプットレイアウト.
 		pCompileShader->GetBufferSize(), &m_pVertexLayout ) ) )
 	{
-		assert( "頂点インプットレイアウトの作成失敗" );
+		assert( "CFont頂点インプットレイアウトの作成失敗" );
 		return FALSE;
 	}
 
@@ -194,7 +194,7 @@ HRESULT clsFont::CreateShader()
 		FONT_SHADER, NULL, NULL, "PS", "ps_5_0", 0, 0, NULL,
 		&pCompileShader, &pErrors, NULL ) ) )
 	{
-		assert( "ブロブ作成失敗(PS)" );
+		assert( "CFontブロブ作成失敗(PS)" );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -204,7 +204,7 @@ HRESULT clsFont::CreateShader()
 		(pCompileShader)->GetBufferPointer(),
 		(pCompileShader)->GetBufferSize(), NULL, &m_pPixelShader ) ) )	//(out)頂点.
 	{
-		assert( "ピクセルシェーダー作成失敗" );
+		assert( "CFontピクセルシェーダー作成失敗" );
 		return E_FAIL;
 	}
 
@@ -247,7 +247,7 @@ HRESULT clsFont::CreateVertexBuffer()
 	InitDate.pSysMem = vertices;		//三角形の頂点をリセット.
 	//頂点バッファの作成.
 	if( FAILED( m_wpDevice->CreateBuffer( &bd, &InitDate, &m_pVertexBuffer ) ) ){
-		ERR_MSG("頂点バッファ(m_pItaVB)の作成に失敗", "InitPolygon");
+		ERR_MSG("頂点バッファ(m_pItaVB)の作成に失敗", "CFont");
 		return E_FAIL;
 	}
 
@@ -284,13 +284,36 @@ HRESULT clsFont::CreateConstantBuffer()
 	if( FAILED( m_wpDevice->CreateBuffer(
 		&ItaBD, NULL, &m_pConstantBuffer ) ) )
 	{
-		ERR_MSG("コンスタントバッファ(Ita)の作成に失敗", "InitShader");
+		ERR_MSG("コンスタントバッファ(Ita)の作成に失敗", "CFont");
 		return E_FAIL;
 	}
 
 
 	return S_OK;
 }
+
+
+
+
+
+
+void clsFont::Create( const char *sTextFileName )
+{
+	if( FAILED( LoadTextFile( sTextFileName ) ) ){
+		assert( !"Can't Load Text File" );
+	}
+
+	if( FAILED( CreateTexture( sTextFileName ) ) ){
+		assert( !"Can't Create Texture" );
+	}
+
+	SetPos( { 0.0f, 0.0f, 0.0f } );
+	SetScale( 0.0f );
+	SetAlpha( 1.0f );
+	SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
+}
+
+
 
 //ファイル読み込み.
 HRESULT clsFont::LoadTextFile( const char *sTextFileName )
@@ -340,7 +363,7 @@ HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 }
 
 //テクスチャ作成.
-HRESULT clsFont::CreateTexture()
+HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 {
 	//fontCreate.
 	LOGFONT lf = {
@@ -360,9 +383,8 @@ HRESULT clsFont::CreateTexture()
 	for( unsigned int iTex=0; iTex<m_vecsTextData.size(); iTex++ )
 	{
 		HFONT hFont = CreateFontIndirect( &lf );
-		if( !hFont )
-		{
-			ERR_MSG("フォント作成不可", "Error");
+		if( !hFont ){
+			ERR_MSG("フォント作成不可", sErrFilePath);
 			return E_FAIL;
 		}
 
@@ -423,7 +445,7 @@ HRESULT clsFont::CreateTexture()
 			
 
 			if( FAILED( m_wpDevice->CreateTexture2D( &desc, 0, &m_vecpTex2D[ iTex ] ) ) ){
-				MessageBox( 0, "テクスチャ作成失敗", "CreateTexture", MB_OK );
+				MessageBox( 0, "テクスチャ作成失敗", sErrFilePath, MB_OK );
 				return E_FAIL;
 			}
 
@@ -437,7 +459,7 @@ HRESULT clsFont::CreateTexture()
 				&hMappedResource ) ) )
 			{
 				MessageBox(NULL, "テクスチャ作成失敗",
-					"CreateTex::->Map", MB_OK);
+					sErrFilePath, MB_OK);
 				return E_FAIL;
 			}
 			// ここで書き込む.
@@ -484,7 +506,7 @@ HRESULT clsFont::CreateTexture()
 			if( FAILED( m_wpDevice->CreateShaderResourceView(
 				m_vecpTex2D[ iTex ], &srvDesc, &m_vecvecpAsciiTexture[ iTex ][ iCharCnt ] ) ) )
 			{
-				assert( !"テクスチャ作成失敗" );
+				ERR_MSG( "テクスチャ作成失敗", sErrFilePath );
 				return E_FAIL;
 			}
 
@@ -505,21 +527,6 @@ HRESULT clsFont::CreateTexture()
 	return S_OK;
 }
 
-void clsFont::Create( const char *sTextFileName )
-{
-	if( FAILED( LoadTextFile( sTextFileName ) ) ){
-		assert( !"Can't Load Text File" );
-	}
-
-	if( FAILED( CreateTexture() ) ){
-		assert( !"Can't Create Texture" );
-	}
-
-	SetPos( { 0.0f, 0.0f, 0.0f } );
-	SetScale( 0.0f );
-	SetAlpha( 1.0f );
-	SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
-}
 
 void clsFont::Release()
 {

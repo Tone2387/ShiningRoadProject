@@ -11,17 +11,17 @@ using namespace std;
 namespace{
 	
 #ifdef _DEBUG
-	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide_.png";
-	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop_.png";
+	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSideDebug.png";
+	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTopDebug.png";
 #else//#ifdef _DEBUG
-	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide.png";
-	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop.png";
+	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
+	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
 #endif//#ifdef _DEBUG
 
 	//ç≈í·å¿ÇÃî¬ÇÃêî.
 	const int iTEX_NUM_MIN = 1;
 
-	const float fTILE_SIZE_MAX_SIZE = 15.0f;
+	const float fTILE_SIZE_MAX_SIZE = 3.0f;//15.0f.
 	const D3DXVECTOR3 vTILE_SIZE_MAX = { fTILE_SIZE_MAX_SIZE, fTILE_SIZE_MAX_SIZE, 1.0f };
 
 	//ë§ñ ÇÃforï∂ÇÃëùâ¡ó .

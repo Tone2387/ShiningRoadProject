@@ -18,10 +18,10 @@
 
 using namespace std;
 
+#define DEBUG_SPRITE_NAME m_vecupStatusText[0]
 
 namespace{
 
-#define DEBUG_SPRITE_NAME m_vecupStatusText[0]
 
 
 	//----- パーツカテゴリ -----//.
@@ -31,15 +31,8 @@ namespace{
 	const D3DXVECTOR3 vINIT_POS_PARTS_TYPE = { 32.0f, 87.0f, 0.0f };
 	//パーツカテゴリの座標の差.
 	const float fOFFSET_POS_X_PARTS_TYPE = PARTS_TYPE_SIZE.w + 18.0f;
-	//パーツカテゴリへのパス.
-	const char* sPATH_PARTS_TYPE = "Data\\Image\\AssembleUi\\";
-	//カテゴリの数.
-	const char cPARTS_TYPE_NUM = 6;
-	//パーツカテゴリ画像パス( sPATH_PARTS_TYPEにくっつける ).
-	const string sPATH_PARTS_TYPE_CHILDREN[ cPARTS_TYPE_NUM ] =
-	{
-		"LegType.png", "CoreType.png", "HeadType.png", "ArmsType.png", "WeaponLeftType.png" ,"WeaponRightType.png" 
-	};
+	//パーツカテゴリアイコンへのパス.
+	const char* sPATH_PARTS_TYPE_PATH = "Data\\Image\\AssembleUi\\IconEmpty.png";
 	//----- パーツカテゴリ 終わり -----//.
 
 	//選択中パーツカテゴリパス.
@@ -164,7 +157,9 @@ namespace{
 	//文字.
 	const float fTEXT_SCALE_HEADER = 4.0f;
 	const D3DXVECTOR2 vTEXT_POS_OFFSET_HEADER = { 57.0f, 7.0f };//画像とのずれ.
-	const D3DXVECTOR2 vTEXT_POS_HEADER = { INIT_POS_HEADER.x + vTEXT_POS_OFFSET_HEADER.x, INIT_POS_HEADER.y + vTEXT_POS_OFFSET_HEADER.y };
+	const D3DXVECTOR2 vTEXT_POS_HEADER = { 
+		INIT_POS_HEADER.x + vTEXT_POS_OFFSET_HEADER.x, 
+		INIT_POS_HEADER.y + vTEXT_POS_OFFSET_HEADER.y };
 	const char* sHEADER_TEXT = "ASSEMBLE";
 	//----- ヘッダーとフッター 終わり -----//.
 
@@ -222,21 +217,23 @@ namespace{
 	const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
 	const float fFONT_COMMENT_SCALE = 16.0f;
 	//パーツ説明以外の行数.
-	const int iFONT_COMMENT_LINE = 4 + 8;
+	const int iFONT_COMMENT_LINE = 5 + 8;
 
 	//ボタン.
+	const float fBUTTON_SET_TEST_OFFSET = -90.0f;
 	const char* sPATH_BUTONS = "Data\\Image\\Buttons.png";
 	const float INIT_DISP_BUTTON_SPRITE = 32.0f;
-	const WHSIZE_FLOAT INIT_ANIM_BUTTON_SPRITE = { 5.0f, 1.0f };
-	const int iBUTTON_SPRITE_NUM = 5;
+	const WHSIZE_FLOAT INIT_ANIM_BUTTON_SPRITE = { 10.0f, 1.0f };
+	const int iBUTTON_SPRITE_NUM = 6;
 	const float fBUTTON_SPRITE_POS_Y = 32.0f;
 	const D3DXVECTOR3 vBUTTON_SPRITE_POS[ iBUTTON_SPRITE_NUM ] =
 	{
-		{ 620.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-		{ 695.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-		{ 770.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-		{ 950.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
-		{ 1110.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 615.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 695.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 775.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 950.0f, fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 1110.0f,fBUTTON_SPRITE_POS_Y, 0.0f },
+		{ fBUTTON_SET_TEST_OFFSET + 1270.0f,fBUTTON_SPRITE_POS_Y, 0.0f },
 	};
 	const POINTFLOAT vBUTTON_SPRITE_ANIM[ iBUTTON_SPRITE_NUM ] =
 	{
@@ -245,7 +242,17 @@ namespace{
 		{ 3.0f, 0.0f },
 		{ 2.0f, 0.0f },
 		{ 0.0f, 0.0f },
+		{ 5.0f, 0.0f },
 	};
+	//ボタン説明文.
+	const D3DXVECTOR3 vFONT_BUTTON_POS = { fBUTTON_SET_TEST_OFFSET + 650.0f, 40.0f, 0.0f };
+	const float fFONT_BUTTON_SCALE = 14.0f;
+	const int iFONT_BUTTON_LINE = 1;
+
+	//画面タイトル「ASSEMBLE」.
+	const D3DXVECTOR3 vFONT_TEXT_TITLE_POS = { 57.0f, 21.0f, 1.0f };
+	const float fFONT_TEXT_TITLE_SCALE = 32.0f;
+	const int iFONT_TEXT_TITLE_LINE = 0;
 
 }
 
@@ -343,8 +350,6 @@ void clsASSEMBLE_UI::Create(
 	assert( !m_upWndBox );
 	m_upWndBox = make_unique< clsWINDOW_BOX >( pDevice, pContext );
 
-	string tmpString;
-
 	//パーツ項目初期化.
 	assert( m_vecupPartsType.size() == 0 );
 	SPRITE_STATE ss;
@@ -353,8 +358,7 @@ void clsASSEMBLE_UI::Create(
 	for( unsigned int i=0; i<m_vecupPartsType.size(); i++ ){
 		m_vecupPartsType[i] = make_unique< clsSprite2D >();
 
-		tmpString = sPATH_PARTS_TYPE + sPATH_PARTS_TYPE_CHILDREN[i];
-		m_vecupPartsType[i]->Create( pDevice, pContext, tmpString.c_str(), ss );
+		m_vecupPartsType[i]->Create( pDevice, pContext, sPATH_PARTS_TYPE_PATH, ss );
 
 		m_vecupPartsType[i]->SetPos( vINIT_POS_PARTS_TYPE );
 		m_vecupPartsType[i]->AddPos( { fOFFSET_POS_X_PARTS_TYPE * static_cast<float>( i ), 0.0f, 0.0f } );
@@ -369,19 +373,19 @@ void clsASSEMBLE_UI::Create(
 	//各パーツUI.
 	clsOPERATION_STRING OprtStr;
 	ss.Disp = PARTS_ICON_SIZE;
-	for( int i=0; i<enPARTS_TYPE_SIZE; i++ )
-	{
+	for( int i=0; i<enPARTS_TYPE_SIZE; i++ ){
 		assert( m_vecupPartsIconArray[i].size() == 0 );
 		m_vecupPartsIconArray[i].resize( data[i] );
 		for( int j=0; j<data[i]; j++ ){
 			m_vecupPartsIconArray[i][j] = make_unique< clsSprite2D >();
 
-			tmpString = sPATH_PARTS_ICON_ROOT + sPATH_PARTS_ICON_PARTS[i] + "\\" + sPATH_PARTS_ICON_PARTS[i];
-			tmpString = OprtStr.ConsolidatedNumber( tmpString, j );//ディレクトリ番号番号連結.
-			tmpString += sPATH_PARTS_ICON_END;//ファイル名.
+			string sTmpPath;
+			sTmpPath = sPATH_PARTS_ICON_ROOT + sPATH_PARTS_ICON_PARTS[i] + "\\" + sPATH_PARTS_ICON_PARTS[i];
+			sTmpPath = OprtStr.ConsolidatedNumber( sTmpPath, j );//ディレクトリ番号番号連結.
+			sTmpPath += sPATH_PARTS_ICON_END;//ファイル名.
 
 			//アイコン画像が見つからなければNODATA画像を読み込む.
-			if( FAILED( m_vecupPartsIconArray[i][j]->Create( pDevice, pContext, tmpString.c_str(), ss ) ) ){
+			if( FAILED( m_vecupPartsIconArray[i][j]->Create( pDevice, pContext, sTmpPath.c_str(), ss ) ) ){
 				m_vecupPartsIconArray[i][j]->Create( pDevice, pContext, sNO_DATA_FILE_NAME.c_str(), ss );
 			}
 
@@ -428,12 +432,12 @@ void clsASSEMBLE_UI::Create(
 	m_upFooter->SetPos( INIT_POS_FOOTER );
 	m_upFooter->SetAlpha( fFOOTER_ALPHA );
 
-	//ヘッダー文字.
-	assert( !m_upHeaderText );
-	m_upHeaderText = make_unique< clsUiText >();
-	m_upHeaderText->Create( pContext, WND_W, WND_H, fTEXT_SCALE_HEADER );
-	m_upHeaderText->SetPos( vTEXT_POS_HEADER );
-	m_upHeaderText->SetText( sHEADER_TEXT );
+//	//ヘッダー文字.
+//	assert( !m_upHeaderText );
+//	m_upHeaderText = make_unique< clsUiText >();
+//	m_upHeaderText->Create( pContext, WND_W, WND_H, fTEXT_SCALE_HEADER );
+//	m_upHeaderText->SetPos( vTEXT_POS_HEADER );
+//	m_upHeaderText->SetText( sHEADER_TEXT );
 
 
 	//ステータスが表示される窓.
@@ -683,8 +687,20 @@ void clsASSEMBLE_UI::Render(
 	m_upRoboWindow->Render();
 
 
-	assert( m_upHeaderText );
-	m_upHeaderText->Render();
+//	assert( m_upHeaderText );
+//	m_upHeaderText->Render();
+	assert( m_wpFont );
+	//画面タイトル「ASSEMBLE」.
+	const D3DXVECTOR4 vFONT_TEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
+	m_wpFont->SetColor( vFONT_TEXT_COLOR );
+	m_wpFont->SetPos( vFONT_TEXT_TITLE_POS );
+	m_wpFont->SetScale( fFONT_TEXT_TITLE_SCALE );
+	m_wpFont->Render( iFONT_TEXT_TITLE_LINE );
+
+	//ボタンの説明文.
+	m_wpFont->SetPos( vFONT_BUTTON_POS );
+	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
+	m_wpFont->Render( iFONT_BUTTON_LINE );
 
 	assert( m_upButton );
 	for( int i=0; i<iBUTTON_SPRITE_NUM; i++ ){

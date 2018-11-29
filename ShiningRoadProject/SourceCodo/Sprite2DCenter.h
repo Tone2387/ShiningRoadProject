@@ -14,11 +14,11 @@ public:
 	void Render() override;
 
 	D3DXVECTOR3 GetRot() const { return m_vRot; };
-	void SetRot( const D3DXVECTOR3 &vRot ){
+	void SetRot( const D3DXVECTOR3& vRot ){
 		m_vRot = vRot;
 		GuardRotOver( m_vRot );
 	};
-	void AddRot( const D3DXVECTOR3 &vRot ){
+	void AddRot( const D3DXVECTOR3& vRot ){
 		m_vRot += vRot;
 		GuardRotOver( m_vRot );
 	};
@@ -27,11 +27,11 @@ public:
 protected:
 
 	//ÉÇÉfÉãçÏê¨.
-	HRESULT InitModel( const SPRITE_STATE ss ) override;
+	HRESULT InitModel( const SPRITE_STATE& ss, const char* sErrFileName ) override;
 
 	//âÒì]ÇÃêîílÇÃå¿äEÇ©ÇÁîÚÇ—èoÇ»Ç¢.
-	D3DXVECTOR3 GuardRotOver( D3DXVECTOR3 &vRot );
-	float GuardRotOver( float &fRot );
+	D3DXVECTOR3 GuardRotOver( D3DXVECTOR3& vRot );
+	float GuardRotOver( float& fRot );
 
 protected:
 

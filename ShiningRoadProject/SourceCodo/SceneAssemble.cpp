@@ -97,10 +97,6 @@ namespace{
 
 	//日本語UI.
 	const char* sFONT_TEXT_PATH_ASSEMBLE = "Data\\Font\\Text\\TextAssemble.csv";
-	//ボタン説明.
-	const D3DXVECTOR3 vFONT_BUTTON_POS = { 650.0f, 40.0f, 0.0f };
-	const float fFONT_BUTTON_SCALE = 14.0f;
-	const int iFONT_BUTTON_LINE = 0;
 
 
 
@@ -559,13 +555,6 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		m_upArrow->AddRot( { 0.0f, 0.0f, fARROW_ROLL_ADD } );
 	}
 
-	//ボタンの説明.
-	assert( m_wpFont );
-	const D3DXVECTOR4 vFONT_TEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
-	m_wpFont->SetColor( vFONT_TEXT_COLOR );
-	m_wpFont->SetPos( vFONT_BUTTON_POS );
-	m_wpFont->SetScale( fFONT_BUTTON_SCALE );
-	m_wpFont->Render( iFONT_BUTTON_LINE );
 
 
 

@@ -75,8 +75,8 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 
 void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::RenderProduct()
 {
-	const int iYES_INDEX = 4;
-	const int iQUESTION_INDEX = 1;
+	const int iYES_INDEX = 5;
+	const int iQUESTION_INDEX = 2;
 	
 	//yes.
 	const D3DXVECTOR2 vPOS_YES_LOCAL = { 180.0f, 250.0f };

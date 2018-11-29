@@ -2,6 +2,7 @@
 #define ROBO_STATUS_H_
 
 
+class clsFILE;
 #include "Global.h"
 
 
@@ -138,6 +139,18 @@ protected:
 
 	//継承先で外部からデータを読み込ませる.
 	virtual void LoadFileData( const char* sFilePath ) = 0;
+
+	//パーツのステータスデータを読み込む.
+	void LoadPartsData( std::vector< std::unique_ptr< clsFILE > >& PartsFile );
+
+	//読み込んだ番号のデータを取得する.
+	void AttachData( const std::vector< std::unique_ptr< clsFILE > >& PartsFile );
+
+	//ReceiveLeg()等の関数に格納するためのデータを作り、吐き出す.
+	std::vector<int> CreateDataForReceive( 
+		const std::vector< std::unique_ptr< clsFILE > >& PartsFile,
+		const int PartsType,
+		const int PartsNum );
 
 protected:
 

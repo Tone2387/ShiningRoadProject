@@ -59,7 +59,7 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 		return E_FAIL;
 	}
 	//シェーダ作成.
-	if( FAILED( InitShader() ) ){
+	if( FAILED( InitShader( sTexName ) ) ){
 		return E_FAIL;
 	}
 	//板ポリゴン作成.
@@ -74,7 +74,7 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 //	HLSLファイルを読み込みシェーダを作成する.
 //	HLSL:HIGE-LEVEL-SHADER-LANGUAGE.
 //============================================================
-HRESULT clsSprite::InitShader()
+HRESULT clsSprite::InitShader( const char* sErrFileName )
 {
 	//シェーダファイル名(ディレクトリも含む)(\\).
 	const char SHADER_NAME[] = "Shader\\Mesh.hlsl";
@@ -104,7 +104,7 @@ HRESULT clsSprite::InitShader()
 		&pErrors,		//エラーと警告一覧を格納するメモリへのポインタ.
 		NULL ) ) )		//戻り値へのポインタ(未使用).
 	{
-		MessageBox( NULL, "hlsl(vs)読み込み失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(vs)読み込み失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -116,7 +116,7 @@ HRESULT clsSprite::InitShader()
 		NULL,
 		&m_pVertexShader) ) )//(out)バーテックスシェーダ.
 	{
-		MessageBox( NULL, "vs作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "vs作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -151,7 +151,7 @@ HRESULT clsSprite::InitShader()
 		pCompiledShader->GetBufferSize(),
 		&m_pVertexLayout ) ) )//(out)頂点インプットレイアウト.
 	{
-		MessageBox( NULL, "頂点インプットレイアウト作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "頂点インプットレイアウト作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pCompiledShader );
@@ -174,7 +174,7 @@ HRESULT clsSprite::InitShader()
 		&pErrors,
 		NULL ) ) )
 	{
-		MessageBox( NULL, "hlsl(ps)読み込み失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(ps)読み込み失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -186,7 +186,7 @@ HRESULT clsSprite::InitShader()
 		NULL,
 		&m_pPixelShader ) ) )//(out)ピクセルシェーダ.
 	{
-		MessageBox( NULL, "ps作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "ps作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pCompiledShader );//ブロブ解放.
@@ -209,7 +209,7 @@ HRESULT clsSprite::InitShader()
 		NULL,
 		&m_pConstantBuffer ) ) )
 	{
-		MessageBox( NULL, "コンスタントバッファ作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "コンスタントバッファ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -221,7 +221,6 @@ HRESULT clsSprite::InitShader()
 //============================================================
 HRESULT clsSprite::InitModel( const char* sTexName )
 {
-//	const float itaW = 0.5075f;
 	const float itaW = 0.5f;
 	float w, h;
 //	w = h = ( 1.0f / 8.0f );
@@ -256,7 +255,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	if( FAILED( m_wpDevice->CreateBuffer(
 		&bd, &InitData, &m_pVertexBuffer ) ) )
 	{
-		MessageBox( NULL, "頂点バッファ作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "頂点バッファ作成失敗", sTexName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -289,7 +288,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 	if( FAILED( m_wpDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear ) ) )//(out)サンプラー.
 	{
-		MessageBox( NULL, "サンプラ作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "サンプラ作成失敗", sTexName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -301,7 +300,7 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 		&m_pTexture,	//(out)テクスチャ.
 		NULL ) ) )
 	{
-		MessageBox( NULL, "テクスチャ作成失敗w", "InitModel()", MB_OK );
+		MessageBox( NULL, "テクスチャ作成失敗w", sTexName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -383,8 +382,6 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 //		m_AnimCount ++;
 
 		cd.vUV = texUV;
-
-
 
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cd ), sizeof( cd ) );
