@@ -126,7 +126,7 @@ namespace{
 	//二行目以降のずれ幅.
 	const float fTEXT_POS_Y_OFFSET_STATUS = INIT_SIZE_STATUS_WINDOW.h;
 	//文字サイズ.
-	const float fTEXT_SCALE_STATUS = 1.5f;
+	const float fTEXT_SCALE_STATUS = 2.0f;//1.5f.//2.0f.
 	//項目文字の座標.
 	const D3DXVECTOR2 vTEXT_POS_OFFSET_TO_STATUS_WINDOW = { 5.0f, 8.75f };//窓からのずれ.
 	const D3DXVECTOR2 vTEXT_POS_STATUS = {
@@ -217,7 +217,22 @@ namespace{
 	const D3DXVECTOR3 vFONT_COMMENT_POS = { 28.0f, 680.0f, 0.0f };
 	const float fFONT_COMMENT_SCALE = 16.0f;
 	//パーツ説明以外の行数.
-	const int iFONT_COMMENT_LINE = 5 + 8;
+	const int iFONT_COMMENT_LINE = 5 + 8 + 8;
+
+	//パーツカテゴリの脚のindex.
+	const int iFONT_TEXT_PARTS_TYPE_LEGS_INDEX = 5 + 8;
+	const float fFONT_TEXT_PARTS_TYPE_SCALE = 18;
+	//legs, core, 等の文字offset.
+	const D3DXVECTOR3 vFONT_TEXT_PARTS_TYPE_POS_OFFSET[] =
+	{
+		{ 8.0f, 16.0f, 0.0f },
+		{ 8.0f, 16.0f, 0.0f },
+		{ 8.0f, 16.0f, 0.0f },
+		{ 8.0f, 16.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f },
+	};
+
 
 	//ボタン.
 	const float fBUTTON_SET_TEST_OFFSET = -90.0f;
@@ -664,16 +679,25 @@ void clsASSEMBLE_UI::Render(
 {
 
 	//パーツカテゴリ.
+	int iPartsTypeIndex = iFONT_TEXT_PARTS_TYPE_LEGS_INDEX;
 	for( unsigned int i=0; i<m_vecupPartsType.size(); i++ ){
 		assert( m_vecupPartsType[i] );
 		m_vecupPartsType[i]->Render();
+		//パーツカテゴリの文字.
+		m_wpFont->SetPos( m_vecupPartsType[i]->GetPos() );
+		m_wpFont->AddPos( vFONT_TEXT_PARTS_TYPE_POS_OFFSET[i] );
+		m_wpFont->SetScale( fFONT_TEXT_PARTS_TYPE_SCALE );
+	
+		m_wpFont->Render( iPartsTypeIndex ++ );
 	}
+
 
 	//パーツアイコン.
 	for( unsigned int j=0; j<m_vecupPartsIconArray[ iPartsType ].size(); j++ ){
 		assert( m_vecupPartsIconArray[ iPartsType ][j] );
 		m_vecupPartsIconArray[ iPartsType ][j]->Render();
 	}
+
 
 	assert( m_upHeader );
 	m_upHeader->Render();
