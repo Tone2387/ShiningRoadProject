@@ -26,9 +26,7 @@ public:
 	void SetStageObjTransform(const int iObjNo);
 
 	//åıÇÈÇ∆Ç±ÇÎÇÃêF.
-	void SetColor( const D3DXVECTOR4& vColor ){ 
-		m_vLightColor = vColor;
-	}
+	void SetColor( const D3DXVECTOR4& vColor ){ m_vLightColor = vColor; }
 
 private:
 

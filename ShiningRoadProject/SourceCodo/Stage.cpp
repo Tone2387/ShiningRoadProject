@@ -167,7 +167,7 @@ void clsStage::Render(
 	//“–‚½‚è”»’è—pƒ‚ƒfƒ‹.
 //	m_pStageCollision->Render( mView, mProj, vLight, vEye );
 
-
+	//°‚Æ“Vˆä.
 	m_pStageFloor->Render(	 mView, mProj, vLight, vEye, m_vLightColor );
 	m_pStageCelling->Render( mView, mProj, vLight, vEye, m_vLightColor );
 

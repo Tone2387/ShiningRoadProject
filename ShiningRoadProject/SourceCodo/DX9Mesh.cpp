@@ -311,7 +311,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 				&m_pMaterials[i].pTexture, //(out)テクスチャオブジェクト.
 				NULL ) ) )
 			{
-				MessageBox( NULL, sTexFilePath, "テクスチャ作成失敗", MB_OK );
+				MessageBox( NULL, sTexFilePath, fileName, MB_OK );
 				return E_FAIL;
 			}
 
@@ -328,7 +328,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 					&m_pMaterials[i].pMask, //(out)テクスチャオブジェクト.
 					NULL ) ) )
 				{
-					MessageBox( NULL, sTexFilePath, "マスク作成失敗", MB_OK );
+					MessageBox( NULL, sTexFilePath, fileName, MB_OK );
 					return E_FAIL;
 				}
 			}

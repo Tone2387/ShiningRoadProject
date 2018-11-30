@@ -11,8 +11,10 @@ using namespace std;
 namespace{
 	
 #ifdef _DEBUG
-	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSideDebug.png";
-	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTopDebug.png";
+//	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSideDebug.png";
+//	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTopDebug.png";
+	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
+	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
 #else//#ifdef _DEBUG
 	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
 	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
