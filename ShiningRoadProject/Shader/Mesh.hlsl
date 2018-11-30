@@ -110,7 +110,10 @@ float4 PS_Main( VS_OUT In )	:	SV_Target
 //		&& maskColor.b >= 0.99f
 		)
 	{
-		color *= g_vColor;
+		maskColor.r = g_vColor.r + ( 1 - maskColor.a ) + ( 1 - maskColor.r );
+		maskColor.g = g_vColor.g + ( 1 - maskColor.a ) + ( 1 - maskColor.g );
+		maskColor.b = g_vColor.b + ( 1 - maskColor.a ) + ( 1 - maskColor.b );
+		color *= maskColor;
 	}
 
 
