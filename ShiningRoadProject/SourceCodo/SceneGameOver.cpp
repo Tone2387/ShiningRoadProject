@@ -271,7 +271,7 @@ void clsSCENE_GAME_OVER::RenderUi()
 
 
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_GAME_OVER::RenderDebugText()
 {
 	//NULLチェック.
@@ -306,4 +306,4 @@ void clsSCENE_GAME_OVER::RenderDebugText()
 
 
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG

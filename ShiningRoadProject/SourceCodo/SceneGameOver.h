@@ -28,10 +28,10 @@ private:
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
 
-#if _DEBUG
+#ifdef _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 private:
 

@@ -25,6 +25,9 @@ public:
 	//指定したオブジェク位置回転拡縮を更新.
 	void SetStageObjTransform(const int iObjNo);
 
+	//光るところの色.
+	void SetColor( const D3DXVECTOR4& vColor ){ m_vLightColor = vColor; }
+
 private:
 
 	//ステージ土台の当たり判定.
@@ -50,5 +53,6 @@ private:
 	//ビル.
 	std::vector< std::unique_ptr< clsBUILDING > > m_vpBuilding;
 
+	D3DXVECTOR4 m_vLightColor;
 
 };

@@ -32,10 +32,10 @@ namespace{
 	const float fNOISE_ORIGINAL = 2.0f;
 	
 
-#if _DEBUG
+#ifdef _DEBUG
 	const D3DXVECTOR4 vDEBUG_TEXT_COLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 	const float fDEBUG_TEXT_SIZE = 50.0f;
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 }
 
 
@@ -120,7 +120,7 @@ void clsSCENE_BASE::Create( const HWND hWnd )
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
-#if _DEBUG
+#ifdef _DEBUG
 	//デバッグテキストの初期化.
 	m_upText = make_unique< clsDebugText >();
 	if( FAILED( m_upText->Init(
@@ -130,7 +130,7 @@ void clsSCENE_BASE::Create( const HWND hWnd )
 	{
 		assert( !"デバッグテキスト作成失敗" );
 	}
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 	//各シーンのCreate.
 	CreateProduct();
@@ -152,10 +152,10 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 	//暗転更新.
 	m_wpBlackScreen->Update();
 
-#if _DEBUG
+#ifdef _DEBUG
 	//BGMのチェック.
 	DebugBgm();
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 	//各シーンのUpdate.
 	UpdateProduct( tmpScene );
@@ -245,32 +245,32 @@ void clsSCENE_BASE::Render(
 		UpdateNoise();
 	}
 
-	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-		NoiseStrong( 60 );
-	}
-	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
-		NoiseWeak( 10 );
-	}
-	if( GetAsyncKeyState( 'C' ) & 0x1 ){
-		static bool nega = false;
-		m_upScreenTexture->SetNega( nega );
-		nega = !nega;
-	}
-	if( GetAsyncKeyState( 'V' ) & 0x8000 ){
-		m_upScreenTexture->SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
-	}
-	if( GetAsyncKeyState( 'B' ) & 0x8000 ){
-		m_upScreenTexture->SetColor( { 0.5f, 0.5f, 1.0f, 1.0f } );
-	}
+//	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+//		NoiseStrong( 60 );
+//	}
+//	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
+//		NoiseWeak( 10 );
+//	}
+//	if( GetAsyncKeyState( 'C' ) & 0x1 ){
+//		static bool nega = false;
+//		m_upScreenTexture->SetNega( nega );
+//		nega = !nega;
+//	}
+//	if( GetAsyncKeyState( 'V' ) & 0x8000 ){
+//		m_upScreenTexture->SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
+//	}
+//	if( GetAsyncKeyState( 'B' ) & 0x8000 ){
+//		m_upScreenTexture->SetColor( { 0.5f, 0.5f, 1.0f, 1.0f } );
+//	}
 
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
-#if _DEBUG
+#ifdef _DEBUG
 	SetDepth( false );
 	RenderDebugText();
 	SetDepth( true );	//Zテスト:ON.
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 }
@@ -577,7 +577,7 @@ void clsSCENE_BASE::SetDepth( const bool isOn )const
 
 
 
-#if _DEBUG
+#ifdef _DEBUG
 
 void clsSCENE_BASE::RenderDebugText()
 {
@@ -632,7 +632,7 @@ void clsSCENE_BASE::DebugBgm()
 }
 
 
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 
 

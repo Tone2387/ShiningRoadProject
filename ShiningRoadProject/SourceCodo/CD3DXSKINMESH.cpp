@@ -13,6 +13,7 @@ namespace{
 	//マスクテクスチャパス.
 	const char sMASK_PATH_0[] = "mask0.png";
 	const char sMASK_PATH_1[] = "mask1.png";
+	const char sMASK_PATH_EMPTY[] = "Data\\Image\\maskEmpty.png";
 }
 
 // フレームを作成する.
@@ -1489,8 +1490,16 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 			&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
 			NULL ) ) )
 		{
-//			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-//			return E_FAIL;
+			if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+				m_pDevice, 
+				sMASK_PATH_EMPTY,//テクスチャファイル名.
+				NULL, NULL,
+				&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
+				NULL ) ) )
+			{
+				MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+				return E_FAIL;
+			}
 		}
 	}
 	//----- ベース -----//.
@@ -1517,8 +1526,16 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 			&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
 			NULL ) ) )
 		{
-//			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-//			return E_FAIL;
+			if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+				m_pDevice, 
+				sMASK_PATH_EMPTY,//テクスチャファイル名.
+				NULL, NULL,
+				&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
+				NULL ) ) )
+			{
+				MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+				return E_FAIL;
+			}
 		}
 	}
 
@@ -1749,21 +1766,13 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 			m_pDeviceContext->PSSetShaderResources( 
 				slot, 1, &pMesh->pMaterial[i].pTexture );
 			slot ++;
-			if( m_pMaskArmor->pTex ){
-				//ベース.
-				m_pDeviceContext->PSSetSamplers( 
-					slot, 1, &m_pSampleLinear );
-				m_pDeviceContext->PSSetShaderResources( 
-					slot, 1, &m_pMaskArmor->pTex );
-			}
+			//アーマー.
+			m_pDeviceContext->PSSetShaderResources( 
+				slot, 1, &m_pMaskArmor->pTex );
 			slot ++;
-			if( m_pMaskBase->pTex ){
-				//アーマー.
-				m_pDeviceContext->PSSetSamplers( 
-					slot, 1, &m_pSampleLinear );
-				m_pDeviceContext->PSSetShaderResources( 
-					slot, 1, &m_pMaskBase->pTex );
-			}
+			//ベース.
+			m_pDeviceContext->PSSetShaderResources( 
+				slot, 1, &m_pMaskBase->pTex );
 		}
 		else
 		{

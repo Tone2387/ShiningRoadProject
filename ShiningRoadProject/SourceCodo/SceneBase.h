@@ -11,9 +11,9 @@ class clsSCREEN_TEXTURE;
 
 #include "Global.h"
 
-#if _DEBUG
+#ifdef _DEBUG
 #include "DebugText.h"
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 #include "CharaStatic.h"
 
@@ -113,7 +113,7 @@ protected:
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
-#if _DEBUG
+#ifdef _DEBUG
 	//デバック゛テキストの表示.
 	virtual void RenderDebugText();
 	//BGMのチェック.
@@ -121,7 +121,7 @@ protected:
 //	clsDebugText*	m_upText;
 	std::unique_ptr< clsDebugText >	m_upText;
 
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 protected:
 

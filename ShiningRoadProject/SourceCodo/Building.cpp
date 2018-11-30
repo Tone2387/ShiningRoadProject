@@ -11,8 +11,10 @@ using namespace std;
 namespace{
 	
 #ifdef _DEBUG
-	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSideDebug.png";
-	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTopDebug.png";
+//	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSideDebug.png";
+//	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTopDebug.png";
+	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
+	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
 #else//#ifdef _DEBUG
 	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
 	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
@@ -106,17 +108,18 @@ void clsBUILDING::Render(
 	const D3DXMATRIX &mView, 
 	const D3DXMATRIX &mProj,
 	const D3DXVECTOR3 &vLight, 
-	const D3DXVECTOR3 &vEye ) const
+	const D3DXVECTOR3 &vEye,
+	const D3DXVECTOR4& vColor ) const
 {
 //	m_upBox->Render( mView, mProj, vLight, vEye );
 
-	m_upTop->Render( mView, mProj, vEye );
+	m_upTop->Render( mView, mProj, vEye, vColor );
 
 	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
 		m_upSide->SetPos( m_SideTransArray[i].vPos );
 		m_upSide->SetRot( m_SideTransArray[i].vRot );
 		m_upSide->SetScale( m_SideTransArray[i].vScale );
-		m_upSide->Render( mView, mProj, vEye );
+		m_upSide->Render( mView, mProj, vEye, vColor );
 	}
 }
 

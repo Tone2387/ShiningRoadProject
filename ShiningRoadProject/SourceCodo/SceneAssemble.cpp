@@ -268,10 +268,11 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		isCanControl = false;
 	}
 
-#if _DEBUG
+#ifdef _DEBUG
+
+#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
 	//テストモデル初期化 & パーツ切替.
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
 
 		static int tmpI = 0; 
 		tmpI ++;
@@ -285,39 +286,22 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 		m_spAsmModel->AttachModel( enPARTS::WEAPON_L, tmpI );
 		m_spAsmModel->AttachModel( enPARTS::WEAPON_R, tmpI );
 
-#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
-		m_spAsmModel->SetPos( vINIT_ROBO_POS );
-		m_spAsmModel->SetRot( vINIT_ROBO_ROT );
-		m_spAsmModel->SetScale( fINIT_ROBO_SCALE );
-
-		m_spAsmModel->SetRot( { 0.0f, 0.0f, 0.0f } );
-
-		m_wpSound->StopAllSound();
 	}
+#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
 
-	//テストモデル移動.
-	float fff = 1.0f;
-	if( GetAsyncKeyState( 'W' ) & 0x8000 ) m_spAsmModel->AddPos( { 0.0f, fff, 0.0f } );
-	if( GetAsyncKeyState( 'S' ) & 0x8000 ) m_spAsmModel->AddPos( { 0.0f, -fff, 0.0f } );
-	if( GetAsyncKeyState( 'D' ) & 0x8000 ) m_spAsmModel->AddPos( { fff, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( 'A' ) & 0x8000 ) m_spAsmModel->AddPos( { -fff, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( 'E' ) & 0x8000 ) m_spAsmModel->AddPos( { 0.0f, 0.0f, fff } );
-	if( GetAsyncKeyState( 'Q' ) & 0x8000 ) m_spAsmModel->AddPos( { 0.0f, 0.0f, -fff } );
-	float rrr = 0.05f;
-	if( GetAsyncKeyState( 'T' ) & 0x8000 ) m_spAsmModel->AddRot( { 0.0f, rrr, 0.0f } );
-	if( GetAsyncKeyState( 'G' ) & 0x8000 ) m_spAsmModel->AddRot( { 0.0f, -rrr, 0.0f } );
-	if( GetAsyncKeyState( 'F' ) & 0x8000 ) m_spAsmModel->AddRot( { rrr, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( 'H' ) & 0x8000 ) m_spAsmModel->AddRot( { -rrr, 0.0f, 0.0f } );
-	if( GetAsyncKeyState( 'R' ) & 0x8000 ) m_spAsmModel->AddRot( { 0.0f, 0.0f, rrr } );
-	if( GetAsyncKeyState( 'Y' ) & 0x8000 ) m_spAsmModel->AddRot( { 0.0f, 0.0f, -rrr } );
 
 
 	if( GetAsyncKeyState( VK_F6 ) & 0x1 ){
 		static int tmpLAnim = 0;
 		m_spAsmModel->PartsAnimChange( static_cast<enPARTS>( m_PartsSelect.Type ), tmpLAnim++ );
-		if( tmpLAnim >= 5 ) tmpLAnim = 0;
+		if( tmpLAnim >= 10 ) tmpLAnim = 0;
 	}
 	if( GetAsyncKeyState( VK_F7 ) & 0x1 ){
+		static int tmpRAnim = 0;
+		m_spAsmModel->PartsAnimChange( enPARTS::LEG, tmpRAnim++ );
+		if( tmpRAnim > 10 ) tmpRAnim = 0;
+	}
+	if( GetAsyncKeyState( VK_F8 ) & 0x1 ){
 		static int siCORE_ANIM_NO = 0;
 		m_spAsmModel->PartsAnimChange( enPARTS::LEG, siCORE_ANIM_NO++ );
 		if( siCORE_ANIM_NO > 1 ) siCORE_ANIM_NO = 0;
@@ -337,7 +321,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 
 
 
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 	//操作.
@@ -347,6 +331,8 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			MenuUpdate( enNextScene );
 		}
 		else{
+			//スティックの動き( ロボの回転 ).
+			MoveRoboStick();
 			//選択肢.
 			if( isPressHoldRight( false ) )MoveCursorRight();
 			if( isPressHoldLeft	( false ) )MoveCursorLeft();
@@ -404,12 +390,9 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 					}
 				}
 			}
-
 		}
 	}
 
-	//スティックの動き( ロボの回転 ).
-	MoveRoboStick();
 
 
 	assert( m_upUI );
@@ -1026,7 +1009,7 @@ void clsSCENE_ASSEMBLE::MenuUpdate( enSCENE &enNextScene )
 
 
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_ASSEMBLE::RenderDebugText()
 {
 	//NULLチェック.
@@ -1107,7 +1090,7 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 
 
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 
 

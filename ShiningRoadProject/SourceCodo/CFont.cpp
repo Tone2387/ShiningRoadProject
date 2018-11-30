@@ -129,7 +129,6 @@ clsFont::~clsFont()
 
 }
 
-
 //シェーダの作成.
 HRESULT clsFont::CreateShader()
 {
@@ -214,7 +213,6 @@ HRESULT clsFont::CreateShader()
 
 	return S_OK;
 }
-
 //バーテックスバッファの作成.
 HRESULT clsFont::CreateVertexBuffer()
 {
@@ -267,7 +265,6 @@ HRESULT clsFont::CreateVertexBuffer()
 
 	return S_OK;
 }
-
 //定数バッファの作成.
 HRESULT clsFont::CreateConstantBuffer()
 {
@@ -295,10 +292,15 @@ HRESULT clsFont::CreateConstantBuffer()
 
 
 
-
-
 void clsFont::Create( const char *sTextFileName )
 {
+	//既に作成されたものがあるなら破棄してから作る.
+	if( m_iTextRow != iERROR_TEXT_ROW_NUM ){
+		Release();
+		assert( !"中身があるclsFontを初期化しようとしたな?\n\
+				 まあ消しといてあげたけど" );
+	}
+
 	if( FAILED( LoadTextFile( sTextFileName ) ) ){
 		assert( !"Can't Load Text File" );
 	}
@@ -312,9 +314,6 @@ void clsFont::Create( const char *sTextFileName )
 	SetAlpha( 1.0f );
 	SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
 }
-
-
-
 //ファイル読み込み.
 HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 {
@@ -361,7 +360,6 @@ HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 
 	return S_OK;
 }
-
 //テクスチャ作成.
 HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 {
@@ -537,7 +535,6 @@ void clsFont::Release()
 	{
 		for( unsigned int i=0; i<m_vecvecpAsciiTexture[ iTex ].size(); i++ )
 		{
-//			SAFE_DELETE(m_pAsciiTexture[ iTex ][i]);
 			if( !m_vecvecpAsciiTexture[ iTex ][i] ) continue;
 			m_vecvecpAsciiTexture[ iTex ][i]->Release();
 			m_vecvecpAsciiTexture[ iTex ][i] = nullptr;
@@ -549,7 +546,6 @@ void clsFont::Release()
 	m_vecvecpAsciiTexture.shrink_to_fit();
 
 	for( unsigned int iTex=0; iTex<m_vecpTex2D.size(); iTex++ ){
-//		SAFE_DELETE(m_pTex2D[ iTex ]);
 		if( !m_vecpTex2D[ iTex ] ) continue;
 		m_vecpTex2D[ iTex ]->Release();
 		m_vecpTex2D[ iTex ] = nullptr;

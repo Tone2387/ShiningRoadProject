@@ -29,6 +29,7 @@ namespace{
 }
 
 clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
+	:m_vLightColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 {
 	clsFILE file;
 	file.Open( sSTAGE_BASE_DATA_PATH );
@@ -163,26 +164,37 @@ void clsStage::Render(
 	const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
 	const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye )
 {
+	//当たり判定用モデル.
+//	m_pStageCollision->Render( mView, mProj, vLight, vEye );
 
-#ifdef _DEBUG
-	m_pStageCollision->Render( mView, mProj, vLight, vEye );
-#else//#ifdef _DEBUG
-	m_pStageFloor->Render( mView, mProj, vLight, vEye );
-	m_pStageCelling->Render( mView, mProj, vLight, vEye );
-#endif//#ifdef _DEBUG
+	//床と天井.
+	m_pStageFloor->Render(	 mView, mProj, vLight, vEye, m_vLightColor );
+	m_pStageCelling->Render( mView, mProj, vLight, vEye, m_vLightColor );
 
 	assert( m_pLia );
-	m_pLia->ModelRender( mView, mProj, vLight, vEye );
+	m_pLia->ModelRender( mView, mProj, vLight, vEye, m_vLightColor );
 
 	for( int i=0; i<enDOOR_NUM_size; i++ ){
 		assert( m_pDoorArray[i] );
 		m_pDoorArray[i]->ModelUpdate( m_pDoorArray[i]->m_Trans );
-		m_pDoorArray[i]->ModelRender( mView, mProj, vLight, vEye );
+		m_pDoorArray[i]->ModelRender( mView, mProj, vLight, vEye, m_vLightColor );
 	}
 
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
-		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye );
+		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
+
+#ifdef _DEBUG
+	//色.
+	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
+	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColor.x += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'V' ) & 0x8000 )m_vLightColor.x -= fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'G' ) & 0x8000 )m_vLightColor.y += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColor.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColor.z += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColor.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
+#endif//#ifdef _DEBUG
+
 }
 
 vector<clsDX9Mesh*> clsStage::GetStageMeshArray()

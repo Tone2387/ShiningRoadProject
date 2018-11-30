@@ -13,12 +13,12 @@ class clsGAME;
 //============================================================
 #include "Global.h"
 
-#if _DEBUG
+#ifdef _DEBUG
 class clsDX9Mesh;
 //#include "DebugText.h"
 #include "Ray.h"		//レイ表示クラス.
 
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 
@@ -85,7 +85,7 @@ private:
 	//メッシュ読み込み関数(まとめた).
 	HRESULT ReadMesh();
 
-#if _DEBUG
+#ifdef _DEBUG
 	//スフィア作成.
 	HRESULT InitSphere( clsDX9Mesh* pMesh, float fScale = 0.7f );
 	//スフィア衝突判定関数.
@@ -101,7 +101,7 @@ private:
 	clsRay*			m_pRayH;	//左右.
 
 
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 
 	//ゲーム.

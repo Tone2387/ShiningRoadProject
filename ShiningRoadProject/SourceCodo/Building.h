@@ -32,16 +32,17 @@ public:
 		const D3DXMATRIX &mView, 
 		const D3DXMATRIX &mProj,
 		const D3DXVECTOR3 &vLight, 
-		const D3DXVECTOR3 &vEye ) const ;
+		const D3DXVECTOR3 &vEye,
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f } ) const ;
 
 	//ƒŒƒC—p.
 	clsDX9Mesh* GetModelPtr() const {
-#if _DEBUG
+#ifdef _DEBUG
 		clsDX9Mesh* pReturn = m_upBox->GetStaticMesh();
 		return pReturn;
-#else//#if _DEBUG
+#else//#ifdef _DEBUG
 		return m_upBox->GetStaticMesh();
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 	}
 
 	//À•W.
@@ -57,7 +58,6 @@ public:
 	D3DXVECTOR3 GetScale() const				{ return m_Trans.vScale; }
 	void SetScale( const D3DXVECTOR3& vScale )	{ m_Trans.vScale = vScale;	this->UpdateTile(); }
 	void AddScale( const D3DXVECTOR3& vScale )	{ m_Trans.vScale += vScale; this->UpdateTile(); }
-
 
 
 private:

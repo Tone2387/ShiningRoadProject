@@ -115,11 +115,11 @@ public:
 	int GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const;
 
 
-#if _DEBUG
+#ifdef _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
 
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 protected:
 

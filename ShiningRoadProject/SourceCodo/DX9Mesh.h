@@ -103,16 +103,18 @@ private:
 		D3DXVECTOR4		Ambient;	//アンビエント.
 		D3DXVECTOR4		Diffuse;	//ディフューズ.
 		D3DXVECTOR4		Specular;	//スペキュラ.
-		CHAR	szTextureName[128];	//テクスチャファイル名.
+//		CHAR	szTextureName[128];	//テクスチャファイル名.
 		ID3D11ShaderResourceView*	pTexture;//テクスチャ.
+		ID3D11ShaderResourceView*	pMask;//マスクテクスチャ.
 		DWORD	dwNumFace;			//そのマテリアルのポリゴン数.
 		//コンストラクタ.
 		MY_MATERIAL(){
-	//		ZeroMemory( this, sizeof( MY_MATERIAL ) );
 			pTexture = nullptr;
+			pMask = nullptr;	
 		}
 		//デストラクタ.
 		~MY_MATERIAL(){
+			SAFE_RELEASE( this->pMask );
 			SAFE_RELEASE( this->pTexture );
 		}
 	}	*m_pMaterials;	//マテリアル構造体.
