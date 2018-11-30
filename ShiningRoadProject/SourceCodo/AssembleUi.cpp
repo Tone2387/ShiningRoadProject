@@ -10,10 +10,9 @@
 #include "WindowBox.h"
 
 #include "OperationString.h"
-//#include <string>
 
-
-//ファイルがあるか調べる機構を作る.
+//これがついているとフォントサイズは2.0f, 無しだと1.5f.
+#define FONT_SIZA_BIG_VER
 
 
 using namespace std;
@@ -123,15 +122,20 @@ namespace{
 		vINIT_POS_STATUS_WINDOW.y + vTEXT_POS_STATUS_TITLE_OFFSET_TO_STATUS_WINDOW.y };
 	const char* sSTATUS_TITLE_TEXT = "Parts Status";
 
-	//二行目以降のずれ幅.
-	const float fTEXT_POS_Y_OFFSET_STATUS = INIT_SIZE_STATUS_WINDOW.h;
-	//文字サイズ.
-	const float fTEXT_SCALE_STATUS = 2.0f;//1.5f.//2.0f.
+	
 	//項目文字の座標.
 	const D3DXVECTOR2 vTEXT_POS_OFFSET_TO_STATUS_WINDOW = { 5.0f, 8.75f };//窓からのずれ.
+	const float fTEXT_POS_Y_OFFSET_STATUS = INIT_SIZE_STATUS_WINDOW.h;//二行目以降のずれ幅.
+#ifdef FONT_SIZA_BIG_VER
+	const float fTEXT_SCALE_STATUS = 2.0f;//文字サイズ.
+	const float fTEXT_STTATUS_POS_Y = vINIT_POS_STATUS_WINDOW.y - vTEXT_POS_OFFSET_TO_STATUS_WINDOW.y - 4.0f;
+#else //#ifdef FONT_SIZA_BIG_VER
+	const float fTEXT_SCALE_STATUS = 1.5f;
+	const float fTEXT_STTATUS_POS_Y = vINIT_POS_STATUS_WINDOW.y - vTEXT_POS_OFFSET_TO_STATUS_WINDOW.y;
+#endif//#ifdef FONT_SIZA_BIG_VER
 	const D3DXVECTOR2 vTEXT_POS_STATUS = {
 		vINIT_POS_STATUS_WINDOW.x + vTEXT_POS_OFFSET_TO_STATUS_WINDOW.x,
-		vINIT_POS_STATUS_WINDOW.y - vTEXT_POS_OFFSET_TO_STATUS_WINDOW.y 
+		fTEXT_STTATUS_POS_Y
 		+ ( 12.0f ) };
 	//値文字の座標.
 	const D3DXVECTOR2 vTEXT_POS_STATUS_NUM = 
