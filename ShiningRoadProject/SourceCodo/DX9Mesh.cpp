@@ -795,17 +795,6 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 
 		//色.
 		cb.vColor = vColor;
-		static float fSTATIC_MODEL_COLOR_R = 1.0f;
-		static float fSTATIC_MODEL_COLOR_G = 1.0f;
-		static float fSTATIC_MODEL_COLOR_B = 1.0f;
-		const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
-		if( GetAsyncKeyState( 'F' ) & 0x8000 ) fSTATIC_MODEL_COLOR_R += fSTATIC_MODEL_COLOR_RGB_ADD;
-		if( GetAsyncKeyState( 'V' ) & 0x8000 ) fSTATIC_MODEL_COLOR_R -= fSTATIC_MODEL_COLOR_RGB_ADD;
-		if( GetAsyncKeyState( 'G' ) & 0x8000 ) fSTATIC_MODEL_COLOR_G += fSTATIC_MODEL_COLOR_RGB_ADD;
-		if( GetAsyncKeyState( 'B' ) & 0x8000 ) fSTATIC_MODEL_COLOR_G -= fSTATIC_MODEL_COLOR_RGB_ADD;
-		if( GetAsyncKeyState( 'H' ) & 0x8000 ) fSTATIC_MODEL_COLOR_B += fSTATIC_MODEL_COLOR_RGB_ADD;
-		if( GetAsyncKeyState( 'N' ) & 0x8000 ) fSTATIC_MODEL_COLOR_B -= fSTATIC_MODEL_COLOR_RGB_ADD;
-		cb.vColor = { fSTATIC_MODEL_COLOR_R, fSTATIC_MODEL_COLOR_G, fSTATIC_MODEL_COLOR_B, 1.0f };
 
 		memcpy_s(
 			pData.pData,	//コピー先のバッファ.

@@ -34,12 +34,13 @@ void clsObjStaticMesh::Render(
 	const D3DXMATRIX&  mView,
 	const D3DXMATRIX& mProj,
 	const D3DXVECTOR3& vLight,
-	const D3DXVECTOR3& vEye)
+	const D3DXVECTOR3& vEye, 
+	const D3DXVECTOR4& vColor)
 {
 	if (!m_pModel)return;
 	ModelTransUpdate();
 
-	m_pModel->Render(mView, mProj, vLight, vEye);
+	m_pModel->Render(mView, mProj, vLight, vEye, vColor );
 }
 
 clsObjStaticMesh::clsObjStaticMesh()

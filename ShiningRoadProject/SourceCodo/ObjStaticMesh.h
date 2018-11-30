@@ -14,7 +14,8 @@ public:
 
 	void ModelTransUpdate();
 
-	virtual void Render(const D3DXMATRIX& mView, const  D3DXMATRIX& mProj, const D3DXVECTOR3& vLight, const  D3DXVECTOR3& vEye);
+	virtual void Render(const D3DXMATRIX& mView, const  D3DXMATRIX& mProj, const D3DXVECTOR3& vLight, const  D3DXVECTOR3& vEye, 
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f } );
 
 	clsObjStaticMesh();
 	~clsObjStaticMesh();

@@ -164,13 +164,12 @@ void clsStage::Render(
 	const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
 	const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye )
 {
+	//ìñÇΩÇËîªíËópÉÇÉfÉã.
+//	m_pStageCollision->Render( mView, mProj, vLight, vEye );
 
-#ifdef _DEBUG
-	m_pStageCollision->Render( mView, mProj, vLight, vEye );
-#else//#ifdef _DEBUG
-	m_pStageFloor->Render( mView, mProj, vLight, vEye );
-	m_pStageCelling->Render( mView, mProj, vLight, vEye );
-#endif//#ifdef _DEBUG
+
+	m_pStageFloor->Render(	 mView, mProj, vLight, vEye, m_vLightColor );
+	m_pStageCelling->Render( mView, mProj, vLight, vEye, m_vLightColor );
 
 	assert( m_pLia );
 	m_pLia->ModelRender( mView, mProj, vLight, vEye, m_vLightColor );
@@ -185,6 +184,7 @@ void clsStage::Render(
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
 
+#ifdef _DEBUG
 	//êF.
 	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
 	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColor.x += fSTATIC_MODEL_COLOR_RGB_ADD;
@@ -193,6 +193,7 @@ void clsStage::Render(
 	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColor.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
 	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColor.z += fSTATIC_MODEL_COLOR_RGB_ADD;
 	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColor.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
+#endif//#ifdef _DEBUG
 
 }
 
