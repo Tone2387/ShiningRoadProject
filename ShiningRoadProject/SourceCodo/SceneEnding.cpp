@@ -1,11 +1,17 @@
 #include "SceneEnding.h"
 #include "File.h"
+
+
 using namespace std;
+
+
+#ifdef _DEBUG
+//つけていると背景に真ん中がわかるものを出す.
+#define CENTER_SPRITE_RENDER
+#endif//#ifdef _DEBUG
 
 namespace{
 
-//つけていると背景に真ん中がわかるものを出す.
-//#define CENTER_SPRITE_RENDER
 #ifdef CENTER_SPRITE_RENDER
 	unique_ptr<clsSprite2D> g_upTex;
 #endif//#ifdef CENTER_SPRITE_RENDER
@@ -68,7 +74,7 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	SPRITE_STATE ss;
 	ss.Disp = { WND_W, WND_H };
 	g_upTex = make_unique<clsSprite2D>();
-	g_upTex->Create( m_wpDevice, m_wpContext, "Data\\Image\\sima.png", ss );
+	g_upTex->Create( m_wpDevice, m_wpContext, "Data\\Image\\EndingUi\\sima.png", ss );
 	g_upTex->SetPos( { 0.0f, 0.0f, 0.0f } );
 #endif//#ifdef CENTER_SPRITE_RENDER
 }
@@ -343,7 +349,7 @@ bool clsSCENE_ENDING::AddAlphaState(
 }
 
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_ENDING::RenderDebugText()
 {
 	//NULLチェック.
@@ -374,4 +380,4 @@ void clsSCENE_ENDING::RenderDebugText()
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG

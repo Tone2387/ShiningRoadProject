@@ -410,7 +410,7 @@ void clsSCENE_TITLE::RenderUi()
 
 
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_TITLE::RenderDebugText()
 {
 	//NULLチェック.
@@ -464,4 +464,4 @@ void clsSCENE_TITLE::RenderDebugText()
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG

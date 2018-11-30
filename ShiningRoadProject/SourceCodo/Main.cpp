@@ -516,7 +516,7 @@ HRESULT clsMain::InitD3D()
 //============================================================
 void clsMain::DestroyD3D()
 {
-#if _DEBUG
+#ifdef _DEBUG
 	if( m_pRayH != nullptr ){
 		delete m_pRayH;
 		m_pRayH = nullptr;
@@ -529,7 +529,7 @@ void clsMain::DestroyD3D()
 		delete m_pRayV;
 		m_pRayV = nullptr;
 	}
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 
 #ifdef Tahara
@@ -567,7 +567,7 @@ HRESULT clsMain::ReadMesh()
 
 
 
-#if _DEBUG
+#ifdef _DEBUG
 
 
 	//ƒŒƒC•\Ž¦‚Ì‰Šú‰»(‚’¼).
@@ -588,7 +588,7 @@ HRESULT clsMain::ReadMesh()
 		m_pRayH->Init( m_pDevice, m_pDeviceContext );
 	}
 
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 	return S_OK;
 }

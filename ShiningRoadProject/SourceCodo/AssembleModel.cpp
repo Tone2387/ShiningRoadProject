@@ -9,18 +9,18 @@ using namespace std;
 //legのモデルの足元がおかしい場合.
 //#define LEG_MODEL_POSITION_BASE_Y_OFFSET
 
-#if _DEBUG
+#ifdef _DEBUG
 #include "CharaStatic.h"
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 namespace{
 
-#if _DEBUG
+#ifdef _DEBUG
 		//足元.
 		std::unique_ptr<clsCharaStatic> m_upFootNull;
 		std::unique_ptr<clsCharaStatic> m_upFootPosBase;
 		std::unique_ptr<clsCharaStatic> m_upFootTrasnPos;
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 	//配列の添え字.
@@ -112,7 +112,7 @@ void clsASSEMBLE_MODEL::Create(
 
 	CreateProduct( pStatus );
 
-#if _DEBUG
+#ifdef _DEBUG
 	float fRATE = 2.5f;
 	//足元.
 	m_upFootTrasnPos = make_unique<clsCharaStatic>();
@@ -136,7 +136,7 @@ void clsASSEMBLE_MODEL::Create(
 		0.125f / fRATE, 
 		0.5f / fRATE * 0.5f, 
 		0.125f / fRATE } );
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 }
 
@@ -242,7 +242,7 @@ void clsASSEMBLE_MODEL::Render(
 	m_Trans.vPos -= D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
 
 #endif//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
-#if _DEBUG
+#ifdef _DEBUG
 	m_upFootNull->SetPosition( vLegPosNull );
 	m_upFootNull->UpdatePos();
 	m_upFootNull->Render( mView, mProj, vLight, vEye, { 10.0f, 0.0f, 0.0f, 0.5f }, true );
@@ -256,7 +256,7 @@ void clsASSEMBLE_MODEL::Render(
 	m_upFootTrasnPos->UpdatePos();
 	m_upFootTrasnPos->Render( mView, mProj, vLight, vEye, { 0.0f, 0.0f, 10.0f, 0.5f }, true );
 	
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 	//ワイヤーフレーム解除.
 	ChangeWireFrame( false, pContext );
@@ -747,12 +747,12 @@ int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorG
 
 
 
-#if _DEBUG
+#ifdef _DEBUG
 //各パーツのpos.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
 {
 	assert( m_vpParts[ucParts] );
 	return m_vpParts[ucParts]->GetPosition();
 }
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 

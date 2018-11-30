@@ -36,12 +36,12 @@ public:
 
 	//ÉåÉCóp.
 	clsDX9Mesh* GetModelPtr() const {
-#if _DEBUG
+#ifdef _DEBUG
 		clsDX9Mesh* pReturn = m_upBox->GetStaticMesh();
 		return pReturn;
-#else//#if _DEBUG
+#else//#ifdef _DEBUG
 		return m_upBox->GetStaticMesh();
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 	}
 
 	//ç¿ïW.

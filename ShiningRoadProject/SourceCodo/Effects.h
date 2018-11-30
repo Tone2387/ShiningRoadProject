@@ -26,15 +26,15 @@
 #include <EffekseerSoundXAudio2.h>
 
 
-#if _DEBUG
+#ifdef _DEBUG
 #pragma comment( lib, "VS2013\\Debug\\Effekseer.lib" )
 #pragma comment( lib, "VS2013\\Debug\\EffekseerRendererDX11.lib" )
 #pragma comment( lib, "VS2013\\Debug\\EffekseerSoundXAudio2.lib" )
-#else//#if _DEBUG
+#else//#ifdef _DEBUG
 #pragma comment( lib, "VS2013\\Release\\Effekseer.lib" )
 #pragma comment( lib, "VS2013\\Release\\EffekseerRendererDX11.lib" )
 #pragma comment( lib, "VS2013\\Release\\EffekseerSoundXAudio2.lib" )
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 //「D3DX～」使用で必須.

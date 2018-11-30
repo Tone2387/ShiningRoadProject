@@ -170,12 +170,12 @@ namespace{
 
 
 
-	#if _DEBUG
+	#ifdef _DEBUG
 	//目安.
 	const char* sPATH_DESIGN = "Data\\Image\\AssembleDesign.png";
 	const D3DXVECTOR3 vINIT_POS_DESIGN = { 0.0f, 0.0f, 0.0f };
 	const float fINIT_SCALE_DESIGN = 0.1875f;
-	#endif//#if _DEBUG
+	#endif//#ifdef _DEBUG
 
 
 
@@ -223,19 +223,30 @@ namespace{
 	//パーツ説明以外の行数.
 	const int iFONT_COMMENT_LINE = 5 + 8 + 8;
 
+
+
 	//パーツカテゴリの脚のindex.
 	const int iFONT_TEXT_PARTS_TYPE_LEGS_INDEX = 5 + 8;
 	const float fFONT_TEXT_PARTS_TYPE_SCALE = 18;
+	const float fFONT_TEXT_PARTS_TYPE_WEAPON_SCALE = 13;
 	//legs, core, 等の文字offset.
 	const D3DXVECTOR3 vFONT_TEXT_PARTS_TYPE_POS_OFFSET[] =
 	{
-		{ 8.0f, 16.0f, 0.0f },
-		{ 8.0f, 16.0f, 0.0f },
-		{ 8.0f, 16.0f, 0.0f },
-		{ 8.0f, 16.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f },
+		{ 10.0f, 22.0f, 0.0f },
+		{ 10.0f, 22.0f, 0.0f },
+		{ 10.0f, 22.0f, 0.0f },
+		{ 10.0f, 22.0f, 0.0f },
+		{ 5.0f, 16.0f, 0.0f },
+		{ 5.0f, 16.0f, 0.0f },
 	};
+	//武器の左右offset.
+	const float fFONT_TEXT_PARTS_TYPE_WEAPON_ADD_POS_Y_RIGHT_LEFT = 24.0f;
+	const D3DXVECTOR3 vFONT_TEXT_PARTS_TYPE_POS_OFFSET_RIGHT_LEFT[] =
+	{
+		{ 11.0f, fFONT_TEXT_PARTS_TYPE_WEAPON_ADD_POS_Y_RIGHT_LEFT, 0.0f },
+		{ 12.0f, fFONT_TEXT_PARTS_TYPE_WEAPON_ADD_POS_Y_RIGHT_LEFT, 0.0f },
+	};
+
 
 
 	//ボタン.
@@ -311,11 +322,6 @@ clsASSEMBLE_UI::clsASSEMBLE_UI( clsFont* const pFont )
 
 clsASSEMBLE_UI::~clsASSEMBLE_UI()
 {
-#if _DEBUG
-	if( m_upDegine ){
-		m_upDegine.reset( nullptr );
-	}
-#endif//#if _DEBUG
 
 	for( unsigned int i=0; i<m_vecupStatusNumText.size(); i++ ){
 		if( m_vecupStatusNumText[i] ){
@@ -509,16 +515,6 @@ void clsASSEMBLE_UI::Create(
 	m_upPartsNameText->Create( pContext, WND_W, WND_H, TEXT_SCALE_PARTS_NAME );
 	m_upPartsNameText->SetPos( vTEXT_POS_PARTS_NAME );
 
-#if _DEBUG
-	ss.Disp = { WND_W, WND_H };
-	m_upDegine = make_unique< clsSprite2D >();
-	m_upDegine->Create( pDevice, pContext, sPATH_DESIGN, ss );
-	m_upDegine->SetPos( vINIT_POS_DESIGN );
-	m_upDegine->SetAlpha( 0.5f );
-#endif//#if _DEBUG
-
-
-
 
 	//ボタン.
 	assert( !m_upButton );
@@ -534,7 +530,7 @@ void clsASSEMBLE_UI::Input(
 		const clsXInput* const pXInput,
 		const clsDxInput* const pDxInput )
 {
-#if _DEBUG
+#ifdef _DEBUG
 	float move = 1.0f;
 	if( GetAsyncKeyState( VK_RIGHT )& 0x8000 )	DEBUG_SPRITE_NAME->AddPos( { move, 0.0f/*, 0.0f*/ } );
 	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	DEBUG_SPRITE_NAME->AddPos( {-move, 0.0f/*, 0.0f*/ } );
@@ -550,7 +546,7 @@ void clsASSEMBLE_UI::Input(
 //	if( GetAsyncKeyState( 'Q' ) & 0x8000 )	DEBUG_SPRITE_NAME->AddScale( 1-scale );
 
 
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 
@@ -681,18 +677,35 @@ void clsASSEMBLE_UI::Render(
 	const int iPartsType, 
 	const int iPartsNum ) const
 {
+	const D3DXVECTOR4 vFONT_TEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
+	m_wpFont->SetColor( vFONT_TEXT_COLOR );
 
 	//パーツカテゴリ.
+	const int iWEAPON_INDEX = 4;
 	int iPartsTypeIndex = iFONT_TEXT_PARTS_TYPE_LEGS_INDEX;
+	int iPartsTypeRightLeftOffsetIndex = 0;
+
 	for( unsigned int i=0; i<m_vecupPartsType.size(); i++ ){
 		assert( m_vecupPartsType[i] );
 		m_vecupPartsType[i]->Render();
 		//パーツカテゴリの文字.
 		m_wpFont->SetPos( m_vecupPartsType[i]->GetPos() );
 		m_wpFont->AddPos( vFONT_TEXT_PARTS_TYPE_POS_OFFSET[i] );
-		m_wpFont->SetScale( fFONT_TEXT_PARTS_TYPE_SCALE );
-	
+		if( i >= iWEAPON_INDEX ){
+			m_wpFont->SetScale( fFONT_TEXT_PARTS_TYPE_WEAPON_SCALE );
+		}
+		else{
+			m_wpFont->SetScale( fFONT_TEXT_PARTS_TYPE_SCALE );
+		}
 		m_wpFont->Render( iPartsTypeIndex ++ );
+
+		//武器の右と左表示.
+		if( i >= iWEAPON_INDEX ){
+			m_wpFont->AddPos( vFONT_TEXT_PARTS_TYPE_POS_OFFSET_RIGHT_LEFT[ iPartsTypeRightLeftOffsetIndex ++ ] );
+
+			const int iRIGHT_LEFT_INDEX = iPartsTypeIndex + 1;
+			m_wpFont->Render( iRIGHT_LEFT_INDEX );
+		}
 	}
 
 
@@ -719,8 +732,6 @@ void clsASSEMBLE_UI::Render(
 //	m_upHeaderText->Render();
 	assert( m_wpFont );
 	//画面タイトル「ASSEMBLE」.
-	const D3DXVECTOR4 vFONT_TEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
-	m_wpFont->SetColor( vFONT_TEXT_COLOR );
 	m_wpFont->SetPos( vFONT_TEXT_TITLE_POS );
 	m_wpFont->SetScale( fFONT_TEXT_TITLE_SCALE );
 	m_wpFont->Render( iFONT_TEXT_TITLE_LINE );
@@ -750,15 +761,6 @@ void clsASSEMBLE_UI::Render(
 
 	assert( m_upWndBox );
 	m_upWndBox->Render();
-
-#if _DEBUG
-	static bool bDesignDisp = true;
-	if( GetAsyncKeyState( 'M' ) & 0x1 ){
-		if( bDesignDisp )	bDesignDisp = false;
-		else				bDesignDisp = true;
-	};
-	if( bDesignDisp )m_upDegine->Render();
-#endif//#if _DEBUG
 
 }
 
@@ -995,10 +997,10 @@ D3DXVECTOR4 clsASSEMBLE_UI::GetStatusColor(
 }
 
 
-#if _DEBUG
+#ifdef _DEBUG
 //デバッグテキスト用.
 D3DXVECTOR3 clsASSEMBLE_UI::GetUiPos()
 {
 	return DEBUG_SPRITE_NAME->GetPos();
 }
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG

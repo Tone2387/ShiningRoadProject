@@ -657,7 +657,7 @@ void clsSCENE_MISSION::SetEnemys()
 }
 
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_MISSION::RenderDebugText()
 {
 	//NULLチェック.
@@ -714,7 +714,7 @@ void clsSCENE_MISSION::RenderDebugText()
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}*/
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 {

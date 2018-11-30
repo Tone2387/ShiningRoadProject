@@ -38,10 +38,10 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
-#if _DEBUG
+#ifdef _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 	clsPlayer* m_pPlayer;
 	clsTestObj* m_pTestObj;
