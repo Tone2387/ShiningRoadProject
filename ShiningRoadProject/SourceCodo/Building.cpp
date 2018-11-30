@@ -106,17 +106,18 @@ void clsBUILDING::Render(
 	const D3DXMATRIX &mView, 
 	const D3DXMATRIX &mProj,
 	const D3DXVECTOR3 &vLight, 
-	const D3DXVECTOR3 &vEye ) const
+	const D3DXVECTOR3 &vEye,
+	const D3DXVECTOR4& vColor ) const
 {
 //	m_upBox->Render( mView, mProj, vLight, vEye );
 
-	m_upTop->Render( mView, mProj, vEye );
+	m_upTop->Render( mView, mProj, vEye, vColor );
 
 	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
 		m_upSide->SetPos( m_SideTransArray[i].vPos );
 		m_upSide->SetRot( m_SideTransArray[i].vRot );
 		m_upSide->SetScale( m_SideTransArray[i].vScale );
-		m_upSide->Render( mView, mProj, vEye );
+		m_upSide->Render( mView, mProj, vEye, vColor );
 	}
 }
 

@@ -110,10 +110,16 @@ float4 PS_Main( VS_OUT In )	:	SV_Target
 //		&& maskColor.b >= 0.99f
 		)
 	{
-		maskColor.r = g_vColor.r + ( 1 - maskColor.a ) + ( 1 - maskColor.r );
-		maskColor.g = g_vColor.g + ( 1 - maskColor.a ) + ( 1 - maskColor.g );
-		maskColor.b = g_vColor.b + ( 1 - maskColor.a ) + ( 1 - maskColor.b );
-		color *= maskColor;
+//		maskColor.r = g_vColor.r + ( 1 - maskColor.a ) * ( 1 - maskColor.r );
+//		maskColor.g = g_vColor.g + ( 1 - maskColor.a ) * ( 1 - maskColor.g );
+//		maskColor.b = g_vColor.b + ( 1 - maskColor.a ) * ( 1 - maskColor.b );
+
+		//alpha値でグラデ可能( aの値が小さいと1.0fに近づく{ 元のテクスチャの色に近づく } ).
+		float4 maskGrdColor;
+		maskGrdColor = g_vColor + ( 1 - maskColor.a ) * ( 1 - maskColor );
+		maskGrdColor.a = color.a;
+
+		color *= maskGrdColor;
 	}
 
 
@@ -272,8 +278,28 @@ float4 PS_Ita( VS_ItaOut input )	:	SV_Target
 	float2 TexPos = input.Tex;
 	TexPos.x *= g_Split.x;
 	TexPos.y *= g_Split.y;
+
 	float4 color = g_texColor.Sample( g_samLinear, TexPos );
-	return color * g_vcolor;//色を返す.
+	//マスク.
+	float4 maskColor = g_TexMask1.Sample( g_samLinear, TexPos );
+
+
+	if( 
+		maskColor.r >= 0.99f
+		&& maskColor.g >= 0.99f
+		&& maskColor.b >= 0.99f
+		)
+	{
+		//alpha値でグラデ可能( aの値が小さいと1.0fに近づく{ 元のテクスチャの色に近づく } ).
+		float4 maskGrdColor;
+		maskGrdColor = g_vcolor + ( 1 - maskColor.a ) * ( 1 - maskColor );
+		maskGrdColor.a = color.a;
+
+		color *= maskGrdColor;
+	}
+
+
+	return color;//色を返す.
 
 //	float4 color = g_texColor.Sample( g_samLinear, input.Tex );
 //	return color * g_vcolor;//色を返す.

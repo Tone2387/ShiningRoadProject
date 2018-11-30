@@ -32,7 +32,8 @@ public:
 		const D3DXMATRIX &mView, 
 		const D3DXMATRIX &mProj,
 		const D3DXVECTOR3 &vLight, 
-		const D3DXVECTOR3 &vEye ) const ;
+		const D3DXVECTOR3 &vEye,
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f } ) const ;
 
 	//ƒŒƒC—p.
 	clsDX9Mesh* GetModelPtr() const {
@@ -57,7 +58,6 @@ public:
 	D3DXVECTOR3 GetScale() const				{ return m_Trans.vScale; }
 	void SetScale( const D3DXVECTOR3& vScale )	{ m_Trans.vScale = vScale;	this->UpdateTile(); }
 	void AddScale( const D3DXVECTOR3& vScale )	{ m_Trans.vScale += vScale; this->UpdateTile(); }
-
 
 
 private:

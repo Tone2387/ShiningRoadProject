@@ -29,6 +29,7 @@ namespace{
 }
 
 clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
+	:m_vLightColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 {
 	clsFILE file;
 	file.Open( sSTAGE_BASE_DATA_PATH );
@@ -172,17 +173,27 @@ void clsStage::Render(
 #endif//#ifdef _DEBUG
 
 	assert( m_pLia );
-	m_pLia->ModelRender( mView, mProj, vLight, vEye );
+	m_pLia->ModelRender( mView, mProj, vLight, vEye, m_vLightColor );
 
 	for( int i=0; i<enDOOR_NUM_size; i++ ){
 		assert( m_pDoorArray[i] );
 		m_pDoorArray[i]->ModelUpdate( m_pDoorArray[i]->m_Trans );
-		m_pDoorArray[i]->ModelRender( mView, mProj, vLight, vEye );
+		m_pDoorArray[i]->ModelRender( mView, mProj, vLight, vEye, m_vLightColor );
 	}
 
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
-		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye );
+		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
+
+	//êF.
+	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
+	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColor.x += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'V' ) & 0x8000 )m_vLightColor.x -= fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'G' ) & 0x8000 )m_vLightColor.y += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColor.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColor.z += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColor.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
+
 }
 
 vector<clsDX9Mesh*> clsStage::GetStageMeshArray()

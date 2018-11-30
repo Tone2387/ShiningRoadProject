@@ -1,6 +1,7 @@
 #include "Sprite.h"
 
 namespace{
+	const char sMASK_PATH_EMPTY[] = "Data\\Image\\maskEmpty.png";
 
 	//シェーダ内のコンスタントバッファと一致している必要あり.
 	struct SPRITESHADER_CONSTANT_BUFFER
@@ -25,7 +26,8 @@ clsSprite::clsSprite()
 	m_pPixelShader		= nullptr;		
 	m_pConstantBuffer	= nullptr;
 	m_pVertexBuffer		= nullptr;
-	m_pTexture			= nullptr;		
+	m_pTexture			= nullptr;	
+	m_pMask				= nullptr;
 	m_pSampleLinear		= nullptr;
 
 	m_vSplit = { 1.0f, 1.0f };
@@ -36,6 +38,7 @@ clsSprite::clsSprite()
 //============================================================
 clsSprite::~clsSprite()
 {
+	SAFE_RELEASE( m_pMask );
 	SAFE_RELEASE( m_pTexture );
 	SAFE_RELEASE( m_pSampleLinear );
 	SAFE_RELEASE( m_pVertexBuffer );
@@ -304,6 +307,39 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 		return E_FAIL;
 	}
 
+	//----- マスク作成 -----//.
+	//テクスチャパスからテク画像名を消す.
+	const char sTYPE[] = ".png";
+	char sMaskPath[ 128 ] = "";
+	strcpy_s( sMaskPath, sizeof( sMaskPath ), sTexName );
+	char* pcType = strstr( sMaskPath, sTYPE );
+	*pcType = '\0';
+
+	//マスク画像名連結.
+	const char sMASK_NAME[] = "mask";
+//	strcat_s( sMaskPath, sizeof( sMaskPath ), sMASK_NAME );
+	strcat_s( sMaskPath, sizeof( sMaskPath ), sMASK_NAME );
+	strcat_s( sMaskPath, sizeof( sMaskPath ), sTYPE );
+
+	//マスク作成.
+	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+		m_wpDevice,		//リソースを使用するデバイスへのポインタ.
+		sMaskPath,
+		NULL, NULL,
+		&m_pMask,		//(out)マスクテクスチャ.
+		NULL ) ) )
+	{
+		if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+			m_wpDevice,		//リソースを使用するデバイスへのポインタ.
+			sMASK_PATH_EMPTY,
+			NULL, NULL,
+			&m_pMask,		//(out)マスクテクスチャ.
+			NULL ) ) )
+		{
+			MessageBox( NULL, "テクスチャ作成失敗w", sTexName, MB_OK );
+			return E_FAIL;		
+		}
+	}
 
 	return S_OK;
 }
@@ -311,7 +347,12 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 //============================================================
 //描画(レンダリング)(※DX9MESH内とMain内で2つ存在するので注意).
 //============================================================
-void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const D3DXVECTOR3 &vEye, bool isBillBoard )
+void clsSprite::Render( 
+	const D3DXMATRIX& mView, 
+	const D3DXMATRIX& mProj, 
+	const D3DXVECTOR3 &vEye, 
+	const D3DXVECTOR4& vColor,
+	bool isBillBoard )
 {
 	//ワールド行列.
 	D3DXMATRIX	mWorld, mScale, mTrans, mYaw, mPitch, mRoll;
@@ -362,8 +403,9 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 		cd.mWVP = m;
 
 		//カラー.
-		D3DXVECTOR4 vColor( 1.0f, 1.0f, 1.0f, 1.0f );
 		cd.vColor = vColor;
+
+		//分割.
 		D3DXVECTOR4 vSplit( 1.0f, 1.0f, 1.0f, 1.0f );
 		cd.vSplit = vSplit;
 		cd.vSplit.x = m_vSplit.x;
@@ -413,6 +455,9 @@ void clsSprite::Render( const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const 
 		0, 1, &m_pSampleLinear );	//サンプラーをセット.
 	m_wpContext->PSSetShaderResources(
 		0, 1, &m_pTexture );		//テクスチャをシェーダに渡す.
+
+	m_wpContext->PSSetShaderResources(
+		1, 1, &m_pMask );		//マスクをシェーダに渡す.
 
 	//アルファブレンド用ブレンドステート作成&設定.
 	SetBlend( true );

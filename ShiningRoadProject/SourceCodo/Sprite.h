@@ -40,7 +40,8 @@ public:
 	virtual void Render( 
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj,
-		const D3DXVECTOR3 &vEye, 
+		const D3DXVECTOR3 &vEye,
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
 		bool isBillBoard = false );
 
 
@@ -75,7 +76,6 @@ protected:
 	D3DXVECTOR2		m_vSplit;
 
 
-
 	//↓モデルの種類ごとに用意.
 	ID3D11VertexShader*		m_pVertexShader;	//頂点シェーダ.
 	ID3D11InputLayout*		m_pVertexLayout;	//頂点レイアウト.
@@ -88,6 +88,7 @@ protected:
 	ID3D11ShaderResourceView*	m_pTexture;		//テクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
 
+	ID3D11ShaderResourceView*	m_pMask;		//テクスチャのマスク.
 
 
 

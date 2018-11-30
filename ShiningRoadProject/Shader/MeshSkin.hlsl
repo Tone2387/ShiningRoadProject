@@ -145,7 +145,6 @@ float4 PSSkin( PSSkinIn input ) : SV_Target
 	//マスク.
 	float4 mask1Color = g_TexMask1.Sample( g_samLinear, input.Tex );
 	float4 mask2Color = g_TexMask2.Sample( g_samLinear, input.Tex );
-
 	if( 
 		mask1Color.r >= 0.99f
 //		&& mask1Color.g >= 0.99f
@@ -162,7 +161,6 @@ float4 PSSkin( PSSkinIn input ) : SV_Target
 	{
 		RetColor *= g_vColorArmor;
 	}
-
 
 
 //	//フォグ処理.

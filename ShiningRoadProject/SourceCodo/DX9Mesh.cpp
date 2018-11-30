@@ -7,6 +7,7 @@ namespace{
 
 	const char sMASK_TEX_NAME[] = "mask";
 	const char sMASK_TEX_TYPE[] = ".png";
+	const char sMASK_PATH_EMPTY[] = "Data\\Image\\maskEmpty.png";
 	//============================================================
 	//	構造体.
 	//============================================================
@@ -301,7 +302,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 
 //			strcpy_s( sTexFilePath,
 //				sizeof( sTexFilePath ),
-//				path );
+//				path );sMASK_PATH_EMPTY
 //
 			//テクスチャ作成.
 			if( FAILED( D3DX11CreateShaderResourceViewFromFile(
@@ -321,10 +322,15 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 				&m_pMaterials[i].pMask, //(out)テクスチャオブジェクト.
 				NULL ) ) )
 			{
-				int a=0;
-				//マスクがない時もあるよね.
-//				MessageBox( NULL, sMaskFilePath, "テクスチャ作成失敗", MB_OK );
-//				return E_FAIL;
+				if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+					m_pDevice, sMASK_PATH_EMPTY,//テクスチャファイル名.
+					NULL, NULL,
+					&m_pMaterials[i].pMask, //(out)テクスチャオブジェクト.
+					NULL ) ) )
+				{
+					MessageBox( NULL, sTexFilePath, "マスク作成失敗", MB_OK );
+					return E_FAIL;
+				}
 			}
 		}
 	}
@@ -875,14 +881,12 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 		{
 			//テクスチャがあるとき.
 			m_pContext->PSSetSamplers(
-				0, 1, &m_pSampleLinear);
+				0, 1, &m_pSampleLinear );
 			m_pContext->PSSetShaderResources(
-				0, 1, &m_pMaterials[m_AttrID[i]].pTexture);
+				0, 1, &m_pMaterials[m_AttrID[i]].pTexture );
 			//マスクがあるとき.
-			if( m_pMaterials[m_AttrID[i]].pMask ){
 			m_pContext->PSSetShaderResources(
-				1, 1, &m_pMaterials[m_AttrID[i]].pMask );
-			}
+				1, 1, &m_pMaterials[ m_AttrID[i] ].pMask );
 		}
 		else
 		{
