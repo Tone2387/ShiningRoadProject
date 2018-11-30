@@ -1,10 +1,12 @@
 #include "DX9Mesh.h"
+#include "OperationString.h"
 
 namespace{
 	//シェーダーファイル名(ディレクトリを含む)
 	const char SHADER_NAME[] = "Shader\\Mesh.hlsl";//const:後に書かれた変数を上書きさせない.
 
-
+	const char sMASK_TEX_NAME[] = "mask";
+	const char sMASK_TEX_TYPE[] = ".png";
 	//============================================================
 	//	構造体.
 	//============================================================
@@ -90,7 +92,6 @@ clsDX9Mesh::~clsDX9Mesh()
 		SAFE_DELETE_ARRAY( m_ppIndexBuffer );
 	}
 
-//	SAFE_RELEASE( m_pMaterials->pTexture );
 	SAFE_DELETE_ARRAY( m_pMaterials );
 
 	SAFE_RELEASE( m_pMesh );
@@ -267,9 +268,10 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 		if (d3dxMaterials[i].pTextureFilename != NULL &&
 			lstrlen(d3dxMaterials[i].pTextureFilename) > 0)
 		{
+			const int iTEX_PATH_SIZE = 128;
 			m_bTexture = true;//テクスチャフラグを立てる.
 
-			char path[128] = "";
+			char path[ iTEX_PATH_SIZE ] = "";
 			int path_cnt = lstrlen( fileName );
 
 			//階層がある前提なのでファイルを直下に置くと死.
@@ -286,22 +288,43 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 				}
 			}
 
-			strcat_s( path, sizeof( path ), d3dxMaterials[i].pTextureFilename );
+			clsOPERATION_STRING OprtStr;
+			//テクスチャファイル名をコピー.
+			char sTexFilePath[ iTEX_PATH_SIZE ] = "";
+			strcpy_s( sTexFilePath,  sizeof( sTexFilePath ),  path );
+			strcat_s( sTexFilePath,  sizeof( path ),		  d3dxMaterials[i].pTextureFilename );
+			char sMaskFilePath[ iTEX_PATH_SIZE ] = "";
+			strcpy_s( sMaskFilePath, sizeof( sMaskFilePath ), path );
+			strcat_s( sMaskFilePath, sizeof( sMaskFilePath ), sMASK_TEX_NAME );
+			strcpy_s( sMaskFilePath, sizeof( sMaskFilePath ), OprtStr.ConsolidatedNumber( sMaskFilePath, static_cast<int>( i ) ).c_str() );
+			strcat_s( sMaskFilePath, sizeof( sMaskFilePath ), sMASK_TEX_TYPE );
 
-			//テクスチャファイルをコピー.
-			strcpy_s( m_pMaterials[i].szTextureName,
-				sizeof( m_pMaterials[i].szTextureName ),
-				path );
-
+//			strcpy_s( sTexFilePath,
+//				sizeof( sTexFilePath ),
+//				path );
+//
 			//テクスチャ作成.
-			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(
-				m_pDevice, m_pMaterials[i].szTextureName,//テクスチャファイル名.
+			if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+				m_pDevice, sTexFilePath,//テクスチャファイル名.
 				NULL, NULL,
 				&m_pMaterials[i].pTexture, //(out)テクスチャオブジェクト.
 				NULL ) ) )
 			{
-				MessageBox( NULL, m_pMaterials[i].szTextureName, "テクスチャ作成失敗", MB_OK );
+				MessageBox( NULL, sTexFilePath, "テクスチャ作成失敗", MB_OK );
 				return E_FAIL;
+			}
+
+			//マスク作成.
+			if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+				m_pDevice, sMaskFilePath,//テクスチャファイル名.
+				NULL, NULL,
+				&m_pMaterials[i].pMask, //(out)テクスチャオブジェクト.
+				NULL ) ) )
+			{
+				int a=0;
+				//マスクがない時もあるよね.
+//				MessageBox( NULL, sMaskFilePath, "テクスチャ作成失敗", MB_OK );
+//				return E_FAIL;
 			}
 		}
 	}
@@ -766,6 +789,17 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 
 		//色.
 		cb.vColor = vColor;
+		static float fSTATIC_MODEL_COLOR_R = 1.0f;
+		static float fSTATIC_MODEL_COLOR_G = 1.0f;
+		static float fSTATIC_MODEL_COLOR_B = 1.0f;
+		const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
+		if( GetAsyncKeyState( 'F' ) & 0x8000 ) fSTATIC_MODEL_COLOR_R += fSTATIC_MODEL_COLOR_RGB_ADD;
+		if( GetAsyncKeyState( 'V' ) & 0x8000 ) fSTATIC_MODEL_COLOR_R -= fSTATIC_MODEL_COLOR_RGB_ADD;
+		if( GetAsyncKeyState( 'G' ) & 0x8000 ) fSTATIC_MODEL_COLOR_G += fSTATIC_MODEL_COLOR_RGB_ADD;
+		if( GetAsyncKeyState( 'B' ) & 0x8000 ) fSTATIC_MODEL_COLOR_G -= fSTATIC_MODEL_COLOR_RGB_ADD;
+		if( GetAsyncKeyState( 'H' ) & 0x8000 ) fSTATIC_MODEL_COLOR_B += fSTATIC_MODEL_COLOR_RGB_ADD;
+		if( GetAsyncKeyState( 'N' ) & 0x8000 ) fSTATIC_MODEL_COLOR_B -= fSTATIC_MODEL_COLOR_RGB_ADD;
+		cb.vColor = { fSTATIC_MODEL_COLOR_R, fSTATIC_MODEL_COLOR_G, fSTATIC_MODEL_COLOR_B, 1.0f };
 
 		memcpy_s(
 			pData.pData,	//コピー先のバッファ.
@@ -844,6 +878,11 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 				0, 1, &m_pSampleLinear);
 			m_pContext->PSSetShaderResources(
 				0, 1, &m_pMaterials[m_AttrID[i]].pTexture);
+			//マスクがあるとき.
+			if( m_pMaterials[m_AttrID[i]].pMask ){
+			m_pContext->PSSetShaderResources(
+				1, 1, &m_pMaterials[m_AttrID[i]].pMask );
+			}
 		}
 		else
 		{

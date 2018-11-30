@@ -245,23 +245,23 @@ void clsSCENE_BASE::Render(
 		UpdateNoise();
 	}
 
-	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-		NoiseStrong( 60 );
-	}
-	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
-		NoiseWeak( 10 );
-	}
-	if( GetAsyncKeyState( 'C' ) & 0x1 ){
-		static bool nega = false;
-		m_upScreenTexture->SetNega( nega );
-		nega = !nega;
-	}
-	if( GetAsyncKeyState( 'V' ) & 0x8000 ){
-		m_upScreenTexture->SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
-	}
-	if( GetAsyncKeyState( 'B' ) & 0x8000 ){
-		m_upScreenTexture->SetColor( { 0.5f, 0.5f, 1.0f, 1.0f } );
-	}
+//	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+//		NoiseStrong( 60 );
+//	}
+//	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
+//		NoiseWeak( 10 );
+//	}
+//	if( GetAsyncKeyState( 'C' ) & 0x1 ){
+//		static bool nega = false;
+//		m_upScreenTexture->SetNega( nega );
+//		nega = !nega;
+//	}
+//	if( GetAsyncKeyState( 'V' ) & 0x8000 ){
+//		m_upScreenTexture->SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
+//	}
+//	if( GetAsyncKeyState( 'B' ) & 0x8000 ){
+//		m_upScreenTexture->SetColor( { 0.5f, 0.5f, 1.0f, 1.0f } );
+//	}
 
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 

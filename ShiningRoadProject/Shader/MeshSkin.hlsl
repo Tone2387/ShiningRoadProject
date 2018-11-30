@@ -5,15 +5,16 @@
 // 定義.
 #define MAX_BONE_MATRICES 255
 
-// グローバル.
-Texture2D		g_texColor	: register( t0 );	// テクスチャーは レジスターt(n).
-SamplerState	g_samLinear : register( s0 );	// サンプラーはレジスターs(n).
-
+//テクスチャ.
+Texture2D		g_texColor	: register( t0 );// テクスチャーは レジスターt(n).
 //マスク.
-Texture2D		g_TexMask1	: register( t1 );	// テクスチャーは レジスターt(n).
-SamplerState	g_SamMask1 : register( s1 );	// サンプラーはレジスターs(n).
-Texture2D		g_TexMask2	: register( t2 );	// テクスチャーは レジスターt(n).
-SamplerState	g_SamMask2 : register( s2 );	// サンプラーはレジスターs(n).
+Texture2D		g_TexMask1	: register( t1 );
+Texture2D		g_TexMask2	: register( t2 );
+
+//サンプラ.
+SamplerState	g_samLinear : register( s0 );	// サンプラーはレジスターs(n).
+//SamplerState	g_SamMask1 : register( s1 );	// サンプラーはレジスターs(n).
+//SamplerState	g_SamMask2 : register( s2 );	// サンプラーはレジスターs(n).
 
 cbuffer global_0	: register( b0 )
 {
@@ -142,8 +143,8 @@ float4 PSSkin( PSSkinIn input ) : SV_Target
 //	RetColor *= g_vColor;
 
 	//マスク.
-	float4 mask1Color = g_TexMask1.Sample( g_SamMask1, input.Tex );
-	float4 mask2Color = g_TexMask2.Sample( g_SamMask2, input.Tex );
+	float4 mask1Color = g_TexMask1.Sample( g_samLinear, input.Tex );
+	float4 mask2Color = g_TexMask2.Sample( g_samLinear, input.Tex );
 
 	if( 
 		mask1Color.r >= 0.99f

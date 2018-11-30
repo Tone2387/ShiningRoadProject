@@ -1750,17 +1750,17 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 				slot, 1, &pMesh->pMaterial[i].pTexture );
 			slot ++;
 			if( m_pMaskArmor->pTex ){
-				//ベース.
-				m_pDeviceContext->PSSetSamplers( 
-					slot, 1, &m_pSampleLinear );
+				//アーマー.
+//				m_pDeviceContext->PSSetSamplers( 
+//					slot, 1, &m_pSampleLinear );
 				m_pDeviceContext->PSSetShaderResources( 
 					slot, 1, &m_pMaskArmor->pTex );
 			}
 			slot ++;
 			if( m_pMaskBase->pTex ){
-				//アーマー.
-				m_pDeviceContext->PSSetSamplers( 
-					slot, 1, &m_pSampleLinear );
+				//ベース.
+//				m_pDeviceContext->PSSetSamplers( 
+//					slot, 1, &m_pSampleLinear );
 				m_pDeviceContext->PSSetShaderResources( 
 					slot, 1, &m_pMaskBase->pTex );
 			}

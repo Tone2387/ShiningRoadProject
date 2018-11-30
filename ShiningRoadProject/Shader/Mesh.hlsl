@@ -1,9 +1,11 @@
-//グローバル変数.
 
 //テクスチャはレジスタt(n).
-Texture2D		g_texColor: register( t0 );
+Texture2D		g_texColor	: register( t0 );
+//マスク.
+Texture2D		g_TexMask1	: register( t1 );
+
 //サンプラーはレジスタs(n).
-SamplerState	g_samLinear:register( s0 );
+SamplerState	g_samLinear	: register( s0 );
 
 
 
@@ -97,8 +99,19 @@ float4 PS_Main( VS_OUT In )	:	SV_Target
 	float4 color
 		= g_texColor.Sample( g_samLinear, In.Tex ) / 2
 		+ In.Color / 2.0f;
-	color *= g_vColor;
 
+
+	//マスク.
+	float4 maskColor = g_TexMask1.Sample( g_samLinear, In.Tex );
+
+	if( 
+		maskColor.r >= 0.99f
+//		&& maskColor.g >= 0.99f
+//		&& maskColor.b >= 0.99f
+		)
+	{
+		color *= g_vColor;
+	}
 
 
 //	//----- フォグ処理 -----//.
