@@ -70,6 +70,7 @@ private:
 	clsSound* m_ppSE[enSESize];
 
 	clsEffects* m_wpEffect;
+	clsSOUND_MANAGER_BASE* m_wpSound;
 
 	::Effekseer::Handle m_ShotEfcHandles[enEfcSize];
 

@@ -151,7 +151,11 @@ public:
 	clsRobo();
 	~clsRobo();
 
+	
+
 private:
+	void Down() final;
+
 	bool m_bStopComShotL;
 	bool m_bStopComShotR;
 
@@ -228,7 +232,9 @@ private:
 		enAnimNoArmWeaponHoldAct,
 		enAnimNoArmWeaponShot,
 		enAnimNoArmWeaponHoldEnd,
+		enAnimNoArmWeaponReloadStart,
 		enAnimNoArmWeaponReload,
+		enAnimNoArmWeaponReloadEnd,
 		enAnimNoArmDown,
 	};
 

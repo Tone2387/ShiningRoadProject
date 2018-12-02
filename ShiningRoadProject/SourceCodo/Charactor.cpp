@@ -349,13 +349,10 @@ bool clsCharactor::IsPointIntersect(
 
 	float VecLenght = D3DXVec3Length(&(vecEnd - vecStart));
 
-
 	if (fDis < VecLenght)//ﾚｲの範囲内に何かあるか?.
 	{
-
 		return true;//何かがある.
 	}
-
 
 	return false;//何もない.
 }
@@ -843,6 +840,11 @@ void clsCharactor::UpdateProduct(clsStage* pStage)
 {
 	clsObject::UpdateProduct(pStage);
 
+	if (m_iHP <= 0)
+	{
+		Down();
+	}
+
 	Move();
 	Rotate();
 
@@ -851,6 +853,16 @@ void clsCharactor::UpdateProduct(clsStage* pStage)
 	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
 	m_iDamage = 0;//毎フレーム初期化.
 	m_bRadarWarning = false;//初期化.
+}
+
+void clsCharactor::Down()
+{
+
+}
+
+void clsCharactor::Dead()
+{
+
 }
 
 clsCharactor::clsCharactor() :

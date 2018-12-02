@@ -232,6 +232,11 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	assert(m_pPlayer);
 	//m_pPlayer->Action(m_pStage);
 
+	if (m_wpSound)
+	{
+		//m_wpSound->PlayBGM(0);
+	}
+
 	if (GetAsyncKeyState('C') & 0x1)
 	{
 		if (!m_bCamTarChange)
