@@ -158,6 +158,11 @@ clsStage::~clsStage()
 //	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 //		m_vpBuilding[i]->DetatchModel();
 //	}
+
+	for( int i=0; i<enDOOR_NUM_size; i++ ){
+		m_pDoorArray[i].reset( nullptr );
+	}
+
 }
 
 void clsStage::Render(
