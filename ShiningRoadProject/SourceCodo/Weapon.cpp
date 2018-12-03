@@ -31,6 +31,14 @@ void clsWeapon::Update()
 	}
 
 	Reload();
+	if (m_iRemainingBullet <= 0)
+	{
+		if (!m_bNeedReload)
+		{
+			m_iMagazineReloadCnt = m_State.iMagazineReloadTime;
+			m_bNeedReload = true;
+		}
+	}
 
 	m_iReloadCnt--;
 }
@@ -128,15 +136,6 @@ bool clsWeapon::Shot()
 					return true;
 				}
 			}
-		}
-	}
-
-	else
-	{
-		if (!m_bNeedReload)
-		{
-			m_iMagazineReloadCnt = m_State.iMagazineReloadTime;
-			m_bNeedReload = true;
 		}
 	}
 	
