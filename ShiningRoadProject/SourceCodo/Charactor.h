@@ -198,6 +198,9 @@ public:
 protected:
 	void ShotSwich(const int iWeaponNum);//•¡”‚ ‚é•Ší‚©‚çg—p‚·‚é•Ší‚ğŒˆ‚ß‚é.
 
+	virtual void Down();
+	virtual void Dead();
+
 private:
 	bool m_bStopComShot;
 

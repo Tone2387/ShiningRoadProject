@@ -31,6 +31,14 @@ void clsWeapon::Update()
 	}
 
 	Reload();
+	if (m_iRemainingBullet <= 0)
+	{
+		if (!m_bNeedReload)
+		{
+			m_iMagazineReloadCnt = m_State.iMagazineReloadTime;
+			m_bNeedReload = true;
+		}
+	}
 
 	m_iReloadCnt--;
 }
@@ -123,18 +131,11 @@ bool clsWeapon::Shot()
 				{
 					m_iRemainingBullet--;
 					m_iReloadCnt = m_State.iReloadTime;
+					//射撃音.
+					//m_pPtrGroup->GetSound()->PlaySE(0,true);
 					return true;
 				}
 			}
-		}
-	}
-
-	else
-	{
-		if (!m_bNeedReload)
-		{
-			m_iMagazineReloadCnt = m_State.iMagazineReloadTime;
-			m_bNeedReload = true;
 		}
 	}
 	
@@ -161,6 +162,8 @@ void clsWeapon::Reload()
 
 	m_bNeedReload = false;
 	m_iRemainingBullet = m_State.iBulletNumMax;
+	//リロード音.
+	//m_pPtrGroup->GetSound()->PlaySE(0,true);
 }
 
 int clsWeapon::GetNowBulletNum()
@@ -207,6 +210,7 @@ void clsWeapon::Lock(clsObject* pTargetObj)//ロック範囲に入っている.
 		if (pTargetObj)
 		{
 			m_pTargetObj = pTargetObj;
+			//m_pPtrGroup->GetSound()->PlaySE(0,true);
 		}
 	}
 }

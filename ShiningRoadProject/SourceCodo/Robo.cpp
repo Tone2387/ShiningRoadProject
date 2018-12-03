@@ -45,7 +45,9 @@ enum enAnimNoArm
 	enAnimNoArmWeaponHoldAct,
 	enAnimNoArmWeaponShot,
 	enAnimNoArmWeaponHoldEnd,
+	enAnimNoArmWeaponReloadStart,
 	enAnimNoArmWeaponReload,
+	enAnimNoArmWeaponReloadEnd,
 	enAnimNoArmDown,
 };
 
@@ -211,7 +213,7 @@ void clsRobo::RoboInit(
 		WS[i].BState.iLineEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_LOCUS);
 		WS[i].iReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOAD_TIME);
 		
-		WS[i].iMagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
+		WS[i].iMagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME) * g_fFPS;
 		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE)* g_fDistanceReference;
 		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
 		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
@@ -268,8 +270,8 @@ void clsRobo::Boost()
 	{
 		//ブースターアニメーションではなかった.
 		AnimChangeLeg(enAnimNoLegBoostStart);//ブースターに切り替え.
-
-		
+		//ブースター点灯.
+		//m_wpSound->PlaySE(0);
 	}
 
 	m_bBoost = true;
@@ -308,6 +310,9 @@ void clsRobo::BoostRising()
 	{
 		if (EnelgyConsumption(m_iBoostRisingyCost))
 		{
+			//ブースター中.
+			//m_wpSound->PlaySE(0);
+
 			if (m_fFollPower < m_fBoostMoveSpeedMax)
 			{
 				m_fFollPower += m_fBoostRisingAccele;
@@ -358,6 +363,8 @@ void clsRobo::QuickBoost()
 				m_fMoveSpeed = m_fQuickBoostSpeedMax;
 				m_iQuickBoostDecStartTime = m_iQuickBoostTopSpeedTime;
 				SetMoveDeceleSpeed(m_iQuickInterbal);
+				//クイックブースト.
+				//m_wpSound->PlaySE(0);
 			}
 		}
 	}
@@ -389,6 +396,8 @@ void clsRobo::QuickTurn()
 					m_fRotSpeed = m_fQuickTrunSpeedMax;
 					m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
 					SetRotDeceleSpeed(m_iQuickInterbal);
+					//クイックブースト.
+					//m_wpSound->PlaySE(0);
 				}
 			}
 		}
@@ -428,6 +437,8 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 
 	if (m_bBoost)
 	{
+		//ブースト音.
+		//m_wpSound->PlaySE(0);
 		if (m_fFollPower < -m_fBoostFollRes)
 		{
 			m_fFollPower += m_fBoostFollRes;
@@ -1532,6 +1543,7 @@ void clsRobo::AnimUpdateArmL()
 	const enAnimNoArm iAnimNo = static_cast<enAnimNoArm>(m_pMesh->GetPartsAnimNo(enPARTS::ARM_L));
 	enAnimNoArm iChangeAnimNo = iAnimNo;
 	double dAnimStartTime = 0.0f;
+	ShotSwich(enWeaponLHand);
 
 	switch (iAnimNo)
 	{
@@ -1571,7 +1583,27 @@ void clsRobo::AnimUpdateArmL()
 		}
 
 		break;
+
+	case enAnimNoArmWeaponReloadStart:
+		
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponReloadStart;
+		}
+		
+		break;
 	case enAnimNoArmWeaponReload:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			if (!IsNeedReload())
+			{
+				iChangeAnimNo = enAnimNoArmWeaponReloadEnd;
+			}
+		}
+
+		break;
+	case enAnimNoArmWeaponReloadEnd:
 
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
 		{
@@ -1601,6 +1633,7 @@ void clsRobo::AnimUpdateArmR()
 	const enAnimNoArm iAnimNo = static_cast<enAnimNoArm>(m_pMesh->GetPartsAnimNo(enPARTS::ARM_R));
 	enAnimNoArm iChangeAnimNo = iAnimNo;
 	double dAnimStartTime = 0.0f;
+	ShotSwich(enWeaponRHand);
 
 	switch (iAnimNo)
 	{
@@ -1638,14 +1671,34 @@ void clsRobo::AnimUpdateArmR()
 		{
 			iChangeAnimNo = enAnimNoArmWait;
 		}
+		
+		if (IsNeedReload())
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
+
+
+		break;
+	case enAnimNoArmWeaponReloadStart:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponReload;
+		}
 
 		break;
 	case enAnimNoArmWeaponReload:
 
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
 		{
-			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+			if (!IsNeedReload())
+			{
+				iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+			}
 		}
+
+		break;
+	case 	enAnimNoArmWeaponReloadEnd:
 
 		break;
 	case enAnimNoArmDown:
@@ -1872,4 +1925,18 @@ clsRobo::~clsRobo()
 	m_wpEffects = nullptr;
 	m_wpResource = nullptr;
 #endif//#ifdef Tahara
+}
+
+void clsRobo::Down()
+{
+	if (m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegDown)
+	{
+		AnimChangeLeg(enAnimNoLegDown);
+	}
+
+	if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+	{
+		m_wpEffects->Play(0, m_vCenterPos);
+		m_bDeadFlg = true;
+	}
 }
