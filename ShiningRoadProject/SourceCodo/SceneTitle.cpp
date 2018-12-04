@@ -13,7 +13,9 @@ using namespace std;
 
 namespace{
 
-	const float fROBO_SCALE = 0.5f;
+//	const float fROBO_SCALE = 0.5f;//s1: p0.01.
+//	const float fBACK_SCALE = 0.5f * 100.0f;
+	const float fROBO_SCALE = 0.01f;//s1: p0.01.
 	const float fBACK_SCALE = 1.0f;
 
 	//ÉçÉS.
@@ -97,6 +99,7 @@ void clsSCENE_TITLE::CreateProduct()
 	//îwåi.
 	assert( !m_upBack );
 	m_upBack = make_unique< clsStage >( m_wpPtrGroup );
+	m_upBack->SetScale( fBACK_SCALE );
 
 	//Ç≤Ç‹Ç©ÇµÉtÉâÉbÉVÉÖ.
 	assert( !m_upFlash );

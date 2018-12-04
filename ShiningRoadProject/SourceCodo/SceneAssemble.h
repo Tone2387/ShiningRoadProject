@@ -2,17 +2,15 @@
 #define SCENE_ASSEMBLE_H_
 
 
+class clsPARTS_WINDOW_MODEL;
+
 class clsMENU_WINDOW_ASSEMBLE_BASE;
 
-#include "File.h"
 
 #include "SceneBase.h"
-#include "CameraAssemble.h"
+
 #include "AssembleModel.h"
-
 #include "AssembleUi.h"
-
-#include "PartsWindowModel.h"
 
 
 //================================//
