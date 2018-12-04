@@ -6,6 +6,12 @@
 #include "MenuWindowAssembleTakeOff.h"
 #include "MenuWindowAssembleColorChange.h"
 
+#include "CameraAssemble.h"
+
+#include "PartsWindowModel.h"
+
+#include "File.h"
+
 using namespace std;
 
 //#include "RoboStatusEnemy.h"

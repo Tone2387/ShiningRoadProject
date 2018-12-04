@@ -9,8 +9,8 @@ using namespace std;
 //============================================================
 //	’è”.
 //============================================================
-#define WND_TITLE	"ShiningRoadProject"
-#define APR_NAME	"ShiningRoadProject"
+#define WND_TITLE	"Gigant Weapons"
+#define APR_NAME	"Gigant Weapons"
 
 
 //

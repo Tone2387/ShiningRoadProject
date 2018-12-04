@@ -1,16 +1,14 @@
 #ifndef SCENE_TITLE_H_
 #define SCENE_TITLE_H_
 
+class clsASSEMBLE_MODEL;
+class clsMENU_WINDOW_TITLE_START_OR_END;
+
+class clsStage;
 
 #include "SceneBase.h"
-#include "CameraTitle.h"
-#include "Sprite2DCenter.h"
-
-#include "AssembleModel.h"
 
 
-
-class clsMENU_WINDOW_TITLE_START_OR_END;
 
 //================================//
 //========== タイトルクラス ==========//
@@ -46,11 +44,10 @@ private:
 
 
 	//タイトルでズンとただずむロボット君.
-	clsASSEMBLE_MODEL*	m_pRoboModel;
+	std::unique_ptr< clsASSEMBLE_MODEL >	m_upRoboModel;
 
 	//背景.
-	std::unique_ptr< clsCharaStatic > m_upBackFloor;
-	std::unique_ptr< clsCharaStatic > m_upBackCelling;
+	std::unique_ptr< clsStage > m_upBack;
 
 	std::unique_ptr< clsSprite2D > m_upLogo;
 

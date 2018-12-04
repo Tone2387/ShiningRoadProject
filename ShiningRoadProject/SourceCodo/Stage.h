@@ -28,6 +28,8 @@ public:
 	//光るところの色.
 	void SetColor( const D3DXVECTOR4& vColor ){ m_vLightColor = vColor; }
 
+	void SetScale( const float fScale );
+
 private:
 
 	//ステージ土台の当たり判定.

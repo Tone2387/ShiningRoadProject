@@ -1,15 +1,21 @@
 #include "SceneTitle.h"
+#include "SceneTitleInformation.h"
+#include "CameraTitle.h"
+#include "AssembleModel.h"
+#include "Stage.h"
 #include "WindowBox.h"
 #include "MenuWindowTitleStartOrEnd.h"
 #include "File.h"
-#include "SceneTitleInformation.h"
+
 
 using namespace std;
 
 
 namespace{
 
-	const float fROBO_SCALE = 0.5f;
+//	const float fROBO_SCALE = 0.5f;//s1: p0.01.
+//	const float fBACK_SCALE = 0.5f * 100.0f;
+	const float fROBO_SCALE = 0.01f;//s1: p0.01.
 	const float fBACK_SCALE = 1.0f;
 
 	//ロゴ.
@@ -43,7 +49,6 @@ namespace{
 //========== タイトルクラス ==========//
 //================================//
 clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
-	,m_pRoboModel( nullptr )
 	,m_fTextAlpha( 0.0f )
 	,m_iTextAlphaStopFrame( 0 )
 	,m_encTextAlphaMode( encTEXT_ALPHA_MODE::NEXT_MINUS )
@@ -52,7 +57,6 @@ clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BA
 
 clsSCENE_TITLE::~clsSCENE_TITLE()
 {
-	SAFE_DELETE( m_pRoboModel );
 }
 
 
@@ -75,11 +79,11 @@ void clsSCENE_TITLE::CreateProduct()
 	//ロボモデルを作る前にクリアしたロボの情報を得る.
 	m_wpRoboStatus->LodeHeroData();
 	//モデルさん作成.
-	assert( !m_pRoboModel );
-	m_pRoboModel = new clsASSEMBLE_MODEL;
-	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus );
-	m_pRoboModel->SetRot( { 0.0f, fROBO_YAW, 0.0f } );
-	m_pRoboModel->SetScale( fROBO_SCALE );
+	assert( !m_upRoboModel );
+	m_upRoboModel = make_unique< clsASSEMBLE_MODEL >();
+	m_upRoboModel->Create( m_wpResource, m_wpRoboStatus );
+	m_upRoboModel->SetRot( { 0.0f, fROBO_YAW, 0.0f } );
+	m_upRoboModel->SetScale( fROBO_SCALE );
 
 
 	//ロゴ.
@@ -93,19 +97,9 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upLogo->SetAlpha( 0.0f );
 
 	//背景.
-	assert( !m_upBackFloor );
-	m_upBackFloor  = make_unique< clsCharaStatic >();
-	m_upBackFloor->AttachModel( 
-		m_wpResource->GetStaticModels( clsResource::enStaticModel_StageCollision ) );
-	m_upBackFloor->SetPosition( m_pRoboModel->GetPos() );
-	m_upBackFloor->SetScale( fBACK_SCALE );
-
-	assert( !m_upBackCelling );
-	m_upBackCelling  = make_unique< clsCharaStatic >();
-	m_upBackCelling->AttachModel( 
-		m_wpResource->GetStaticModels( clsResource::enStaticModel_StageCollision ) );
-	m_upBackCelling->SetPosition( m_pRoboModel->GetPos() );
-	m_upBackCelling->SetScale( fBACK_SCALE );
+	assert( !m_upBack );
+	m_upBack = make_unique< clsStage >( m_wpPtrGroup );
+	m_upBack->SetScale( fBACK_SCALE );
 
 	//ごまかしフラッシュ.
 	assert( !m_upFlash );
@@ -368,14 +362,11 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 
 void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-	assert( m_pRoboModel );
-	m_pRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
+	assert( m_upRoboModel );
+	m_upRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
-	assert( m_upBackFloor );
-	m_upBackFloor->Render( m_mView, m_mProj, m_vLight, vCamPos );
-
-	assert( m_upBackCelling );
-	m_upBackCelling->Render( m_mView, m_mProj, m_vLight, vCamPos );
+	assert( m_upBack );
+	m_upBack->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 
 }

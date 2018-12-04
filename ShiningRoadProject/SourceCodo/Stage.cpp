@@ -158,6 +158,11 @@ clsStage::~clsStage()
 //	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 //		m_vpBuilding[i]->DetatchModel();
 //	}
+
+	for( int i=0; i<enDOOR_NUM_size; i++ ){
+		m_pDoorArray[i].reset( nullptr );
+	}
+
 }
 
 void clsStage::Render(
@@ -184,7 +189,7 @@ void clsStage::Render(
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	//F.
 	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
 	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColor.x += fSTATIC_MODEL_COLOR_RGB_ADD;
@@ -193,9 +198,34 @@ void clsStage::Render(
 	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColor.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
 	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColor.z += fSTATIC_MODEL_COLOR_RGB_ADD;
 	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColor.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
-#endif//#ifdef _DEBUG
+//#endif//#ifdef _DEBUG
 
 }
+
+void clsStage::SetScale( const float fScale )
+{
+	m_pStageCollision->SetScale( fScale );
+
+	//°‚Æ“Vˆä.
+	m_pStageFloor->SetScale( fScale );
+	m_pStageCelling->SetScale( fScale );
+
+	assert( m_pLia );
+	m_pLia->SetScale( fScale );
+
+	for( int i=0; i<enDOOR_NUM_size; i++ ){
+		assert( m_pDoorArray[i] );
+		m_pDoorArray[i]->SetScale( fScale );
+		m_pDoorArray[i]->SetScale( fScale );
+	}
+
+	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
+		m_vpBuilding[i]->SetPos( m_vpBuilding[i]->GetPos() * fScale );
+		m_vpBuilding[i]->SetScale( m_vpBuilding[i]->GetScale() * fScale );
+	}
+}
+
+
 
 vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 {
