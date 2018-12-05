@@ -35,7 +35,7 @@ namespace{
 	//----- パーツカテゴリ 終わり -----//.
 
 	//選択中パーツカテゴリパス.
-	const char* sPATH_SELECT_PARTS_TYPE = "Data\\Image\\AssembleUi\\SelectPartsType.png";
+	const char* sPATH_SELECT_PARTS_TYPE = "Data\\Image\\MenuWindow\\Cursor.png";
 	const float fALPHA_SELECT_PARTS_TYPE = 0.5f;
 
 
@@ -63,11 +63,11 @@ namespace{
 
 
 	//エラー画像.
-	const string sNO_DATA_FILE_NAME = "Data\\Image\\PartsIcon\\NoData.png";
+	const string sNO_DATA_FILE_NAME = "Data\\Image\\Empty.png";
 	//----- 各パーツUI 終わり -----//.
 
 	//選択中各パーツUIパス.
-	const char* sPATH_SELECT_PARTS_NUM = "Data\\Image\\AssembleUi\\SelectPartsNum.png";
+	const char* sPATH_SELECT_PARTS_NUM = "Data\\Image\\MenuWindow\\Cursor.png";
 	const float fALPHA_SELECT_PARTS_NUM = fALPHA_SELECT_PARTS_TYPE;
 
 
@@ -110,7 +110,7 @@ namespace{
 	const int iSTATUS_NUM_MAX = 11;//ステータスの最大数.
 
 	//選択中ステータス.
-	const char* sPATH_STATUS_COMMENT = "Data\\Image\\AssembleUi\\SelectStatus.png";
+	const char* sPATH_STATUS_COMMENT = "Data\\Image\\MenuWindow\\Cursor.png";
 	const float fSTATUS_COMMENT_ALPHA = 0.5f;
 
 	//ステータス文字.

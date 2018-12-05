@@ -12,6 +12,10 @@
 #define RESOURCE_READ_PARTS_MODEL_LOCK
 
 
+#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
+	//テスト中のパーツ最大数.
+	const int iTEST_ROBO_PARTS_MODEL_MAX = 1;
+#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
 
 /*
 //テストモデルに足の3番のモデルを割り当てる例.

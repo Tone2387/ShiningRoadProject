@@ -19,7 +19,7 @@ clsWINDOW_BOX::clsWINDOW_BOX(
 	SPRITE_STATE ss;
 	ss.Disp = { 1.0f, 1.0f };
 
-	const char* sFILE_NAME = "Data\\Image\\AssembleUi\\BoxBack.png";
+	const char* sFILE_NAME = "Data\\Image\\MenuWindow\\BoxBack.png";
 	m_upBack = make_unique< clsSPRITE2D_CENTER >();
 	m_upBack->Create( pDevice11, pContext11, sFILE_NAME, ss );
 

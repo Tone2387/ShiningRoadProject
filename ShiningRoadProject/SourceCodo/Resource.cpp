@@ -44,10 +44,6 @@ namespace{
 	};
 	const string sDATA_PASS_END	 = "\\RoboPartsData.csv";
 
-#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
-	//テスト中のパーツ最大数.
-	const int iTEST_ROBO_PARTS_MODEL_MAX = 1;
-#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
 
 
 }
