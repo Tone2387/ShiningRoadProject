@@ -15,8 +15,12 @@ namespace{
 
 //	const float fROBO_SCALE = 0.5f;//s1: p0.01.
 //	const float fBACK_SCALE = 0.5f * 100.0f;
-	const float fROBO_SCALE = 0.01f;//s1: p0.01.
-	const float fBACK_SCALE = 1.0f;
+//
+//	const float fROBO_SCALE = 0.01f;//s1: p0.01.
+//	const float fBACK_SCALE = 1.0f;
+//
+	const float fROBO_SCALE = 0.5f;//s1: p0.01.
+	const float fBACK_SCALE = 50.0f;
 
 	//ÉçÉS.
 	const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";

@@ -189,6 +189,7 @@ void clsStage::Render(
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
 
+
 //#ifdef _DEBUG
 	//êF.
 	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
