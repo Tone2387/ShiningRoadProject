@@ -552,7 +552,8 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	SetViewPort( 
 		m_pViewPortPartsWindow, 
 		PartsViewCam.GetPos(), PartsViewCam.GetLookPos(),
-		m_pViewPortPartsWindow->Width, m_pViewPortPartsWindow->Height );
+		m_pViewPortPartsWindow->Width, m_pViewPortPartsWindow->Height,
+		m_fRenderLimit );
 	assert( m_upSelectParts );
 	m_upSelectParts->Render( m_mView, m_mProj, m_vLight, PartsViewCam.GetPos(), isMessageBoxClose() );
 
@@ -561,7 +562,8 @@ void clsSCENE_ASSEMBLE::RenderUi()
 	SetViewPort( 
 		m_pViewPortRoboWindow, 
 		RoboViewCam.GetPos(), RoboViewCam.GetLookPos(),
-		m_pViewPortRoboWindow->Width, m_pViewPortRoboWindow->Height );
+		m_pViewPortRoboWindow->Width, m_pViewPortRoboWindow->Height,
+		m_fRenderLimit );
 	assert( m_spAsmModel );
 	//パーツ選択中は選択しているパーツを光らせる.
 	if( isMessageBoxClose() )
