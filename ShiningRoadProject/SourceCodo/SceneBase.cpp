@@ -679,7 +679,7 @@ void clsSCENE_BASE::Proj()
 	//プロジェクション(射影行列)変換.
 	D3DXMatrixPerspectiveFovLH(
 		&m_mProj,			//(out)プロジェクション計算結果.
-		m_fZoom,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が狭くなる.
+		m_fZoom,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が広くなるくなる.
 		static_cast<FLOAT>( WND_W ) / static_cast<FLOAT>( WND_H ),//アスペクト比(幅/高さ).
 		0.1f,				//近いビュー平面のz値.
 		m_fRenderLimit );	//遠いビュー平面のz値.
