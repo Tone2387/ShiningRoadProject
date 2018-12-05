@@ -328,11 +328,11 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 			for( unsigned int j=0; j<m_pMaterials[i].vecpMask.size(); j++ )
 			{
 				//マスク画像名作成( 番号と拡張子 ).
-				sMaskFilePath = OprtStr.ConsolidatedNumber( sMaskFilePath, j );
-				sMaskFilePath += sMASK_TEX_TYPE;
+				string sMaskFileFullPath = OprtStr.ConsolidatedNumber( sMaskFilePath, j );
+				sMaskFileFullPath += sMASK_TEX_TYPE;
 
 				if( FAILED( D3DX11CreateShaderResourceViewFromFile(
-					m_pDevice, sMaskFilePath.c_str(),//テクスチャファイル名.
+					m_pDevice, sMaskFileFullPath.c_str(),//テクスチャファイル名.
 					NULL, NULL,
 					&m_pMaterials[i].vecpMask[j], //(out)テクスチャオブジェクト.
 					NULL ) ) )
@@ -343,7 +343,7 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 						&m_pMaterials[i].vecpMask[j], //(out)テクスチャオブジェクト.
 						NULL ) ) )
 					{
-						MessageBox( NULL, sMaskFilePath.c_str(), fileName, MB_OK );
+						MessageBox( NULL, sMaskFileFullPath.c_str(), fileName, MB_OK );
 						return E_FAIL;
 					}
 				}
