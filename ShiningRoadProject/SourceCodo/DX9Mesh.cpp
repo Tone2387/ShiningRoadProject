@@ -1,11 +1,13 @@
 #include "DX9Mesh.h"
 #include "OperationString.h"
 
+using namespace std;
+
 namespace{
 	//シェーダーファイル名(ディレクトリを含む)
 	const char SHADER_NAME[] = "Shader\\Mesh.hlsl";//const:後に書かれた変数を上書きさせない.
 
-	const char sMASK_TEX_NAME[] = "mask";
+	const char sMASK_TEX_NAME[] = "Mask";
 	const char sMASK_TEX_TYPE[] = ".png";
 	const char sMASK_PATH_EMPTY[] = "Data\\Image\\maskEmpty.png";
 	//============================================================
@@ -38,6 +40,8 @@ namespace{
 		D3DXVECTOR2 vTex;	//テクスチャ座標.
 	};
 
+	//マスクの最大枚数.
+	const int iMASK_MAX = 1;
 
 
 }
@@ -294,16 +298,20 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 			char sTexFilePath[ iTEX_PATH_SIZE ] = "";
 			strcpy_s( sTexFilePath,  sizeof( sTexFilePath ),  path );
 			strcat_s( sTexFilePath,  sizeof( path ),		  d3dxMaterials[i].pTextureFilename );
-			char sMaskFilePath[ iTEX_PATH_SIZE ] = "";
-			strcpy_s( sMaskFilePath, sizeof( sMaskFilePath ), path );
-			strcat_s( sMaskFilePath, sizeof( sMaskFilePath ), sMASK_TEX_NAME );
-			strcpy_s( sMaskFilePath, sizeof( sMaskFilePath ), OprtStr.ConsolidatedNumber( sMaskFilePath, static_cast<int>( i ) ).c_str() );
-			strcat_s( sMaskFilePath, sizeof( sMaskFilePath ), sMASK_TEX_TYPE );
+			
+			//マスク画像名作成( マスク番号はまだ ).
+			string sMaskFilePath = sTexFilePath;
+			if( sMaskFilePath.size() ){
+				auto StrItr = sMaskFilePath.rfind( sMASK_TEX_TYPE );
+				const int iRoop = sMaskFilePath.size() - StrItr;
+				for( int j=0; j<iRoop; j++ ){
+					sMaskFilePath.pop_back();
+				}
+				sMaskFilePath += sMASK_TEX_NAME;
+			}
 
-//			strcpy_s( sTexFilePath,
-//				sizeof( sTexFilePath ),
-//				path );sMASK_PATH_EMPTY
-//
+
+
 			//テクスチャ作成.
 			if( FAILED( D3DX11CreateShaderResourceViewFromFile(
 				m_pDevice, sTexFilePath,//テクスチャファイル名.
@@ -316,20 +324,28 @@ HRESULT clsDX9Mesh::LoadXMesh( LPSTR fileName, LPDIRECT3DDEVICE9 pDevice9 )
 			}
 
 			//マスク作成.
-			if( FAILED( D3DX11CreateShaderResourceViewFromFile(
-				m_pDevice, sMaskFilePath,//テクスチャファイル名.
-				NULL, NULL,
-				&m_pMaterials[i].pMask, //(out)テクスチャオブジェクト.
-				NULL ) ) )
+			m_pMaterials[i].vecpMask.resize( iMASK_MAX, nullptr );
+			for( unsigned int j=0; j<m_pMaterials[i].vecpMask.size(); j++ )
 			{
+				//マスク画像名作成( 番号と拡張子 ).
+				sMaskFilePath = OprtStr.ConsolidatedNumber( sMaskFilePath, j );
+				sMaskFilePath += sMASK_TEX_TYPE;
+
 				if( FAILED( D3DX11CreateShaderResourceViewFromFile(
-					m_pDevice, sMASK_PATH_EMPTY,//テクスチャファイル名.
+					m_pDevice, sMaskFilePath.c_str(),//テクスチャファイル名.
 					NULL, NULL,
-					&m_pMaterials[i].pMask, //(out)テクスチャオブジェクト.
+					&m_pMaterials[i].vecpMask[j], //(out)テクスチャオブジェクト.
 					NULL ) ) )
 				{
-					MessageBox( NULL, sTexFilePath, fileName, MB_OK );
-					return E_FAIL;
+					if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+						m_pDevice, sMASK_PATH_EMPTY,//テクスチャファイル名.
+						NULL, NULL,
+						&m_pMaterials[i].vecpMask[j], //(out)テクスチャオブジェクト.
+						NULL ) ) )
+					{
+						MessageBox( NULL, sMaskFilePath.c_str(), fileName, MB_OK );
+						return E_FAIL;
+					}
 				}
 			}
 		}
@@ -872,10 +888,12 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 			m_pContext->PSSetSamplers(
 				0, 1, &m_pSampleLinear );
 			m_pContext->PSSetShaderResources(
-				0, 1, &m_pMaterials[m_AttrID[i]].pTexture );
-			//マスクがあるとき.
-			m_pContext->PSSetShaderResources(
-				1, 1, &m_pMaterials[ m_AttrID[i] ].pMask );
+				0, 1, &m_pMaterials[ m_AttrID[i] ].pTexture );
+			for( unsigned int j=0; j<m_pMaterials->vecpMask.size(); j++ ){
+				//マスクがあるとき.
+				m_pContext->PSSetShaderResources(
+					j + 1, 1, &m_pMaterials[ m_AttrID[i] ].vecpMask[j] );
+			}
 		}
 		else
 		{

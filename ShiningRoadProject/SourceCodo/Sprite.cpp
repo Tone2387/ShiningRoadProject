@@ -486,6 +486,7 @@ void clsSprite::Render(
 		m_wpContext->PSSetShaderResources(
 			i + 1, 1, &m_vecpMask[i] );		//マスクをシェーダに渡す.
 	}
+
 	//アルファブレンド用ブレンドステート作成&設定.
 	SetBlend( true );
 
