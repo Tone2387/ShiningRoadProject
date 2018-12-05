@@ -242,15 +242,15 @@ void clsSCENE_BASE::Render(
 		//テクスチャの内容を画面に描画.
 		m_upScreenTexture->RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
 
-		UpdateNoise();
+		this->UpdateNoise();
 	}
 
-//	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-//		NoiseStrong( 60 );
-//	}
-//	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
-//		NoiseWeak( 10 );
-//	}
+	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+		NoiseStrong( 60 );
+	}
+	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
+		NoiseWeak( 10 );
+	}
 //	if( GetAsyncKeyState( 'C' ) & 0x1 ){
 //		static bool nega = false;
 //		m_upScreenTexture->SetNega( nega );

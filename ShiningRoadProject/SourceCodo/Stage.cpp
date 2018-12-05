@@ -247,12 +247,12 @@ vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 	return vvpMeshArrayTmp;
 }
 
-void clsStage::SetStageObjTransform(const int iObjNo)
+void clsStage::SetStageObjTransform(const unsigned int uiObjNo)
 {
-	if (iObjNo >= m_vpBuilding.size())
+	if (uiObjNo >= m_vpBuilding.size())
 	{
 		return;
 	}
 
-	m_vpBuilding[iObjNo]->UpdateModel();
+	m_vpBuilding[uiObjNo]->UpdateModel();
 }

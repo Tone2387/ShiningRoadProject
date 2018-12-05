@@ -98,8 +98,10 @@ float4 PS_Noise( VS_OUT input ) : SV_Target
 	//ブロック.
 	float cx = noise( input.UV * g_iBlock );
 	float cy = noise( float2( cx, 1.0f-cx ) * g_iBlock );
-	color *= g_Texture.Sample( g_Sampler, input.UV + float2( cx, cy ) );
-	color /= g_Texture.Sample( g_Sampler, input.UV + float2( cy, cx ) );
+//	color *= g_Texture.Sample( g_Sampler, input.UV + float2( cx, cy ) );
+//	color /= g_Texture.Sample( g_Sampler, input.UV + float2( cy, cx ) );
+	color += g_Texture.Sample( g_Sampler, input.UV + float2( cx, cy ) );
+	color -= g_Texture.Sample( g_Sampler, input.UV + float2( cy, cx ) );
 	//----- ノイズ 終了 -----//.											  
 
 	color *= g_vColor;
