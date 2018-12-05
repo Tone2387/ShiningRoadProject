@@ -1,5 +1,9 @@
 #include "Sprite.h"
 
+#include "OperationString.h"
+
+using namespace std;
+
 namespace{
 	const char sMASK_PATH_EMPTY[] = "Data\\Image\\maskEmpty.png";
 
@@ -12,6 +16,8 @@ namespace{
 		D3DXVECTOR4 vSplit;//何分割?.
 	};
 
+	//マスクの最大枚数.
+	const int iMASK_MAX = 1;
 }
 
 //============================================================
@@ -27,7 +33,6 @@ clsSprite::clsSprite()
 	m_pConstantBuffer	= nullptr;
 	m_pVertexBuffer		= nullptr;
 	m_pTexture			= nullptr;	
-	m_pMask				= nullptr;
 	m_pSampleLinear		= nullptr;
 
 	m_vSplit = { 1.0f, 1.0f };
@@ -38,7 +43,9 @@ clsSprite::clsSprite()
 //============================================================
 clsSprite::~clsSprite()
 {
-	SAFE_RELEASE( m_pMask );
+	for( unsigned int i=0; i<m_vecpMask.size(); i++ ){
+		SAFE_RELEASE( m_vecpMask[i] );
+	}
 	SAFE_RELEASE( m_pTexture );
 	SAFE_RELEASE( m_pSampleLinear );
 	SAFE_RELEASE( m_pVertexBuffer );
@@ -67,6 +74,10 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 	}
 	//板ポリゴン作成.
 	if( FAILED( InitModel( sTexName ) ) ){
+		return E_FAIL;
+	}
+	//マスク作成.
+	if( FAILED( CreateMask( sTexName ) ) ){
 		return E_FAIL;
 	}
 
@@ -307,42 +318,57 @@ HRESULT clsSprite::InitModel( const char* sTexName )
 		return E_FAIL;
 	}
 
-	//----- マスク作成 -----//.
-	//テクスチャパスからテク画像名を消す.
-	const char sTYPE[] = ".png";
-	char sMaskPath[ 128 ] = "";
-	strcpy_s( sMaskPath, sizeof( sMaskPath ), sTexName );
-	char* pcType = strstr( sMaskPath, sTYPE );
-	*pcType = '\0';
-
-	//マスク画像名連結.
-	const char sMASK_NAME[] = "mask";
-//	strcat_s( sMaskPath, sizeof( sMaskPath ), sMASK_NAME );
-	strcat_s( sMaskPath, sizeof( sMaskPath ), sMASK_NAME );
-	strcat_s( sMaskPath, sizeof( sMaskPath ), sTYPE );
-
-	//マスク作成.
-	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
-		m_wpDevice,		//リソースを使用するデバイスへのポインタ.
-		sMaskPath,
-		NULL, NULL,
-		&m_pMask,		//(out)マスクテクスチャ.
-		NULL ) ) )
-	{
-		if( FAILED( D3DX11CreateShaderResourceViewFromFile(
-			m_wpDevice,		//リソースを使用するデバイスへのポインタ.
-			sMASK_PATH_EMPTY,
-			NULL, NULL,
-			&m_pMask,		//(out)マスクテクスチャ.
-			NULL ) ) )
-		{
-			MessageBox( NULL, "テクスチャ作成失敗w", sTexName, MB_OK );
-			return E_FAIL;		
-		}
-	}
 
 	return S_OK;
 }
+
+//マスク作成.
+HRESULT clsSprite::CreateMask( const char* sTexName )
+{
+	//----- マスク作成 -----//.
+	//テクスチャパスからテク画像名を消す.
+	const char sTYPE[] = ".png";
+	char sTmpMaskPath[ 128 ] = "";
+	strcpy_s( sTmpMaskPath, sizeof( sTmpMaskPath ), sTexName );
+	char* pcType = strstr( sTmpMaskPath, sTYPE );
+	*pcType = '\0';
+
+	//マスク画像名連結.
+	const char sMASK_NAME[] = "Mask";
+	strcat_s( sTmpMaskPath, sizeof( sTmpMaskPath ), sMASK_NAME );
+	
+	clsOPERATION_STRING OprtStr;
+	m_vecpMask.resize( iMASK_MAX, nullptr );
+
+	for( unsigned int i=0; i<m_vecpMask.size(); i++ ){
+		//マスク番号連結.
+		string sMaskPath = OprtStr.ConsolidatedNumber( sTmpMaskPath, i );
+		sMaskPath += sTYPE;
+
+		//マスク作成.
+		if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+			m_wpDevice,		//リソースを使用するデバイスへのポインタ.
+			sMaskPath.c_str(),
+			NULL, NULL,
+			&m_vecpMask[i],		//(out)マスクテクスチャ.
+			NULL ) ) )
+		{
+			//作成失敗したら真っ黒のマスク作成.
+			if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+				m_wpDevice,		//リソースを使用するデバイスへのポインタ.
+				sMASK_PATH_EMPTY,
+				NULL, NULL,
+				&m_vecpMask[i],		//(out)マスクテクスチャ.
+				NULL ) ) )
+			{
+				MessageBox( NULL, sMaskPath.c_str(), sTexName, MB_OK );
+				return E_FAIL;		
+			}
+		}
+	}
+
+}
+
 
 //============================================================
 //描画(レンダリング)(※DX9MESH内とMain内で2つ存在するので注意).
@@ -456,9 +482,10 @@ void clsSprite::Render(
 	m_wpContext->PSSetShaderResources(
 		0, 1, &m_pTexture );		//テクスチャをシェーダに渡す.
 
-	m_wpContext->PSSetShaderResources(
-		1, 1, &m_pMask );		//マスクをシェーダに渡す.
-
+	for( unsigned int i=0; i<m_vecpMask.size(); i++ ){
+		m_wpContext->PSSetShaderResources(
+			i + 1, 1, &m_vecpMask[i] );		//マスクをシェーダに渡す.
+	}
 	//アルファブレンド用ブレンドステート作成&設定.
 	SetBlend( true );
 
