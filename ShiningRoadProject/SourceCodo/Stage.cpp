@@ -189,6 +189,7 @@ void clsStage::Render(
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
 
+
 //#ifdef _DEBUG
 	//êF.
 	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
@@ -247,12 +248,12 @@ vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
 	return vvpMeshArrayTmp;
 }
 
-void clsStage::SetStageObjTransform(const int iObjNo)
+void clsStage::SetStageObjTransform(const unsigned int uiObjNo)
 {
-	if (iObjNo >= m_vpBuilding.size())
+	if (uiObjNo >= m_vpBuilding.size())
 	{
 		return;
 	}
 
-	m_vpBuilding[iObjNo]->UpdateModel();
+	m_vpBuilding[uiObjNo]->UpdateModel();
 }

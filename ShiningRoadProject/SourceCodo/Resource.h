@@ -4,16 +4,18 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 
-//シングルトンにするならばつける.
-//#define RESOURCE_CLASS_SINGLETON
+////シングルトンにするならばつける.
+////#define RESOURCE_CLASS_SINGLETON
 
 
 //テスト中はつける( パーツの読み込み数を固定化 ).
 //#define RESOURCE_READ_PARTS_MODEL_LOCK
-#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
-const int iTEST_ROBO_PARTS_MODEL_MAX = 1;//テスト中のパーツ最大数.
-#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
 
+
+#ifdef RESOURCE_READ_PARTS_MODEL_LOCK
+	//テスト中のパーツ最大数.
+	const int iTEST_ROBO_PARTS_MODEL_MAX = 1;
+#endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
 
 /*
 //テストモデルに足の3番のモデルを割り当てる例.

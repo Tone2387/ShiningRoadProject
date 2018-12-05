@@ -43,7 +43,7 @@ clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(
 		pParentWindow->Operation( false );
 	}
 
-	const char sCURSOR_PATH[] = "Data\\Image\\StartUp\\Cursor.png";
+	const char sCURSOR_PATH[] = "Data\\Image\\MenuWindow\\Cursor.png";
 	const WHSIZE_FLOAT CURSOR_DISP = { 1.0f, 1.0f };
 	const float fCURSOR_ALPHA = 0.75f;
 	SPRITE_STATE ss;

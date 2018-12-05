@@ -28,8 +28,8 @@ clsLINE_BOX::clsLINE_BOX(
 	,m_encBeforChange( encBEFOR_CHANGE::NOTHING )
 	,m_isStopChange( false )
 {
-	const char* sLINE_PATH = "Data\\Image\\StartUp\\UiLineBody.png";
-	const char* sJOINT_PATH = "Data\\Image\\StartUp\\UiLineJoint.png";
+	const char* sLINE_PATH = "Data\\Image\\MenuWindow\\UiLineBody.png";
+	const char* sJOINT_PATH = "Data\\Image\\MenuWindow\\UiLineJoint.png";
 
 	const WHSIZE_FLOAT SS_DISP = { 1.0f, 1.0f };
 	const WHSIZE_FLOAT SS_ANIM = { 1.0f, 1.0f };

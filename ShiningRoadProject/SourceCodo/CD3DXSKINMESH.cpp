@@ -2,18 +2,24 @@
 *	SkinMeshCode Version 1.50
 *	LastUpdate	: 2017/06/30
 **/
+#include "OperationString.h"
 #include <stdlib.h>
 #include "CD3DXSKINMESH.h"
 #include <string.h>
 
 
+using namespace std;
+
 namespace{
 	// シェーダ名(ディレクトリも含む)
 	const char SHADER_NAME[] = "Shader\\MeshSkin.hlsl";
 	//マスクテクスチャパス.
-	const char sMASK_PATH_0[] = "mask0.png";
-	const char sMASK_PATH_1[] = "mask1.png";
+	const char sMASK_TEX_NAME[] = "Mask";
+	const char sMASK_TEX_TYPE[] = ".png";
 	const char sMASK_PATH_EMPTY[] = "Data\\Image\\maskEmpty.png";
+
+	//マスクの最大枚数.
+	const int iMASK_MAX = 2;
 }
 
 // フレームを作成する.
@@ -822,8 +828,6 @@ clsD3DXSKINMESH::clsD3DXSKINMESH(
 	,m_pConstantBufferBone( NULL )
 	,m_pD3dxMesh( NULL )
 	,m_pBlendState()
-	,m_pMaskBase( nullptr )
-	,m_pMaskArmor( nullptr )
 {	 
 	LPDIRECT3DDEVICE9	pDevice9 = NULL;
 
@@ -871,8 +875,6 @@ clsD3DXSKINMESH::clsD3DXSKINMESH(
 // デストラクタ.
 clsD3DXSKINMESH::~clsD3DXSKINMESH()
 {
-	SAFE_DELETE( m_pMaskArmor );
-	SAFE_DELETE( m_pMaskBase );
 
 	// 解放処理.
 	Release();
@@ -1380,10 +1382,53 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 				m_pDevice, pAppMesh->pMaterial[i].szTextureName,
 				NULL, NULL, &pAppMesh->pMaterial[i].pTexture, NULL )))
 		{
-			MessageBox( NULL, "テクスチャ読み込み失敗",
-				"Error", MB_OK );
+			MessageBox( NULL, pAppMesh->pMaterial[i].szTextureName,
+				m_FilePath, MB_OK );
 			return E_FAIL;
 		}
+
+
+		//========== マスク作成 ==========//.
+		//マスク画像名作成( マスク番号はまだ ).
+		string sMaskFilePath = pAppMesh->pMaterial[i].szTextureName;
+		if( sMaskFilePath.size() ){
+			auto StrItr = sMaskFilePath.rfind( sMASK_TEX_TYPE );
+			const int iRoop = sMaskFilePath.size() - StrItr;
+			for( int j=0; j<iRoop; j++ ){
+				sMaskFilePath.pop_back();
+			}
+			sMaskFilePath += sMASK_TEX_NAME;
+		}
+
+		clsOPERATION_STRING OprtStr;
+		pAppMesh->pMaterial[i].vecpMask.resize( iMASK_MAX, nullptr );
+
+		for( unsigned int j=0; j<pAppMesh->pMaterial[i].vecpMask.size(); j++ ){
+			//マスク画像名作成( 番号と拡張子 ).
+			string sMaskFullPath = OprtStr.ConsolidatedNumber( sMaskFilePath, j );
+			sMaskFullPath += sMASK_TEX_TYPE;
+
+			//テクスチャ作成.
+			if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+				m_pDevice, 
+				sMaskFullPath.c_str(),//テクスチャファイル名.
+				NULL, NULL,
+				&pAppMesh->pMaterial[i].vecpMask[j], //(out)テクスチャオブジェクト.
+				NULL ) ) )
+			{
+				if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+					m_pDevice, 
+					sMASK_PATH_EMPTY,//テクスチャファイル名.
+					NULL, NULL,
+					&pAppMesh->pMaterial[i].vecpMask[j], //(out)テクスチャオブジェクト.
+					NULL ) ) )
+				{
+					MessageBox(NULL, sMaskFullPath.c_str(), m_FilePath, MB_OK);
+					return E_FAIL;
+				}
+			}
+		}
+
 		// そのマテリアルであるインデックス配列内の開始インデックスを調べる.
 		// さらにインデックスの個数を調べる.
 		int iCount = 0;
@@ -1465,79 +1510,42 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 	}
 
 
-	//========== マスク作成 ==========//.
-	//----- アーマー -----//.
-	if( !m_pMaskArmor ){
-		std::string name = sMASK_PATH_0;
-		if( name.size() ){
-			char* ret = strrchr( m_FilePath, '\\' );
-			if( ret != NULL ){
-				int check = ret - m_FilePath;
-				char path[512];
-				strcpy_s( path, 512, m_FilePath );
-				path[check+1] = '\0';
-
-				strcat_s( path, sizeof( path ), name.c_str() );
-				name = path;
-			}
-		}
-		m_pMaskArmor = new MASK_TEXTURE;
-		//テクスチャ作成.
-		if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
-			m_pDevice, 
-			name.c_str(),//テクスチャファイル名.
-			NULL, NULL,
-			&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
-			NULL ) ) )
-		{
-			if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
-				m_pDevice, 
-				sMASK_PATH_EMPTY,//テクスチャファイル名.
-				NULL, NULL,
-				&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
-				NULL ) ) )
-			{
-				MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-				return E_FAIL;
-			}
-		}
-	}
-	//----- ベース -----//.
-	if( !m_pMaskBase ){
-		std::string name = sMASK_PATH_1;
-		if( name.size() ){
-			char* ret = strrchr( m_FilePath, '\\' );
-			if( ret != NULL ){
-				int check = ret - m_FilePath;
-				char path[512];
-				strcpy_s( path, 512, m_FilePath );
-				path[check+1] = '\0';
-
-				strcat_s( path, sizeof( path ), name.c_str() );
-				name = path;
-			}
-		}
-		m_pMaskBase = new MASK_TEXTURE;
-		//テクスチャ作成.
-		if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
-			m_pDevice, 
-			name.c_str(),//テクスチャファイル名.
-			NULL, NULL,
-			&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
-			NULL ) ) )
-		{
-			if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
-				m_pDevice, 
-				sMASK_PATH_EMPTY,//テクスチャファイル名.
-				NULL, NULL,
-				&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
-				NULL ) ) )
-			{
-				MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-				return E_FAIL;
-			}
-		}
-	}
+//	//----- ベース -----//.
+//	if( !m_pMaskBase ){
+//		std::string name = sMASK_PATH_1;
+//		if( name.size() ){
+//			char* ret = strrchr( m_FilePath, '\\' );
+//			if( ret != NULL ){
+//				int check = ret - m_FilePath;
+//				char path[512];
+//				strcpy_s( path, 512, m_FilePath );
+//				path[check+1] = '\0';
+//
+//				strcat_s( path, sizeof( path ), name.c_str() );
+//				name = path;
+//			}
+//		}
+//		m_pMaskBase = new MASK_TEXTURE;
+//		//テクスチャ作成.
+//		if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+//			m_pDevice, 
+//			name.c_str(),//テクスチャファイル名.
+//			NULL, NULL,
+//			&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
+//			NULL ) ) )
+//		{
+//			if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+//				m_pDevice, 
+//				sMASK_PATH_EMPTY,//テクスチャファイル名.
+//				NULL, NULL,
+//				&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
+//				NULL ) ) )
+//			{
+//				MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+//				return E_FAIL;
+//			}
+//		}
+//	}
 
 	return hRslt;
 }
@@ -1759,20 +1767,16 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 		// テクスチャをシェーダに渡す.
 		if( pMesh->pMaterial[i].szTextureName[0] != NULL )
 		{
-			UINT slot = 0;
 			//テクスチャ.
 			m_pDeviceContext->PSSetSamplers( 
-				slot, 1, &m_pSampleLinear );
+				0, 1, &m_pSampleLinear );
 			m_pDeviceContext->PSSetShaderResources( 
-				slot, 1, &pMesh->pMaterial[i].pTexture );
-			slot ++;
-			//アーマー.
-			m_pDeviceContext->PSSetShaderResources( 
-				slot, 1, &m_pMaskArmor->pTex );
-			slot ++;
-			//ベース.
-			m_pDeviceContext->PSSetShaderResources( 
-				slot, 1, &m_pMaskBase->pTex );
+				0, 1, &pMesh->pMaterial[i].pTexture );
+			//マスク.
+			for( unsigned int j=0; j<pMesh->pMaterial[i].vecpMask.size(); j++ ){
+				m_pDeviceContext->PSSetShaderResources( 
+					j + 1, 1, &pMesh->pMaterial[i].vecpMask[j] );
+			}
 		}
 		else
 		{

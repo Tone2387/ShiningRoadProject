@@ -66,6 +66,8 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_fBlock(					0.0f )
 	,m_fPulse(					0.0f )
 	,m_bStopNoiseSe(			false )
+	,m_fRenderLimit(			fRENDER_LIMIT )
+	,m_fZoom(					fZOOM )
 {
 }
 
@@ -242,15 +244,15 @@ void clsSCENE_BASE::Render(
 		//テクスチャの内容を画面に描画.
 		m_upScreenTexture->RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
 
-		UpdateNoise();
+		this->UpdateNoise();
 	}
 
-//	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-//		NoiseStrong( 60 );
-//	}
-//	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
-//		NoiseWeak( 10 );
-//	}
+	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
+		NoiseStrong( 60 );
+	}
+	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
+		NoiseWeak( 10 );
+	}
 //	if( GetAsyncKeyState( 'C' ) & 0x1 ){
 //		static bool nega = false;
 //		m_upScreenTexture->SetNega( nega );
@@ -677,10 +679,10 @@ void clsSCENE_BASE::Proj()
 	//プロジェクション(射影行列)変換.
 	D3DXMatrixPerspectiveFovLH(
 		&m_mProj,			//(out)プロジェクション計算結果.
-		fZOOM,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が狭くなる.
+		m_fZoom,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が広くなるくなる.
 		static_cast<FLOAT>( WND_W ) / static_cast<FLOAT>( WND_H ),//アスペクト比(幅/高さ).
 		0.1f,				//近いビュー平面のz値.
-		fRENDER_LIMIT );	//遠いビュー平面のz値.
+		m_fRenderLimit );	//遠いビュー平面のz値.
 }
 
 
@@ -707,7 +709,8 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 void clsSCENE_BASE::SetViewPort( 
 	D3D11_VIEWPORT* const pVp, const 
 	D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos,
-	const float fWndW, const float fWndH )
+	const float fWndW, const float fWndH,
+	const float fRenderLimit )
 {
 	if( !pVp ) return;
 	if( m_wpViewPortUsing == pVp ) return;
@@ -726,7 +729,7 @@ void clsSCENE_BASE::SetViewPort(
 		fZOOM,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が狭くなる.
 		fWndW / fWndH,//アスペクト比(幅/高さ).
 		0.1f,				//近いビュー平面のz値.
-		fRENDER_LIMIT );	//遠いビュー平面のz値.
+		fRenderLimit );	//遠いビュー平面のz値.
 
 	assert( m_wpContext );
 	m_wpContext->RSSetViewports( 1, m_wpViewPortUsing );

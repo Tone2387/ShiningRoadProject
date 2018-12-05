@@ -82,6 +82,7 @@ struct MY_SKINMATERIAL
 	D3DXVECTOR4	Ks;	// スペキュラー.
 	CHAR szTextureName[512];	// テクスチャーファイル名.
 	ID3D11ShaderResourceView* pTexture;
+	std::vector< ID3D11ShaderResourceView* > vecpMask;
 	DWORD dwNumFace;	// そのマテリアルであるポリゴン数.
 	MY_SKINMATERIAL()
 	{
@@ -93,6 +94,9 @@ struct MY_SKINMATERIAL
 	}
 	~MY_SKINMATERIAL()
 	{
+		for( unsigned int i=0; i<vecpMask.size(); i++ ){
+			SAFE_RELEASE( vecpMask[i] );
+		}
 		SAFE_RELEASE( pTexture );
 	}
 };
@@ -438,23 +442,6 @@ private:
 	void SetBlend( const bool isAlpha );
 	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
-
-	struct MASK_TEXTURE
-	{
-		ID3D11ShaderResourceView*	pTex;
-//		ID3D11SamplerState*			pSample;
-
-		MASK_TEXTURE(){
-			pTex = nullptr;
-//			pSample = nullptr;
-		}
-		~MASK_TEXTURE(){
-//			SAFE_RELEASE( pSample );
-			SAFE_RELEASE( pTex );
-		}
-	};
-	MASK_TEXTURE* m_pMaskBase;
-	MASK_TEXTURE* m_pMaskArmor;
 
 
 //	HWND m_hWnd;

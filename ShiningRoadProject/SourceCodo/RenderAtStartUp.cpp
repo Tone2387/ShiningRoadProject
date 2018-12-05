@@ -327,7 +327,7 @@ void clsRENDER_AT_START_UP::Render( bool isLoop ) const
 
 #endif//#ifdef _DEBUG
 
-		m_upGageBox->Render();
+		m_upLineBox->Render();
 
 		for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
 			//˜g‚Ì’†‚¾‚¯•`‰æ‚·‚é.
@@ -338,8 +338,7 @@ void clsRENDER_AT_START_UP::Render( bool isLoop ) const
 			}
 			m_vecupGage[i]->Render();
 		}
-
-		m_upLineBox->Render();
+		m_upGageBox->Render();
 
 		m_upLogo->Render();
 

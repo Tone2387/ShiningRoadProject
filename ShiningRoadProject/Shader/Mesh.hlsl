@@ -286,8 +286,8 @@ float4 PS_Ita( VS_ItaOut input )	:	SV_Target
 
 	if( 
 		maskColor.r >= 0.99f
-		&& maskColor.g >= 0.99f
-		&& maskColor.b >= 0.99f
+//		&& maskColor.g >= 0.99f
+//		&& maskColor.b >= 0.99f
 		)
 	{
 		//alpha値でグラデ可能( aの値が小さいと1.0fに近づく{ 元のテクスチャの色に近づく } ).

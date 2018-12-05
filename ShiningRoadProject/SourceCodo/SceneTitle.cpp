@@ -15,8 +15,12 @@ namespace{
 
 //	const float fROBO_SCALE = 0.5f;//s1: p0.01.
 //	const float fBACK_SCALE = 0.5f * 100.0f;
-	const float fROBO_SCALE = 0.01f;//s1: p0.01.
-	const float fBACK_SCALE = 1.0f;
+//
+//	const float fROBO_SCALE = 0.01f;//s1: p0.01.
+//	const float fBACK_SCALE = 1.0f;
+//
+	const float fROBO_SCALE = 0.5f;//s1: p0.01.
+	const float fBACK_SCALE = 50.0f;
 
 	//ロゴ.
 	const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
@@ -53,6 +57,13 @@ clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BA
 	,m_iTextAlphaStopFrame( 0 )
 	,m_encTextAlphaMode( encTEXT_ALPHA_MODE::NEXT_MINUS )
 {
+	m_fRenderLimit *= fBACK_SCALE;
+	//限界距離はステージの直系ではなく半径でよいので2.
+	const float fRENDER_RIMIT_RATE = 2.0f; 
+	m_fRenderLimit /= fRENDER_RIMIT_RATE;
+	//高さの分増やす( これをやらないとステージモデルの上のほうが見えなくなる ).
+	const float fRENDER_RIMIT_RATE_Y = 1.125f; 
+	m_fRenderLimit *= fRENDER_RIMIT_RATE_Y;
 }
 
 clsSCENE_TITLE::~clsSCENE_TITLE()

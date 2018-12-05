@@ -23,7 +23,7 @@ public:
 	std::vector<clsDX9Mesh*> GetStageMeshArray();
 	
 	//指定したオブジェク位置回転拡縮を更新.
-	void SetStageObjTransform(const int iObjNo);
+	void SetStageObjTransform(const unsigned int uiObjNo);
 
 	//光るところの色.
 	void SetColor( const D3DXVECTOR4& vColor ){ m_vLightColor = vColor; }

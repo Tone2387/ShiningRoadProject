@@ -95,7 +95,8 @@ protected:
 		D3D11_VIEWPORT* const pVp, 
 		const D3DXVECTOR3 &vCamPos, 
 		const D3DXVECTOR3 &vCamLookPos,
-		const float fWndW, const float fWndH );
+		const float fWndW, const float fWndH,
+		const float fRenderLimit = 100.0f );
 
 	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
 	D3D11_VIEWPORT* GetViewPortMainPtr()const{
@@ -157,6 +158,8 @@ protected:
 	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
 
+	float m_fRenderLimit;
+	float m_fZoom;
 
 
 	//基底クラスのポインタは基底クラスで破棄します.

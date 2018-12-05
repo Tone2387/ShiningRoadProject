@@ -66,6 +66,8 @@ protected:
 	HRESULT InitShader( const char* sErrFileName );
 	////モデル作成.
 	virtual HRESULT InitModel( const char* sTexName );
+	//マスク作成.
+	HRESULT CreateMask( const char* sTexName );
 
 protected:
 
@@ -88,7 +90,7 @@ protected:
 	ID3D11ShaderResourceView*	m_pTexture;		//テクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
 
-	ID3D11ShaderResourceView*	m_pMask;		//テクスチャのマスク.
+	std::vector< ID3D11ShaderResourceView* >	m_vecpMask;		//テクスチャのマスク.
 
 
 
