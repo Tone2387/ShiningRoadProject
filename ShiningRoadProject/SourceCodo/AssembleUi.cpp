@@ -195,7 +195,7 @@ namespace{
 	const string sSTATUS_NAME_ARMS[] = 
 		{ sHP_NAME, "Aiming", "Boost Quick Power", "Boost Quick Cost", "Boost Quick Time" };
 	const string sSTATUS_NAME_WEAPON[] = 
-		{ "Attack Power", "Bullet Speed", "Bullet Range", "EN Cost", "Load Time", "Lock on Time", "Stability of Shooting", "Magazine Load Time", "Bullets Num" };
+		{ "Attack Power", "Bullet Speed", "Bullet Range", "EN Cost", "Load Time", "Lock on Time", "Stability of Shooting", "Magazine Load Time", "Bullets Amount" };
 
 
 	//ステータスの色.
