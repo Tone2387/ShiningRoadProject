@@ -28,6 +28,7 @@ namespace{
 clsXInput::clsXInput()
 {
 	ZeroMemory( this, sizeof( clsXInput ) );
+	m_isConnect = false;
 }
 clsXInput::~clsXInput()
 {
@@ -67,8 +68,10 @@ bool clsXInput::UpdateStatus(){
 		m_padId,
 		&m_state ) ) 
 	{
+		m_isConnect = true;
 		return true;
 	}
+	m_isConnect = false;
 	return false;
 }
 ////XV( g‚í‚È‚¢? ).

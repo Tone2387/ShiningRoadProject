@@ -43,6 +43,18 @@ private:
 	//キャンセル.
 	void Exit();
 
+	//Xinputのボタン入力.
+//	bool isPressButtonA();
+	bool isPressButtonB();
+	bool isPressButtonX();
+	bool isPressButtonY();
+	bool isPressButtonStart();
+	bool isPressButtonBack();
+	bool isRightStickStayUp();
+	bool isRightStickStayDown();
+	bool isRightStickStayRight();
+	bool isRightStickStayLeft();
+
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
 
