@@ -339,6 +339,21 @@ const bool clsDxInput::IsPressKey(enPKey enKey)
 
 	return false;
 }
+const bool clsDxInput::IsPressKeyEnter(const enPKey enKey)
+{
+	if ((m_InputNowState.uiKeyState >> enKey) & 1)
+	{
+		//1ƒtƒŒ[ƒ€‘O‚à‰Ÿ‚³‚ê‚Ä‚¢‚½‚ç.
+		if ((m_InputOldState.uiKeyState >> enKey) & 1 )
+		{
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+
 
 const float clsDxInput::GetLSDir()
 {

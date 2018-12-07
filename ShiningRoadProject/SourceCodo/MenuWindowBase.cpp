@@ -10,6 +10,8 @@
 
 
 using namespace std;
+#define DINPUT_ENTER enPKey_01
+#define DINPUT_EXIT	 enPKey_02
 
 namespace{
 	//ボタンのホールドフレーム.
@@ -264,7 +266,7 @@ bool clsMENU_WINDOW_BASE::SelectUp( bool isWithStick )
 	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDInput->IsLSUpStay() && isWithStick ){
+	else if( m_wpDInput->IsLSUpStay()/* && isWithStick*/ ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
@@ -311,7 +313,7 @@ bool clsMENU_WINDOW_BASE::SelectDown( bool isWithStick )
 	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDInput->IsLSDownStay() && isWithStick ){
+	else if( m_wpDInput->IsLSDownStay() /*&& isWithStick*/ ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
@@ -358,7 +360,7 @@ bool clsMENU_WINDOW_BASE::SelectRight( bool isWithStick )
 	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDInput->IsLSRightStay() && isWithStick ){
+	else if( m_wpDInput->IsLSRightStay() /*&& isWithStick*/ ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
@@ -405,7 +407,7 @@ bool clsMENU_WINDOW_BASE::SelectLeft( bool isWithStick )
 	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDInput->IsLSLeftStay() && isWithStick ){
+	else if( m_wpDInput->IsLSLeftStay() /*&& isWithStick*/ ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
@@ -451,6 +453,9 @@ bool clsMENU_WINDOW_BASE::SelectEnter()
 	else if( m_wpXInput->isPressEnter( XINPUT_B ) ){
 		return true;
 	}
+	else if( m_wpDInput->IsPressKeyEnter( DINPUT_ENTER ) ){
+		return true;
+	}
 
 	return false;
 }
@@ -461,6 +466,9 @@ bool clsMENU_WINDOW_BASE::SelectExit()
 		return true;
 	}
 	else if( m_wpXInput->isPressEnter( XINPUT_A ) ){
+		return true;
+	}
+	else if( m_wpDInput->IsPressKeyEnter( DINPUT_EXIT ) ){
 		return true;
 	}
 

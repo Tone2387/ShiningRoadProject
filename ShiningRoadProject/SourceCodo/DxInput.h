@@ -79,6 +79,7 @@ public:
 
 	//“ü—ÍÁª¯¸‚·‚éŠÖ”.
 	const bool IsPressKey(const enPKey enKey);
+	const bool IsPressKeyEnter(const enPKey enKey);
 
 	const float GetLSDir();
 

@@ -6,6 +6,8 @@ using namespace std;
 
 #define XINPUT_ENTER ( XINPUT_START | XINPUT_B )
 #define XINPUT_EXIT  ( XINPUT_A )
+#define DINPUT_ENTER enPKey_01
+#define DINPUT_EXIT	 enPKey_02
 
 namespace{
 
@@ -347,9 +349,9 @@ bool clsSCENE_BASE::isPressEnter()const
 	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
 		return true;
 	}
-//	else if( m_wpDxInput->IsPressKey( enPKey_00 ) ){
-//		return true;
-//	}
+	else if( m_wpDxInput->IsPressKeyEnter( DINPUT_ENTER ) ){
+		return true;
+	}
 	else if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		return true;
 	}
@@ -358,6 +360,9 @@ bool clsSCENE_BASE::isPressEnter()const
 bool clsSCENE_BASE::isPressExit()const
 {
 	if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
+		return true;
+	}
+	else if( m_wpDxInput->IsPressKeyEnter( DINPUT_EXIT ) ){
 		return true;
 	}
 	else if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
@@ -376,7 +381,7 @@ bool clsSCENE_BASE::isPressHoldRight( bool isWithStick )
 	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDxInput->IsLSRightStay() && isWithStick ){
+	else if( m_wpDxInput->IsLSRightStay() /*&& isWithStick*/ ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
@@ -422,7 +427,7 @@ bool clsSCENE_BASE::isPressHoldLeft( bool isWithStick )
 	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDxInput->IsLSLeftStay() && isWithStick ){
+	else if( m_wpDxInput->IsLSLeftStay() /*&& isWithStick*/ ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
@@ -468,7 +473,7 @@ bool clsSCENE_BASE::isPressHoldUp( bool isWithStick )
 	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDxInput->IsLSUpStay() && isWithStick ){
+	else if( m_wpDxInput->IsLSUpStay() /*&& isWithStick*/ ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
@@ -514,7 +519,7 @@ bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
 		isPush = true;
 	}
-	else if( m_wpDxInput->IsLSDownStay() && isWithStick ){
+	else if( m_wpDxInput->IsLSDownStay() /*&& isWithStick*/ ){
 		isPush = true;
 	}
 	else if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){

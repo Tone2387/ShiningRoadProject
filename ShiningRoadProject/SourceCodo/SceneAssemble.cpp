@@ -1,4 +1,5 @@
 #include "SceneAssemble.h"
+//#include "DxInput.h"
 #include "WindowBox.h"
 #include "SceneAssembleInformation.h"
 
@@ -345,6 +346,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			if( isPressHoldUp	( false ) )MoveCursorUp();
 			if( isPressHoldDown	( false ) )MoveCursorDown();
 			if( m_wpXInput->isPressEnter( XINPUT_B ) ||
+				m_wpDxInput->IsPressKeyEnter( enPKey_01 ) ||
 				GetAsyncKeyState( VK_RETURN ) & 0x1 )
 			{
 				Enter( enNextScene );
@@ -354,6 +356,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			}
 			//次のシーンへのウィンドウを出す.
 			if( m_wpXInput->isPressEnter( XINPUT_START ) || 
+				m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_START ) ||
 				GetAsyncKeyState( VK_SPACE ) & 0x1 )
 			{
 				//ウィンドウを出してない時は次のシーンへのウィンドウを出す.
@@ -367,6 +370,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			}
 			//カラーチェンジ.
 			if( m_wpXInput->isPressEnter( XINPUT_BACK ) ||
+				m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_BACK ) ||
 				GetAsyncKeyState( VK_SHIFT ) & 0x1 )
 			{
 				//開けるなら開く.
@@ -379,11 +383,14 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 				}
 			}
 			//ステータスウィンドウを隠す.
-			if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
+			if( m_wpXInput->isPressEnter( XINPUT_Y ) ||
+				m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_Y ) )
+			{
 				SwitchDispStatus();
 			}
 			//ステータスのcomment切替.
-			if( m_wpXInput->isPressEnter( XINPUT_X ) )
+			if( m_wpXInput->isPressEnter( XINPUT_X ) ||
+				m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_X ) )
 			{
 				if( m_upUI->isCanSwitchStatusComment() &&
 					isMessageBoxClose() )
@@ -463,21 +470,29 @@ void clsSCENE_ASSEMBLE::MoveRoboStick()
 	//右スティックは回転とズーム.
 	//モデル回転.
 	const float fMODEL_SPN_SPD = 0.05f;
-	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ||
+		m_wpDxInput->IsRSRightStay() )
+	{
 		m_spAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+	else if(m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ||
+			m_wpDxInput->IsRSLeftStay() )
+	{
 		m_spAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
 	}
 	//モデルズーム.
 	const float fMODEL_ZOOM_SPD = 5.0f;
-	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ||
+		m_wpDxInput->IsRSUpStay() )
+	{
 		m_vRoboViewOffsetPos.z += fMODEL_ZOOM_SPD;
 		if( m_vRoboViewOffsetPos.z > fZOOM_RIMIT_MAX ){
 			m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MAX;
 		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ||
+		m_wpDxInput->IsRSDownStay() )
+	{
 		m_vRoboViewOffsetPos.z -= fMODEL_MOVE_SPD;
 		if( m_vRoboViewOffsetPos.z < fZOOM_RIMIT_MIN ){
 			m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MIN;
@@ -516,7 +531,7 @@ void clsSCENE_ASSEMBLE::RenderUi()
 
 	//ほとんどのUI.
 	assert( m_upUI );
-	m_upUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
+	m_upUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
 
 
 	//矢印.
@@ -585,7 +600,7 @@ void clsSCENE_ASSEMBLE::RenderUi()
 		m_wpCamera->GetPos(), m_wpCamera->GetLookPos(),
 		WND_W, WND_H );
 	assert( m_upUI );
-	m_upUI->RenderPartsState( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[m_PartsSelect.Type] );
+	m_upUI->RenderPartsState( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
 
 
 	if( m_upMenu ){
@@ -602,10 +617,10 @@ void clsSCENE_ASSEMBLE::MoveCursorUp()
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		m_upUI->InitReadNumPartsComment();
 
-		m_PartsSelect.Num[m_PartsSelect.Type] --;
+		m_PartsSelect.Num[ m_PartsSelect.Type ] --;
 
-		m_PartsSelect.Num[m_PartsSelect.Type] = 
-			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vecspFile[m_PartsSelect.Type]->GetSizeRow() );
+		m_PartsSelect.Num[ m_PartsSelect.Type ] = 
+			LoopRange( m_PartsSelect.Num[ m_PartsSelect.Type ], 0, m_vecspFile[ m_PartsSelect.Type ]->GetSizeRow() );
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
@@ -624,10 +639,10 @@ void clsSCENE_ASSEMBLE::MoveCursorDown()
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
 		m_upUI->InitReadNumPartsComment();
 
-		m_PartsSelect.Num[m_PartsSelect.Type] ++;
+		m_PartsSelect.Num[ m_PartsSelect.Type ] ++;
 
-		m_PartsSelect.Num[m_PartsSelect.Type] = 
-			LoopRange( m_PartsSelect.Num[m_PartsSelect.Type], 0, m_vecspFile[m_PartsSelect.Type]->GetSizeRow() );
+		m_PartsSelect.Num[ m_PartsSelect.Type ] = 
+			LoopRange( m_PartsSelect.Num[ m_PartsSelect.Type ], 0, m_vecspFile[ m_PartsSelect.Type ]->GetSizeRow() );
 	}
 	else if( m_enSelectMode == clsASSEMBLE_UI::enSELECT_MODE::STATUS ){
 		m_wpSound->PlaySE( enSE_CURSOL_MOVE );
@@ -759,13 +774,13 @@ void clsSCENE_ASSEMBLE::AssembleParts()const
 		//m_vecspFile[]の添え字はどのパーツか、である.
 		tmpStatus.push_back( 
 			m_vecspFile[ m_PartsSelect.Type ]->
-				GetDataInt( m_PartsSelect.Num[m_PartsSelect.Type], i + iSTATUS_CUT_NUM ) );
+				GetDataInt( m_PartsSelect.Num[ m_PartsSelect.Type ], i + iSTATUS_CUT_NUM ) );
 		//GetDataInt()の第一引数は、そのパーツ部位の何番目の行を参照すればよいのか.
 		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
 	}
 
 	//何度もキャストをするのは嫌なので.
-	UCHAR tmpPartsNum = static_cast<UCHAR>( m_PartsSelect.Num[m_PartsSelect.Type] );
+	UCHAR tmpPartsNum = static_cast<UCHAR>( m_PartsSelect.Num[ m_PartsSelect.Type ] );
 
 	switch( m_PartsSelect.Type )
 	{

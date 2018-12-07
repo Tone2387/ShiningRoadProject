@@ -11,6 +11,8 @@
 
 #include "OperationString.h"
 
+#include "SceneAssembleInformation.h"
+
 //これがついているとフォントサイズは2.0f, 無しだと1.5f.
 #define FONT_SIZA_BIG_VER
 
