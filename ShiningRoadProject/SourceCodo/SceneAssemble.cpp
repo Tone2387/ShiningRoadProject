@@ -453,29 +453,21 @@ void clsSCENE_ASSEMBLE::MoveRoboStick()
 	//右スティックは回転とズーム.
 	//モデル回転.
 	const float fMODEL_SPN_SPD = 0.05f;
-	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ||
-		m_wpDxInput->IsPressKey( enPKey_RRight ) )
-	{
+	if( isRightStickStayRight() ){
 		m_spAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
 	}
-	else if(m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ||
-			m_wpDxInput->IsPressKey( enPKey_RLeft ) )
-	{
+	else if( isRightStickStayLeft() ){
 		m_spAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
 	}
 	//モデルズーム.
 	const float fMODEL_ZOOM_SPD = 5.0f;
-	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ||
-		m_wpDxInput->IsPressKey( enPKey_RUp ) )
-	{
+	if( isRightStickStayUp() ){
 		m_vRoboViewOffsetPos.z += fMODEL_ZOOM_SPD;
 		if( m_vRoboViewOffsetPos.z > fZOOM_RIMIT_MAX ){
 			m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MAX;
 		}
 	}
-	else if(m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ||
-			m_wpDxInput->IsPressKey( enPKey_RDown ) )
-	{
+	else if( isRightStickStayDown() ){
 		m_vRoboViewOffsetPos.z -= fMODEL_MOVE_SPD;
 		if( m_vRoboViewOffsetPos.z < fZOOM_RIMIT_MIN ){
 			m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MIN;
@@ -795,6 +787,66 @@ bool clsSCENE_ASSEMBLE::isPressButtonBack()
 
 	if( GetAsyncKeyState( VK_SHIFT ) & 0x1 ){
 		return true;
+	}
+
+	return false;
+}
+bool clsSCENE_ASSEMBLE::isRightStickStayUp()
+{
+	if( m_wpXInput->isConnected() ){
+		if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKey( enPKey_RUp ) ){
+			return true;
+		}
+	}
+
+	return false;
+}
+bool clsSCENE_ASSEMBLE::isRightStickStayDown()
+{
+	if( m_wpXInput->isConnected() ){
+		if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKey( enPKey_RDown ) ){
+			return true;
+		}
+	}
+
+	return false;
+}
+bool clsSCENE_ASSEMBLE::isRightStickStayRight()
+{
+	if( m_wpXInput->isConnected() ){
+		if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKey( enPKey_RRight ) ){
+			return true;
+		}
+	}
+
+	return false;
+}
+bool clsSCENE_ASSEMBLE::isRightStickStayLeft()
+{
+	if( m_wpXInput->isConnected() ){
+		if( m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKey( enPKey_RLeft ) ){
+			return true;
+		}
 	}
 
 	return false;

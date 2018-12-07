@@ -50,6 +50,10 @@ private:
 	bool isPressButtonY();
 	bool isPressButtonStart();
 	bool isPressButtonBack();
+	bool isRightStickStayUp();
+	bool isRightStickStayDown();
+	bool isRightStickStayRight();
+	bool isRightStickStayLeft();
 
 	//ƒƒjƒ…[‚Ì“®‚«.
 	void MenuUpdate( enSCENE &enNextScene );
