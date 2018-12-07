@@ -165,9 +165,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 {
 	//ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚Ä‚¢‚é‚Æ‰Á‘¬‚³‚¹‚é.
 	bool isAccel = false;
-	if( m_wpXInput->isPressStay( XINPUT_B ) ||
-		GetAsyncKeyState( VK_SPACE ) & 0x8000 )
-	{
+	if( isPressButtonAccel() ){
 		isAccel = true;
 	}
 
@@ -261,9 +259,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 
 
-	if( ( m_wpXInput->isPressEnter( XINPUT_START ) || GetAsyncKeyState( VK_RETURN ) & 0x1 ) ||
-		( ( m_wpXInput->isPressEnter( XINPUT_B ) ||	GetAsyncKeyState( VK_SPACE ) & 0x1 ) && m_isCanGoTitle ) )
-	{
+	if( isPressButtonEnd() ){
 		enNextScene = enSCENE::TITLE;
 		m_wpRoboStatus->SaveHeroData();
 	}
@@ -330,6 +326,53 @@ void clsSCENE_ENDING::RenderUi()
 		iTextIndex ++;
 	}
 }
+
+
+bool clsSCENE_ENDING::isPressButtonAccel()
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_B ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKey( DINPUT_ENTER ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x8000 ){
+		return true;
+	}
+
+	return false;
+}
+bool clsSCENE_ENDING::isPressButtonEnd()
+{
+	if( !m_isCanGoTitle ) return false;
+
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_B ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( DINPUT_ENTER ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x8000 ){
+		return true;
+	}
+
+	return false;
+}
+
+
+
 
 bool clsSCENE_ENDING::AddAlphaState( 
 	TEXT_STATE* const pTextState, const float fAlpha )const

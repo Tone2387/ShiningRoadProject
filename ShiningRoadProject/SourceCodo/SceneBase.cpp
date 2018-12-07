@@ -6,8 +6,6 @@ using namespace std;
 
 #define XINPUT_ENTER ( XINPUT_START | XINPUT_B )
 #define XINPUT_EXIT  ( XINPUT_A )
-#define DINPUT_ENTER enPKey_01
-#define DINPUT_EXIT	 enPKey_02
 
 namespace{
 
@@ -280,94 +278,136 @@ void clsSCENE_BASE::Render(
 }
 
 //ƒƒjƒ…[‘€ì‚ÉŽg‚Á‚Ä‚Ë.
-bool clsSCENE_BASE::isPressRight()const
+bool clsSCENE_BASE::isPressRight() const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
+			return true;
+		}
+		else if( m_wpXInput->isSlopeEnter( XINPUT_RIGHT ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsLSRightEnter() ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpXInput->isSlopeEnter( XINPUT_RIGHT ) ){
-		return true;
-	}
-	else if( m_wpDxInput->IsLSRightEnter() ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
-bool clsSCENE_BASE::isPressLeft()const
+bool clsSCENE_BASE::isPressLeft() const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
+			return true;
+		}
+		else if( m_wpXInput->isSlopeEnter( XINPUT_LEFT ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsLSLeftEnter() ){
+			return true;
+		}
+	}
+	
+	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpXInput->isSlopeEnter( XINPUT_LEFT ) ){
-		return true;
-	}
-	else if( m_wpDxInput->IsLSLeftEnter() ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
 bool clsSCENE_BASE::isPressUp()const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
+			return true;
+		}
+		else if( m_wpXInput->isSlopeEnter( XINPUT_UP ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsLSUpEnter() ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_UP ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpXInput->isSlopeEnter( XINPUT_UP ) ){
-		return true;
-	}
-	else if( m_wpDxInput->IsLSUpEnter() ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_UP ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
 bool clsSCENE_BASE::isPressDown()const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
+			return true;
+		}
+		else if( m_wpXInput->isSlopeEnter( XINPUT_DOWN ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsLSDownEnter() ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpXInput->isSlopeEnter( XINPUT_DOWN ) ){
-		return true;
-	}
-	else if( m_wpDxInput->IsLSDownEnter() ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
 bool clsSCENE_BASE::isPressEnter()const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( DINPUT_ENTER ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpDxInput->IsPressKeyEnter( DINPUT_ENTER ) ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
 bool clsSCENE_BASE::isPressExit()const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( DINPUT_EXIT ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpDxInput->IsPressKeyEnter( DINPUT_EXIT ) ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
 
@@ -375,16 +415,22 @@ bool clsSCENE_BASE::isPressExit()const
 bool clsSCENE_BASE::isPressHoldRight( bool isWithStick )
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDxInput->IsLSRightStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDxInput->IsLSRightStay() /*&& isWithStick*/ ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -421,16 +467,22 @@ bool clsSCENE_BASE::isPressHoldRight( bool isWithStick )
 bool clsSCENE_BASE::isPressHoldLeft( bool isWithStick )
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDxInput->IsLSLeftStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDxInput->IsLSLeftStay() /*&& isWithStick*/ ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -467,16 +519,22 @@ bool clsSCENE_BASE::isPressHoldLeft( bool isWithStick )
 bool clsSCENE_BASE::isPressHoldUp( bool isWithStick )
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_UP ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_UP ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDxInput->IsLSUpStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDxInput->IsLSUpStay() /*&& isWithStick*/ ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -513,16 +571,22 @@ bool clsSCENE_BASE::isPressHoldUp( bool isWithStick )
 bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDxInput->IsLSDownStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDxInput->IsLSDownStay() /*&& isWithStick*/ ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
 		isPush = true;
 	}
 

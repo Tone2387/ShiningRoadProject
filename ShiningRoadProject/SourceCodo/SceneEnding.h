@@ -25,6 +25,10 @@ private:
 	void RenderUi() final;//Åu UIÇÃ ÅvRender.
 
 
+	bool isPressButtonAccel();
+	bool isPressButtonEnd();
+
+
 	struct TEXT_STATE
 	{
 		D3DXVECTOR3 vPos;

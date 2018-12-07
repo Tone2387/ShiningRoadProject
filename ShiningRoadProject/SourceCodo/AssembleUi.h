@@ -56,7 +56,8 @@ public:
 	void Render( 
 		enSELECT_MODE enSelect, 
 		const int iPartsType, 
-		const int iPartsNum ) const;//選択中パーツ番号.
+		const int iPartsNum,
+		const bool isXInputConnect ) const;//選択中パーツ番号.
 
 	void RenderPartsState( 
 		enSELECT_MODE enSelect, 

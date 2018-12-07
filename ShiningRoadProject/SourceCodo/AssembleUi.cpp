@@ -276,6 +276,15 @@ namespace{
 		{ 0.0f, 0.0f },
 		{ 5.0f, 0.0f },
 	};
+	const POINTFLOAT vBUTTON_SPRITE_ANIM_D_INPUT[ iBUTTON_SPRITE_NUM ] =
+	{
+		{ 9.0f, 0.0f },
+		{ 1.0f, 0.0f },
+		{ 8.0f, 0.0f },
+		{ 6.0f, 0.0f },
+		{ 0.0f, 0.0f },
+		{ 7.0f, 0.0f },
+	};
 	//ƒ{ƒ^ƒ“à–¾•¶.
 	const D3DXVECTOR3 vFONT_BUTTON_POS = { fBUTTON_SET_TEST_OFFSET + 650.0f, 40.0f, 0.0f };
 	const float fFONT_BUTTON_SCALE = 14.0f;
@@ -677,7 +686,8 @@ void clsASSEMBLE_UI::Update(
 void clsASSEMBLE_UI::Render( 
 	enSELECT_MODE enSelect,
 	const int iPartsType, 
-	const int iPartsNum ) const
+	const int iPartsNum,
+	const bool isXInputConnect ) const
 {
 	const D3DXVECTOR4 vFONT_TEXT_COLOR = { 1.0f, 1.0f, 1.0f, 1.0f };
 	m_wpFont->SetColor( vFONT_TEXT_COLOR );
@@ -746,7 +756,12 @@ void clsASSEMBLE_UI::Render(
 	assert( m_upButton );
 	for( int i=0; i<iBUTTON_SPRITE_NUM; i++ ){
 		m_upButton->SetPos( vBUTTON_SPRITE_POS[i] );
-		m_upButton->SetAnim( vBUTTON_SPRITE_ANIM[i] );
+		if( isXInputConnect ){
+			m_upButton->SetAnim( vBUTTON_SPRITE_ANIM[i] );
+		}
+		else{
+			m_upButton->SetAnim( vBUTTON_SPRITE_ANIM_D_INPUT[i] );
+		}
 		m_upButton->Render();
 	}
 

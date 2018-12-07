@@ -341,24 +341,14 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 			//スティックの動き( ロボの回転 ).
 			MoveRoboStick();
 			//選択肢.
-			if( isPressHoldRight( false ) )MoveCursorRight();
-			if( isPressHoldLeft	( false ) )MoveCursorLeft();
-			if( isPressHoldUp	( false ) )MoveCursorUp();
-			if( isPressHoldDown	( false ) )MoveCursorDown();
-			if( m_wpXInput->isPressEnter( XINPUT_B ) ||
-				m_wpDxInput->IsPressKeyEnter( enPKey_01 ) ||
-				GetAsyncKeyState( VK_RETURN ) & 0x1 )
-			{
-				Enter( enNextScene );
-			}
-			if( isPressExit() ){
-				Exit();
-			}
+			if( isPressHoldRight( false ) )	MoveCursorRight();
+			if( isPressHoldLeft	( false ) )	MoveCursorLeft();
+			if( isPressHoldUp	( false ) )	MoveCursorUp();
+			if( isPressHoldDown	( false ) )	MoveCursorDown();
+			if( isPressExit() )				Exit();
+			if( isPressButtonB() )			Enter( enNextScene );
 			//次のシーンへのウィンドウを出す.
-			if( m_wpXInput->isPressEnter( XINPUT_START ) || 
-				m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_START ) ||
-				GetAsyncKeyState( VK_SPACE ) & 0x1 )
-			{
+			if( isPressButtonStart() ){
 				//ウィンドウを出してない時は次のシーンへのウィンドウを出す.
 				if( isMessageBoxClose() ){
 					AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::MISSION_START );
@@ -369,10 +359,7 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 				}
 			}
 			//カラーチェンジ.
-			if( m_wpXInput->isPressEnter( XINPUT_BACK ) ||
-				m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_BACK ) ||
-				GetAsyncKeyState( VK_SHIFT ) & 0x1 )
-			{
+			if( isPressButtonBack() ){
 				//開けるなら開く.
 				if( isMessageBoxClose() ){
 					AppearMessageBox( clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE );
@@ -383,15 +370,11 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 				}
 			}
 			//ステータスウィンドウを隠す.
-			if( m_wpXInput->isPressEnter( XINPUT_Y ) ||
-				m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_Y ) )
-			{
+			if( isPressButtonY() ){
 				SwitchDispStatus();
 			}
 			//ステータスのcomment切替.
-			if( m_wpXInput->isPressEnter( XINPUT_X ) ||
-				m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_X ) )
-			{
+			if( isPressButtonX() ){
 				if( m_upUI->isCanSwitchStatusComment() &&
 					isMessageBoxClose() )
 				{
@@ -471,27 +454,27 @@ void clsSCENE_ASSEMBLE::MoveRoboStick()
 	//モデル回転.
 	const float fMODEL_SPN_SPD = 0.05f;
 	if( m_wpXInput->isSlopeStay( XINPUT_RIGHT, false ) ||
-		m_wpDxInput->IsRSRightStay() )
+		m_wpDxInput->IsPressKey( enPKey_RRight ) )
 	{
 		m_spAsmModel->AddRot( { 0.0f, fMODEL_SPN_SPD, 0.0f } );
 	}
 	else if(m_wpXInput->isSlopeStay( XINPUT_LEFT, false ) ||
-			m_wpDxInput->IsRSLeftStay() )
+			m_wpDxInput->IsPressKey( enPKey_RLeft ) )
 	{
 		m_spAsmModel->AddRot( { 0.0f, -fMODEL_SPN_SPD, 0.0f } );
 	}
 	//モデルズーム.
 	const float fMODEL_ZOOM_SPD = 5.0f;
 	if( m_wpXInput->isSlopeStay( XINPUT_UP, false ) ||
-		m_wpDxInput->IsRSUpStay() )
+		m_wpDxInput->IsPressKey( enPKey_RUp ) )
 	{
 		m_vRoboViewOffsetPos.z += fMODEL_ZOOM_SPD;
 		if( m_vRoboViewOffsetPos.z > fZOOM_RIMIT_MAX ){
 			m_vRoboViewOffsetPos.z = fZOOM_RIMIT_MAX;
 		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ||
-		m_wpDxInput->IsRSDownStay() )
+	else if(m_wpXInput->isSlopeStay( XINPUT_DOWN, false ) ||
+			m_wpDxInput->IsPressKey( enPKey_RDown ) )
 	{
 		m_vRoboViewOffsetPos.z -= fMODEL_MOVE_SPD;
 		if( m_vRoboViewOffsetPos.z < fZOOM_RIMIT_MIN ){
@@ -531,7 +514,11 @@ void clsSCENE_ASSEMBLE::RenderUi()
 
 	//ほとんどのUI.
 	assert( m_upUI );
-	m_upUI->Render( m_enSelectMode, m_PartsSelect.Type, m_PartsSelect.Num[ m_PartsSelect.Type ] );
+	m_upUI->Render( 
+		m_enSelectMode, 
+		m_PartsSelect.Type, 
+		m_PartsSelect.Num[ m_PartsSelect.Type ],
+		m_wpXInput->isConnected() );
 
 
 	//矢印.
@@ -714,6 +701,110 @@ void clsSCENE_ASSEMBLE::Exit()
 		DisAppearMessageBox();
 	}
 }
+
+//Xinputのボタン入力.
+//bool clsSCENE_ASSEMBLE::isPressButtonA()
+//{
+//	return false;
+//}
+bool clsSCENE_ASSEMBLE::isPressButtonB()
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_B ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_B ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
+		return true;
+	}
+
+	return false;
+}
+bool clsSCENE_ASSEMBLE::isPressButtonX()
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_X ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_X ) ){
+			return true;
+		}
+	}
+
+	return false;
+}
+bool clsSCENE_ASSEMBLE::isPressButtonY()
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_Y ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_Y ) ){
+			return true;
+		}
+	}
+
+	return false;
+}
+bool clsSCENE_ASSEMBLE::isPressButtonStart()
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_START ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_START ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
+		return true;
+	}
+
+	return false;
+}
+bool clsSCENE_ASSEMBLE::isPressButtonBack()
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_BACK ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_BACK ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_SHIFT ) & 0x1 ){
+		return true;
+	}
+
+	return false;
+}
+
+
+
+
+
+
 
 //色替え( 左右キーを押された ).
 void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )const

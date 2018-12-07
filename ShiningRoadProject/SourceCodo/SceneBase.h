@@ -33,6 +33,8 @@ class clsSCREEN_TEXTURE;
 
 //#include "KeyInput.h"
 
+#define DINPUT_ENTER enPKey_01
+#define DINPUT_EXIT	 enPKey_02
 
 //================================//
 //========== Šî’êƒNƒ‰ƒX ==========//

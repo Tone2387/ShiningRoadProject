@@ -260,16 +260,22 @@ D3DXVECTOR3 clsMENU_WINDOW_BASE::SetPosFromWindow(
 bool clsMENU_WINDOW_BASE::SelectUp( bool isWithStick )	
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_UP ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_UP ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDInput->IsLSUpStay()/* && isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDInput->IsLSUpStay()/* && isWithStick*/ ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -307,16 +313,22 @@ bool clsMENU_WINDOW_BASE::SelectUp( bool isWithStick )
 bool clsMENU_WINDOW_BASE::SelectDown( bool isWithStick )	
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDInput->IsLSDownStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDInput->IsLSDownStay() /*&& isWithStick*/ ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -354,16 +366,22 @@ bool clsMENU_WINDOW_BASE::SelectDown( bool isWithStick )
 bool clsMENU_WINDOW_BASE::SelectRight( bool isWithStick )	
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDInput->IsLSRightStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDInput->IsLSRightStay() /*&& isWithStick*/ ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -401,16 +419,22 @@ bool clsMENU_WINDOW_BASE::SelectRight( bool isWithStick )
 bool clsMENU_WINDOW_BASE::SelectLeft( bool isWithStick )	
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDInput->IsLSLeftStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDInput->IsLSLeftStay() /*&& isWithStick*/ ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -447,13 +471,19 @@ bool clsMENU_WINDOW_BASE::SelectLeft( bool isWithStick )
 
 bool clsMENU_WINDOW_BASE::SelectEnter()	
 {
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_B ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDInput->IsPressKeyEnter( DINPUT_ENTER ) ){
+			return true;
+		}
+	}
+
 	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
-		return true;
-	}
-	else if( m_wpXInput->isPressEnter( XINPUT_B ) ){
-		return true;
-	}
-	else if( m_wpDInput->IsPressKeyEnter( DINPUT_ENTER ) ){
 		return true;
 	}
 
@@ -462,13 +492,19 @@ bool clsMENU_WINDOW_BASE::SelectEnter()
 
 bool clsMENU_WINDOW_BASE::SelectExit()	
 {
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_A ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDInput->IsPressKeyEnter( DINPUT_EXIT ) ){
+			return true;
+		}
+	}
+
 	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
-		return true;
-	}
-	else if( m_wpXInput->isPressEnter( XINPUT_A ) ){
-		return true;
-	}
-	else if( m_wpDInput->IsPressKeyEnter( DINPUT_EXIT ) ){
 		return true;
 	}
 
