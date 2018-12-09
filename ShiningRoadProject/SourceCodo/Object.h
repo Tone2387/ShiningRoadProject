@@ -85,6 +85,11 @@ public:
 	bool m_bGround;
 	bool m_NoFollObj;
 
+	void ActStop();
+	void ActStart();
+
+	bool m_bAct;
+
 	std::vector<SPHERE> m_v_Spheres;
 
 	void Update(clsStage* pStage);

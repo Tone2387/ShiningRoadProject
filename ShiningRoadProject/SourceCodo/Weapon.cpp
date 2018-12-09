@@ -131,8 +131,10 @@ bool clsWeapon::Shot()
 				{
 					m_iRemainingBullet--;
 					m_iReloadCnt = m_State.iReloadTime;
+					//マズルフラッシュ.
+					//m_pPtrGroup->GetEffects()->Play(3, vPos);
 					//射撃音.
-					//m_pPtrGroup->GetSound()->PlaySE(0,true);
+					m_pPtrGroup->GetSound()->PlaySE(0);
 					return true;
 				}
 			}
@@ -163,7 +165,7 @@ void clsWeapon::Reload()
 	m_bNeedReload = false;
 	m_iRemainingBullet = m_State.iBulletNumMax;
 	//リロード音.
-	//m_pPtrGroup->GetSound()->PlaySE(0,true);
+	m_pPtrGroup->GetSound()->PlaySE(0);
 }
 
 int clsWeapon::GetNowBulletNum()
@@ -210,7 +212,6 @@ void clsWeapon::Lock(clsObject* pTargetObj)//ロック範囲に入っている.
 		if (pTargetObj)
 		{
 			m_pTargetObj = pTargetObj;
-			//m_pPtrGroup->GetSound()->PlaySE(0,true);
 		}
 	}
 }

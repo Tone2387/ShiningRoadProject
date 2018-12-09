@@ -319,8 +319,8 @@ const D3DXVECTOR3 clsMISSION_MODEL::GetRotfromVec(
 	//ベクトルから回転値を求める.
 	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
 	//	vRot.x = atanf( vVec.y );//このゲームの仕様なら正解( 2018/06/19(火)現在 )( つまりゴリ押し ).
-	vRot.x = atan2f(vVecLocal.y, -vVecLocal.z);//.
-	vRot.y = atan2f(-vVecWorld.x, -vVecWorld.z);//( 何故、マイナスがかかっていたり、X,Zが入れ替わっているのかといえば、0度でモデルがこっちを向くから ).
+	vRot.x = atan2f(-vVecLocal.y, -vVecLocal.z);//.
+	vRot.y = atan2f(vVecWorld.x, vVecWorld.z);//( 何故、マイナスがかかっていたり、X,Zが入れ替わっているのかといえば、0度でモデルがこっちを向くから ).
 
 	vRot.x = GuardDirOver(vRot.x);
 	vRot.y = GuardDirOver(vRot.y);

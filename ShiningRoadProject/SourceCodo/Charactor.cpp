@@ -5,6 +5,8 @@ void clsCharactor::CharactorUpdate()
 	Move();
 	Rotate();
 
+	UpdateLookOn();
+
 	m_iDamage = 0;//毎フレーム初期化.
 	m_bRadarWarning = false;//初期化.
 }
@@ -273,15 +275,12 @@ const bool clsCharactor::IsTargetWall(
 	std::vector<clsDX9Mesh*> vvpMeshTmp;
 	vvpMeshTmp = pStage->GetStageMeshArray();
 
-	bool bResult = false;
-	bool bHit = false;
-
 	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{
 		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
-		pStage->SetStageObjTransform(i);
 
 		if (!pObjMesh)continue;
+		pStage->SetStageObjTransform(i);
 
 		if (IsPointIntersect(vStartPos, vEndPos, pObjMesh))
 		{
@@ -347,7 +346,7 @@ bool clsCharactor::IsPointIntersect(
 		&fDis,			//ﾀｰｹﾞｯﾄとの距離.
 		NULL, NULL);
 
-	float VecLenght = D3DXVec3Length(&(vecEnd - vecStart));
+	float VecLenght = D3DXVec3Length(&(EndPos - StartPos));
 
 	if (fDis < VecLenght)//ﾚｲの範囲内に何かあるか?.
 	{
@@ -488,7 +487,7 @@ bool clsCharactor::Damage(HitState HitS)
 		if (m_iHP < HitS.iDamage)
 		{
 			m_iHP = 0;
-			m_bDeadFlg = true;//仮.
+			ActStop();
 		}
 
 		else
@@ -504,8 +503,6 @@ bool clsCharactor::Damage(HitState HitS)
 
 void clsCharactor::LockChara(clsStage* const pStage)
 {
-	UpdateLookOn();
-
 	if (m_pTargetChara)
 	{
 		if (m_pTargetChara->m_bDeadFlg)//ターゲットが死亡.
@@ -514,32 +511,30 @@ void clsCharactor::LockChara(clsStage* const pStage)
 			return;
 		}
 		
-		/*if (!IsTargetWall(m_vLockStartingPos, m_pTargetChara->m_vCenterPos, pStage))
-		{
-			return;
-		}*/
-
-		if (IsInLockRange(m_pTargetChara->m_vCenterPos))
-		{
-			Lock();
-
-			D3DXMATRIX mW;
-			D3DXMatrixIdentity(&mW);
-
-			D3DXVECTOR3 vTmp = m_pTargetChara->GetCenterPos();
-
-			D3DXVec3Project(&m_vTargetScrPos,
-				&vTmp,
-				m_pViewPort, &m_mProj,
-				&m_mThisCharaView,
-				&mW);
-		}
-
-		else
+		if (!IsTargetWall(m_vLockStartingPos, m_pTargetChara->GetCenterPos(), pStage))
 		{
 			LockOut();
 			return;
 		}
+
+		if (!IsInLockRange(m_pTargetChara->m_vCenterPos))
+		{
+			LockOut();
+			return;
+		}
+
+		Lock();
+
+		D3DXMATRIX mW;
+		D3DXMatrixIdentity(&mW);
+
+		D3DXVECTOR3 vTmp = m_pTargetChara->GetCenterPos();
+
+		D3DXVec3Project(&m_vTargetScrPos,
+			&vTmp,
+			m_pViewPort, &m_mProj,
+			&m_mThisCharaView,
+			&mW);
 	}
 
 	else
@@ -599,30 +594,39 @@ void clsCharactor::LockChara(clsStage* const pStage)
 
 bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 {
-	//開始位置.底面の方向.ターゲットの位置.距離.半径
-	if (IsTargetDirBack(vTargetPos))
+	//敵の方向が後ろ.
+	if (!IsTargetDirBack(vTargetPos))
 	{
-		D3DXMATRIX mW;
-		D3DXMatrixIdentity(&mW);
+		return false;
+	}
 
-		D3DXVec3Project(&m_vLockCenterPos,
-			&m_vLockPos,
-			m_pViewPort, &m_mProj,
-			&m_mThisCharaView,
-			&mW);
+	float fDis = D3DXVec3Length(&(m_vLockStartingPos - vTargetPos));
 
-		D3DXVECTOR3 vTarPosTmp;
+	if (fDis > m_fLockRange)
+	{
+		return false;
+	}
 
-		D3DXVec3Project(&vTarPosTmp,
-			&vTargetPos,
-			m_pViewPort, &m_mProj,
-			&m_mThisCharaView,
-			&mW);
+	D3DXMATRIX mW;
+	D3DXMatrixIdentity(&mW);
 
-		if (IsCurcleLange(m_vLockCenterPos, vTarPosTmp, m_fLockCircleRadius / 4))
-		{
-			return true;
-		}
+	D3DXVec3Project(&m_vLockCenterPos,
+		&m_vLockPos,
+		m_pViewPort, &m_mProj,
+		&m_mThisCharaView,
+		&mW);
+
+	D3DXVECTOR3 vTarPosTmp;
+
+	D3DXVec3Project(&vTarPosTmp,
+		&vTargetPos,
+		m_pViewPort, &m_mProj,
+		&m_mThisCharaView,
+		&mW);
+
+	if (IsCurcleLange(m_vLockCenterPos, vTarPosTmp, m_fLockCircleRadius / 4))
+	{
+		return true;
 	}
 
 	return false;
@@ -633,7 +637,7 @@ bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
 	D3DXVECTOR3 vTarDir = vTargetPos - m_vLockStartingPos;
-	vTarDir.y = 0;
+	vTarDir.y = 0.0f;
 	D3DXVec3Normalize(&vTarDir, &vTarDir);
 
 	float fDir = D3DXVec3Dot(&vTarDir, &vForword);
@@ -849,6 +853,7 @@ void clsCharactor::UpdateProduct(clsStage* pStage)
 	Rotate();
 
 	WeaponUpdate();
+	UpdateLookOn();
 
 	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
 	m_iDamage = 0;//毎フレーム初期化.

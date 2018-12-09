@@ -1,5 +1,7 @@
 #include "SceneMission.h"
 
+static const int g_iStartCnt = 180;
+
 namespace
 {
 	const char strMissonFolderPath[] = "Data\\FileData\\Hiyoshi\\Misson";
@@ -12,6 +14,7 @@ clsSCENE_MISSION::clsSCENE_MISSION(clsPOINTER_GROUP* const ptrGroup) : clsSCENE_
 m_pPlayer(nullptr)
 , m_bEnemyStop(false)
 , m_bCamTarChange(false)
+, m_bStartFlg(false)
 {
 }
 
@@ -38,6 +41,11 @@ void clsSCENE_MISSION::CreateProduct()
 	m_pStage = new clsStage( m_wpPtrGroup );
 
 	m_fCamMoveSpeed = 0.01f;
+
+	if (m_wpSound)
+	{
+		m_wpSound->PlayBGM(0);
+	}
 }
 
 void clsSCENE_MISSION::CreateUI()
@@ -223,6 +231,14 @@ void clsSCENE_MISSION::CreateUI()
 
 	m_pLockWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockWindow.png", ss);
 	m_pLockWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	vPos = { WND_W / 2, WND_H / 2 };
+
+	m_iStartCnt = g_iStartCnt;
+
+	m_pStartText = new clsUiText;
+	m_pStartText->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H,5.0f);
+	m_pStartText->SetPos(vPos);
 }
 
 //–ˆƒtƒŒ[ƒ€’Ê‚éˆ—.
@@ -232,10 +248,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	assert(m_pPlayer);
 	//m_pPlayer->Action(m_pStage);
 
-	if (m_wpSound)
-	{
-		//m_wpSound->PlayBGM(0);
-	}
+	
 
 	if (GetAsyncKeyState('C') & 0x1)
 	{
@@ -261,7 +274,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	{
 		m_v_pFriends[i]->Update(m_pStage);
 	}
-	
+
 	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
 		m_v_pEnemys[i]->Update(m_pStage);
@@ -461,6 +474,27 @@ void clsSCENE_MISSION::RenderUi()
 		{
 			iHitDispTime = 0;
 		}
+	}
+
+	if (!m_bStartFlg)
+	{
+		if (m_iStartCnt < g_fFPS)
+		{
+			sprintf_s(pText, "Misson Start");
+			m_pStartText->SetText(pText);
+			m_pStartText->SetColor({1.0f,0.0f,0.0f,1.0f});
+			m_pStartText->Render(clsUiText::enPOS::MIDDLE);
+		}
+
+		if (m_iStartCnt < 0)
+		{
+			GameStart();
+			m_wpSound->PlaySE(0);
+			m_bStartFlg = true;
+		}
+
+		m_iStartCnt--;
+		
 	}
 	
 	SetDepth(true);
@@ -730,4 +764,17 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 
 	m_vCamTargetPos = pChara->GetCamPos();
 	m_vLookTargetPos = pChara->m_vLockPos;
+}
+
+void clsSCENE_MISSION::GameStart()
+{
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		m_v_pFriends[i]->ActStart();
+	}
+
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		m_v_pEnemys[i]->ActStart();
+	}
 }

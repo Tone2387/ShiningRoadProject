@@ -48,6 +48,7 @@ private:
 	clsCharactor* m_pCamTar;
 
 	bool m_bCamTarChange;
+	bool m_bStartFlg;
 
 	std::vector<clsCharactor*> m_v_pFriends;
 	std::vector<clsCharactor*> m_v_pEnemys;
@@ -77,8 +78,8 @@ private:
 	bool m_bEnemyStop;
 
 	//テスト用モデル( これは消しても良いです、いらないです ).
-
 	void UpdateCamTargetPos(clsCharactor* pChara);
+	void GameStart();
 
 	D3DXVECTOR3 m_vCamTargetPos;
 	D3DXVECTOR3 m_vLookTargetPos;
@@ -90,6 +91,9 @@ private:
 	float m_fCamMoveSpeed;
 
 	void CreateUI();
+
+	int m_iStartCnt;
+	clsUiText* m_pStartText;
 
 	clsSPRITE2D_CENTER* m_pRaderWindowFront;
 	clsSPRITE2D_CENTER* m_pRaderWindowBack;
@@ -139,4 +143,3 @@ private:
 	//サウンド.
 
 };
-

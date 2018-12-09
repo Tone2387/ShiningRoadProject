@@ -708,8 +708,11 @@ void clsObject::Update(clsStage* pStage)
 {
 	m_vOldPos = m_Trans.vPos;
 
-	Action(pStage);
-
+	if (m_bAct)
+	{
+		Action(pStage);
+	}
+	
 	UpdateProduct(pStage);
 }
 
@@ -728,6 +731,16 @@ const D3DXVECTOR3 clsObject::GetCenterPos()const
 	return m_vCenterPos;
 }
 
+void clsObject::ActStop()
+{
+	m_bAct = false;
+}
+
+void clsObject::ActStart()
+{
+	m_bAct = true;
+}
+
 clsObject::clsObject() :
 m_vOldPos({0.0f,0.0f,0.0f}),
 m_vCenterPos({ 0.0f, 0.0f, 0.0f }),//オブジェクトの中心.
@@ -738,6 +751,7 @@ m_fRaySpece(0.0f),
 m_fFollPower(0.0f),
 m_bGround(false),
 m_NoFollObj(false)
+, m_bAct(false)
 {
 	m_Trans.fPitch = 0.0f;
 	m_Trans.fYaw = 0.0f;
