@@ -67,7 +67,7 @@ bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcLine]);
 					m_bShotExistFlg = false;
 					//”š”­SE.
-					//m_wpSound->PlaySE(0,true);
+					m_wpSound->PlaySE(0);
 					return true;
 				}
 

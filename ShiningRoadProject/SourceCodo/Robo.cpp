@@ -150,7 +150,7 @@ void clsRobo::RoboInit(
 	
 	m_v_Spheres = m_pMesh->GetColState(pRobo);
 
-	m_Trans.vPos.y = 10.0f;
+	//m_Trans.vPos.y = 10.0f;
 
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
@@ -213,7 +213,7 @@ void clsRobo::RoboInit(
 		WS[i].BState.iLineEfcNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::EFC_LOCUS);
 		WS[i].iReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOAD_TIME);
 		
-		WS[i].iMagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME) * g_fFPS;
+		WS[i].iMagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
 		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE)* g_fDistanceReference;
 		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
 		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
@@ -919,9 +919,7 @@ void clsRobo::PlayRightBoostEfc()
 			vPosRootTmp = m_pMesh->GetBonePosArmRBoostSideRoot(i);
 			vPosEndTmp = m_pMesh->GetBonePosArmRBoostSideEnd(i);
 
-			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
-
-			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp,vPosEndTmp);
 
 			if (!m_wpEffects->isPlay(m_v_RHandSideBoostEfc[i]))
 			{
@@ -1190,8 +1188,22 @@ void clsRobo::SetRotateArmParts()
 
 	D3DXVECTOR3 vArmRot = { fRot, vTmp.y, vTmp.z };
 
-	m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
-	m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
+	int iAnimNoTmp = m_pMesh->GetPartsAnimNo(enPARTS::ARM_L);
+
+	//リロード中は角度を適応しない.
+	if (iAnimNoTmp < enAnimNoArmWeaponReloadStart || 
+		iAnimNoTmp > enAnimNoArmWeaponReloadEnd)
+	{
+		m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
+	}
+	
+	iAnimNoTmp = m_pMesh->GetPartsAnimNo(enPARTS::ARM_R);
+
+	if (iAnimNoTmp < enAnimNoArmWeaponReloadStart ||
+		iAnimNoTmp > enAnimNoArmWeaponReloadEnd)
+	{
+		m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
+	}
 }
 
 void clsRobo::SetRotateCoreParts()
@@ -1563,7 +1575,10 @@ void clsRobo::AnimUpdateArmL()
 		break;
 	case enAnimNoArmWeaponHoldAct:
 
-		
+		if (IsNeedReload())
+		{
+			iChangeAnimNo = enAnimNoArmWeaponReloadStart;
+		}
 
 		break;
 	case enAnimNoArmWeaponShot:
@@ -1588,7 +1603,7 @@ void clsRobo::AnimUpdateArmL()
 		
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
 		{
-			iChangeAnimNo = enAnimNoArmWeaponReloadStart;
+			iChangeAnimNo = enAnimNoArmWeaponReload;
 		}
 		
 		break;
@@ -1653,7 +1668,10 @@ void clsRobo::AnimUpdateArmR()
 		break;
 	case enAnimNoArmWeaponHoldAct:
 
-
+		if (IsNeedReload())
+		{
+			iChangeAnimNo = enAnimNoArmWeaponReloadStart;
+		}
 
 		break;
 	case enAnimNoArmWeaponShot:
@@ -1670,11 +1688,6 @@ void clsRobo::AnimUpdateArmR()
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
 		{
 			iChangeAnimNo = enAnimNoArmWait;
-		}
-		
-		if (IsNeedReload())
-		{
-			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
 		}
 
 
@@ -1693,13 +1706,16 @@ void clsRobo::AnimUpdateArmR()
 		{
 			if (!IsNeedReload())
 			{
-				iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+				iChangeAnimNo = enAnimNoArmWeaponReloadEnd;
 			}
 		}
 
 		break;
 	case 	enAnimNoArmWeaponReloadEnd:
-
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
 		break;
 	case enAnimNoArmDown:
 
