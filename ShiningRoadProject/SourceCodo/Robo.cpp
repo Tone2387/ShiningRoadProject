@@ -107,9 +107,7 @@ void clsRobo::RoboInit(
 	//エネルギー最大値.
 	m_iEnelgy = m_iEnelgyMax = pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
 	//エネルギー回復量.
-	m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
-
-	//m_iEnelgyOutput = 250;
+	//m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
 
 	//浮遊時エネルギー回復量(通常エネルギーの半分).
 	m_iBoostFloatRecovery = m_iEnelgyOutput / iHulf;
@@ -120,6 +118,8 @@ void clsRobo::RoboInit(
 	m_iBoostTopSpeedFrame = g_iBoostRisingyTopSpeedFrame + (g_iWalkTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage);
 	//ブースト展開中のEN消費.
 	m_iBoostMoveCost = pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
+
+	m_iEnelgyOutput = m_iBoostMoveCost + m_iBoostMoveCost / iHulf;
 
 	//ブースト上昇速度.
 	m_fBoostRisingSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_V) * g_fDistanceReference;
@@ -1446,18 +1446,22 @@ void clsRobo::AnimUpdateLeg()
 		break;
 	}
 
-	//落ちてる間ブーストをふかしてないなら強制的に落下モーション.
-	if (!m_bGround && m_fFollPower < 0.0f)
+	if (iAnimNo != enAnimNoLegDown)
 	{
-		if (!m_bBoost)
+		//落ちてる間ブーストをふかしてないなら強制的に落下モーション.
+		if (!m_bGround && m_fFollPower < 0.0f)
 		{
-			if (!IsLegPartsAnimBoost() &&
-				m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpDown)
+			if (!m_bBoost)
 			{
-				iChangeAnimNo = enAnimNoLegJumpDown;
+				if (!IsLegPartsAnimBoost() &&
+					m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpDown)
+				{
+					iChangeAnimNo = enAnimNoLegJumpDown;
+				}
 			}
 		}
 	}
+	
 
 	//アニメーションの変更がある.
 	if (iChangeAnimNo != iAnimNo)
@@ -1947,6 +1951,11 @@ void clsRobo::Down()
 {
 	if (m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegDown)
 	{
+		if (m_bBoost)
+		{
+			Walk();
+		}
+
 		AnimChangeLeg(enAnimNoLegDown);
 	}
 
