@@ -250,7 +250,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	//ƒtƒ‰ƒbƒVƒ…‚·‚éuŠÔ.
 	if( static_cast<clsCAMERA_TITLE*>( m_wpCamera )->isFlash() ){
 		const float fNEW_ALPHA = 1.0f;
-		m_wpSound->PlayBGM( enBGM_MAOU3 );
+		m_wpSound->PlayBGM( enBGM_NOVA2 );
 		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
 		m_upFlash->SetAlpha( fNEW_ALPHA );
 		m_upLogo->SetAlpha( fNEW_ALPHA );
