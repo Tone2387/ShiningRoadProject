@@ -468,13 +468,6 @@ void clsASSEMBLE_UI::Create(
 	m_upFooter->SetPos( INIT_POS_FOOTER );
 	m_upFooter->SetAlpha( fFOOTER_ALPHA );
 
-//	//ヘッダー文字.
-//	assert( !m_upHeaderText );
-//	m_upHeaderText = make_unique< clsUiText >();
-//	m_upHeaderText->Create( pContext, WND_W, WND_H, fTEXT_SCALE_HEADER );
-//	m_upHeaderText->SetPos( vTEXT_POS_HEADER );
-//	m_upHeaderText->SetText( sHEADER_TEXT );
-
 
 	//ステータスが表示される窓.
 	assert( !m_upStatusWindow );
