@@ -309,6 +309,7 @@ void clsUiText::Render( const enPOS enPos )
 	mOtho._41	=-1.0f;
 	mOtho._42	= 1.0f;
 #endif
+
 	m_mProj = mOtho;
 
 	//プリミティブ・トポロジー.
@@ -339,10 +340,12 @@ void clsUiText::Render( const enPOS enPos )
 
 	SetBlend( true );
 
+
 	//これがないと平行移動の値がscaleに引っ張られる.
 	x /= m_fScale;
 	y /= m_fScale;
 
+#if 0
 	//文字数分ループの準備.
 	const char* tmpText = m_sText.c_str();
 	UINT textSize = strlen( tmpText );	//文字数.
@@ -370,6 +373,36 @@ void clsUiText::Render( const enPOS enPos )
 //		x += m_fKerning[index];
 		x += fWIDE_DIS;
 	}
+
+#else
+	//文字数分ループの準備.
+	UINT textSize = m_sText.size();	//文字数.
+
+	//右寄せなら左にずらす.
+	switch( enPos )
+	{
+	case enPOS::RIGHT:
+		x -= static_cast<float>( textSize ) * fRIGHT_RATE;
+		break;
+	case enPOS::MIDDLE:
+		const float fHARH = 0.5f;
+		x -= static_cast<float>( textSize ) * fRIGHT_RATE * fHARH;
+		break;
+	}
+
+
+	//文字数分ループ.
+	for( UINT i=0; i<m_sText.size(); i++ ){
+		char font = m_sText[i];
+		int index = font - 32;	//フォントインデックス作成.
+
+		//フォントレンダリング.
+		RenderFont( index, x, y, static_cast<float>( i ) );
+
+		x += fWIDE_DIS;
+	}
+#endif
+
 
 //	SetBlend( false );
 

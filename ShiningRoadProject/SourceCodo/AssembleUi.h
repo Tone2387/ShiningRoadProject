@@ -140,11 +140,10 @@ private:
 
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vecupArrow;//矢印.
 
-//	std::unique_ptr< clsUiText > m_upHeaderText;//ヘッダー文字.
 
 	std::vector< std::unique_ptr< clsUiText > > m_vecupStatusText;	//ステータス文字( 項目名 ).
 	std::vector< std::unique_ptr< clsUiText > > m_vecupStatusNumText;	//今見ているパーツのステータス値.
-	std::vector< std::unique_ptr< clsUiText > > m_vecupStatusNumTextNow;	//現在の装備のステータス値.
+	std::vector< std::unique_ptr< clsUiText > > m_vecupStatusNumTextNow;//現在の装備のステータス値.
 
 
 	std::unique_ptr< clsUiText > m_upPartsNameText;//パーツ名.
