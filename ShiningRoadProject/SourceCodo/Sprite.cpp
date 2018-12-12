@@ -367,6 +367,7 @@ HRESULT clsSprite::CreateMask( const char* sTexName )
 		}
 	}
 
+	return S_OK;
 }
 
 

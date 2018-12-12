@@ -258,13 +258,12 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	}
 
 
-	//メニューが開いているなら.
-	if( m_upMenuBox ){
-		MenuUpdate( enNextScene );
-		return;
-	}
-
 	if( isCanControl ){
+		//メニューが開いているなら.
+		if( m_upMenuBox ){
+			MenuUpdate( enNextScene );
+			return;
+		}
 
 		TextAlphaUpdate();
 
