@@ -24,6 +24,7 @@ namespace{
 //コンストラクタ.
 //============================================================
 clsSprite::clsSprite()
+	:m_fAlpha( 1.0f )
 {
 	//初期化.
 //	ZeroMemory( this, sizeof( clsSprite ) );
@@ -367,6 +368,7 @@ HRESULT clsSprite::CreateMask( const char* sTexName )
 		}
 	}
 
+	return S_OK;
 }
 
 
@@ -430,6 +432,7 @@ void clsSprite::Render(
 
 		//カラー.
 		cd.vColor = vColor;
+		cd.vColor.w = m_fAlpha;
 
 		//分割.
 		D3DXVECTOR4 vSplit( 1.0f, 1.0f, 1.0f, 1.0f );

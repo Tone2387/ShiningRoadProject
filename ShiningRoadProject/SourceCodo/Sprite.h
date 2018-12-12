@@ -57,6 +57,8 @@ public:
 	void SetScale( const D3DXVECTOR3& vScale )	{ m_vScale = vScale; };
 	void AddScale( const D3DXVECTOR3& vScale )	{ m_vScale += vScale; };
 
+	void SetAlpha( const float fAlpha )	{ m_fAlpha = fAlpha; };
+
 	void SetSplit( const D3DXVECTOR2& vSplit )	{ m_vSplit = vSplit; }
 
 
@@ -74,6 +76,8 @@ protected:
 	D3DXVECTOR3		m_vPos;	//ˆÊ’u.
 	D3DXVECTOR3		m_vRot;
 	D3DXVECTOR3		m_vScale;
+
+	float			m_fAlpha;
 
 	D3DXVECTOR2		m_vSplit;
 

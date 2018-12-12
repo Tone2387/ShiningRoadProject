@@ -161,7 +161,8 @@ void clsGAME::Render(
 	ID3D11DepthStencilView* const pBackBuffer_DSTexDSV ) const
 { 
 	//画面の初期化色.
-	const float fCleaColorArray[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+//	const float fCleaColorArray[4] = { 0.5f, 0.25f, 2.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
+	const float fCleaColorArray[4] = { 0.0f, 0.0f, 0.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
 
 	assert( m_wpContext );
 	//画面のクリア.

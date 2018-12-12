@@ -5,7 +5,7 @@
 
 
 //これがついていると、右スティックの信号をlz, lRzに出力するコントローラに対応する.
-#define RIGHT_STICK_SIGNAL_Z_
+//#define RIGHT_STICK_SIGNAL_Z_
 
 
 
