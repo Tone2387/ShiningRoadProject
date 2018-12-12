@@ -16,10 +16,12 @@ namespace{
 	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
 	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
 	const char* sTEX_NAME_SIDEINSIDE = "Data\\Stage\\Building\\BuildingTexSideMask0.png";
+	const char* sTEX_NAME_TOPINSIDE = "Data\\Image\\maskEmpty.png";
 #else//#ifdef _DEBUG
 	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
 	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
 	const char* sTEX_NAME_SIDEINSIDE = "Data\\Stage\\Building\\BuildingTexSideMask0.png";
+	const char* sTEX_NAME_TOPINSIDE = "Data\\Image\\maskEmpty.png";
 #endif//#ifdef _DEBUG
 
 	//ç≈í·å¿ÇÃî¬ÇÃêî.
@@ -57,8 +59,18 @@ clsBUILDING::clsBUILDING(
 	m_upSide = make_unique< clsSprite >();
 	m_upSide->Create( pDevice11, pContext11, sTEX_NAME_SIDE );
 
+	const float fINSIDESIDE_ALPHA = 0.5f;
 	m_upSideInside = make_unique< clsSprite >();
 	m_upSideInside->Create( pDevice11, pContext11, sTEX_NAME_SIDEINSIDE );
+	m_upSideInside->SetAlpha( fINSIDESIDE_ALPHA );
+
+	m_upTopInside = make_unique< clsSprite >();
+	m_upTopInside->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+	m_upTopInside->SetAlpha( fINSIDESIDE_ALPHA );
+
+	m_upBottomInside = make_unique< clsSprite >();
+	m_upBottomInside->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+
 }
 
 clsBUILDING::~clsBUILDING()
@@ -107,6 +119,16 @@ void clsBUILDING::UpdateTile()
 	//É^ÉCÉãÇï¿Ç◊ÇÈ.
 	SetTransformSide();
 
+	//ó†ñ ( è„ñ ÅAíÍñ  ).
+	const D3DXVECTOR3 vTOPINSIDE_ADD_ROT = { 0.0f, static_cast<float>( M_PI ), 0.0f };
+	m_upTopInside->SetPos( m_TopTrans.vPos );
+	m_upTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
+	m_upTopInside->SetScale( m_TopTrans.vScale );
+
+	const D3DXVECTOR3 vBOTTOMINSIDE_ADD_POS = { 0.0f, 0.01f, 0.0f };
+	m_upBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
+	m_upBottomInside->SetRot( m_TopTrans.vRot );
+	m_upBottomInside->SetScale( m_TopTrans.vScale );
 }
 
 void clsBUILDING::Render(
@@ -141,6 +163,9 @@ void clsBUILDING::RenderInside(
 		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
 		m_upSideInside->Render( mView, mProj, vEye );
 	}
+
+	m_upBottomInside->Render( mView, mProj, vEye );
+	m_upTopInside->Render( mView, mProj, vEye );
 }
 
 

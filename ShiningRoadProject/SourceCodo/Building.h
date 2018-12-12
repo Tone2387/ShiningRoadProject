@@ -21,9 +21,8 @@ public:
 		 clsDX9Mesh* const pModel );
 	~clsBUILDING();
 
+	//レイの当たり判定に必要.
 	void UpdateModel() const;
-
-
 	//毎フレーム使ってはいけない.
 	//TransFormを変更したときにだけ使う.
 	void UpdateTile();
@@ -132,7 +131,12 @@ private:
 	//テクスチャ.
 	std::unique_ptr< clsSprite > m_upTop;
 	std::unique_ptr< clsSprite > m_upSide;
-	std::unique_ptr< clsSprite > m_upSideInside;//裏面( カメラがビルの中に入った時の為 ).
+	//裏面( カメラがビルの中に入った時の為 ).
+	std::unique_ptr< clsSprite > m_upSideInside;
+	std::unique_ptr< clsSprite > m_upTopInside;
+	std::unique_ptr< clsSprite > m_upBottomInside;
+
+
 
 	ID3D11Device*  m_wpDevice;
 	ID3D11DeviceContext* m_wpContext;

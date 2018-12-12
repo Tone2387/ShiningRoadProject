@@ -299,10 +299,10 @@ float4 PS_Ita( VS_ItaOut input )	:	SV_Target
 	}
 
 
-	return color;//色を返す.
+//	return color;//色を返す.
+	return color * g_vcolor.a;//色を返す.
 
 //	float4 color = g_texColor.Sample( g_samLinear, input.Tex );
-//	return color * g_vcolor;//色を返す.
 }
 
 
