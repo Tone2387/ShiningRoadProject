@@ -11,13 +11,15 @@ using namespace std;
 namespace{
 	
 #ifdef _DEBUG
-//	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSideDebug.png";
 //	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTopDebug.png";
-	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
+//	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSideDebug.png";
 	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
+	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
+	const char* sTEX_NAME_SIDEINSIDE = "Data\\Stage\\Building\\BuildingTexSideMask0.png";
 #else//#ifdef _DEBUG
-	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
 	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
+	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
+	const char* sTEX_NAME_SIDEINSIDE = "Data\\Stage\\Building\\BuildingTexSideMask0.png";
 #endif//#ifdef _DEBUG
 
 	//ç≈í·å¿ÇÃî¬ÇÃêî.
@@ -54,6 +56,9 @@ clsBUILDING::clsBUILDING(
 
 	m_upSide = make_unique< clsSprite >();
 	m_upSide->Create( pDevice11, pContext11, sTEX_NAME_SIDE );
+
+	m_upSideInside = make_unique< clsSprite >();
+	m_upSideInside->Create( pDevice11, pContext11, sTEX_NAME_SIDEINSIDE );
 }
 
 clsBUILDING::~clsBUILDING()
@@ -120,6 +125,21 @@ void clsBUILDING::Render(
 		m_upSide->SetRot( m_SideTransArray[i].vRot );
 		m_upSide->SetScale( m_SideTransArray[i].vScale );
 		m_upSide->Render( mView, mProj, vEye, vColor );
+	}
+}
+
+void clsBUILDING::RenderInside(
+	const D3DXMATRIX &mView, 
+	const D3DXMATRIX &mProj,
+	const D3DXVECTOR3 &vLight, 
+	const D3DXVECTOR3 &vEye ) const
+{
+	const D3DXVECTOR3 vSIDEINSIDE_ADD_ROT = { 0.0f, static_cast<float>( M_PI ), 0.0f };
+	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
+		m_upSideInside->SetPos( m_SideTransArray[i].vPos );
+		m_upSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
+		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
+		m_upSideInside->Render( mView, mProj, vEye );
 	}
 }
 
@@ -198,6 +218,10 @@ void clsBUILDING::SetTileNumSide(
 		m_upSide->SetSplit( D3DXVECTOR2(
 			static_cast<float>( uiTmpCol ),
 			static_cast<float>( uiTmpRow ) ) );
+
+		m_upSideInside->SetSplit( D3DXVECTOR2(
+			static_cast<float>( uiTmpCol ),
+			static_cast<float>( uiTmpRow ) ) );
 	}
 	//========== ìåêº ==========//.
 	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM  ){
@@ -207,6 +231,10 @@ void clsBUILDING::SetTileNumSide(
 		if( !uiTmpRow )	uiTmpRow = iTEX_NUM_MIN; 
 
 		m_upSide->SetSplit( D3DXVECTOR2(
+			static_cast<float>( uiTmpCol ),
+			static_cast<float>( uiTmpRow ) ) );
+
+		m_upSideInside->SetSplit( D3DXVECTOR2(
 			static_cast<float>( uiTmpCol ),
 			static_cast<float>( uiTmpRow ) ) );
 	}

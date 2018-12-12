@@ -188,6 +188,9 @@ void clsStage::Render(
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
+	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
+		m_vpBuilding[i]->RenderInside( mView, mProj, vLight, vEye );
+	}
 
 
 //#ifdef _DEBUG

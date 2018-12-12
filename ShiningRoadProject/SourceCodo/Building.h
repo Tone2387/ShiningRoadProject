@@ -33,7 +33,15 @@ public:
 		const D3DXMATRIX &mProj,
 		const D3DXVECTOR3 &vLight, 
 		const D3DXVECTOR3 &vEye,
-		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f } ) const ;
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f } ) const;
+
+	void RenderInside(
+		const D3DXMATRIX &mView, 
+		const D3DXMATRIX &mProj,
+		const D3DXVECTOR3 &vLight, 
+		const D3DXVECTOR3 &vEye ) const;
+
+
 
 	//レイ用.
 	clsDX9Mesh* GetModelPtr() const {
@@ -121,9 +129,10 @@ private:
 
 	std::unique_ptr< clsObjStaticMesh > m_upBox;
 
-
+	//テクスチャ.
 	std::unique_ptr< clsSprite > m_upTop;
 	std::unique_ptr< clsSprite > m_upSide;
+	std::unique_ptr< clsSprite > m_upSideInside;//裏面( カメラがビルの中に入った時の為 ).
 
 	ID3D11Device*  m_wpDevice;
 	ID3D11DeviceContext* m_wpContext;
