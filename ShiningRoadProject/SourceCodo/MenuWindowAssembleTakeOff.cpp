@@ -1,6 +1,6 @@
 #include "MenuWindowAssembleTakeOff.h"
 #include "PtrGroup.h"
-#include "SoundManagerBase.h"
+#include "SoundManagerMenuWindow.h"
 #include "CFont.h"
 
 namespace{
@@ -12,10 +12,11 @@ namespace{
 
 
 clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::clsMENU_WINDOW_ASSEMBLE_TAKE_OFF(
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_ASSEMBLE_BASE( pPtrGroup, pParentWindow, pInformationVec )
+	:clsMENU_WINDOW_ASSEMBLE_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, "MenuWindowAssembleTakeOff" )
 {
 	//‚±‚Ì‘‹‚ÌƒTƒCƒY.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
@@ -39,7 +40,7 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 			m_iSelectNum = 0;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -49,7 +50,7 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 			m_iSelectNum = iSELECT_NUM_MAX;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -57,17 +58,17 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 
 	if( SelectEnter() ){
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
-			m_wpSound->PlaySE( enSE_ENTER );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GO_MISSION ];
 		}
 		else{
-			m_wpSound->PlaySE( enSE_EXIT );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 	}
 

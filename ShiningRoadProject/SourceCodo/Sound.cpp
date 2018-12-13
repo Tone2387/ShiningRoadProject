@@ -51,7 +51,7 @@ bool clsSound::Open( const LPCTSTR sFName, const char* const sAlias, const HWND 
 		return true;
 	}
 
-	ERR_MSG( m_sAlias, "開くの失敗" );
+	ERR_MSG( m_sAlias, sFName );//エイリアス名がかぶったり.
 	m_bOpend = false;
 	return false;
 }

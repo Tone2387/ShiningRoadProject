@@ -894,7 +894,7 @@ void clsSCENE_ASSEMBLE::AddRoboColor( const bool isIncrement )const
 void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 {
 	m_wpSound->PlaySE( enSE_MISSION_START );
-	m_wpSound->PlaySE( enSE_ENTER );
+//	m_wpSound->PlaySE( enSE_ENTER );
 
 	enNextScene = enSCENE::MISSION;
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
@@ -1022,16 +1022,16 @@ void clsSCENE_ASSEMBLE::AppearMessageBox(
 	m_enSelectMode = encMode;
 	if( encMode == clsASSEMBLE_UI::enSELECT_MODE::MISSION_START ){
 		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_TAKE_OFF >(
-			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
+			m_hWnd, m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
 	}
 	else if( encMode == clsASSEMBLE_UI::enSELECT_MODE::TITLE_BACK ){
 		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_BACK_TITLE >(
-			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
+			m_hWnd, m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
 	}
 	else if( encMode == clsASSEMBLE_UI::enSELECT_MODE::COLOR_CHANGE ){
 		m_enColorGageIndex = static_cast<clsROBO_STATUS::enCOLOR_GAGE>( 0 );
 		m_upMenu = make_unique< clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE >(
-			m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray, m_spAsmModel );
+			m_hWnd, m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray, m_spAsmModel );
 		m_upMenu->SetPos( vBOX_POS_COLOR );
 	}
 }

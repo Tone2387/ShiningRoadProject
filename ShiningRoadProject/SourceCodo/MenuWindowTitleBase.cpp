@@ -1,19 +1,18 @@
 #include "MenuWindowTitleBase.h"
-#include "SoundManagerTitle.h"
+#include "SoundManagerMenuWindow.h"
 
 namespace{
 	const float fBACK_ALPHA = 0.75f;
 }
 
 clsMENU_WINDOW_TITLE_BASE::clsMENU_WINDOW_TITLE_BASE(		
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
-	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_BASE( pPtrGroup, pParentWindow, pInformationVec, enSE_WIN_DISAPP )
+	std::vector<unsigned int>* const pInformationVec,
+	const char* sWindowName )
+	:clsMENU_WINDOW_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, sWindowName )
 {
-	assert( m_wpSound );
-	m_wpSound->PlaySE( enSE_WIN_APP );
-
 	SetAlphaBack( fBACK_ALPHA );
 }
 

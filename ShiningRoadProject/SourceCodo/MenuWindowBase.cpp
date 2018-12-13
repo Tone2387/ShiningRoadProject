@@ -2,7 +2,7 @@
 
 
 #include "PtrGroup.h"
-#include "SoundManagerBase.h"
+#include "SoundManagerMenuWindow.h"
 #include "CFont.h"
 #include "UiText.h"
 #include "DxInput.h"
@@ -21,30 +21,31 @@ namespace{
 }
 
 clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(		
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* pParentWindow,
 	std::vector<unsigned int>* const pInformationVec,
-	const int iCloseSeNum )
+	const char* sWindowName )
 		:clsWINDOW_BOX( pPtrGroup->GetDevice(), pPtrGroup->GetContext() )
+		,m_hWnd( hWnd )
 		,m_pPtrGroup( pPtrGroup )
 		,m_pInformationVec( pInformationVec )
 		,m_wpFont( pPtrGroup->GetFont() )
 		,m_wpXInput( pPtrGroup->GetXInput() )
 		,m_wpDInput( pPtrGroup->GetDxInput() )
-		,m_wpSound( pPtrGroup->GetSound() )
 		,m_pParentWindow( pParentWindow )
 		,m_pNextWindow( nullptr )
 		,m_isOperation( true )
 		,m_iSelectNum( 0 )
 		,m_uiInformation( 0 )
 		,m_isClose( false )
-		,m_iCLOSE_SE_NUM( iCloseSeNum )
 {
 	Operation( true );
 	if( pParentWindow ){
 		pParentWindow->Operation( false );
 	}
 
+	//カーソル画像作成.
 	const char sCURSOR_PATH[] = "Data\\Image\\MenuWindow\\Cursor.png";
 	const WHSIZE_FLOAT CURSOR_DISP = { 1.0f, 1.0f };
 	const float fCURSOR_ALPHA = 0.75f;
@@ -53,6 +54,11 @@ clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(
 	m_upCursor = make_unique< clsSprite2D >();
 	m_upCursor->Create( pPtrGroup->GetDevice(), pPtrGroup->GetContext(), sCURSOR_PATH, ss );
 	m_upCursor->SetAlpha( fCURSOR_ALPHA );
+
+
+	m_upSound = make_unique< clsSOUND_MANAGER_MENUWINDOW >( m_hWnd );
+	m_upSound->Create( sWindowName );
+	m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_APP );
 
 //	//継承先でやる.
 //	//窓を開く.
@@ -67,7 +73,6 @@ clsMENU_WINDOW_BASE::~clsMENU_WINDOW_BASE()
 	Operation( false );
 	m_pParentWindow = nullptr;
 
-	m_wpSound = nullptr;
 	m_wpDInput = nullptr;
 	m_wpXInput = nullptr;
 	m_wpFont = nullptr;
@@ -79,6 +84,20 @@ clsMENU_WINDOW_BASE::~clsMENU_WINDOW_BASE()
 //このメニューウィンドウのdeleteはこのif文の中で使いましょう.
 bool clsMENU_WINDOW_BASE::isDeletePermission()
 {
+	//ウィンドウが縮み切っている.
+	if( isMinimum() ){
+		//音も鳴り終わっている.
+		if( m_upSound->IsStoppedSE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_DISAPP ) ){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//最小か( 消す許可の出るサイズか ).
+bool clsMENU_WINDOW_BASE::isMinimum()
+{
 	const float fDELETE_SIZE = 0.1f;
 	if( m_vSize.x <= fDELETE_SIZE && m_vSize.y <= fDELETE_SIZE ){
 		return true;
@@ -86,7 +105,6 @@ bool clsMENU_WINDOW_BASE::isDeletePermission()
 
 	return false;
 }
-
 
 //継承先のコンストラクタで使う.
 void clsMENU_WINDOW_BASE::Open( const D3DXVECTOR2& vSize )
@@ -110,7 +128,8 @@ void clsMENU_WINDOW_BASE::Update()
 	if( m_pNextWindow ){
 		m_pNextWindow->Update();
 		//子供が閉じたら.
-		if( m_pNextWindow->GetSize().x <= 0.0f && m_pNextWindow->GetSize().y <= 0.0f ){
+//		if( m_pNextWindow->GetSize().x <= 0.0f && m_pNextWindow->GetSize().y <= 0.0f ){
+		if( m_pNextWindow->isDeletePermission() ){
 			delete m_pNextWindow;
 			m_pNextWindow = nullptr;
 			//閉じる予約をしていたら自分も閉じる.
@@ -155,8 +174,13 @@ void clsMENU_WINDOW_BASE::Render()
 	SetTextAlpha( fTEXT_ALPHA );
 
 	//文字とカーソル.
+	//変化中ではないこと.
 	if( isStopChange() ){
-		RenderProduct();
+		//大きい時( 小さくないとき ).
+		if( !isMinimum() ){
+			//継承先で定義.
+			RenderProduct();
+		}
 	}
 
 	//子供を描画.
@@ -199,7 +223,7 @@ void clsMENU_WINDOW_BASE::Close( const float fCloseSpdRate )
 		return;
 	}
 
-	m_wpSound->PlaySE( m_iCLOSE_SE_NUM );
+	m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_DISAPP );
 
 	SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 

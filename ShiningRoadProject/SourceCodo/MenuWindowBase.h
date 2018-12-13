@@ -7,7 +7,7 @@ class clsUiText;
 class clsFont;
 class clsXInput;
 class clsDxInput;
-class clsSOUND_MANAGER_BASE;
+class clsSOUND_MANAGER_MENUWINDOW;
 
 #include "WindowBox.h"
 
@@ -17,11 +17,12 @@ class clsMENU_WINDOW_BASE : public clsWINDOW_BOX
 {
 public:
 
-	clsMENU_WINDOW_BASE(		
+	clsMENU_WINDOW_BASE(	
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec,
-		const int iCloseSeNum );
+		const char* sWindowName );
 	virtual ~clsMENU_WINDOW_BASE();
 
 
@@ -77,6 +78,8 @@ protected:
 	bool SelectEnter();
 	bool SelectExit();
 
+protected:
+
 	//選択肢.
 	int m_iSelectNum;
 	//メニューを開いたものに返す値.
@@ -102,8 +105,10 @@ protected:
 	//子供のために必要.
 	clsPOINTER_GROUP*	m_pPtrGroup;
 
+	HWND m_hWnd;
+
 	//効果音.
-	clsSOUND_MANAGER_BASE* m_wpSound;
+	std::unique_ptr< clsSOUND_MANAGER_MENUWINDOW > m_upSound;
 
 private:
 	virtual void UpdateProduct() = 0;
@@ -114,6 +119,11 @@ private:
 
 	void SetColor( const D3DXVECTOR3& vColor ) final;
 	void SetTextAlpha( const float& fAlpha );
+
+	//最小か( 消す許可の出るサイズか ).
+	bool isMinimum();
+
+private:
 
 	//カーソル移動に必要.
 	struct HOLD_STATE
@@ -143,9 +153,6 @@ private:
 	
 	//この窓を閉じる予約.
 	bool m_isClose;
-
-	//閉じるSEの番号.
-	const int m_iCLOSE_SE_NUM;
 
 };
 

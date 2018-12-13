@@ -112,7 +112,9 @@ void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 	if( !m_wpBlackScreen->GetAlpha() ){
 		//” ‚ÌŠJ‚«Žn‚ß.
 		if(!m_upMenu ){
-			m_upMenu = make_unique<clsMENU_WINDOW_GAME_OVER_CONTINUE>( m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
+			m_upMenu = make_unique<clsMENU_WINDOW_GAME_OVER_CONTINUE>( 
+				m_hWnd, m_wpPtrGroup, nullptr, 
+				&m_vecuiInformationDataArray );
 		}
 	}
 

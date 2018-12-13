@@ -194,6 +194,7 @@
     <ClCompile Include="SourceCodo\SoundManagerBase.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerEnding.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerMenuWindow.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerMission.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerNoise.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerTitle.cpp" />
@@ -314,6 +315,7 @@
     <ClInclude Include="SourceCodo\SoundManagerBase.h" />
     <ClInclude Include="SourceCodo\SoundManagerEnding.h" />
     <ClInclude Include="SourceCodo\SoundManagerGameOver.h" />
+    <ClInclude Include="SourceCodo\SoundManagerMenuWindow.h" />
     <ClInclude Include="SourceCodo\SoundManagerMission.h" />
     <ClInclude Include="SourceCodo\SoundManagerNoise.h" />
     <ClInclude Include="SourceCodo\SoundManagerTitle.h" />

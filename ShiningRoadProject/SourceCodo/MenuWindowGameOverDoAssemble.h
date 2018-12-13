@@ -9,6 +9,7 @@ class clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE : public clsMENU_WINDOW_GAME_OVER_BAS
 {
 public:
 	clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE(
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec );

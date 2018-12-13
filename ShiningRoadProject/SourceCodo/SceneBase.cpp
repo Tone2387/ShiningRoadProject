@@ -57,6 +57,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpRoboStatus(			m_wpPtrGroup->GetRoboStatus() )
 	,m_wpBlackScreen(			m_wpPtrGroup->GetBlackScreen() )
 	,m_wpFont(					m_wpPtrGroup->GetFont() )
+	,m_hWnd(					nullptr )
 	,m_enNextScene(				enSCENE::NOTHING )
 	,m_encNoise(				encNOISE::NOTHING )
 	,m_wpViewPortUsing(			m_wpViewPort11 )
@@ -84,6 +85,8 @@ clsSCENE_BASE::~clsSCENE_BASE()
 
 	m_enNextScene = enSCENE::NOTHING;
 
+	m_hWnd = nullptr;
+
 	m_wpFont = nullptr;
 	m_wpBlackScreen = nullptr;
 	m_wpRoboStatus = nullptr;
@@ -104,6 +107,8 @@ clsSCENE_BASE::~clsSCENE_BASE()
 //シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
 void clsSCENE_BASE::Create( const HWND hWnd )
 {
+	m_hWnd = hWnd;
+
 	if( FAILED( CreateDepthStencilState() ) ){
 		assert( !"デプスステンシル作成失敗" );
 		return;
@@ -118,7 +123,7 @@ void clsSCENE_BASE::Create( const HWND hWnd )
 
 #ifdef RENDER_SCREEN_TEXTURE_
 	assert( !m_upScreenTexture );
-	m_upScreenTexture = make_unique<clsSCREEN_TEXTURE>( hWnd, m_wpContext );
+	m_upScreenTexture = make_unique<clsSCREEN_TEXTURE>( m_hWnd, m_wpContext );
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 

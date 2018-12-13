@@ -18,7 +18,7 @@ public:
 	virtual ~clsSOUND_MANAGER_BASE();
 
 	//new直後に一度だけ使用.
-	void Create();
+	void Create( const char* sAddAlias = "" );
 
 	//毎フレーム一回使う.
 	void UpdateLoop();
@@ -114,6 +114,9 @@ private:
 	std::vector<int> m_veciBgmNum;
 	std::vector<int> m_veciSeNum;
 
+
+	//エイリアス名追加( 主にメニューウィンドウ用 ).
+	std::string m_sAddAlias;
 
 
 	HWND m_hWnd;
