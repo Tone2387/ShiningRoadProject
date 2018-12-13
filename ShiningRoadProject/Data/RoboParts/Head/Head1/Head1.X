@@ -147,7 +147,7 @@ Material _01_-_Default {
  0.000000;0.000000;0.000000;;
 
  TextureFilename {
-  "robo1head.png";
+  "head01.png";
  }
 }
 
