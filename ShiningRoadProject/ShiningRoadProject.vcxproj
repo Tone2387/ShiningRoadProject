@@ -127,6 +127,8 @@
     <ClCompile Include="SourceCodo\AIRoboCommand.cpp" />
     <ClCompile Include="SourceCodo\AIRobo.cpp" />
     <ClCompile Include="SourceCodo\FriendFactory.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowMissionBase.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowMissionPause.cpp" />
     <ClCompile Include="SourceCodo\RoboStatusEnemy.cpp" />
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
@@ -243,6 +245,8 @@
     <ClInclude Include="SourceCodo\AIRoboCommand.h" />
     <ClInclude Include="SourceCodo\AIRobo.h" />
     <ClInclude Include="SourceCodo\FriendFactory.h" />
+    <ClInclude Include="SourceCodo\MenuWindowMissionBase.h" />
+    <ClInclude Include="SourceCodo\MenuWindowMissionPause.h" />
     <ClInclude Include="SourceCodo\RoboStatusEnemy.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
