@@ -101,8 +101,10 @@ clsSOUND_MANAGER_BASE::~clsSOUND_MANAGER_BASE()
 
 
 
-void clsSOUND_MANAGER_BASE::Create()
+void clsSOUND_MANAGER_BASE::Create( const char* sAddAlias )
 {
+	m_sAddAlias = sAddAlias;
+
 	//継承クラスで動く関数( m_sSceneNameを入れる ).
 	CreateSceneName();
 
@@ -115,6 +117,10 @@ void clsSOUND_MANAGER_BASE::Create()
 	CreateSound( m_BgmSet, m_dqisLoopBgm, BgmDataPath, sSUB_PASS_BGM, m_veciBgmNum );
 	//SE.
 	CreateSound( m_SeSet,  m_dqisLoopSe,  SeDataPath,  sSUB_PASS_SE,  m_veciSeNum );
+
+	m_sAddAlias.clear();
+	m_sAddAlias.shrink_to_fit();
+
 }
 
 //毎フレーム一回使う.
@@ -196,6 +202,8 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 			string tmpAlias = OprtStr.ConsolidatedNumber( vData[i].sAlias.c_str(), j );
 			//番号の後に挿入する.
 			tmpAlias += sCONSOLIDATE;
+			//エイリアス名追加( 主にメニューウィンドウ用 ).
+			tmpAlias += m_sAddAlias;
 
 			//作成.
 			assert( vpSound[i][j]->Open( vData[i].sPath.c_str(), tmpAlias.c_str(), m_hWnd ) );
@@ -211,9 +219,12 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 	vpSound.shrink_to_fit();
 	vData.clear();
 	vData.shrink_to_fit();
+
+
 	//ループフラグ作成.
 	dqbLoop.resize( vpSound.size(), bLOOP_INIT );
 	dqbLoop.shrink_to_fit();
+
 }
 
 //サウンドデータ作成.

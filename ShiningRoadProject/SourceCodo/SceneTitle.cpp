@@ -272,7 +272,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 			//メニューウィンドウ作成.
 			assert( !m_upMenuBox );
 			m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
-				m_wpPtrGroup, nullptr,
+				m_hWnd, m_wpPtrGroup, nullptr,
 				&m_vecuiInformationDataArray );
 			const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
 			m_upMenuBox->SetPos( vMENU_POS );

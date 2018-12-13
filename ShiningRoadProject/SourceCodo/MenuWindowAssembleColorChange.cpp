@@ -1,6 +1,6 @@
 #include "MenuWindowAssembleColorChange.h"
 #include "PtrGroup.h"
-#include "SoundManagerBase.h"
+#include "SoundManagerMenuWindow.h"
 #include "CFont.h"
 
 #include "AssembleModel.h"
@@ -15,11 +15,12 @@ namespace{
 }
 
 clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE(
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec,
 	clsASSEMBLE_MODEL* const pAssembleModel )
-	:clsMENU_WINDOW_ASSEMBLE_BASE( pPtrGroup, pParentWindow, pInformationVec )
+	:clsMENU_WINDOW_ASSEMBLE_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, "MenuWindowAssembleColorChange" )
 	,m_wpAssembleModel( pAssembleModel )
 {
 	//‚±‚Ì‘‹‚ÌƒTƒCƒY.
@@ -82,7 +83,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 			m_iSelectNum = 0;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 	else if( SelectDown( false ) ){
@@ -91,7 +92,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 			m_iSelectNum = enSELECT_NUM_size - 1;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -148,13 +149,13 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 
 	if( SelectEnter() ){
 		if( m_iSelectNum == enSELECT_NUM_BACK ){
-			m_wpSound->PlaySE( enSE_ENTER );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 	}
 

@@ -1,6 +1,6 @@
 #include "MenuWindowGameOverDoAssemble.h"
 #include "PtrGroup.h"
-#include "SoundManagerBase.h"
+#include "SoundManagerMenuWindow.h"
 #include "CFont.h"
 //#include "UiText.h"
 
@@ -14,10 +14,11 @@ namespace{
 
 
 clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE(
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_GAME_OVER_BASE( pPtrGroup, pParentWindow, pInformationVec )
+	:clsMENU_WINDOW_GAME_OVER_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, "MenuWindowGameoverDoAssemble" )
 {
 	//この窓のサイズ.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 400.0f };
@@ -39,7 +40,7 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::UpdateProduct()
 			m_iSelectNum = 0;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -49,13 +50,12 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::UpdateProduct()
 			m_iSelectNum = iSELECT_NUM_MAX;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
 	if( SelectEnter() ){
-		m_wpSound->PlaySE( enSE_MISSION_START );
-		m_wpSound->PlaySE( enSE_ENTER );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 		//アセンブルしなおす.
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_ASSEMBLE ];
@@ -67,7 +67,7 @@ void clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::UpdateProduct()
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		Close();
 	}
 

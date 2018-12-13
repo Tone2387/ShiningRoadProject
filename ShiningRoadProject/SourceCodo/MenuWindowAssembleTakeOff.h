@@ -9,6 +9,7 @@ class clsMENU_WINDOW_ASSEMBLE_TAKE_OFF : public clsMENU_WINDOW_ASSEMBLE_BASE
 {
 public:
 	clsMENU_WINDOW_ASSEMBLE_TAKE_OFF(
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec );

@@ -182,6 +182,9 @@ protected:
 	clsBLACK_SCREEN*		m_wpBlackScreen;
 	clsFont*				m_wpFont;
 
+
+	HWND m_hWnd;
+
 private:
 
 	HRESULT CreateDepthStencilState();

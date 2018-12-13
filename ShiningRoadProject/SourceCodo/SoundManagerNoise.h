@@ -3,7 +3,9 @@
 
 #include "SoundManagerBase.h"
 
+
 //ノイズの効果音を扱う( シーンは関係ない ).
+//ファクトリの作成リストに追加しない.
 class clsSOUND_MANAGER_NOISE : public clsSOUND_MANAGER_BASE
 {
 public:
