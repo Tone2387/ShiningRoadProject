@@ -8,6 +8,8 @@
 namespace{
 
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 400.0f };
 
 }
 
@@ -18,11 +20,12 @@ clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE::clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_GAME_OVER_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, "MenuWindowGameoverDoAssemble" )
+	:clsMENU_WINDOW_GAME_OVER_BASE( 
+		hWnd, pPtrGroup, pParentWindow, 
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
+		"MenuWindowGameoverDoAssemble" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 400.0f };
-	Open( vTHIS_WINDOW_SIZE );
 
 }
 

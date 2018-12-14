@@ -8,6 +8,8 @@
 namespace{
 
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
 
 }
 
@@ -18,12 +20,14 @@ clsMENU_WINDOW_TITLE_START_OR_END::clsMENU_WINDOW_TITLE_START_OR_END(
 	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* pParentWindow,
-		std::vector<unsigned int>* const pInformationVec )
-		:clsMENU_WINDOW_TITLE_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, "MenuWindowTitleStartOrEnd" )
+	std::vector<unsigned int>* const pInformationVec )
+	:clsMENU_WINDOW_TITLE_BASE( 
+		hWnd, pPtrGroup, 
+		pParentWindow, 
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
+		"MenuWindowTitleStartOrEnd" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
-	Open( vTHIS_WINDOW_SIZE );
 }
 
 clsMENU_WINDOW_TITLE_START_OR_END::~clsMENU_WINDOW_TITLE_START_OR_END()

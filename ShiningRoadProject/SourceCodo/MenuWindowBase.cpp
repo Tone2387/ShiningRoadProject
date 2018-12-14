@@ -23,11 +23,12 @@ namespace{
 }
 
 clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(		
-	const HWND hWnd,
-	clsPOINTER_GROUP* const pPtrGroup,
-	clsMENU_WINDOW_BASE* pParentWindow,
+	const HWND						hWnd,
+	clsPOINTER_GROUP* const			pPtrGroup,
+	clsMENU_WINDOW_BASE* const		pParentWindow,
 	std::vector<unsigned int>* const pInformationVec,
-	const char* sWindowName )
+	const D3DXVECTOR2&				vSize,
+	const char*						sWindowName )
 		:clsWINDOW_BOX( pPtrGroup->GetDevice(), pPtrGroup->GetContext() )
 		,m_hWnd( hWnd )
 		,m_pPtrGroup( pPtrGroup )
@@ -62,9 +63,8 @@ clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(
 	m_upSound->Create( sWindowName );
 	m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_APP );
 
-//	//åpè≥êÊÇ≈Ç‚ÇÈ.
-//	//ëãÇäJÇ≠.
-//	Open( D3DXVECTOR2 vWINDOW_SIZE );
+	//ëãÇäJÇ≠.
+	Open( vSize );
 }
 
 

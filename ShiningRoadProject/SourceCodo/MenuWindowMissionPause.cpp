@@ -8,6 +8,8 @@ namespace{
 
 	//画面上に出てるメニューののYESの選択番号.
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
 
 }
 
@@ -19,12 +21,11 @@ clsMENU_WINDOW_MISSION_PAUSE::clsMENU_WINDOW_MISSION_PAUSE(
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
 	:clsMENU_WINDOW_MISSION_BASE( 
-		hWnd, pPtrGroup, pParentWindow, pInformationVec, 
+		hWnd, pPtrGroup, pParentWindow, 
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
 		"MenuWindowAssembleBackTitle" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
-	Open( vTHIS_WINDOW_SIZE );
 }
 
 clsMENU_WINDOW_MISSION_PAUSE::~clsMENU_WINDOW_MISSION_PAUSE()

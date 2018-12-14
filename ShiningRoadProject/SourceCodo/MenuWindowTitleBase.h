@@ -12,6 +12,7 @@ public:
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec,
+		const D3DXVECTOR2& vSize,
 		const char* sWindowName );
 
 	virtual ~clsMENU_WINDOW_TITLE_BASE();

@@ -6,12 +6,13 @@ namespace{
 }
 
 clsMENU_WINDOW_TITLE_BASE::clsMENU_WINDOW_TITLE_BASE(		
-	const HWND hWnd,
-	clsPOINTER_GROUP* const pPtrGroup,
-	clsMENU_WINDOW_BASE* const pParentWindow,
+	const HWND						hWnd,
+	clsPOINTER_GROUP* const			pPtrGroup,
+	clsMENU_WINDOW_BASE* const		pParentWindow,
 	std::vector<unsigned int>* const pInformationVec,
-	const char* sWindowName )
-	:clsMENU_WINDOW_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, sWindowName )
+	const D3DXVECTOR2&				vSize,
+	const char*						sWindowName )
+	:clsMENU_WINDOW_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, vSize, sWindowName )
 {
 	SetAlphaBack( fBACK_ALPHA );
 }
