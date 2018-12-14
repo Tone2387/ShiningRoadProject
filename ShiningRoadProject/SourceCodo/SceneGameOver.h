@@ -77,23 +77,14 @@ private:
 
 
 
-
-
-
-
 	//メッセボックス.
-	std::unique_ptr< clsMENU_WINDOW_GAME_OVER_CONTINUE > m_upMenu;
-	
+	std::unique_ptr< clsMENU_WINDOW_GAME_OVER_CONTINUE > m_upMenu;	
 	//メニューから帰ってくる情報との照合用.
 	std::vector<unsigned int> m_vecuiInformationDataArray;
 
 
-
-
 	//黒背景.
 	std::unique_ptr< clsSprite2D > m_upBlackBack;
-
-
 
 
 };
