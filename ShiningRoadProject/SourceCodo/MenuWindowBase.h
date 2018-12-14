@@ -12,6 +12,8 @@ class clsSOUND_MANAGER_MENUWINDOW;
 #include "WindowBox.h"
 
 
+
+
 //窓メニューの基底クラス.
 class clsMENU_WINDOW_BASE : public clsWINDOW_BOX
 {
@@ -25,11 +27,15 @@ public:
 		const char* sWindowName );
 	virtual ~clsMENU_WINDOW_BASE();
 
+	//シーンクラスと情報のやり取りをする変数の型及び作成関数.
+	using INFORMATION_MENU_DATA_ARRAY = std::vector<unsigned int>;
+	//実働関数はこの基底クラス内のprotected:内にあり、継承先の各シーンBaseクラスで、下のコメントの形でラップする.
+	//その内容は、参照するInformationのファイルパスを指定するだけ.
+//	static INFORMATION_MENU_DATA_ARRAY CreateInformation( 
+//		INFORMATION_MENU_DATA_ARRAY* const InformationDataArray,
+//		const int iInformationSize );
 
-protected:
 
-	//継承先のコンストラクタで使う.
-	void Open( const D3DXVECTOR2& vSize );
 
 public:
 
@@ -60,8 +66,12 @@ public:
 	}
 
 
-
 protected:
+
+	//===== 継承先のコンストラクタで使う =====//.
+	void Open( const D3DXVECTOR2& vSize );
+	//===== 継承先のコンストラクタで使う =====//.
+
 
 	//次の窓を吐き出す( 成功したならtrue ).
 	bool CreateNextWindow( clsMENU_WINDOW_BASE** ppOutNextWindow );
@@ -77,6 +87,12 @@ protected:
 	bool SelectLeft	( bool isWithStick = true );
 	bool SelectEnter();
 	bool SelectExit();
+
+	//シーンクラスと情報のやり取りをする変数の型及び作成関数の実働関数.
+	static INFORMATION_MENU_DATA_ARRAY CreateInformationProduct( 
+		INFORMATION_MENU_DATA_ARRAY* const InformationDataArray,
+		const int iInformationSize,
+		const char* sInformationDataPath );
 
 protected:
 

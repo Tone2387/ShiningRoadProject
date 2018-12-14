@@ -85,7 +85,7 @@ private:
 	}	m_encTextAlphaMode;
 
 
-	std::unique_ptr< clsMENU_WINDOW_TITLE_START_OR_END > m_upMenuBox;
+	std::unique_ptr< clsMENU_WINDOW_TITLE_START_OR_END > m_upMenu;
 
 	//ƒƒjƒ…[‚©‚çó‚¯æ‚Á‚½î•ñ‚ğÆ‡‚·‚é.
 	std::vector<unsigned int> m_vecuiInformationDataArray;

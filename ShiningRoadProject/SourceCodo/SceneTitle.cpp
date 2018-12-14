@@ -8,6 +8,7 @@
 #include "File.h"
 
 
+
 using namespace std;
 
 
@@ -112,7 +113,7 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upBack = make_unique< clsStage >( m_wpPtrGroup );
 	m_upBack->SetScale( fBACK_SCALE );
 
-	//ごまかしフラッシュ.
+	//フラッシュ.
 	assert( !m_upFlash );
 	ss.Disp = { WND_W, WND_H };
 	m_upFlash = make_unique< clsSprite2D >();
@@ -120,28 +121,9 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upFlash->SetAlpha( 0.0f );
 
 
-	//照合用情報の作成の為のファイルデータ取得.
-	const char sTITLE_INFORMATION_DATA_PATH[] = "Data\\FileData\\Tahara\\TitleMenuInformation.csv";
-	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
-	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
-	//照合用情報の作成.
-	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size );
-	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
-		const int iCOL = 0;
-		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
-		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
-	}
-	upFile.reset();
+	//メニューの為のデータ取得&作成.
+	clsMENU_WINDOW_TITLE_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
 
-//	//箱.
-//	assert( !m_upMenuBox );
-//	m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
-//		m_wpPtrGroup, nullptr );
-
-//	//カメラ.
-//	assert( m_wpCamera );
-//	m_wpCamera->SetPos( { 0.0f, 100.0f, -80.0f } );
-//	m_wpCamera->SetLookPos( { 0.0f, 45.0f, 0.0f } );
 
 }
 
@@ -260,7 +242,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 
 	if( isCanControl ){
 		//メニューが開いているなら.
-		if( m_upMenuBox ){
+		if( m_upMenu ){
 			MenuUpdate( enNextScene );
 			return;
 		}
@@ -270,12 +252,12 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 		//音声とシーン移動.
 		if( isPressEnter() ){
 			//メニューウィンドウ作成.
-			assert( !m_upMenuBox );
-			m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
+			assert( !m_upMenu );
+			m_upMenu = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
 				m_hWnd, m_wpPtrGroup, nullptr,
 				&m_vecuiInformationDataArray );
 			const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
-			m_upMenuBox->SetPos( vMENU_POS );
+			m_upMenu->SetPos( vMENU_POS );
 		}
 	}
 
@@ -329,9 +311,9 @@ void clsSCENE_TITLE::TextAlphaUpdate()
 //メニューの動き.
 void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 {
-	m_upMenuBox->Update();
+	m_upMenu->Update();
 	//メニューが何か返してくる.
-	unsigned int uiReceiveInformation = m_upMenuBox->GetInformation();
+	unsigned int uiReceiveInformation = m_upMenu->GetInformation();
 	if( uiReceiveInformation )
 	{
 		char cInformationIndex = -1;
@@ -353,7 +335,7 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 			break;
 
 		case enINFORMATION_INDEX_CLOSE_MENU:
-			m_upMenuBox->Close();
+			m_upMenu->Close();
 			break;
 
 		default:
@@ -363,8 +345,8 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 	}
 
 	//( 見た目が )消えたら( メモリからも )消える.
-	if( m_upMenuBox->isDeletePermission() ){
-		m_upMenuBox.reset( nullptr );
+	if( m_upMenu->isDeletePermission() ){
+		m_upMenu.reset( nullptr );
 	}
 
 }
@@ -386,8 +368,8 @@ void clsSCENE_TITLE::RenderUi()
 	m_upLogo->Render();
 
 
-	if( m_upMenuBox ){
-		m_upMenuBox->Render();
+	if( m_upMenu ){
+		m_upMenu->Render();
 	}
 	else{
 		assert( m_wpFont );

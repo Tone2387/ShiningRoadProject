@@ -20,3 +20,17 @@ clsMENU_WINDOW_GAME_OVER_BASE::clsMENU_WINDOW_GAME_OVER_BASE(
 clsMENU_WINDOW_GAME_OVER_BASE::~clsMENU_WINDOW_GAME_OVER_BASE()
 {
 }
+
+
+//シーンクラスと情報のやり取りをするデータ作成関数( のラップ関数 ).
+clsMENU_WINDOW_BASE::INFORMATION_MENU_DATA_ARRAY clsMENU_WINDOW_GAME_OVER_BASE::CreateInformation( 
+	INFORMATION_MENU_DATA_ARRAY* const InformationDataArray,
+	const int iInformationSize )
+{
+	const char sInformationDataPath[] = "Data\\FileData\\Tahara\\GameOverMenuInformation.csv";
+
+	return clsMENU_WINDOW_BASE::CreateInformationProduct(
+		InformationDataArray,
+		iInformationSize,
+		sInformationDataPath );
+}
