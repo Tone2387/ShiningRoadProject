@@ -35,6 +35,23 @@ private:
 
 private:
 
+	//âπÇÃà¯êî.
+	enum enBGM : int
+	{
+		enBGM_AMACHA0 = 0,
+		enBGM_HART2,
+		enBGM_NOVA1,
+	};
+
+	enum enSE : int
+	{
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+		enSE_MISSION_START,
+		enSE_WIN_APP,
+		enSE_WIN_DISAPP,
+	};
 
 	struct MESSAGE_TEXT_STATE
 	{

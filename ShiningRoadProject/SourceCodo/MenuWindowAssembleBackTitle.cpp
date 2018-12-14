@@ -58,17 +58,17 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
 
 	if( SelectEnter() ){
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
-			m_upSound->PlaySE( enSE_ENTER );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GO_TITLE ];
 		}
 		else{
-			m_upSound->PlaySE( enSE_EXIT );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_upSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 	}
 
