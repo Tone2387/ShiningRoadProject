@@ -306,6 +306,7 @@
     <ClInclude Include="SourceCodo\SceneGameOver.h" />
     <ClInclude Include="SourceCodo\SceneGameOverInformation.h" />
     <ClInclude Include="SourceCodo\SceneMission.h" />
+    <ClInclude Include="SourceCodo\SceneMissionInformation.h" />
     <ClInclude Include="SourceCodo\SceneTitle.h" />
     <ClInclude Include="SourceCodo\SceneTitleInformation.h" />
     <ClInclude Include="SourceCodo\ScreenTexture.h" />

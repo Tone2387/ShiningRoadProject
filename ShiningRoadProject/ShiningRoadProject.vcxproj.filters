@@ -761,6 +761,9 @@
     <ClInclude Include="SourceCodo\MenuWindowMissionPause.h">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClInclude>
+    <ClInclude Include="SourceCodo\SceneMissionInformation.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\DebugText.hlsl">

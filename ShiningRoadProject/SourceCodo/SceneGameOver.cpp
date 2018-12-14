@@ -78,17 +78,9 @@ void clsSCENE_GAME_OVER::CreateProduct()
 	}
 	upFile->Close();
 
-	//照合用情報の作成の為のファイルデータ取得.
-	const char sTITLE_INFORMATION_DATA_PATH[] = "Data\\FileData\\Tahara\\GameOverMenuInformation.csv";
-	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
-	//照合用情報の作成.
-	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size, 0 );
-	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
-		const int iCOL = 0;
-		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
-		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
-	}
-	upFile.reset();
+
+	//メニューの為のデータ取得&作成.
+	clsMENU_WINDOW_GAME_OVER_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
 
 
 	//ゆっくり暗明転.

@@ -42,6 +42,26 @@ private:
 
 private:
 
+	//音の引数.
+	enum enBGM : int
+	{
+		enBGM_MAOU1 = 0,
+		enBGM_MAOU3,
+		enBGM_AMACHA0,
+		enBGM_NOVA2,
+	};
+
+	enum enSE : int
+	{
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+
+		enSE_BOMBER,
+
+		enSE_WIN_APP,
+		enSE_WIN_DISAPP
+	};
 
 	//タイトルでズンとただずむロボット君.
 	std::unique_ptr< clsASSEMBLE_MODEL >	m_upRoboModel;
@@ -65,7 +85,7 @@ private:
 	}	m_encTextAlphaMode;
 
 
-	std::unique_ptr< clsMENU_WINDOW_TITLE_START_OR_END > m_upMenuBox;
+	std::unique_ptr< clsMENU_WINDOW_TITLE_START_OR_END > m_upMenu;
 
 	//メニューから受け取った情報を照合する.
 	std::vector<unsigned int> m_vecuiInformationDataArray;

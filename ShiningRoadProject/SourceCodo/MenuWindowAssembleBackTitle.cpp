@@ -6,6 +6,8 @@
 namespace{
 
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
 
 }
 
@@ -16,11 +18,12 @@ clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::clsMENU_WINDOW_ASSEMBLE_BACK_TITLE(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_ASSEMBLE_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, "MenuWindowAssembleBackTitle" )
+	:clsMENU_WINDOW_ASSEMBLE_BASE( 
+	hWnd, pPtrGroup, pParentWindow, 
+	pInformationVec, 
+	vTHIS_WINDOW_SIZE,
+	"MenuWindowAssembleBackTitle" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
-	Open( vTHIS_WINDOW_SIZE );
 }
 
 clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::~clsMENU_WINDOW_ASSEMBLE_BACK_TITLE()
@@ -58,17 +61,17 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
 
 	if( SelectEnter() ){
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
-			m_upSound->PlaySE( enSE_ENTER );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GO_TITLE ];
 		}
 		else{
-			m_upSound->PlaySE( enSE_EXIT );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_upSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 	}
 

@@ -12,6 +12,9 @@ namespace{
 
 	const WHSIZE_FLOAT BONE_SIZE = { fCOLOR_GAGE_SIZE_BASE * 15.0f, fCOLOR_GAGE_SIZE_BASE };
 	const WHSIZE_FLOAT GAGE_SIZE = { fCOLOR_GAGE_SIZE_BASE,			fCOLOR_GAGE_SIZE_BASE };
+
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 678.0f, 500.0f };
 }
 
 clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE(
@@ -20,12 +23,13 @@ clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE(
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec,
 	clsASSEMBLE_MODEL* const pAssembleModel )
-	:clsMENU_WINDOW_ASSEMBLE_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, "MenuWindowAssembleColorChange" )
+	:clsMENU_WINDOW_ASSEMBLE_BASE( 
+		hWnd, pPtrGroup, pParentWindow, 
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
+		"MenuWindowAssembleColorChange" )
 	,m_wpAssembleModel( pAssembleModel )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 678.0f, 500.0f };
-	Open( vTHIS_WINDOW_SIZE );
 
 	//骨.
 	m_vecupColorBone.resize( clsROBO_STATUS::enCOLOR_GAGE_size );

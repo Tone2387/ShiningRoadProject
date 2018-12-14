@@ -1,6 +1,12 @@
 #include "SceneEnding.h"
 #include "File.h"
 
+//#include "MenuWindowMissionPause.h"
+//std::unique_ptr< clsMENU_WINDOW_MISSION_PAUSE > g_upMissionMenu;
+//std::vector<unsigned int> g_vecuiInformationDataArray;
+//	clsMENU_WINDOW_MISSION_PAUSE::CreateInformation( &g_vecuiInformationDataArray, enINFORMATION_INDEX_size );
+//	g_upMissionMenu = make_unique< clsMENU_WINDOW_MISSION_PAUSE >(
+//		m_hWnd, m_wpPtrGroup, nullptr, &g_vecuiInformationDataArray );
 
 using namespace std;
 
@@ -78,6 +84,8 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	g_upTex->Create( m_wpDevice, m_wpContext, "Data\\Image\\EndingUi\\sima.png", ss );
 	g_upTex->SetPos( { 0.0f, 0.0f, 0.0f } );
 #endif//#ifdef CENTER_SPRITE_RENDER
+
+
 }
 
 clsSCENE_ENDING::~clsSCENE_ENDING()
@@ -164,6 +172,7 @@ void clsSCENE_ENDING::CreateProduct()
 
 void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 {
+
 	//ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚Ä‚¢‚é‚Æ‰Á‘¬‚³‚¹‚é.
 	bool isAccel = false;
 	if( isPressButtonAccel() ){
@@ -302,6 +311,7 @@ void clsSCENE_ENDING::RenderUi()
 
 	assert( m_upLogo );
 	m_upLogo->Render();
+
 
 #ifdef CENTER_SPRITE_RENDER
 	g_upTex->Render();

@@ -8,6 +8,8 @@
 #include "DxInput.h"
 #include "CXInput.h"
 
+#include "File.h"
+
 
 using namespace std;
 #define DINPUT_ENTER enPKey_01
@@ -21,11 +23,12 @@ namespace{
 }
 
 clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(		
-	const HWND hWnd,
-	clsPOINTER_GROUP* const pPtrGroup,
-	clsMENU_WINDOW_BASE* pParentWindow,
+	const HWND						hWnd,
+	clsPOINTER_GROUP* const			pPtrGroup,
+	clsMENU_WINDOW_BASE* const		pParentWindow,
 	std::vector<unsigned int>* const pInformationVec,
-	const char* sWindowName )
+	const D3DXVECTOR2&				vSize,
+	const char*						sWindowName )
 		:clsWINDOW_BOX( pPtrGroup->GetDevice(), pPtrGroup->GetContext() )
 		,m_hWnd( hWnd )
 		,m_pPtrGroup( pPtrGroup )
@@ -60,9 +63,8 @@ clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(
 	m_upSound->Create( sWindowName );
 	m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_APP );
 
-//	//継承先でやる.
-//	//窓を開く.
-//	Open( D3DXVECTOR2 vWINDOW_SIZE );
+	//窓を開く.
+	Open( vSize );
 }
 
 
@@ -79,6 +81,27 @@ clsMENU_WINDOW_BASE::~clsMENU_WINDOW_BASE()
 	m_pInformationVec = nullptr;
 	m_pPtrGroup = nullptr;
 }
+
+clsMENU_WINDOW_BASE::INFORMATION_MENU_DATA_ARRAY clsMENU_WINDOW_BASE::CreateInformationProduct( 
+	INFORMATION_MENU_DATA_ARRAY* const InformationDataArray,
+	const int iInformationSize,
+	const char* sInformationDataPath )
+{
+	//照合用情報の作成の為のファイルデータ取得.
+	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
+	upFile->Open( sInformationDataPath );
+	//照合用情報の作成.
+	InformationDataArray->resize( iInformationSize );
+	for( char i=0; i<iInformationSize; i++ ){
+		const int iCOL = 0;
+		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
+		( *InformationDataArray )[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
+	}
+
+	return *InformationDataArray;
+}
+
+
 
 
 //このメニューウィンドウのdeleteはこのif文の中で使いましょう.

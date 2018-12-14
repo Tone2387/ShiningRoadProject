@@ -5,7 +5,10 @@
 
 namespace{
 
+	//画面上に出てるメニューののYESの選択番号.
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
 
 }
 
@@ -16,11 +19,12 @@ clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::clsMENU_WINDOW_ASSEMBLE_TAKE_OFF(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_ASSEMBLE_BASE( hWnd, pPtrGroup, pParentWindow, pInformationVec, "MenuWindowAssembleTakeOff" )
+	:clsMENU_WINDOW_ASSEMBLE_BASE( 
+		hWnd, pPtrGroup, pParentWindow, 
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
+		"MenuWindowAssembleTakeOff" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
-	Open( vTHIS_WINDOW_SIZE );
 }
 
 clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::~clsMENU_WINDOW_ASSEMBLE_TAKE_OFF()
@@ -34,6 +38,7 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 {
 	const int iSELECT_NUM_MAX = 1;//選択肢の最大は何?.
 
+	//選択肢左右.
 	if( SelectLeft( false ) ){
 		m_iSelectNum --;
 		if( m_iSelectNum < 0 ){
@@ -43,7 +48,6 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
-
 	if( SelectRight( false ) ){
 		m_iSelectNum ++;
 		if( m_iSelectNum > iSELECT_NUM_MAX ){

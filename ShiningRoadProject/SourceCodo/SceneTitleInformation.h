@@ -2,26 +2,6 @@
 #define SCENE_TITLE_INFORMATION_H_
 
 
-//‰¹‚Ìˆø”.
-enum enBGM : int
-{
-	enBGM_MAOU1 = 0,
-	enBGM_MAOU3,
-	enBGM_AMACHA0,
-	enBGM_NOVA2,
-};
-
-enum enSE : int
-{
-	enSE_CURSOL_MOVE = 0,
-	enSE_ENTER,
-	enSE_EXIT,
-
-	enSE_BOMBER,
-
-	enSE_WIN_APP,
-	enSE_WIN_DISAPP
-};
 
 //ƒƒjƒ…[‚©‚çŽó‚¯Žæ‚Á‚½î•ñ‚ðÆ‡‚·‚é.
 enum enINFORMATION_INDEX : char
