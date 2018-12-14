@@ -2,7 +2,7 @@
 #define MENU_WINDOW_MISSION_BASE_H_
 
 #include "MenuWindowBase.h"
-
+#include "SceneMissionInformation.h"
 
 
 class clsMENU_WINDOW_MISSION_BASE : public clsMENU_WINDOW_BASE
