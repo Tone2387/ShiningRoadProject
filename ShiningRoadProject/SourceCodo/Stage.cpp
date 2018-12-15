@@ -188,9 +188,6 @@ void clsStage::Render(
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
-	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
-		m_vpBuilding[i]->RenderInside( mView, mProj, vLight, vEye );
-	}
 
 
 //#ifdef _DEBUG
@@ -203,6 +200,16 @@ void clsStage::Render(
 	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColor.z += fSTATIC_MODEL_COLOR_RGB_ADD;
 	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColor.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
 //#endif//#ifdef _DEBUG
+
+}
+
+void clsStage::RenderInside(
+	const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
+	const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye )
+{
+	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
+		m_vpBuilding[i]->RenderInside( mView, mProj, vLight, vEye );
+	}
 
 }
 

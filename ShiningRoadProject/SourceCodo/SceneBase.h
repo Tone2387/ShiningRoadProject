@@ -32,9 +32,11 @@ class clsSCREEN_TEXTURE;
 #include "UiText.h"
 
 //#include "KeyInput.h"
+#define XINPUT_ENTER ( XINPUT_B )
+#define XINPUT_EXIT  ( XINPUT_A )
 
-#define DINPUT_ENTER enPKey_01
-#define DINPUT_EXIT	 enPKey_02
+#define DINPUT_ENTER ( enPKey_01 )
+#define DINPUT_EXIT	 ( enPKey_02 )
 
 //================================//
 //========== 基底クラス ==========//
@@ -81,6 +83,7 @@ protected:
 	bool isPressDown()	const;
 	bool isPressEnter()	const;
 	bool isPressExit()	const;
+	bool isPressStart() const;
 
 	//押しっぱなしで動く( trueならスティック有効 ).
 	bool isPressHoldRight( bool isWithStick = true );

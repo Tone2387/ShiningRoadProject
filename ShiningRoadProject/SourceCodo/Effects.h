@@ -113,12 +113,12 @@ public:
 	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) const 
 	{
 		return m_pManager->Play(
-			m_vecpEffect[EfcType], vPos.x, vPos.y, vPos.z );
+			m_vecpEffect[ EfcType ], vPos.x, vPos.y, vPos.z );
 	};
 	//ˆê’â~.
-	void Paused( const ::Effekseer::Handle handle, const bool bFlag ) const 
+	void Paused( const ::Effekseer::Handle handle, const bool isStop ) const 
 	{
-		m_pManager->SetPaused( handle, bFlag );	//bFlag:true = ˆê’â~.
+		m_pManager->SetPaused( handle, isStop );	//bFlag:true = ˆê’â~.
 	}
 	//’â~.
 	void Stop( const ::Effekseer::Handle handle ) const 

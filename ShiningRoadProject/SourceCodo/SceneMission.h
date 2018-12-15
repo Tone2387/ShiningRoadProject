@@ -1,6 +1,13 @@
 #pragma once
 
+
 #include "SceneBase.h"
+
+#ifdef Tahara
+class clsMENU_WINDOW_MISSION_BASE;
+#endif//#ifdef Tahara
+
+
 #include "CameraMission.h"
 
 #include"Player.h"
@@ -9,6 +16,7 @@
 #include"Sprite.h"
 #include"EnemyFactory.h"
 #include"FriendFactory.h"
+
 
 //================================//
 //========== ミッション中クラス ==========//
@@ -141,5 +149,14 @@ private:
 	//リソース.
 	//エフェクト.
 	//サウンド.
+#ifdef Tahara
+	//メニューの動き.
+	void MenuUpdate( enSCENE &enNextScene );
+	//ポーズメニュー.
+	std::unique_ptr< clsMENU_WINDOW_MISSION_BASE > m_upMenu;
+	//メニューから受け取った情報を照合する.
+	std::vector<unsigned int> m_vecuiInformationDataArray;
+	std::unique_ptr< clsSprite2D > m_upPauseDisplayBlack;
+#endif//#ifdef Tahara
 
 };

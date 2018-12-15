@@ -743,21 +743,13 @@ bool clsSCENE_ASSEMBLE::isPressButtonY()
 }
 bool clsSCENE_ASSEMBLE::isPressButtonStart()
 {
-	if( m_wpXInput->isConnected() )
-	{
-		if( m_wpXInput->isPressEnter( XINPUT_START ) ){
-			return true;
-		}
-	}
-	else{
-		if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_START ) ){
-			return true;
-		}
-	}
-
-	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
+	if( isPressStart() ){
 		return true;
 	}
+	else if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_START ) ){
+		return true;
+	}
+
 
 	return false;
 }
