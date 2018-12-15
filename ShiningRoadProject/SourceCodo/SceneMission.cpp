@@ -352,7 +352,9 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 			m_upMenu = make_unique< clsMENU_WINDOW_MISSION_PAUSE >(
 				m_hWnd, m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
 			//エフェクトの一時停止.
-			//アニメーションの一時停止.
+			m_wpEffects->PausedAll( true );
+			//========== アニメーションの一時停止はここ ==========//.
+
 		}
 	}
 #endif//#ifdef Tahara
@@ -893,7 +895,10 @@ void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
 		m_upMenu.reset( nullptr );
 		//消し終わったら.
 		if( !m_upMenu ){
-			//エフェクトとモデルのアニメーションの一時停止の解除.
+			//エフェクトの一時停止の解除.
+			m_wpEffects->PausedAll( false );
+			//========== モデルのアニメーションの一時停止の解除 ==========//.
+
 		}
 	}
 }

@@ -235,7 +235,7 @@ HRESULT clsEffects::LoadData()
 //	描画.
 //==================================================
 void clsEffects::Render( 
-	const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const D3DXVECTOR3& vEye ) const
+	const D3DXMATRIX& mView, const D3DXMATRIX& mProj, const D3DXVECTOR3& vEye )
 {
 	//ビュー行列設定.
 	SetViewMatrix( mView );
@@ -257,6 +257,15 @@ void clsEffects::Render(
 
 	//エフェクトの描画終了処理を行う.
 	m_pRender->EndRendering();
+
+	//再生エフェクトのハンドルのリストの更新.
+	for( unsigned int i=0; i<m_vecHandle.size(); i++ )
+	{
+		//止まっているならリストから消す.
+		if( !isPlay( m_vecHandle[i] ) ){
+			m_vecHandle.erase( m_vecHandle.begin() + i-- );
+		}
+	}
 
 }
 
