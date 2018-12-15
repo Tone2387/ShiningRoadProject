@@ -1,13 +1,15 @@
 #include "MenuWindowMissionPause.h"
 #include "SoundManagerMenuWindow.h"
+#include "PtrGroup.h"
 #include "CFont.h"
 
-
+using namespace std;
 
 namespace{
 
 	//画面上に出てるメニューののYESの選択番号.
 	const int iSELECT_NUM_YES_INDEX = 0;
+	const int iSELECT_NUM_NO_INDEX = 1;
 	//この窓のサイズ.
 	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
 
@@ -26,6 +28,7 @@ clsMENU_WINDOW_MISSION_PAUSE::clsMENU_WINDOW_MISSION_PAUSE(
 		vTHIS_WINDOW_SIZE,
 		"MenuWindowAssembleBackTitle" )
 {
+	m_iSelectNum = iSELECT_NUM_NO_INDEX;
 }
 
 clsMENU_WINDOW_MISSION_PAUSE::~clsMENU_WINDOW_MISSION_PAUSE()
@@ -64,6 +67,7 @@ void clsMENU_WINDOW_MISSION_PAUSE::UpdateProduct()
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_MISSION_FAILED ];
+			Operation( false );
 		}
 		//ポーズ解除.
 		else{
@@ -102,7 +106,7 @@ void clsMENU_WINDOW_MISSION_PAUSE::RenderProduct()
 
 
 	//「ミッションを放棄しますか?」.
-	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 70.0f, 70.0f };
+	const D3DXVECTOR2 vPOS_CONTINUE_LOCAL = { 60.0f, 70.0f };
 	const D3DXVECTOR3 vPOS_CONTINUE = SetPosFromWindow( vPOS_CONTINUE_LOCAL );
 	const float fSCALE_CONTINUE = 36;
 	iTextRow = iQUESTION_INDEX;

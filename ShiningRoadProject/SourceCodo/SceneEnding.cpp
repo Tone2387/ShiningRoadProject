@@ -343,7 +343,7 @@ bool clsSCENE_ENDING::isPressButtonAccel()
 {
 	if( m_wpXInput->isConnected() )
 	{
-		if( m_wpXInput->isPressStay( XINPUT_B ) ){
+		if( m_wpXInput->isPressStay( XINPUT_ENTER ) ){
 			return true;
 		}
 	}
@@ -365,7 +365,7 @@ bool clsSCENE_ENDING::isPressButtonEnd()
 
 	if( m_wpXInput->isConnected() )
 	{
-		if( m_wpXInput->isPressEnter( XINPUT_B ) ){
+		if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
 			return true;
 		}
 	}

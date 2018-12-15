@@ -1,4 +1,10 @@
 #include "SceneMission.h"
+#ifdef Tahara
+#include "MenuWindowMissionPause.h"
+#include "SceneMissionInformation.h"
+#endif//#ifdef Tahara
+
+using namespace std;
 
 static const int g_iStartCnt = 180;
 
@@ -46,6 +52,30 @@ void clsSCENE_MISSION::CreateProduct()
 	{
 		m_wpSound->PlayBGM(0);
 	}
+
+#ifdef Tahara
+	//メニュー用日本語.
+	const char* sFONT_TEXT_PATH_MISSION = "Data\\Font\\Text\\TextMission.csv";
+	m_wpFont->Create( sFONT_TEXT_PATH_MISSION );
+	//メニューの為のデータ取得&作成.
+	clsMENU_WINDOW_MISSION_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
+
+	//メニューを開いた時の暗転画像.
+	m_upPauseDisplayBlack = make_unique< clsSprite2D >();
+	const char* sPAUSE_DISPLAY_BLACK_PATH = "Data\\Image\\BlackScreen.png";
+	SPRITE_STATE ss;
+	ss.Disp = { 1.0f, 1.0f };
+	m_upPauseDisplayBlack->Create(
+		m_wpDevice, m_wpContext,
+		sPAUSE_DISPLAY_BLACK_PATH,
+		ss );
+	m_upPauseDisplayBlack->SetPos( { 0.0f, 0.0f, 0.0f } );
+	const float fBLACK_ALPHA = 0.5f;
+	m_upPauseDisplayBlack->SetAlpha( fBLACK_ALPHA );
+	const D3DXVECTOR3 vBLACK_SCALE = { WND_W, WND_H, 0.0f };
+	m_upPauseDisplayBlack->SetScale( vBLACK_SCALE );
+#endif//#ifdef Tahara
+
 }
 
 void clsSCENE_MISSION::CreateUI()
@@ -244,6 +274,14 @@ void clsSCENE_MISSION::CreateUI()
 //毎フレーム通る処理.
 void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 {
+#ifdef Tahara
+	if( m_upMenu ){
+		MenuUpdate( enNextScene );
+		return;
+	}
+#endif//#ifdef Tahara
+
+
 	//nullならassert.
 	assert(m_pPlayer);
 	//m_pPlayer->Action(m_pStage);
@@ -297,10 +335,27 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 		enNextScene = enSCENE::ENDING;
 	}
 
-	if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp)
+	else if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp)
 	{
 		enNextScene = enSCENE::GAMEOVER;
 	}
+#ifdef Tahara
+	//シーン移動暗転中はポーズさせないためのelse.
+	else if( !m_upMenu ){
+		//開始しない内にポーズはさせない.
+		if( !m_bStartFlg ){
+			return;
+		}
+		//スタートボタンで.
+		if( isPressStart() ){
+			//メニューを開く.
+			m_upMenu = make_unique< clsMENU_WINDOW_MISSION_PAUSE >(
+				m_hWnd, m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
+			//エフェクトの一時停止.
+			//アニメーションの一時停止.
+		}
+	}
+#endif//#ifdef Tahara
 }
 
 //描画.
@@ -326,7 +381,14 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 void clsSCENE_MISSION::RenderUi()
 {
-	SetDepth(false);	//Zテスト:OFF.
+
+#ifdef Tahara
+	//ビルの裏側描画.
+	SetDepth( true );	//Zテスト:OFF.
+	m_pStage->RenderInside( m_mView, m_mProj, m_vLight, m_wpCamera->GetPos() );
+	SetDepth( false );	//Zテスト:OFF.
+#endif//#ifdef Tahara
+
 	//活動限界時間.
 	int iTmp = m_pPlayer->m_iActivityLimitTime;
 	int iMin = iTmp / 3600;
@@ -497,7 +559,16 @@ void clsSCENE_MISSION::RenderUi()
 		
 	}
 	
-	SetDepth(true);
+
+#ifdef Tahara
+	if( m_upMenu ){
+		if( m_upPauseDisplayBlack ){
+			m_upPauseDisplayBlack->Render();
+		}
+		m_upMenu->Render();
+	}
+#endif//#ifdef Tahara
+
 }
 
 bool clsSCENE_MISSION::AllEnemyDead()
@@ -778,3 +849,52 @@ void clsSCENE_MISSION::GameStart()
 		m_v_pEnemys[i]->ActStart();
 	}
 }
+
+
+
+
+
+
+
+#ifdef Tahara
+//メニューの動き.
+void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
+{
+	m_upMenu->Update();
+	//メニューが何か返してくる.
+	unsigned int uiReceiveInformation = m_upMenu->GetInformation();
+	if( uiReceiveInformation )
+	{
+		char cInformationIndex = -1;
+		for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
+			//有用な情報と合致したなら.
+			if( uiReceiveInformation == m_vecuiInformationDataArray[i] ){
+				cInformationIndex = i;
+			}
+		}
+		switch( cInformationIndex )
+		{
+		case enINFORMATION_INDEX_MISSION_FAILED:
+			enNextScene = enSCENE::GAMEOVER;
+			break;
+
+		case enINFORMATION_INDEX_WINDOW_CLOSE:
+			m_upMenu->Close();
+			break;
+
+		default:
+			assert( !"不正な情報が返されました" );
+			break;
+		}
+	}
+
+	//( 見た目が )消えたら( メモリからも )消える.
+	if( m_upMenu->isDeletePermission() ){
+		m_upMenu.reset( nullptr );
+		//消し終わったら.
+		if( !m_upMenu ){
+			//エフェクトとモデルのアニメーションの一時停止の解除.
+		}
+	}
+}
+#endif//#ifdef Tahara

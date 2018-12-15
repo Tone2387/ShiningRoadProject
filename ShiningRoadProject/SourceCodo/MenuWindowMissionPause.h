@@ -22,6 +22,9 @@ private:
 		clsMENU_WINDOW_BASE** ppOutNextWindow, 
 		clsMENU_WINDOW_BASE* const pParentWindow ) override { return false; };
 
+private:
+
+
 };
 
 

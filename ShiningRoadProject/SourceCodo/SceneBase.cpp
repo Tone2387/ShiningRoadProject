@@ -4,8 +4,6 @@
 
 using namespace std;
 
-#define XINPUT_ENTER ( XINPUT_START | XINPUT_B )
-#define XINPUT_EXIT  ( XINPUT_A )
 
 namespace{
 
@@ -410,6 +408,20 @@ bool clsSCENE_BASE::isPressExit()const
 	}
 
 	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
+		return true;
+	}
+
+	return false;
+}
+bool clsSCENE_BASE::isPressStart()const
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_START ) ){
+			return true;
+		}
+	}
+	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
 		return true;
 	}
 

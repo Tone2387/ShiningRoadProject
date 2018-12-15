@@ -20,6 +20,11 @@ public:
 		const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
 		const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye );
 
+	//ビルの内側描画.
+	void RenderInside(				
+		const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
+		const D3DXVECTOR3 &vLight, const D3DXVECTOR3 &vEye );
+
 	std::vector<clsDX9Mesh*> GetStageMeshArray();
 	
 	//指定したオブジェク位置回転拡縮を更新.
