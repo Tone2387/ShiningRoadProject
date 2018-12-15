@@ -97,6 +97,8 @@ public:
 #endif//EFFECTS_CLASS_SINGLETON
 	~clsEffects();
 
+
+
 	//構築関数.
 	HRESULT Create( 
 		ID3D11Device* const pDevice,
@@ -106,19 +108,30 @@ public:
 	void Render( 
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
-		const D3DXVECTOR3& vEye ) const;
+		const D3DXVECTOR3& vEye );
 
 
 	//再生関数.
-	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) const 
+	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) 
 	{
-		return m_pManager->Play(
+		::Effekseer::Handle hAdd = m_pManager->Play(
 			m_vecpEffect[ EfcType ], vPos.x, vPos.y, vPos.z );
+
+		m_vecHandle.push_back( hAdd );
+
+		return hAdd;
 	};
 	//一時停止.
 	void Paused( const ::Effekseer::Handle handle, const bool isStop ) const 
 	{
 		m_pManager->SetPaused( handle, isStop );	//bFlag:true = 一時停止.
+	}
+	//全て一時停止.
+	void PausedAll( const bool isStop ) const 
+	{
+		for( auto& Handle_i : m_vecHandle ){
+			m_pManager->SetPaused( Handle_i, isStop );	//bFlag:true = 一時停止.
+		}
 	}
 	//停止.
 	void Stop( const ::Effekseer::Handle handle ) const 
@@ -236,6 +249,10 @@ private:
 
 	//エフェクトの種類ごとに必要.
 	std::vector< ::Effekseer::Effect* >	m_vecpEffect;
+
+	//一時停止用.
+	std::vector< ::Effekseer::Handle >  m_vecHandle;
+
 
 
 };
