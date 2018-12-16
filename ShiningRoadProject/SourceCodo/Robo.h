@@ -56,6 +56,8 @@ public:
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
 		m_pMesh->UpDate();
+
+		PlayBoostEfc();
 	}
 
 	void SetRotateHeadParts();

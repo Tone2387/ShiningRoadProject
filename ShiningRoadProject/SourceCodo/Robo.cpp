@@ -138,8 +138,9 @@ void clsRobo::RoboInit(
 	m_iQuickBoostEnelgyCost = pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);
 	m_iQuickBoostTopSpeedTime = pRobo->GetRoboState(clsROBO_STATUS::QUICK_TIME);
 
-	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
-	m_iQuickTrunTopSpeedTime = m_iQuickBoostTopSpeedTime;
+	//m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
+	m_fQuickTrunSpeedMax = m_fRotSpeedMax;
+	//m_iQuickTrunTopSpeedTime = m_iQuickBoostTopSpeedTime;
 
 	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
 	//m_iActivityLimitTime = pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME) * static_cast<int>(g_fFPS);
@@ -394,7 +395,7 @@ void clsRobo::QuickTurn()
 				{
 					m_iQuickInterbal = g_iQuickInterbal;
 					m_fRotSpeed = m_fQuickTrunSpeedMax;
-					m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
+					//m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
 					SetRotDeceleSpeed(m_iQuickInterbal);
 					//クイックブースト.
 					//m_wpSound->PlaySE(0);
@@ -406,7 +407,7 @@ void clsRobo::QuickTurn()
 
 void clsRobo::UpdateProduct(clsStage* pStage)
 {
-	PlayBoostEfc();
+	m_vMoveDirforBoost = GetVec3Dir(-m_Trans.fYaw, m_vAcceleDir);
 	clsCharactor::UpdateProduct(pStage);
 
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
@@ -415,12 +416,12 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 		m_iQuickBoostDecStartTime--;
 	}
 
-	if (m_iQuickTrunDecStartTime > 0)//クイックターン.
+	/*if (m_iQuickTrunDecStartTime > 0)//クイックターン.
 	{
 		m_fRotSpeed = m_fQuickTrunSpeedMax;
 		SetRotDir(m_fQuickTrunDir);
 		m_iQuickTrunDecStartTime--;
-	}
+	}*/
 
 	if (IsMoveControl())
 	{
@@ -818,8 +819,7 @@ bool clsRobo::IsRWeaponLock()
 
 void clsRobo::PlayBoostEfc()
 {
-	m_vMoveDirforBoost = GetVec3Dir(-m_Trans.fYaw, m_vAcceleDir);
-	m_vMoveDirforBoost.z = +m_vMoveDirforBoost.z;
+	
 
 	PlayFrontBoostEfc();
 	PlayRightBoostEfc();

@@ -320,6 +320,8 @@ const D3DXVECTOR3 clsMISSION_MODEL::GetRotfromVec(
 	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
 	//	vRot.x = atanf( vVec.y );//このゲームの仕様なら正解( 2018/06/19(火)現在 )( つまりゴリ押し ).
 	vRot.x = atan2f(-vVecLocal.y, -vVecLocal.z);//.
+	vRot.x = (vVecLocal.y * cosf(vRot.x)) - (vVecLocal.z * sinf(vRot.x));
+	vRot.x = asin(vRot.x);
 	vRot.y = atan2f(vVecWorld.x, vVecWorld.z);//( 何故、マイナスがかかっていたり、X,Zが入れ替わっているのかといえば、0度でモデルがこっちを向くから ).
 
 	vRot.x = GuardDirOver(vRot.x);
