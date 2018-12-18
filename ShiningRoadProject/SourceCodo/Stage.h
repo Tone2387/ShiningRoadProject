@@ -31,9 +31,20 @@ public:
 	void SetStageObjTransform(const unsigned int uiObjNo);
 
 	//光るところの色.
-	void SetColor( const D3DXVECTOR4& vColor ){ m_vLightColor = vColor; }
+	void SetColorTarget( const D3DXVECTOR4& vColor ){ 
+		m_vLightColorTarget = m_vLightColor = vColor;
+		m_LightLightingFlg.Init();
+	}
 
 	void SetScale( const float fScale );
+
+private:
+
+	//光の明滅.
+	void UpdateLight();
+
+	//光の描く数値.
+	void Lighting( float* const fpColor, const float fTarget, bool* const ispFlg );
 
 private:
 
@@ -61,5 +72,26 @@ private:
 	std::vector< std::unique_ptr< clsBUILDING > > m_vpBuilding;
 
 	D3DXVECTOR4 m_vLightColor;
+	D3DXVECTOR4 m_vLightColorTarget;
+
+	//光のフラグ.
+	struct LIGHT_LIGHTING_FLG
+	{
+		//true:明るくなる.
+		bool isLightingR;
+		bool isLightingG;
+		bool isLightingB;
+
+		LIGHT_LIGHTING_FLG()
+		{
+			Init();
+		}
+		void LIGHT_LIGHTING_FLG::Init()
+		{
+			isLightingR = false;
+			isLightingG = false;
+			isLightingB = false;
+		}
+	}	m_LightLightingFlg;
 
 };

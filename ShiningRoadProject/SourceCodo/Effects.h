@@ -105,14 +105,14 @@ public:
 		ID3D11DeviceContext* const pContext );
 
 	//•`‰æ.
-	void Render( 
+	void Render(
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vEye );
 
 
 	//Ä¶ŠÖ”.
-	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) 
+	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos )
 	{
 		::Effekseer::Handle hAdd = m_pManager->Play(
 			m_vecpEffect[ EfcType ], vPos.x, vPos.y, vPos.z );
@@ -130,7 +130,7 @@ public:
 	void PausedAll( const bool isStop ) const 
 	{
 		for( auto& Handle_i : m_vecHandle ){
-			m_pManager->SetPaused( Handle_i, isStop );	//bFlag:true = ˆê’â~.
+			m_pManager->SetPaused( Handle_i, isStop );	//isStop:true = ˆê’â~.
 		}
 	}
 	//’â~.

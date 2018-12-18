@@ -26,10 +26,12 @@ namespace{
 	const char cINDEX_SCALE_Z = 8;
 
 	const double dDOOR_ANIM_SPD = 0.05;
+
 }
 
 clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
-	:m_vLightColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
+	:m_vLightColorTarget( { 1.0f, 1.0f, 1.0f, 1.0f } )
+	,m_vLightColor( m_vLightColorTarget )
 {
 	clsFILE file;
 	file.Open( sSTAGE_BASE_DATA_PATH );
@@ -189,16 +191,18 @@ void clsStage::Render(
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
 
+	//ピカピカ光るよ.
+	UpdateLight();
 
 //#ifdef _DEBUG
 	//色.
 	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
-	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColor.x += fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'V' ) & 0x8000 )m_vLightColor.x -= fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'G' ) & 0x8000 )m_vLightColor.y += fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColor.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColor.z += fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColor.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColorTarget.x += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'V' ) & 0x8000 )m_vLightColorTarget.x -= fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'G' ) & 0x8000 )m_vLightColorTarget.y += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColorTarget.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColorTarget.z += fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColorTarget.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
 //#endif//#ifdef _DEBUG
 
 }
@@ -234,6 +238,38 @@ void clsStage::SetScale( const float fScale )
 		m_vpBuilding[i]->SetPos( m_vpBuilding[i]->GetPos() * fScale );
 		m_vpBuilding[i]->SetScale( m_vpBuilding[i]->GetScale() * fScale );
 	}
+}
+
+//光の明滅.
+void clsStage::UpdateLight()
+{
+	Lighting( &m_vLightColor.x, m_vLightColorTarget.x, &m_LightLightingFlg.isLightingR );
+	Lighting( &m_vLightColor.y, m_vLightColorTarget.y, &m_LightLightingFlg.isLightingG );
+	Lighting( &m_vLightColor.z, m_vLightColorTarget.z, &m_LightLightingFlg.isLightingB );
+
+}
+
+//光の描く数値.
+void clsStage::Lighting( float* const fpColor, const float fTarget, bool* const ispFlg )
+{
+	const float fLIGHT_OFFSET = 0.25f;
+	const float fLIGHT_ADD = fLIGHT_OFFSET * fLIGHT_OFFSET * fLIGHT_OFFSET;
+
+	//明るくなる.
+	if( *ispFlg ){
+		*fpColor += fLIGHT_ADD;
+		if( *fpColor >= fTarget + fLIGHT_OFFSET ){
+			*ispFlg = !*ispFlg;
+		}
+	}
+	//暗くなる.
+	else{
+		*fpColor -= fLIGHT_ADD;
+		if( *fpColor <= fTarget - fLIGHT_OFFSET ){
+			*ispFlg = !*ispFlg;
+		}
+	}
+
 }
 
 
