@@ -28,6 +28,9 @@ private:
 	bool isPressButtonAccel();
 	bool isPressButtonEnd();
 
+	//テキストの明滅.
+	void TextAlphaUpdate();
+
 
 	struct TEXT_STATE
 	{
@@ -65,8 +68,15 @@ private:
 	//スタッフロール透過文字の同時表示数.
 	unsigned int m_uiRenderTextNum;
 
-//	std::unique_ptr< clsStage >	m_upStage;//テスト用.
-
+	//ボタンを押してねに必要.
+	enum class encTEXT_ALPHA_MODE : UCHAR
+	{
+		PLUS = 0,
+		NEXT_MINUS,//マイナスの準備.
+		MINUS,
+		NEXT_PLUS
+	}	m_encTextAlphaMode;
+	int	m_iTextAlphaStopFrame;
 
 
 

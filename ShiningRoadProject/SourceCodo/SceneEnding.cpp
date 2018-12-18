@@ -64,6 +64,11 @@ namespace{
 	{ STAFF_ROLL_PROGRAMR, STAFF_ROLL_GRAPHICR, STAFF_ROLL_CONTROLLER, STAFF_ROLL_SPECIAL };
 
 	//const float fSCROLL_END_POS_Y = 1;
+
+	//ここから何個とんでスクロール.
+	const int iSTAFF_ROLL_JUMP_TO_SCROLL = 2;
+	//最後に表示する行数.
+	const int iSTAFF_ROLL_LAST_LINE = 1;
 }
 
 //================================//
@@ -76,6 +81,7 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	,m_isScroll( false )
 	,m_isCanGoTitle( false )
 	,m_uiRenderTextNum( 0 )
+	,m_iTextAlphaStopFrame( 0 )
 {
 #ifdef CENTER_SPRITE_RENDER	
 	SPRITE_STATE ss;
@@ -128,7 +134,7 @@ void clsSCENE_ENDING::CreateProduct()
 	}
 
 	//最後に表示する番号.
-	m_iGoScrollIndex = iAlphaSize - 1;
+	m_iGoScrollIndex = iAlphaSize - iSTAFF_ROLL_JUMP_TO_SCROLL;
 
 	//透過.
 	m_vecupTextStateAlpha.resize( iAlphaSize );
@@ -201,7 +207,10 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 		}
 
 		//終わり.
-		if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() ){
+		if( m_uiSpriteCnt >= m_vecupTextStateAlpha.size() ){
+			//ボタンのアナウンスを行う.
+			int iii=0;
+			TextAlphaUpdate();
 		}
 		//スクロール.
 		else if( m_isScroll ){
@@ -248,9 +257,10 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 				if( m_isSpriteAlphaAppear ){
 					m_isSpriteAlphaAppear = false;
 					//終われるようにする( サンキューの描画完了 ).
-					if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() + iOFFSET_END ){ 
+					if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() + iOFFSET_END - iSTAFF_ROLL_LAST_LINE ){//iSTAFF_ROLL_LAST_LINE 
 						m_isSpriteAlphaAppear = true;
 						m_isCanGoTitle = true;
+						m_uiSpriteCnt += iSTAFF_ROLL_JUMP_TO_SCROLL;
 					}
 				}
 				//消し終わったので次は出す.
@@ -401,6 +411,53 @@ bool clsSCENE_ENDING::AddAlphaState(
 	}
 	return false;
 }
+
+
+//テキストの明滅.
+void clsSCENE_ENDING::TextAlphaUpdate()
+{
+	const float fADD_ALPHA = 0.125f * 0.125f;
+	const float fALPHA_MIN = 0.25f;
+	const float fALPHA_MAX = 1.0f;
+	const int iTEXT_ALPHA_STOP_FRAME_PLUS = 60;
+	const int iTEXT_ALPHA_STOP_FRAME_MINUS = 0;
+	const int iANIM_TEXT_INDEX = m_vecupTextStateAlpha.size() - 1;//Bボタン押してねの行数.
+
+	switch( m_encTextAlphaMode )
+	{
+	case encTEXT_ALPHA_MODE::PLUS:
+		m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha += fADD_ALPHA;
+		if( m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha > fALPHA_MAX ){
+			m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha = fALPHA_MAX;
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::NEXT_MINUS;
+		}
+		break;
+	case encTEXT_ALPHA_MODE::NEXT_MINUS:
+		m_iTextAlphaStopFrame ++;
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME_PLUS ){
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::MINUS;
+			m_iTextAlphaStopFrame = 0;
+		}
+		break;
+	case encTEXT_ALPHA_MODE::MINUS:
+			m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha -= fADD_ALPHA;
+			if( m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha < fALPHA_MIN ){
+				m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha = fALPHA_MIN;
+				m_encTextAlphaMode = encTEXT_ALPHA_MODE::NEXT_PLUS;
+			}
+		break;
+	case encTEXT_ALPHA_MODE::NEXT_PLUS:
+		m_iTextAlphaStopFrame ++;
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME_MINUS ){
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::PLUS;
+			m_iTextAlphaStopFrame = 0;
+		}
+		break;
+	}
+}
+
+
+
 
 //============================ デバッグテキスト ===========================//
 #ifdef _DEBUG
