@@ -25,6 +25,9 @@ namespace{
 	const char cINDEX_SCALE_Y = 7;
 	const char cINDEX_SCALE_Z = 8;
 
+	const D3DXVECTOR4 vLIGHT_COLOR_BLUE = D3DXVECTOR4( 0.0f, 1.0f, 1.0f, 1.0f );
+	const D3DXVECTOR4 vLIGHT_COLOR_RED  = D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f );
+
 	const double dDOOR_ANIM_SPD = 0.05;
 
 }
@@ -151,6 +154,9 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i]->UpdateTile();
 	}
+
+	//åıÇê¬Ç≠.
+	SetColorTarget( vLIGHT_COLOR_BLUE );
 }
 //enStaticModel_Building
 clsStage::~clsStage()
@@ -197,12 +203,14 @@ void clsStage::Render(
 //#ifdef _DEBUG
 	//êF.
 	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
-	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColorTarget.x += fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'V' ) & 0x8000 )m_vLightColorTarget.x -= fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'G' ) & 0x8000 )m_vLightColorTarget.y += fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColorTarget.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColorTarget.z += fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColorTarget.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
+//	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColorTarget.x += fSTATIC_MODEL_COLOR_RGB_ADD;
+//	if( GetAsyncKeyState( 'V' ) & 0x8000 )m_vLightColorTarget.x -= fSTATIC_MODEL_COLOR_RGB_ADD;
+//	if( GetAsyncKeyState( 'G' ) & 0x8000 )m_vLightColorTarget.y += fSTATIC_MODEL_COLOR_RGB_ADD;
+//	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColorTarget.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
+//	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColorTarget.z += fSTATIC_MODEL_COLOR_RGB_ADD;
+//	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColorTarget.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
+	if( GetAsyncKeyState( 'V' ) & 0x8000 )SetColorTarget( vLIGHT_COLOR_BLUE );
+	if( GetAsyncKeyState( 'B' ) & 0x8000 )SetColorTarget( vLIGHT_COLOR_RED );
 //#endif//#ifdef _DEBUG
 
 }
@@ -216,6 +224,14 @@ void clsStage::RenderInside(
 	}
 
 }
+
+//åıÇÈÇ∆Ç±ÇÎÇÃêFÇíËÇﬂÇÈ.
+void clsStage::SetColorTarget( const D3DXVECTOR4& vColor )
+{ 
+	m_vLightColorTarget = vColor;
+	m_LightLightingFlg.SetFlg( m_vLightColor, m_vLightColorTarget );
+}
+
 
 void clsStage::SetScale( const float fScale )
 {
