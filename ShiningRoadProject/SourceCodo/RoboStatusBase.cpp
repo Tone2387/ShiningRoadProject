@@ -337,10 +337,10 @@ void clsROBO_STATUS::AttachData( const vector< unique_ptr< clsFILE > >& PartsFil
 
 
 //ReceiveLeg()等の関数に格納するためのデータを作り、吐き出す.
-vector<int> clsROBO_STATUS::CreateDataForReceive( 
+vector<int> clsROBO_STATUS::CreateDataForReceive(
 	const vector< unique_ptr< clsFILE > >& PartsFile,
 	const int PartsType,
-	const int PartsNum  )
+	const int PartsNum )
 {
 	//ステータスの、CSVから削る行数.
 	const int iSTATUS_CUT_NUM = 2;//番号と名前.

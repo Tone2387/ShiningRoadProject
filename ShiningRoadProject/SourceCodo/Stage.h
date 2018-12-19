@@ -30,11 +30,8 @@ public:
 	//指定したオブジェク位置回転拡縮を更新.
 	void SetStageObjTransform(const unsigned int uiObjNo);
 
-	//光るところの色.
-	void SetColorTarget( const D3DXVECTOR4& vColor ){ 
-		m_vLightColorTarget = m_vLightColor = vColor;
-		m_LightLightingFlg.Init();
-	}
+	//光るところの色を定める.
+	void SetColorTarget( const D3DXVECTOR4& vColor );
 
 	void SetScale( const float fScale );
 
@@ -91,6 +88,14 @@ private:
 			isLightingR = false;
 			isLightingG = false;
 			isLightingB = false;
+		}
+		void LIGHT_LIGHTING_FLG::SetFlg( const D3DXVECTOR4& vColor, const D3DXVECTOR4& vTarget ){
+			if( vColor.x > vTarget.x )	isLightingR = false;
+			else						isLightingR = true;
+			if( vColor.y > vTarget.y )	isLightingG = false;
+			else						isLightingG = true;
+			if( vColor.z > vTarget.z )	isLightingB = false;
+			else						isLightingB = true;
 		}
 	}	m_LightLightingFlg;
 

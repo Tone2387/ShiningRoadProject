@@ -93,6 +93,7 @@ clsSCENE_BASE::~clsSCENE_BASE()
 	m_wpEffects = nullptr;
 	m_wpResource = nullptr;
 	m_wpDxInput = nullptr;
+	m_wpXInput = nullptr;
 	m_wpPtrGroup = nullptr;
 	m_wpViewPortUsing = nullptr;
 	m_wpViewPort11 = nullptr;
