@@ -140,7 +140,7 @@ HRESULT clsFont::CreateShader()
 
 
 	//ブロブからバーテックスシェーダー作成.
-	if( FAILED(D3DX11CompileFromFile(
+	if( FAILED( D3DX11CompileFromFile(
 		FONT_SHADER, NULL, NULL, "VS", "vs_5_0", 0, 0, NULL,
 		&pCompileShader, &pErrors, NULL ) ) )
 	{
@@ -180,7 +180,7 @@ HRESULT clsFont::CreateShader()
 	UINT numElements_Ita = sizeof( layout_Ita ) / sizeof( layout_Ita[0] );
 
 	//頂点インプットレイアウト作成.
-	if( FAILED( m_wpDevice->CreateInputLayout(layout_Ita,
+	if( FAILED( m_wpDevice->CreateInputLayout( layout_Ita,
 		numElements_Ita, pCompileShader->GetBufferPointer(),	//(out)頂点インプットレイアウト.
 		pCompileShader->GetBufferSize(), &m_pVertexLayout ) ) )
 	{
@@ -382,7 +382,7 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 	{
 		HFONT hFont = CreateFontIndirect( &lf );
 		if( !hFont ){
-			ERR_MSG("フォント作成不可", sErrFilePath);
+			ERR_MSG( "フォント作成不可", sErrFilePath );
 			return E_FAIL;
 		}
 
@@ -448,8 +448,7 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 			}
 
 			D3D11_MAPPED_SUBRESOURCE hMappedResource;
-			if( FAILED
-				( m_wpContext->Map(
+			if( FAILED( m_wpContext->Map(
 				m_vecpTex2D[ iTex ],
 				0,
 				D3D11_MAP_WRITE_DISCARD,
