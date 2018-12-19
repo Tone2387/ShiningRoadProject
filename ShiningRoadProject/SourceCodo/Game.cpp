@@ -119,8 +119,6 @@ void clsGAME::Create()
 
 
 
-	//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
-//	SwitchScene( GET_STATUS_DATA_INIT_SCENE, true );
 	//最初のシーンはタイトルを指定する.
 	SwitchScene( START_UP_SCENE );
 
@@ -183,7 +181,7 @@ void clsGAME::Render(
 
 
 //シーン切り替え.
-void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
+void clsGAME::SwitchScene( const enSCENE enNextScene )
 {
 	//何もしないならそのまま( シーン変更を行わない ).
 	if( enNextScene == enSCENE::NOTHING ){
@@ -191,17 +189,16 @@ void clsGAME::SwitchScene( const enSCENE enNextScene, const bool bStartUp )
 	}
 
 	//今のシーンを消して.
+	m_upScene.reset( nullptr );
 	SAFE_DELETE( m_spCamera );
 	SAFE_DELETE( m_spSound );
 
 	//サウンド.
 
-	if( !bStartUp ){
-		unique_ptr< clsFACTORY_SOUND_MANAGER > upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
-		m_spSound = upSoundFactory->Create( enNextScene, m_hWnd );
-		if( m_spSound ){
-			m_spSound->Create();
-		}
+	unique_ptr< clsFACTORY_SOUND_MANAGER > upSoundFactory = make_unique<clsFACTORY_SOUND_MANAGER>();
+	m_spSound = upSoundFactory->Create( enNextScene, m_hWnd );
+	if( m_spSound ){
+		m_spSound->Create();
 	}
 	m_spPtrGroup->UpdateSoundPtr( m_spSound );
 

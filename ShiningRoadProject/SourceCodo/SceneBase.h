@@ -146,7 +146,8 @@ protected:
 	HOLD_STATE m_HoldDown;
 
 #ifdef RENDER_SCREEN_TEXTURE_	
-	enum class encNOISE{
+	enum class encNOISE
+	{
 		NOTHING = 0,
 		BLOCK_AND_PULSE,//大ダメージ.
 		MINUTE_BLOCK,	//小刻みなダメージ.
