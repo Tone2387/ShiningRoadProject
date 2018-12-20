@@ -239,7 +239,7 @@ void clsSCENE_BASE::Render(
 	}
 
 	//暗転描画.
-	SetDepth( true );	//Zテスト:ON.
+//	SetDepth( true );	//Zテスト:ON.
 	m_wpBlackScreen->Render();
 
 
@@ -273,9 +273,8 @@ void clsSCENE_BASE::Render(
 
 
 #ifdef _DEBUG
-	SetDepth( false );
+//	SetDepth( false );
 	RenderDebugText();
-	SetDepth( true );	//Zテスト:ON.
 #endif//#ifdef _DEBUG
 
 
