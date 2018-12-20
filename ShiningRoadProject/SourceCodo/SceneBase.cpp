@@ -239,7 +239,7 @@ void clsSCENE_BASE::Render(
 	}
 
 	//暗転描画.
-	SetDepth( true );	//Zテスト:ON.
+//	SetDepth( true );	//Zテスト:ON.
 	m_wpBlackScreen->Render();
 
 
@@ -273,9 +273,8 @@ void clsSCENE_BASE::Render(
 
 
 #ifdef _DEBUG
-	SetDepth( false );
+//	SetDepth( false );
 	RenderDebugText();
-	SetDepth( true );	//Zテスト:ON.
 #endif//#ifdef _DEBUG
 
 
@@ -776,11 +775,14 @@ void clsSCENE_BASE::Proj()
 //デバッグ用シーン切り替え.
 void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 {
-	if( GetAsyncKeyState( 'Y' ) & 0x1 ){
+	if( GetAsyncKeyState( 'T' ) & 0x1 ){
 		enNextScene = enSCENE::TITLE;
 	}
-	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
+	else if( GetAsyncKeyState( 'Y' ) & 0x1 ){
 		enNextScene = enSCENE::ASSEMBLE;
+	}
+	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
+		enNextScene = enSCENE::TAKEOFF;
 	}
 	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
 		enNextScene = enSCENE::MISSION;

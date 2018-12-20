@@ -4,6 +4,7 @@
 
 #include "SoundManagerTitle.h"
 #include "SoundManagerAssemble.h"
+#include "SoundManagerTakeoff.h"
 #include "SoundManagerMission.h"
 #include "SoundManagerEnding.h"
 #include "SoundManagerGameOver.h"
@@ -16,6 +17,8 @@ clsSOUND_MANAGER_BASE* clsFACTORY_SOUND_MANAGER::Create( const enSCENE enNextSce
 		return new clsSOUND_MANAGER_TITLE( hWnd );
 	case enSCENE::ASSEMBLE:
 		return new clsSOUND_MANAGER_ASSEMBLE( hWnd );
+	case enSCENE::TAKEOFF:
+		return new clsSOUND_MANAGER_TAKEOFF( hWnd );
 	case enSCENE::MISSION:
 		return new clsSOUND_MANAGER_MISSION( hWnd );
 	case enSCENE::ENDING:

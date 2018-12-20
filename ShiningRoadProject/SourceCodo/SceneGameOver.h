@@ -2,11 +2,10 @@
 #define SCENE_GAME_OVER_H_
 
 
+class clsMENU_WINDOW_GAME_OVER_CONTINUE;
 #include "SceneBase.h"
 #include "CameraGameOver.h"
-#include "MissionModel.h"
 #include "Sprite2DCenter.h"
-class clsMENU_WINDOW_GAME_OVER_CONTINUE;
 
 //================================//
 //========== ゲームオーバークラス ==========//

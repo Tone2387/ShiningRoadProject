@@ -878,7 +878,8 @@ void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 	m_wpSound->PlaySE( enSE_MISSION_START );
 //	m_wpSound->PlaySE( enSE_ENTER );
 
-	enNextScene = enSCENE::MISSION;
+//	enNextScene = enSCENE::MISSION;
+	enNextScene = enSCENE::TAKEOFF;
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
 
 	m_wpSound->PlaySE( enSE_MISSION_START );
