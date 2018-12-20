@@ -12,7 +12,7 @@ using namespace std;
 namespace
 {
 
-	const string sFILE_NAME = "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
+	const string sFILE_PATH = "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
 
 
 }
@@ -25,7 +25,7 @@ clsSCENE_TAKEOFF::clsSCENE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup ) : clsSCEN
 	,m_fMovieFrameNextArray()
 {
 	clsFILE File;
-	assert( File.Open( sFILE_NAME ) );
+	assert( File.Open( sFILE_PATH ) );
 	assert( File.GetSizeRow() > enCUT_size );
 
 	//カットのフレーム数のindex.
@@ -53,10 +53,13 @@ void clsSCENE_TAKEOFF::CreateProduct()
 	SetCamPosFromFile( m_iCountCameraCutChange );
 
 	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
-	m_upPlayer= make_unique< clsRobo >();
-	m_upEnemy = make_unique< clsRobo >();
 
+	m_upPlayer= make_unique< clsRobo >();
 	m_upPlayer->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
+
+
+
+	m_upEnemy = make_unique< clsRobo >();
 	m_upEnemy->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
 }
 
@@ -98,7 +101,7 @@ void clsSCENE_TAKEOFF::RenderUi()
 void clsSCENE_TAKEOFF::SetCamPosFromFile( const int iFileRow )
 {
 	clsFILE File;
-	assert( File.Open( sFILE_NAME ) );
+	assert( File.Open( sFILE_PATH ) );
 
 	D3DXVECTOR3 vPos;
 	int iColIndex = 0;
