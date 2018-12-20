@@ -26,6 +26,19 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
+	//指定した行のファイルデータをカメラに与える.
+	void SetCamPosFromFile( const int iFileRow );
+
+	//カメラのカット割りの段階.
+	enum enCUT : int
+	{
+		enCUT_START = 0,
+			
+		enCUT_END,//ここに来た瞬間にミッションシーンに飛ぶ.
+
+		enCUT_size
+	};
+	void NextCut( enCUT* const penCut );
 
 
 #ifdef _DEBUG
@@ -35,13 +48,16 @@ private:
 
 private:
 
+	//カット割り.
+	enCUT m_enCut;
+	//.
+	int m_iCountCameraCutChange;
 
-	enum enCUT : int
-	{
-		enCUT_START = 0,
-			
-		enCUT_END
-	}	m_enCut;
+	//今のカットのフレームカウント.
+	float m_fMovieFrame = 0;
+	//全カットのフレーム数.
+	float m_fMovieFrameNextArray[ enCUT_size ];
+
 
 	std::unique_ptr< clsStage >	m_upStage;
 	std::unique_ptr< clsRobo >	m_upPlayer;

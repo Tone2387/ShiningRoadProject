@@ -1,15 +1,19 @@
 #include "SceneTakeoff.h"
 #include "Stage.h"
 #include "Robo.h"
+#include "File.h"
 
 using namespace std;
 
+//これをつけていると手動じゃないとカメラの動きが進まない.
+#define CAMERA_FREE_MOVE_
 
 
 namespace
 {
-	const float fMOVIEFRAME_END = 60;
-	float g_fMovieFrame = 0;
+
+	const string sFILE_NAME = "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
+
 
 }
 
@@ -17,7 +21,20 @@ namespace
 
 clsSCENE_TAKEOFF::clsSCENE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
 	,m_enCut( enCUT_START )
+	,m_iCountCameraCutChange( 0 )
+	,m_fMovieFrameNextArray()
 {
+	clsFILE File;
+	assert( File.Open( sFILE_NAME ) );
+	assert( File.GetSizeRow() > enCUT_size );
+
+	//カットのフレーム数のindex.
+	const float fCOL_INDEX = File.GetSizeCol() - 1;
+
+
+	for( int i=0; i<enCUT_size; i++ ){
+		m_fMovieFrameNextArray[i] = File.GetDataInt( i, fCOL_INDEX );
+	}
 }
 
 clsSCENE_TAKEOFF::~clsSCENE_TAKEOFF()
@@ -33,25 +50,30 @@ void clsSCENE_TAKEOFF::CreateProduct()
 	
 //	m_wpFont->Create( sFONT_TEXT_PATH_GAME_OVER );
 
-
-	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 10.0f } );
-
+	SetCamPosFromFile( m_iCountCameraCutChange );
 
 	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
+	m_upPlayer= make_unique< clsRobo >();
+	m_upEnemy = make_unique< clsRobo >();
 
+	m_upPlayer->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
+	m_upEnemy->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
 }
 
 
 void clsSCENE_TAKEOFF::UpdateProduct( enSCENE &enNextScene )
 {
+#ifndef CAMERA_FREE_MOVE_
 	g_fMovieFrame ++;
+#endif//CAMERA_FREE_MOVE_
 
 	if( isPressEnter() ){
-		g_fMovieFrame = fMOVIEFRAME_END;
+		m_fMovieFrame = m_fMovieFrameNextArray[ m_iCountCameraCutChange ];
 	}
 
-	if( g_fMovieFrame > fMOVIEFRAME_END ){
-		m_enCut = enCUT_END;
+	if( m_fMovieFrame >= m_fMovieFrameNextArray[ m_iCountCameraCutChange ] ){
+		NextCut( &m_enCut );
+		SetCamPosFromFile( ++m_iCountCameraCutChange );
 	}
 
 	if( m_enCut == enCUT_END ){
@@ -65,9 +87,36 @@ void clsSCENE_TAKEOFF::RenderProduct( const D3DXVECTOR3 &vCamPos )
 	if( m_upPlayer ){	m_upPlayer->Render( m_mView, m_mProj, m_vLight, vCamPos ); }
 	if( m_upEnemy ){	m_upEnemy-> Render( m_mView, m_mProj, m_vLight, vCamPos ); }
 }
+
 void clsSCENE_TAKEOFF::RenderUi()
 {
 
+}
+
+
+//指定した行のファイルデータをカメラに与える.
+void clsSCENE_TAKEOFF::SetCamPosFromFile( const int iFileRow )
+{
+	clsFILE File;
+	assert( File.Open( sFILE_NAME ) );
+
+	D3DXVECTOR3 vPos;
+	int iColIndex = 0;
+
+	vPos.x = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	vPos.y = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	vPos.z = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	m_wpCamera->SetPos( vPos );
+
+	vPos.x = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	vPos.y = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	vPos.z = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	m_wpCamera->SetLookPos( vPos );
+}
+
+void clsSCENE_TAKEOFF::NextCut( enCUT* const penCut )
+{
+	*penCut = static_cast<enCUT>( static_cast<int>( *penCut ) + 1 );
 }
 
 
