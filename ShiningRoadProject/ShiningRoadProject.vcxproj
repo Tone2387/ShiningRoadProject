@@ -103,6 +103,7 @@
     <ClCompile Include="SourceCodo\CameraEnding.cpp" />
     <ClCompile Include="SourceCodo\CameraGameOver.cpp" />
     <ClCompile Include="SourceCodo\CameraMission.cpp" />
+    <ClCompile Include="SourceCodo\CameraTakeoff.cpp" />
     <ClCompile Include="SourceCodo\CameraTitle.cpp" />
     <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp" />
     <ClCompile Include="SourceCodo\CFont.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="SourceCodo\SceneEnding.cpp" />
     <ClCompile Include="SourceCodo\SceneGameOver.cpp" />
     <ClCompile Include="SourceCodo\SceneMission.cpp" />
+    <ClCompile Include="SourceCodo\SceneTakeoff.cpp" />
     <ClCompile Include="SourceCodo\SceneTitle.cpp" />
     <ClCompile Include="SourceCodo\ScreenTexture.cpp" />
     <ClCompile Include="SourceCodo\Shot.cpp">
@@ -199,6 +201,7 @@
     <ClCompile Include="SourceCodo\SoundManagerMenuWindow.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerMission.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerNoise.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerTakeoff.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerTitle.cpp" />
     <ClCompile Include="SourceCodo\Sprite.cpp" />
     <ClCompile Include="SourceCodo\Sprite2D.cpp" />
@@ -221,6 +224,7 @@
     <ClInclude Include="SourceCodo\CameraEnding.h" />
     <ClInclude Include="SourceCodo\CameraGameOver.h" />
     <ClInclude Include="SourceCodo\CameraMission.h" />
+    <ClInclude Include="SourceCodo\CameraTakeoff.h" />
     <ClInclude Include="SourceCodo\CameraTitle.h" />
     <ClInclude Include="SourceCodo\CD3DXSKINMESH.h" />
     <ClInclude Include="SourceCodo\CFont.h" />
@@ -307,6 +311,7 @@
     <ClInclude Include="SourceCodo\SceneGameOverInformation.h" />
     <ClInclude Include="SourceCodo\SceneMission.h" />
     <ClInclude Include="SourceCodo\SceneMissionInformation.h" />
+    <ClInclude Include="SourceCodo\SceneTakeoff.h" />
     <ClInclude Include="SourceCodo\SceneTitle.h" />
     <ClInclude Include="SourceCodo\SceneTitleInformation.h" />
     <ClInclude Include="SourceCodo\ScreenTexture.h" />
@@ -323,6 +328,7 @@
     <ClInclude Include="SourceCodo\SoundManagerMenuWindow.h" />
     <ClInclude Include="SourceCodo\SoundManagerMission.h" />
     <ClInclude Include="SourceCodo\SoundManagerNoise.h" />
+    <ClInclude Include="SourceCodo\SoundManagerTakeoff.h" />
     <ClInclude Include="SourceCodo\SoundManagerTitle.h" />
     <ClInclude Include="SourceCodo\Sprite.h" />
     <ClInclude Include="SourceCodo\Sprite2D.h" />

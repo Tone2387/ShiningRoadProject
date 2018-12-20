@@ -420,6 +420,15 @@
     <ClCompile Include="SourceCodo\MenuWindowMissionPause.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\SceneTakeoff.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CameraTakeoff.cpp">
+      <Filter>Tahara\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerTakeoff.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -763,6 +772,15 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneMissionInformation.h">
       <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneTakeoff.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CameraTakeoff.h">
+      <Filter>Tahara\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerTakeoff.h">
+      <Filter>Tahara\SoundManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

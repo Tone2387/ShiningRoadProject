@@ -3,6 +3,7 @@
 //#include "Camera.h"
 #include "CameraTitle.h"
 #include "CameraAssemble.h"
+#include "CameraTakeoff.h"
 #include "CameraMission.h"
 #include "CameraEnding.h"
 #include "CameraGameOver.h"
@@ -17,6 +18,9 @@ clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene ) const
 		break;
 	case enSCENE::ASSEMBLE:
 		return new clsCAMERA_ASSEMBLE();
+		break;
+	case enSCENE::TAKEOFF:
+		return new clsCAMERA_TAKEOFF();
 		break;
 	case enSCENE::MISSION:
 		return new clsCAMERA_MISSION();

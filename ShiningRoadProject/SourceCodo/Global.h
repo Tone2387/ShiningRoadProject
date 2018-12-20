@@ -74,6 +74,7 @@ enum class enSCENE : UCHAR
 
 	TITLE,		//タイトル画面.
 	ASSEMBLE,	//パーツ組み換え画面.
+	TAKEOFF,	//出撃ムービー.
 	MISSION,	//アクションシーン( ゲームのメイン ).
 	ENDING,		//クリア後.
 	GAMEOVER,		//ゲームオーバー.			
