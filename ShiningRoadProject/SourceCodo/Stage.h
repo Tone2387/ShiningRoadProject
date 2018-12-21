@@ -35,13 +35,37 @@ public:
 
 	void SetScale( const float fScale );
 
+	//引数用列挙体.
+	enum enDOOR : UCHAR
+	{
+		enDOOR_DOOR_0 = 0,
+		enDOOR_DOOR_1,
+		enDOOR_Lia,
+
+		enDOOR_size
+	};
+	enum enDOOR_ANIM : int
+	{
+		enDOOR_ANIM_CLOSED = 0,
+		enDOOR_ANIM_OPENING,
+		enDOOR_ANIM_OPENED,
+		enDOOR_ANIM_CLOSING,
+	};
+	void SetAnimDoor( const enDOOR enDoor, const enDOOR_ANIM enAnimNo );
+
 private:
 
 	//光の明滅.
 	void UpdateLight();
 
-	//光の描く数値.
-	void Lighting( float* const fpColor, const float fTarget, bool* const ispFlg );
+	//光の数値を動かす.
+	void Lighting( 
+		float* const fpColor, 
+		const float fTarget, 
+		bool* const ispLiting );
+
+	//ドアが開いたら空きっぱなし.
+	void SafeDoorAnimation();
 
 private:
 
@@ -90,12 +114,12 @@ private:
 			isLightingB = false;
 		}
 		void LIGHT_LIGHTING_FLG::SetFlg( const D3DXVECTOR4& vColor, const D3DXVECTOR4& vTarget ){
-			if( vColor.x > vTarget.x )	isLightingR = false;
-			else						isLightingR = true;
-			if( vColor.y > vTarget.y )	isLightingG = false;
-			else						isLightingG = true;
-			if( vColor.z > vTarget.z )	isLightingB = false;
-			else						isLightingB = true;
+			if( vColor.x > vTarget.x )	{ isLightingR = false; }
+			else						{ isLightingR = true;  }
+			if( vColor.y > vTarget.y )	{ isLightingG = false; }
+			else						{ isLightingG = true;  }
+			if( vColor.z > vTarget.z )	{ isLightingB = false; }
+			else						{ isLightingB = true;  }
 		}
 	}	m_LightLightingFlg;
 
