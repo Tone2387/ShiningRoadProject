@@ -2,6 +2,7 @@
 #include "Stage.h"
 #include "Robo.h"
 #include "File.h"
+#include "RoboStatusEnemy.h"
 
 using namespace std;
 
@@ -52,15 +53,22 @@ void clsSCENE_TAKEOFF::CreateProduct()
 
 	SetCamPosFromFile( m_iCountCameraCutChange );
 
+
 	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
+
 
 	m_upPlayer= make_unique< clsRobo >();
 	m_upPlayer->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
+	m_upPlayer->SetPosition( { 1.0f, 0.0f, 0.0f } );
 
 
+	unique_ptr< clsROBO_STATUS_ENEMY > upEnemyState;
+	const int iMovieEnemyRow = 0;
+	upEnemyState = make_unique< clsROBO_STATUS_ENEMY >( iMovieEnemyRow );
 
 	m_upEnemy = make_unique< clsRobo >();
-	m_upEnemy->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
+	m_upEnemy->RoboInit( m_wpPtrGroup, upEnemyState.get() );
+	m_upEnemy->SetPosition( { 0.0f, 0.0f, 1.0f } );
 }
 
 
