@@ -28,13 +28,21 @@ private:
 
 	//指定した行のファイルデータをカメラに与える.
 	void SetCamPosFromFile( const int iFileRow );
+	//指定した行のファイルデータをギガポンたちに与える.
+	void SetGigaponPosFromFile( const int iFileRow );
+
 
 	//カメラのカット割りの段階.
 	enum enCUT : int
 	{
-		enCUT_START = 0,
+		enCUT_START = 0,//通路を通る主人公.
+		enCUT_GO_YOU,	//広場に出た主人公.
+		enCUT_LOOK_UP,	//天井を見上げる.
+		enCUT_ENEMY_APP,//天井から敵登場.
+		enCUT_ENEMY_LANDING,//敵着地.
 			
-		enCUT_END,//ここに来た瞬間にミッションシーンに飛ぶ.
+		//ここに来た瞬間にミッションシーンに飛ぶ.
+		enCUT_END,		//にらみ合う二体のギガポン、カメラが引いていく.
 
 		enCUT_size
 	};

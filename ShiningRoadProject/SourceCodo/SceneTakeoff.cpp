@@ -7,13 +7,14 @@
 using namespace std;
 
 //これをつけていると手動じゃないとカメラの動きが進まない.
-#define CAMERA_FREE_MOVE_
+//#define CAMERA_FREE_MOVE_
 
 
 namespace
 {
 
-	const string sFILE_PATH = "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
+	const string sFILE_PATH_CAMERA = "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
+	const string sFILE_PATH_GIGAPON= "Data\\FileData\\Tahara\\TakeoffGigaponPos.csv";
 
 
 }
@@ -26,8 +27,8 @@ clsSCENE_TAKEOFF::clsSCENE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup ) : clsSCEN
 	,m_fMovieFrameNextArray()
 {
 	clsFILE File;
-	assert( File.Open( sFILE_PATH ) );
-	assert( File.GetSizeRow() > enCUT_size );
+	assert( File.Open( sFILE_PATH_CAMERA ) );
+	assert( File.GetSizeRow() >= enCUT_size );
 
 	//カットのフレーム数のindex.
 	const float fCOL_INDEX = File.GetSizeCol() - 1;
@@ -59,7 +60,6 @@ void clsSCENE_TAKEOFF::CreateProduct()
 
 	m_upPlayer= make_unique< clsRobo >();
 	m_upPlayer->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
-	m_upPlayer->SetPosition( { 1.0f, 0.0f, 0.0f } );
 
 
 	unique_ptr< clsROBO_STATUS_ENEMY > upEnemyState;
@@ -68,14 +68,16 @@ void clsSCENE_TAKEOFF::CreateProduct()
 
 	m_upEnemy = make_unique< clsRobo >();
 	m_upEnemy->RoboInit( m_wpPtrGroup, upEnemyState.get() );
-	m_upEnemy->SetPosition( { 0.0f, 0.0f, 1.0f } );
+	m_upEnemy->SetRotation( { 0.0f, static_cast<float>( D3DX_PI ), 0.0f } );
+
+	SetGigaponPosFromFile( m_iCountCameraCutChange );
 }
 
 
 void clsSCENE_TAKEOFF::UpdateProduct( enSCENE &enNextScene )
 {
 #ifndef CAMERA_FREE_MOVE_
-	g_fMovieFrame ++;
+	m_fMovieFrame ++;
 #endif//CAMERA_FREE_MOVE_
 
 	if( isPressEnter() ){
@@ -84,7 +86,9 @@ void clsSCENE_TAKEOFF::UpdateProduct( enSCENE &enNextScene )
 
 	if( m_fMovieFrame >= m_fMovieFrameNextArray[ m_iCountCameraCutChange ] ){
 		NextCut( &m_enCut );
-		SetCamPosFromFile( ++m_iCountCameraCutChange );
+		SetCamPosFromFile(	 ++m_iCountCameraCutChange );
+		SetGigaponPosFromFile( m_iCountCameraCutChange );
+		m_fMovieFrame = 0;
 	}
 
 	if( m_enCut == enCUT_END ){
@@ -109,7 +113,8 @@ void clsSCENE_TAKEOFF::RenderUi()
 void clsSCENE_TAKEOFF::SetCamPosFromFile( const int iFileRow )
 {
 	clsFILE File;
-	assert( File.Open( sFILE_PATH ) );
+	assert( File.Open( sFILE_PATH_CAMERA ) );
+	assert( File.GetSizeRow() > iFileRow );
 
 	D3DXVECTOR3 vPos;
 	int iColIndex = 0;
@@ -124,6 +129,31 @@ void clsSCENE_TAKEOFF::SetCamPosFromFile( const int iFileRow )
 	vPos.z = File.GetDataFloat( iFileRow, iColIndex++ ), 
 	m_wpCamera->SetLookPos( vPos );
 }
+
+//指定した行のファイルデータをギガポンたちに与える.
+void clsSCENE_TAKEOFF::SetGigaponPosFromFile( const int iFileRow )
+{
+	clsFILE File;
+	assert( File.Open( sFILE_PATH_GIGAPON ) );
+	assert( File.GetSizeRow() > iFileRow );
+
+	D3DXVECTOR3 vPos;
+	int iColIndex = 0;
+
+	vPos.x = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	vPos.y = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	vPos.z = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	m_upPlayer->SetPosition( vPos );
+
+	vPos.x = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	vPos.y = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	vPos.z = File.GetDataFloat( iFileRow, iColIndex++ ), 
+	m_upEnemy->SetPosition( vPos );
+
+}
+
+
+
 
 void clsSCENE_TAKEOFF::NextCut( enCUT* const penCut )
 {
