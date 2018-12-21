@@ -46,8 +46,13 @@ private:
 
 		enCUT_size
 	};
-	void NextCut( enCUT* const penCut );
+	//カット変数を更新.
+	void AddCut( enCUT* const penCut );
 
+	void UpdateMovie();
+
+	//フレームが満たしていなくても次のカットへ飛ぶ.
+	void NextCut();
 
 #ifdef _DEBUG
 	//デバック゛テキストの表示.

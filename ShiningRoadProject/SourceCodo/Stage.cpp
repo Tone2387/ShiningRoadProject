@@ -28,7 +28,7 @@ namespace{
 	const D3DXVECTOR4 vLIGHT_COLOR_BLUE = D3DXVECTOR4( 0.0f, 1.0f, 1.0f, 1.0f );
 	const D3DXVECTOR4 vLIGHT_COLOR_RED  = D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f );
 
-	const double dDOOR_ANIM_SPD = 0.05;
+	const double dDOOR_ANIM_SPD = 0.0125;
 
 }
 
@@ -98,7 +98,6 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 		file.GetDataFloat( 0, cINDEX_SCALE_Z ) } );
 
 		m_pLia->ModelUpdate( m_pLia->m_Trans );//このモデルはここしか使わないから毎フレームしなくていい.
-		m_pLia->SetAnimChange( 1 );
 		m_pLia->SetAnimSpeed( dDOOR_ANIM_SPD );
 
 	for( int i=0; i<enDOOR_NUM_size; i++ ){
@@ -118,8 +117,6 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 
 		m_pDoorArray[i]->SetAnimSpeed( dDOOR_ANIM_SPD );
 	}
-	m_pDoorArray[ enDOOR_NUM_0 ]->SetAnimChange( 1 );
-	m_pDoorArray[ enDOOR_NUM_1 ]->SetAnimChange( 3 );
 
 	file.Close();
 	//========== ドア 終わり ==========//.
@@ -155,6 +152,12 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 		m_vpBuilding[i]->UpdateTile();
 	}
 
+	for( UCHAR i=0; i<enDOOR_size; i++ ){
+		SetAnimDoor( static_cast<enDOOR>( i ), enDOOR_ANIM_CLOSED );
+	}
+
+
+
 	//光を青く.
 	SetColorTarget( vLIGHT_COLOR_BLUE );
 }
@@ -172,6 +175,7 @@ clsStage::~clsStage()
 	}
 
 }
+
 
 void clsStage::Render(
 	const D3DXMATRIX &mView, const D3DXMATRIX &mProj,
@@ -196,6 +200,9 @@ void clsStage::Render(
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
 	}
+
+	//ドアが開いたら空きっぱなし.
+	SafeDoorAnimation();
 
 	//ピカピカ光るよ.
 	UpdateLight();
@@ -266,28 +273,72 @@ void clsStage::UpdateLight()
 }
 
 //光の描く数値.
-void clsStage::Lighting( float* const fpColor, const float fTarget, bool* const ispFlg )
+void clsStage::Lighting( float* const fpColor, const float fTarget, bool* const ispLiting )
 {
 	const float fLIGHT_OFFSET = 0.25f;
 	const float fLIGHT_ADD = fLIGHT_OFFSET * fLIGHT_OFFSET * fLIGHT_OFFSET;
 
 	//明るくなる.
-	if( *ispFlg ){
+	if( *ispLiting ){
 		*fpColor += fLIGHT_ADD;
 		if( *fpColor >= fTarget + fLIGHT_OFFSET ){
-			*ispFlg = !*ispFlg;
+			*ispLiting = !*ispLiting;
 		}
 	}
 	//暗くなる.
 	else{
 		*fpColor -= fLIGHT_ADD;
 		if( *fpColor <= fTarget - fLIGHT_OFFSET ){
-			*ispFlg = !*ispFlg;
+			*ispLiting = !*ispLiting;
 		}
 	}
 
 }
 
+void clsStage::SetAnimDoor( const enDOOR enDoor, const enDOOR_ANIM enAnimNo )
+{
+	switch( enDoor )
+	{
+	case enDOOR_DOOR_0:
+		m_pDoorArray[ enDOOR_NUM_0 ]->SetAnimChange( enAnimNo );
+		break;
+	case enDOOR_DOOR_1:
+		m_pDoorArray[ enDOOR_NUM_1 ]->SetAnimChange( enAnimNo );
+		break;
+	case enDOOR_Lia:
+		m_pLia->SetAnimChange( enAnimNo );
+		break;
+	default:
+		assert( !"そんなドアは存在しない" || enDoor || enAnimNo );
+		break;
+	}
+}
+
+//ドアが開いたら空きっぱなし.
+void clsStage::SafeDoorAnimation()
+{
+	clsSkinMesh* pTmpDoorArray[] = {
+		m_pDoorArray[ enDOOR_NUM_0 ].get(),
+		m_pDoorArray[ enDOOR_NUM_1 ].get(),
+		m_pLia.get()
+	};
+
+	for( auto pDoor : pTmpDoorArray ){
+		//アニメが終了する瞬間じゃなかったらスルー.
+		if( !pDoor->IsAnimTimeEnd() ){ continue; }
+
+		enDOOR_ANIM enAnimNo = static_cast<enDOOR_ANIM>( pDoor->GetAnimNo() );
+		switch( enAnimNo )
+		{
+		case enDOOR_ANIM_OPENING:
+			pDoor->SetAnimChange( enDOOR_ANIM_OPENED );
+			break;
+		case enDOOR_ANIM_CLOSING:
+			pDoor->SetAnimChange( enDOOR_ANIM_CLOSED );
+			break;
+		}
+	}
+}
 
 
 vector<clsDX9Mesh*> clsStage::GetStageMeshArray()
