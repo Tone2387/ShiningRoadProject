@@ -429,6 +429,9 @@
     <ClCompile Include="SourceCodo\SoundManagerTakeoff.cpp">
       <Filter>Tahara\SoundManager</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\CameraMovieBase.cpp">
+      <Filter>Tahara\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -781,6 +784,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SoundManagerTakeoff.h">
       <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CameraMovieBase.h">
+      <Filter>Tahara\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

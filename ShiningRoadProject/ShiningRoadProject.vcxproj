@@ -103,6 +103,7 @@
     <ClCompile Include="SourceCodo\CameraEnding.cpp" />
     <ClCompile Include="SourceCodo\CameraGameOver.cpp" />
     <ClCompile Include="SourceCodo\CameraMission.cpp" />
+    <ClCompile Include="SourceCodo\CameraMovieBase.cpp" />
     <ClCompile Include="SourceCodo\CameraTakeoff.cpp" />
     <ClCompile Include="SourceCodo\CameraTitle.cpp" />
     <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="SourceCodo\CameraEnding.h" />
     <ClInclude Include="SourceCodo\CameraGameOver.h" />
     <ClInclude Include="SourceCodo\CameraMission.h" />
+    <ClInclude Include="SourceCodo\CameraMovieBase.h" />
     <ClInclude Include="SourceCodo\CameraTakeoff.h" />
     <ClInclude Include="SourceCodo\CameraTitle.h" />
     <ClInclude Include="SourceCodo\CD3DXSKINMESH.h" />
