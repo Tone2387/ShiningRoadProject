@@ -17,6 +17,29 @@ public:
 	virtual void Update() override = 0;
 
 
+	void SetPos( const D3DXVECTOR3& vPos, bool isWithLook = true ) override {
+		clsCAMERA_BASE::SetPos( vPos, isWithLook );
+		UpdateDistance();
+		UpdateRot();
+	}
+	void AddPos( const D3DXVECTOR3& vVec, bool isWithLook = true ) override {
+		clsCAMERA_BASE::AddPos( vVec, isWithLook );
+		UpdateDistance();
+		UpdateRot();
+	}
+	void SetLookPos( const D3DXVECTOR3& vPos ) override { 
+		clsCAMERA_BASE::SetLookPos( vPos );
+		UpdateDistance();
+		UpdateRot();
+	}
+	void AddLookPos( const D3DXVECTOR3& vVec ) override {
+		clsCAMERA_BASE::AddLookPos( vVec );
+		UpdateDistance();
+		UpdateRot();
+	}
+
+
+
 	//ŠÄ‹‘ÎÛ‚ğ’†S‚Éù‰ñ‚·‚é.
 	void Spn( const float fSpn ){
 		SpnProduct( fSpn, &m_vPos, &m_vLook, &m_vRot );
@@ -42,6 +65,10 @@ public:
 	void AddDistance( const float fDistance, const bool isCamMove );
 
 protected:
+
+	void UpdateRot();
+
+	void UpdateDistance();
 
 	//ŠÄ‹‘ÎÛ‚ğ’†S‚Éù‰ñ‚·‚é.
 	void SpnProduct( 
@@ -76,6 +103,7 @@ protected:
 
 
 private:
+
 
 };
 

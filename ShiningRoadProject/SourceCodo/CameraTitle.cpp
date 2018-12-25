@@ -71,18 +71,7 @@ clsCAMERA_TITLE::~clsCAMERA_TITLE()
 void clsCAMERA_TITLE::Update()
 {
 	//二点間の距離( 2線 ).
-	float fX, fZ;
-	fX = m_vPos.x - m_vLook.x;
-	fZ = m_vPos.z - m_vLook.z;
-
-	//現状の角度取得.
-//	m_vRot.y = atan2f( -fX, -fZ );
-////	m_vRot.y = atan2f( fZ, -fX );
-
-	//二点間の距離( 斜線 ).
-	fX *= fX;
-	fZ *= fZ;
-	m_fDistance = sqrtf( fX + fZ );
+	UpdateDistance();
 
 	//モード別動作.
 	switch( m_enMode )
@@ -98,7 +87,7 @@ void clsCAMERA_TITLE::Update()
 		m_CamGhost.vLook = m_vLook;
 		m_CamGhost.vRot = m_vRot;
 
-		if( abs( m_vMoveSpd.z ) < abs( fSTART_END_SPD )){
+		if( abs( m_vMoveSpd.z ) < abs( fSTART_END_SPD ) ){
 			Init( enMODE::SPN_L );
 		}
 		else{
@@ -201,13 +190,7 @@ void clsCAMERA_TITLE::Init( const enMODE enMode )
 	SetRot		( InitData.vRot );
 
 	//Turnに必要.
-	//二点間の距離( 2線 ).
-	float fX, fZ;
-	fX = m_vPos.x - m_vLook.x;
-	fZ = m_vPos.z - m_vLook.z;
-	fX *= fX;
-	fZ *= fZ;
-	m_fDistance = sqrtf( fX + fZ );
+	UpdateDistance();
 
 
 	TurnProduct( fRotY, &m_vPos, &m_vLook, &m_vRot );

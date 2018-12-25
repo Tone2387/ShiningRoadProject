@@ -16,7 +16,24 @@ clsCAMERA_MOVIE_BASE::~clsCAMERA_MOVIE_BASE()
 }
 
 
+void clsCAMERA_MOVIE_BASE::UpdateRot()
+{
+	float fX = m_vLook.x - m_vPos.x;
+	float fY = m_vLook.y - m_vPos.y;
+	float fZ = m_vLook.z - m_vPos.z;
 
+	m_vRot.x = atan2f( fZ, fY );
+	m_vRot.y = -atan2f( fX, fZ );
+}
+
+void clsCAMERA_MOVIE_BASE::UpdateDistance()
+{
+	float fX = m_vPos.x - m_vLook.x;
+	float fZ = m_vPos.z - m_vLook.z;
+	fX *= fX;
+	fZ *= fZ;
+	m_fDistance = sqrtf( fX + fZ );
+}
 
 
 
@@ -154,4 +171,5 @@ void clsCAMERA_MOVIE_BASE::AddDistance( const float fAdd, const bool isCamMove )
 		m_vLook.x -= vAxisZ.x * -fAdd;
 	}
 }
+
 
