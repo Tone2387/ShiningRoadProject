@@ -15,6 +15,7 @@ namespace
 
 	const string sFILE_PATH_CAMERA = "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
 	const string sFILE_PATH_GIGAPON= "Data\\FileData\\Tahara\\TakeoffGigaponPos.csv";
+	const string sFILE_PATH_OTHER  = "Data\\FileData\\Tahara\\TakeoffOtherData.csv";
 
 	const D3DXVECTOR4 vSTAGE_COLOR_RED = { 1.0f, 0.0f, 0.0f, 1.0f };
 	const D3DXVECTOR4 vSTAGE_COLOR_BLUE= { 0.0f, 1.0f, 1.0f, 1.0f };
@@ -75,6 +76,11 @@ void clsSCENE_TAKEOFF::CreateProduct()
 	m_upEnemy->SetRotation(  { 0.0f, static_cast<float>( M_PI_2 + M_PI  ), 0.0f } );
 
 	SetGigaponPosFromFile( m_iCountCameraCutChange );
+
+	//枠を作っておく.
+	clsFILE File;
+	assert( File.Open( sFILE_PATH_OTHER ) );
+	m_vecfOtherData.resize( File.GetSizeCol() );
 }
 
 
@@ -119,6 +125,7 @@ void clsSCENE_TAKEOFF::InitMovie()
 	AddCut( &m_enCut );
 	SetCamPosFromFile(	 ++m_iCountCameraCutChange );
 	SetGigaponPosFromFile( m_iCountCameraCutChange );
+	SetOtherDataFromFile(  m_iCountCameraCutChange );
 	m_fMovieFrame = 0;
 
 
@@ -349,6 +356,44 @@ void clsSCENE_TAKEOFF::SetGigaponPosFromFile( const int iFileRow )
 }
 
 
+void clsSCENE_TAKEOFF::SetOtherDataFromFile( const int iFileRow )
+{
+	clsFILE File;
+	assert( File.Open( sFILE_PATH_OTHER ) );
+	assert( File.GetSizeRow() > iFileRow );
+
+	m_vecfOtherData;
+
+	switch( m_enCut )
+	{
+	case clsSCENE_TAKEOFF::enCUT_START:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_1:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_2:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_3:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_END:
+		break;
+
+	}
+
+}
 
 
 //カット変数を更新.
@@ -386,6 +431,8 @@ void clsSCENE_TAKEOFF::RenderDebugText()
 		m_wpCamera->GetLookPos().x, m_wpCamera->GetLookPos().y, m_wpCamera->GetLookPos().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
+	iTxtY += iOFFSET;
+
 	sprintf_s( strDbgTxt, 
 		"PlayerPos : x[%f], y[%f], z[%f]",
 		m_upPlayer->GetPosition().x, m_upPlayer->GetPosition().y, m_upPlayer->GetPosition().z );
@@ -396,6 +443,14 @@ void clsSCENE_TAKEOFF::RenderDebugText()
 		m_upEnemy->GetPosition().x, m_upEnemy->GetPosition().y, m_upEnemy->GetPosition().z );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
+	iTxtY += iOFFSET;
+
+	sprintf_s( strDbgTxt, 
+		"Frame : [%f]",
+		m_fMovieFrame );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
+	
 //	sprintf_s( strDbgTxt, 
 //		"MisModelPos : x[%f], y[%f], z[%f]",
 //		m_upMissModel->GetPos().x, m_upMissModel->GetPos().y, m_upMissModel->GetPos().z );

@@ -31,6 +31,7 @@ private:
 	//指定した行のファイルデータをギガポンたちに与える.
 	void SetGigaponPosFromFile( const int iFileRow );
 
+	void SetOtherDataFromFile( const int iFileRow );
 
 	//カメラのカット割りの段階.
 	enum enCUT : int
@@ -89,6 +90,9 @@ private:
 	std::unique_ptr< clsStage >	m_upStage;
 	std::unique_ptr< clsRobo >	m_upPlayer;
 	std::unique_ptr< clsRobo >	m_upEnemy;
+
+	//カメラの移動速度など.
+	std::vector< float > m_vecfOtherData;
 
 	//音の引数.
 	enum enBGM : int
