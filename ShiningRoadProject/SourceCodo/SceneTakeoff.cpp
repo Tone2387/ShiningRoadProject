@@ -84,14 +84,13 @@ void clsSCENE_TAKEOFF::UpdateProduct( enSCENE &enNextScene )
 #endif//CAMERA_FREE_MOVE_
 
 	if( isPressEnter() ){
+		//フレーム数の変数を次のカットへ飛ぶ数まで増やす.
 		NextCut();
 	}
 
+	//今のカットのフレーム数を満たしたら.
 	if( m_fMovieFrame > m_fMovieFrameNextArray[ m_iCountCameraCutChange ] ){
-		AddCut( &m_enCut );
-		SetCamPosFromFile(	 ++m_iCountCameraCutChange );
-		SetGigaponPosFromFile( m_iCountCameraCutChange );
-		m_fMovieFrame = 0;
+		InitMovie();
 	}
 
 	UpdateMovie();
@@ -113,54 +112,120 @@ void clsSCENE_TAKEOFF::RenderUi()
 
 }
 
+
+void clsSCENE_TAKEOFF::InitMovie()
+{
+	AddCut( &m_enCut );
+	SetCamPosFromFile(	 ++m_iCountCameraCutChange );
+	SetGigaponPosFromFile( m_iCountCameraCutChange );
+	m_fMovieFrame = 0;
+
+	switch( m_enCut )
+	{
+	case clsSCENE_TAKEOFF::enCUT_START:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_1:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_2:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_3:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_END:
+		break;
+
+	}
+
+}
+
+
 void clsSCENE_TAKEOFF::UpdateMovie()
 {
 	const float fPLAYER_SPEED = 0.5f;
 
 	switch( m_enCut )
 	{
-	case clsSCENE_TAKEOFF::enCUT_START:
-		{
-			m_upPlayer->SetPosition(
-				m_upPlayer->GetPosition() +
-				D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
-			m_wpCamera->AddPos( D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
+//	case clsSCENE_TAKEOFF::enCUT_START:
+//		{
+//			m_upPlayer->SetPosition(
+//				m_upPlayer->GetPosition() +
+//				D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
+//			m_wpCamera->AddPos( D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
+//
+//			const float fDOOR_OPEN_X_START	= -350.0f;
+//			const float fDOOR_OPEN_X_END	= -300.0f;
+//			const float fDOOR_X = -260.0f;
+//			//次のカットへ.
+//			if( m_upPlayer->GetPosition().x > fDOOR_X ){
+//				NextCut();
+//			}
+//			//ドアが開きます.
+//			if( fDOOR_OPEN_X_START			< m_upPlayer->GetPosition().x &&
+//				m_upPlayer->GetPosition().x < fDOOR_OPEN_X_END )
+//			{
+//				m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
+//			}
+//		}
+//		break;
+//	case clsSCENE_TAKEOFF::enCUT_GO_YOU:
+//			m_upPlayer->SetPosition(
+//				m_upPlayer->GetPosition() +
+//				D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
+//			break;
+//	case clsSCENE_TAKEOFF::enCUT_LOOK_UP:
+//		if( m_fMovieFrame == 1 ){
+//			m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
+//		}
+//		break;
+//	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+//		break;
+//	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+//		break;
+//	case clsSCENE_TAKEOFF::enCUT_END:
+//		break;
+////	case clsSCENE_TAKEOFF::enCUT_size:
+////		break;
+//	default:
+//		break;
 
-			const float fDOOR_OPEN_X_START	= -350.0f;
-			const float fDOOR_OPEN_X_END	= -300.0f;
-			const float fDOOR_X = -260.0f;
-			//次のカットへ.
-			if( m_upPlayer->GetPosition().x > fDOOR_X ){
-				NextCut();
-			}
-			//ドアが開きます.
-			if( fDOOR_OPEN_X_START			< m_upPlayer->GetPosition().x &&
-				m_upPlayer->GetPosition().x < fDOOR_OPEN_X_END )
-			{
-				m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
-			}
-		}
+	case clsSCENE_TAKEOFF::enCUT_START:
 		break;
-	case clsSCENE_TAKEOFF::enCUT_GO_YOU:
-			m_upPlayer->SetPosition(
-				m_upPlayer->GetPosition() +
-				D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
-			break;
-	case clsSCENE_TAKEOFF::enCUT_LOOK_UP:
-		if( m_fMovieFrame == 1 ){
-			m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
-		}
+	case clsSCENE_TAKEOFF::enCUT_RED_1:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_2:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_3:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
 		break;
 	case clsSCENE_TAKEOFF::enCUT_END:
 		break;
-//	case clsSCENE_TAKEOFF::enCUT_size:
-//		break;
-	default:
-		break;
+
 	}
 }
 

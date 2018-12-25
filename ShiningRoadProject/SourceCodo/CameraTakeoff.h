@@ -2,10 +2,10 @@
 #define CAMERA_TAKEOFF_H_
 
 
-#include "Camera.h"
+#include "CameraMovieBase.h"
 
 
-class clsCAMERA_TAKEOFF : public clsCAMERA_BASE
+class clsCAMERA_TAKEOFF : public clsCAMERA_MOVIE_BASE
 {
 public:
 	clsCAMERA_TAKEOFF();

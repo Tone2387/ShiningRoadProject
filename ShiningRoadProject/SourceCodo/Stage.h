@@ -32,6 +32,7 @@ public:
 
 	//Œõ‚é‚Æ‚±‚ë‚ÌF‚ğ’è‚ß‚é.
 	void SetColorTarget( const D3DXVECTOR4& vColor );
+	void SetColor( const D3DXVECTOR4& vColor );
 
 	void SetScale( const float fScale );
 

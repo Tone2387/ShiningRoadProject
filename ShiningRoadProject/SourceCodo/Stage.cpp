@@ -238,6 +238,11 @@ void clsStage::SetColorTarget( const D3DXVECTOR4& vColor )
 	m_vLightColorTarget = vColor;
 	m_LightLightingFlg.SetFlg( m_vLightColor, m_vLightColorTarget );
 }
+void clsStage::SetColor( const D3DXVECTOR4& vColor )
+{ 
+	m_vLightColor = m_vLightColorTarget = vColor;
+	m_LightLightingFlg.Init();
+}
 
 
 void clsStage::SetScale( const float fScale )

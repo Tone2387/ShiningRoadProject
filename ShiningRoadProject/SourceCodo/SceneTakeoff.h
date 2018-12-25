@@ -35,13 +35,25 @@ private:
 	//カメラのカット割りの段階.
 	enum enCUT : int
 	{
-		enCUT_START = 0,//通路を通る主人公.
-		enCUT_GO_YOU,	//広場に出た主人公.
-		enCUT_LOOK_UP,	//天井を見上げる.
+//		enCUT_START = 0,//通路を通る主人公.
+//		enCUT_GO_YOU,	//広場に出た主人公.
+//		enCUT_LOOK_UP,	//天井を見上げる.
+//		enCUT_ENEMY_APP,//天井から敵登場.
+//		enCUT_ENEMY_LANDING,//敵着地.
+
+		enCUT_START = 0,//エリア全体を写す.
+		enCUT_RED_1,	//ステージが赤くなる.
+		enCUT_RED_2,		
+		enCUT_RED_3,	//( 天井を写す ).
+		enCUT_LIA_OPEN,	//天井が開く.
 		enCUT_ENEMY_APP,//天井から敵登場.
+		enCUT_PLAYER_UP,//通路を行く自機のアップ( 正面 ).
+		enCUT_PLAYER_ROAD,//通路を行く自機( 背面 ).
+		enCUT_PLAYER_APP,//広場に現れる自機.
+		enCUT_ENCOUNT,	//そして出会う二機のギガポン.
 		enCUT_ENEMY_LANDING,//敵着地.
-			
-		//ここに来た瞬間にミッションシーンに飛ぶ.
+
+		//ここに来た瞬間にミッションシーンに飛び始める.
 		enCUT_END,		//にらみ合う二体のギガポン、カメラが引いていく.
 
 		enCUT_size
@@ -49,6 +61,8 @@ private:
 	//カット変数を更新.
 	void AddCut( enCUT* const penCut );
 
+	//ムービーっぽく動かすための為の関数.
+	void InitMovie();
 	void UpdateMovie();
 
 	//フレームが満たしていなくても次のカットへ飛ぶ.
