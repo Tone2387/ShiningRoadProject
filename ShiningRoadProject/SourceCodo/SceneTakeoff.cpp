@@ -126,7 +126,7 @@ void clsSCENE_TAKEOFF::InitMovie()
 	SetCamPosFromFile(	 ++m_iCountCameraCutChange );
 	SetGigaponPosFromFile( m_iCountCameraCutChange );
 	SetOtherDataFromFile(  m_iCountCameraCutChange );
-	m_fMovieFrame = 0;
+	m_fMovieFrame = 0.0f;
 
 
 	switch( m_enCut )
@@ -317,7 +317,7 @@ void clsSCENE_TAKEOFF::SetCamPosFromFile( const int iFileRow )
 
 	clsFILE File;
 	assert( File.Open( sFILE_PATH_CAMERA ) );
-	assert( File.GetSizeRow() > iFileRow );
+	if( File.GetSizeRow() <= iFileRow )	{ return; }
 
 	D3DXVECTOR3 vPos;
 	int iColIndex = 0;
@@ -338,7 +338,7 @@ void clsSCENE_TAKEOFF::SetGigaponPosFromFile( const int iFileRow )
 {
 	clsFILE File;
 	assert( File.Open( sFILE_PATH_GIGAPON ) );
-	assert( File.GetSizeRow() > iFileRow );
+	if( File.GetSizeRow() <= iFileRow )	{ return; }
 
 	D3DXVECTOR3 vPos;
 	int iColIndex = 0;
@@ -360,7 +360,7 @@ void clsSCENE_TAKEOFF::SetOtherDataFromFile( const int iFileRow )
 {
 	clsFILE File;
 	assert( File.Open( sFILE_PATH_OTHER ) );
-	assert( File.GetSizeRow() > iFileRow );
+	if( File.GetSizeRow() <= iFileRow )	{ return; }
 
 	m_vecfOtherData;
 
@@ -405,7 +405,11 @@ void clsSCENE_TAKEOFF::AddCut( enCUT* const penCut )
 //フレームが満たしていなくても次のカットへ飛ぶ.
 void clsSCENE_TAKEOFF::NextCut()
 {
-	m_fMovieFrame = m_fMovieFrameNextArray[ m_iCountCameraCutChange ] + 1;
+	//配列のサイズチェック.
+	if( m_iCountCameraCutChange < enCUT_size ){
+		//カウント変数を次に進むまで増やす.
+		m_fMovieFrame = m_fMovieFrameNextArray[ m_iCountCameraCutChange ] + 1;
+	}
 //	enNextScene = enSCENE::MISSION;
 
 }
