@@ -6,7 +6,8 @@ clsSkinMesh::clsSkinMesh() :
 	m_iAnimNo( 0 ),
 	m_pAnimCtrl( NULL ),
 	m_dAnimSpeed( 0.1 ),
-	m_bAnimReverce( false )
+	m_bAnimReverce( false ),
+	m_bAnimPause(false)
 {
 
 }
@@ -32,6 +33,15 @@ void clsSkinMesh::ModelRender(
 
 void clsSkinMesh::AnimUpdate()
 {
+	if (m_bAnimPause)
+	{
+		if (m_pAnimCtrl != NULL){
+			m_pAnimCtrl->AdvanceTime(0, NULL);
+		}
+
+		return;
+	}
+
 	if (!m_bAnimReverce)
 	{
 		m_dAnimTime += abs(m_dAnimSpeed);

@@ -195,6 +195,9 @@ public:
 
 	void CharaDuplicate(clsCharactor* const pContactChara);
 
+	virtual void AnimPause() const{};
+	virtual void AnimPlay() const{};
+
 protected:
 	void ShotSwich(const int iWeaponNum);//•¡”‚ ‚é•Ší‚©‚çg—p‚·‚é•Ší‚ğŒˆ‚ß‚é.
 

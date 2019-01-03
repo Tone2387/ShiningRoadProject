@@ -78,6 +78,16 @@ public:
 		m_pMesh->UpdateColPos();
 	}
 
+	virtual void AnimPause() const override
+	{
+		m_pMesh->AnimPause();
+	}
+
+	virtual void AnimPlay() const override
+	{
+		m_pMesh->AnimPlay();
+	}
+
 	void UpdateCollsion();
 
 	bool m_bBoost;//true:ブースター展開/false:非展開.
