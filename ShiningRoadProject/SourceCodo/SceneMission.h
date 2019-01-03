@@ -132,6 +132,9 @@ private:
 	float m_fCursorSize;
 
 	clsUiText* m_pHP;
+	clsUiText* m_pHPTargetChara;
+
+	clsUiText* m_pBoostOn;
 
 	clsSPRITE2D_CENTER* m_pLBulletMark;
 	clsSPRITE2D_CENTER* m_pRBulletMark;

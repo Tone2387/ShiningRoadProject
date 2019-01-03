@@ -269,6 +269,16 @@ void clsSCENE_MISSION::CreateUI()
 	m_pStartText = new clsUiText;
 	m_pStartText->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H,5.0f);
 	m_pStartText->SetPos(vPos);
+
+	m_pHPTargetChara = new clsUiText;
+	m_pHPTargetChara->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pHPTargetChara->SetPos(vPos);
+
+	m_pBoostOn = new clsUiText;
+	m_pBoostOn->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pBoostOn->SetPos(vPos);
+	m_pBoostOn->SetText("Boost");
+
 }
 
 //毎フレーム通る処理.
@@ -354,7 +364,15 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 			//エフェクトの一時停止.
 			m_wpEffects->PausedAll( true );
 			//========== アニメーションの一時停止はここ ==========//.
+			for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+			{
+				m_v_pFriends[i]->AnimPause();
+			}
 
+			for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+			{
+				m_v_pEnemys[i]->AnimPause();
+			}
 		}
 	}
 #endif//#ifdef Tahara
@@ -448,6 +466,12 @@ void clsSCENE_MISSION::RenderUi()
 
 	m_pRaderWindowBack->Render();
 
+	//ブースター点灯表示.
+	if (m_pPlayer->m_bBoost)
+	{
+		m_pBoostOn->Render(clsUiText::enPOS::MIDDLE);
+	}
+
 	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
 	{
 		if (!m_v_pEnemys[i])continue;
@@ -509,6 +533,12 @@ void clsSCENE_MISSION::RenderUi()
 		
 		m_pLockWindow->SetPos(vPosTmp);
 		m_pLockWindow->Render();
+
+		int iTargetHP = m_pPlayer->GetTargetChara()->m_iHP;
+
+		sprintf_s(pText, "%d", iTargetHP);
+		m_pHPTargetChara->SetText(pText);
+		m_pHPTargetChara->Render(clsUiText::enPOS::MIDDLE);
 
 		//ヒットマーク描画.
 		if (iHitDispTime > 0)
@@ -898,7 +928,15 @@ void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
 			//エフェクトの一時停止の解除.
 			m_wpEffects->PausedAll( false );
 			//========== モデルのアニメーションの一時停止の解除 ==========//.
+			for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+			{
+				m_v_pFriends[i]->AnimPlay();
+			}
 
+			for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+			{
+				m_v_pEnemys[i]->AnimPlay();
+			}
 		}
 	}
 }

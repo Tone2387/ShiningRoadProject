@@ -27,6 +27,11 @@ public:
 	D3DXVECTOR3 GetCamTargetPos();
 	D3DXVECTOR3 GetLookTargetPos();
 
+	clsCharactor* GetTargetChara()
+	{
+		return m_pTargetChara;
+	}
+
 private:
 	clsInputRobo* m_pInput;
 

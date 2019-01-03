@@ -57,6 +57,24 @@ public:
 
 	void UpdateColPos();
 
+	void AnimPause()
+	{
+		for (char i = 0; i < enPARTS_INDEX_size; i++)
+		{
+			assert(m_vpParts[i]);
+			m_vpParts[i]->AnimPause();
+		}
+	}
+
+	void AnimPlay()
+	{
+		for (char i = 0; i < enPARTS_INDEX_size; i++)
+		{
+			assert(m_vpParts[i]);
+			m_vpParts[i]->AnimPlay();
+		}
+	}
+
 	//指定したパーツの回転値を変更する.
 	void SetPartsRotate(const enPARTS PartsNum, const D3DXVECTOR3 vRot);
 	//指定したパーツのアニメーションを変える.

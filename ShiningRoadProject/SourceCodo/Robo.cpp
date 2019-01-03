@@ -364,6 +364,7 @@ void clsRobo::QuickBoost()
 				m_fMoveSpeed = m_fQuickBoostSpeedMax;
 				m_iQuickBoostDecStartTime = m_iQuickBoostTopSpeedTime;
 				SetMoveDeceleSpeed(m_iQuickInterbal);
+				AnimChangeLeg(enAnimNoLegBoostStart);
 				//クイックブースト.
 				//m_wpSound->PlaySE(0);
 			}
@@ -413,6 +414,7 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
 		m_fMoveSpeed = m_fQuickBoostSpeedMax;
+		m_vAcceleDir = m_vMoveDir;//ブースト表示用に
 		m_iQuickBoostDecStartTime--;
 	}
 
@@ -1365,7 +1367,10 @@ void clsRobo::AnimUpdateLeg()
 
 		if (!m_bBoost)//|| !IsMoveing())
 		{
-			iChangeAnimNo = enAnimNoLegBoostEnd;
+			if (m_iQuickInterbal < 0)
+			{
+				iChangeAnimNo = enAnimNoLegBoostEnd;
+			}
 		}
 
 		break;
@@ -1373,7 +1378,10 @@ void clsRobo::AnimUpdateLeg()
 
 		if (!m_bBoost)//|| !IsMoveing())
 		{
-			iChangeAnimNo = enAnimNoLegBoostEnd;
+			if (m_iQuickInterbal < 0)
+			{
+				iChangeAnimNo = enAnimNoLegBoostEnd;
+			}
 		}
 
 		break;
@@ -1961,7 +1969,11 @@ void clsRobo::Down()
 
 	if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
 	{
-		m_wpEffects->Play(0, m_vCenterPos);
+		if (!m_bTimeUp)
+		{
+			m_wpEffects->Play(0, m_vCenterPos);
+		}
+		
 		m_bDeadFlg = true;
 	}
 }

@@ -51,6 +51,16 @@ public:
 	const bool IsAnimTimePoint(const double dDesignationTime);
 	const bool IsExistsBone(const char* sBoneName);
 
+	void AnimPause()
+	{
+		m_bAnimPause = true;
+	}
+
+	void AnimPlay()
+	{
+		m_bAnimPause = false;
+	}
+
 	//アニメーションを逆再生させる.
 	void AnimReverce(const bool bAnimTimeInit = false);
 	//アニメーションを通常再生させる.
@@ -66,6 +76,7 @@ private:
 	int m_iAnimNo;//ﾓｰｼｮﾝ番号.
 	double m_dAnimSpeed;
 	bool m_bAnimReverce;
+	bool m_bAnimPause;
 	
 	LPD3DXANIMATIONCONTROLLER m_pAnimCtrl;
 
