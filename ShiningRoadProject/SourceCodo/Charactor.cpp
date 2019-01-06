@@ -305,31 +305,33 @@ bool clsCharactor::IsPointIntersect(
 	//標的の位置を終点に.
 	vecEnd = EndPos;
 
-	//対象が動いている物体でも、対象のworld行列の、
-	//逆行列を用いれば、正しくﾚｲが当たる.
-	D3DXMATRIX matWorld;
-	D3DXMatrixTranslation(
-		&matWorld,
+	//対象が動いてる物体でも、対象のworld行列の、逆並列を用いれば正しくﾚｲが当たる.
+	D3DXMATRIX mWorld, mWorldInv, mTrans, mRotate, mScale;
+	D3DXMatrixTranslation(&mTrans,
 		pTarget->m_Trans.vPos.x,
 		pTarget->m_Trans.vPos.y,
-		pTarget->m_Trans.vPos.z
-		);
+		pTarget->m_Trans.vPos.z);
 
-	//逆行列を求める.
-	D3DXMatrixInverse(&matWorld, NULL, &matWorld);
+	D3DXMatrixRotationYawPitchRoll(&mRotate,
+		pTarget->m_Trans.fYaw,
+		pTarget->m_Trans.fPitch,
+		pTarget->m_Trans.fRoll);
 
-	D3DXVec3TransformCoord(
-		&vecStart, &vecStart, &matWorld);
+	D3DXMatrixScaling(&mScale,
+		pTarget->m_Trans.vScale.x,
+		pTarget->m_Trans.vScale.y,
+		pTarget->m_Trans.vScale.z);
 
-	D3DXVec3TransformCoord(
-		&vecEnd, &vecEnd, &matWorld);
+	mWorld = mScale * mRotate * mTrans;//もともと.
+
+	//逆並列を求める.
+	D3DXMatrixInverse(&mWorldInv, NULL, &mWorld);
+	D3DXVec3TransformCoord(&vecStart, &vecStart, &mWorldInv);
+	D3DXVec3TransformCoord(&vecEnd, &vecEnd, &mWorldInv);
 
 	//距離を求める.
 	vecDistance = vecEnd - vecStart;
-
 	D3DXVec3Normalize(&vecDistance, &vecDistance);
-
-	//距離を求める.
 
 	BOOL bHit = false;	//命中ﾌﾗｸﾞ.
 
@@ -346,7 +348,7 @@ bool clsCharactor::IsPointIntersect(
 		&fDis,			//ﾀｰｹﾞｯﾄとの距離.
 		NULL, NULL);
 
-	float VecLenght = D3DXVec3Length(&(EndPos - StartPos));
+	float VecLenght = D3DXVec3Length(&(vecEnd - vecStart));
 
 	if (fDis < VecLenght)//ﾚｲの範囲内に何かあるか?.
 	{
@@ -545,6 +547,11 @@ void clsCharactor::LockChara(clsStage* const pStage)
 		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 		{
 			if (m_v_pEnemys[i]->m_bDeadFlg)
+			{
+				continue;
+			}
+
+			if (!IsTargetWall(m_vLockStartingPos, m_v_pEnemys[i]->GetCenterPos(), pStage))
 			{
 				continue;
 			}

@@ -217,26 +217,24 @@ void clsSCENE_MISSION::CreateUI()
 	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
 
 	assert(!m_pLWeaponLockMark);
-	ss.Disp = { 128.0f, 64.0f };
+	ss.Disp = { 92.0f, 106.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_pLWeaponLockMark = new clsSPRITE2D_CENTER;
 
-	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockMark.png", ss);
+	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockL.png", ss);
 	m_pLWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
-	m_pLWeaponLockMark->SetAlpha(0.4f);
+	//m_pLWeaponLockMark->SetAlpha(0.4f);
 
 	assert(!m_pRWeaponLockMark);
-	ss.Disp = { 128.0f, 64.0f };
-	ss.Anim = { 1.0f, 1.0f };
 
 	m_pRWeaponLockMark = new clsSPRITE2D_CENTER;
 
-	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockMark.png", ss);
+	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockR.png", ss);
 	m_pRWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
-	m_pRWeaponLockMark->SetAlpha(0.4f);
+	//m_pRWeaponLockMark->SetAlpha(0.4f);
 
 	assert(!m_pHitMark);
 	ss.Disp = { 128.0f, 64.0f };
@@ -278,6 +276,17 @@ void clsSCENE_MISSION::CreateUI()
 	m_pBoostOn->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
 	m_pBoostOn->SetPos(vPos);
 	m_pBoostOn->SetText("Boost");
+
+	ss.Disp = { WND_W, WND_H };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pWindowScr = new clsSPRITE2D_CENTER;
+	m_pWindowScr->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Screen.png", ss);
+	m_pWindowScr->SetPos({ WND_W / 2, (WND_H / 2), 0.0f });
+
+	m_pWindowScrFilter = new clsSPRITE2D_CENTER;
+	m_pWindowScrFilter->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\ScreenBack.png", ss);
+	m_pWindowScrFilter->SetPos({ WND_W / 2, (WND_H / 2), 0.0f });
 
 }
 
@@ -408,6 +417,9 @@ void clsSCENE_MISSION::RenderUi()
 	m_pStage->RenderInside( m_mView, m_mProj, m_vLight, m_wpCamera->GetPos() );
 	SetDepth( false );	//ZƒeƒXƒg:OFF.
 #endif//#ifdef Tahara
+
+	m_pWindowScrFilter->Render();
+	m_pWindowScr->Render();
 
 	//Šˆ“®ŒÀŠEŠÔ.
 	int iTmp = m_pPlayer->m_iActivityLimitTime;
@@ -550,6 +562,18 @@ void clsSCENE_MISSION::RenderUi()
 
 		if (m_pPlayer->IsLWeaponLock())
 		{
+			m_pLWeaponLockMark->SetPos(vPosTmp);
+			m_pLWeaponLockMark->Render();
+		}
+
+		if (m_pPlayer->IsRWeaponLock())
+		{
+			m_pRWeaponLockMark->SetPos(vPosTmp);
+			m_pRWeaponLockMark->Render();
+		}
+
+		/*if (m_pPlayer->IsLWeaponLock())
+		{
 			m_pLWeaponLockMark->SetPos(vPosTmp - D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
 			m_pLWeaponLockMark->Render();
 		}
@@ -558,7 +582,7 @@ void clsSCENE_MISSION::RenderUi()
 		{
 			m_pRWeaponLockMark->SetPos(vPosTmp + D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
 			m_pRWeaponLockMark->Render();
-		}
+		}*/
 	}
 
 	else
