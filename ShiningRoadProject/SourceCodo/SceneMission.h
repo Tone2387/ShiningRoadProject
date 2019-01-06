@@ -103,6 +103,9 @@ private:
 	int m_iStartCnt;
 	clsUiText* m_pStartText;
 
+	clsSPRITE2D_CENTER* m_pWindowScr;
+	clsSPRITE2D_CENTER* m_pWindowScrFilter;
+
 	clsSPRITE2D_CENTER* m_pRaderWindowFront;
 	clsSPRITE2D_CENTER* m_pRaderWindowBack;
 	std::vector<clsSPRITE2D_CENTER*> m_v_pRaderEnemyMark;
