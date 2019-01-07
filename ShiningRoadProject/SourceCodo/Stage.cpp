@@ -159,7 +159,7 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 
 
 	//åıÇê¬Ç≠.
-	SetColorTarget( vLIGHT_COLOR_BLUE );
+	SetColor( vLIGHT_COLOR_BLUE );
 }
 //enStaticModel_Building
 clsStage::~clsStage()
@@ -242,6 +242,10 @@ void clsStage::SetColor( const D3DXVECTOR4& vColor )
 { 
 	m_vLightColor = m_vLightColorTarget = vColor;
 	m_LightLightingFlg.Init();
+}
+void clsStage::SetColorRed()
+{
+	SetColor( vLIGHT_COLOR_RED );
 }
 
 
