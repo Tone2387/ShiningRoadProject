@@ -46,6 +46,10 @@ void clsSCENE_MISSION::CreateProduct()
 
 	m_pStage = new clsStage( m_wpPtrGroup );
 
+#ifdef Tahara
+	m_pStage->SetColorRed();
+#endif//#ifdef Tahara
+
 	m_fCamMoveSpeed = 0.01f;
 
 	if (m_wpSound)

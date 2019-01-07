@@ -53,9 +53,8 @@ private:
 		enCUT_PLAYER_APP,//広場に現れる自機.
 		enCUT_ENCOUNT,	//そして出会う二機のギガポン.
 		enCUT_ENEMY_LANDING,//敵着地.
-
-		//ここに来た瞬間にミッションシーンに飛び始める.
-		enCUT_END,		//にらみ合う二体のギガポン、カメラが引いていく.
+		enCUT_VS,		//自機の顔のアップ.
+		enCUT_END,		//敵の顔のアップ.
 
 		enCUT_size
 	};
@@ -82,7 +81,7 @@ private:
 	int m_iCountCameraCutChange;
 
 	//今のカットのフレームカウント.
-	float m_fMovieFrame = 0;
+	float m_fMovieFrame;
 	//全カットのフレーム数.
 	float m_fMovieFrameNextArray[ enCUT_size ];
 
