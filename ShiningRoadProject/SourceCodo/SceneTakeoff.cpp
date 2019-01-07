@@ -173,7 +173,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
 	int iOtherDataIndex = 0;
 
-	switch( m_enCut )//m_vecfOtherData[ iOtherDataIndex ]
+	switch( m_enCut )
 	{
 //	case clsSCENE_TAKEOFF::enCUT_START:
 //		{
