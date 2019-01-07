@@ -27,7 +27,7 @@ namespace{
 	//ç≈í·å¿ÇÃî¬ÇÃêî.
 	const int iTEX_NUM_MIN = 1;
 
-	const float fTILE_SIZE_MAX_SIZE = 15.0f;//3.0f.
+	const float fTILE_SIZE_MAX_SIZE = 3.0f;//3.0f.//15.0f.
 	const D3DXVECTOR3 vTILE_SIZE_MAX = { fTILE_SIZE_MAX_SIZE, fTILE_SIZE_MAX_SIZE, 1.0f };
 
 	//ë§ñ ÇÃforï∂ÇÃëùâ¡ó .

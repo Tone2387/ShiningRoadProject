@@ -8,6 +8,7 @@ using namespace std;
 namespace{
 
 	//ƒ‰ƒCƒg•ûŒü.
+//	const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -0.01f };
 	const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -0.01f };
 	//ƒJƒƒ‰‚Ì‚æ‚è‹ï‡.
 	const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );

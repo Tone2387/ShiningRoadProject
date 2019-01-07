@@ -184,21 +184,24 @@ void clsStage::Render(
 	//当たり判定用モデル.
 //	m_pStageCollision->Render( mView, mProj, vLight, vEye );
 
+//	const D3DXVECTOR3 vLIGHT = vLight;
+	const D3DXVECTOR3 vLIGHT = { 0.0f, 0.0f, 0.0f };
+
 	//床と天井.
-	m_pStageFloor->Render(	 mView, mProj, vLight, vEye, m_vLightColor );
-	m_pStageCelling->Render( mView, mProj, vLight, vEye, m_vLightColor );
+	m_pStageFloor->Render(	 mView, mProj, vLIGHT, vEye, m_vLightColor );
+	m_pStageCelling->Render( mView, mProj, vLIGHT, vEye, m_vLightColor );
 
 	assert( m_pLia );
-	m_pLia->ModelRender( mView, mProj, vLight, vEye, m_vLightColor );
+	m_pLia->ModelRender( mView, mProj, vLIGHT, vEye, m_vLightColor );
 
 	for( int i=0; i<enDOOR_NUM_size; i++ ){
 		assert( m_pDoorArray[i] );
 		m_pDoorArray[i]->ModelUpdate( m_pDoorArray[i]->m_Trans );
-		m_pDoorArray[i]->ModelRender( mView, mProj, vLight, vEye, m_vLightColor );
+		m_pDoorArray[i]->ModelRender( mView, mProj, vLIGHT, vEye, m_vLightColor );
 	}
 
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
-		m_vpBuilding[i]->Render( mView, mProj, vLight, vEye, m_vLightColor );
+		m_vpBuilding[i]->Render( mView, mProj, vLIGHT, vEye, m_vLightColor );
 	}
 
 	//ドアが開いたら空きっぱなし.
@@ -216,8 +219,8 @@ void clsStage::Render(
 //	if( GetAsyncKeyState( 'B' ) & 0x8000 )m_vLightColorTarget.y -= fSTATIC_MODEL_COLOR_RGB_ADD;
 //	if( GetAsyncKeyState( 'H' ) & 0x8000 )m_vLightColorTarget.z += fSTATIC_MODEL_COLOR_RGB_ADD;
 //	if( GetAsyncKeyState( 'N' ) & 0x8000 )m_vLightColorTarget.z -= fSTATIC_MODEL_COLOR_RGB_ADD;
-	if( GetAsyncKeyState( 'V' ) & 0x8000 )SetColorTarget( vLIGHT_COLOR_BLUE );
-	if( GetAsyncKeyState( 'B' ) & 0x8000 )SetColorTarget( vLIGHT_COLOR_RED );
+//	if( GetAsyncKeyState( 'V' ) & 0x8000 )SetColorTarget( vLIGHT_COLOR_BLUE );
+//	if( GetAsyncKeyState( 'B' ) & 0x8000 )SetColorTarget( vLIGHT_COLOR_RED );
 //#endif//#ifdef _DEBUG
 
 }
