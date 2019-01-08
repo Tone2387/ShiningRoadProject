@@ -181,6 +181,7 @@
     <ClCompile Include="SourceCodo\Robo.cpp" />
     <ClCompile Include="SourceCodo\RoboCommand.cpp" />
     <ClCompile Include="SourceCodo\RoboStatusBase.cpp" />
+    <ClCompile Include="SourceCodo\RoboTakeoff.cpp" />
     <ClCompile Include="SourceCodo\SceneAssemble.cpp" />
     <ClCompile Include="SourceCodo\SceneBase.cpp" />
     <ClCompile Include="SourceCodo\SceneEnding.cpp" />
@@ -305,6 +306,7 @@
     <ClInclude Include="SourceCodo\Robo.h" />
     <ClInclude Include="SourceCodo\RoboCommand.h" />
     <ClInclude Include="SourceCodo\RoboStatusBase.h" />
+    <ClInclude Include="SourceCodo\RoboTakeoff.h" />
     <ClInclude Include="SourceCodo\SceneAssemble.h" />
     <ClInclude Include="SourceCodo\SceneAssembleInformation.h" />
     <ClInclude Include="SourceCodo\SceneBase.h" />
