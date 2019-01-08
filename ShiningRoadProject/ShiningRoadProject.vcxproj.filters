@@ -97,6 +97,9 @@
     <Filter Include="Hiyosi\Enemy">
       <UniqueIdentifier>{20753a3d-a977-4344-82aa-f1047fc7fd5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\Robo">
+      <UniqueIdentifier>{e4e00ffa-f7a8-4727-91d7-d4e7d7748946}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\CameraMission.cpp">
@@ -431,6 +434,9 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\CameraMovieBase.cpp">
       <Filter>Tahara\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboTakeoff.cpp">
+      <Filter>Tahara\Robo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -787,6 +793,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\CameraMovieBase.h">
       <Filter>Tahara\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboTakeoff.h">
+      <Filter>Tahara\Robo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

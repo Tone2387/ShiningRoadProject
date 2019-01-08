@@ -83,7 +83,8 @@ void clsSCENE_TAKEOFF::CreateProduct()
 void clsSCENE_TAKEOFF::UpdateProduct( enSCENE &enNextScene )
 {
 #ifndef CAMERA_FREE_MOVE_
-	if( m_enCut != enCUT_END ){ m_fMovieFrame ++; }
+//	if( m_enCut != enCUT_END ){ m_fMovieFrame ++; }
+	m_fMovieFrame ++;
 #endif//CAMERA_FREE_MOVE_
 
 	if( isPressEnter() ){
@@ -97,7 +98,10 @@ void clsSCENE_TAKEOFF::UpdateProduct( enSCENE &enNextScene )
 		if( m_enCut == enCUT_END ){
 			enNextScene = enSCENE::MISSION;
 		}
-		InitMovie();
+		//次のカットへ.
+		else{
+			InitMovie();
+		}
 	}
 
 	UpdateMovie();
@@ -124,7 +128,7 @@ void clsSCENE_TAKEOFF::InitMovie()
 	SetGigaponPosFromFile( m_iCountCameraCutChange );
 	SetOtherDataFromFile(  m_iCountCameraCutChange );
 	m_fMovieFrame = 0.0f;
-
+	m_isTrigger = false;
 
 	switch( m_enCut )
 	{
@@ -144,17 +148,29 @@ void clsSCENE_TAKEOFF::InitMovie()
 		break;
 	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
 		m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
+		m_upEnemy->Boost();
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+		{
+			const int iARM_ANIM_INDEX = 0;
+			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
+			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
+		}
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+		m_upPlayer->Boost();
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
-		m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
+		{
+			m_upPlayer->Boost();
+
+
+			m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_CLOSING );
+		}
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
 		break;
@@ -170,6 +186,15 @@ void clsSCENE_TAKEOFF::InitMovie()
 
 void clsSCENE_TAKEOFF::UpdateMovie()
 {
+	D3DXVECTOR3 vPosPlayerOld = m_upPlayer->GetPosition();
+	D3DXVECTOR3 vPosEnemyOld = m_upEnemy->GetPosition();
+
+	m_upPlayer->UpdateProduct( m_upStage.get() );
+	m_upPlayer->ModelUpdate();
+	m_upEnemy->UpdateProduct( m_upStage.get() );
+	m_upEnemy->ModelUpdate();
+
+
 	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
 	int iOtherDataIndex = 0;
 
@@ -263,7 +288,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 			wpCam->AddPos( { 0.0f, fDOWN_CAM, 0.0f } );
 
 			m_upEnemy->SetPosition(
-				m_upEnemy->GetPosition() +
+				vPosEnemyOld +
 				D3DXVECTOR3( 0.0f, fDOWN_ENEMY, 0.0f ) );
 			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->AddDistance( fMOVE, true );
@@ -274,7 +299,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 		{
 			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//通路を進んでいるとき.
 			m_upPlayer->SetPosition(
-				m_upPlayer->GetPosition() +
+				vPosPlayerOld +
 				D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
 			wpCam->AddPos( D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
 		
@@ -289,12 +314,20 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 		{
 			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//通路を進んでいるとき.
 			m_upPlayer->SetPosition(
-				m_upPlayer->GetPosition() +
+				vPosPlayerOld +
 				D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
 			wpCam->AddPos( D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
 	
 			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->AddDistance( fMOVE, true );
+
+			const float fDOOR_OPEN_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
+			const float fDOOR_OPEN_FRAME_TOLERANCE = m_vecfOtherData[ iOtherDataIndex++ ];//floatの許容量.
+			if( m_fMovieFrame - fDOOR_OPEN_FRAME_TOLERANCE <= fDOOR_OPEN_FRAME &&
+				fDOOR_OPEN_FRAME <= m_fMovieFrame + fDOOR_OPEN_FRAME_TOLERANCE )
+			{
+				m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
+			}
 		}
 		break;
 
@@ -302,22 +335,80 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 		{
 			const float fPLAYER_SPEED_DOOR_APP = m_vecfOtherData[ iOtherDataIndex++ ];//ドアから現れるとき.
 			m_upPlayer->SetPosition(
-				m_upPlayer->GetPosition() +
+				vPosPlayerOld +
 				D3DXVECTOR3( fPLAYER_SPEED_DOOR_APP, 0.0f, 0.0f ) );
 		}
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
+		{
+			const float fDOWN = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->AddPos( { 0.0f, fDOWN, 0.0f } );
+
+			m_upEnemy->SetPosition(
+				vPosEnemyOld +
+				D3DXVECTOR3( 0.0f, fDOWN, 0.0f ) );
+
+			const float fPLAYER_SPD = m_vecfOtherData[ iOtherDataIndex++ ];
+			m_upPlayer->SetPosition(
+				vPosPlayerOld +
+				D3DXVECTOR3( fPLAYER_SPD, 0.0f, 0.0f ) );
+
+			const float fANIM_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
+			if( !m_isTrigger && m_fMovieFrame > fANIM_FRAME ){
+				const int iARM_ANIM_INDEX = 1;
+				m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
+				m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
+				m_isTrigger = true;
+			}
+		}
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+		{
+			const float fDOWN = m_vecfOtherData[ iOtherDataIndex++ ];
+			const float fLANDING = m_vecfOtherData[ iOtherDataIndex++ ];
+
+			//着地.
+			if( vPosEnemyOld.y <= fLANDING ){
+				m_upEnemy->SetPosition( 
+					D3DXVECTOR3(
+						vPosEnemyOld.x,
+						fLANDING,
+						vPosEnemyOld.z ) );
+
+				if( !m_isTrigger ){
+					m_upEnemy->Walk();
+					const int iANIM_INDEX = m_vecfOtherData[ iOtherDataIndex++ ];
+					m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::LEG, iANIM_INDEX );
+					m_upEnemy->m_pMesh->SetPartsAnimSpeed( enPARTS::LEG, g_dAnimSpeedReference / 4.0 );
+					m_isTrigger = true;
+				}
+			}
+			//下降.
+			else{
+				m_upEnemy->SetPosition(
+					vPosEnemyOld +
+					D3DXVECTOR3( 0.0f, fDOWN, 0.0f ) );
+			}
+		}
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_VS:
+		{
+			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->CrabWalk( fDistance );
+		}
 		break;
 	case clsSCENE_TAKEOFF::enCUT_END:
+		{
+			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->CrabWalk( fDistance );
+		}
 		break;
 	}
+
+
 
 	const float fSPN = 0.00625f;
 	const float fMOVE = 0.25f;
@@ -440,7 +531,7 @@ void clsSCENE_TAKEOFF::NextCut()
 	//配列のサイズチェック.
 	if( m_iCountCameraCutChange < enCUT_size ){
 		//カウント変数を次に進むまで増やす.
-		m_fMovieFrame = m_fMovieFrameNextArray[ m_iCountCameraCutChange ] + 1;
+		m_fMovieFrame = m_fMovieFrameNextArray[ m_iCountCameraCutChange ] + 1.0f;
 	}
 //	enNextScene = enSCENE::MISSION;
 
@@ -486,7 +577,53 @@ void clsSCENE_TAKEOFF::RenderDebugText()
 		m_fMovieFrame );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	
+
+	iTxtY += iOFFSET;
+
+	switch( m_enCut )
+	{
+	case clsSCENE_TAKEOFF::enCUT_START:
+		sprintf_s( strDbgTxt,"Cut : enCUT_START" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_1:
+		sprintf_s( strDbgTxt,"Cut : enCUT_RED_1" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_2:
+		sprintf_s( strDbgTxt,"Cut : enCUT_RED_2" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_RED_3:
+		sprintf_s( strDbgTxt,"Cut : enCUT_RED_3" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
+		sprintf_s( strDbgTxt,"Cut : enCUT_LIA_OPEN" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+		sprintf_s( strDbgTxt,"Cut : enCUT_ENEMY_APP" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_UP" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
+		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_ROAD" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_APP" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
+		sprintf_s( strDbgTxt,"Cut : enCUT_ENCOUNT" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+		sprintf_s( strDbgTxt,"Cut : enCUT_ENEMY_LANDING" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_VS:
+		sprintf_s( strDbgTxt,"Cut : enCUT_VS" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_END:
+		sprintf_s( strDbgTxt,"Cut : enCUT_END" );
+		break;
+	}
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+
 //	sprintf_s( strDbgTxt, 
 //		"MisModelPos : x[%f], y[%f], z[%f]",
 //		m_upMissModel->GetPos().x, m_upMissModel->GetPos().y, m_upMissModel->GetPos().z );

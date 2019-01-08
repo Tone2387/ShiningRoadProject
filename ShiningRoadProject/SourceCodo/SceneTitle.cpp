@@ -76,7 +76,6 @@ void clsSCENE_TITLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 
-	m_wpSound->PlaySE( enSE_BOMBER );
 
 
 
@@ -124,6 +123,7 @@ void clsSCENE_TITLE::CreateProduct()
 	//メニューの為のデータ取得&作成.
 	clsMENU_WINDOW_TITLE_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
 
+	m_wpSound->PlaySE( enSE_BOMBER );
 
 }
 
