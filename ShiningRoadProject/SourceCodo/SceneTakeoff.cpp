@@ -167,8 +167,6 @@ void clsSCENE_TAKEOFF::InitMovie()
 	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
 		{
 			m_upPlayer->Boost();
-
-
 			m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_CLOSING );
 		}
 		break;
