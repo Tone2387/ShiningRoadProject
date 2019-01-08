@@ -32,12 +32,12 @@ private:
 	void Update();
 
 	//描画.
-	void Render( bool isLoop = true );
+	void Render( bool isLoop = true ) const;
 
 
 
 	//深度テスト(Zテスト)ON/OFF切替.
-	void SetDepth( bool isOn );
+	void SetDepth( bool isOn ) const;
 	
 
 	enum class enMODE
@@ -63,13 +63,14 @@ private:
 
 
 	//終了させるための処理.
-	void End();
+	void End(){
+		m_bEnd = true;//このフラグがtrueになればこのクラスのループは終わる.
+	};
+
+private:
 
 	int m_iTimer;//モードの、待機時間.
 
-#ifdef _DEBUG
-	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vecupRogo;
-#endif//#ifdef _DEBUG
 
 	std::unique_ptr< clsLINE_BOX > m_upLineBox;
 	std::unique_ptr< clsLINE_BOX > m_upGageBox;
@@ -94,6 +95,11 @@ private:
 	ID3D11DepthStencilView*		m_wpBackBuffer_DSTexDSV;//デプスステンシルビュー.
 	ID3D11DepthStencilState*	m_pDepthStencilStateOn;	//深度(Z)テスト設定.
 	ID3D11DepthStencilState*	m_pDepthStencilStateOff;	//深度(Z)テスト設定.
+
+
+#ifdef _DEBUG
+	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vecupDebugImage;
+#endif//#ifdef _DEBUG
 
 };
 

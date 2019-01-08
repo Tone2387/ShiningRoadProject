@@ -2,11 +2,10 @@
 #define SCENE_GAME_OVER_H_
 
 
+class clsMENU_WINDOW_GAME_OVER_CONTINUE;
 #include "SceneBase.h"
 #include "CameraGameOver.h"
-#include "MissionModel.h"
 #include "Sprite2DCenter.h"
-class clsMENU_WINDOW_GAME_OVER_CONTINUE;
 
 //================================//
 //========== ゲームオーバークラス ==========//
@@ -28,7 +27,30 @@ private:
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
 
+#ifdef _DEBUG
+	//デバック゛テキストの表示.
+	void RenderDebugText() final;
+#endif//#ifdef _DEBUG
 
+private:
+
+	//音の引数.
+	enum enBGM : int
+	{
+		enBGM_AMACHA0 = 0,
+		enBGM_HART2,
+		enBGM_NOVA1,
+	};
+
+	enum enSE : int
+	{
+		enSE_CURSOL_MOVE = 0,
+		enSE_ENTER,
+		enSE_EXIT,
+		enSE_MISSION_START,
+		enSE_WIN_APP,
+		enSE_WIN_DISAPP,
+	};
 
 	struct MESSAGE_TEXT_STATE
 	{
@@ -54,28 +76,14 @@ private:
 
 
 
-
-
-
-
 	//メッセボックス.
-	std::unique_ptr< clsMENU_WINDOW_GAME_OVER_CONTINUE > m_upMenu;
-	
+	std::unique_ptr< clsMENU_WINDOW_GAME_OVER_CONTINUE > m_upMenu;	
 	//メニューから帰ってくる情報との照合用.
 	std::vector<unsigned int> m_vecuiInformationDataArray;
 
 
-
-
 	//黒背景.
 	std::unique_ptr< clsSprite2D > m_upBlackBack;
-
-
-
-#if _DEBUG
-	//デバック゛テキストの表示.
-	void RenderDebugText() final;
-#endif//#if _DEBUG
 
 
 };

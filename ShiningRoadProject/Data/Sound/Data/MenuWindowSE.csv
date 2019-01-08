@@ -1,0 +1,5 @@
+MenuWindowCursol,ZEROSHIKI000.wav,30,2,
+MenuWindowEnter,ZEROSHIKI001.wav,60,1,
+MenuWindowExit,ZEROSHIKI002.wav,60,1,
+MenuWindowWinApp,ZEROSHIKI003.wav,300,1,
+MenuWindowWinDisApp,ZEROSHIKI004.wav,150,1,

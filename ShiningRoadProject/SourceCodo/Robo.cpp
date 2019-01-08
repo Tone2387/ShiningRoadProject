@@ -45,7 +45,9 @@ enum enAnimNoArm
 	enAnimNoArmWeaponHoldAct,
 	enAnimNoArmWeaponShot,
 	enAnimNoArmWeaponHoldEnd,
+	enAnimNoArmWeaponReloadStart,
 	enAnimNoArmWeaponReload,
+	enAnimNoArmWeaponReloadEnd,
 	enAnimNoArmDown,
 };
 
@@ -81,6 +83,9 @@ void clsRobo::RoboInit(
 	m_wpSound = pPtrGroup->GetSound();
 #endif//#ifdef Tahara
 
+	m_pMesh = new clsMISSION_MODEL;
+	m_pMesh->Create(m_wpResource, pRobo);
+
 	const int iHulf = 2;
 
 	m_iMaxHP = pRobo->GetRoboState(clsROBO_STATUS::HP);//HP受け取り.
@@ -104,8 +109,6 @@ void clsRobo::RoboInit(
 	//エネルギー回復量.
 	//m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
 
-	m_iEnelgyOutput = 50000;
-
 	//浮遊時エネルギー回復量(通常エネルギーの半分).
 	m_iBoostFloatRecovery = m_iEnelgyOutput / iHulf;
 	
@@ -115,6 +118,8 @@ void clsRobo::RoboInit(
 	m_iBoostTopSpeedFrame = g_iBoostRisingyTopSpeedFrame + (g_iWalkTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage);
 	//ブースト展開中のEN消費.
 	m_iBoostMoveCost = pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
+
+	m_iEnelgyOutput = m_iBoostMoveCost + m_iBoostMoveCost / iHulf;
 
 	//ブースト上昇速度.
 	m_fBoostRisingSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_V) * g_fDistanceReference;
@@ -133,8 +138,9 @@ void clsRobo::RoboInit(
 	m_iQuickBoostEnelgyCost = pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);
 	m_iQuickBoostTopSpeedTime = pRobo->GetRoboState(clsROBO_STATUS::QUICK_TIME);
 
-	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
-	m_iQuickTrunTopSpeedTime = m_iQuickBoostTopSpeedTime;
+	//m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
+	m_fQuickTrunSpeedMax = m_fRotSpeedMax;
+	//m_iQuickTrunTopSpeedTime = m_iQuickBoostTopSpeedTime;
 
 	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
 	//m_iActivityLimitTime = pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME) * static_cast<int>(g_fFPS);
@@ -142,14 +148,10 @@ void clsRobo::RoboInit(
 	m_fRaderRange = pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
 
 	m_fLockRange = pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
-
-	m_pMesh = new clsMISSION_MODEL;
-
-	m_pMesh->Create(m_wpResource, pRobo);
 	
 	m_v_Spheres = m_pMesh->GetColState(pRobo);
 
-	m_Trans.vPos.y = 10.0f;
+	//m_Trans.vPos.y = 10.0f;
 
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
@@ -244,6 +246,8 @@ void clsRobo::RoboInit(
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
 
+	SetScale(0.01f);
+
 	m_pMesh->PartsAnimChange(enPARTS::ARM_R, enAnimNoArmWeaponHoldStart);
 	m_pMesh->PartsAnimChange(enPARTS::ARM_L, enAnimNoArmWeaponHoldStart);
 	
@@ -267,8 +271,8 @@ void clsRobo::Boost()
 	{
 		//ブースターアニメーションではなかった.
 		AnimChangeLeg(enAnimNoLegBoostStart);//ブースターに切り替え.
-
-		
+		//ブースター点灯.
+		//m_wpSound->PlaySE(0);
 	}
 
 	m_bBoost = true;
@@ -307,6 +311,9 @@ void clsRobo::BoostRising()
 	{
 		if (EnelgyConsumption(m_iBoostRisingyCost))
 		{
+			//ブースター中.
+			//m_wpSound->PlaySE(0);
+
 			if (m_fFollPower < m_fBoostMoveSpeedMax)
 			{
 				m_fFollPower += m_fBoostRisingAccele;
@@ -357,6 +364,9 @@ void clsRobo::QuickBoost()
 				m_fMoveSpeed = m_fQuickBoostSpeedMax;
 				m_iQuickBoostDecStartTime = m_iQuickBoostTopSpeedTime;
 				SetMoveDeceleSpeed(m_iQuickInterbal);
+				AnimChangeLeg(enAnimNoLegBoostStart);
+				//クイックブースト.
+				//m_wpSound->PlaySE(0);
 			}
 		}
 	}
@@ -368,8 +378,8 @@ void clsRobo::SetDirQuickTurn(const float fAngle)
 	{
 		if (IsRotControl())
 		{
-			float fTmp = (int)D3DX_PI * (fAngle / abs(fAngle));
-			SetRotDir(fTmp);
+			m_fQuickTrunDir = (int)D3DX_PI * (fAngle / abs(fAngle));
+			SetRotDir(m_fQuickTrunDir);
 		}
 	}
 }
@@ -386,31 +396,34 @@ void clsRobo::QuickTurn()
 				{
 					m_iQuickInterbal = g_iQuickInterbal;
 					m_fRotSpeed = m_fQuickTrunSpeedMax;
-					m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
+					//m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
 					SetRotDeceleSpeed(m_iQuickInterbal);
+					//クイックブースト.
+					//m_wpSound->PlaySE(0);
 				}
 			}
 		}
 	}
 }
 
-void clsRobo::Updata()
+void clsRobo::UpdateProduct(clsStage* pStage)
 {
-	PlayBoostEfc();
-	CharactorUpdate();
-	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
+	m_vMoveDirforBoost = GetVec3Dir(-m_Trans.fYaw, m_vAcceleDir);
+	clsCharactor::UpdateProduct(pStage);
 
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
 		m_fMoveSpeed = m_fQuickBoostSpeedMax;
+		m_vAcceleDir = m_vMoveDir;//ブースト表示用に
 		m_iQuickBoostDecStartTime--;
 	}
 
-	if (m_iQuickTrunDecStartTime > 0)//クイックターン.
+	/*if (m_iQuickTrunDecStartTime > 0)//クイックターン.
 	{
 		m_fRotSpeed = m_fQuickTrunSpeedMax;
+		SetRotDir(m_fQuickTrunDir);
 		m_iQuickTrunDecStartTime--;
-	}
+	}*/
 
 	if (IsMoveControl())
 	{
@@ -427,6 +440,8 @@ void clsRobo::Updata()
 
 	if (m_bBoost)
 	{
+		//ブースト音.
+		//m_wpSound->PlaySE(0);
 		if (m_fFollPower < -m_fBoostFollRes)
 		{
 			m_fFollPower += m_fBoostFollRes;
@@ -448,12 +463,8 @@ void clsRobo::Updata()
 		m_iQuickInterbal--;
 	}
 
-	WeaponUpdate();
-
 	EnelgyRecovery();
-
 	UpdataLimitTime();
-
 	AnimUpdate();
 }
 
@@ -540,7 +551,7 @@ void clsRobo::UpdatePosfromBone()
 {
 	m_vCenterPos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_CORE, clsPARTS_CORE::enCORE_BONE_POSITIONS_JENERATOR);
 
-	m_vLockRangePos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD, clsPARTS_HEAD::enHEAD_BONE_POSITIONS_CENTER);
+	//m_vLockStartingPos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD, clsPARTS_HEAD::enHEAD_BONE_POSITIONS_CENTER);
 
 	m_v_vMuzzlePos[enWeaponLHand] = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_L, clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_END);
 	m_v_vShotDir[enWeaponLHand] = m_v_vMuzzlePos[enWeaponLHand] - m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_L, clsPARTS_WEAPON::enWEAPON_BONE_POSITIONS_MUZZLE_ROOT);
@@ -552,6 +563,11 @@ void clsRobo::UpdatePosfromBone()
 	{
 		D3DXVec3Normalize(&m_v_vShotDir[i], &m_v_vShotDir[i]);
 	}
+}
+
+void clsRobo::UpdateLookStartingPos()
+{
+	m_vLockStartingPos = m_pMesh->GetBonePosPreviosFrame(clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD, clsPARTS_HEAD::enHEAD_BONE_POSITIONS_CENTER);
 }
 
 void clsRobo::ShotLWeapon()
@@ -805,8 +821,7 @@ bool clsRobo::IsRWeaponLock()
 
 void clsRobo::PlayBoostEfc()
 {
-	m_vMoveDirforBoost = GetVec3Dir(-m_Trans.fYaw, m_vAcceleDir);
-	m_vMoveDirforBoost.z = +m_vMoveDirforBoost.z;
+	
 
 	PlayFrontBoostEfc();
 	PlayRightBoostEfc();
@@ -906,9 +921,7 @@ void clsRobo::PlayRightBoostEfc()
 			vPosRootTmp = m_pMesh->GetBonePosArmRBoostSideRoot(i);
 			vPosEndTmp = m_pMesh->GetBonePosArmRBoostSideEnd(i);
 
-			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
-
-			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp,vPosEndTmp);
 
 			if (!m_wpEffects->isPlay(m_v_RHandSideBoostEfc[i]))
 			{
@@ -1177,8 +1190,22 @@ void clsRobo::SetRotateArmParts()
 
 	D3DXVECTOR3 vArmRot = { fRot, vTmp.y, vTmp.z };
 
-	m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
-	m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
+	int iAnimNoTmp = m_pMesh->GetPartsAnimNo(enPARTS::ARM_L);
+
+	//リロード中は角度を適応しない.
+	if (iAnimNoTmp < enAnimNoArmWeaponReloadStart || 
+		iAnimNoTmp > enAnimNoArmWeaponReloadEnd)
+	{
+		m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
+	}
+	
+	iAnimNoTmp = m_pMesh->GetPartsAnimNo(enPARTS::ARM_R);
+
+	if (iAnimNoTmp < enAnimNoArmWeaponReloadStart ||
+		iAnimNoTmp > enAnimNoArmWeaponReloadEnd)
+	{
+		m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
+	}
 }
 
 void clsRobo::SetRotateCoreParts()
@@ -1340,7 +1367,10 @@ void clsRobo::AnimUpdateLeg()
 
 		if (!m_bBoost)//|| !IsMoveing())
 		{
-			iChangeAnimNo = enAnimNoLegBoostEnd;
+			if (m_iQuickInterbal < 0)
+			{
+				iChangeAnimNo = enAnimNoLegBoostEnd;
+			}
 		}
 
 		break;
@@ -1348,7 +1378,10 @@ void clsRobo::AnimUpdateLeg()
 
 		if (!m_bBoost)//|| !IsMoveing())
 		{
-			iChangeAnimNo = enAnimNoLegBoostEnd;
+			if (m_iQuickInterbal < 0)
+			{
+				iChangeAnimNo = enAnimNoLegBoostEnd;
+			}
 		}
 
 		break;
@@ -1421,18 +1454,22 @@ void clsRobo::AnimUpdateLeg()
 		break;
 	}
 
-	//落ちてる間ブーストをふかしてないなら強制的に落下モーション.
-	if (!m_bGround && m_fFollPower < 0.0f)
+	if (iAnimNo != enAnimNoLegDown)
 	{
-		if (!m_bBoost)
+		//落ちてる間ブーストをふかしてないなら強制的に落下モーション.
+		if (!m_bGround && m_fFollPower < 0.0f)
 		{
-			if (!IsLegPartsAnimBoost() &&
-				m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpDown)
+			if (!m_bBoost)
 			{
-				iChangeAnimNo = enAnimNoLegJumpDown;
+				if (!IsLegPartsAnimBoost() &&
+					m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegJumpDown)
+				{
+					iChangeAnimNo = enAnimNoLegJumpDown;
+				}
 			}
 		}
 	}
+	
 
 	//アニメーションの変更がある.
 	if (iChangeAnimNo != iAnimNo)
@@ -1530,6 +1567,7 @@ void clsRobo::AnimUpdateArmL()
 	const enAnimNoArm iAnimNo = static_cast<enAnimNoArm>(m_pMesh->GetPartsAnimNo(enPARTS::ARM_L));
 	enAnimNoArm iChangeAnimNo = iAnimNo;
 	double dAnimStartTime = 0.0f;
+	ShotSwich(enWeaponLHand);
 
 	switch (iAnimNo)
 	{
@@ -1549,7 +1587,10 @@ void clsRobo::AnimUpdateArmL()
 		break;
 	case enAnimNoArmWeaponHoldAct:
 
-		
+		if (IsNeedReload())
+		{
+			iChangeAnimNo = enAnimNoArmWeaponReloadStart;
+		}
 
 		break;
 	case enAnimNoArmWeaponShot:
@@ -1569,7 +1610,27 @@ void clsRobo::AnimUpdateArmL()
 		}
 
 		break;
+
+	case enAnimNoArmWeaponReloadStart:
+		
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponReload;
+		}
+		
+		break;
 	case enAnimNoArmWeaponReload:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
+		{
+			if (!IsNeedReload())
+			{
+				iChangeAnimNo = enAnimNoArmWeaponReloadEnd;
+			}
+		}
+
+		break;
+	case enAnimNoArmWeaponReloadEnd:
 
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_L))
 		{
@@ -1599,6 +1660,7 @@ void clsRobo::AnimUpdateArmR()
 	const enAnimNoArm iAnimNo = static_cast<enAnimNoArm>(m_pMesh->GetPartsAnimNo(enPARTS::ARM_R));
 	enAnimNoArm iChangeAnimNo = iAnimNo;
 	double dAnimStartTime = 0.0f;
+	ShotSwich(enWeaponRHand);
 
 	switch (iAnimNo)
 	{
@@ -1618,7 +1680,10 @@ void clsRobo::AnimUpdateArmR()
 		break;
 	case enAnimNoArmWeaponHoldAct:
 
-
+		if (IsNeedReload())
+		{
+			iChangeAnimNo = enAnimNoArmWeaponReloadStart;
+		}
 
 		break;
 	case enAnimNoArmWeaponShot:
@@ -1637,14 +1702,32 @@ void clsRobo::AnimUpdateArmR()
 			iChangeAnimNo = enAnimNoArmWait;
 		}
 
+
+		break;
+	case enAnimNoArmWeaponReloadStart:
+
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponReload;
+		}
+
 		break;
 	case enAnimNoArmWeaponReload:
 
 		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
 		{
-			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+			if (!IsNeedReload())
+			{
+				iChangeAnimNo = enAnimNoArmWeaponReloadEnd;
+			}
 		}
 
+		break;
+	case 	enAnimNoArmWeaponReloadEnd:
+		if (m_pMesh->IsPartsAnimEnd(enPARTS::ARM_R))
+		{
+			iChangeAnimNo = enAnimNoArmWeaponHoldAct;
+		}
 		break;
 	case enAnimNoArmDown:
 
@@ -1870,4 +1953,27 @@ clsRobo::~clsRobo()
 	m_wpEffects = nullptr;
 	m_wpResource = nullptr;
 #endif//#ifdef Tahara
+}
+
+void clsRobo::Down()
+{
+	if (m_pMesh->GetPartsAnimNo(enPARTS::LEG) != enAnimNoLegDown)
+	{
+		if (m_bBoost)
+		{
+			Walk();
+		}
+
+		AnimChangeLeg(enAnimNoLegDown);
+	}
+
+	if (m_pMesh->IsPartsAnimEnd(enPARTS::LEG))
+	{
+		if (!m_bTimeUp)
+		{
+			m_wpEffects->Play(0, m_vCenterPos);
+		}
+		
+		m_bDeadFlg = true;
+	}
 }

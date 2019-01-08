@@ -1,16 +1,27 @@
 #include "SceneTitle.h"
+#include "SceneTitleInformation.h"
+#include "CameraTitle.h"
+#include "AssembleModel.h"
+#include "Stage.h"
 #include "WindowBox.h"
 #include "MenuWindowTitleStartOrEnd.h"
 #include "File.h"
-#include "SceneTitleInformation.h"
+
+
 
 using namespace std;
 
 
 namespace{
 
-	const float fROBO_SCALE = 0.5f;
-	const float fBACK_SCALE = 1.0f;
+//	const float fROBO_SCALE = 0.5f;//s1: p0.01.
+//	const float fBACK_SCALE = 0.5f * 100.0f;
+//
+//	const float fROBO_SCALE = 0.01f;//s1: p0.01.
+//	const float fBACK_SCALE = 1.0f;
+//
+	const float fROBO_SCALE = 0.5f;//s1: p0.01.
+	const float fBACK_SCALE = 50.0f;
 
 	//ロゴ.
 	const char* sFILE_PATH_LOGO = "Data\\Image\\TitleUi\\TitleLogo.png";
@@ -43,13 +54,21 @@ namespace{
 //========== タイトルクラス ==========//
 //================================//
 clsSCENE_TITLE::clsSCENE_TITLE( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
-	,m_pRoboModel( nullptr )
+	,m_fTextAlpha( 0.0f )
+	,m_iTextAlphaStopFrame( 0 )
+	,m_encTextAlphaMode( encTEXT_ALPHA_MODE::NEXT_MINUS )
 {
+	m_fRenderLimit *= fBACK_SCALE;
+	//限界距離はステージの直系ではなく半径でよいので2.
+	const float fRENDER_RIMIT_RATE = 2.0f; 
+	m_fRenderLimit /= fRENDER_RIMIT_RATE;
+	//高さの分増やす( これをやらないとステージモデルの上のほうが見えなくなる ).
+	const float fRENDER_RIMIT_RATE_Y = 1.125f; 
+	m_fRenderLimit *= fRENDER_RIMIT_RATE_Y;
 }
 
 clsSCENE_TITLE::~clsSCENE_TITLE()
 {
-	SAFE_DELETE( m_pRoboModel );
 }
 
 
@@ -57,7 +76,6 @@ void clsSCENE_TITLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
 
-	m_wpSound->PlaySE( enSE_BOMBER );
 
 
 
@@ -72,11 +90,11 @@ void clsSCENE_TITLE::CreateProduct()
 	//ロボモデルを作る前にクリアしたロボの情報を得る.
 	m_wpRoboStatus->LodeHeroData();
 	//モデルさん作成.
-	assert( !m_pRoboModel );
-	m_pRoboModel = new clsASSEMBLE_MODEL;
-	m_pRoboModel->Create( m_wpResource, m_wpRoboStatus );
-	m_pRoboModel->SetRot( { 0.0f, fROBO_YAW, 0.0f } );
-	m_pRoboModel->SetScale( fROBO_SCALE );
+	assert( !m_upRoboModel );
+	m_upRoboModel = make_unique< clsASSEMBLE_MODEL >();
+	m_upRoboModel->Create( m_wpResource, m_wpRoboStatus );
+	m_upRoboModel->SetRot( { 0.0f, fROBO_YAW, 0.0f } );
+	m_upRoboModel->SetScale( fROBO_SCALE );
 
 
 	//ロゴ.
@@ -91,13 +109,10 @@ void clsSCENE_TITLE::CreateProduct()
 
 	//背景.
 	assert( !m_upBack );
-	m_upBack  = make_unique< clsCharaStatic >();
-	m_upBack->AttachModel( 
-		m_wpResource->GetStaticModels( clsResource::enStaticModel_StageBase ) );
-	m_upBack->SetPosition( m_pRoboModel->GetPos() );
+	m_upBack = make_unique< clsStage >( m_wpPtrGroup );
 	m_upBack->SetScale( fBACK_SCALE );
 
-	//ごまかしフラッシュ.
+	//フラッシュ.
 	assert( !m_upFlash );
 	ss.Disp = { WND_W, WND_H };
 	m_upFlash = make_unique< clsSprite2D >();
@@ -105,28 +120,10 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upFlash->SetAlpha( 0.0f );
 
 
-	//照合用情報の作成の為のファイルデータ取得.
-	const char sTITLE_INFORMATION_DATA_PATH[] = "Data\\FileData\\Tahara\\TitleMenuInformation.csv";
-	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
-	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
-	//照合用情報の作成.
-	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size );
-	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
-		const int iCOL = 0;
-		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
-		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
-	}
-	upFile.reset();
+	//メニューの為のデータ取得&作成.
+	clsMENU_WINDOW_TITLE_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
 
-//	//箱.
-//	assert( !m_upMenuBox );
-//	m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
-//		m_wpPtrGroup, nullptr );
-
-//	//カメラ.
-//	assert( m_wpCamera );
-//	m_wpCamera->SetPos( { 0.0f, 100.0f, -80.0f } );
-//	m_wpCamera->SetLookPos( { 0.0f, 45.0f, 0.0f } );
+	m_wpSound->PlaySE( enSE_BOMBER );
 
 }
 
@@ -235,7 +232,7 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	//フラッシュする瞬間.
 	if( static_cast<clsCAMERA_TITLE*>( m_wpCamera )->isFlash() ){
 		const float fNEW_ALPHA = 1.0f;
-		m_wpSound->PlayBGM( enBGM_MAOU3 );
+		m_wpSound->PlayBGM( enBGM_NOVA2 );
 		m_upFlash->SetScale( { WND_W, WND_H, 0.0f } );
 		m_upFlash->SetAlpha( fNEW_ALPHA );
 		m_upLogo->SetAlpha( fNEW_ALPHA );
@@ -245,32 +242,78 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 
 	if( isCanControl ){
 		//メニューが開いているなら.
-		if( m_upMenuBox ){
+		if( m_upMenu ){
 			MenuUpdate( enNextScene );
 			return;
 		}
 
+		TextAlphaUpdate();
+
 		//音声とシーン移動.
 		if( isPressEnter() ){
 			//メニューウィンドウ作成.
-			assert( !m_upMenuBox );
-			m_upMenuBox = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
-				m_wpPtrGroup, nullptr,
+			assert( !m_upMenu );
+			m_upMenu = make_unique< clsMENU_WINDOW_TITLE_START_OR_END >( 
+				m_hWnd, m_wpPtrGroup, nullptr,
 				&m_vecuiInformationDataArray );
 			const D3DXVECTOR3 vMENU_POS = { 400.0f, 570.0f, 0.0f };
-			m_upMenuBox->SetPos( vMENU_POS );
+			m_upMenu->SetPos( vMENU_POS );
 		}
 	}
 
 
+
 }
+
+//テキストの明滅.
+void clsSCENE_TITLE::TextAlphaUpdate()
+{
+	const float fADD_ALPHA = 0.125f * 0.125f;
+	const float fALPHA_MIN = 0.25f;
+	const float fALPHA_MAX = 1.0f;
+	const int iTEXT_ALPHA_STOP_FRAME_PLUS = 60;
+	const int iTEXT_ALPHA_STOP_FRAME_MINUS = 0;
+
+	switch( m_encTextAlphaMode )
+	{
+	case encTEXT_ALPHA_MODE::PLUS:
+		m_fTextAlpha += fADD_ALPHA;
+		if( m_fTextAlpha > fALPHA_MAX ){
+			m_fTextAlpha = fALPHA_MAX;
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::NEXT_MINUS;
+		}
+		break;
+	case encTEXT_ALPHA_MODE::NEXT_MINUS:
+		m_iTextAlphaStopFrame ++;
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME_PLUS ){
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::MINUS;
+			m_iTextAlphaStopFrame = 0;
+		}
+		break;
+	case encTEXT_ALPHA_MODE::MINUS:
+			m_fTextAlpha -= fADD_ALPHA;
+			if( m_fTextAlpha < fALPHA_MIN ){
+				m_fTextAlpha = fALPHA_MIN;
+				m_encTextAlphaMode = encTEXT_ALPHA_MODE::NEXT_PLUS;
+			}
+		break;
+	case encTEXT_ALPHA_MODE::NEXT_PLUS:
+		m_iTextAlphaStopFrame ++;
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME_MINUS ){
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::PLUS;
+			m_iTextAlphaStopFrame = 0;
+		}
+		break;
+	}
+}
+
 
 //メニューの動き.
 void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 {
-	m_upMenuBox->Update();
+	m_upMenu->Update();
 	//メニューが何か返してくる.
-	unsigned int uiReceiveInformation = m_upMenuBox->GetInformation();
+	unsigned int uiReceiveInformation = m_upMenu->GetInformation();
 	if( uiReceiveInformation )
 	{
 		char cInformationIndex = -1;
@@ -292,7 +335,7 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 			break;
 
 		case enINFORMATION_INDEX_CLOSE_MENU:
-			m_upMenuBox->Close();
+			m_upMenu->Close();
 			break;
 
 		default:
@@ -302,8 +345,8 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 	}
 
 	//( 見た目が )消えたら( メモリからも )消える.
-	if( m_upMenuBox->isDeletePermission() ){
-		m_upMenuBox.reset( nullptr );
+	if( m_upMenu->isDeletePermission() ){
+		m_upMenu.reset( nullptr );
 	}
 
 }
@@ -311,8 +354,8 @@ void clsSCENE_TITLE::MenuUpdate( enSCENE &enNextScene )
 
 void clsSCENE_TITLE::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-	assert( m_pRoboModel );
-	m_pRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
+	assert( m_upRoboModel );
+	m_upRoboModel->Render( m_mView, m_mProj, m_vLight, vCamPos );
 
 	assert( m_upBack );
 	m_upBack->Render( m_mView, m_mProj, m_vLight, vCamPos );
@@ -325,8 +368,8 @@ void clsSCENE_TITLE::RenderUi()
 	m_upLogo->Render();
 
 
-	if( m_upMenuBox ){
-		m_upMenuBox->Render();
+	if( m_upMenu ){
+		m_upMenu->Render();
 	}
 	else{
 		assert( m_wpFont );
@@ -334,6 +377,7 @@ void clsSCENE_TITLE::RenderUi()
 		m_wpFont->SetPos( vPLESS_START_POS );
 		m_wpFont->SetScale( fPLESS_START_SCALE );
 		m_wpFont->SetColor( vTEXT_COLOR );
+		m_wpFont->SetAlpha( m_fTextAlpha );
 		m_wpFont->Render( iPLESS_START_MESSAGE_INDEX );
 	}
 
@@ -349,7 +393,7 @@ void clsSCENE_TITLE::RenderUi()
 
 
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_TITLE::RenderDebugText()
 {
 	//NULLチェック.
@@ -364,15 +408,15 @@ void clsSCENE_TITLE::RenderDebugText()
 		m_wpXInput->GetLStickTheta() );
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
-	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	sprintf_s( strDbgTxt, 
+//		"CameraPos : x[%f], y[%f], z[%f]",
+//		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"CamLokPos : x[%f], y[%f], z[%f]",
+//		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	sprintf_s( strDbgTxt, 
 		"CamRot : x[%f], y[%f], z[%f]",
@@ -403,4 +447,4 @@ void clsSCENE_TITLE::RenderDebugText()
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG

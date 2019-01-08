@@ -235,21 +235,25 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
 					{
 						m_Trans.vPos.x += fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
 					{
 						m_Trans.vPos.z += fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
 					{
 						m_Trans.vPos.x -= fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else//奥から.
 					{
 						m_Trans.vPos.z -= fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 				}
 
@@ -259,21 +263,25 @@ bool clsObject::WallForward(const clsDX9Mesh* pWall, const bool bSlip)
 					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
 					{
 						m_Trans.vPos.x -= fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
 					{
 						m_Trans.vPos.z += fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
 					{
 						m_Trans.vPos.x += fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else//奥から.
 					{
 						m_Trans.vPos.z -= fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 				}
 			}
@@ -312,21 +320,25 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
 					{
 						m_Trans.vPos.x -= fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
 					{
 						m_Trans.vPos.z -= fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
 					{
 						m_Trans.vPos.x += fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else//奥から.
 					{
 						m_Trans.vPos.z += fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 				}
 
@@ -336,21 +348,25 @@ bool clsObject::WallBack(const clsDX9Mesh* pWall, const bool bSlip)
 					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
 					{
 						m_Trans.vPos.x += fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
 					{
 						m_Trans.vPos.z -= fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
 					{
 						m_Trans.vPos.x -= fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else//奥から.
 					{
 						m_Trans.vPos.z += fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 				}
 			}
@@ -389,21 +405,25 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
 					{
 						m_Trans.vPos.z += fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
 					{
 						m_Trans.vPos.x -= fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
 					{
 						m_Trans.vPos.z -= fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else//奥から.
 					{
 						m_Trans.vPos.x += fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 				}
 
@@ -413,21 +433,25 @@ bool clsObject::WallLeft(const clsDX9Mesh* pWall, const bool bSlip)
 					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
 					{
 						m_Trans.vPos.z -= fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
 					{
 						m_Trans.vPos.x -= fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
 					{
 						m_Trans.vPos.z += fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else//奥から.
 					{
 						m_Trans.vPos.x += fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 				}
@@ -467,21 +491,25 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
 					{
 						m_Trans.vPos.z -= fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
 					{
 						m_Trans.vPos.x += fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
 					{
 						m_Trans.vPos.z += fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else//奥から.
 					{
 						m_Trans.vPos.x -= fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 				}
 
@@ -491,21 +519,25 @@ bool clsObject::WallRight(const clsDX9Mesh* pWall, const bool bSlip)
 					if (fYaw >= 0.785f && fYaw < 2.355f)//右から.
 					{
 						m_Trans.vPos.z += fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else if (fYaw >= 2.355f && fYaw < 3.925f)//前から.
 					{
 						m_Trans.vPos.x += fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 
 					else if (fYaw >= 3.925f && fYaw < 5.495f)//左から
 					{
 						m_Trans.vPos.z -= fRaySpece - fDis;
+						//m_vWallHit.z = 0.0f;
 					}
 
 					else//奥から.
 					{
 						m_Trans.vPos.x -= fRaySpece - fDis;
+						//m_vWallHit.x = 0.0f;
 					}
 				}
 			}
@@ -528,14 +560,14 @@ bool clsObject::WallUp(const clsDX9Mesh* pWall)
 
 	if (Intersect(rs, pWall, &fDis, &vIntersect))
 	{
-		if (fDis < m_fFollPower && fDis > 0.0f)
+		if (fDis < fRaySpece + m_fFollPower && fDis > 0.0f)
 		{
 			bResult = true;
 
 			if (m_fFollPower > 0.0f)
 			{
+				m_Trans.vPos.y = vIntersect.y - fRaySpece - m_fFollPower;
 				m_fFollPower = 0.0f;
-				m_Trans.vPos.y = vIntersect.y - g_fGroundSpece;
 			}
 		}
 	}
@@ -623,6 +655,7 @@ void clsObject::FreeFoll()
 
 bool clsObject::WallJudge(clsStage* const pStage)
 {
+	m_vWallHit = { 1.0f, 0.0f, 1.0f };
 	m_bGround = false;
 
 	if (!pStage)return false;
@@ -632,32 +665,6 @@ bool clsObject::WallJudge(clsStage* const pStage)
 
 	bool bResult = false;
 	bool bHit = false;
-
-	/*clsDX9Mesh* pObjMesh = vvpMeshTmp[vvpMeshTmp.size() - 1];
-	if (!pObjMesh)return false;
-
-	//StageObjectとの当たり判定.
-	if (WallForward(pObjMesh))if (!bHit)bHit = true;
-	if (WallBack(pObjMesh))if (!bHit)bHit = true;
-	if (WallLeft(pObjMesh))if (!bHit)bHit = true;
-	if (WallRight(pObjMesh))if (!bHit)bHit = true;
-	if (WallUp(pObjMesh))if (!bHit)bHit = true;
-
-	if (WallUnder(pObjMesh))
-	{
-		if (!bHit)bHit = true;
-
-		//D3DXVECTOR3 vMovePos = GetPosition();
-		//D3DXVECTOR3 vMoveDir = { 0.0f, 0.0f, 0.0f };
-
-		//vMovePos += vMoveDir;
-		//SetPosition(vMovePos);
-	}
-
-	if (!bResult)
-	{
-		bResult = bHit;
-	}*/
 
 	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{
@@ -697,16 +704,24 @@ bool clsObject::WallJudge(clsStage* const pStage)
 	return bResult;
 }
 
-void clsObject::Action(clsStage* pStage)
+void clsObject::Update(clsStage* pStage)
 {
 	m_vOldPos = m_Trans.vPos;
 
-	ActionProduct();
+	if (m_bAct)
+	{
+		Action(pStage);
+	}
+	
+	UpdateProduct(pStage);
+}
 
+void clsObject::UpdateProduct(clsStage* pStage)
+{
 	WallJudge(pStage);
 }
 
-void clsObject::ActionProduct()
+void clsObject::Action(clsStage* const pStage)
 {
 
 }
@@ -716,15 +731,27 @@ const D3DXVECTOR3 clsObject::GetCenterPos()const
 	return m_vCenterPos;
 }
 
+void clsObject::ActStop()
+{
+	m_bAct = false;
+}
+
+void clsObject::ActStart()
+{
+	m_bAct = true;
+}
+
 clsObject::clsObject() :
 m_vOldPos({0.0f,0.0f,0.0f}),
 m_vCenterPos({ 0.0f, 0.0f, 0.0f }),//オブジェクトの中心.
 m_fMoveSpeed(0.0f),
 m_vMoveDir({ 0.0f, 0.0f, 0.0f }),
+m_vWallHit({ 0.0f, 0.0f, 0.0f }),
 m_fRaySpece(0.0f),
 m_fFollPower(0.0f),
 m_bGround(false),
 m_NoFollObj(false)
+, m_bAct(false)
 {
 	m_Trans.fPitch = 0.0f;
 	m_Trans.fYaw = 0.0f;

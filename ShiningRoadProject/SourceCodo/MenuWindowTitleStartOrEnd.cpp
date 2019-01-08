@@ -1,11 +1,15 @@
 #include "MenuWindowTitleStartOrEnd.h"
 #include "PtrGroup.h"
+#include "SoundManagerMenuWindow.h"
+#include "CFont.h"
 //#include "UiText.h"
 
 
 namespace{
 
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
 
 }
 
@@ -13,14 +17,17 @@ namespace{
 
 
 clsMENU_WINDOW_TITLE_START_OR_END::clsMENU_WINDOW_TITLE_START_OR_END(		
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* pParentWindow,
-		std::vector<unsigned int>* const pInformationVec )
-		:clsMENU_WINDOW_TITLE_BASE( pPtrGroup, pParentWindow, pInformationVec )
+	std::vector<unsigned int>* const pInformationVec )
+	:clsMENU_WINDOW_TITLE_BASE( 
+		hWnd, pPtrGroup, 
+		pParentWindow, 
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
+		"MenuWindowTitleStartOrEnd" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 200.0f, 150.0f };
-	Open( vTHIS_WINDOW_SIZE );
 }
 
 clsMENU_WINDOW_TITLE_START_OR_END::~clsMENU_WINDOW_TITLE_START_OR_END()
@@ -41,7 +48,7 @@ void clsMENU_WINDOW_TITLE_START_OR_END::UpdateProduct()
 			m_iSelectNum = 0;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -51,23 +58,23 @@ void clsMENU_WINDOW_TITLE_START_OR_END::UpdateProduct()
 			m_iSelectNum = iSELECT_NUM_MAX;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
 	if( SelectEnter() ){
 		if( m_iSelectNum ){
-			m_wpSound->PlaySE( enSE_EXIT );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GAME_END ];
 		}
 		else{
-			m_wpSound->PlaySE( enSE_ENTER );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_NEXT_SCENE ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_WIN_DISAPP );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_DISAPP );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_MENU ];
 	}
 
@@ -105,15 +112,4 @@ void clsMENU_WINDOW_TITLE_START_OR_END::RenderProduct()
 
 
 }
-
-bool clsMENU_WINDOW_TITLE_START_OR_END::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-	return false;
-}
-
-
-
 

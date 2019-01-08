@@ -37,9 +37,11 @@ public:
 	//直前のフレームのボーンの座標を持ってくる.
 	D3DXVECTOR3 GetBonePosPreviosFrame( 
 		const int enBoneName, 
-		int iVecNum = 0 ) override;
+		int iVecNum = 0 ) const override;
 	//↑で使うためにボーン座標を記録する( Renderの直後に使う ).
-	void UpdateBonePosPreviosFrame() override;
+	void UpdateBonePosPreviosFrame() override{
+		m_BonePositions.vCenter	= this->GetBonePos( sBONE_NAME_HEAD_CENTER );
+	};
 
 private:
 	//----- 各パーツごとの関数 -----//.

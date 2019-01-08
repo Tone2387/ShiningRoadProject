@@ -11,6 +11,7 @@ class clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE : public clsMENU_WINDOW_ASSEMBLE_BASE
 {
 public:
 	clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE(
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec,
@@ -24,7 +25,7 @@ private:
 	void RenderProduct() override;
 	bool CreateNextWindowProduct( 
 		clsMENU_WINDOW_BASE** ppOutNextWindow, 
-		clsMENU_WINDOW_BASE* const pParentWindow ) override;
+		clsMENU_WINDOW_BASE* const pParentWindow ) override { return false; };
 
 
 	std::vector< std::unique_ptr< clsSprite2D > > m_vecupColorGage;

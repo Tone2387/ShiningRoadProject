@@ -1,9 +1,16 @@
 #include "DebugText.h"
 
-//シェーダファイル名(パスも含む).
-const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
 
-const char* FILE_PATH = "Data\\DebugText\\ascii0.png";
+namespace{
+	//シェーダファイル名(パスも含む).
+	const char SHADER_NAME[] = "Shader\\DebugText.hlsl";
+
+	const char* FILE_PATH = "Data\\Image\\DebugText\\ascii0.png";
+
+	const float DIMENSION		= 12.0f;
+	const float WDIMENSION		= 10.0f;
+	const float TEX_DIMENSION	= 128.0f;
+}
 
 //============================================================
 //	コンストラクタ.
@@ -11,8 +18,6 @@ const char* FILE_PATH = "Data\\DebugText\\ascii0.png";
 clsDebugText::clsDebugText()
 {
 //	ZeroMemory( this, sizeof( clsDebugText ) );	//初期化.
-	m_pDevice11 = nullptr;		//デバイスオブジェクト.
-	m_pDeviceContext11 = nullptr;	//デバイスコンテキスト.
 
 	m_pVertexShader = nullptr;	//頂点シェーダ.
 	m_pVertexLayout = nullptr;	//頂点レイアウト.
@@ -25,10 +30,6 @@ clsDebugText::clsDebugText()
 
 	m_pAsciiTexture = nullptr;//アスキーテクスチャ.
 	m_pSampleLinear = nullptr;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		m_pBlendState[i] = nullptr;
-	}
 
 	for( int i=0; i<100; i++ ){
 		m_fKerning[i] = 0.0f;
@@ -63,14 +64,6 @@ clsDebugText::~clsDebugText()
 //	D3DXMatrixIdentity( &m_mView );
 //	D3DXMatrixIdentity( &m_mProj );
 
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		SAFE_RELEASE( m_pBlendState[i] );
-	}
-
-	m_pDevice11 = nullptr;		//デバイスオブジェクト.
-	m_pDeviceContext11 = nullptr;	//デバイスコンテキスト.
-
 }
 
 
@@ -90,8 +83,8 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 		m_fKerning[i] = 10.0f;
 	}
 	//デバイスコンテキストをコピー.
-	m_pDeviceContext11 = pContext;
-	m_pDeviceContext11->GetDevice( &m_pDevice11 );
+	m_wpContext = pContext;
+	m_wpContext->GetDevice( &m_wpDevice );
 
 	//ブレンドステート作成.
 	CreateBlendState();
@@ -131,7 +124,7 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 
 			D3D11_SUBRESOURCE_DATA InitData;
 			InitData.pSysMem = vertices;
-			if( FAILED( m_pDevice11->CreateBuffer(
+			if( FAILED( m_wpDevice->CreateBuffer(
 				&bd, &InitData, &m_pVertexBuffer[cnt]) ) )
 			{
 				MessageBox( NULL,
@@ -151,7 +144,7 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	SamDesc.AddressU= D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressV= D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressW= D3D11_TEXTURE_ADDRESS_WRAP;
-	if( FAILED( m_pDevice11->CreateSamplerState(
+	if( FAILED( m_wpDevice->CreateSamplerState(
 		&SamDesc, &m_pSampleLinear) ) )
 	{
 		MessageBox( NULL,
@@ -163,14 +156,14 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	//フォントのテクスチャ作成.
 	if( FAILED(
 		D3DX11CreateShaderResourceViewFromFile(
-			m_pDevice11,
+			m_wpDevice,
 			FILE_PATH,
 			NULL, NULL,
 			&m_pAsciiTexture, NULL ) ) )
 	{
 		MessageBox( NULL,
 			"フォントテクスチャ作成失敗(DebugText:Init)",
-			"error", MB_OK );
+			FILE_PATH, MB_OK );
 		return E_FAIL;
 	}
 
@@ -190,7 +183,7 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	}
 	SAFE_RELEASE( pErrors );
 
-	if( FAILED( m_pDevice11->CreateVertexShader(
+	if( FAILED( m_wpDevice->CreateVertexShader(
 		pCompileShader->GetBufferPointer(),
 		pCompileShader->GetBufferSize(),
 		NULL, &m_pVertexShader ) ) )
@@ -211,7 +204,7 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	UINT numElements = sizeof( layout ) / sizeof( layout[0] );
 
 	//頂点インプットレイアウト作成.
-	if( FAILED( m_pDevice11->CreateInputLayout(
+	if( FAILED( m_wpDevice->CreateInputLayout(
 		layout, numElements,
 		pCompileShader->GetBufferPointer(),
 		pCompileShader->GetBufferSize(),
@@ -234,7 +227,7 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	SAFE_RELEASE( pErrors );
 
 
-	if( FAILED( m_pDevice11->CreatePixelShader(
+	if( FAILED( m_wpDevice->CreatePixelShader(
 		pCompileShader->GetBufferPointer(),
 		pCompileShader->GetBufferSize(),
 		NULL, &m_pPixelShader ) ) )
@@ -254,7 +247,7 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	cb.StructureByteStride = 0;
 	cb.Usage = D3D11_USAGE_DYNAMIC;
 
-	if( FAILED(m_pDevice11->CreateBuffer(
+	if( FAILED(m_wpDevice->CreateBuffer(
 		&cb, NULL, &m_pConstantBuffer ) ) )
 	{
 		MessageBox( NULL, "コンスタントバッファ作成", "DebugText:Init", MB_OK );
@@ -267,59 +260,6 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	return S_OK;
 }
 
-
-//ブレンドステート作成.
-HRESULT clsDebugText::CreateBlendState()
-{
-	//アルファブレンド用ブレンドステート作成.
-	//pngファイル内にアルファ情報があるので、透過するようにブレンドステートで設定する.
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );	//初期化.
-	blendDesc.IndependentBlendEnable = false;			//false:RenderTarget[0]のメンバーのみ使用する。true:RenderTarget[0～7]が使用できる(レンダーターゲット毎に独立したブレンド処理).
-	blendDesc.AlphaToCoverageEnable = false;			//true:アルファトゥカバレッジを使用する.
-
-	//表示タイプ
-//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:アルファブレンドを使用する.
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//アルファブレンドを指定.
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//アルファブレンドの反転を指定.
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成.
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//そのまま使用.
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;		//何もしない.
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ADD：加算合成.
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのデータの格納を許可する.
-
-	bool tmpBlendEnable[ enBLEND_STATE_size ];
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
-	{
-		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice11->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
-			assert( !"ブレンドステートの作成に失敗" );
-			return E_FAIL;
-		}
-	}
-
-	return S_OK;
-}
-
-
-//============================================================
-//	透過(アルファブレンド)設定の切り替え.
-//============================================================
-void clsDebugText::SetBlend( bool isAlpha )
-{
-	UINT mask = 0xffffffff;	//マスク値白.
-
-	if( isAlpha ){		
-		//ブレンドステートの設定.
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
-	}
-	else{
-		m_pDeviceContext11->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
-	}
-}
 
 
 //============================================================
@@ -354,28 +294,28 @@ void clsDebugText::Render( char* text, int x, int y )
 	m_mProj = mOtho;
 
 	//プリミティブ・トポロジー.
-	m_pDeviceContext11->IASetPrimitiveTopology(
+	m_wpContext->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 	//頂点インプットレイアウトをセット.
-	m_pDeviceContext11->IASetInputLayout(
+	m_wpContext->IASetInputLayout(
 		m_pVertexLayout );
 
 	//使用するシェーダの登録.
-	m_pDeviceContext11->VSSetShader(
+	m_wpContext->VSSetShader(
 		m_pVertexShader, NULL, 0 );
-	m_pDeviceContext11->PSSetShader(
+	m_wpContext->PSSetShader(
 		m_pPixelShader, NULL, 0 );
 
 	//このコンスタントバッファを使うシェーダの登録.
-	m_pDeviceContext11->VSSetConstantBuffers(
+	m_wpContext->VSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer );
-	m_pDeviceContext11->PSSetConstantBuffers(
+	m_wpContext->PSSetConstantBuffers(
 		0, 1, &m_pConstantBuffer );
 
 	//テクスチャをシェーダに渡す.
-	m_pDeviceContext11->PSSetSamplers(
+	m_wpContext->PSSetSamplers(
 		0, 1, &m_pSampleLinear );
-	m_pDeviceContext11->PSSetShaderResources(
+	m_wpContext->PSSetShaderResources(
 		0, 1, &m_pAsciiTexture );
 
 
@@ -390,7 +330,6 @@ void clsDebugText::Render( char* text, int x, int y )
 
 		x += static_cast<int>(m_fKerning[index]);
 	}
-	SetBlend( false );
 
 
 
@@ -412,7 +351,7 @@ void clsDebugText::RenderFont( int FontIndex, int x, int y )
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE	pData;
 	TEXT_CONSTANT_BUFFER		cb;
-	if( SUCCEEDED( m_pDeviceContext11->Map(
+	if( SUCCEEDED( m_wpContext->Map(
 		m_pConstantBuffer, 0,
 		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
@@ -427,19 +366,19 @@ void clsDebugText::RenderFont( int FontIndex, int x, int y )
 
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)(&cb), sizeof(cb) );
-		m_pDeviceContext11->Unmap(
+		m_wpContext->Unmap(
 			m_pConstantBuffer, 0 );
 	}
 	//バーテックスバッファをセット.
 	UINT stride = sizeof( TextVertex );
 	UINT offset = 0;
-	m_pDeviceContext11->IASetVertexBuffers(
+	m_wpContext->IASetVertexBuffers(
 		0, 1, &m_pVertexBuffer[FontIndex],
 		&stride, &offset );
 
 	//描画.
 //	SetBlend( true );
-	m_pDeviceContext11->Draw( 4, 0 );
+	m_wpContext->Draw( 4, 0 );
 
 
 }

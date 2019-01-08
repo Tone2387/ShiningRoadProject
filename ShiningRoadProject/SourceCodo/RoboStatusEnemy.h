@@ -1,6 +1,8 @@
 #ifndef ENEMY_ROBO_STATE_H_
 #define ENEMY_ROBO_STATE_H_
 
+
+class clsFILE;
 #include "RoboStatusBase.h"
 
 
@@ -14,6 +16,7 @@ public:
 private:
 	//外部からデータを読み込む.
 	void LoadFileData( const char* sFilePath ) override;
+
 
 private:
 	//csvデータの何行目を読み込むか.

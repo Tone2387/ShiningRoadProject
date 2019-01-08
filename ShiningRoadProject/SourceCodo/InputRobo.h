@@ -45,8 +45,8 @@ public:
 
 	clsInputRobo::~clsInputRobo()
 	{
-		delete m_pDxInput;
-		delete m_pXInput;
+		m_pDxInput = nullptr;
+		m_pXInput = nullptr;
 		delete m_pComLS;
 		delete m_pComRS;
 

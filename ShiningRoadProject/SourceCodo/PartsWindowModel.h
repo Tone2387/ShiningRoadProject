@@ -19,13 +19,15 @@ public:
 		const D3DXMATRIX& mProj, 
 		const D3DXVECTOR3& vLight, 
 		const D3DXVECTOR3& vEye,
-		const bool isRender );
+		const bool isRender ) const;
 
 	//アセンブルシーンのパーツウィンドウのカメラの高さの基準にする.
 	D3DXVECTOR3 GetSelectPartsHeight();
 
 	//色を受け取る.
-	void SetColors( const std::vector< D3DXVECTOR4 > vecvColors );
+	void SetColors( const std::vector< D3DXVECTOR4 >& vecvColors ){
+		m_vecvColors = vecvColors;
+	};
 
 private:
 

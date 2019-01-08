@@ -7,12 +7,26 @@
 #include "PartsArmR.h"
 #include "PartsWeapon.h"
 
+#include "AssembleModel.h"
+
+#include "File.h"
 
 using namespace std;
 
 namespace{
 
 	const int iCOLOR_RANK_INIT = 16;
+
+	//要素数は<clsSCENE_ASSEMBLE::ENUM_SIZE>.
+	const string sPARTS_STATUS_PASS[] =
+	{
+		"Data\\RoboParts\\Leg\\RoboPartsData.csv",
+		"Data\\RoboParts\\Core\\RoboPartsData.csv",
+		"Data\\RoboParts\\Head\\RoboPartsData.csv",
+		"Data\\RoboParts\\Arms\\RoboPartsData.csv",
+		"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
+		"Data\\RoboParts\\Weapon\\RoboPartsData.csv",
+	};
 
 }
 
@@ -110,7 +124,7 @@ int clsROBO_STATUS::GetWeaponState(
 
 
 //パーツ番号を返す( いま装備しているパーツが何番か ).
-UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType )
+UCHAR clsROBO_STATUS::GetPartsNum( const enPARTS PartsType ) const
 {
 	return m_RoboStateData.ucPartsModelNum[ static_cast<int>( PartsType ) ];
 }
@@ -260,9 +274,95 @@ void clsROBO_STATUS::SetColorRank(
 }
 
 
-int clsROBO_STATUS::GetColorRank( const enCOLOR_GAGE enColorNum )
+int clsROBO_STATUS::GetColorRank( const enCOLOR_GAGE enColorNum ) const
 {
 	assert( enColorNum >= 0  );
 	assert( enColorNum < enCOLOR_GAGE_size );
 	return m_RoboStateData.iColorRank[ enColorNum ];
 }
+
+
+
+
+//パーツのステータスデータを読み込む.
+void clsROBO_STATUS::LoadPartsData( vector< unique_ptr< clsFILE > >& PartsFile )
+{
+
+	//パーツのステータス読み込み.
+	UCHAR ucFileMax = clsASSEMBLE_MODEL::ENUM_SIZE;
+	PartsFile.resize( ucFileMax ); 
+	for( UCHAR i=0; i<PartsFile.size(); i++ ){
+		if( PartsFile[i] != nullptr ){
+			assert( !"m_spFile[i]は作成済みです" );
+			continue;
+		}
+		PartsFile[i] = make_unique< clsFILE >();
+		PartsFile[i]->Open( sPARTS_STATUS_PASS[i] );
+	}
+
+
+}
+
+
+//読み込んだデータを取得する.
+void clsROBO_STATUS::AttachData( const vector< unique_ptr< clsFILE > >& PartsFile )
+{
+	//ステータスの、CSVから削る行数.
+	const int iSTATUS_CUT_NUM = 2;//番号と名前.
+
+	int PartsType = clsASSEMBLE_MODEL::LEG;
+
+	//引数用変数.
+	vector<int> tmpStatus;
+
+	tmpStatus = CreateDataForReceive( PartsFile, PartsType ++, clsASSEMBLE_MODEL::enPARTS_INDEX_LEG );
+	ReceiveLeg( tmpStatus,	m_RoboStateData.ucPartsModelNum[ clsASSEMBLE_MODEL::enPARTS_INDEX_LEG ] );
+
+	tmpStatus = CreateDataForReceive( PartsFile, PartsType ++, clsASSEMBLE_MODEL::enPARTS_INDEX_CORE );
+	ReceiveCore( tmpStatus,	m_RoboStateData.ucPartsModelNum[ clsASSEMBLE_MODEL::enPARTS_INDEX_CORE ] );
+
+	tmpStatus = CreateDataForReceive( PartsFile, PartsType ++, clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD );
+	ReceiveHead( tmpStatus,	m_RoboStateData.ucPartsModelNum[ clsASSEMBLE_MODEL::enPARTS_INDEX_HEAD ] );
+
+	tmpStatus = CreateDataForReceive( PartsFile, PartsType ++, clsASSEMBLE_MODEL::enPARTS_INDEX_ARM_L );
+	ReceiveArms( tmpStatus,	m_RoboStateData.ucPartsModelNum[ clsASSEMBLE_MODEL::enPARTS_INDEX_ARM_L ] );
+
+	tmpStatus = CreateDataForReceive( PartsFile, PartsType ++, clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_L );
+	ReceiveWeaponL( tmpStatus,m_RoboStateData.ucPartsModelNum[ clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_L ] );
+
+	tmpStatus = CreateDataForReceive( PartsFile, PartsType ++, clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_R );
+	ReceiveWeaponR( tmpStatus,m_RoboStateData.ucPartsModelNum[ clsASSEMBLE_MODEL::enPARTS_INDEX_WEAPON_R ] );
+
+}
+
+
+//ReceiveLeg()等の関数に格納するためのデータを作り、吐き出す.
+vector<int> clsROBO_STATUS::CreateDataForReceive(
+	const vector< unique_ptr< clsFILE > >& PartsFile,
+	const int PartsType,
+	const int PartsNum )
+{
+	//ステータスの、CSVから削る行数.
+	const int iSTATUS_CUT_NUM = 2;//番号と名前.
+
+	//引数用変数.
+	vector<int> ReturnState;
+	ReturnState.resize( PartsFile[ PartsType ]->GetSizeCol() - iSTATUS_CUT_NUM );
+	for( unsigned int i=0; i<ReturnState.size(); i++ ){
+		//PartsFile[]の添え字はどのパーツか、である.
+		ReturnState[i] = PartsFile[ PartsType ]->GetDataInt(
+			m_RoboStateData.ucPartsModelNum[ PartsNum ], i + iSTATUS_CUT_NUM );
+		//GetDataInt()の第一引数は、そのパーツ部位の何番目の行を参照すればよいのか.
+		//第二引数でiSTATUS_CUT_NUMを足しているのは、元の表にあるパーツ番号と名前はいらないからカットするためである.
+	}
+
+	return ReturnState;
+}
+
+
+
+
+
+
+
+

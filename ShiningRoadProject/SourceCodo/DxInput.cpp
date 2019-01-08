@@ -1,6 +1,14 @@
 #include "DxInput.h"
 #include<math.h>
 
+
+
+
+//これがついていると、右スティックの信号をlz, lRzに出力するコントローラに対応する.
+//#define RIGHT_STICK_SIGNAL_Z_
+
+
+
 LPDIRECTINPUT8 g_pDI2 = NULL;			// DxInputオブジェクト.
 LPDIRECTINPUTDEVICE8 g_pPad2=NULL;	// デバイス(コントローラ)オブジェクト.
 
@@ -204,6 +212,48 @@ const HRESULT clsDxInput::UpdataInputState()
 		m_InputNowState.fLSDir = atan2f((float)js.lX, (float)-js.lY);
 	}
 
+#ifdef RIGHT_STICK_SIGNAL_Z_
+	if (js.lZ > g_iAxisMin)
+	{
+		AddInputState(enPKey_RRight);
+	}
+
+	else if (js.lZ < -g_iAxisMin)
+	{
+		//左ｷｰ.
+		AddInputState(enPKey_RLeft);
+	}
+
+	if (js.lRz < -g_iAxisMin)
+	{
+		//上ｷｰ.
+		AddInputState(enPKey_RUp);
+	}
+
+	else if (js.lRz > g_iAxisMin)
+	{
+		//上ｷｰ.
+		AddInputState(enPKey_RDown);
+	}
+
+	if (abs(js.lZ) > g_iAxisMin)
+	{
+		m_InputNowState.fHorRSPush = (float)js.lZ;
+		m_InputNowState.fHorRSPush /= g_iAxisMax;
+	}
+
+	if (abs(js.lRz) > g_iAxisMin)
+	{
+		m_InputNowState.fVerRSPush = (float)js.lRz;
+		m_InputNowState.fVerRSPush /= g_iAxisMax;
+	}
+
+	if ((abs(js.lZ) + abs(js.lRz)) / iHulf > g_iAxisMin)
+	{
+		AddInputState(enPKey_R);
+		m_InputNowState.fRSDir = atan2f((float)js.lZ, (float)-js.lRz);
+	}
+#else//#ifdef RIGHT_STICK_SIGNAL_Z_
 	if (js.lRx > g_iAxisMin)
 	{
 		AddInputState(enPKey_RRight);
@@ -244,6 +294,7 @@ const HRESULT clsDxInput::UpdataInputState()
 		AddInputState(enPKey_R);
 		m_InputNowState.fRSDir = atan2f((float)js.lRx, (float)-js.lRy);
 	}
+#endif//#ifdef RIGHT_STICK_SIGNAL_Z_
 
 	//ﾎﾞﾀﾝ.
 	for (int i = enPKey_00; i < enPKey_Max; i++)
@@ -339,6 +390,21 @@ const bool clsDxInput::IsPressKey(enPKey enKey)
 
 	return false;
 }
+const bool clsDxInput::IsPressKeyEnter(const enPKey enKey)
+{
+	if ((m_InputNowState.uiKeyState >> enKey) & 1)
+	{
+		//1フレーム前も押されていたら.
+		if ((m_InputOldState.uiKeyState >> enKey) & 1 )
+		{
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+
 
 const float clsDxInput::GetLSDir()
 {

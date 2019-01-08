@@ -1,10 +1,10 @@
 #include"TestObject.h"
+#include"OperationString.h"
 
 clsTestObj::clsTestObj()
 	: m_pAI(nullptr)
 	, m_bAct(false)
 {
-	//ZeroMemory(this, sizeof(clsTestObj));
 }
 
 clsTestObj::~clsTestObj()
@@ -15,24 +15,27 @@ clsTestObj::~clsTestObj()
 void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup)
 {
 	RoboInit(pPtrGroup, pPtrGroup->GetRoboStatus());
-
-	/*m_v_Spheres.resize(1);
-	m_v_Spheres[0].vCenter = &m_vCenterPos;
-	m_v_Spheres[0].fRadius = 0.1f;*/
-
-	//m_HP = m_MaxHP = 5;
 }
 
 void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup,
-	LPSTR strEnemyFolderName)
+	std::string strEnemyFolderName)
 {
+	int iNum = 1;
+
+	clsOPERATION_STRING strOpr;
+
+	std::string strFileNameTmp = "\\Enemy";
+	std::string strFileName = strEnemyFolderName + strFileNameTmp;
+
+	strFileName = strOpr.ConsolidatedNumber(strFileName, iNum, 1);
+
 	m_pAI = new clsEnemyRobo;
-	m_pAI->Init("Data\\FileData\\Hiyoshi\\Enemy1", this);
+	m_pAI->Init(strFileName, this);
 
 	Init(pPtrGroup);
 }
 
-void clsTestObj::ActionProduct()
+void clsTestObj::Action(clsStage* const pStage)
 {
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
@@ -40,7 +43,7 @@ void clsTestObj::ActionProduct()
 
 	float fPushMin = 0.5f;
 
-	LockChara();
+	LockChara(pStage);
 
 	m_pAI->Update();
 
@@ -142,11 +145,7 @@ void clsTestObj::ActionProduct()
 		}
 
 		pRoboCom = m_pAI->QuickTurnOperation(fPush, fAngle);
-
-		
 	}
-
-	Updata();
 }
 
 void clsTestObj::SwitchMove()

@@ -44,6 +44,8 @@ namespace{
 	};
 	const string sDATA_PASS_END	 = "\\RoboPartsData.csv";
 
+
+
 }
 
 
@@ -55,7 +57,7 @@ clsResource::clsResource()
 	,m_ppStaticModels( nullptr )
 	,m_ppSkinModels( nullptr )
 	,m_ucSkinModelMax( 0 )
-	,m_PartsNum( )
+//	,m_PartsNum()
 {
 	for( UCHAR i=0; i<enPARTS_READ_SIZE; i++ ){
 		m_PartsNum[i] = 0;
@@ -136,21 +138,27 @@ void clsResource::Create( const HWND hWnd, ID3D11Device* const pDevice, ID3D11De
 	InitSkinModel( hWnd, pDevice, pContext );
 
 	CreateStaticModel( 
-		"Data\\Stage\\kami_map.x",
-		enSTATIC_MODEL::enStaticModel_StageBase );
+		"Data\\Stage\\Collision\\StageCollision.X",
+		enSTATIC_MODEL::enStaticModel_StageCollision );
+	CreateStaticModel( 
+		"Data\\Stage\\Floor\\StageFloor.X",
+		enSTATIC_MODEL::enStaticModel_StageFloor );
+	CreateStaticModel( 
+		"Data\\Stage\\Celling\\StageCeling.X",
+		enSTATIC_MODEL::enStaticModel_StageCelling );
 	CreateStaticModel(
-		"Data\\Stage\\Building.X",
+		"Data\\Stage\\Building\\Building.X",
 		enSTATIC_MODEL::enStaticModel_Building );
 	CreateStaticModel(
 		"Data\\Collision\\Sphere.x",
 		enSTATIC_MODEL::enStaticModel_Shpere );
 
-//	CreateSkinModel(
-//		"Data\\RoboParts\\Leg\\Leg0\\Leg0.x",
-//		enSKIN_MODEL::enSkinModel_Player );
-//	CreateSkinModel(
-//		"Data\\RoboParts\\Leg\\Leg0\\Leg0.X",
-//		enSKIN_MODEL::enSkinModel_Leg );
+	CreateSkinModel(
+		"Data\\Stage\\Door\\Door.X",
+		enSKIN_MODEL::enSkinModel_Door );
+	CreateSkinModel(
+		"Data\\Stage\\Lia\\Lia.X",
+		enSKIN_MODEL::enSkinModel_Lia );
 
 	//ƒp[ƒcì¬.
 	CreatePartsGroup();

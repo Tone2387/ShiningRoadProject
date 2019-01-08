@@ -1,24 +1,23 @@
 #include "Main.h"
+#include "RenderAtStartUp.h"
+#include "Game.h"
 #include <stdio.h>
 #include <thread>
-#include "RenderAtStartUp.h"
 
-//Using宣言.
 using namespace std;
+
+//============================================================
+//	定数.
+//============================================================
+#define WND_TITLE	"Gigant Weapons"
+#define APR_NAME	"Gigant Weapons"
+
 
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //グローバル変数.
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-//clsMain* g_pClsMain = nullptr;
 unique_ptr< clsMain >	g_upMain;
 
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-//	定数.
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-//	定数終了.
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
 //============================================================
 //	メイン関数.
@@ -38,12 +37,11 @@ INT WINAPI WinMain(
 	//クラスが存在しているかチェック.
 	if( g_upMain != nullptr ){
 		//ウィンドウ作成成功.
-		if( SUCCEEDED(
-			g_upMain->InitWindow(
-				hInstance,
-				64, 64,
-				WND_W, WND_H,
-				WND_TITLE ) ) )
+		if( SUCCEEDED( g_upMain->InitWindow(
+			hInstance,
+			64, 64,
+			WND_W, WND_H,
+			WND_TITLE ) ) )
 		{
 			//Dx11用の初期化
 			if( SUCCEEDED( g_upMain->InitD3D() ) ){
@@ -88,7 +86,6 @@ clsMain::clsMain()
 	,m_pBackBuffer_TexRTV( nullptr )
 	,m_pBackBuffer_DSTex( nullptr )
 	,m_pBackBuffer_DSTexDSV( nullptr )
-	,m_upGame( nullptr )
 	,m_spViewPort10( nullptr )
 	,m_spViewPort11( nullptr )
 {
@@ -99,7 +96,7 @@ clsMain::clsMain()
 //============================================================
 clsMain::~clsMain()
 {
-	int i=0;
+	DestroyD3D();
 }
 
 //============================================================
@@ -162,7 +159,7 @@ HRESULT clsMain::InitWindow(
 
 	//マウスカーソルの非表示.
 #ifndef _DEBUG
-	ShowCursor(false);
+	ShowCursor( false );
 #endif//#ifndef _DEBUG
 
 	return S_OK;
@@ -365,25 +362,23 @@ HRESULT clsMain::InitD3D()
 
 	//デバイスとスワップチェーンの作成.
 	//	ハードウェア(GPU)デバイスで作成.
-	if( FAILED(
-		D3D11CreateDeviceAndSwapChain(
-			NULL,					//ビデオアダプタへのポインタ.
-			D3D_DRIVER_TYPE_HARDWARE,//作成するデバイスの種類.
-			NULL,					//ソフトウェアラスタライザーを実装するDLLのハンドル.
-			0,						//有効にするランタイムレイヤー.
-			&pFeatureLevels,		//作成を試みる機能レベルの順序を指定する配列.
-			1,						//↑の要素数.
-			D3D11_SDK_VERSION,		//SDKのバージョン.
-			&sd,					//スワップチェーンの初期化パラメータのポインタ.
-			&m_pSwapChain,			//(out)レンダリングに使用されたスワップチェーン.
-			&m_pDevice,				//(out)作成されたデバイス.
-			pFeatureLevel,			//機能レベルの配列にある最初の要素を表すポインタ.
-			&m_pDeviceContext ) ) )	//(out)デバイスコンテキスト.
+	if( FAILED( D3D11CreateDeviceAndSwapChain(
+				NULL,					//ビデオアダプタへのポインタ.
+				D3D_DRIVER_TYPE_HARDWARE,//作成するデバイスの種類.
+				NULL,					//ソフトウェアラスタライザーを実装するDLLのハンドル.
+				0,						//有効にするランタイムレイヤー.
+				&pFeatureLevels,		//作成を試みる機能レベルの順序を指定する配列.
+				1,						//↑の要素数.
+				D3D11_SDK_VERSION,		//SDKのバージョン.
+				&sd,					//スワップチェーンの初期化パラメータのポインタ.
+				&m_pSwapChain,			//(out)レンダリングに使用されたスワップチェーン.
+				&m_pDevice,				//(out)作成されたデバイス.
+				pFeatureLevel,			//機能レベルの配列にある最初の要素を表すポインタ.
+				&m_pDeviceContext ) ) )	//(out)デバイスコンテキスト.
 	{
 		//WARPデバイスの作成.
 		// D3D_FEATURE_LEVEL_9_1 ～ D3D_FEATURE_LEVEL_10_1.
-		if( FAILED(
-			D3D11CreateDeviceAndSwapChain(
+		if( FAILED( D3D11CreateDeviceAndSwapChain(
 				NULL, D3D_DRIVER_TYPE_WARP,
 				NULL, 0, &pFeatureLevels, 1,
 				D3D11_SDK_VERSION, &sd,
@@ -392,13 +387,12 @@ HRESULT clsMain::InitD3D()
 		{
 			//リファレンスデバイスの作成.
 			//	DirectX SDKがインストールされていないと使えない.
-			if( FAILED(
-				D3D11CreateDeviceAndSwapChain(
-					NULL, D3D_DRIVER_TYPE_REFERENCE,
-					NULL, 0, &pFeatureLevels, 1,
-					D3D11_SDK_VERSION, &sd,
-					&m_pSwapChain, &m_pDevice,
-					pFeatureLevel, &m_pDeviceContext ) ) )
+			if( FAILED( D3D11CreateDeviceAndSwapChain(
+				NULL, D3D_DRIVER_TYPE_REFERENCE,
+				NULL, 0, &pFeatureLevels, 1,
+				D3D11_SDK_VERSION, &sd,
+				&m_pSwapChain, &m_pDevice,
+				pFeatureLevel, &m_pDeviceContext ) ) )
 			{
 				MessageBox( NULL, "デバイスとスワップチェーンの作成にミス", "error(main.cpp)", MB_OK );
 				return E_FAIL;
@@ -417,7 +411,7 @@ HRESULT clsMain::InitD3D()
 	ID3D11Texture2D *pBackBuffer_Tex;
 	m_pSwapChain->GetBuffer(
 		0,
-		__uuidof(ID3D11Texture2D),	//__uuidof:式に関連付けたGUIDを取得.
+		__uuidof( ID3D11Texture2D ),	//__uuidof:式に関連付けたGUIDを取得.
 									//		   Texture2Dの唯一の物として扱う.
 		(LPVOID*)&pBackBuffer_Tex );//(out)バックバッファテクスチャ.
 
@@ -522,7 +516,7 @@ HRESULT clsMain::InitD3D()
 //============================================================
 void clsMain::DestroyD3D()
 {
-#if _DEBUG
+#ifdef _DEBUG
 	if( m_pRayH != nullptr ){
 		delete m_pRayH;
 		m_pRayH = nullptr;
@@ -535,18 +529,13 @@ void clsMain::DestroyD3D()
 		delete m_pRayV;
 		m_pRayV = nullptr;
 	}
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
+
 
 #ifdef Tahara
-
-
-//	SAFE_DELETE( m_upGame );
-	if( m_upGame ){
-		m_upGame.reset( nullptr );
-	}
-
-
+	m_upGame.reset( nullptr );
 #endif //#ifdef Tahara
+
 
 #ifdef STARTUP_FULLSCREEN_
 	//フルスクリーンならWindowModeへ.
@@ -578,7 +567,7 @@ HRESULT clsMain::ReadMesh()
 
 
 
-#if _DEBUG
+#ifdef _DEBUG
 
 
 	//レイ表示の初期化(垂直).
@@ -599,7 +588,7 @@ HRESULT clsMain::ReadMesh()
 		m_pRayH->Init( m_pDevice, m_pDeviceContext );
 	}
 
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 	return S_OK;
 }

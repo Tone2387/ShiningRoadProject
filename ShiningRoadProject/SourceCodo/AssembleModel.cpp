@@ -1,5 +1,7 @@
 #include "AssembleModel.h"
 
+#include "FactoryParts.h"
+
 #include "OperationString.h"
 
 using namespace std;
@@ -7,18 +9,18 @@ using namespace std;
 //legのモデルの足元がおかしい場合.
 //#define LEG_MODEL_POSITION_BASE_Y_OFFSET
 
-#if _DEBUG
+#ifdef _DEBUG
 #include "CharaStatic.h"
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 namespace{
 
-#if _DEBUG
+#ifdef _DEBUG
 		//足元.
 		std::unique_ptr<clsCharaStatic> m_upFootNull;
 		std::unique_ptr<clsCharaStatic> m_upFootPosBase;
 		std::unique_ptr<clsCharaStatic> m_upFootTrasnPos;
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 	//配列の添え字.
@@ -58,11 +60,10 @@ namespace{
 
 clsASSEMBLE_MODEL::clsASSEMBLE_MODEL()
 	:m_wpResource( nullptr )
-	,m_upPartsFactory( nullptr )
 	,m_vpParts()
 	,m_dAnimSpd( 1.0 )
 	,m_enPartsNum()
-	,m_iColorRank()
+//	,m_iColorRank()
 {
 	m_dAnimSpd = dANIM_SPD;
 	m_vecvColor.resize( iMASK_MAX_NUM, vCOLOR_NORMAL );
@@ -84,10 +85,6 @@ clsASSEMBLE_MODEL::~clsASSEMBLE_MODEL()
 	m_vpParts.clear();
 	m_vpParts.shrink_to_fit();
 
-//	SAFE_DELETE( m_upPartsFactory );
-	if( m_upPartsFactory ){
-		m_upPartsFactory.reset( nullptr );
-	}
 
 	m_wpResource = nullptr;
 }
@@ -98,17 +95,16 @@ void clsASSEMBLE_MODEL::Create(
 	clsResource* const pResource, 
 	clsROBO_STATUS* const pStatus )
 {
-	assert( !m_upPartsFactory );
 	assert( !m_vpParts.size() );
 	assert( !m_wpResource );
 
 	m_wpResource = pResource;
 
-	m_upPartsFactory = make_unique< clsFACTORY_PARTS >();
+	unique_ptr< clsFACTORY_PARTS > upPartsFactory = make_unique< clsFACTORY_PARTS >();
 
 	m_vpParts.resize( ucPARTS_MAX, nullptr );
 	for( UCHAR i=0; i<ucPARTS_MAX; i++ ){
-		m_vpParts[i] = m_upPartsFactory->Create( static_cast<enPARTS>( i ) );
+		m_vpParts[i] = upPartsFactory->Create( static_cast<enPARTS>( i ) );
 	}
 
 
@@ -116,7 +112,7 @@ void clsASSEMBLE_MODEL::Create(
 
 	CreateProduct( pStatus );
 
-#if _DEBUG
+#ifdef _DEBUG
 	float fRATE = 2.5f;
 	//足元.
 	m_upFootTrasnPos = make_unique<clsCharaStatic>();
@@ -140,7 +136,7 @@ void clsASSEMBLE_MODEL::Create(
 		0.125f / fRATE, 
 		0.5f / fRATE * 0.5f, 
 		0.125f / fRATE } );
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 }
 
@@ -191,12 +187,8 @@ void clsASSEMBLE_MODEL::UpDate()
 		m_vpParts[i]->Update();
 	}
 	UpdateProduct();
-
-
 }
 
-void clsASSEMBLE_MODEL::UpdateProduct()
-{}
 
 void clsASSEMBLE_MODEL::Render(
 	const D3DXMATRIX& mView, 
@@ -250,7 +242,7 @@ void clsASSEMBLE_MODEL::Render(
 	m_Trans.vPos -= D3DXVECTOR3( 0.0f, fADD_POS_Y, 0.0f );
 
 #endif//#define LEG_MODEL_POSITION_BASE_Y_OFFSET
-#if _DEBUG
+#ifdef _DEBUG
 	m_upFootNull->SetPosition( vLegPosNull );
 	m_upFootNull->UpdatePos();
 	m_upFootNull->Render( mView, mProj, vLight, vEye, { 10.0f, 0.0f, 0.0f, 0.5f }, true );
@@ -264,7 +256,7 @@ void clsASSEMBLE_MODEL::Render(
 	m_upFootTrasnPos->UpdatePos();
 	m_upFootTrasnPos->Render( mView, mProj, vLight, vEye, { 0.0f, 0.0f, 10.0f, 0.5f }, true );
 	
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 	//ワイヤーフレーム解除.
 	ChangeWireFrame( false, pContext );
@@ -277,7 +269,7 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 	const enPARTS_TYPES AlphaParts, 
 	const UINT uiIndex,
 	const unsigned int uiMaskNum,
-	ID3D11DeviceContext* const pContext  )
+	ID3D11DeviceContext* const pContext  ) const
 {
 	D3DXVECTOR4 vReturn = vCOLOR_NORMAL;
 
@@ -339,7 +331,7 @@ D3DXVECTOR4 clsASSEMBLE_MODEL::CreateColor(
 //ワイヤーフレーム切替.
 void clsASSEMBLE_MODEL::ChangeWireFrame(
 	const bool isWire,
-	ID3D11DeviceContext* const  pContext )
+	ID3D11DeviceContext* const  pContext ) const
 {
 	if( !pContext ){
 		return;
@@ -479,14 +471,6 @@ void clsASSEMBLE_MODEL::SetPos( const D3DXVECTOR3 &vPos )
 
 
 }
-void clsASSEMBLE_MODEL::AddPos( const D3DXVECTOR3 &vVec )
-{
-	SetPos( m_Trans.vPos + vVec );
-}
-D3DXVECTOR3 clsASSEMBLE_MODEL::GetPos() const
-{
-	return m_Trans.vPos;
-}
 
 
 
@@ -506,14 +490,6 @@ void clsASSEMBLE_MODEL::SetRot( const D3DXVECTOR3 &vRot )
 		assert( m_vpParts[i] );
 		m_vpParts[i]->SetRotation( tmpRot );
 	}
-}
-void clsASSEMBLE_MODEL::AddRot( const D3DXVECTOR3 &vRot )
-{
-	SetRot( D3DXVECTOR3( m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll ) + vRot );
-}
-D3DXVECTOR3 clsASSEMBLE_MODEL::GetRot() const
-{
-	return { m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll };
 }
 
 
@@ -538,14 +514,9 @@ void clsASSEMBLE_MODEL::SetAnimSpd( const double &dSpd )
 }
 
 
-int clsASSEMBLE_MODEL::GetPartsNum( const enPARTS_TYPES enPartsType )
-{
-	return m_enPartsNum[ enPartsType ];
-}
-
 
 //パーツのアニメーション変更.
-bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex )
+bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex ) const
 {
 	char cPartsIndex = static_cast<char>( enParts );
 	assert( m_vpParts[ cPartsIndex ] );
@@ -557,7 +528,7 @@ bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex
 
 //パーツのボーンの座標を取得.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos( 
-	const enPARTS enParts, const char* sBoneName )
+	const enPARTS enParts, const char* sBoneName ) const
 {
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
 	char cTmpNum = static_cast<char>( enParts );
@@ -570,7 +541,7 @@ D3DXVECTOR3 clsASSEMBLE_MODEL::GetBonePos(
 
 
 //ボーンが存在するか.
-bool clsASSEMBLE_MODEL::ExistsBone( const enPARTS enParts, const char* sBoneName )
+bool clsASSEMBLE_MODEL::ExistsBone( const enPARTS enParts, const char* sBoneName ) const
 {
 	char cTmpNum = static_cast<char>( enParts );
 	return m_vpParts[ cTmpNum ]->m_pMesh->ExistsBone( sBoneName );
@@ -602,7 +573,7 @@ float clsASSEMBLE_MODEL::GuardDirOver( float &outTheta ) const
 //腕の角度を武器も模写する.
 void clsASSEMBLE_MODEL::FitJointModel( 
 	clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-	const char *RootBone, const char *EndBone )
+	const char *RootBone, const char *EndBone ) const
 {
 	//ボーンのベクトルを出す( ローカル ).
 	D3DXVECTOR3 vVecLocal = 
@@ -631,7 +602,7 @@ void clsASSEMBLE_MODEL::FitJointModel(
 
 
 //アニメーションリセット.
-void clsASSEMBLE_MODEL::AnimReSet()
+void clsASSEMBLE_MODEL::AnimReSet() const
 {
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		m_vpParts[i]->PartsAnimChange( 0 );
@@ -650,7 +621,7 @@ void clsASSEMBLE_MODEL::SetPartsColor(
 	m_vecvColor[ uiMaskNum ] = vColor;
 }
 
-D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum )
+D3DXVECTOR4 clsASSEMBLE_MODEL::GetPartsColor( const unsigned int uiMaskNum ) const
 {
 	if( uiMaskNum >= m_vecvColor.size() ){
 		float fERROR_NUM = -1.0f;
@@ -734,7 +705,7 @@ void clsASSEMBLE_MODEL::UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorG
 
 
 
-void clsASSEMBLE_MODEL::ModelUpdate()
+void clsASSEMBLE_MODEL::ModelUpdate() const
 {
 	for( UINT i=0; i<m_vpParts.size(); i++ ){
 		assert( m_vpParts[i] );
@@ -743,7 +714,8 @@ void clsASSEMBLE_MODEL::ModelUpdate()
 }
 
 
-float clsASSEMBLE_MODEL::GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+float clsASSEMBLE_MODEL::GetColorGradation( 
+	const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const
 {
 	const float fERROR = -1.0f; 
 	if( enColorGage >= clsROBO_STATUS::enCOLOR_GAGE_size ){
@@ -757,14 +729,10 @@ float clsASSEMBLE_MODEL::GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE e
 	return fReturn;
 }
 
-std::vector< D3DXVECTOR4 > clsASSEMBLE_MODEL::GetColor()
-{
-	return m_vecvColor;
-}
 
 
 //0~16で返す.
-int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage )
+int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const
 {
 	if( enColorGage >= clsROBO_STATUS::enCOLOR_GAGE_size ||
 		enColorGage < 0 )
@@ -779,12 +747,12 @@ int clsASSEMBLE_MODEL::GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorG
 
 
 
-#if _DEBUG
+#ifdef _DEBUG
 //各パーツのpos.
 D3DXVECTOR3 clsASSEMBLE_MODEL::GetPartsPos( const UCHAR ucParts ) const
 {
 	assert( m_vpParts[ucParts] );
 	return m_vpParts[ucParts]->GetPosition();
 }
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 

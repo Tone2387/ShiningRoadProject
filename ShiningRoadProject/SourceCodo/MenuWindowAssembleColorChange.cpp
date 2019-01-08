@@ -1,5 +1,7 @@
 #include "MenuWindowAssembleColorChange.h"
 #include "PtrGroup.h"
+#include "SoundManagerMenuWindow.h"
+#include "CFont.h"
 
 #include "AssembleModel.h"
 
@@ -10,19 +12,24 @@ namespace{
 
 	const WHSIZE_FLOAT BONE_SIZE = { fCOLOR_GAGE_SIZE_BASE * 15.0f, fCOLOR_GAGE_SIZE_BASE };
 	const WHSIZE_FLOAT GAGE_SIZE = { fCOLOR_GAGE_SIZE_BASE,			fCOLOR_GAGE_SIZE_BASE };
+
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 678.0f, 500.0f };
 }
 
 clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE(
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec,
 	clsASSEMBLE_MODEL* const pAssembleModel )
-	:clsMENU_WINDOW_ASSEMBLE_BASE( pPtrGroup, pParentWindow, pInformationVec )
+	:clsMENU_WINDOW_ASSEMBLE_BASE( 
+		hWnd, pPtrGroup, pParentWindow, 
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
+		"MenuWindowAssembleColorChange" )
 	,m_wpAssembleModel( pAssembleModel )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 678.0f, 500.0f };
-	Open( vTHIS_WINDOW_SIZE );
 
 	//骨.
 	m_vecupColorBone.resize( clsROBO_STATUS::enCOLOR_GAGE_size );
@@ -80,7 +87,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 			m_iSelectNum = 0;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 	else if( SelectDown( false ) ){
@@ -89,7 +96,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 			m_iSelectNum = enSELECT_NUM_size - 1;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -146,13 +153,13 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::UpdateProduct()
 
 	if( SelectEnter() ){
 		if( m_iSelectNum == enSELECT_NUM_BACK ){
-			m_wpSound->PlaySE( enSE_ENTER );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 	}
 
@@ -196,7 +203,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	//----- Text座標を決定する -----//.
 	//RGB.
 	const float fSCALE_RGB = 24.0f;
-	const int iRGB_INDEX = 8;
+	const int iRGB_INDEX = 9;
 	for( unsigned int i=0; i<m_vecupColorGage.size(); i++ ){
 		const D3DXVECTOR3 vADD_POS = { -50.0f, 0.0f, 0.0f };
 		const D3DXVECTOR3 vPOS_AGB = { m_vecupColorBone[i]->GetPos().x, m_vecupColorBone[i]->GetPos().y, 0.0f };
@@ -259,7 +266,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	const float fTITLE_TEXT_SCALE = 36;
 	m_wpFont->SetScale( fTITLE_TEXT_SCALE );
 
-	const int iMENU_TITLE_TEXT_INDEX = 3;
+	const int iMENU_TITLE_TEXT_INDEX = 4;
 	m_wpFont->Render( iMENU_TITLE_TEXT_INDEX );
 
 	//color1.
@@ -270,7 +277,7 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	const float fCOLOR1_TEXT_SCALE = 18;
 	m_wpFont->SetScale( fCOLOR1_TEXT_SCALE );
 
-	int iColorTextIndex = 6;
+	int iColorTextIndex = 7;
 	m_wpFont->Render( iColorTextIndex ++ );
 
 	//color2.
@@ -279,18 +286,4 @@ void clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::RenderProduct()
 	m_wpFont->Render( iColorTextIndex ++ );
 
 }
-
-bool clsMENU_WINDOW_ASSEMBLE_COLOR_CHANGE::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-
-	return false;
-}
-
-
-
-
-
 

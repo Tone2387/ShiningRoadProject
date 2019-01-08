@@ -1,8 +1,7 @@
 #include "Sprite2D.h"
 
 namespace{
-	//シェーダファイル名(ディレクトリも含む)
-	const char SHADER_NAME[] = "Shader\\Sprite2D.hlsl";
+
 }
 
 
@@ -28,33 +27,35 @@ clsSprite2D::clsSprite2D() :
 //デストラクタ.
 clsSprite2D::~clsSprite2D()
 {
-	Release();
+	SAFE_RELEASE( m_pTexture );
+	SAFE_RELEASE( m_pSampleLinear );
+	SAFE_RELEASE( m_pVertexBuffer );
+	SAFE_RELEASE( m_pConstantBuffer );
+	SAFE_RELEASE( m_pPixelShader );
+	SAFE_RELEASE( m_pVertexLayout );
+	SAFE_RELEASE( m_pVertexShader );
 }
 
 //初期化.
 HRESULT clsSprite2D::Create(
 	ID3D11Device* const pDevice11, ID3D11DeviceContext* const pContext11,
-	const char* fileName, const SPRITE_STATE ss )
+	const char* fileName, const SPRITE_STATE& ss )
 {
-	m_pDevice11 = pDevice11;
-	m_pDeviceContext11 = pContext11;
+	m_wpDevice = pDevice11;
+	m_wpContext = pContext11;
 
 	m_SState = ss;
 
-	if( FAILED( CreateBlendState() ))
-	{
+	if( FAILED( CreateBlendState() ) ){
 		return E_FAIL;
 	}
-	if( FAILED( InitShader() ))
-	{
+	if( FAILED( InitShader( fileName ) ) ){
 		return E_FAIL;
 	}
-	if( FAILED( InitModel( ss )))
-	{
+	if( FAILED( InitModel( ss, fileName ) ) ){
 		return E_FAIL;
 	}
-	if( FAILED( CreateTexture( fileName, &m_pTexture )))
-	{
+	if( FAILED( CreateTexture( fileName, &m_pTexture ) ) ){
 		return E_FAIL;
 	}
 
@@ -65,8 +66,11 @@ HRESULT clsSprite2D::Create(
 //	HLSLファイルを読み込みシェーダを作成する.
 //	HLSL:HIGH-LEVEL-SHADER-LANGUAGE.
 //======================================
-HRESULT clsSprite2D::InitShader()
+HRESULT clsSprite2D::InitShader( const char* sErrFileName )
 {
+	//シェーダファイル名(ディレクトリも含む)
+	const char SHADER_NAME[] = "Shader\\Sprite2D.hlsl";
+
 	ID3DBlob* pCompiledShader = NULL;
 	ID3DBlob* pErrors = NULL;
 	UINT uCompileFlag = 0;
@@ -77,8 +81,7 @@ HRESULT clsSprite2D::InitShader()
 #endif//#ifdef _DEBUG
 
 	//HLSLからバーテックスシェーダのブロブを作成.
-	if (FAILED(
-		D3DX11CompileFromFile(
+	if( FAILED(	D3DX11CompileFromFile(
 		SHADER_NAME,	//シェーダファイル名(HLSLファイル)
 		NULL,			//マクロ定義の配列へのポインタ(未使用)
 		NULL,			//インクルードファイルを扱うインターフェイスへのポインタ(未使用)
@@ -89,22 +92,21 @@ HRESULT clsSprite2D::InitShader()
 		NULL,			//スレッドポンプインターフェイスへのポインタ(未使用)
 		&pCompiledShader,//ブロブを格納するメモリへのポインタ.
 		&pErrors,		//エラーと警告一覧を格納するメモリへのポインタ.
-		NULL)))		//戻り値へのポインタ(未使用)
+		NULL ) ) )		//戻り値へのポインタ(未使用)
 	{
-		MessageBox(NULL, "hlsl読込失敗", "エラー", MB_OK);
+		MessageBox(NULL, "hlsl読込失敗", sErrFileName, MB_OK);
 		return E_FAIL;
 	}
 	SAFE_RELEASE(pErrors);
 
 	//上記で作成したブロブから「バーテックスシェーダ」を作成.
-	if (FAILED(
-		m_pDevice11->CreateVertexShader(
+	if( FAILED(	m_wpDevice->CreateVertexShader(
 		pCompiledShader->GetBufferPointer(),
 		pCompiledShader->GetBufferSize(),
 		NULL,
-		&m_pVertexShader)))//(out)バーテックスシェーダ.
+		&m_pVertexShader ) ) )//(out)バーテックスシェーダ.
 	{
-		MessageBox(NULL, "vs作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "vs作成失敗", sErrFileName, MB_OK);
 		return E_FAIL;
 	}
 
@@ -132,23 +134,21 @@ HRESULT clsSprite2D::InitShader()
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
 	//頂点インプットレイアウトの作成.
-	if (FAILED(
-		m_pDevice11->CreateInputLayout(
+	if( FAILED(	m_wpDevice->CreateInputLayout(
 		layout,
 		numElements,
 		pCompiledShader->GetBufferPointer(),
 		pCompiledShader->GetBufferSize(),
-		&m_pVertexLayout)))//(out)頂点インプットレイアウト.
+		&m_pVertexLayout ) ) )//(out)頂点インプットレイアウト.
 	{
-		MessageBox(NULL, "頂点インプットレイアウト作成失敗", "エラー", MB_OK);
+		MessageBox(NULL, "頂点インプットレイアウト作成失敗", sErrFileName, MB_OK);
 		return E_FAIL;
 	}
-	SAFE_RELEASE(pCompiledShader);
+	SAFE_RELEASE( pCompiledShader );
 
 
 	//HLSLからピクセルシェーダのブロブを作成.
-	if (FAILED(
-		D3DX11CompileFromFile(
+	if( FAILED(	D3DX11CompileFromFile(
 		SHADER_NAME,	//シェーダファイル名(HLSLファイル)
 		NULL,
 		NULL,
@@ -159,25 +159,24 @@ HRESULT clsSprite2D::InitShader()
 		NULL,
 		&pCompiledShader,//ブロブを格納するメモリへのポインタ.
 		&pErrors,
-		NULL)))
+		NULL ) ) )
 	{
-		MessageBox(NULL, "hlsl(ps)読込失敗", "エラー", MB_OK);
+		MessageBox( NULL, "hlsl(ps)読込失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
-	SAFE_RELEASE(pErrors);
+	SAFE_RELEASE( pErrors );
 
 	//上記で作成したブロブから「ピクセルシェーダ」を作成.
-	if (FAILED(
-		m_pDevice11->CreatePixelShader(
+	if( FAILED( m_wpDevice->CreatePixelShader(
 		pCompiledShader->GetBufferPointer(),
 		pCompiledShader->GetBufferSize(),
 		NULL,
-		&m_pPixelShader)))//(out)ピクセルシェーダ.
+		&m_pPixelShader ) ) )//(out)ピクセルシェーダ.
 	{
-		MessageBox(NULL, "ps作成失敗", "エラー", MB_OK);
+		MessageBox( NULL, "ps作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
-	SAFE_RELEASE(pCompiledShader);//ブロブ解放.
+	SAFE_RELEASE( pCompiledShader );//ブロブ解放.
 
 
 
@@ -191,13 +190,12 @@ HRESULT clsSprite2D::InitShader()
 	cb.Usage = D3D11_USAGE_DYNAMIC;//使用方法:直接書き込み.
 
 	//コンスタントバッファ作成.
-	if (FAILED(
-		m_pDevice11->CreateBuffer(
+	if( FAILED(	m_wpDevice->CreateBuffer(
 		&cb,
 		NULL,
-		&m_pConstantBuffer)))
+		&m_pConstantBuffer ) ) )
 	{
-		MessageBox(NULL, "コンスタントバッファ作成失敗", "エラー", MB_OK);
+		MessageBox( NULL, "コンスタントバッファ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -209,7 +207,7 @@ HRESULT clsSprite2D::InitShader()
 //================================================
 //	モデル作成.
 //================================================
-HRESULT clsSprite2D::InitModel( SPRITE_STATE ss )
+HRESULT clsSprite2D::InitModel( const SPRITE_STATE& ss, const char* sErrFileName )
 {
 	float fW = ss.Disp.w;	//表示スプライト幅.
 	float fH = ss.Disp.h;	//表示スプライト高さ.
@@ -231,7 +229,7 @@ HRESULT clsSprite2D::InitModel( SPRITE_STATE ss )
 	//バッファ構造体.
 	D3D11_BUFFER_DESC bd;
 	bd.Usage = D3D11_USAGE_DEFAULT;//使用方(デフォルト)
-	bd.ByteWidth = sizeof(SpriteVertex) * uVerMax;//頂点サイズ(頂点×4)
+	bd.ByteWidth = sizeof( SpriteVertex ) * uVerMax;//頂点サイズ(頂点×4)
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;//頂点バッファとして扱う.
 	bd.CPUAccessFlags = 0;	//CPUからはアクセスしない.
 	bd.MiscFlags = 0;	//その他のフラグ(未使用)
@@ -242,26 +240,25 @@ HRESULT clsSprite2D::InitModel( SPRITE_STATE ss )
 	InitData.pSysMem = vertices;//板ポリの頂点をセット.
 
 	//頂点バッファの作成.
-	if (FAILED(
-		m_pDevice11->CreateBuffer(
-		&bd, &InitData, &m_pVertexBuffer)))
+	if( FAILED( m_wpDevice->CreateBuffer(
+		&bd, &InitData, &m_pVertexBuffer ) ) )
 	{
-		MessageBox(NULL, "頂点バッファ作成失敗", "エラー", MB_OK);
+		MessageBox( NULL, "頂点バッファ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 
 
 	//頂点バッファをセット.
-	UINT stride = sizeof(SpriteVertex);//データ間隔.
+	UINT stride = sizeof( SpriteVertex );//データ間隔.
 	UINT offset = 0;
-	m_pDeviceContext11->IASetVertexBuffers(
+	m_wpContext->IASetVertexBuffers(
 		0, 1,
-		&m_pVertexBuffer, &stride, &offset);
+		&m_pVertexBuffer, &stride, &offset );
 
 
 	//テクスチャ用のサンプラー構造体.
 	D3D11_SAMPLER_DESC SamDesc;
-	ZeroMemory(&SamDesc, sizeof(SamDesc));
+	ZeroMemory( &SamDesc, sizeof( SamDesc ) );
 	//リニアフィルタ-(線形補間)
 	//	POINT:高速だが粗い.
 	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -275,11 +272,10 @@ HRESULT clsSprite2D::InitModel( SPRITE_STATE ss )
 	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
 	//サンプラー作成.
-	if (FAILED(
-		m_pDevice11->CreateSamplerState(
-		&SamDesc, &m_pSampleLinear)))//(out)サンプラー.
+	if( FAILED( m_wpDevice->CreateSamplerState(
+		&SamDesc, &m_pSampleLinear ) ) )//(out)サンプラー.
 	{
-		MessageBox(NULL, "サンプラ作成失敗", "エラー", MB_OK);
+		MessageBox( NULL, "サンプラ作成失敗", sErrFileName, MB_OK );
 		return E_FAIL;
 	}
 
@@ -294,13 +290,12 @@ HRESULT clsSprite2D::CreateTexture(
 	ID3D11ShaderResourceView** pTex )
 {
 	//テクスチャ作成.
-	if( FAILED(
-		D3DX11CreateShaderResourceViewFromFile(
-		m_pDevice11,	//リソースを使用するデバイスへのポインタ.
+	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+		m_wpDevice,	//リソースを使用するデバイスへのポインタ.
 		fileName,		//ファイル名.
 		NULL, NULL,
 		pTex,			//(out)テクスチャ.
-		NULL )))
+		NULL ) ) )
 	{
 		ERR_MSG( fileName, "clsSprite2D::CreateTexture()" );
 		return E_FAIL;
@@ -326,29 +321,28 @@ void clsSprite2D::Render()
 
 
 	//平行移動.
-	D3DXMatrixTranslation(&mTrans,
-		m_vPos.x, m_vPos.y, m_vPos.z);
+	D3DXMatrixTranslation( &mTrans,
+		m_vPos.x, m_vPos.y, m_vPos.z );
 
 	//合成.
 	mWorld = mScale * mTrans;
 
 	//使用するシェーダの登録.
-	m_pDeviceContext11->VSSetShader(m_pVertexShader, NULL, 0);
-	m_pDeviceContext11->PSSetShader(m_pPixelShader, NULL, 0);
+	m_wpContext->VSSetShader( m_pVertexShader, NULL, 0 );
+	m_wpContext->PSSetShader( m_pPixelShader,  NULL, 0 );
 
 
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
 	SPRITE2D_CONSTANT_BUFFER cd;	//コンスタントバッファ.
 	//バッファ内のデータの書き方開始時にmap.
-	if (SUCCEEDED(
-		m_pDeviceContext11->Map(
+	if( SUCCEEDED( m_wpContext->Map(
 		m_pConstantBuffer, 0,
-		D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
 		//ワールド行列を渡す.
 		D3DXMATRIX m = mWorld;
-		D3DXMatrixTranspose(&m, &m);	//行列を転置する.					
+		D3DXMatrixTranspose( &m, &m );	//行列を転置する.					
 		//行列の計算方法がDirectXとGPUで異なる為.
 		cd.mW = m;
 
@@ -365,70 +359,49 @@ void clsSprite2D::Render()
 		cd.vUV.y = ( 1.0f / m_SState.Anim.h ) * m_fPatternNo.y;
 
 		memcpy_s(pData.pData, pData.RowPitch,
-			(void*)(&cd), sizeof(cd));
+			(void*)( &cd ), sizeof( cd ) );
 
-		m_pDeviceContext11->Unmap(m_pConstantBuffer, 0);
+		m_wpContext->Unmap( m_pConstantBuffer, 0 );
 	}
 
 	//このコンスタントバッファをどのシェーダで使うか？.
-	m_pDeviceContext11->VSSetConstantBuffers(
-		0, 1, &m_pConstantBuffer);
-	m_pDeviceContext11->PSSetConstantBuffers(
-		0, 1, &m_pConstantBuffer);
+	m_wpContext->VSSetConstantBuffers(
+		0, 1, &m_pConstantBuffer );
+	m_wpContext->PSSetConstantBuffers(
+		0, 1, &m_pConstantBuffer );
 
 	//頂点バッファをセット.
-	UINT stride = sizeof(SpriteVertex);	//データの間隔.
+	UINT stride = sizeof( SpriteVertex );	//データの間隔.
 	UINT offset = 0;
-	m_pDeviceContext11->IASetVertexBuffers(
-		0, 1, &m_pVertexBuffer, &stride, &offset);
+	m_wpContext->IASetVertexBuffers(
+		0, 1, &m_pVertexBuffer, &stride, &offset );
 
 	//頂点インプットレイアウトをセット.
-	m_pDeviceContext11->IASetInputLayout(m_pVertexLayout);
+	m_wpContext->IASetInputLayout( m_pVertexLayout );
 
 	//プリミティブ・トポロジーをセット.
-	m_pDeviceContext11->IASetPrimitiveTopology(
-		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	m_wpContext->IASetPrimitiveTopology(
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 
 	//テクスチャをシェーダに渡す.
-	m_pDeviceContext11->PSSetSamplers(
-		0, 1, &m_pSampleLinear);	//サンプラ-をセット.
-	m_pDeviceContext11->PSSetShaderResources(
-		0, 1, &m_pTexture);		//テクスチャをシェーダに渡す.
+	m_wpContext->PSSetSamplers(
+		0, 1, &m_pSampleLinear );	//サンプラ-をセット.
+	m_wpContext->PSSetShaderResources(
+		0, 1, &m_pTexture );		//テクスチャをシェーダに渡す.
 
 	//アルファブレンド用ブレンドステート作成＆設定.
-	SetBlend(true);
+	SetBlend( true );
 
 	//プリミティブをレンダリング.
-	m_pDeviceContext11->Draw(4, 0);
+	m_wpContext->Draw( 4, 0 );
 
-	//アルファブレンドを無効にする.
-	SetBlend(false);
-}
-
-
-void clsSprite2D::Release()
-{
-	SAFE_RELEASE( m_pTexture );
-	SAFE_RELEASE( m_pSampleLinear );
-	SAFE_RELEASE( m_pVertexBuffer );
-	SAFE_RELEASE( m_pConstantBuffer );
-	SAFE_RELEASE( m_pPixelShader );
-	SAFE_RELEASE( m_pVertexLayout );
-	SAFE_RELEASE( m_pVertexShader );
-
+//	//アルファブレンドを無効にする.
+//	SetBlend(false);
 }
 
 
 
-void clsSprite2D::SetPos( const D3DXVECTOR3 &vPos )
-{
-	m_vPos = vPos;
-}
 
-void clsSprite2D::SetScale( const D3DXVECTOR3 &vScale )
-{
-	m_vScale = vScale;
-}
 
 void clsSprite2D::SetScale( const float &fScale, const bool withZ )
 {
@@ -439,10 +412,6 @@ void clsSprite2D::SetScale( const float &fScale, const bool withZ )
 	m_vScale.z = fScale;
 }
 
-void clsSprite2D::SetAlpha( const float fAlpha )
-{
-	m_vColor.w = fAlpha;
-}
 bool clsSprite2D::AddAlpha( const float fAlpha )
 {
 	//範囲内.
@@ -462,27 +431,8 @@ bool clsSprite2D::AddAlpha( const float fAlpha )
 
 	return isWithInRange;
 }
-float clsSprite2D::GetAlpha()
-{
-	return m_vColor.w;
-}
 
 
-D3DXVECTOR3 clsSprite2D::GetPos() const
-{
-	return m_vPos;
-}
-D3DXVECTOR3 clsSprite2D::GetScale() const
-{
-	return m_vScale;
-}
-
-
-
-void clsSprite2D::AddPos( const D3DXVECTOR3 &vPos )
-{
-	m_vPos += vPos;
-}
 
 void clsSprite2D::AddScale( const D3DXVECTOR3 &vScale )
 {
@@ -500,7 +450,7 @@ void clsSprite2D::AddScale( const float &fScale, const bool withZ )
 	m_vScale.z *= fScale;
 }
 
-void clsSprite2D::SetAnim( const POINTFLOAT &anim )
+void clsSprite2D::SetAnim( const POINTFLOAT& anim )
 {
 	m_fPatternNo = anim;
 }

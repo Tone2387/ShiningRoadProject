@@ -1,17 +1,26 @@
 #ifndef PTR_GROUP_H_
 #define PTR_GROUP_H_
 
+class clsDxInput;
+class clsXInput;
+class clsResource;
+class clsEffects;
+class clsSOUND_MANAGER_BASE;
+class clsCAMERA_BASE;
+class clsROBO_STATUS_PLAYER;
+class clsBLACK_SCREEN;
+class clsFont;
 
+
+#include "Global.h"
+#include "RoboStatusPlayer.h"
 #include "DxInput.h"
 #include "CXInput.h"
-#include "Resource.h"
-#include "Effects.h"
 #include "SoundManagerBase.h"
-#include "Camera.h"
-#include "RoboStatusPlayer.h"
-#include "BlackScreen.h"
-#include "CFont.h"
+#include "Effects.h"
 
+
+//各シーンに必要なもののまとめ.
 class clsPOINTER_GROUP
 {
 public:
@@ -37,19 +46,19 @@ public:
 	void UpdateCameraPtr( clsCAMERA_BASE* const pCamera );
 
 	//----- ポインターを渡す -----//.
-	ID3D11Device* GetDevice() const;
-	ID3D11DeviceContext* GetContext() const;
-	D3D10_VIEWPORT* GetViewPort10() const;
-	D3D11_VIEWPORT* GetViewPort11() const;
-	clsDxInput* GetDxInput() const;
-	clsXInput* GetXInput() const;
-	clsResource* GetResource() const;
-	clsEffects*	GetEffects() const;
-	clsSOUND_MANAGER_BASE*	GetSound() const;
-	clsCAMERA_BASE*	GetCamera() const;
-	clsROBO_STATUS_PLAYER* GetRoboStatus() const;
-	clsBLACK_SCREEN* GetBlackScreen() const;
-	clsFont* GetFont() const;
+	ID3D11Device*			GetDevice()		const;
+	ID3D11DeviceContext*	GetContext()	const;
+	D3D10_VIEWPORT*			GetViewPort10() const;
+	D3D11_VIEWPORT*			GetViewPort11() const;
+	clsDxInput*				GetDxInput()	const;
+	clsXInput*				GetXInput()		const;
+	clsResource*			GetResource()	const;
+	clsEffects*				GetEffects()	const;
+	clsSOUND_MANAGER_BASE*	GetSound()		const;
+	clsCAMERA_BASE*			GetCamera()		const;
+	clsROBO_STATUS_PLAYER*	GetRoboStatus() const;
+	clsBLACK_SCREEN*		GetBlackScreen()const;
+	clsFont*				GetFont()		const;
 
 private:
 	//デバイスオブジェクト.

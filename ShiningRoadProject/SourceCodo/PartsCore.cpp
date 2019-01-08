@@ -55,7 +55,7 @@ void clsPARTS_CORE::UpdateProduct()
 //直前のフレームのボーンの座標を持ってくる.
 D3DXVECTOR3 clsPARTS_CORE::GetBonePosPreviosFrame( 
 	const int enBoneName, 
-	int iVecNum )
+	int iVecNum ) const
 {
 //	if( iVecNum >= m_BonePositions.vecvBoosterRoot.size() ){
 //		iVecNum = m_BonePositions.vecvBoosterRoot.size() - 1;
@@ -93,8 +93,8 @@ D3DXVECTOR3 clsPARTS_CORE::GetBonePosPreviosFrame(
 	}
 
 
-	D3DXVECTOR3 vReturnPos = { 0.0f, 0.0f, 0.0f };
-	return vReturnPos;
+	const D3DXVECTOR3 vRETURN_POS = { 0.0f, 0.0f, 0.0f };
+	return vRETURN_POS;
 }
 
 //↑で使うためにボーン座標を記録する( Renderの直後に使う ).
@@ -103,7 +103,7 @@ void clsPARTS_CORE::UpdateBonePosPreviosFrame()
 	clsOPERATION_STRING OprtStr;
 	string sBoneNameRoot = sBONE_NAME_CORE_BOOSTER_ROOT;
 	string sBoneNameEnd	 = sBONE_NAME_CORE_BOOSTER_END;
-	for( int i=0; i<m_BonePositions.vecvBoosterRoot.size(); i++ ){
+	for( unsigned int i=0; i<m_BonePositions.vecvBoosterRoot.size(); i++ ){
 		m_BonePositions.vecvBoosterRoot[i] = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameRoot, i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 		m_BonePositions.vecvBoosterEnd[i]  = this->GetBonePos( OprtStr.ConsolidatedNumber( sBoneNameEnd , i, m_iDIGIT_BOOSTER_NUM ).c_str() );
 	}

@@ -1,12 +1,22 @@
 #pragma once
 
+
 #include "SceneBase.h"
+
+#ifdef Tahara
+class clsMENU_WINDOW_MISSION_BASE;
+#endif//#ifdef Tahara
+
+
 #include "CameraMission.h"
 
 #include"Player.h"
 #include"TestObject.h"
 #include"Stage.h"
 #include"Sprite.h"
+#include"EnemyFactory.h"
+#include"FriendFactory.h"
+
 
 //================================//
 //========== ミッション中クラス ==========//
@@ -36,16 +46,17 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
-#if _DEBUG
+#ifdef _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 	clsPlayer* m_pPlayer;
 	clsTestObj* m_pTestObj;
 	clsCharactor* m_pCamTar;
 
 	bool m_bCamTarChange;
+	bool m_bStartFlg;
 
 	std::vector<clsCharactor*> m_v_pFriends;
 	std::vector<clsCharactor*> m_v_pEnemys;
@@ -65,19 +76,18 @@ private:
 	void ColEShottoEBody();
 
 	//重複時の動作.
+	void Duplicate();
 	void ColFtoFDuplicate();
 	void ColFtoEDuplicate();
-
 	void ColEtoFDuplicate();
-	void ColEtoEDuplicate();
 
 	bool AllEnemyDead();
 
 	bool m_bEnemyStop;
 
 	//テスト用モデル( これは消しても良いです、いらないです ).
-
 	void UpdateCamTargetPos(clsCharactor* pChara);
+	void GameStart();
 
 	D3DXVECTOR3 m_vCamTargetPos;
 	D3DXVECTOR3 m_vLookTargetPos;
@@ -89,6 +99,12 @@ private:
 	float m_fCamMoveSpeed;
 
 	void CreateUI();
+
+	int m_iStartCnt;
+	clsUiText* m_pStartText;
+
+	clsSPRITE2D_CENTER* m_pWindowScr;
+	clsSPRITE2D_CENTER* m_pWindowScrFilter;
 
 	clsSPRITE2D_CENTER* m_pRaderWindowFront;
 	clsSPRITE2D_CENTER* m_pRaderWindowBack;
@@ -119,6 +135,9 @@ private:
 	float m_fCursorSize;
 
 	clsUiText* m_pHP;
+	clsUiText* m_pHPTargetChara;
+
+	clsUiText* m_pBoostOn;
 
 	clsSPRITE2D_CENTER* m_pLBulletMark;
 	clsSPRITE2D_CENTER* m_pRBulletMark;
@@ -136,6 +155,14 @@ private:
 	//リソース.
 	//エフェクト.
 	//サウンド.
+#ifdef Tahara
+	//メニューの動き.
+	void MenuUpdate( enSCENE &enNextScene );
+	//ポーズメニュー.
+	std::unique_ptr< clsMENU_WINDOW_MISSION_BASE > m_upMenu;
+	//メニューから受け取った情報を照合する.
+	std::vector<unsigned int> m_vecuiInformationDataArray;
+	std::unique_ptr< clsSprite2D > m_upPauseDisplayBlack;
+#endif//#ifdef Tahara
 
 };
-

@@ -1,10 +1,13 @@
 #ifndef ASSEMBLE_MODEL_H_
 #define ASSEMBLE_MODEL_H_
 
-
-#include "FactoryParts.h"
-
 #include "Resource.h"
+#include "PartsLeg.h"
+#include "PartsCore.h"
+#include "PartsHead.h"
+#include "PartsArmL.h"
+#include "PartsArmR.h"
+#include "PartsWeapon.h"
 
 #include "RoboStatusBase.h"
 
@@ -72,88 +75,86 @@ public:
 
 
 	//トランスフォーム.
-	void SetPos( const D3DXVECTOR3 &vPos );
-	void AddPos( const D3DXVECTOR3 &vVec );
-	D3DXVECTOR3 GetPos() const;
+	void SetPos( const D3DXVECTOR3 &vPos );//ボーン位置に各パーツを合わせる作業もしている.
+	void AddPos( const D3DXVECTOR3 &vVec )	{ SetPos( m_Trans.vPos + vVec ); }
+	D3DXVECTOR3 GetPos() const				{ return m_Trans.vPos; }
 
 	void SetRot( const D3DXVECTOR3 &vRot );
-	void AddRot( const D3DXVECTOR3 &vRot );
-	D3DXVECTOR3 GetRot() const;
+	void AddRot( const D3DXVECTOR3 &vRot )	{ SetRot( D3DXVECTOR3( m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll ) + vRot ); }
+	D3DXVECTOR3 GetRot() const				{ return { m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll }; }
 
 	void SetScale( const float fScale );
 
 	void SetAnimSpd( const double &dSpd );
 
-	int GetPartsNum( const enPARTS_TYPES enParts );
+	int GetPartsNum( const enPARTS_TYPES enPartsType ){ return m_enPartsNum[ enPartsType ]; }
 
 	//パーツのアニメーション変更.
-	bool PartsAnimChange( const enPARTS enParts, const int iIndex );
+	bool PartsAnimChange( const enPARTS enParts, const int iIndex ) const;
 
 	//パーツのボーンの座標を取得.
-	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName );
+	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName ) const;
 
 	//ボーンが存在するか.
-	bool ExistsBone( const enPARTS enParts, const char* sBoneName );
+	bool ExistsBone( const enPARTS enParts, const char* sBoneName ) const;
 
 
 	//パーツの色指定.
 	void SetPartsColor( const D3DXVECTOR4 &vColor, const unsigned int uiMaskNum );
-	D3DXVECTOR4 GetPartsColor( const unsigned int uiMaskNum );
+	D3DXVECTOR4 GetPartsColor( const unsigned int uiMaskNum ) const;
 
 	//可能なら( 範囲内なら )trueを返す.
 	bool IncrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 	bool DecrementColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
 
 	//0.0f～1.0fで返す.
-	float GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
-	std::vector< D3DXVECTOR4 > GetColor();
+	float GetColorGradation( const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const;
+	std::vector< D3DXVECTOR4 > GetColor() const { return m_vecvColor; };
 
 	//0~16で返す.
-	int GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
+	int GetColorRank( const clsROBO_STATUS::enCOLOR_GAGE enColorGage ) const;
 
 
-#if _DEBUG
+#ifdef _DEBUG
 	//各パーツのpos.
 	D3DXVECTOR3 GetPartsPos( const UCHAR ucParts ) const;
 
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 protected:
 
 	//継承先で使ってね.
 	virtual void CreateProduct( clsROBO_STATUS* const pStatus );
-	virtual void UpdateProduct();
+	virtual void UpdateProduct(){};
 
 
 	//パーツをボーンの位置( 正式な場所 )に合わせる( +武器の角度を腕に合わせる ).
-	void SetPartsFormalPos(){
-		SetPos( GetPos() );
-	}
+	void SetPartsFormalPos() { SetPos( GetPos() ); }
 
 	//腕の角度を武器も模写する.
 	void FitJointModel( 
 		clsPARTS_BASE *pMover, clsPARTS_BASE *pBace,
-		const char *RootBone, const char *EndBone );
+		const char *RootBone, const char *EndBone ) const;
 
 	//色を吐き出す.
 	D3DXVECTOR4 CreateColor( 
 		const enPARTS_TYPES AlphaParts, 
 		const UINT uiIndex,
 		const unsigned int uiMaskNum,
-		ID3D11DeviceContext* const pContext );
+		ID3D11DeviceContext* const pContext ) const;
 
 	//ワイヤーフレーム切替.
 	void ChangeWireFrame(
 		const bool isWire,
-		ID3D11DeviceContext* const pContext );
+		ID3D11DeviceContext* const pContext ) const;
 
 	//アニメーションリセット.
-	void AnimReSet();
+	void AnimReSet() const;
 
 	//回転値抑制.
 	float GuardDirOver( float &outTheta ) const;
 
-	void ModelUpdate();
+	void ModelUpdate() const;
 
 	//色.
 	void UpdateColor( const clsROBO_STATUS::enCOLOR_GAGE enColorGage );
@@ -166,7 +167,6 @@ protected:
 
 	clsResource* m_wpResource;
 
-	std::unique_ptr< clsFACTORY_PARTS >	m_upPartsFactory;
 
 	//パーツの数分のポインタ.
 	std::vector< clsPARTS_BASE* >	m_vpParts;

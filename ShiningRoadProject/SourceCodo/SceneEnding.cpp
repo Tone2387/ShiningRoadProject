@@ -1,11 +1,23 @@
 #include "SceneEnding.h"
 #include "File.h"
+
+//#include "MenuWindowMissionPause.h"
+//std::unique_ptr< clsMENU_WINDOW_MISSION_PAUSE > g_upMissionMenu;
+//std::vector<unsigned int> g_vecuiInformationDataArray;
+//	clsMENU_WINDOW_MISSION_PAUSE::CreateInformation( &g_vecuiInformationDataArray, enINFORMATION_INDEX_size );
+//	g_upMissionMenu = make_unique< clsMENU_WINDOW_MISSION_PAUSE >(
+//		m_hWnd, m_wpPtrGroup, nullptr, &g_vecuiInformationDataArray );
+
 using namespace std;
+
+
+#ifdef _DEBUG
+//つけていると背景に真ん中がわかるものを出す.
+#define CENTER_SPRITE_RENDER
+#endif//#ifdef _DEBUG
 
 namespace{
 
-//つけていると背景に真ん中がわかるものを出す.
-//#define CENTER_SPRITE_RENDER
 #ifdef CENTER_SPRITE_RENDER
 	unique_ptr<clsSprite2D> g_upTex;
 #endif//#ifdef CENTER_SPRITE_RENDER
@@ -43,14 +55,20 @@ namespace{
 		unsigned int uiNum;	//いくつ同時に描画する?.
 	};
 
-	const int iSTAFF_TEXT_RENDER_NUM_MAX = 3;
+	const int iSTAFF_TEXT_RENDER_NUM_MAX = 4;
 	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_PROGRAMR = { 1, 3 };
 	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_GRAPHICR = { 4, 2 };
-	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_SPECIAL =  { 6, 2 };
+	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_CONTROLLER={ 6, 2 };
+	const STAFF_TEXT_RENDER_NUM STAFF_ROLL_SPECIAL =  { 8, 2 };
 	const STAFF_TEXT_RENDER_NUM STAFF_TEXT_NUM_ARRAY[ iSTAFF_TEXT_RENDER_NUM_MAX ]=
-	{ STAFF_ROLL_PROGRAMR, STAFF_ROLL_GRAPHICR, STAFF_ROLL_SPECIAL };
+	{ STAFF_ROLL_PROGRAMR, STAFF_ROLL_GRAPHICR, STAFF_ROLL_CONTROLLER, STAFF_ROLL_SPECIAL };
 
 	//const float fSCROLL_END_POS_Y = 1;
+
+	//ここから何個とんでスクロール.
+	const int iSTAFF_ROLL_JUMP_TO_SCROLL = 2;
+	//最後に表示する行数.
+	const int iSTAFF_ROLL_LAST_LINE = 1;
 }
 
 //================================//
@@ -63,14 +81,17 @@ clsSCENE_ENDING::clsSCENE_ENDING( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_
 	,m_isScroll( false )
 	,m_isCanGoTitle( false )
 	,m_uiRenderTextNum( 0 )
+	,m_iTextAlphaStopFrame( 0 )
 {
 #ifdef CENTER_SPRITE_RENDER	
 	SPRITE_STATE ss;
 	ss.Disp = { WND_W, WND_H };
 	g_upTex = make_unique<clsSprite2D>();
-	g_upTex->Create( m_wpDevice, m_wpContext, "Data\\Image\\sima.png", ss );
+	g_upTex->Create( m_wpDevice, m_wpContext, "Data\\Image\\EndingUi\\sima.png", ss );
 	g_upTex->SetPos( { 0.0f, 0.0f, 0.0f } );
 #endif//#ifdef CENTER_SPRITE_RENDER
+
+
 }
 
 clsSCENE_ENDING::~clsSCENE_ENDING()
@@ -113,7 +134,7 @@ void clsSCENE_ENDING::CreateProduct()
 	}
 
 	//最後に表示する番号.
-	m_iGoScrollIndex = iAlphaSize - 1;
+	m_iGoScrollIndex = iAlphaSize - iSTAFF_ROLL_JUMP_TO_SCROLL;
 
 	//透過.
 	m_vecupTextStateAlpha.resize( iAlphaSize );
@@ -157,11 +178,10 @@ void clsSCENE_ENDING::CreateProduct()
 
 void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 {
+
 	//ボタンを押していると加速させる.
 	bool isAccel = false;
-	if( m_wpXInput->isPressStay( XINPUT_B ) ||
-		GetAsyncKeyState( VK_SPACE ) & 0x8000 )
-	{
+	if( isPressButtonAccel() ){
 		isAccel = true;
 	}
 
@@ -187,7 +207,10 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 		}
 
 		//終わり.
-		if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() ){
+		if( m_uiSpriteCnt >= m_vecupTextStateAlpha.size() ){
+			//ボタンのアナウンスを行う.
+			int iii=0;
+			TextAlphaUpdate();
 		}
 		//スクロール.
 		else if( m_isScroll ){
@@ -234,9 +257,10 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 				if( m_isSpriteAlphaAppear ){
 					m_isSpriteAlphaAppear = false;
 					//終われるようにする( サンキューの描画完了 ).
-					if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() + iOFFSET_END ){ 
+					if( m_uiSpriteCnt == m_vecupTextStateAlpha.size() + iOFFSET_END - iSTAFF_ROLL_LAST_LINE ){//iSTAFF_ROLL_LAST_LINE 
 						m_isSpriteAlphaAppear = true;
 						m_isCanGoTitle = true;
+						m_uiSpriteCnt += iSTAFF_ROLL_JUMP_TO_SCROLL;
 					}
 				}
 				//消し終わったので次は出す.
@@ -255,9 +279,7 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 
 
-	if( ( m_wpXInput->isPressEnter( XINPUT_START ) || GetAsyncKeyState( VK_RETURN ) & 0x1 ) ||
-		( ( m_wpXInput->isPressEnter( XINPUT_B ) ||	GetAsyncKeyState( VK_SPACE ) & 0x1 ) && m_isCanGoTitle ) )
-	{
+	if( isPressButtonEnd() ){
 		enNextScene = enSCENE::TITLE;
 		m_wpRoboStatus->SaveHeroData();
 	}
@@ -300,6 +322,7 @@ void clsSCENE_ENDING::RenderUi()
 	assert( m_upLogo );
 	m_upLogo->Render();
 
+
 #ifdef CENTER_SPRITE_RENDER
 	g_upTex->Render();
 #endif//#ifdef CENTER_SPRITE_RENDER
@@ -325,7 +348,55 @@ void clsSCENE_ENDING::RenderUi()
 	}
 }
 
-bool clsSCENE_ENDING::AddAlphaState( TEXT_STATE* const pTextState, const float fAlpha )
+
+bool clsSCENE_ENDING::isPressButtonAccel()
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_ENTER ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKey( DINPUT_ENTER ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x8000 ){
+		return true;
+	}
+
+	return false;
+}
+bool clsSCENE_ENDING::isPressButtonEnd()
+{
+	if( !m_isCanGoTitle ) return false;
+
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( DINPUT_ENTER ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x8000 ){
+		return true;
+	}
+
+	return false;
+}
+
+
+
+
+bool clsSCENE_ENDING::AddAlphaState( 
+	TEXT_STATE* const pTextState, const float fAlpha )const
 {
 	pTextState->fAlpha += fAlpha;
 
@@ -341,8 +412,55 @@ bool clsSCENE_ENDING::AddAlphaState( TEXT_STATE* const pTextState, const float f
 	return false;
 }
 
+
+//テキストの明滅.
+void clsSCENE_ENDING::TextAlphaUpdate()
+{
+	const float fADD_ALPHA = 0.125f * 0.125f;
+	const float fALPHA_MIN = 0.25f;
+	const float fALPHA_MAX = 1.0f;
+	const int iTEXT_ALPHA_STOP_FRAME_PLUS = 60;
+	const int iTEXT_ALPHA_STOP_FRAME_MINUS = 0;
+	const int iANIM_TEXT_INDEX = m_vecupTextStateAlpha.size() - 1;//Bボタン押してねの行数.
+
+	switch( m_encTextAlphaMode )
+	{
+	case encTEXT_ALPHA_MODE::PLUS:
+		m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha += fADD_ALPHA;
+		if( m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha > fALPHA_MAX ){
+			m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha = fALPHA_MAX;
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::NEXT_MINUS;
+		}
+		break;
+	case encTEXT_ALPHA_MODE::NEXT_MINUS:
+		m_iTextAlphaStopFrame ++;
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME_PLUS ){
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::MINUS;
+			m_iTextAlphaStopFrame = 0;
+		}
+		break;
+	case encTEXT_ALPHA_MODE::MINUS:
+			m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha -= fADD_ALPHA;
+			if( m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha < fALPHA_MIN ){
+				m_vecupTextStateAlpha[ iANIM_TEXT_INDEX ]->fAlpha = fALPHA_MIN;
+				m_encTextAlphaMode = encTEXT_ALPHA_MODE::NEXT_PLUS;
+			}
+		break;
+	case encTEXT_ALPHA_MODE::NEXT_PLUS:
+		m_iTextAlphaStopFrame ++;
+		if( m_iTextAlphaStopFrame >= iTEXT_ALPHA_STOP_FRAME_MINUS ){
+			m_encTextAlphaMode = encTEXT_ALPHA_MODE::PLUS;
+			m_iTextAlphaStopFrame = 0;
+		}
+		break;
+	}
+}
+
+
+
+
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_ENDING::RenderDebugText()
 {
 	//NULLチェック.
@@ -352,15 +470,15 @@ void clsSCENE_ENDING::RenderDebugText()
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
 
-	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	sprintf_s( strDbgTxt, 
+//		"CameraPos : x[%f], y[%f], z[%f]",
+//		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"CamLokPos : x[%f], y[%f], z[%f]",
+//		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 
 	//dbgtxty += 10;
@@ -373,4 +491,4 @@ void clsSCENE_ENDING::RenderDebugText()
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG

@@ -1,23 +1,30 @@
 #include "MenuWindowAssembleTakeOff.h"
 #include "PtrGroup.h"
+#include "SoundManagerMenuWindow.h"
+#include "CFont.h"
 
 namespace{
 
+	//画面上に出てるメニューののYESの選択番号.
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
 
 }
 
 
 
 clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::clsMENU_WINDOW_ASSEMBLE_TAKE_OFF(
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_ASSEMBLE_BASE( pPtrGroup, pParentWindow, pInformationVec )
+	:clsMENU_WINDOW_ASSEMBLE_BASE( 
+		hWnd, pPtrGroup, pParentWindow, 
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
+		"MenuWindowAssembleTakeOff" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
-	Open( vTHIS_WINDOW_SIZE );
 }
 
 clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::~clsMENU_WINDOW_ASSEMBLE_TAKE_OFF()
@@ -31,23 +38,23 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 {
 	const int iSELECT_NUM_MAX = 1;//選択肢の最大は何?.
 
+	//選択肢左右.
 	if( SelectLeft( false ) ){
 		m_iSelectNum --;
 		if( m_iSelectNum < 0 ){
 			m_iSelectNum = 0;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
-
 	if( SelectRight( false ) ){
 		m_iSelectNum ++;
 		if( m_iSelectNum > iSELECT_NUM_MAX ){
 			m_iSelectNum = iSELECT_NUM_MAX;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -55,17 +62,17 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 
 	if( SelectEnter() ){
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
-			m_wpSound->PlaySE( enSE_ENTER );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GO_MISSION ];
 		}
 		else{
-			m_wpSound->PlaySE( enSE_EXIT );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 	}
 
@@ -73,8 +80,8 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::UpdateProduct()
 
 void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::RenderProduct()
 {
-	const int iYES_INDEX = 4;
-	const int iQUESTION_INDEX = 1;
+	const int iYES_INDEX = 5;
+	const int iQUESTION_INDEX = 2;
 	
 	//yes.
 	const D3DXVECTOR2 vPOS_YES_LOCAL = { 180.0f, 250.0f };
@@ -113,18 +120,4 @@ void clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::RenderProduct()
 	}
 
 }
-
-bool clsMENU_WINDOW_ASSEMBLE_TAKE_OFF::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-
-	return false;
-}
-
-
-
-
-
 

@@ -18,7 +18,7 @@ public:
 	virtual ~clsSOUND_MANAGER_BASE();
 
 	//new直後に一度だけ使用.
-	void Create();
+	void Create( const char* sAddAlias = "" );
 
 	//毎フレーム一回使う.
 	void UpdateLoop();
@@ -28,33 +28,35 @@ public:
 
 	//----- BGM -----//
 	//再生関数.
-	bool PlayBGM( const int bgmNo, const bool bNotify = true );
+	bool PlayBGM( const int bgmNo, const bool bNotify = true )	{ return Play( m_BgmSet, m_dqisLoopBgm, m_veciBgmNum, bgmNo, bNotify ); };
 	//停止関数.
-	bool StopBGM( const int bgmNo );
+	bool StopBGM( const int bgmNo )								{ return Stop( m_BgmSet, m_dqisLoopBgm, bgmNo ); };
 	//音の停止を確認する関数.
-	bool IsStoppedBGM( const int bgmNo ) const;
+	bool IsStoppedBGM( const int bgmNo ) const					{ return IsStopped( m_BgmSet, bgmNo ); };
 	//音の再生中を確認する関数.
-	bool IsPlayingBGM( const int bgmNo ) const;
+	bool IsPlayingBGM( const int bgmNo ) const					{ return IsPlaying( m_BgmSet, bgmNo ); };
 	//巻き戻し関数(再生位置初期化).
-	bool SeekToStartBGM( const int bgmNo ) const;
+	bool SeekToStartBGM( const int bgmNo ) const				{ return SeekToStart( m_BgmSet, bgmNo ); };
 
 
 	//----- SE -----//
 	//再生関数.
-	bool PlaySE( const int seNo, const bool bNotify = false );
+	bool PlaySE( const int seNo, const bool bNotify = false )	{ return Play( m_SeSet, m_dqisLoopSe, m_veciSeNum, seNo, bNotify ); };
 	//停止関数.
-	bool StopSE( const int seNo );
+	bool StopSE( const int seNo )								{ return Stop( m_SeSet, m_dqisLoopSe, seNo ); };
 	//音の停止を確認する関数.
-	bool IsStoppedSE( const int seNo ) const;
+	bool IsStoppedSE( const int seNo ) const					{ return IsStopped( m_SeSet, seNo ); };
 	//音の再生中を確認する関数.
-	bool IsPlayingSE( const int seNo ) const;
+	bool IsPlayingSE( const int seNo ) const					{ return IsPlaying( m_SeSet, seNo ); };
 	//巻き戻し関数(再生位置初期化).
-	bool SeekToStartSE( const int seNo ) const;
+	bool SeekToStartSE( const int seNo ) const					{ return SeekToStart( m_SeSet, seNo ); };
 
 protected:
 
 	//各継承クラスのクラス名をm_sSceneNameに入れる.
 	virtual void CreateSceneName() = 0;
+
+protected:
 
 	//継承クラスで中身を入れる.
 	std::string m_sSceneName;
@@ -69,7 +71,6 @@ private:
 	void CreateSound( 
 		SOUND_SET &vpSound,
 		std::deque<bool> &dqbLoop,			//ループフラグの数を準備する.
-		const unsigned int uiRESERVE_SIZE,	//BGMとSEで違うので引数にする.
 		const std::string &sFilePath,		
 		const std::string &sSubPath,
 		std::vector<int> &viMaxNum );
@@ -88,10 +89,10 @@ private:
 		const SOUND_SET &vpSound, 
 		std::deque<bool> &dqbLoop,
 		std::vector<int> &viNum,
-		const int No, const bool bNotify );
+		const int No, const bool bNotify ) const;
 	//停止関数.
 	bool Stop( 
-		const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No );
+		const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No ) const;
 	//音の停止を確認する関数.
 	bool IsStopped( const SOUND_SET &vpSound, const int No ) const;
 	//音の再生中を確認する関数.
@@ -100,6 +101,7 @@ private:
 	bool SeekToStart( const SOUND_SET &vpSound, const int No ) const;
 
 
+private:
 
 	//サウンドクラス.
 	SOUND_SET m_BgmSet;
@@ -113,9 +115,9 @@ private:
 	std::vector<int> m_veciSeNum;
 
 
-	//リザーブのサイズ.
-	const unsigned int m_uiRESERVE_SIZE_BGM;
-	const unsigned int m_uiRESERVE_SIZE_SE;
+	//エイリアス名追加( 主にメニューウィンドウ用 ).
+	std::string m_sAddAlias;
+
 
 	HWND m_hWnd;
 

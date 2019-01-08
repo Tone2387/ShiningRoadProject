@@ -7,12 +7,14 @@
 
 using namespace std;
 
+//サウンドクラスへ指示を出す際にvectorの範囲を超えていたら、だめですとおしかりをくれるマクロ.
+#define SOUND_NUMBER_OVER_SHECK(no,vp) \
+if( (no) >= static_cast<int>( (vp).size() ) ){\
+	assert( !"指定された番号のサウンドクラスは存在しません" );\
+	return false;\
+}
+
 namespace{
-
-	const unsigned int uiRESERVE_SIZE_BGM = 16;
-	const unsigned int uiRESERVE_SIZE_SE = 256;
-	const unsigned int uiRESURVE_SIZE_MAX = 8;	//同時再生数.
-
 
 	//添え字.
 	const char cALIAS_NUM = 0;	//エイリアス名.
@@ -26,14 +28,6 @@ namespace{
 	const string sSE_PASS = "SE.csv";
 	const string sSUB_PASS_BGM = "BGM\\";
 	const string sSUB_PASS_SE = "SE\\";
-
-	//サウンドクラスへ指示を出す際にvectorの範囲を超えていたら、だめですとおしかりをくれるマクロ.
-	#define SOUND_NUMBER_OVER_SHECK(no,vp) \
-	if( (no) >= static_cast<int>( (vp).size() ) ){\
-		assert( !"指定された番号のBGMは存在しません" );\
-		return false;\
-	}
-	
 
 	//ループフラグの初期化.
 	const bool bLOOP_INIT = false;
@@ -51,8 +45,6 @@ clsSOUND_MANAGER_BASE::clsSOUND_MANAGER_BASE( const HWND hWnd )
 	,m_dqisLoopSe()
 	,m_veciBgmNum()
 	,m_veciSeNum()
-	,m_uiRESERVE_SIZE_BGM( uiRESERVE_SIZE_BGM )
-	,m_uiRESERVE_SIZE_SE( uiRESERVE_SIZE_SE )	
 {
 }
 
@@ -109,8 +101,10 @@ clsSOUND_MANAGER_BASE::~clsSOUND_MANAGER_BASE()
 
 
 
-void clsSOUND_MANAGER_BASE::Create()
+void clsSOUND_MANAGER_BASE::Create( const char* sAddAlias )
 {
+	m_sAddAlias = sAddAlias;
+
 	//継承クラスで動く関数( m_sSceneNameを入れる ).
 	CreateSceneName();
 
@@ -120,9 +114,13 @@ void clsSOUND_MANAGER_BASE::Create()
 	string SeDataPath  = tmpDataPass + sSE_PASS;
 
 	//BGM.
-	CreateSound( m_BgmSet, m_dqisLoopBgm, uiRESERVE_SIZE_BGM, BgmDataPath, sSUB_PASS_BGM, m_veciBgmNum );
+	CreateSound( m_BgmSet, m_dqisLoopBgm, BgmDataPath, sSUB_PASS_BGM, m_veciBgmNum );
 	//SE.
-	CreateSound( m_SeSet,  m_dqisLoopSe,  uiRESERVE_SIZE_SE,  SeDataPath,  sSUB_PASS_SE,  m_veciSeNum );
+	CreateSound( m_SeSet,  m_dqisLoopSe,  SeDataPath,  sSUB_PASS_SE,  m_veciSeNum );
+
+	m_sAddAlias.clear();
+	m_sAddAlias.shrink_to_fit();
+
 }
 
 //毎フレーム一回使う.
@@ -175,7 +173,6 @@ void clsSOUND_MANAGER_BASE::StopAllSound()
 void clsSOUND_MANAGER_BASE::CreateSound( 
 	SOUND_SET &vpSound,
 	std::deque<bool> &dqbLoop,
-	const unsigned int uiRESERVE_SIZE,
 	const string &sFilePath,
 	const string &sSubPath,
 	vector<int> &viMaxNum )
@@ -205,6 +202,8 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 			string tmpAlias = OprtStr.ConsolidatedNumber( vData[i].sAlias.c_str(), j );
 			//番号の後に挿入する.
 			tmpAlias += sCONSOLIDATE;
+			//エイリアス名追加( 主にメニューウィンドウ用 ).
+			tmpAlias += m_sAddAlias;
 
 			//作成.
 			assert( vpSound[i][j]->Open( vData[i].sPath.c_str(), tmpAlias.c_str(), m_hWnd ) );
@@ -220,9 +219,12 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 	vpSound.shrink_to_fit();
 	vData.clear();
 	vData.shrink_to_fit();
+
+
 	//ループフラグ作成.
 	dqbLoop.resize( vpSound.size(), bLOOP_INIT );
 	dqbLoop.shrink_to_fit();
+
 }
 
 //サウンドデータ作成.
@@ -257,60 +259,60 @@ void clsSOUND_MANAGER_BASE::CreateSoundData(
 
 
 
-//----- BGM -----//
-//再生関数.
-bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify )
-{
-	return Play( m_BgmSet, m_dqisLoopBgm, m_veciBgmNum, bgmNo, bNotify );
-}
-//停止関数.
-bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo )
-{
-	return Stop( m_BgmSet, m_dqisLoopBgm, bgmNo );
-}
-//音の停止を確認する関数.
-bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
-{
-	return IsStopped( m_BgmSet, bgmNo );
-}
-//音の再生中を確認する関数.
-bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
-{
-	return IsPlaying( m_BgmSet, bgmNo );
-}
-//巻き戻し関数(再生位置初期化).
-bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
-{
-	return SeekToStart( m_BgmSet, bgmNo );
-}
+////----- BGM -----//
+////再生関数.
+//bool clsSOUND_MANAGER_BASE::PlayBGM( const int bgmNo, const bool bNotify )
+//{
+//	return Play( m_BgmSet, m_dqisLoopBgm, m_veciBgmNum, bgmNo, bNotify );
+//}
+////停止関数.
+//bool clsSOUND_MANAGER_BASE::StopBGM( const int bgmNo )
+//{
+//	return Stop( m_BgmSet, m_dqisLoopBgm, bgmNo );
+//}
+////音の停止を確認する関数.
+//bool clsSOUND_MANAGER_BASE::IsStoppedBGM( const int bgmNo ) const
+//{
+//	return IsStopped( m_BgmSet, bgmNo );
+//}
+////音の再生中を確認する関数.
+//bool clsSOUND_MANAGER_BASE::IsPlayingBGM( const int bgmNo ) const
+//{
+//	return IsPlaying( m_BgmSet, bgmNo );
+//}
+////巻き戻し関数(再生位置初期化).
+//bool clsSOUND_MANAGER_BASE::SeekToStartBGM( const int bgmNo ) const
+//{
+//	return SeekToStart( m_BgmSet, bgmNo );
+//}
 
 
-//----- SE -----//
-//再生関数.
-bool clsSOUND_MANAGER_BASE::PlaySE( const int seNo, const bool bNotify )
-{
-	return Play( m_SeSet, m_dqisLoopSe, m_veciSeNum, seNo, bNotify );
-}
-//停止関数.
-bool clsSOUND_MANAGER_BASE::StopSE( const int seNo )
-{
-	return Stop( m_SeSet, m_dqisLoopSe, seNo );
-}
-//音の停止を確認する関数.
-bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
-{
-	return IsStopped( m_SeSet, seNo );
-}
-//音の再生中を確認する関数.
-bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
-{
-	return IsPlaying( m_SeSet, seNo );
-}
-//巻き戻し関数(再生位置初期化).
-bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
-{
-	return SeekToStart( m_SeSet, seNo );
-}
+////----- SE -----//
+////再生関数.
+//bool clsSOUND_MANAGER_BASE::PlaySE( const int seNo, const bool bNotify )
+//{
+//	return Play( m_SeSet, m_dqisLoopSe, m_veciSeNum, seNo, bNotify );
+//}
+////停止関数.
+//bool clsSOUND_MANAGER_BASE::StopSE( const int seNo )
+//{
+//	return Stop( m_SeSet, m_dqisLoopSe, seNo );
+//}
+////音の停止を確認する関数.
+//bool clsSOUND_MANAGER_BASE::IsStoppedSE( const int seNo ) const
+//{
+//	return IsStopped( m_SeSet, seNo );
+//}
+////音の再生中を確認する関数.
+//bool clsSOUND_MANAGER_BASE::IsPlayingSE( const int seNo ) const
+//{
+//	return IsPlaying( m_SeSet, seNo );
+//}
+////巻き戻し関数(再生位置初期化).
+//bool clsSOUND_MANAGER_BASE::SeekToStartSE( const int seNo ) const
+//{
+//	return SeekToStart( m_SeSet, seNo );
+//}
 
 
 //----- 各関数の中身 -----//.
@@ -320,7 +322,7 @@ bool clsSOUND_MANAGER_BASE::Play(
 	std::deque<bool> &dqbLoop,
 	std::vector<int> &viNum,
 	const int No, 
-	const bool bNotify )
+	const bool bNotify ) const
 {
 	SOUND_NUMBER_OVER_SHECK( No, vpSound );
 	dqbLoop[No] = bNotify;
@@ -345,13 +347,13 @@ bool clsSOUND_MANAGER_BASE::Play(
 
 	vpSound[ uiNo ][ viNum[ uiNo ] ]->SeekToStart();
 
-	return vpSound[ uiNo ][ viNum[ uiNo ] ]->Play( bNotify );
+	return vpSound[uiNo][viNum[uiNo]]->Play(bNotify);
 #endif//#if 0
 }
 
 //停止関数.
 bool clsSOUND_MANAGER_BASE::Stop( 
-	const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No )
+	const SOUND_SET &vpSound, std::deque<bool> &dqbLoop, const int No ) const
 {
 	SOUND_NUMBER_OVER_SHECK( No, vpSound );
 	dqbLoop[No] = bLOOP_INIT;

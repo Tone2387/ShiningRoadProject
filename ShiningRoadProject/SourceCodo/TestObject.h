@@ -12,9 +12,8 @@
 //#ifndef TESTOBJECT
 //#define TESTOBJECT
 
-#include"CharaSkinMesh.h"
 #include"Robo.h"
-#include"EnemyRobo.h"
+#include"AIRoboCommand.h"
 
 //#ifdef Tahara
 //#include "PtrGroup.h"
@@ -29,9 +28,9 @@ public:
 	void Init(clsPOINTER_GROUP* const pPtrGroup);
 	
 	void Init(clsPOINTER_GROUP* const pPtrGroup,
-		LPSTR strEnemyFolderName);
+		std::string strEnemyFolderName);
 
-	void ActionProduct() override;
+	void Action(clsStage* const pStage) final;
 
 	void InhUpdate();//Inheritance
 

@@ -53,8 +53,12 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>SourceCodo\Effekseer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -74,8 +78,10 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <OmitFramePointers>true</OmitFramePointers>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -86,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SourceCodo\AIFactory.cpp" />
     <ClCompile Include="SourceCodo\AssembleModel.cpp" />
     <ClCompile Include="SourceCodo\AssembleUi.cpp" />
     <ClCompile Include="SourceCodo\BlackScreen.cpp" />
@@ -96,6 +103,8 @@
     <ClCompile Include="SourceCodo\CameraEnding.cpp" />
     <ClCompile Include="SourceCodo\CameraGameOver.cpp" />
     <ClCompile Include="SourceCodo\CameraMission.cpp" />
+    <ClCompile Include="SourceCodo\CameraMovieBase.cpp" />
+    <ClCompile Include="SourceCodo\CameraTakeoff.cpp" />
     <ClCompile Include="SourceCodo\CameraTitle.cpp" />
     <ClCompile Include="SourceCodo\CD3DXSKINMESH.cpp" />
     <ClCompile Include="SourceCodo\CFont.cpp" />
@@ -113,11 +122,15 @@
     <ClCompile Include="SourceCodo\DX9Mesh.cpp" />
     <ClCompile Include="SourceCodo\DxInput.cpp" />
     <ClCompile Include="SourceCodo\Effects.cpp" />
-    <ClCompile Include="SourceCodo\Enemy.cpp" />
-    <ClCompile Include="SourceCodo\EnemyCharactor.cpp" />
+    <ClCompile Include="SourceCodo\AI.cpp" />
+    <ClCompile Include="SourceCodo\AICharaCommand.cpp" />
+    <ClCompile Include="SourceCodo\AICharactor.cpp" />
     <ClCompile Include="SourceCodo\EnemyFactory.cpp" />
-    <ClCompile Include="SourceCodo\EnemyRobo.cpp" />
+    <ClCompile Include="SourceCodo\AIRoboCommand.cpp" />
+    <ClCompile Include="SourceCodo\AIRobo.cpp" />
     <ClCompile Include="SourceCodo\FriendFactory.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowMissionBase.cpp" />
+    <ClCompile Include="SourceCodo\MenuWindowMissionPause.cpp" />
     <ClCompile Include="SourceCodo\RoboStatusEnemy.cpp" />
     <ClCompile Include="SourceCodo\FactoryCamera.cpp" />
     <ClCompile Include="SourceCodo\FactoryParts.cpp" />
@@ -168,11 +181,13 @@
     <ClCompile Include="SourceCodo\Robo.cpp" />
     <ClCompile Include="SourceCodo\RoboCommand.cpp" />
     <ClCompile Include="SourceCodo\RoboStatusBase.cpp" />
+    <ClCompile Include="SourceCodo\RoboTakeoff.cpp" />
     <ClCompile Include="SourceCodo\SceneAssemble.cpp" />
     <ClCompile Include="SourceCodo\SceneBase.cpp" />
     <ClCompile Include="SourceCodo\SceneEnding.cpp" />
     <ClCompile Include="SourceCodo\SceneGameOver.cpp" />
     <ClCompile Include="SourceCodo\SceneMission.cpp" />
+    <ClCompile Include="SourceCodo\SceneTakeoff.cpp" />
     <ClCompile Include="SourceCodo\SceneTitle.cpp" />
     <ClCompile Include="SourceCodo\ScreenTexture.cpp" />
     <ClCompile Include="SourceCodo\Shot.cpp">
@@ -185,7 +200,10 @@
     <ClCompile Include="SourceCodo\SoundManagerBase.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerEnding.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerGameOver.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerMenuWindow.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerMission.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerNoise.cpp" />
+    <ClCompile Include="SourceCodo\SoundManagerTakeoff.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerTitle.cpp" />
     <ClCompile Include="SourceCodo\Sprite.cpp" />
     <ClCompile Include="SourceCodo\Sprite2D.cpp" />
@@ -197,6 +215,7 @@
     <ClCompile Include="SourceCodo\WindowBox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SourceCodo\AIFactory.h" />
     <ClInclude Include="SourceCodo\AssembleModel.h" />
     <ClInclude Include="SourceCodo\AssembleUi.h" />
     <ClInclude Include="SourceCodo\BlackScreen.h" />
@@ -207,6 +226,8 @@
     <ClInclude Include="SourceCodo\CameraEnding.h" />
     <ClInclude Include="SourceCodo\CameraGameOver.h" />
     <ClInclude Include="SourceCodo\CameraMission.h" />
+    <ClInclude Include="SourceCodo\CameraMovieBase.h" />
+    <ClInclude Include="SourceCodo\CameraTakeoff.h" />
     <ClInclude Include="SourceCodo\CameraTitle.h" />
     <ClInclude Include="SourceCodo\CD3DXSKINMESH.h" />
     <ClInclude Include="SourceCodo\CFont.h" />
@@ -224,11 +245,15 @@
     <ClInclude Include="SourceCodo\DX9Mesh.h" />
     <ClInclude Include="SourceCodo\DxInput.h" />
     <ClInclude Include="SourceCodo\Effects.h" />
-    <ClInclude Include="SourceCodo\Enemy.h" />
-    <ClInclude Include="SourceCodo\EnemyCharactor.h" />
+    <ClInclude Include="SourceCodo\AI.h" />
+    <ClInclude Include="SourceCodo\AICharaCommand.h" />
+    <ClInclude Include="SourceCodo\AICharactor.h" />
     <ClInclude Include="SourceCodo\EnemyFactory.h" />
-    <ClInclude Include="SourceCodo\EnemyRobo.h" />
+    <ClInclude Include="SourceCodo\AIRoboCommand.h" />
+    <ClInclude Include="SourceCodo\AIRobo.h" />
     <ClInclude Include="SourceCodo\FriendFactory.h" />
+    <ClInclude Include="SourceCodo\MenuWindowMissionBase.h" />
+    <ClInclude Include="SourceCodo\MenuWindowMissionPause.h" />
     <ClInclude Include="SourceCodo\RoboStatusEnemy.h" />
     <ClInclude Include="SourceCodo\FactoryCamera.h" />
     <ClInclude Include="SourceCodo\FactoryParts.h" />
@@ -281,6 +306,7 @@
     <ClInclude Include="SourceCodo\Robo.h" />
     <ClInclude Include="SourceCodo\RoboCommand.h" />
     <ClInclude Include="SourceCodo\RoboStatusBase.h" />
+    <ClInclude Include="SourceCodo\RoboTakeoff.h" />
     <ClInclude Include="SourceCodo\SceneAssemble.h" />
     <ClInclude Include="SourceCodo\SceneAssembleInformation.h" />
     <ClInclude Include="SourceCodo\SceneBase.h" />
@@ -288,6 +314,8 @@
     <ClInclude Include="SourceCodo\SceneGameOver.h" />
     <ClInclude Include="SourceCodo\SceneGameOverInformation.h" />
     <ClInclude Include="SourceCodo\SceneMission.h" />
+    <ClInclude Include="SourceCodo\SceneMissionInformation.h" />
+    <ClInclude Include="SourceCodo\SceneTakeoff.h" />
     <ClInclude Include="SourceCodo\SceneTitle.h" />
     <ClInclude Include="SourceCodo\SceneTitleInformation.h" />
     <ClInclude Include="SourceCodo\ScreenTexture.h" />
@@ -301,7 +329,10 @@
     <ClInclude Include="SourceCodo\SoundManagerBase.h" />
     <ClInclude Include="SourceCodo\SoundManagerEnding.h" />
     <ClInclude Include="SourceCodo\SoundManagerGameOver.h" />
+    <ClInclude Include="SourceCodo\SoundManagerMenuWindow.h" />
     <ClInclude Include="SourceCodo\SoundManagerMission.h" />
+    <ClInclude Include="SourceCodo\SoundManagerNoise.h" />
+    <ClInclude Include="SourceCodo\SoundManagerTakeoff.h" />
     <ClInclude Include="SourceCodo\SoundManagerTitle.h" />
     <ClInclude Include="SourceCodo\Sprite.h" />
     <ClInclude Include="SourceCodo\Sprite2D.h" />

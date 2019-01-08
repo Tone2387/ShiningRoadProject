@@ -49,9 +49,6 @@
     <Filter Include="Tahara\Parts\Arms">
       <UniqueIdentifier>{ce180e55-01a4-4623-a574-98f54dfab2cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Hiyosi\Enemy">
-      <UniqueIdentifier>{fa11f2f1-fb32-4caa-b1f7-b22f8b14f6b0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Tahara\UI">
       <UniqueIdentifier>{d9f0ad52-5110-481d-9fb5-99933f2625a4}</UniqueIdentifier>
     </Filter>
@@ -93,6 +90,15 @@
     </Filter>
     <Filter Include="Hiyosi\Friend">
       <UniqueIdentifier>{3dc9113c-43a3-4afe-a816-5b709c580582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\AI">
+      <UniqueIdentifier>{fa11f2f1-fb32-4caa-b1f7-b22f8b14f6b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hiyosi\Enemy">
+      <UniqueIdentifier>{20753a3d-a977-4344-82aa-f1047fc7fd5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tahara\Robo">
+      <UniqueIdentifier>{e4e00ffa-f7a8-4727-91d7-d4e7d7748946}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -194,12 +200,6 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\AssembleModel.cpp">
       <Filter>Tahara</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\Enemy.cpp">
-      <Filter>Hiyosi\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\EnemyRobo.cpp">
-      <Filter>Hiyosi\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\Object.cpp">
       <Filter>Hiyosi\Object</Filter>
@@ -327,9 +327,6 @@
     <ClCompile Include="SourceCodo\InputRobo.cpp">
       <Filter>Hiyosi\Player\Input</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\EnemyCharactor.cpp">
-      <Filter>Hiyosi\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\PartsWindowModel.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
@@ -390,11 +387,56 @@
     <ClCompile Include="SourceCodo\ScreenTexture.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\FriendFactory.cpp">
+      <Filter>Hiyosi\Friend</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\AI.cpp">
+      <Filter>Hiyosi\AI</Filter>
+    </ClCompile>
     <ClCompile Include="SourceCodo\EnemyFactory.cpp">
       <Filter>Hiyosi\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\FriendFactory.cpp">
-      <Filter>Hiyosi\Friend</Filter>
+    <ClCompile Include="SourceCodo\AICharaCommand.cpp">
+      <Filter>Hiyosi\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\AIRoboCommand.cpp">
+      <Filter>Hiyosi\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\AIFactory.cpp">
+      <Filter>Hiyosi\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\AICharactor.cpp">
+      <Filter>Hiyosi\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\AIRobo.cpp">
+      <Filter>Hiyosi\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerNoise.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerMenuWindow.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowMissionBase.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\MenuWindowMissionPause.cpp">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SceneTakeoff.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CameraTakeoff.cpp">
+      <Filter>Tahara\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerTakeoff.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\CameraMovieBase.cpp">
+      <Filter>Tahara\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RoboTakeoff.cpp">
+      <Filter>Tahara\Robo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -499,12 +541,6 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\AssembleModel.h">
       <Filter>Tahara</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\Enemy.h">
-      <Filter>Hiyosi\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\EnemyRobo.h">
-      <Filter>Hiyosi\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\Object.h">
       <Filter>Hiyosi\Object</Filter>
@@ -638,9 +674,6 @@
     <ClInclude Include="SourceCodo\CharactorStaticMesh.h">
       <Filter>Hiyosi\Object\Charactor</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\EnemyCharactor.h">
-      <Filter>Hiyosi\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\PartsWindowModel.h">
       <Filter>Tahara\UI</Filter>
     </ClInclude>
@@ -710,11 +743,59 @@
     <ClInclude Include="SourceCodo\ScreenTexture.h">
       <Filter>Tahara\UI</Filter>
     </ClInclude>
+    <ClInclude Include="SourceCodo\FriendFactory.h">
+      <Filter>Hiyosi\Friend</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AI.h">
+      <Filter>Hiyosi\AI</Filter>
+    </ClInclude>
     <ClInclude Include="SourceCodo\EnemyFactory.h">
       <Filter>Hiyosi\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\FriendFactory.h">
-      <Filter>Hiyosi\Friend</Filter>
+    <ClInclude Include="SourceCodo\AICharaCommand.h">
+      <Filter>Hiyosi\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AIRoboCommand.h">
+      <Filter>Hiyosi\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AIFactory.h">
+      <Filter>Hiyosi\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AIRobo.h">
+      <Filter>Hiyosi\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AICharactor.h">
+      <Filter>Hiyosi\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerNoise.h">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerMenuWindow.h">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowMissionBase.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\MenuWindowMissionPause.h">
+      <Filter>Tahara\UI\MenuWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneMissionInformation.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneTakeoff.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CameraTakeoff.h">
+      <Filter>Tahara\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerTakeoff.h">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CameraMovieBase.h">
+      <Filter>Tahara\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RoboTakeoff.h">
+      <Filter>Tahara\Robo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

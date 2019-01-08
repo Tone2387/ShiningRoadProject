@@ -1,7 +1,14 @@
 #include "FactoryCamera.h"
 
+//#include "Camera.h"
+#include "CameraTitle.h"
+#include "CameraAssemble.h"
+#include "CameraTakeoff.h"
+#include "CameraMission.h"
+#include "CameraEnding.h"
+#include "CameraGameOver.h"
 
-clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene )
+clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene ) const
 {
 	//指定されたシーンを作って吐き出す.
 	switch( enScene )
@@ -11,6 +18,9 @@ clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene )
 		break;
 	case enSCENE::ASSEMBLE:
 		return new clsCAMERA_ASSEMBLE();
+		break;
+	case enSCENE::TAKEOFF:
+		return new clsCAMERA_TAKEOFF();
 		break;
 	case enSCENE::MISSION:
 		return new clsCAMERA_MISSION();

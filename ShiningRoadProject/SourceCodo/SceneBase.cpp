@@ -1,21 +1,19 @@
 #include "SceneBase.h"
 #include "ScreenTexture.h"
 
-#include <Windows.h>
 
 using namespace std;
 
-#define XINPUT_ENTER  ( XINPUT_START | XINPUT_B )
-#define XINPUT_EXIT  ( XINPUT_A )
 
 namespace{
 
 	//ライト方向.
-	const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -2.0f };
+//	const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -0.01f };
+	const D3DXVECTOR3 vLIGHT_DIR = { 0.005f, 0.01f, -0.01f };
 	//カメラのより具合.
 	const float fZOOM = static_cast<float>( D3DX_PI / 4.0 );
 	//描画限界距離.
-	const float fRENDER_LIMIT = 640.0f;//150.0f.
+	const float fRENDER_LIMIT = 760.0f;//640.0f;.//150.0f.
 
 
 
@@ -33,10 +31,10 @@ namespace{
 	const float fNOISE_ORIGINAL = 2.0f;
 	
 
-#if _DEBUG
+#ifdef _DEBUG
 	const D3DXVECTOR4 vDEBUG_TEXT_COLOR( 1.0f, 1.0f, 1.0f, 1.0f );
 	const float fDEBUG_TEXT_SIZE = 50.0f;
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 }
 
 
@@ -44,43 +42,49 @@ namespace{
 //========== 基底クラス ==========//
 //================================//
 clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
-	:m_wpPtrGroup(		ptrGroup )
-	,m_wpDevice(		m_wpPtrGroup->GetDevice() )
-	,m_wpContext(		m_wpPtrGroup->GetContext() )
-	,m_wpViewPort10(	m_wpPtrGroup->GetViewPort10() )
-	,m_wpViewPort11(	m_wpPtrGroup->GetViewPort11() )
-	,m_wpDxInput(		m_wpPtrGroup->GetDxInput() )
-	,m_wpXInput(		m_wpPtrGroup->GetXInput() )
-	,m_wpResource(		m_wpPtrGroup->GetResource() )
-	,m_wpEffects(		m_wpPtrGroup->GetEffects() )
-	,m_wpSound(			m_wpPtrGroup->GetSound() )
-	,m_wpCamera(		m_wpPtrGroup->GetCamera() )
-	,m_wpRoboStatus(	m_wpPtrGroup->GetRoboStatus() )
-	,m_wpBlackScreen(	m_wpPtrGroup->GetBlackScreen() )
-	,m_wpFont(			m_wpPtrGroup->GetFont() )
-	,m_enNextScene(		enSCENE::NOTHING )
-	,m_encNoise(		encNOISE::NOTHING )
-	,m_wpViewPortUsing(	m_wpViewPort11 )
-	,m_pDepthStencilStateOn( nullptr )
-	,m_pDepthStencilStateOff(nullptr )
-	,m_iNoiseFrame( 0 )
-	,m_fBlock( 0.0f )
-	,m_fPulse( 0.0f )
+	:m_wpPtrGroup(				ptrGroup )
+	,m_wpDevice(				m_wpPtrGroup->GetDevice() )
+	,m_wpContext(				m_wpPtrGroup->GetContext() )
+	,m_wpViewPort10(			m_wpPtrGroup->GetViewPort10() )
+	,m_wpViewPort11(			m_wpPtrGroup->GetViewPort11() )
+	,m_wpDxInput(				m_wpPtrGroup->GetDxInput() )
+	,m_wpXInput(				m_wpPtrGroup->GetXInput() )
+	,m_wpResource(				m_wpPtrGroup->GetResource() )
+	,m_wpEffects(				m_wpPtrGroup->GetEffects() )
+	,m_wpSound(					m_wpPtrGroup->GetSound() )
+	,m_wpCamera(				m_wpPtrGroup->GetCamera() )
+	,m_wpRoboStatus(			m_wpPtrGroup->GetRoboStatus() )
+	,m_wpBlackScreen(			m_wpPtrGroup->GetBlackScreen() )
+	,m_wpFont(					m_wpPtrGroup->GetFont() )
+	,m_hWnd(					nullptr )
+	,m_enNextScene(				enSCENE::NOTHING )
+	,m_encNoise(				encNOISE::NOTHING )
+	,m_wpViewPortUsing(			m_wpViewPort11 )
+	,m_pDepthStencilStateOn(	nullptr )
+	,m_pDepthStencilStateOff(	nullptr )
+	,m_iNoiseFrame(				0 )
+	,m_fBlock(					0.0f )
+	,m_fPulse(					0.0f )
+	,m_bStopNoiseSe(			false )
+	,m_fRenderLimit(			fRENDER_LIMIT )
+	,m_fZoom(					fZOOM )
 {
 }
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
-	m_wpFont->Release();
+	if( m_wpFont ) m_wpFont->Release();
 
 	//次のシーンに余計なエフェクトを持ち込まない.
-	m_wpEffects->StopAll();
+	if( m_wpEffects ) m_wpEffects->StopAll();
 
 	SAFE_RELEASE( m_pDepthStencilStateOff );
 	SAFE_RELEASE( m_pDepthStencilStateOn );
 
 
 	m_enNextScene = enSCENE::NOTHING;
+
+	m_hWnd = nullptr;
 
 	m_wpFont = nullptr;
 	m_wpBlackScreen = nullptr;
@@ -90,6 +94,7 @@ clsSCENE_BASE::~clsSCENE_BASE()
 	m_wpEffects = nullptr;
 	m_wpResource = nullptr;
 	m_wpDxInput = nullptr;
+	m_wpXInput = nullptr;
 	m_wpPtrGroup = nullptr;
 	m_wpViewPortUsing = nullptr;
 	m_wpViewPort11 = nullptr;
@@ -100,8 +105,10 @@ clsSCENE_BASE::~clsSCENE_BASE()
 
 
 //シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
-void clsSCENE_BASE::Create()
+void clsSCENE_BASE::Create( const HWND hWnd )
 {
+	m_hWnd = hWnd;
+
 	if( FAILED( CreateDepthStencilState() ) ){
 		assert( !"デプスステンシル作成失敗" );
 		return;
@@ -116,11 +123,11 @@ void clsSCENE_BASE::Create()
 
 #ifdef RENDER_SCREEN_TEXTURE_
 	assert( !m_upScreenTexture );
-	m_upScreenTexture = make_unique<clsSCREEN_TEXTURE>( m_wpContext );
+	m_upScreenTexture = make_unique<clsSCREEN_TEXTURE>( m_hWnd, m_wpContext );
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
-#if _DEBUG
+#ifdef _DEBUG
 	//デバッグテキストの初期化.
 	m_upText = make_unique< clsDebugText >();
 	if( FAILED( m_upText->Init(
@@ -130,7 +137,7 @@ void clsSCENE_BASE::Create()
 	{
 		assert( !"デバッグテキスト作成失敗" );
 	}
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 	//各シーンのCreate.
 	CreateProduct();
@@ -152,10 +159,10 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 	//暗転更新.
 	m_wpBlackScreen->Update();
 
-#if _DEBUG
+#ifdef _DEBUG
 	//BGMのチェック.
 	DebugBgm();
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 	//各シーンのUpdate.
 	UpdateProduct( tmpScene );
@@ -176,6 +183,19 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 		m_enNextScene = enSCENE::NOTHING;//初期化.//覚えていた忘れる.
 	}
 
+#ifdef RENDER_SCREEN_TEXTURE_	
+	if( m_upScreenTexture->isNoiseFlag() ){
+		//ノイズが起動中なら更新( 減衰 )する.
+		m_upScreenTexture->NoiseUpdate();
+	}
+	else{
+		if( m_bStopNoiseSe ){
+			m_bStopNoiseSe = false;
+			m_upScreenTexture->StopSe();
+		}
+	}
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+	
 	//デバッグ用シーン切り替え.
 	DebugChangeScene( enNextScene );
 }
@@ -192,7 +212,7 @@ void clsSCENE_BASE::Render(
 
 
 #ifdef RENDER_SCREEN_TEXTURE_	
-	if( m_upScreenTexture->GetNoiseFlag() ){
+	if( m_upScreenTexture->isUse() ){
 		//Rendertargetをテクスチャにする.
 		m_upScreenTexture->SetRenderTargetTexture( pDepthStencilView );
 	}
@@ -200,6 +220,7 @@ void clsSCENE_BASE::Render(
 
 
 	//各シーンの描画.
+	SetDepth( true );	//Zテスト:ON.
 	RenderProduct( m_wpCamera->GetPos() );
 	
 	//エフェクト描画.
@@ -211,7 +232,6 @@ void clsSCENE_BASE::Render(
 	//各シーンのUIの描画.
 	SetDepth( false );
 	RenderUi();
-	SetDepth( true );	//Zテスト:ON.
 
 	//元通りのビューポート.
 	if( m_wpViewPortUsing != m_wpViewPort11 ){
@@ -220,127 +240,192 @@ void clsSCENE_BASE::Render(
 	}
 
 	//暗転描画.
+//	SetDepth( true );	//Zテスト:ON.
 	m_wpBlackScreen->Render();
 
 
 #ifdef RENDER_SCREEN_TEXTURE_	
-	if( m_upScreenTexture->GetNoiseFlag() ){
+	if( m_upScreenTexture->isUse() ){
 		//テクスチャの内容を画面に描画.
 		m_upScreenTexture->RenderWindowFromTexture( pBackBuffer_TexRTV, pDepthStencilView );
 
-		UpdateNoise();
+		this->UpdateNoise();
 	}
 
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
-		NoiseBig( 60 );
+		NoiseStrong( 60 );
 	}
 	if( GetAsyncKeyState( 'X' ) & 0x8000 ){
-		NoiseSmall( 10 );
+		NoiseWeak( 10 );
 	}
+//	if( GetAsyncKeyState( 'C' ) & 0x1 ){
+//		static bool nega = false;
+//		m_upScreenTexture->SetNega( nega );
+//		nega = !nega;
+//	}
+//	if( GetAsyncKeyState( 'V' ) & 0x8000 ){
+//		m_upScreenTexture->SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
+//	}
+//	if( GetAsyncKeyState( 'B' ) & 0x8000 ){
+//		m_upScreenTexture->SetColor( { 0.5f, 0.5f, 1.0f, 1.0f } );
+//	}
 
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
-#if _DEBUG
-	SetDepth( false );
+#ifdef _DEBUG
+//	SetDepth( false );
 	RenderDebugText();
-	SetDepth( true );	//Zテスト:ON.
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 }
 
 //メニュー操作に使ってね.
-bool clsSCENE_BASE::isPressRight()
+bool clsSCENE_BASE::isPressRight() const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_RIGHT ) ){
+			return true;
+		}
+		else if( m_wpXInput->isSlopeEnter( XINPUT_RIGHT ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsLSRightEnter() ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpXInput->isSlopeEnter( XINPUT_RIGHT ) ){
-		return true;
-	}
-	else if( m_wpDxInput->IsLSRightEnter() ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_RIGHT ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
-
-bool clsSCENE_BASE::isPressLeft()
+bool clsSCENE_BASE::isPressLeft() const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_LEFT ) ){
+			return true;
+		}
+		else if( m_wpXInput->isSlopeEnter( XINPUT_LEFT ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsLSLeftEnter() ){
+			return true;
+		}
+	}
+	
+	if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpXInput->isSlopeEnter( XINPUT_LEFT ) ){
-		return true;
-	}
-	else if( m_wpDxInput->IsLSLeftEnter() ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_LEFT ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
-
-bool clsSCENE_BASE::isPressUp()
+bool clsSCENE_BASE::isPressUp()const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_UP ) ){
+			return true;
+		}
+		else if( m_wpXInput->isSlopeEnter( XINPUT_UP ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsLSUpEnter() ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_UP ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpXInput->isSlopeEnter( XINPUT_UP ) ){
-		return true;
-	}
-	else if( m_wpDxInput->IsLSUpEnter() ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_UP ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
-
-bool clsSCENE_BASE::isPressDown()
+bool clsSCENE_BASE::isPressDown()const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_DOWN ) ){
+			return true;
+		}
+		else if( m_wpXInput->isSlopeEnter( XINPUT_DOWN ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsLSDownEnter() ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
 		return true;
 	}
-	else if( m_wpXInput->isSlopeEnter( XINPUT_DOWN ) ){
-		return true;
-	}
-	else if( m_wpDxInput->IsLSDownEnter() ){
-		return true;
-	}
-	else if( GetAsyncKeyState( VK_DOWN ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
-
-bool clsSCENE_BASE::isPressEnter()
+bool clsSCENE_BASE::isPressEnter()const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_ENTER ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( DINPUT_ENTER ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		return true;
 	}
-//	else if( m_wpDxInput->IsPressKey( enPKey_00 ) ){
-//		return true;
-//	}
-	else if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
-		return true;
-	}
+
 	return false;
 }
-
-bool clsSCENE_BASE::isPressExit()
+bool clsSCENE_BASE::isPressExit()const
 {
-	if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_EXIT ) ){
+			return true;
+		}
+	}
+	else{
+		if( m_wpDxInput->IsPressKeyEnter( DINPUT_EXIT ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		return true;
 	}
-	else if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
+
+	return false;
+}
+bool clsSCENE_BASE::isPressStart()const
+{
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_START ) ){
+			return true;
+		}
+	}
+	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
 		return true;
 	}
+
 	return false;
 }
 
@@ -348,16 +433,22 @@ bool clsSCENE_BASE::isPressExit()
 bool clsSCENE_BASE::isPressHoldRight( bool isWithStick )
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDxInput->IsLSRightStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDxInput->IsLSRightStay() && isWithStick ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -391,20 +482,25 @@ bool clsSCENE_BASE::isPressHoldRight( bool isWithStick )
 
 	return false;
 }
-
 bool clsSCENE_BASE::isPressHoldLeft( bool isWithStick )
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDxInput->IsLSLeftStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDxInput->IsLSLeftStay() && isWithStick ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -438,20 +534,25 @@ bool clsSCENE_BASE::isPressHoldLeft( bool isWithStick )
 
 	return false;
 }
-
 bool clsSCENE_BASE::isPressHoldUp( bool isWithStick )
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_UP ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_UP ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDxInput->IsLSUpStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDxInput->IsLSUpStay() && isWithStick ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -485,20 +586,25 @@ bool clsSCENE_BASE::isPressHoldUp( bool isWithStick )
 
 	return false;
 }
-
 bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDxInput->IsLSDownStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDxInput->IsLSDownStay() && isWithStick ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -533,9 +639,8 @@ bool clsSCENE_BASE::isPressHoldDown( bool isWithStick )
 	return false;
 }
 
-
 //3D座標をスクリーン( 2D )座標へと変換する conversion(変換) dimensions(次元).
-D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
+D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )const
 {
 	D3DXVECTOR3 v2DPos;
 	D3DXMATRIX mWorld;
@@ -544,9 +649,8 @@ D3DXVECTOR3 clsSCENE_BASE::ConvDimPos( const D3DXVECTOR3 &v3DPos )
 	return v2DPos;
 }
 
-
 //深度テスト(Zテスト)ON/OFF切替.
-void clsSCENE_BASE::SetDepth( const bool isOn )
+void clsSCENE_BASE::SetDepth( const bool isOn )const
 {
 	if( isOn ){
 		m_wpContext->OMSetDepthStencilState(
@@ -560,21 +664,9 @@ void clsSCENE_BASE::SetDepth( const bool isOn )
 
 
 
-D3DXVECTOR3 clsSCENE_BASE::GetCameraPos() const
-{
-	assert( m_wpCamera );
-	return m_wpCamera->GetPos();
-}
-D3DXVECTOR3 clsSCENE_BASE::GetCameraLookPos() const
-{
-	assert( m_wpCamera );
-	return m_wpCamera->GetLookPos();
-}
 
 
-
-
-#if _DEBUG
+#ifdef _DEBUG
 
 void clsSCENE_BASE::RenderDebugText()
 {
@@ -585,15 +677,15 @@ void clsSCENE_BASE::RenderDebugText()
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にだけ下にずらすか.
 
-	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	sprintf_s( strDbgTxt, 
+//		"CameraPos : x[%f], y[%f], z[%f]",
+//		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"CamLokPos : x[%f], y[%f], z[%f]",
+//		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 
 	//dbgtxty += 10;
@@ -629,7 +721,7 @@ void clsSCENE_BASE::DebugBgm()
 }
 
 
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 
 
@@ -660,11 +752,12 @@ HRESULT clsSCENE_BASE::CreateDepthStencilState()
 //カメラ関数.
 void clsSCENE_BASE::Camera()
 {
+	assert( m_wpCamera );
 	//ビュー(カメラ)変換.
 	D3DXVECTOR3 vUpVec	( 0.0f, 1.0f, 0.0f );	//上方位置.
 	D3DXMatrixLookAtLH(
 		&m_mView,	//(out)ビュー計算結果.
-		&GetCameraPos(), &GetCameraLookPos(), &vUpVec );
+		&m_wpCamera->GetPos(), &m_wpCamera->GetLookPos(), &vUpVec );
 
 }
 //プロジェクション関数.
@@ -673,21 +766,24 @@ void clsSCENE_BASE::Proj()
 	//プロジェクション(射影行列)変換.
 	D3DXMatrixPerspectiveFovLH(
 		&m_mProj,			//(out)プロジェクション計算結果.
-		fZOOM,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が狭くなる.
+		m_fZoom,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が広くなるくなる.
 		static_cast<FLOAT>( WND_W ) / static_cast<FLOAT>( WND_H ),//アスペクト比(幅/高さ).
 		0.1f,				//近いビュー平面のz値.
-		fRENDER_LIMIT );	//遠いビュー平面のz値.
+		m_fRenderLimit );	//遠いビュー平面のz値.
 }
 
 
 //デバッグ用シーン切り替え.
 void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 {
-	if( GetAsyncKeyState( 'Y' ) & 0x1 ){
+	if( GetAsyncKeyState( 'T' ) & 0x1 ){
 		enNextScene = enSCENE::TITLE;
 	}
-	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
+	else if( GetAsyncKeyState( 'Y' ) & 0x1 ){
 		enNextScene = enSCENE::ASSEMBLE;
+	}
+	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
+		enNextScene = enSCENE::TAKEOFF;
 	}
 	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
 		enNextScene = enSCENE::MISSION;
@@ -703,7 +799,8 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 void clsSCENE_BASE::SetViewPort( 
 	D3D11_VIEWPORT* const pVp, const 
 	D3DXVECTOR3 &vCamPos, const D3DXVECTOR3 &vCamLookPos,
-	const float fWndW, const float fWndH )
+	const float fWndW, const float fWndH,
+	const float fRenderLimit )
 {
 	if( !pVp ) return;
 	if( m_wpViewPortUsing == pVp ) return;
@@ -722,7 +819,7 @@ void clsSCENE_BASE::SetViewPort(
 		fZOOM,	//y方向の視野(ラジアン指定)数字を大きくしたら視野が狭くなる.
 		fWndW / fWndH,//アスペクト比(幅/高さ).
 		0.1f,				//近いビュー平面のz値.
-		fRENDER_LIMIT );	//遠いビュー平面のz値.
+		fRenderLimit );	//遠いビュー平面のz値.
 
 	assert( m_wpContext );
 	m_wpContext->RSSetViewports( 1, m_wpViewPortUsing );
@@ -734,17 +831,11 @@ void clsSCENE_BASE::SetViewPort(
 }
 
 
-D3D11_VIEWPORT* clsSCENE_BASE::GetViewPortMainPtr()
-{
-	assert( m_wpViewPort11 );
-	return m_wpViewPort11;
-}
-
 
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 //ノイズを起こす.
-void clsSCENE_BASE::NoiseBig( const int iPower )
+void clsSCENE_BASE::NoiseStrong( const int iPower )
 {
 	assert( m_upScreenTexture );
 
@@ -769,9 +860,13 @@ void clsSCENE_BASE::NoiseBig( const int iPower )
 	m_upScreenTexture->SetBlock( static_cast<int>( m_fBlock ) );
 	m_upScreenTexture->SetPulse( m_fPulse );
 
+	m_upScreenTexture->PlaySeStrong();
+
+	m_bStopNoiseSe = true;
+
 	m_encNoise = encNOISE::BLOCK_AND_PULSE;
 }
-void clsSCENE_BASE::NoiseSmall( const int iFrame )
+void clsSCENE_BASE::NoiseWeak( const int iFrame )
 {
 	assert( m_upScreenTexture );
 
@@ -782,20 +877,24 @@ void clsSCENE_BASE::NoiseSmall( const int iFrame )
 	m_upScreenTexture->SetBlock( iNOISE_SMALL_BLOCK );
 	m_upScreenTexture->SetPulse( 0.0f );
 
+	m_upScreenTexture->PlaySeWeak();
+
+	m_bStopNoiseSe = true;
+
 	m_encNoise = encNOISE::MINUTE_BLOCK;
 }
 
 void clsSCENE_BASE::UpdateNoise()
 {
-	m_iNoiseFrame --;
+	if( m_iNoiseFrame > 0 ){
+		m_iNoiseFrame --;
+	}
 
 	switch( m_encNoise )
 	{
 	case encNOISE::BLOCK_AND_PULSE:
 		//終了.
-		if( //m_iNoiseFrame <= 0 && 
-			m_fBlock <= fNOISE_ORIGINAL 
-		){
+		if( m_fBlock <= fNOISE_ORIGINAL ){
 			m_upScreenTexture->SetNoiseFlag( false );
 			m_encNoise = encNOISE::NOTHING;
 		}
@@ -816,8 +915,5 @@ void clsSCENE_BASE::UpdateNoise()
 		}
 		break;
 	}
-
-
-
 }
 #endif//#ifdef RENDER_SCREEN_TEXTURE_

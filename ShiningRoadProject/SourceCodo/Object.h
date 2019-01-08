@@ -80,15 +80,23 @@ public:
 
 	float m_fMoveSpeed;//最終的に加算されるスピード.
 	D3DXVECTOR3 m_vMoveDir;
+	D3DXVECTOR3 m_vWallHit;
 
 	bool m_bGround;
 	bool m_NoFollObj;
 
+	void ActStop();
+	void ActStart();
+
+	bool m_bAct;
+
 	std::vector<SPHERE> m_v_Spheres;
 
-	void Action(clsStage* pStage);
+	void Update(clsStage* pStage);
 
-	virtual void ActionProduct();
+	virtual void UpdateProduct(clsStage* pStage);
+
+	virtual void Action(clsStage* const pStage);
 
 	virtual void Render(
 		const D3DXMATRIX& mView,

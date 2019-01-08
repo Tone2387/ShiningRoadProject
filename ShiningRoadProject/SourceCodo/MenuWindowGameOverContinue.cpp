@@ -1,24 +1,31 @@
 #include "MenuWindowGameOverContinue.h"
 #include "PtrGroup.h"
+#include "SoundManagerMenuWindow.h"
+#include "CFont.h"
+
 //メニューを呼び出すため.
 #include "MenuWindowGameOverDoAssemble.h"
 
 namespace{
 
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 400.0f };
 
 }
 
 
 clsMENU_WINDOW_GAME_OVER_CONTINUE::clsMENU_WINDOW_GAME_OVER_CONTINUE(
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_GAME_OVER_BASE( pPtrGroup, pParentWindow, pInformationVec )
+	:clsMENU_WINDOW_GAME_OVER_BASE(
+		hWnd, pPtrGroup, pParentWindow,
+		pInformationVec, 
+		vTHIS_WINDOW_SIZE,
+		"MenuWindowGameoverContinue" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 400.0f };
-	Open( vTHIS_WINDOW_SIZE );
 }
 
 clsMENU_WINDOW_GAME_OVER_CONTINUE::~clsMENU_WINDOW_GAME_OVER_CONTINUE()
@@ -38,7 +45,7 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 			m_iSelectNum = 0;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -48,7 +55,7 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 			m_iSelectNum = iSELECT_NUM_MAX;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -56,20 +63,20 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 			//次を開く.
 			if( CreateNextWindow( &m_pNextWindow ) ){
-				m_wpSound->PlaySE( enSE_ENTER );
+				m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 				const D3DXVECTOR3 vADD_POS = D3DXVECTOR3( 20.0f, 20.0f, 0.0f );
 				m_pNextWindow->SetPos( GetPos() + vADD_POS );
 				Operation( false );
 			}
 		}
 		else{
-			m_wpSound->PlaySE( enSE_EXIT );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GAME_OVER ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GAME_OVER ];
 	}
 
@@ -120,8 +127,8 @@ bool clsMENU_WINDOW_GAME_OVER_CONTINUE::CreateNextWindowProduct(
 	clsMENU_WINDOW_BASE** ppOutNextWindow, 
 	clsMENU_WINDOW_BASE* const pParentWindow ) 
 {
-//	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_CONTINUE( m_pPtrGroup, pParentWindow, m_pInformationVec );
-	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE( m_pPtrGroup, pParentWindow, m_pInformationVec );
+//	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_CONTINUE( m_hWnd, m_pPtrGroup, pParentWindow, m_pInformationVec );
+	*ppOutNextWindow = new clsMENU_WINDOW_GAME_OVER_DO_ASSEMBLE( m_hWnd, m_pPtrGroup, pParentWindow, m_pInformationVec );
 
 	if( *ppOutNextWindow ){
 		return true;

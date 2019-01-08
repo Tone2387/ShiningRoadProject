@@ -12,8 +12,8 @@ public:
 	~clsCAMERA_ASSEMBLE();
 
 
-	void Create() final;
-	void Update() final;
+	void Create() final {};
+	void Update() final {};
 
 private:
 

@@ -82,6 +82,7 @@ struct MY_SKINMATERIAL
 	D3DXVECTOR4	Ks;	// スペキュラー.
 	CHAR szTextureName[512];	// テクスチャーファイル名.
 	ID3D11ShaderResourceView* pTexture;
+	std::vector< ID3D11ShaderResourceView* > vecpMask;
 	DWORD dwNumFace;	// そのマテリアルであるポリゴン数.
 	MY_SKINMATERIAL()
 	{
@@ -93,6 +94,9 @@ struct MY_SKINMATERIAL
 	}
 	~MY_SKINMATERIAL()
 	{
+		for( unsigned int i=0; i<vecpMask.size(); i++ ){
+			SAFE_RELEASE( vecpMask[i] );
+		}
 		SAFE_RELEASE( pTexture );
 	}
 };
@@ -393,10 +397,10 @@ private:
 	// 解放関数.
 	HRESULT Release();
 
-	HRESULT CreateDeviceDx9( HWND hWnd );
-	HRESULT InitShader();
+	HRESULT CreateDeviceDx9( HWND hWnd, LPDIRECT3DDEVICE9* ppOutDevice9, const char* sErrFilePath );
+	HRESULT InitShader( const char* sErrFilePath );
 	// Xファイルからスキンメッシュを作成する.
-	HRESULT CreateFromX( CHAR* sFileName );
+	HRESULT CreateFromX( CHAR* sFileName, LPDIRECT3DDEVICE9 pDevice9 );
 	HRESULT CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buffer** ppIndexBuffer );
 	void RecursiveSetNewPoseMatrices( BONE* pBone,D3DXMATRIX* pmParent );
 
@@ -439,28 +443,13 @@ private:
 	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 
-	struct MASK_TEXTURE
-	{
-		ID3D11ShaderResourceView*	pTex;
-//		ID3D11SamplerState*			pSample;
 
-		MASK_TEXTURE(){
-			pTex = nullptr;
-//			pSample = nullptr;
-		}
-		~MASK_TEXTURE(){
-//			SAFE_RELEASE( pSample );
-			SAFE_RELEASE( pTex );
-		}
-	};
-	MASK_TEXTURE* m_pMaskBase;
-	MASK_TEXTURE* m_pMaskArmor;
+//	HWND m_hWnd;
 
-
-	HWND m_hWnd;
 	// Dx9.
-	LPDIRECT3D9 m_pD3d9;
-	LPDIRECT3DDEVICE9 m_pDevice9;
+//	LPDIRECT3D9			m_pD3d9;
+//	LPDIRECT3DDEVICE9	m_pDevice9;
+
 	// Dx11.
 	ID3D11Device*			m_pDevice;
 	ID3D11DeviceContext*	m_pDeviceContext;
@@ -468,9 +457,9 @@ private:
 	ID3D11VertexShader*		m_pVertexShader;
 	ID3D11PixelShader*		m_pPixelShader;
 	ID3D11InputLayout*		m_pVertexLayout;
-	ID3D11Buffer* m_pConstantBuffer0;
-	ID3D11Buffer* m_pConstantBuffer1;
-	ID3D11Buffer* m_pConstantBufferBone;
+	ID3D11Buffer*			m_pConstantBuffer0;
+	ID3D11Buffer*			m_pConstantBuffer1;
+	ID3D11Buffer*			m_pConstantBufferBone;
 
 	// メッシュ.
 	D3DXPARSER* m_pD3dxMesh;

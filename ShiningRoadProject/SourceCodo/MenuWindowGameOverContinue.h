@@ -9,6 +9,7 @@ class clsMENU_WINDOW_GAME_OVER_CONTINUE : public clsMENU_WINDOW_GAME_OVER_BASE
 {
 public:
 	clsMENU_WINDOW_GAME_OVER_CONTINUE(
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec );

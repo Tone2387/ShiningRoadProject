@@ -11,20 +11,32 @@ class clsSCREEN_TEXTURE;
 
 #include "Global.h"
 
-#if _DEBUG
+#ifdef _DEBUG
 #include "DebugText.h"
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 #include "CharaStatic.h"
 
 #include "PtrGroup.h"
+#include "DxInput.h"
+#include "CXInput.h"
+#include "Resource.h"
+#include "Effects.h"
+#include "SoundManagerBase.h"
+#include "Camera.h"
+#include "RoboStatusPlayer.h"
+#include "BlackScreen.h"
+#include "CFont.h"
 
 #include "Sprite2DCenter.h"
-
 #include "UiText.h"
 
 //#include "KeyInput.h"
+#define XINPUT_ENTER ( XINPUT_B )
+#define XINPUT_EXIT  ( XINPUT_A )
 
+#define DINPUT_ENTER ( enPKey_01 )
+#define DINPUT_EXIT	 ( enPKey_02 )
 
 //================================//
 //========== 基底クラス ==========//
@@ -38,7 +50,7 @@ public:
 
 	//----- 各シーン共通 -----//.
 	//シーン作成直後に「SceneManager.cpp」の「SwitchScene」関数内で使用されている.
-	void Create();
+	void Create( const HWND hWnd );
 	//ループ内の処理( 引数を関数内で変更すると今のシーンが破棄され、.
 	//				  指定したシーンが生成される ).
 	void Update( enSCENE &enNextScene );
@@ -48,10 +60,6 @@ public:
 		ID3D11DepthStencilView* const pDepthStencilView );
 	//----- 各シーン共通 -----//.
 
-
-	//メインまで送り上げる.
-	D3DXVECTOR3 GetCameraPos() const;
-	D3DXVECTOR3 GetCameraLookPos() const;
 
 protected:
 
@@ -65,16 +73,17 @@ protected:
 	//3D座標をスクリーン( 2D )座標へと変換する.
 	//dimensions(次元) conversion(変換).
 	//戻り値は2D座標.
-	D3DXVECTOR3 ConvDimPos( const D3DXVECTOR3 &v3DPos );
+	D3DXVECTOR3 ConvDimPos( const D3DXVECTOR3 &v3DPos ) const;
 
 
 	//メニュー操作に使ってね.
-	bool isPressRight();
-	bool isPressLeft();
-	bool isPressUp();
-	bool isPressDown();
-	bool isPressEnter();
-	bool isPressExit();
+	bool isPressRight()	const;
+	bool isPressLeft()	const;
+	bool isPressUp()	const;
+	bool isPressDown()	const;
+	bool isPressEnter()	const;
+	bool isPressExit()	const;
+	bool isPressStart() const;
 
 	//押しっぱなしで動く( trueならスティック有効 ).
 	bool isPressHoldRight( bool isWithStick = true );
@@ -84,29 +93,33 @@ protected:
 
 	//----- Render用 -----//.
 	//深度テスト(Zテスト)　ON/OFF切替.
-	void SetDepth( const bool isOn );
+	void SetDepth( const bool isOn )const;
 
 	//---継承先のRenderProductで使用する---.
 	void SetViewPort( 
 		D3D11_VIEWPORT* const pVp, 
 		const D3DXVECTOR3 &vCamPos, 
 		const D3DXVECTOR3 &vCamLookPos,
-		const float fWndW, const float fWndH );
+		const float fWndW, const float fWndH,
+		const float fRenderLimit = 100.0f );
 
 	//メインで使っているビューポートのポインタ取得( SetViewPort関数の引数用 ).
-	D3D11_VIEWPORT* GetViewPortMainPtr();
+	D3D11_VIEWPORT* GetViewPortMainPtr()const{
+		assert( m_wpViewPort11 );
+		return m_wpViewPort11;
+	};
 	//----- Render用 -----//.
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 	//ノイズを起こす.
-	void NoiseBig( const int iPower );
-	void NoiseSmall( const int iFrame );
+	void NoiseStrong( const int iPower );
+	void NoiseWeak( const int iFrame );
 
 	void UpdateNoise();
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
-#if _DEBUG
+#ifdef _DEBUG
 	//デバック゛テキストの表示.
 	virtual void RenderDebugText();
 	//BGMのチェック.
@@ -114,7 +127,7 @@ protected:
 //	clsDebugText*	m_upText;
 	std::unique_ptr< clsDebugText >	m_upText;
 
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 protected:
 
@@ -133,7 +146,8 @@ protected:
 	HOLD_STATE m_HoldDown;
 
 #ifdef RENDER_SCREEN_TEXTURE_	
-	enum class encNOISE{
+	enum class encNOISE
+	{
 		NOTHING = 0,
 		BLOCK_AND_PULSE,//大ダメージ.
 		MINUTE_BLOCK,	//小刻みなダメージ.
@@ -150,6 +164,8 @@ protected:
 	D3DXMATRIX		m_mProj;	//プロジェクション行列.
 	D3DXVECTOR3		m_vLight;	//ライトの方向.
 
+	float m_fRenderLimit;
+	float m_fZoom;
 
 
 	//基底クラスのポインタは基底クラスで破棄します.
@@ -169,6 +185,9 @@ protected:
 	clsROBO_STATUS_PLAYER*	m_wpRoboStatus;
 	clsBLACK_SCREEN*		m_wpBlackScreen;
 	clsFont*				m_wpFont;
+
+
+	HWND m_hWnd;
 
 private:
 
@@ -205,6 +224,7 @@ private:
 
 #ifdef RENDER_SCREEN_TEXTURE_
 	std::unique_ptr< clsSCREEN_TEXTURE >	m_upScreenTexture;
+	bool m_bStopNoiseSe;
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 

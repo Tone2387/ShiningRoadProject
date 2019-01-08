@@ -64,9 +64,12 @@ public:
 	clsXInput();
 	~clsXInput();
 
+	//Xinputが有効ならtrue.
+	bool isConnected(){ return m_isConnect; };
+
 	//毎フレーム回す.
 	bool UpdateStatus();
-//	bool UpdateKeyStatus();//使わないかも?.
+//	bool UpdateKeyStatus();
 
 	//ボタン入力.
 	bool isPressEnter( const WORD _padKey ) const;	//押した瞬間.
@@ -120,10 +123,10 @@ public:
 	void SetVibPowerL( int iVibL, const int iTime, int iVibDecL = 0 );
 	void SetVibPowerR( int iVibR, const int iTime, int iVibDecR = 0 );
 
+private:
 	//終了処理.
 	void EndProc();
 
-private:
 	//振動.
 	bool SetVibration( const WORD LMotorSpd, const WORD RMotorSpd );
 
@@ -146,7 +149,7 @@ private:
 	DWORD				m_padId;
 	XINPUT_STATE		m_state;
 	XINPUT_STATE		m_stateOld;//判断用.
-	XINPUT_KEYSTROKE	m_keystroke;
+//	XINPUT_KEYSTROKE	m_keystroke;
 	XINPUT_VIBRATION	m_vibration;
 
 	//振動補助.
@@ -160,6 +163,7 @@ private:
 	int		m_iVibTimerL;//収まる時間.
 	int		m_iVibTimerR;
 	
+	bool	m_isConnect;//コントローラが接続されているならtrue.
 
 };
 

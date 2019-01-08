@@ -42,7 +42,7 @@ void clsPARTS_WINDOW_MODEL_FOR_ARMS::Render(
 }
 
 //êFÇìfÇ´èoÇ∑.
-bool clsPARTS_WINDOW_MODEL_FOR_ARMS::isRender( const enPARTS_TYPES AlphaParts, const UINT uiIndex )
+bool clsPARTS_WINDOW_MODEL_FOR_ARMS::isRender( const enPARTS_TYPES AlphaParts, const UINT uiIndex ) const
 {
 	switch( AlphaParts )
 	{

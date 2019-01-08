@@ -21,7 +21,9 @@ private:
 	//外部からデータを読み込む.
 	void LoadFileData( const char* sFilePath ) override;
 
-//	//クリアデータ( タイトルで必要 ).
+
+
+	//クリアデータ( タイトルで必要 ).
 	ROBO_STATE_DATA m_RoboStateDataHero;
 
 };

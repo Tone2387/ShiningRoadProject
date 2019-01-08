@@ -8,6 +8,7 @@ class clsMENU_WINDOW_TITLE_START_OR_END : public clsMENU_WINDOW_TITLE_BASE
 {
 public:
 	clsMENU_WINDOW_TITLE_START_OR_END(		
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec );
@@ -22,7 +23,7 @@ private:
 	void RenderProduct() override;
 	bool CreateNextWindowProduct( 
 		clsMENU_WINDOW_BASE** ppOutNextWindow, 
-		clsMENU_WINDOW_BASE* const pParentWindow ) override;
+		clsMENU_WINDOW_BASE* const pParentWindow ) override { return false; };
 
 
 };

@@ -1,23 +1,29 @@
 #include "MenuWindowAssembleBackTitle.h"
 #include "PtrGroup.h"
+#include "SoundManagerMenuWindow.h"
+#include "CFont.h"
 
 namespace{
 
 	const int iSELECT_NUM_YES_INDEX = 0;
+	//この窓のサイズ.
+	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
 
 }
 
 
 
 clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::clsMENU_WINDOW_ASSEMBLE_BACK_TITLE(
+	const HWND hWnd,
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsMENU_WINDOW_BASE* const pParentWindow,
 	std::vector<unsigned int>* const pInformationVec )
-	:clsMENU_WINDOW_ASSEMBLE_BASE( pPtrGroup, pParentWindow, pInformationVec )
+	:clsMENU_WINDOW_ASSEMBLE_BASE( 
+	hWnd, pPtrGroup, pParentWindow, 
+	pInformationVec, 
+	vTHIS_WINDOW_SIZE,
+	"MenuWindowAssembleBackTitle" )
 {
-	//この窓のサイズ.
-	const D3DXVECTOR2 vTHIS_WINDOW_SIZE = { 600.0f, 340.0f };
-	Open( vTHIS_WINDOW_SIZE );
 }
 
 clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::~clsMENU_WINDOW_ASSEMBLE_BACK_TITLE()
@@ -37,7 +43,7 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
 			m_iSelectNum = 0;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -47,7 +53,7 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
 			m_iSelectNum = iSELECT_NUM_MAX;
 		}
 		else{
-			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_CURSOL );
 		}
 	}
 
@@ -55,17 +61,17 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
 
 	if( SelectEnter() ){
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
-			m_wpSound->PlaySE( enSE_ENTER );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_GO_TITLE ];
 		}
 		else{
-			m_wpSound->PlaySE( enSE_EXIT );
+			m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 			m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 		}
 	}
 
 	if( SelectExit() ){
-		m_wpSound->PlaySE( enSE_EXIT );
+		m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_EXIT );
 		m_uiInformation = ( *m_pInformationVec )[ enINFORMATION_INDEX_CLOSE_WINDOW ];
 	}
 
@@ -73,8 +79,8 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::UpdateProduct()
 
 void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::RenderProduct()
 {
-	const int iYES_INDEX = 4;
-	const int iQUESTION_INDEX = 2;
+	const int iYES_INDEX = 5;
+	const int iQUESTION_INDEX = 3;
 	
 	//yes.
 	const D3DXVECTOR2 vPOS_YES_LOCAL = { 180.0f, 250.0f };
@@ -113,18 +119,4 @@ void clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::RenderProduct()
 	}
 
 }
-
-bool clsMENU_WINDOW_ASSEMBLE_BACK_TITLE::CreateNextWindowProduct( 
-	clsMENU_WINDOW_BASE** ppOutNextWindow, 
-	clsMENU_WINDOW_BASE* const pParentWindow )
-{
-
-
-	return false;
-}
-
-
-
-
-
 

@@ -2,6 +2,7 @@
 #define ROBO_STATUS_H_
 
 
+class clsFILE;
 #include "Global.h"
 
 
@@ -125,18 +126,31 @@ public:
 	int GetWeaponState( const enWEAPON_NUM enArmLR, const enWEAPON_STATE enStateNum ) const;
 
 	//パーツ番号を返す( いま装備しているパーツが何番か ).//#define SKIN_ENUM_TYPE UCHAR.
-	UCHAR GetPartsNum( const enPARTS PartsType );
+	//clsASSEMBLE_MODELクラスのAttachModelの第二引数として使います.
+	UCHAR GetPartsNum( const enPARTS PartsType ) const;
 
 
 	//色フラグのやり取り.
 	void SetColorRank( const enCOLOR_GAGE enColorNum, const int iColorRate );
-	int GetColorRank( const enCOLOR_GAGE enColorNum );
+	int GetColorRank( const enCOLOR_GAGE enColorNum ) const;
 
 protected:
 
 
 	//継承先で外部からデータを読み込ませる.
 	virtual void LoadFileData( const char* sFilePath ) = 0;
+
+	//パーツのステータスデータを読み込む.
+	void LoadPartsData( std::vector< std::unique_ptr< clsFILE > >& PartsFile );
+
+	//読み込んだ番号のデータを取得する.
+	void AttachData( const std::vector< std::unique_ptr< clsFILE > >& PartsFile );
+
+	//ReceiveLeg()等の関数に格納するためのデータを作り、吐き出す.
+	std::vector<int> CreateDataForReceive( 
+		const std::vector< std::unique_ptr< clsFILE > >& PartsFile,
+		const int PartsType,
+		const int PartsNum );
 
 protected:
 

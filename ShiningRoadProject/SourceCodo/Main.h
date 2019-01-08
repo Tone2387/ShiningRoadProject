@@ -2,52 +2,43 @@
 //警告についてのコード分析を無効にする.4005:再定義.
 #pragma warning( disable:4005 )
 
-//これがついていると起動時にフルスクリーンになる.
+//これがついていると起動時にフルスクリーンになる予定だったが無理だやめました.
 //#define STARTUP_FULLSCREEN_
+
+
+class clsGAME;
 
 //============================================================
 //	インクルード.
 //============================================================
 #include "Global.h"
 
-#if _DEBUG
-#include "DebugText.h"
+#ifdef _DEBUG
+class clsDX9Mesh;
+//#include "DebugText.h"
 #include "Ray.h"		//レイ表示クラス.
-#endif//#if _DEBUG
 
-#include "Game.h"
+#endif//#ifdef _DEBUG
 
 
-#include <Windows.h>
 
 //メモリリーク検出用.
 #include <crtdbg.h>
 
-#include <D3DX11.h>
-#include <D3D11.h>
-
-#include <D3DX10.h>//「D3DX～」の定義使用時に必要.
-#include <D3D10.h>
 
 
 
-//============================================================
-//	ライブラリ.
-//============================================================
-#pragma comment( lib, "winmm.lib" )
+////============================================================
+////	ライブラリ.
+////============================================================
+//#pragma comment( lib, "winmm.lib" )
+//
+//#pragma comment( lib, "d3dx11.lib" )
+//#pragma comment( lib, "d3d11.lib" )
+//
+//#pragma comment( lib, "d3dx10.lib" )//「D3DX～」の定義使用時に必要.
 
-#pragma comment( lib, "d3dx11.lib" )
-#pragma comment( lib, "d3d11.lib" )
 
-#pragma comment( lib, "d3dx10.lib" )//「D3DX～」の定義使用時に必要.
-
-
-
-//============================================================
-//	定数.
-//============================================================
-#define WND_TITLE	"ShiningRoadProject"
-#define APR_NAME	"ShiningRoadProject"
 
 
 
@@ -94,7 +85,7 @@ private:
 	//メッシュ読み込み関数(まとめた).
 	HRESULT ReadMesh();
 
-#if _DEBUG
+#ifdef _DEBUG
 	//スフィア作成.
 	HRESULT InitSphere( clsDX9Mesh* pMesh, float fScale = 0.7f );
 	//スフィア衝突判定関数.
@@ -110,11 +101,10 @@ private:
 	clsRay*			m_pRayH;	//左右.
 
 
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 
 	//ゲーム.
-	//clsGAME*		m_upGame;
 	std::unique_ptr< clsGAME >	m_upGame;
 
 

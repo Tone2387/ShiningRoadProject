@@ -4,8 +4,7 @@
 #include "Common.h"	//共通クラス.
 
 //レイクラス(表示のみを行う).
-class clsRay
-	: public clsCommon	//共通クラス継承.
+class clsRay : public clsCommon	//共通クラス継承.
 {
 public:
 	//============================================================

@@ -1,5 +1,5 @@
 #include"Global.h"
-#include"EnemyRobo.h"
+#include"Charactor.h"
 #include"RoboStatusEnemy.h"
 
 class clsEnemyFactory
@@ -8,7 +8,7 @@ public:
 	clsEnemyFactory();
 	~clsEnemyFactory();
 
-	const std::vector<clsCharactor*> CreateEnemy(std::string strFolderName);
+	const std::vector<clsCharactor*> CreateEnemy(clsPOINTER_GROUP* clsPtrGroup, std::string strFolderName);
 
 private:
 	enum enEnemyType

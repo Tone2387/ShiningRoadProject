@@ -27,5 +27,5 @@ private:
 
 clsObjSkinMesh::clsObjSkinMesh()
 {
-	ZeroMemory(this, sizeof(clsObjSkinMesh));
+//	ZeroMemory(this, sizeof(clsObjSkinMesh));
 }

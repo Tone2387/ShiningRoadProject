@@ -1,14 +1,17 @@
 #ifndef MENU_WINDOW_BASE_H_
 #define MENU_WINDOW_BASE_H_
 
+
 class clsPOINTER_GROUP;
 class clsUiText;
 class clsFont;
 class clsXInput;
 class clsDxInput;
-class clsSOUND_MANAGER_BASE;
+class clsSOUND_MANAGER_MENUWINDOW;
 
 #include "WindowBox.h"
+
+
 
 
 //窓メニューの基底クラス.
@@ -16,18 +19,24 @@ class clsMENU_WINDOW_BASE : public clsWINDOW_BOX
 {
 public:
 
-	clsMENU_WINDOW_BASE(		
+	clsMENU_WINDOW_BASE(	
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec,
-		const int iCloseSeNum );
+		const D3DXVECTOR2& vSize,
+		const char* sWindowName );
 	virtual ~clsMENU_WINDOW_BASE();
 
+	//シーンクラスと情報のやり取りをする変数の型及び作成関数.
+	using INFORMATION_MENU_DATA_ARRAY = std::vector<unsigned int>;
+	//実働関数はこの基底クラス内のprotected:内にあり、継承先の各シーンBaseクラスで、下のコメントの形でラップする.
+	//その内容は、参照するInformationのファイルパスを指定するだけ.
+//	static INFORMATION_MENU_DATA_ARRAY CreateInformation( 
+//		INFORMATION_MENU_DATA_ARRAY* const InformationDataArray,
+//		const int iInformationSize );
 
-protected:
 
-	//継承先のコンストラクタで使う.
-	void Open( const D3DXVECTOR2& vSize );
 
 public:
 
@@ -58,14 +67,18 @@ public:
 	}
 
 
-
 protected:
+
+	//===== 継承先のコンストラクタで使う =====//.
+	void Open( const D3DXVECTOR2& vSize );
+	//===== 継承先のコンストラクタで使う =====//.
+
 
 	//次の窓を吐き出す( 成功したならtrue ).
 	bool CreateNextWindow( clsMENU_WINDOW_BASE** ppOutNextWindow );
 
 	//このウィンドウを操作するようになるならtrue,離れるならfalse.
-	void Operation( const bool isOperation );
+	void Operation( const bool isOperation ){ m_isOperation = isOperation; };
 
 
 	//操作.
@@ -75,6 +88,14 @@ protected:
 	bool SelectLeft	( bool isWithStick = true );
 	bool SelectEnter();
 	bool SelectExit();
+
+	//シーンクラスと情報のやり取りをする変数の型及び作成関数の実働関数.
+	static INFORMATION_MENU_DATA_ARRAY CreateInformationProduct( 
+		INFORMATION_MENU_DATA_ARRAY* const InformationDataArray,
+		const int iInformationSize,
+		const char* sInformationDataPath );
+
+protected:
 
 	//選択肢.
 	int m_iSelectNum;
@@ -101,8 +122,10 @@ protected:
 	//子供のために必要.
 	clsPOINTER_GROUP*	m_pPtrGroup;
 
+	HWND m_hWnd;
+
 	//効果音.
-	clsSOUND_MANAGER_BASE* m_wpSound;
+	std::unique_ptr< clsSOUND_MANAGER_MENUWINDOW > m_upSound;
 
 private:
 	virtual void UpdateProduct() = 0;
@@ -113,6 +136,11 @@ private:
 
 	void SetColor( const D3DXVECTOR3& vColor ) final;
 	void SetTextAlpha( const float& fAlpha );
+
+	//最小か( 消す許可の出るサイズか ).
+	bool isMinimum();
+
+private:
 
 	//カーソル移動に必要.
 	struct HOLD_STATE
@@ -142,9 +170,6 @@ private:
 	
 	//この窓を閉じる予約.
 	bool m_isClose;
-
-	//閉じるSEの番号.
-	const int m_iCLOSE_SE_NUM;
 
 };
 

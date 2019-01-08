@@ -78,17 +78,9 @@ void clsSCENE_GAME_OVER::CreateProduct()
 	}
 	upFile->Close();
 
-	//照合用情報の作成の為のファイルデータ取得.
-	const char sTITLE_INFORMATION_DATA_PATH[] = "Data\\FileData\\Tahara\\GameOverMenuInformation.csv";
-	upFile->Open( sTITLE_INFORMATION_DATA_PATH );
-	//照合用情報の作成.
-	m_vecuiInformationDataArray.resize( enINFORMATION_INDEX_size, 0 );
-	for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
-		const int iCOL = 0;
-		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
-		m_vecuiInformationDataArray[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
-	}
-	upFile.reset();
+
+	//メニューの為のデータ取得&作成.
+	clsMENU_WINDOW_GAME_OVER_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
 
 
 	//ゆっくり暗明転.
@@ -104,67 +96,20 @@ void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 		MenuUpdate( enNextScene );
 	}
 
+	//画面にノイズを走らせ続ける.
+	const int iNoizeVar = 10;
+	NoiseWeak( iNoizeVar );
 
-//	float fff = 1.0f;
-//	if( GetAsyncKeyState( 'W' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, fff, 0.0f } );
-//	if( GetAsyncKeyState( 'S' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, -fff, 0.0f } );
-//	if( GetAsyncKeyState( 'D' ) & 0x8000 ) m_upMissModel->AddPos( { fff, 0.0f, 0.0f } );
-//	if( GetAsyncKeyState( 'A' ) & 0x8000 ) m_upMissModel->AddPos( { -fff, 0.0f, 0.0f } );
-//	if( GetAsyncKeyState( 'E' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, 0.0f, fff } );
-//	if( GetAsyncKeyState( 'Q' ) & 0x8000 ) m_upMissModel->AddPos( { 0.0f, 0.0f, -fff } );
 
 	if( !m_wpBlackScreen->GetAlpha() ){
 		//箱の開き始め.
 		if(!m_upMenu ){
-//			m_wpSound->PlaySE( enSE_WIN_APP );
-			m_upMenu = make_unique<clsMENU_WINDOW_GAME_OVER_CONTINUE>( m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
+			m_upMenu = make_unique<clsMENU_WINDOW_GAME_OVER_CONTINUE>( 
+				m_hWnd, m_wpPtrGroup, nullptr, 
+				&m_vecuiInformationDataArray );
 		}
 	}
 
-//	//開ききるまで動かせない.
-//	if( !m_isBoxOpened ){
-//		return;
-//	}
-//
-//	//コントローラ.
-//	if( isPressLeft() ){
-//		if(!m_isYes ){
-//			m_isYes = true;
-//			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
-//		}
-//	}
-//	if( isPressRight() ){
-//		if( m_isYes ){
-//			m_isYes = false;
-//			m_wpSound->PlaySE( enSE_CURSOL_MOVE );
-//		}
-//	}
-
-//	if( isPressEnter() ){
-//		//リトライ.
-//		if( m_isYes ){
-//			m_wpSound->PlaySE( enSE_ENTER );
-//			m_wpSound->PlaySE( enSE_MISSION_START );
-//			enNextScene = enSCENE::MISSION;
-//		}
-//		//あきらめる.
-//		else{
-//			m_wpSound->PlaySE( enSE_EXIT );
-//			m_wpSound->PlaySE( enSE_WIN_DISAPP );
-//			//箱を閉じる.
-//			const D3DXVECTOR2 vCHANGE_SPD = { 60.0f, 30.0f };
-//			m_upBox->SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
-//			m_upBox->AddChangeData( 
-//				vCHANGE_SPD.x, vCHANGE_SPD.y, 
-//				clsWINDOW_BOX::encBEFOR_CHANGE::BOTH );
-//			//文字を消す & 赤い文字を出す.
-//			float fTmpAlpha = m_fTextAlphaWhite;
-//			m_fTextAlphaWhite = m_fTextAlphaRed;
-//			m_fTextAlphaRed = fTmpAlpha;
-//			//シーン飛ぶ.
-//			enNextScene = enSCENE::TITLE;
-//		}
-//	}
 }
 
 //メニューの動き.
@@ -271,7 +216,7 @@ void clsSCENE_GAME_OVER::RenderUi()
 
 
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_GAME_OVER::RenderDebugText()
 {
 	//NULLチェック.
@@ -281,15 +226,15 @@ void clsSCENE_GAME_OVER::RenderDebugText()
 	int iTxtY = 0;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
 
-	sprintf_s( strDbgTxt, 
-		"CameraPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	sprintf_s( strDbgTxt, 
-		"CamLokPos : x[%f], y[%f], z[%f]",
-		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//	sprintf_s( strDbgTxt, 
+//		"CameraPos : x[%f], y[%f], z[%f]",
+//		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+//
+//	sprintf_s( strDbgTxt, 
+//		"CamLokPos : x[%f], y[%f], z[%f]",
+//		GetCameraLookPos().x, GetCameraLookPos().y, GetCameraLookPos().z );
+//	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 //	sprintf_s( strDbgTxt, 
 //		"MisModelPos : x[%f], y[%f], z[%f]",
@@ -306,4 +251,4 @@ void clsSCENE_GAME_OVER::RenderDebugText()
 
 
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG

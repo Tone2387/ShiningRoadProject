@@ -1,34 +1,50 @@
 #include"EnemyFactory.h"
+#include"AIRobo.h"
 #include"File.h"
+#include"OperationString.h"
+#include"AIRobo.h"
+#include"RoboStatusEnemy.h"
 
-const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(std::string strFolderName)
+const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(clsPOINTER_GROUP* clsPtrGroup, std::string strFolderName)
 {
 	std::string strFileName = strFolderName + "\\Enemy.csv";
+	clsFILE EnemyTransformFile;
 
-	clsFILE File;
-
-	assert(File.Open(strFileName));
+	assert(EnemyTransformFile.Open(strFileName));
 
 	std::vector<clsCharactor*> v_EnemysTmp;
 
-	v_EnemysTmp.resize(File.GetSizeRow());
+	v_EnemysTmp.resize(EnemyTransformFile.GetSizeRow());
 
 	for (int i = 0; i < v_EnemysTmp.size(); i++)
 	{
-		switch (File.GetDataInt(i,enEnemyDataFileOrderEnemyType))
+		if (EnemyTransformFile.GetDataInt(i, enEnemyDataFileOrderEnemyType) == enEnemyTypeMinion)
 		{
-		case clsEnemyFactory::enEnemyTypeMinion:
 
-			break;
-		case clsEnemyFactory::enEnemyTypeRobo:
+		}
 
-			break;
+		else if (EnemyTransformFile.GetDataInt(i, enEnemyDataFileOrderEnemyType) == enEnemyTypeRobo)
+		{
+			const int iNum = EnemyTransformFile.GetDataInt(i, enEnemyDataFileOrderEnemyNum);
 
-		default:
+			clsAIRobo* clsEnemyTmp = new clsAIRobo;
+			clsEnemyTmp->Init(clsPtrGroup, iNum);
 
-			
+			D3DXVECTOR3 vPosTmp;
+			vPosTmp.x = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderPosX);
+			vPosTmp.y = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderPosY);
+			vPosTmp.z = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderPosZ);
 
-			break;
+			clsEnemyTmp->SetPosition(vPosTmp);
+
+			D3DXVECTOR3 vRotTmp;
+			vRotTmp.x = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderPitch);
+			vRotTmp.y = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderYaw);
+			vRotTmp.z = EnemyTransformFile.GetDataFloat(i, enEnemyDataFileOrderRoll);
+
+			clsEnemyTmp->SetRotation(vRotTmp);
+
+			v_EnemysTmp[i] = clsEnemyTmp;
 		}
 	}
 

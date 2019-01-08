@@ -7,6 +7,7 @@ clsShot::clsShot(clsPOINTER_GROUP* pPtrGroup)
 	: m_fRangeMax(0.0f)
 {
 	m_wpEffect = pPtrGroup->GetEffects();
+	m_wpSound = pPtrGroup->GetSound();
 }
 
 clsShot::~clsShot()
@@ -65,6 +66,8 @@ bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
 					m_wpEffect->Stop(m_ShotEfcHandles[enEfcLine]);
 					m_bShotExistFlg = false;
+					//”š”­SE.
+					m_wpSound->PlaySE(0);
 					return true;
 				}
 

@@ -9,11 +9,19 @@ class clsMENU_WINDOW_ASSEMBLE_BASE : public clsMENU_WINDOW_BASE
 {
 public:
 	clsMENU_WINDOW_ASSEMBLE_BASE(		
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
-		std::vector<unsigned int>* const pInformationVec );
+		std::vector<unsigned int>* const pInformationVec,
+		const D3DXVECTOR2& vSize,
+		const char* sWindowName );
 
 	virtual ~clsMENU_WINDOW_ASSEMBLE_BASE();
+
+	//シーンクラスと情報のやり取りをするデータ作成関数( のラップ関数 ).
+	static INFORMATION_MENU_DATA_ARRAY CreateInformation(
+		INFORMATION_MENU_DATA_ARRAY* const InformationDataArray,
+		const int iInformationSize );
 
 private:
 

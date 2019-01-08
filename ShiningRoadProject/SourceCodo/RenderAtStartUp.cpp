@@ -157,23 +157,23 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 #ifdef _DEBUG
 	ss.Disp = INIT_DISP;
 	ss.Anim = INIT_ANIM;
-	m_vecupRogo.reserve( cSPRITE_MAX );
+	m_vecupDebugImage.reserve( cSPRITE_MAX );
 	for( char i=0; i<cSPRITE_MAX; i++ ){
-		m_vecupRogo.push_back( nullptr );
-		m_vecupRogo[i] = make_unique< clsSPRITE2D_CENTER >();
-		m_vecupRogo[i]->Create( m_wpDevice, m_wpContext, cIMAGE_PATH, ss );
+		m_vecupDebugImage.push_back( nullptr );
+		m_vecupDebugImage[i] = make_unique< clsSPRITE2D_CENTER >();
+		m_vecupDebugImage[i]->Create( m_wpDevice, m_wpContext, cIMAGE_PATH, ss );
 
 	//	m_upRogo->SetPos( vINIT_POS );
 		float tmpY;
 		if( i%2 )	tmpY = -128.0f;
 		else		tmpY = WND_H * 0.5f;
-		m_vecupRogo[i]->SetPos( { -128.0f, tmpY, 0.0f } );//256size.
-		m_vecupRogo[i]->AddPos( { 96.0f*i, 32.0f*i, 0.0f } );
-		m_vecupRogo[i]->SetAnim( { static_cast<float>( i % 3 ), static_cast<float>( i % 2 ) } );
+		m_vecupDebugImage[i]->SetPos( { -128.0f, tmpY, 0.0f } );//256size.
+		m_vecupDebugImage[i]->AddPos( { 96.0f*i, 32.0f*i, 0.0f } );
+		m_vecupDebugImage[i]->SetAnim( { static_cast<float>( i % 3 ), static_cast<float>( i % 2 ) } );
 		float tmpAlpha;
 		if( i%2 )	tmpAlpha = 0.75f;
 		else		tmpAlpha = 0.5f;
-		m_vecupRogo[i]->SetAlpha( tmpAlpha );
+		m_vecupDebugImage[i]->SetAlpha( tmpAlpha );
 	}
 #endif//#ifdef _DEBUG
 
@@ -200,13 +200,13 @@ clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 	m_vecupGage.shrink_to_fit();
 
 #ifdef _DEBUG
-	for( unsigned int i=0; i<m_vecupRogo.size(); i++ ){
-		if( m_vecupRogo[i] ){
-			m_vecupRogo[i].reset( nullptr );
+	for( unsigned int i=0; i<m_vecupDebugImage.size(); i++ ){
+		if( m_vecupDebugImage[i] ){
+			m_vecupDebugImage[i].reset( nullptr );
 		}
 	}
-	m_vecupRogo.clear();
-	m_vecupRogo.shrink_to_fit();
+	m_vecupDebugImage.clear();
+	m_vecupDebugImage.shrink_to_fit();
 #endif//#ifdef _DEBUG
 
 	if( m_upLineBox ){
@@ -262,8 +262,8 @@ void clsRENDER_AT_START_UP::Loop()
 void clsRENDER_AT_START_UP::Update()
 {
 #ifdef _DEBUG
-	for( unsigned int i=0; i<m_vecupRogo.size(); i++ ){
-		m_vecupRogo[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
+	for( unsigned int i=0; i<m_vecupDebugImage.size(); i++ ){
+		m_vecupDebugImage[i]->AddRot( vUPDATE_ROT*( (i+1) * 0.5f) );
 	}
 #endif//#ifdef _DEBUG
 
@@ -304,7 +304,7 @@ void clsRENDER_AT_START_UP::Update()
 }
 
 //起動中の描画.
-void clsRENDER_AT_START_UP::Render( bool isLoop )
+void clsRENDER_AT_START_UP::Render( bool isLoop ) const
 {
 	//画面のクリア.
 	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
@@ -321,13 +321,13 @@ void clsRENDER_AT_START_UP::Render( bool isLoop )
 
 	if( isLoop ){
 #ifdef _DEBUG
-		for( unsigned int i=0; i<m_vecupRogo.size(); i++ ){
-			m_vecupRogo[i]->Render();
+		for( unsigned int i=0; i<m_vecupDebugImage.size(); i++ ){
+			m_vecupDebugImage[i]->Render();
 		}
 
 #endif//#ifdef _DEBUG
 
-		m_upGageBox->Render();
+		m_upLineBox->Render();
 
 		for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
 			//枠の中だけ描画する.
@@ -338,8 +338,7 @@ void clsRENDER_AT_START_UP::Render( bool isLoop )
 			}
 			m_vecupGage[i]->Render();
 		}
-
-		m_upLineBox->Render();
+		m_upGageBox->Render();
 
 		m_upLogo->Render();
 
@@ -377,13 +376,6 @@ void clsRENDER_AT_START_UP::FinishLoad()
 	m_vecupGage[0]->SetScale( { m_upGageBox->GetSize().x, m_upGageBox->GetSize().y, 0.0f } );
 
 }
-
-//終了させるための処理.
-void clsRENDER_AT_START_UP::End()
-{
-	m_bEnd = true;//このフラグがtrueになればこのクラスのループは終わる.
-}
-
 
 
 //switch文の中身.
@@ -617,7 +609,7 @@ HRESULT clsRENDER_AT_START_UP::CreateDepthStencilState()
 
 
 //深度テスト(Zテスト)ON/OFF切替.
-void clsRENDER_AT_START_UP::SetDepth( bool isOn )
+void clsRENDER_AT_START_UP::SetDepth( bool isOn ) const
 {
 	if( isOn ){
 		m_wpContext->OMSetDepthStencilState(

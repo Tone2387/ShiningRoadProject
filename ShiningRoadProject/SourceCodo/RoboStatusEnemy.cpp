@@ -1,14 +1,13 @@
 #include "RoboStatusEnemy.h"
 
-
 #include "File.h"
 #include "OperationString.h"
 
 using namespace std;
 
 namespace{
-
 	const char sROBO_STATUS_ENEMY_PATH[] = "Data\\FileData\\Hiyoshi\\RoboStatusEnemy.csv";
+
 }
 
 
@@ -16,6 +15,9 @@ clsROBO_STATUS_ENEMY::clsROBO_STATUS_ENEMY( const int iRow )
 	:m_iFILE_ROW( iRow )
 {
 	LoadFileData( sROBO_STATUS_ENEMY_PATH );
+	vector< unique_ptr< clsFILE > > vecupFile;
+	LoadPartsData( vecupFile );
+	AttachData( vecupFile );
 }
 
 clsROBO_STATUS_ENEMY::~clsROBO_STATUS_ENEMY()

@@ -10,18 +10,6 @@
 #include "Common.h"//共通クラス.
 
 
-//============================================================
-//	構造体.
-//============================================================
-//コンスタントバッファのアプリ側の定義(Simple.hlsl).
-//シェーダ内のコンスタントバッファと一致している必要あり.
-struct SPRITESHADER_CONSTANT_BUFFER
-{
-	D3DXMATRIX	mWVP;		//ワールド,ビュー,射影の合成変換行列.
-	D3DXVECTOR4	vColor;		//カラー(RGBAの型に合わせる) : テクスチャの上から色を載せる(赤っぽくも見せるためとか).
-	D3DXVECTOR4	vUV;		//UV座標.
-	D3DXVECTOR4 vSplit;//何分割?.
-};
 
 ////頂点の構造体.
 //struct SpriteVertex
@@ -36,8 +24,7 @@ struct SPRITESHADER_CONSTANT_BUFFER
 //============================================================
 //	スプライトクラス.
 //============================================================
-class clsSprite
-	: public clsCommon
+class clsSprite : public clsCommon
 {
 public:
 	clsSprite();	//コンストラクタ.
@@ -53,41 +40,46 @@ public:
 	virtual void Render( 
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj,
-		const D3DXVECTOR3 &vEye, 
+		const D3DXVECTOR3 &vEye,
+		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f },
 		bool isBillBoard = false );
 
 
-	D3DXVECTOR3 GetPos();
-	void SetPos( const D3DXVECTOR3& vPos );
-	void AddPos( const D3DXVECTOR3& vPos );
+	D3DXVECTOR3 GetPos()					{ return m_vPos; };
+	void SetPos( const D3DXVECTOR3& vPos )	{ m_vPos = vPos; };
+	void AddPos( const D3DXVECTOR3& vPos )	{ m_vPos += vPos; };
 
-	D3DXVECTOR3 GetRot();
-	void SetRot( const D3DXVECTOR3& vRot );
-	void AddRot( const D3DXVECTOR3& vRot );
+	D3DXVECTOR3 GetRot()					{ return m_vRot; };
+	void SetRot( const D3DXVECTOR3& vRot )	{ m_vRot = vRot; };
+	void AddRot( const D3DXVECTOR3& vRot )	{ m_vRot += vRot; };
 
-	D3DXVECTOR3 GetScale();
-	void SetScale( const D3DXVECTOR3& vScale );
-	void AddScale( const D3DXVECTOR3& vScale );
+	D3DXVECTOR3 GetScale()						{ return m_vScale; };
+	void SetScale( const D3DXVECTOR3& vScale )	{ m_vScale = vScale; };
+	void AddScale( const D3DXVECTOR3& vScale )	{ m_vScale += vScale; };
 
-	void SetSplit( const D3DXVECTOR2& vSplit ){
-		m_vSplit = vSplit;
-	}
+	void SetAlpha( const float fAlpha )	{ m_fAlpha = fAlpha; };
+
+	void SetSplit( const D3DXVECTOR2& vSplit )	{ m_vSplit = vSplit; }
 
 
 protected:
 
 	//シェーダ作成.
-	HRESULT InitShader();
+	HRESULT InitShader( const char* sErrFileName );
 	////モデル作成.
 	virtual HRESULT InitModel( const char* sTexName );
+	//マスク作成.
+	HRESULT CreateMask( const char* sTexName );
 
+protected:
 
 	D3DXVECTOR3		m_vPos;	//位置.
 	D3DXVECTOR3		m_vRot;
 	D3DXVECTOR3		m_vScale;
 
-	D3DXVECTOR2		m_vSplit;
+	float			m_fAlpha;
 
+	D3DXVECTOR2		m_vSplit;
 
 
 	//↓モデルの種類ごとに用意.
@@ -102,12 +94,11 @@ protected:
 	ID3D11ShaderResourceView*	m_pTexture;		//テクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
 
+	std::vector< ID3D11ShaderResourceView* >	m_vecpMask;		//テクスチャのマスク.
 
 
 
 	int		m_AnimCount;//UVスクロール.
-
-	bool	m_bDispFlg;//表示フラグ.
 
 
 };

@@ -43,7 +43,6 @@ public:
 		size
 	};
 
-
 	enum enCORE_BONE_POSITIONS : int
 	{
 		enCORE_BONE_POSITIONS_BOOSTER_ROOT = 0,
@@ -59,7 +58,7 @@ public:
 	//直前のフレームのボーンの座標を持ってくる.
 	D3DXVECTOR3 GetBonePosPreviosFrame( 
 		const int enBoneName, 
-		int iVecNum = 0 ) override;
+		int iVecNum = 0 ) const override;
 	//↑で使うためにボーン座標を記録する( Renderの直後に使う ).
 	void UpdateBonePosPreviosFrame() override;
 

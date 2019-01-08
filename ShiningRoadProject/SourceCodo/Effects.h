@@ -4,6 +4,11 @@
 //警告についてのコード分析を無効にする。4005:再定義.
 #pragma warning( disable : 4005 )
 
+
+//XAudioを使用する場合は有効にする.
+//#define EFFECTS_USE_XAUDIO_
+
+
 //==================================================
 //	先にしておくべきヘッダ、ライブラリの読込.
 //==================================================
@@ -21,15 +26,15 @@
 #include <EffekseerSoundXAudio2.h>
 
 
-#if _DEBUG
+#ifdef _DEBUG
 #pragma comment( lib, "VS2013\\Debug\\Effekseer.lib" )
 #pragma comment( lib, "VS2013\\Debug\\EffekseerRendererDX11.lib" )
 #pragma comment( lib, "VS2013\\Debug\\EffekseerSoundXAudio2.lib" )
-#else//#if _DEBUG
+#else//#ifdef _DEBUG
 #pragma comment( lib, "VS2013\\Release\\Effekseer.lib" )
 #pragma comment( lib, "VS2013\\Release\\EffekseerRendererDX11.lib" )
 #pragma comment( lib, "VS2013\\Release\\EffekseerSoundXAudio2.lib" )
-#endif//#if _DEBUG
+#endif//#ifdef _DEBUG
 
 
 //「D3DX～」使用で必須.
@@ -92,28 +97,41 @@ public:
 #endif//EFFECTS_CLASS_SINGLETON
 	~clsEffects();
 
+
+
 	//構築関数.
 	HRESULT Create( 
 		ID3D11Device* const pDevice,
 		ID3D11DeviceContext* const pContext );
 
 	//描画.
-	void Render( 
+	void Render(
 		const D3DXMATRIX& mView, 
 		const D3DXMATRIX& mProj, 
-		const D3DXVECTOR3& vEye ) const;
+		const D3DXVECTOR3& vEye );
 
 
 	//再生関数.
-	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos ) const 
+	::Effekseer::Handle Play( const int EfcType, const D3DXVECTOR3 &vPos )
 	{
-		return m_pManager->Play(
-			m_vecpEffect[EfcType], vPos.x, vPos.y, vPos.z );
+		::Effekseer::Handle hAdd = m_pManager->Play(
+			m_vecpEffect[ EfcType ], vPos.x, vPos.y, vPos.z );
+
+		m_vecHandle.push_back( hAdd );
+
+		return hAdd;
 	};
 	//一時停止.
-	void Paused( const ::Effekseer::Handle handle, const bool bFlag ) const 
+	void Paused( const ::Effekseer::Handle handle, const bool isStop ) const 
 	{
-		m_pManager->SetPaused( handle, bFlag );	//bFlag:true = 一時停止.
+		m_pManager->SetPaused( handle, isStop );	//bFlag:true = 一時停止.
+	}
+	//全て一時停止.
+	void PausedAll( const bool isStop ) const 
+	{
+		for( auto& Handle_i : m_vecHandle ){
+			m_pManager->SetPaused( Handle_i, isStop );	//isStop:true = 一時停止.
+		}
 	}
 	//停止.
 	void Stop( const ::Effekseer::Handle handle ) const 
@@ -123,6 +141,7 @@ public:
 	//すべて停止.
 	void StopAll() const 
 	{
+		if( !m_pManager )return;
 		m_pManager->StopAllEffects();
 	}
 	
@@ -215,17 +234,25 @@ private:
 					const ::Effekseer::Matrix44* pSrcMatEfk ) const;
 
 
+private:
+
 	//エフェクトを作動させるために必要.
 	::Effekseer::Manager*			m_pManager;
 	::EffekseerRenderer::Renderer*	m_pRender;
+
+#ifdef EFFECTS_USE_XAUDIO_
 	::EffekseerSound::Sound*		m_pSound;
 	//エフェクトデータに含まれる音再生に必要.
 	IXAudio2*						m_pXA2;
 	IXAudio2MasteringVoice*			m_pXA2Master;
-
+#endif//#ifdef EFFECTS_USE_XAUDIO_
 
 	//エフェクトの種類ごとに必要.
 	std::vector< ::Effekseer::Effect* >	m_vecpEffect;
+
+	//一時停止用.
+	std::vector< ::Effekseer::Handle >  m_vecHandle;
+
 
 
 };

@@ -1,7 +1,9 @@
 #ifndef LINE_BOX_H_
 #define LINE_BOX_H_
 
+class clsSPRITE2D_CENTER;
 
+#include "Global.h"
 #include "Sprite2DCenter.h"
 
 //ê¸ÇÃéläp.
@@ -30,13 +32,25 @@ public:
 
 	virtual void Render();
 
-	void SetPos( const D3DXVECTOR3 &vPos );
-	void AddPos( const D3DXVECTOR3 &vPos );
-	void SetSize( const D3DXVECTOR3 &vSize );
-	void SetSize( const float &fSize );
-	void AddSize( const D3DXVECTOR3 &vSize );
-	void AddScale( const D3DXVECTOR3 &vScale );
-	void AddScale( const float &fScale );
+	D3DXVECTOR3 GetPos() const				{ return m_vPos; };
+	void SetPos( const D3DXVECTOR3 &vPos )	{ m_vPos = vPos; };
+	void AddPos( const D3DXVECTOR3 &vPos )	{ m_vPos += vPos; };
+
+	D3DXVECTOR3 GetSize() const				{ return m_vSize; };
+	void SetSize( const D3DXVECTOR3 &vSize ){ m_vSize = vSize; };
+	void SetSize( const float &fSize )		{ m_vSize = { fSize, fSize, 1.0f }; };
+	void AddSize( const D3DXVECTOR3 &vSize ){ m_vSize += vSize; };
+
+	void AddScale( const D3DXVECTOR3 &vScale ){
+		m_vSize.x *= vScale.x;
+		m_vSize.y *= vScale.y;
+		m_vSize.z *= vScale.z;
+	};
+	void AddScale( const float &fScale ){
+		m_vSize.x *= fScale;
+		m_vSize.y *= fScale;
+		m_vSize.z = 1.0f;
+	};
 
 	//Ç∂ÇÌÇ∂ÇÌëÂÇ´Ç≥ÇïœÇ¶Ç≥ÇπÇΩÇ¢Ç∆Ç´Ç…égÇ§.
 	void SetSizeTarget( const D3DXVECTOR3 &vSize );
@@ -44,11 +58,10 @@ public:
 		const float fWidthSpd,
 		const float fHeightSpd,
 		const encBEFOR_CHANGE encBefor );
-	//ïœâªíÜÇÕfalse.
-	bool isStopChange();
 
-	D3DXVECTOR3 GetPos() const;
-	D3DXVECTOR3 GetSize() const;
+	//ïœâªíÜÇÕfalse.
+	bool isStopChange(){ return m_isStopChange; };
+
 
 	virtual void SetAlpha( const float fAlpha );
 	//îÕàÕÇoverÇ∑ÇÈÇ∆falseÇ™ï‘Ç¡ÇƒÇ≠ÇÈ.

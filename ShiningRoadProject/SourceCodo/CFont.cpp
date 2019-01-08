@@ -5,7 +5,6 @@
 #include "File.h"
 //#include "OperationString.h"
 
-#include <assert.h>
 
 
 
@@ -17,6 +16,21 @@ namespace{
 #define sFONT_NAME "マキナス Scrap 5"
 
 #define FONT_SHADER		"Shader\\FontText.hlsl"
+
+//アラインメント設定(強制的に16バイトに設定する).
+#define ALIGN16 _declspec( align ( 16 ) )
+
+	//構造体.
+	struct FONTSHADER_CONSTANT_BUFFER
+	{
+		ALIGN16 D3DXMATRIX mW;			//位置とカメラ位置と表示画面設定.
+		ALIGN16 float ViewPortWidth;	//カラー(RGBAの型に合わせる).
+		ALIGN16 float ViewPortHeight;	//UV座標.
+		ALIGN16 float Alpha;	//透過値.
+		ALIGN16 D3DXVECTOR2 Uv;	//UV座標.
+		ALIGN16 D3DXVECTOR4 Color;	//UV座標.
+	};
+
 
 	//フォントのパス.
 	const char* sFONT_STYLE_PATH = "Data\\Font\\FontType\\Makinas-Scrap-5.otf";//Makinas-Scrap-5.otf.//aozora.ttf.
@@ -37,9 +51,7 @@ namespace{
 clsFont::clsFont( 
 	ID3D11Device* const pDevice, 
 	ID3D11DeviceContext* const pContext )
-	:m_pDevice( pDevice )
-	,m_pContext( pContext )
-	,m_pVertexShader( nullptr )
+	:m_pVertexShader( nullptr )
 	,m_pVertexLayout( nullptr )
 	,m_pPixelShader( nullptr )
 	,m_pVertexBuffer( nullptr )
@@ -47,7 +59,6 @@ clsFont::clsFont(
 	,m_pConstantBuffer( nullptr )
 	,m_vecpTex2D()
 	,m_vecvecpAsciiTexture()
-	,m_pBlendState()
 	,m_vecsTextData()
 	,m_Design()
 	,m_fIndentionPosint( static_cast<float>( WND_W ) )
@@ -61,6 +72,9 @@ clsFont::clsFont(
 	,m_vPosLast( m_vPos )
 	,m_iTextRow( iERROR_TEXT_ROW_NUM )
 {
+	m_wpDevice = pDevice;
+	m_wpContext = pContext;
+
 //	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 //		m_pBlendState[i] = nullptr;
 //	}
@@ -113,46 +127,7 @@ clsFont::~clsFont()
 		ERR_MSG( "フォントリソースの破棄に失敗", "" );
 	}
 
-	m_pContext = nullptr;
-	m_pDevice = nullptr;
 }
-
-//ブレンドステート作成.
-HRESULT clsFont::CreateBlendState()
-{
-	//アルファブレンド用ブレンドステート作成.
-	//pngファイル内にアルファ情報があるので、透過するようにブレンドステートで設定する.
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );	//初期化.
-	blendDesc.IndependentBlendEnable = false;			//false:RenderTarget[0]のメンバーのみ使用する。true:RenderTarget[0～7]が使用できる(レンダーターゲット毎に独立したブレンド処理).
-	blendDesc.AlphaToCoverageEnable = false;			//true:アルファトゥカバレッジを使用する.
-
-	//表示タイプ
-//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:アルファブレンドを使用する.
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//アルファブレンドを指定.
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//アルファブレンドの反転を指定.
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成.
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//そのまま使用.
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;		//何もしない.
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ADD：加算合成.
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのデータの格納を許可する.
-
-	bool tmpBlendEnable[ enBLEND_STATE_size ];
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
-	{
-		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
-			assert( !"ブレンドステートの作成に失敗" );
-			return E_FAIL;
-		}
-	}
-
-	return S_OK;
-}
-
 
 //シェーダの作成.
 HRESULT clsFont::CreateShader()
@@ -165,22 +140,22 @@ HRESULT clsFont::CreateShader()
 
 
 	//ブロブからバーテックスシェーダー作成.
-	if( FAILED(D3DX11CompileFromFile(
+	if( FAILED( D3DX11CompileFromFile(
 		FONT_SHADER, NULL, NULL, "VS", "vs_5_0", 0, 0, NULL,
 		&pCompileShader, &pErrors, NULL ) ) )
 	{
-		assert( "ブロブ作成失敗(VS)" );
+		assert( "CFontブロブ作成失敗(VS)" );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
 
 	//Vertex Shaderの作成.
-	if( FAILED( m_pDevice->CreateVertexShader(
+	if( FAILED( m_wpDevice->CreateVertexShader(
 		(pCompileShader)->GetBufferPointer(),
 		(pCompileShader)->GetBufferSize(),
 		NULL, &m_pVertexShader ) ) )	//(out)頂点シェーダー.
 	{
-		assert( "Vertex Shader作成失敗(VS)" );
+		assert( "CFontVertex Shader作成失敗(VS)" );
 		return E_FAIL;
 	}
 
@@ -205,11 +180,11 @@ HRESULT clsFont::CreateShader()
 	UINT numElements_Ita = sizeof( layout_Ita ) / sizeof( layout_Ita[0] );
 
 	//頂点インプットレイアウト作成.
-	if( FAILED( m_pDevice->CreateInputLayout(layout_Ita,
+	if( FAILED( m_wpDevice->CreateInputLayout( layout_Ita,
 		numElements_Ita, pCompileShader->GetBufferPointer(),	//(out)頂点インプットレイアウト.
 		pCompileShader->GetBufferSize(), &m_pVertexLayout ) ) )
 	{
-		assert( "頂点インプットレイアウトの作成失敗" );
+		assert( "CFont頂点インプットレイアウトの作成失敗" );
 		return FALSE;
 	}
 
@@ -218,17 +193,17 @@ HRESULT clsFont::CreateShader()
 		FONT_SHADER, NULL, NULL, "PS", "ps_5_0", 0, 0, NULL,
 		&pCompileShader, &pErrors, NULL ) ) )
 	{
-		assert( "ブロブ作成失敗(PS)" );
+		assert( "CFontブロブ作成失敗(PS)" );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
 
 	//Pixel Shaderの作成.
-	if( FAILED( m_pDevice->CreatePixelShader(
+	if( FAILED( m_wpDevice->CreatePixelShader(
 		(pCompileShader)->GetBufferPointer(),
 		(pCompileShader)->GetBufferSize(), NULL, &m_pPixelShader ) ) )	//(out)頂点.
 	{
-		assert( "ピクセルシェーダー作成失敗" );
+		assert( "CFontピクセルシェーダー作成失敗" );
 		return E_FAIL;
 	}
 
@@ -238,7 +213,6 @@ HRESULT clsFont::CreateShader()
 
 	return S_OK;
 }
-
 //バーテックスバッファの作成.
 HRESULT clsFont::CreateVertexBuffer()
 {
@@ -270,15 +244,15 @@ HRESULT clsFont::CreateVertexBuffer()
 	D3D11_SUBRESOURCE_DATA InitDate;
 	InitDate.pSysMem = vertices;		//三角形の頂点をリセット.
 	//頂点バッファの作成.
-	if( FAILED( m_pDevice->CreateBuffer( &bd, &InitDate, &m_pVertexBuffer ) ) ){
-		ERR_MSG("頂点バッファ(m_pItaVB)の作成に失敗", "InitPolygon");
+	if( FAILED( m_wpDevice->CreateBuffer( &bd, &InitDate, &m_pVertexBuffer ) ) ){
+		ERR_MSG("頂点バッファ(m_pItaVB)の作成に失敗", "CFont");
 		return E_FAIL;
 	}
 
 	//頂点バッファをセット.
 	UINT stride = sizeof(FONT_VERTEX);	//頂点間のサイズ.
 	UINT offset = 0;					//オフセット値.
-	m_pContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
+	m_wpContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
 
 	//テクスチャ用サンプラー作成.
 	D3D11_SAMPLER_DESC SamDesc;
@@ -287,11 +261,10 @@ HRESULT clsFont::CreateVertexBuffer()
 	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;		//ラッピングモード（WRAP：繰り返し).
 	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	m_pDevice->CreateSamplerState( &SamDesc, &m_pSampleLinear );	//（out)サンプラー.
+	m_wpDevice->CreateSamplerState( &SamDesc, &m_pSampleLinear );	//（out)サンプラー.
 
 	return S_OK;
 }
-
 //定数バッファの作成.
 HRESULT clsFont::CreateConstantBuffer()
 {
@@ -305,10 +278,10 @@ HRESULT clsFont::CreateConstantBuffer()
 	ItaBD.Usage = D3D11_USAGE_DYNAMIC;					//使用法：直接書き込み.
 
 	//コンスタンストバッファ作成.
-	if( FAILED( m_pDevice->CreateBuffer(
+	if( FAILED( m_wpDevice->CreateBuffer(
 		&ItaBD, NULL, &m_pConstantBuffer ) ) )
 	{
-		ERR_MSG("コンスタントバッファ(Ita)の作成に失敗", "InitShader");
+		ERR_MSG("コンスタントバッファ(Ita)の作成に失敗", "CFont");
 		return E_FAIL;
 	}
 
@@ -316,6 +289,31 @@ HRESULT clsFont::CreateConstantBuffer()
 	return S_OK;
 }
 
+
+
+
+void clsFont::Create( const char *sTextFileName )
+{
+	//既に作成されたものがあるなら破棄してから作る.
+	if( m_iTextRow != iERROR_TEXT_ROW_NUM ){
+		Release();
+		assert( !"中身があるclsFontを初期化しようとしたな?\n\
+				 まあ消しといてあげたけど" );
+	}
+
+	if( FAILED( LoadTextFile( sTextFileName ) ) ){
+		assert( !"Can't Load Text File" );
+	}
+
+	if( FAILED( CreateTexture( sTextFileName ) ) ){
+		assert( !"Can't Create Texture" );
+	}
+
+	SetPos( { 0.0f, 0.0f, 0.0f } );
+	SetScale( 0.0f );
+	SetAlpha( 1.0f );
+	SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
+}
 //ファイル読み込み.
 HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 {
@@ -362,9 +360,8 @@ HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 
 	return S_OK;
 }
-
 //テクスチャ作成.
-HRESULT clsFont::CreateTexture()
+HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 {
 	//fontCreate.
 	LOGFONT lf = {
@@ -384,9 +381,8 @@ HRESULT clsFont::CreateTexture()
 	for( unsigned int iTex=0; iTex<m_vecsTextData.size(); iTex++ )
 	{
 		HFONT hFont = CreateFontIndirect( &lf );
-		if( !hFont )
-		{
-			ERR_MSG("フォント作成不可", "Error");
+		if( !hFont ){
+			ERR_MSG( "フォント作成不可", sErrFilePath );
 			return E_FAIL;
 		}
 
@@ -446,14 +442,13 @@ HRESULT clsFont::CreateTexture()
 //			}
 			
 
-			if( FAILED( m_pDevice->CreateTexture2D( &desc, 0, &m_vecpTex2D[ iTex ] ) ) ){
-				MessageBox( 0, "テクスチャ作成失敗", "CreateTexture", MB_OK );
+			if( FAILED( m_wpDevice->CreateTexture2D( &desc, 0, &m_vecpTex2D[ iTex ] ) ) ){
+				MessageBox( 0, "テクスチャ作成失敗", sErrFilePath, MB_OK );
 				return E_FAIL;
 			}
 
 			D3D11_MAPPED_SUBRESOURCE hMappedResource;
-			if( FAILED
-				( m_pContext->Map(
+			if( FAILED( m_wpContext->Map(
 				m_vecpTex2D[ iTex ],
 				0,
 				D3D11_MAP_WRITE_DISCARD,
@@ -461,7 +456,7 @@ HRESULT clsFont::CreateTexture()
 				&hMappedResource ) ) )
 			{
 				MessageBox(NULL, "テクスチャ作成失敗",
-					"CreateTex::->Map", MB_OK);
+					sErrFilePath, MB_OK);
 				return E_FAIL;
 			}
 			// ここで書き込む.
@@ -491,7 +486,7 @@ HRESULT clsFont::CreateTexture()
 				}
 			}
 
-			m_pContext->Unmap( m_vecpTex2D[ iTex ], 0 );
+			m_wpContext->Unmap( m_vecpTex2D[ iTex ], 0 );
 
 			//テクスチャ情報を取得する.
 			D3D11_TEXTURE2D_DESC texDesc;
@@ -505,10 +500,10 @@ HRESULT clsFont::CreateTexture()
 			srvDesc.Texture2D.MostDetailedMip = 0;
 			srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
 
-			if( FAILED( m_pDevice->CreateShaderResourceView(
+			if( FAILED( m_wpDevice->CreateShaderResourceView(
 				m_vecpTex2D[ iTex ], &srvDesc, &m_vecvecpAsciiTexture[ iTex ][ iCharCnt ] ) ) )
 			{
-				assert( !"テクスチャ作成失敗" );
+				ERR_MSG( "テクスチャ作成失敗", sErrFilePath );
 				return E_FAIL;
 			}
 
@@ -529,21 +524,6 @@ HRESULT clsFont::CreateTexture()
 	return S_OK;
 }
 
-void clsFont::Create( const char *sTextFileName )
-{
-	if( FAILED( LoadTextFile( sTextFileName ) ) ){
-		assert( !"Can't Load Text File" );
-	}
-
-	if( FAILED( CreateTexture() ) ){
-		assert( !"Can't Create Texture" );
-	}
-
-	SetPos( { 0.0f, 0.0f, 0.0f } );
-	SetScale( 0.0f );
-	SetAlpha( 1.0f );
-	SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
-}
 
 void clsFont::Release()
 {
@@ -554,7 +534,6 @@ void clsFont::Release()
 	{
 		for( unsigned int i=0; i<m_vecvecpAsciiTexture[ iTex ].size(); i++ )
 		{
-//			SAFE_DELETE(m_pAsciiTexture[ iTex ][i]);
 			if( !m_vecvecpAsciiTexture[ iTex ][i] ) continue;
 			m_vecvecpAsciiTexture[ iTex ][i]->Release();
 			m_vecvecpAsciiTexture[ iTex ][i] = nullptr;
@@ -566,7 +545,6 @@ void clsFont::Release()
 	m_vecvecpAsciiTexture.shrink_to_fit();
 
 	for( unsigned int iTex=0; iTex<m_vecpTex2D.size(); iTex++ ){
-//		SAFE_DELETE(m_pTex2D[ iTex ]);
 		if( !m_vecpTex2D[ iTex ] ) continue;
 		m_vecpTex2D[ iTex ]->Release();
 		m_vecpTex2D[ iTex ] = nullptr;
@@ -576,8 +554,6 @@ void clsFont::Release()
 
 	m_iTextRow = iERROR_TEXT_ROW_NUM;
 }
-
-
 //							↓段( 何行目? )	　		↓文字数.
 void clsFont::Render( const int iTextRow, const int iCharNum )
 {
@@ -586,9 +562,9 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 
 
 	//使用するシェーダーの登録.
-	m_pContext->VSSetShader( m_pVertexShader,	NULL, 0 );
-	m_pContext->PSSetShader( m_pPixelShader,	NULL, 0 );
-	m_pContext->GSSetShader( NULL,				NULL, 0 );
+	m_wpContext->VSSetShader( m_pVertexShader,	NULL, 0 );
+	m_wpContext->PSSetShader( m_pPixelShader,	NULL, 0 );
+	m_wpContext->GSSetShader( NULL,				NULL, 0 );
 
 	//文字列の左上を座標の位置に持ってくるために必要.
 	const D3DXVECTOR3 vOFFSET_POS = { -m_fScale, m_fScale * 0.5f, 0.0f };
@@ -646,7 +622,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 		//シェーダーのコンスタントバッファに各種データを渡す.
 		D3D11_MAPPED_SUBRESOURCE	pData;
 		FONTSHADER_CONSTANT_BUFFER	cb;
-		if( SUCCEEDED( m_pContext->Map(
+		if( SUCCEEDED( m_wpContext->Map(
 			m_pConstantBuffer, 0,
 			D3D11_MAP_WRITE_DISCARD,
 			0, &pData ) ) )
@@ -665,7 +641,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 			cb.Alpha = m_fAlpha;
 
 			memcpy_s( pData.pData, pData.RowPitch, (void*)( &cb ), sizeof( cb ) );
-			m_pContext->Unmap( m_pConstantBuffer, 0 );
+			m_wpContext->Unmap( m_pConstantBuffer, 0 );
 		}
 
 		//最後の文字の位置を取得.
@@ -675,52 +651,29 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 			0.0f );
 
 		//このコンスタントバッファを使うシェーダーの登録.
-		m_pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
-		m_pContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+		m_wpContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+		m_wpContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 
 		//バーテックスバッファをセット.
 		UINT stride = sizeof( FONT_VERTEX );
 		UINT offset = 0;
-		m_pContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
+		m_wpContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
 
 		//トポロジー.
-		m_pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+		m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 		//頂点インプットレイアウトをセット.
-		m_pContext->IASetInputLayout(m_pVertexLayout);
+		m_wpContext->IASetInputLayout(m_pVertexLayout);
 
 		//テクスチャをシェーダーに渡す.
-		m_pContext->PSSetSamplers( 0, 1, &m_pSampleLinear );
-		m_pContext->PSSetShaderResources( 0, 1, &m_vecvecpAsciiTexture[ iTextRow ][i] );
+		m_wpContext->PSSetSamplers( 0, 1, &m_pSampleLinear );
+		m_wpContext->PSSetShaderResources( 0, 1, &m_vecvecpAsciiTexture[ iTextRow ][i] );
 
 		//アルファブレンド用ブレンドステート作成.
 		SetBlend( true );
 
 		//描画.
-		m_pContext->Draw( 4, 0 );
+		m_wpContext->Draw( 4, 0 );
 	}
-}
-
-
-
-void clsFont::SetPos( const D3DXVECTOR3 &vPos )
-{
-	m_vPos = vPos;
-}
-
-D3DXVECTOR3 clsFont::GetPos()
-{
-	return m_vPos;
-}
-
-
-void clsFont::SetScale( const float fScale )
-{
-	m_fScale = fScale;
-}
-
-float clsFont::GetScale()
-{
-	return m_fScale;
 }
 	 
 void clsFont::SetColor( const D3DXVECTOR4 &vColor )
@@ -730,49 +683,14 @@ void clsFont::SetColor( const D3DXVECTOR4 &vColor )
 	m_vColor.w = fNOT_ALPHA;
 }
 
-void clsFont::SetAlpha( const float fAlpha )
-{
-	m_fAlpha = fAlpha;
-}
-
-//折り返し位置.
-void clsFont::SetIndentPos( const float fPosX )
-{
-	m_fIndentionPosint = fPosX;
-}
-
-//読み込んだテキストの数( Createしていないと-1が返る ).
-int clsFont::GetTextRow()
-{
-	return m_iTextRow;
-}
-
-void clsFont::SetBlend( const bool isAlpha )
-{
-	UINT mask = 0xffffffff;	//マスク値白.
-
-	if( isAlpha ){		
-		//ブレンドステートの設定.
-		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
-	}
-	else{
-		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
-	}
-}
-
-D3DXVECTOR3 clsFont::GetPosLast()
-{
-	return m_vPosLast;
-}
 
 //テキストの内容.
-std::string clsFont::GetText( const int iRow )
+std::string clsFont::GetText( const int iRow ) const
 {
 	assert( static_cast<unsigned int>( iRow ) < m_vecsTextData.size() );
 
 	return m_vecsTextData[ iRow ];
 }
-
 
 //文字を細くする倍率を返す( 問題ないなら1.0f ).
 //第二引数は( 全角で )何文字目か.
@@ -780,7 +698,7 @@ std::string clsFont::GetText( const int iRow )
 float clsFont::GetFineCharactorRate( 
 	const int iTextRow, 
 	const int iCharNum, 
-	float* outfAddLeft )
+	float* outfAddLeft ) const
 {
 	const float fDEFAULT_RATE	= 1.0f;
 	const float fSLENDER_RATE	= 0.5f;
@@ -855,8 +773,8 @@ float clsFont::GetFineCharactorRate(
 	return fReturn;
 }
 
-
-clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType( const int iTextRow, const int iCharNum )
+clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType( 
+	const int iTextRow, const int iCharNum ) const
 {
 	//次がないならそれは文末すなわち、とりあえず半角を返しておけばよい( 仮に日本語の末尾だったとしても見えないから影響しない ).
 	if( iCharNum + 1 >= static_cast<int>( m_vecsTextData[ iTextRow ].size() ) ){

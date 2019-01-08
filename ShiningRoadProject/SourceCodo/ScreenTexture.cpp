@@ -1,6 +1,11 @@
 #include "ScreenTexture.h"
 
+#include "SoundManagerNoise.h"
 #include "Sprite2D.h"	
+
+#include <random>
+
+using namespace std;
 
 namespace{
 
@@ -8,15 +13,29 @@ namespace{
 	{
 		ALIGN16 D3DXMATRIX	mW;				//ワールド行列.
 		ALIGN16	D3DXVECTOR4	vColor;			//アルファ値(透過で使用する)
-		ALIGN16 float		fViewPortWidth;	//ビューポート幅.
-		ALIGN16 float		fViewPortHeight;//ビューポート高さ.
-		ALIGN16 D3DXVECTOR2	vUV;			//UV座標.
+		ALIGN16 D3DXVECTOR2 vViewPort;	//ビューポート幅.
 		ALIGN16 float		fPulse;			//パルス.
 		ALIGN16 float		fPulseOffset;	
 		ALIGN16 int			iBlock;			//ブロックの分割数.
 		ALIGN16 int			iSeed;			//ブロックのseed値.
-		ALIGN16 D3DXVECTOR2	vNoiseStart;	//ノイズ範囲開始座標.
-		ALIGN16 D3DXVECTOR2	vNoiseEnd;		//ノイズ範囲終了座標.
+		ALIGN16 float		isfNega;
+	};
+
+
+	enum enSE_WEAK : int{
+		enSE_WEAK_A = 0,
+		enSE_WEAK_B,
+
+		enSE_WEAK_size
+	};
+	enum enSE_STRONG : int{
+		enSE_STRONG_A = enSE_WEAK_size,
+		enSE_STRONG_B,
+		enSE_STRONG_C,
+		enSE_STRONG_D,
+		enSE_STRONG_E,
+
+		enSE_STRONG_size
 	};
 
 	const char sSHADER_NAME[] = "Shader\\Screen.hlsl";
@@ -30,10 +49,9 @@ namespace{
 
 
 clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
+	const HWND hWnd,
 	ID3D11DeviceContext* const pContext )
-	:m_wpContext( pContext )
-	,m_wpDevice( nullptr )
-	,m_pTexture( nullptr )
+	:m_pTexture( nullptr )
 	,m_pRenderTargetView( nullptr )
 	,m_pShaderResourceView( nullptr )
 	,m_pSamplerState( nullptr )
@@ -47,22 +65,30 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	,m_fPulse( fPULSE_INIT )
 	,m_fPulseOffset( fPULSE_OFFSET_INIT )
 	,m_fPulseOffsetAdd( fPULSE_OFFSET_ADD )
-	,m_vNoiseStart( { 0.0f, 0.0f } )
-	,m_vNoiseEnd( { 0.0f, 0.0f } )
+	,m_isNega( false )
+	,m_vColor( 1.0f, 1.0f, 1.0f, 1.0f )
 {
+	m_wpContext = pContext;
 	assert( m_wpContext );
 	m_wpContext->GetDevice( &m_wpDevice );
 
 	if( FAILED( CreateTexture() ) ){
-		ERR_MSG( "描画先テクスチャ作成失敗", "" );
+		ERR_MSG( "描画先テクスチャ作成失敗", "clsSCREEN_TEXTURE" );
 	}
 	if( FAILED( CreateShader() ) ){
-		ERR_MSG( "描画先テクスチャシェーダー作成失敗", "" );
+		ERR_MSG( "描画先テクスチャシェーダー作成失敗", "clsSCREEN_TEXTURE" );
 	}
 	if( FAILED( CreateConstantBuffer() ) ){
-		ERR_MSG( "描画先テクスチャバッファ作成失敗", "" );
+		ERR_MSG( "描画先テクスチャバッファ作成失敗", "clsSCREEN_TEXTURE" );
+	}
+	if( FAILED( CreateBlendState() ) ){
+		ERR_MSG( "描画先ブレンドステート作成失敗", "clsSCREEN_TEXTURE" );
 	}
 
+	//サウンド作成.
+	m_upSound = make_unique< clsSOUND_MANAGER_NOISE >( hWnd );
+	assert( m_upSound );
+	m_upSound->Create();
 }
 
 clsSCREEN_TEXTURE::~clsSCREEN_TEXTURE()
@@ -78,9 +104,6 @@ clsSCREEN_TEXTURE::~clsSCREEN_TEXTURE()
 	SAFE_RELEASE( m_pTexture );
 
 
-
-	m_wpContext = nullptr;
-	m_wpDevice = nullptr;
 }
 
 
@@ -103,7 +126,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	
 	HRESULT hr = m_wpDevice->CreateTexture2D( &texDesc, nullptr, &m_pTexture );
 	if( FAILED( hr ) ){
-		ERR_MSG( "スクリーンテクスチャ作成失敗", "" );
+		ERR_MSG( "スクリーンテクスチャ作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"スクリーンテクスチャ作成失敗" );
 		return hr;
 	}
@@ -133,7 +156,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 	
 	hr = m_wpDevice->CreateRenderTargetView( m_pTexture, &rtvDesc, &m_pRenderTargetView );
 	if( FAILED( hr ) ){
-		ERR_MSG( "スクリーンレンダーターゲットビュー作成失敗", "" );
+		ERR_MSG( "スクリーンレンダーターゲットビュー作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"スクリーンレンダーターゲットビュー作成失敗" );
 		return hr;
 	}
@@ -147,7 +170,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 
 	hr = m_wpDevice->CreateShaderResourceView( m_pTexture, &srvDesc, &m_pShaderResourceView );
 	if( FAILED( hr ) ){
-		ERR_MSG( "スクリーンシェーダーリソースビュー作成失敗", "" );
+		ERR_MSG( "スクリーンシェーダーリソースビュー作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"スクリーンシェーダーリソースビュー作成失敗" );
 		return hr;
 	}
@@ -165,7 +188,7 @@ HRESULT clsSCREEN_TEXTURE::CreateTexture()
 
 	hr = m_wpDevice->CreateSamplerState( &smpDesc, &m_pSamplerState );
 	if( FAILED( hr ) ){
-		ERR_MSG( "スクリーンサンプラーステート作成失敗", "" );
+		ERR_MSG( "スクリーンサンプラーステート作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"スクリーンサンプラーステート作成失敗" );
 		return hr;
 	}
@@ -187,8 +210,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 
 
 	//HLSLからバーテックスシェーダのブロブを作成.
-	if( FAILED(
-		D3DX11CompileFromFile(
+	if( FAILED( D3DX11CompileFromFile(
 			sSHADER_NAME,	//シェーダファイル名(HLSLファイル).
 			NULL,			//マクロ定義の配列へのポインタ(未使用).
 			NULL,			//インクルードファイルを扱うインターフェースへのポインタ(未使用).
@@ -201,7 +223,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			&pErrors,		//エラーと警告一覧を格納するメモリへのポインタ.
 			NULL ) ) )		//戻り値へのポインタ(未使用).
 	{
-		MessageBox( NULL, "hlsl(vs)読み込み失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(vs)読み込み失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -214,7 +236,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			NULL,
 			&m_pVertexShader ) ) )//(out)バーテックスシェーダ.
 	{
-		MessageBox( NULL, "vs作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "vs作成失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 
@@ -239,7 +261,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			&pErrors,
 			NULL ) ) )
 	{
-		MessageBox( NULL, "hlsl(ps)読み込み失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(ps)読み込み失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -252,7 +274,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			NULL,
 			&m_pDefaultPS ) ) )//(out)ピクセルシェーダ.
 	{
-		MessageBox( NULL, "通常ps作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "通常ps作成失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 
@@ -273,7 +295,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			&pErrors,
 			NULL ) ) )
 	{
-		MessageBox( NULL, "hlsl(ps)読み込み失敗", "エラー", MB_OK );
+		MessageBox( NULL, "hlsl(ps)読み込み失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -286,7 +308,7 @@ HRESULT clsSCREEN_TEXTURE::CreateShader()
 			NULL,
 			&m_pNoisePS ) ) )//(out)ピクセルシェーダ.
 	{
-		MessageBox( NULL, "ノイズps作成失敗", "エラー", MB_OK );
+		MessageBox( NULL, "ノイズps作成失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pCompiledShader );//ブロブ解放.
@@ -310,7 +332,7 @@ HRESULT clsSCREEN_TEXTURE::CreateConstantBuffer()
 		NULL,
 		&m_pConstantBuffer ) ) )
 	{
-		MessageBox( NULL, "コンスタントバッファ作成失敗", "ScreenTexture", MB_OK );
+		MessageBox( NULL, "コンスタントバッファ作成失敗", "clsSCREEN_TEXTURE", MB_OK );
 		return E_FAIL;
 	}
 
@@ -318,16 +340,63 @@ HRESULT clsSCREEN_TEXTURE::CreateConstantBuffer()
 }
 
 //Rendertargetをテクスチャにする.
-void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView )
+void clsSCREEN_TEXTURE::SetRenderTargetTexture( ID3D11DepthStencilView* const pDepthStencilView ) const
 {
 	if( !pDepthStencilView )	return;
 
 	//レンダーターゲットをテクスチャに.
-	float clearcolor[] = { 2.5f, 0.125f, 0.125f, 1.0f };
+	float clearcolor[] = { 0.125f, 0.125f, 2.5f, 1.0f };
 	m_wpContext->OMSetRenderTargets( 1, &m_pRenderTargetView, pDepthStencilView );
 	m_wpContext->ClearRenderTargetView( m_pRenderTargetView, clearcolor );
 	m_wpContext->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 }
+
+
+//ノイズの更新.
+void clsSCREEN_TEXTURE::NoiseUpdate()
+{
+	m_upSound->UpdateLoop();
+
+	//ポストエフェクト.
+	m_iSeed ++;
+	const int iSEED_MAX = 32000;
+	if( m_iSeed >= iSEED_MAX ){
+		m_iSeed = 0;
+	}
+	m_fPulseOffset += m_fPulseOffsetAdd;
+	const float fPULSE_OFFSET_MAX = -fPULSE_OFFSET_INIT;
+	if( m_fPulseOffset >= fPULSE_OFFSET_MAX ){
+		m_fPulseOffset = fPULSE_OFFSET_INIT;
+	}
+
+	//音再生中なら再生中フラグを立て続け、停止中なら寝かせる.
+	if( !m_SeFlagWeak.isCanPlay )
+	{
+		for( int i=enSE_WEAK_A; i<enSE_WEAK_size; i++ )
+		{
+			if( m_upSound->IsPlayingSE( i ) ){
+				goto PLAYING_SE_WEAK;//再生中である.
+			}
+		}
+		m_SeFlagWeak.isCanPlay = false;
+	}
+PLAYING_SE_WEAK:;
+
+	if( !m_SeFlagStrong.isCanPlay )
+	{
+		for( int i=enSE_STRONG_A; i<enSE_STRONG_size; i++ )
+		{
+			if( m_upSound->IsPlayingSE( i ) ){
+				goto PLAYING_SE_STRONG;
+			}
+		}
+		m_SeFlagStrong.isCanPlay = false;
+	}
+PLAYING_SE_STRONG:;
+
+
+}
+
 
 //テクスチャの内容を画面に描画.
 void clsSCREEN_TEXTURE::RenderWindowFromTexture( 
@@ -389,7 +458,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		m_wpDevice->CreateBuffer(
 			&bd, &InitData, &pBuffer ) ) )
 	{
-		ERR_MSG( "バッファ作成失敗", "" );
+		ERR_MSG( "バッファ作成失敗", "clsSCREEN_TEXTURE" );
 		assert( !"バッファ作成失敗" );
 		return ;
 	}
@@ -413,31 +482,18 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 		D3DXMatrixIdentity( &m );
 	
 		cb.mW = m;
-		cb.fViewPortWidth = WND_W;
-		cb.fViewPortHeight= WND_H;
-		cb.vColor = { 1.0f, 1.0f, 1.0f, 0.0f };
-		cb.vColor = { 2.0f, 2.0f, 2.0f, 0.0f };
-//		cb.vColor = { 2.0f, 0.5f, 0.5f, 1.0f };
-		cb.vUV			= { 0.0f, 0.0f };
+		cb.vColor = m_vColor;
+		cb.vViewPort.x = WND_W;
+		cb.vViewPort.y = WND_H;
 
-		cb.iBlock = m_iBlock;
-		cb.iSeed  = m_iSeed;
 		cb.fPulse = m_fPulse;
 		cb.fPulseOffset = m_fPulseOffset;
+		cb.iBlock = m_iBlock;
+		cb.iSeed  = m_iSeed;
 
-		cb.vNoiseStart	= { 0.0f, 0.0f };
-		cb.vNoiseEnd	= { WND_W, WND_H };
-
-		m_iSeed ++;
-		const int iSEED_MAX = 32000;
-		if( m_iSeed >= iSEED_MAX ){
-			m_iSeed = 0;
-		}
-		m_fPulseOffset += m_fPulseOffsetAdd;
-		const float fPULSE_OFFSET_MAX = -fPULSE_OFFSET_INIT;
-		if( m_fPulseOffset >= fPULSE_OFFSET_MAX ){
-			m_fPulseOffset = fPULSE_OFFSET_INIT;
-		}
+		const float fNEGA = 1.0f;
+		if( m_isNega )	cb.isfNega = fNEGA;
+		else			cb.isfNega = 0.0f;
 	
 		memcpy_s( pData.pData, pData.RowPitch,
 			(void*)( &cb ), sizeof( cb ) );
@@ -459,19 +515,93 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 //	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	m_wpContext->Draw( uVerMax, 0 );
+	SetBlend( false );
+
+	m_wpContext->Draw( 4, 0 );//uVerMax.
 
 }
 
 
 
+//効果音再生.
+bool clsSCREEN_TEXTURE::PlaySeStrong()
+{
+	if( m_SeFlagStrong.isCanPlay ) return false;
+
+	int iContinueNo = m_SeFlagStrong.iContinueNo;
+	bool isPlay;
+
+	if( m_SeFlagStrong.isContinue ){
+		isPlay = m_upSound->PlaySE( m_SeFlagStrong.iContinueNo );
+	}
+	else{
+		isPlay = PlaySeProduct( enSE_STRONG_A, enSE_STRONG_size, &iContinueNo );
+	}
 
 
+	if( isPlay ){
+		m_SeFlagStrong.isCanPlay	= true;
+		m_SeFlagStrong.isContinue	= true;
+		m_SeFlagStrong.iContinueNo	= iContinueNo;
+	}
+
+	return isPlay;
+}
+
+bool clsSCREEN_TEXTURE::PlaySeWeak()
+{
+	if( m_SeFlagStrong.isCanPlay )	return false;
+	if( m_SeFlagWeak.isCanPlay )	return false;
+
+	int iContinueNo = m_SeFlagWeak.iContinueNo;
+	bool isPlay;
+
+	if( m_SeFlagWeak.isContinue ){
+		isPlay = m_upSound->PlaySE( m_SeFlagWeak.iContinueNo );
+	}
+	else{
+		isPlay = PlaySeProduct( enSE_WEAK_A, enSE_WEAK_size, &iContinueNo );
+	}
 
 
+	if( isPlay ){
+		m_SeFlagWeak.isCanPlay	= true;
+		m_SeFlagWeak.isContinue	= true;
+		m_SeFlagWeak.iContinueNo= iContinueNo;
+	}
+
+	return isPlay;
+}
 
 
+bool clsSCREEN_TEXTURE::PlaySeProduct( 
+	const int iMin, const int iSize, int* const outSeNo )
+{
+	//ランダムでノイズ音再生.
+	mt19937 mt{ std::random_device{}() };
 
+	int iMax = iSize - 1;
+	if( iMax < iMin ){
+		iMax = iMin;
+	}
 
+	uniform_int_distribution<int> dist( iMin, iMax );
 
+	*outSeNo = dist( mt );
 
+	const bool NOISE_LOOP = true;
+	return m_upSound->PlaySE( *outSeNo, NOISE_LOOP );
+}
+
+void clsSCREEN_TEXTURE::StopSe()
+{
+	//音.
+	m_upSound->StopAllSound();
+
+	m_SeFlagStrong.isCanPlay = false;
+	m_SeFlagWeak.isCanPlay	 = false;
+
+	m_SeFlagStrong.isContinue = false;
+	m_SeFlagWeak.isContinue	 = false;
+
+}

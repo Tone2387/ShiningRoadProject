@@ -1,14 +1,7 @@
 #include "Building.h"
 
-
-
 #define _USE_MATH_DEFINES
 #include <math.h>
-
-
-
-//下が生きているなら複数枚の板を貼るのをシェーダーに任せずに各板の座標をこのクラスが保持する.
-//#define BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 
 
 
@@ -17,29 +10,25 @@ using namespace std;
 
 namespace{
 	
+#ifdef _DEBUG
+//	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTopDebug.png";
+//	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSideDebug.png";
+	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
+	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
+	const char* sTEX_NAME_SIDEINSIDE = "Data\\Stage\\Building\\BuildingTexSideMask0.png";
+	const char* sTEX_NAME_TOPINSIDE = "Data\\Image\\maskEmpty.png";
+#else//#ifdef _DEBUG
+	const char* sTEX_NAME_TOP  = "Data\\Stage\\Building\\BuildingTexTop.png";
+	const char* sTEX_NAME_SIDE = "Data\\Stage\\Building\\BuildingTexSide.png";
+	const char* sTEX_NAME_SIDEINSIDE = "Data\\Stage\\Building\\BuildingTexSideMask0.png";
+	const char* sTEX_NAME_TOPINSIDE = "Data\\Image\\maskEmpty.png";
+#endif//#ifdef _DEBUG
+
 	//最低限の板の数.
 	const int iTEX_NUM_MIN = 1;
 
-#ifdef _DEBUG
-	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide_.png";
-	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop_.png";
-#else//#ifdef _DEBUG
-	const char* sTEX_NAME_SIDE = "Data\\Image\\Building\\BuildingTexSide.png";
-	const char* sTEX_NAME_TOP  = "Data\\Image\\Building\\BuildingTexTop.png";
-#endif//#ifdef _DEBUG
-
-
-	const int iRESURVE_NUM = 256;
-
-//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-//	const D3DXVECTOR3 vTILE_SIZE_MIN = { 25.0f, 25.0f, 1.0f };
-//	const D3DXVECTOR3 vTILE_SIZE_MAX = { 30.0f, 30.0f, 1.0f };
-//#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-//	const D3DXVECTOR3 vTILE_SIZE_MIN = { 2.5f, 2.5f, 1.0f };
-//	const D3DXVECTOR3 vTILE_SIZE_MAX = { 3.0f, 3.0f, 1.0f };
-//#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-	const D3DXVECTOR3 vTILE_SIZE_MIN = { 2.5f, 2.5f, 1.0f };
-	const D3DXVECTOR3 vTILE_SIZE_MAX = { 3.0f, 3.0f, 1.0f };
+	const float fTILE_SIZE_MAX_SIZE = 3.0f;//3.0f.//15.0f.
+	const D3DXVECTOR3 vTILE_SIZE_MAX = { fTILE_SIZE_MAX_SIZE, fTILE_SIZE_MAX_SIZE, 1.0f };
 
 	//側面のfor文の増加量.
 	const int iSIDE_TILE_COUNT_NUM = 2;
@@ -55,32 +44,33 @@ clsBUILDING::clsBUILDING(
 		{ 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f },
 		{ 100.0f, 100.0f, 100.0f } } )
+	,m_TopTrans( m_TopTrans )
 {
+	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
+		m_SideTransArray[i] = m_Trans;
+	}
+
 	m_upBox = make_unique< clsObjStaticMesh >();
 	m_upBox->AttachModel( pModel );
 
-
-
-	m_vecvecTop.resize( iTEX_NUM_MIN );
-	m_vecvecTop.reserve( iRESURVE_NUM );
-	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ ){
-		m_vecvecTop[ Row ].resize( iTEX_NUM_MIN );
-		m_vecvecTop[ Row ].reserve( iRESURVE_NUM );
-	}
 	m_upTop = make_unique< clsSprite >();
 	m_upTop->Create( pDevice11, pContext11, sTEX_NAME_TOP );
 
-
-	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum++  ){
-		m_vecvecSideArray[ SideNum ].resize( iTEX_NUM_MIN );
-		m_vecvecSideArray[ SideNum ].reserve( iRESURVE_NUM );
-		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
-			m_vecvecSideArray[ SideNum ][ Row ].resize( iTEX_NUM_MIN );
-			m_vecvecSideArray[ SideNum ][ Row ].reserve( iRESURVE_NUM );
-		}
-	}
 	m_upSide = make_unique< clsSprite >();
 	m_upSide->Create( pDevice11, pContext11, sTEX_NAME_SIDE );
+
+	const float fINSIDESIDE_ALPHA = 0.5f;
+	m_upSideInside = make_unique< clsSprite >();
+	m_upSideInside->Create( pDevice11, pContext11, sTEX_NAME_SIDEINSIDE );
+	m_upSideInside->SetAlpha( fINSIDESIDE_ALPHA );
+
+	m_upTopInside = make_unique< clsSprite >();
+	m_upTopInside->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+	m_upTopInside->SetAlpha( fINSIDESIDE_ALPHA );
+
+	m_upBottomInside = make_unique< clsSprite >();
+	m_upBottomInside->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+
 }
 
 clsBUILDING::~clsBUILDING()
@@ -90,7 +80,7 @@ clsBUILDING::~clsBUILDING()
 	m_wpContext = nullptr;
 }
 
-void clsBUILDING::UpdateModel()
+void clsBUILDING::UpdateModel() const
 {
 	m_upBox->SetPosition( m_Trans.vPos );
 	m_upBox->SetRotation( m_Trans.vRot );
@@ -99,261 +89,129 @@ void clsBUILDING::UpdateModel()
 	m_upBox->ModelTransUpdate();
 }
 
-
 void clsBUILDING::UpdateTile()
 {
-//	if( GetAsyncKeyState( VK_UP ) & 0x8000 )	m_Trans.vPos.z += 1.0f;
-//	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 )	m_Trans.vPos.z -= 1.0f;
-//	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 )	m_Trans.vPos.x += 1.0f;
-//	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 )	m_Trans.vPos.x -= 1.0f;
-//
-//	if( GetAsyncKeyState( 'W' ) & 0x1 )		m_Trans.vScale.z += 10.0f;
-//	if( GetAsyncKeyState( 'S' ) & 0x1 )		m_Trans.vScale.z -= 10.0f;
-//	if( GetAsyncKeyState( 'D' ) & 0x1 )		m_Trans.vScale.x += 10.0f;
-//	if( GetAsyncKeyState( 'A' ) & 0x1 )		m_Trans.vScale.x -= 10.0f;
-//	if( GetAsyncKeyState( 'E' ) & 0x1 )		m_Trans.vScale.y += 10.0f;
-//	if( GetAsyncKeyState( 'Q' ) & 0x1 )		m_Trans.vScale.y -= 10.0f;
-//
-//	if( GetAsyncKeyState( 'R' ) & 0x1 )	m_Trans.vRot.y += 0.01f;
-//	if( GetAsyncKeyState( 'F' ) & 0x1 )	m_Trans.vRot.y -= 0.01f;
-
 	UpdateModel();
 
 	//上面.
-	{
-		const int iEND_LOOP = 1;
-		unsigned int uiROW = m_vecvecTop.size();
-		unsigned int uiCOL = m_vecvecTop[0].size();
-#if 0
-		//同じものを繰り返さないためのチェック用配列.
-		vector<unsigned int> vuiRow;
-		vector<unsigned int> vuiCol;
-		vuiRow.reserve( iRESURVE_NUM );
-		vuiCol.reserve( iRESURVE_NUM );
-		bool isRowEnd = false;
-		for( int i=0; i<iEND_LOOP;  ){
-			//タイルの目標数を作る.
-			SetTileNumTargetTop( uiROW, uiCOL );
-			//目標の数に合わせてタイルを増減する.
-			SetTileNumTop( uiROW, uiCOL );
-			//タイルを並べる.
-			SetTransformTop();
-			//増やす.
-			vuiRow.push_back( uiROW );
-			vuiCol.push_back( uiCOL );
-			if( !isRowEnd ){
-				//最後のものは現状と同じなので比較しない.
-				for( unsigned int j=0; j<vuiRow.size() - 1; j++ )
-				{
-					if( uiROW == vuiRow[j] ){
-						isRowEnd = true;
-						break;
-					}
-				}
-				continue;
-			}
-			else{
-				for( unsigned int j=0; j<vuiCol.size() - 1; j++ ){
-					if( uiCOL == vuiCol[j] ){
-						i = iEND_LOOP;
-						break;
-					}
-				}
-			}
-		}
-#else
-		//タイルの目標数を作る.
-		SetTileNumTargetTop( uiROW, uiCOL );
-		//目標の数に合わせてタイルを増減する.
-		SetTileNumTop( uiROW, uiCOL );
-		//タイルを並べる.
-		SetTransformTop();
-#endif
-	}
+	unsigned int uiROW = iTEX_NUM_MIN;
+	unsigned int uiCOL = iTEX_NUM_MIN;
+	//タイルの目標数を作る.
+	SetTileNumTargetTop( uiROW, uiCOL );
+	//目標の数に合わせてタイルを増減する.
+	SetTileNumTop( uiROW, uiCOL );
+	//タイルを並べる.
+	SetTransformTop();
+	//座標のセット.
+	m_upTop->SetPos( m_TopTrans.vPos );
+	m_upTop->SetRot( m_TopTrans.vRot );
+	m_upTop->SetScale( m_TopTrans.vScale );
+
 	//側面.
-	{
-		unsigned int uiROW_Z = m_vecvecSideArray[ enWD_SOUTH ].size();
-		unsigned int uiCOL_Z = m_vecvecSideArray[ enWD_SOUTH ][0].size();
-		unsigned int uiROW_X = m_vecvecSideArray[ enWD_EAST ].size();
-		unsigned int uiCOL_X = m_vecvecSideArray[ enWD_EAST ][0].size();
-		//タイルの目標数を作る.
-		SetTileNumTargetSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
-		//目標の数に合わせてタイルを増減する.
-		SetTileNumSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
-		//タイルを並べる.
-		SetTransformSide();
-	}
+	unsigned int uiROW_Z = iTEX_NUM_MIN;
+	unsigned int uiCOL_Z = iTEX_NUM_MIN;
+	unsigned int uiROW_X = iTEX_NUM_MIN;
+	unsigned int uiCOL_X = iTEX_NUM_MIN;
+	//タイルの目標数を作る.
+	SetTileNumTargetSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
+	//目標の数に合わせてタイルを増減する.
+	SetTileNumSide( uiROW_Z, uiCOL_Z, uiROW_X, uiCOL_X );
+	//タイルを並べる.
+	SetTransformSide();
 
+	//裏面( 上面、底面 ).
+	const D3DXVECTOR3 vTOPINSIDE_ADD_ROT = { 0.0f, static_cast<float>( M_PI ), 0.0f };
+	m_upTopInside->SetPos( m_TopTrans.vPos );
+	m_upTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
+	m_upTopInside->SetScale( m_TopTrans.vScale );
+
+	const D3DXVECTOR3 vBOTTOMINSIDE_ADD_POS = { 0.0f, 0.01f, 0.0f };
+	m_upBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
+	m_upBottomInside->SetRot( m_TopTrans.vRot );
+	m_upBottomInside->SetScale( m_TopTrans.vScale );
 }
-
-
-
 
 void clsBUILDING::Render(
 	const D3DXMATRIX &mView, 
 	const D3DXMATRIX &mProj,
 	const D3DXVECTOR3 &vLight, 
-	const D3DXVECTOR3 &vEye )
+	const D3DXVECTOR3 &vEye,
+	const D3DXVECTOR4& vColor ) const
 {
-#ifdef _DEBUG
-	m_upBox->Render( mView, mProj, vLight, vEye );
-#else//#ifdef _DEBUG
-	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ )
-	{
-		for( unsigned int Col=0; Col<m_vecvecTop[ Row ].size(); Col++ ){
-			m_upTop->SetPos( m_vecvecTop[ Row ][ Col ].vPos );
-			m_upTop->SetRot( m_vecvecTop[ Row ][ Col ].vRot );
-			m_upTop->SetScale( m_vecvecTop[ Row ][ Col ].vScale );
-			m_upTop->Render( mView, mProj, vEye );
-		}
-	}
+//	m_upBox->Render( mView, mProj, vLight, vEye );
 
-	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum++  )
-	{
-		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ )
-		{
-			for( unsigned int Col=0; Col<m_vecvecSideArray[ SideNum ][ Row ].size(); Col++ ){
-				m_upSide->SetPos( m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos );
-				m_upSide->SetRot( m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot );
-				m_upSide->SetScale( m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale );
-				m_upSide->Render( mView, mProj, vEye );
-			}
-		}
-	}
-#endif//#ifdef _DEBUG
+	m_upTop->Render( mView, mProj, vEye, vColor );
 
+	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
+		m_upSide->SetPos( m_SideTransArray[i].vPos );
+		m_upSide->SetRot( m_SideTransArray[i].vRot );
+		m_upSide->SetScale( m_SideTransArray[i].vScale );
+		m_upSide->Render( mView, mProj, vEye, vColor );
+	}
 }
 
+void clsBUILDING::RenderInside(
+	const D3DXMATRIX &mView, 
+	const D3DXMATRIX &mProj,
+	const D3DXVECTOR3 &vLight, 
+	const D3DXVECTOR3 &vEye ) const
+{
+	const D3DXVECTOR3 vSIDEINSIDE_ADD_ROT = { 0.0f, static_cast<float>( M_PI ), 0.0f };
+	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
+		m_upSideInside->SetPos( m_SideTransArray[i].vPos );
+		m_upSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
+		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
+		m_upSideInside->Render( mView, mProj, vEye );
+	}
 
-
+	m_upBottomInside->Render( mView, mProj, vEye );
+	m_upTopInside->Render( mView, mProj, vEye );
+}
 
 
 //タイルの目標数を作る.
 void clsBUILDING::SetTileNumTargetTop( unsigned int& puiRow, unsigned int& puiCol )
 {
 	//----- 数を合わせる -----//.
-
-	if( !m_vecvecTop.size() ){
-		return;
-	}
-	for( unsigned int i=0; i<m_vecvecTop.size(); i++ ){
-		if( !m_vecvecTop[i].size() ){
-			return;
-		}
-	}
-
-	m_vecvecTop[ 0 ][ 0 ].vScale.x = m_Trans.vScale.x / m_vecvecTop[ 0 ].size();
-	m_vecvecTop[ 0 ][ 0 ].vScale.y = m_Trans.vScale.z / m_vecvecTop.size();
-	D3DXVECTOR3 vScale = m_vecvecTop[0][0].vScale;
-
-#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-
-	if( vScale.y > vTILE_SIZE_MAX.y ){
-		puiRow ++;	
-	}
-	else if( vScale.y < vTILE_SIZE_MIN.y ){
-		if( puiRow > iTEX_NUM_MIN ){
-			puiRow --;
-		}
-	}
-
-	if( vScale.x > vTILE_SIZE_MAX.x ){
-		puiCol ++;	
-	}
-	else if( vScale.x < vTILE_SIZE_MIN.x ){
-		if( puiCol > iTEX_NUM_MIN ){
-			puiCol --;
-		}
-	}
-#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-
-	puiRow = static_cast<int>( vScale.y / vTILE_SIZE_MAX.y );
-	puiCol = static_cast<int>( vScale.x / vTILE_SIZE_MAX.x );
-
-#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+	puiRow = static_cast<int>( m_TopTrans.vScale.y / vTILE_SIZE_MAX.y );
+	puiCol = static_cast<int>( m_TopTrans.vScale.x / vTILE_SIZE_MAX.x );
 }
 
 //目標の数に合わせてタイルを増減する.
 void clsBUILDING::SetTileNumTop( const unsigned int uiROW, const unsigned int uiCOL )
 {
-#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-	//----- 個数 -----//.
-	//縦.
-	//足りないから増やす.
-	if( m_vecvecTop.size() < uiROW ){
-		vector< TRANSFORM > tmpInit;
-		m_vecvecTop.push_back( tmpInit );//行を増やす.
-		const unsigned int uiNEW_ROW_NUM = m_vecvecTop.size() - 1;
-		m_vecvecTop[ uiNEW_ROW_NUM ].resize( m_vecvecTop[0].size() );//増やした行の列の数をそろえる.
-		m_vecvecTop[ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
-	}
-	//多いから減らす.
-	else if( m_vecvecTop.size() > uiROW ){
-		const unsigned int uiDELETE_RAW_NUM = m_vecvecTop.size() - 1;
-		m_vecvecTop.pop_back();//行を減らす.
-	}
-	//横.
-	//足りないから増やす.
-	if( m_vecvecTop[0].size() < uiCOL ){
-		TRANSFORM tmpInit;
-		for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ ){
-			m_vecvecTop[ Row ].push_back( tmpInit );
-		}
-	}
-	//多いから減らす.
-	else if( m_vecvecTop[0].size() > uiCOL ){
-		for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ ){
-			m_vecvecTop[ Row ].pop_back();
-		}
-	}
-#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+	unsigned int uiTmpCol = uiCOL;
+	if( !uiCOL )	uiTmpCol = iTEX_NUM_MIN; 
+	unsigned int uiTmpRow = uiROW;
+	if( !uiROW )	uiTmpRow = iTEX_NUM_MIN; 
 	m_upTop->SetSplit( D3DXVECTOR2(
-		static_cast<float>( uiCOL ),
-		static_cast<float>( uiROW ) ) );
-#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
+		static_cast<float>( uiTmpCol ),
+		static_cast<float>( uiTmpRow ) ) );
 }
 
 //タイルを並べる.
 void clsBUILDING::SetTransformTop()
 {
-	const float fHALF = 0.5f;
-
 	//----- トランスフォームを整える -----//.
-	//上面.
-	for( unsigned int Row=0; Row<m_vecvecTop.size(); Row++ )
-	{
-		for( unsigned int Col=0; Col<m_vecvecTop[ Row ].size(); Col++ ){
-			//大きさをそろえる.
-			m_vecvecTop[ Row ][ Col ].vScale.x = m_Trans.vScale.x / m_vecvecTop[ Row ].size();
-			m_vecvecTop[ Row ][ Col ].vScale.y = m_Trans.vScale.z / m_vecvecTop.size();
-			//中心寄せ.
-			m_vecvecTop[ Row ][ Col ].vPos = m_Trans.vPos;
-			//左寄せ.	
-			m_vecvecTop[ Row ][ Col ].vPos.x -= m_Trans.vScale.x * fHALF;				//板の真ん中が端に来る.
-			m_vecvecTop[ Row ][ Col ].vPos.x += m_vecvecTop[ Row ][ Col ].vScale.x * fHALF;	//板の半分だけずらす.
-			//順番に貼る.		
-			m_vecvecTop[ Row ][ Col ].vPos.x += ( m_Trans.vScale.x / ( m_vecvecTop[ Row ].size() ) ) * Col;
-			//下寄せ.	
-			m_vecvecTop[ Row ][ Col ].vPos.z -= m_Trans.vScale.z * fHALF;
-			m_vecvecTop[ Row ][ Col ].vPos.z += m_vecvecTop[ Row ][ Col ].vScale.y * fHALF;
-			//順番に貼る.		
-			m_vecvecTop[ Row ][ Col ].vPos.z += ( m_Trans.vScale.z / ( m_vecvecTop.size() ) ) * Row;
-			//共通.			   
-			m_vecvecTop[ Row ][ Col ].vPos.y += m_Trans.vScale.y;
-			m_vecvecTop[ Row ][ Col ].vRot = { 0.0f, 0.0f, 0.0f };
-			m_vecvecTop[ Row ][ Col ].vRot.x = m_Trans.vRot.y;
-			m_vecvecTop[ Row ][ Col ].vRot.x += static_cast<float>( M_PI_2 );
-			m_vecvecTop[ Row ][ Col ].vRot.y -= static_cast<float>( M_PI_2 );
-			m_vecvecTop[ Row ][ Col ].vRot.z -= static_cast<float>( M_PI_2 + M_PI );
+	m_TopTrans.vPos = m_Trans.vPos;
 
-			//本体の回転に応じて移動.
-			float fTheta, fDistance;
-			GetTileTheta( m_vecvecTop[ Row ][ Col ], m_Trans, &fTheta, &fDistance );
-			GetTilePosForRotation( &m_vecvecTop[ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
-		}
-	}
+	m_TopTrans.vPos.y += m_Trans.vScale.y;
+	m_TopTrans.vRot = { 0.0f, 0.0f, 0.0f };
+	m_TopTrans.vRot.x = m_Trans.vRot.y;
+	m_TopTrans.vRot.x += static_cast<float>( M_PI_2 );
+	m_TopTrans.vRot.y -= static_cast<float>( M_PI_2 );
+	m_TopTrans.vRot.z -= static_cast<float>( M_PI_2 + M_PI );
+
+	const float fDEFALT_SCALE = 1.0f;
+	m_TopTrans.vScale.z = fDEFALT_SCALE;
+	m_TopTrans.vScale.x = m_Trans.vScale.x;
+	m_TopTrans.vScale.y = m_Trans.vScale.z;
+
+	//本体の回転に応じて移動.
+	float fTheta, fDistance;
+	GetTileTheta( m_TopTrans, m_Trans, &fTheta, &fDistance );
+	GetTilePosForRotation( &m_TopTrans.vPos, m_Trans.vPos, fTheta, fDistance );
 }
-
 
 //タイルの目標数を作る.//引数は軸方向.
 void clsBUILDING::SetTileNumTargetSide( 
@@ -361,80 +219,13 @@ void clsBUILDING::SetTileNumTargetSide(
 	unsigned int& puiRowX, unsigned int&  puiColX )
 {
 	//----- 数を合わせる -----//.
-
-	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum++  ){
-		if( !m_vecvecSideArray[ SideNum ].size() ){
-			return;
-		}
-		for( unsigned int i=0; i<m_vecvecSideArray[ SideNum ].size(); i++ ){
-			if( !m_vecvecSideArray[ SideNum ][i].size() ){
-				return;
-			}
-		}
-	}
-
 	//========== 南北 ==========//.
-	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
-		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.x = m_Trans.vScale.x / m_vecvecSideArray[ SideNum ][ 0 ].size();
-		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.y = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
-		D3DXVECTOR3 vScale = m_vecvecSideArray[ SideNum ][0][0].vScale;
+	puiRowZ = static_cast<int>( m_SideTransArray[ enWD_SOUTH ].vScale.y / vTILE_SIZE_MAX.y );
+	puiColZ = static_cast<int>( m_SideTransArray[ enWD_SOUTH ].vScale.x / vTILE_SIZE_MAX.x );
 
-#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-		if( vScale.y > vTILE_SIZE_MAX.y ){
-			puiRowZ ++;
-		}
-		else if( vScale.y < vTILE_SIZE_MIN.y ){
-			if( puiRowZ > iTEX_NUM_MIN ){
-				puiRowZ --;
-			}
-		}
-
-		if( vScale.x > vTILE_SIZE_MAX.x ){
-			puiColZ ++;
-		}
-		else if( vScale.x < vTILE_SIZE_MIN.x ){
-			if( puiColZ > iTEX_NUM_MIN ){
-				puiColZ --;
-			}
-		}
-#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-
-	puiRowZ = static_cast<int>( vScale.y / vTILE_SIZE_MAX.y );
-	puiColZ = static_cast<int>( vScale.x / vTILE_SIZE_MAX.x );
-
-#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-	}
 	//========== 東西 ==========//.
-	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
-		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.x = m_Trans.vScale.z / m_vecvecSideArray[ SideNum ][ 0 ].size();
-		m_vecvecSideArray[ SideNum ][ 0 ][ 0 ].vScale.y = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
-		D3DXVECTOR3 vScale = m_vecvecSideArray[ SideNum ][0][0].vScale;
-
-#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-		if( vScale.y > vTILE_SIZE_MAX.y ){
-			puiRowX ++;
-		}
-		else if( vScale.y < vTILE_SIZE_MIN.y ){
-			if( puiRowX > iTEX_NUM_MIN ){
-				puiRowX --;
-			}
-		}
-
-		if( vScale.x > vTILE_SIZE_MAX.x ){
-			puiColX ++;
-		}
-		else if( vScale.x < vTILE_SIZE_MIN.x ){
-			if( puiColX > iTEX_NUM_MIN ){
-				puiColX --;
-			}
-		}
-#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-
-	puiRowX = static_cast<int>( vScale.y / vTILE_SIZE_MAX.y );
-	puiColX = static_cast<int>( vScale.x / vTILE_SIZE_MAX.x );
-
-#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-	}
+	puiRowX = static_cast<int>( m_SideTransArray[ enWD_EAST ].vScale.y / vTILE_SIZE_MAX.y );
+	puiColX = static_cast<int>( m_SideTransArray[ enWD_EAST ].vScale.x / vTILE_SIZE_MAX.x );
 }
 
 //目標の数に合わせてタイルを増減する.//引数は軸方向.
@@ -442,83 +233,36 @@ void clsBUILDING::SetTileNumSide(
 	const unsigned int uiROW_Z, const unsigned int uiCOL_Z,
 	const unsigned int uiROW_X, const unsigned int uiCOL_X )
 {
-#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 	//========== 南北 ==========//.
-	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
-		//----- 縦 -----//.
-		//足りないから増やす.
-		if( m_vecvecSideArray[ SideNum ].size() < uiROW_Z ){
-			vector< TRANSFORM > tmpInit;
-			m_vecvecSideArray[ SideNum ].push_back( tmpInit );
-			const unsigned int uiNEW_ROW_NUM = m_vecvecSideArray[ SideNum ].size() - 1;
-			m_vecvecSideArray[ SideNum ][ uiNEW_ROW_NUM ].resize( m_vecvecSideArray[ SideNum ][0].size() );
-			m_vecvecSideArray[ SideNum ][ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
-		}
-		//多いから減らす.
-		else if( m_vecvecSideArray[ SideNum ].size() > uiROW_Z ){
-			const unsigned int uiDELETE_RAW_NUM = m_vecvecSideArray[ SideNum ].size() - 1;
-			m_vecvecSideArray[ SideNum ].pop_back();
-		}
-		//----- 横 -----//.
-		//足りないから増やす.
-		if( m_vecvecSideArray[ SideNum ][0].size() < uiCOL_Z ){
-			TRANSFORM tmpInit;
-			for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
-				m_vecvecSideArray[ SideNum ][ Row ].push_back( tmpInit );
-			}			
-		}
-		//多いから減らす.
-		else if( m_vecvecSideArray[ SideNum ][0].size() > uiCOL_Z ){
-			for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
-				m_vecvecSideArray[ SideNum ][ Row ].pop_back();
-			}
-		}
+	for( int i=enWD_SOUTH; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM  ){
+		unsigned int uiTmpCol = uiCOL_Z;
+		if( !uiTmpCol )	uiTmpCol = iTEX_NUM_MIN; 
+		unsigned int uiTmpRow = uiROW_Z;
+		if( !uiTmpRow )	uiTmpRow = iTEX_NUM_MIN; 
+
+		m_upSide->SetSplit( D3DXVECTOR2(
+			static_cast<float>( uiTmpCol ),
+			static_cast<float>( uiTmpRow ) ) );
+
+		m_upSideInside->SetSplit( D3DXVECTOR2(
+			static_cast<float>( uiTmpCol ),
+			static_cast<float>( uiTmpRow ) ) );
 	}
 	//========== 東西 ==========//.
-	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
-		//----- 縦 -----//.
-		//足りないから増やす.
-		if( m_vecvecSideArray[ SideNum ].size() < uiROW_X ){
-			vector< TRANSFORM > tmpInit;
-			m_vecvecSideArray[ SideNum ].push_back( tmpInit );
-			const unsigned int uiNEW_ROW_NUM = m_vecvecSideArray[ SideNum ].size() - 1;
-			m_vecvecSideArray[ SideNum ][ uiNEW_ROW_NUM ].resize( m_vecvecSideArray[ SideNum ][0].size() );
-			m_vecvecSideArray[ SideNum ][ uiNEW_ROW_NUM ].reserve( iRESURVE_NUM );
-		}
-		//多いから減らす.
-		else if( m_vecvecSideArray[ SideNum ].size() > uiROW_X ){
-			const unsigned int uiDELETE_RAW_NUM = m_vecvecSideArray[ SideNum ].size() - 1;
-			m_vecvecSideArray[ SideNum ].pop_back();
-		}
-		//----- 横 -----//.
-		//足りないから増やす.
-		if( m_vecvecSideArray[ SideNum ][0].size() < uiCOL_X ){
-			TRANSFORM tmpInit;
-			for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
-				m_vecvecSideArray[ SideNum ][ Row ].push_back( tmpInit );
-			}			
-		}
-		//多いから減らす.
-		else if( m_vecvecSideArray[ SideNum ][0].size() > uiCOL_X ){
-			for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ ){
-				m_vecvecSideArray[ SideNum ][ Row ].pop_back();
-			}
-		}
-	}
-#else//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
-	//========== 南北 ==========//.
-	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
+	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM  ){
+		unsigned int uiTmpCol = uiCOL_X;
+		if( !uiTmpCol )	uiTmpCol = iTEX_NUM_MIN; 
+		unsigned int uiTmpRow = uiROW_X;
+		if( !uiTmpRow )	uiTmpRow = iTEX_NUM_MIN; 
+
 		m_upSide->SetSplit( D3DXVECTOR2(
-			static_cast<float>( uiCOL_Z ),
-			static_cast<float>( uiROW_Z ) ) );
+			static_cast<float>( uiTmpCol ),
+			static_cast<float>( uiTmpRow ) ) );
+
+		m_upSideInside->SetSplit( D3DXVECTOR2(
+			static_cast<float>( uiTmpCol ),
+			static_cast<float>( uiTmpRow ) ) );
 	}
-	//========== 東西 ==========//.
-	for( int SideNum=1; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  ){
-		m_upSide->SetSplit( D3DXVECTOR2(
-			static_cast<float>( uiCOL_X ),
-			static_cast<float>( uiROW_X ) ) );
-	}
-#endif//#ifdef BUILDING_TEXCHARS_POS_HAVE_THIS_CLASS
 
 }
 
@@ -529,82 +273,53 @@ void clsBUILDING::SetTransformSide()
 
 	//側面.
 	const D3DXVECTOR3 vOFFSET_SIDE[ enWALL_DIRECTION_size ] ={
-		D3DXVECTOR3( 0.0f,						0.0f, -m_Trans.vScale.z * fHALF ),
-		D3DXVECTOR3( -m_Trans.vScale.x * fHALF,	0.0f, 0.0f						),
-		D3DXVECTOR3( 0.0f,						0.0f, +m_Trans.vScale.z * fHALF ),
-		D3DXVECTOR3( +m_Trans.vScale.x * fHALF,	0.0f, 0.0f						),
+		D3DXVECTOR3( 0.0f,						m_Trans.vScale.y * fHALF, -m_Trans.vScale.z * fHALF ),
+		D3DXVECTOR3( -m_Trans.vScale.x * fHALF,	m_Trans.vScale.y * fHALF, 0.0f						),
+		D3DXVECTOR3( 0.0f,						m_Trans.vScale.y * fHALF, +m_Trans.vScale.z * fHALF ),
+		D3DXVECTOR3( +m_Trans.vScale.x * fHALF,	m_Trans.vScale.y * fHALF, 0.0f						),
 	};
 
 	//南北.
-	for( int SideNum=0; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  )
-	{
-		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ )
-		{
-			for( unsigned int Col=0; Col<m_vecvecSideArray[ SideNum ][ Row ].size(); Col++ ){
-				//大きさをそろえる.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.x	 = m_Trans.vScale.x / m_vecvecSideArray[ SideNum ][ Row ].size();
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.y	 = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
-				//中心寄せ.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos		 = m_Trans.vPos;
-				//各面に寄せる.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos		+= vOFFSET_SIDE[ SideNum ];
-				//左寄せ.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.x	-= m_Trans.vScale.x * fHALF;
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.x	+= m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.x * fHALF;
-				//順番に貼る.		
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.x	+= ( m_Trans.vScale.x / ( m_vecvecSideArray[ SideNum ][ Row ].size() ) ) * Col;
-				//下寄せ.	
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.y	+= m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.y * fHALF;
-				//順番に貼る.		
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.y	+= ( m_Trans.vScale.y / ( m_vecvecSideArray[ SideNum ].size() ) ) * Row;
-				//共通.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot		 = m_Trans.vRot;
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot.y	+= static_cast<float>( M_PI_2 * SideNum + M_PI );
+	for( int i=0; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM  ){
+		//大きさをそろえる.
+		const float fDEFALT_SCALE	 = 1.0f;
+		m_SideTransArray[i].vScale.z = fDEFALT_SCALE;
+		m_SideTransArray[i].vScale.x = m_Trans.vScale.x;
+		m_SideTransArray[i].vScale.y = m_Trans.vScale.y;
+		//中心寄せ.
+		m_SideTransArray[i].vPos	 = m_Trans.vPos;
+		//各面に寄せる.
+		m_SideTransArray[i].vPos	+= vOFFSET_SIDE[ i ];
+		//共通.
+		m_SideTransArray[i].vRot	 = m_Trans.vRot;
+		m_SideTransArray[i].vRot.y	+= static_cast<float>( M_PI_2 * i + M_PI );
 			
-				//本体の回転に応じて移動.
-				float fTheta, fDistance;
-				GetTileTheta( m_vecvecSideArray[ SideNum ][ Row ][ Col ], m_Trans, &fTheta, &fDistance );
-				GetTilePosForRotation( &m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
-			}
-		}
+		//本体の回転に応じて移動.
+		float fTheta, fDistance;
+		GetTileTheta( m_SideTransArray[i], m_Trans, &fTheta, &fDistance );
+		GetTilePosForRotation( &m_SideTransArray[i].vPos, m_Trans.vPos, fTheta, fDistance );
 	}
 	//東西.
-	for( int SideNum=enWD_EAST; SideNum<enWALL_DIRECTION_size; SideNum+=iSIDE_TILE_COUNT_NUM  )
-	{
-		for( unsigned int Row=0; Row<m_vecvecSideArray[ SideNum ].size(); Row++ )
-		{
-			for( unsigned int Col=0; Col<m_vecvecSideArray[ SideNum ][ Row ].size(); Col++ )
-			{
-				//大きさをそろえる.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.x	 = m_Trans.vScale.z / m_vecvecSideArray[ SideNum ][ Row ].size();
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.y	 = m_Trans.vScale.y / m_vecvecSideArray[ SideNum ].size();
-				//中心寄せ.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos		 = m_Trans.vPos;
-				//各面に寄せる.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos		+= vOFFSET_SIDE[ SideNum ];
-				//左寄せ.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.z	-= m_Trans.vScale.z * fHALF;
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.z	+= m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.x * fHALF;
-				//順番に貼る.		
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.z	+= ( m_Trans.vScale.z / ( m_vecvecSideArray[ SideNum ][ Row ].size() ) ) * Col;
-				//下寄せ.	
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.y	+= m_vecvecSideArray[ SideNum ][ Row ][ Col ].vScale.y * fHALF;
-				//順番に貼る.		
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos.y	+= ( m_Trans.vScale.y / ( m_vecvecSideArray[ SideNum ].size() ) ) * Row;
-				//共通.
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot		 = m_Trans.vRot;
-				m_vecvecSideArray[ SideNum ][ Row ][ Col ].vRot.y	+= static_cast<float>( M_PI_2 * SideNum + M_PI );
+	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM  ){
+		//大きさをそろえる.
+		const float fDEFALT_SCALE	 = 1.0f;
+		m_SideTransArray[i].vScale.z = fDEFALT_SCALE;
+		m_SideTransArray[i].vScale.x = m_Trans.vScale.z;
+		m_SideTransArray[i].vScale.y = m_Trans.vScale.y;
+		//中心寄せ.
+		m_SideTransArray[i].vPos	 = m_Trans.vPos;
+		//各面に寄せる.
+		m_SideTransArray[i].vPos	+= vOFFSET_SIDE[ i ];
+		//共通.
+		m_SideTransArray[i].vRot	 = m_Trans.vRot;
+		m_SideTransArray[i].vRot.y	+= static_cast<float>( M_PI_2 * i + M_PI );
 			
-				//本体の回転に応じて移動.
-				float fTheta, fDistance;
-				GetTileTheta( m_vecvecSideArray[ SideNum ][ Row ][ Col ], m_Trans, &fTheta, &fDistance );
-				GetTilePosForRotation( &m_vecvecSideArray[ SideNum ][ Row ][ Col ].vPos, m_Trans.vPos, fTheta, fDistance );
-			}
-		}
+		//本体の回転に応じて移動.
+		float fTheta, fDistance;
+		GetTileTheta( m_SideTransArray[i], m_Trans, &fTheta, &fDistance );
+		GetTilePosForRotation( &m_SideTransArray[i].vPos, m_Trans.vPos, fTheta, fDistance );
 	}
 }
-
-
 
 //引数に入れたタイルが中心から見て何度の位置にあるか.
 float clsBUILDING::GetTileTheta( 
@@ -633,7 +348,7 @@ float clsBUILDING::GetTileTheta(
 //回転に応じて座標を更新する.
 D3DXVECTOR3 clsBUILDING::GetTilePosForRotation( 
 	D3DXVECTOR3* const vTilePos, const D3DXVECTOR3& vCenterPos,
-	const float fTileTheta, const float fTileDistance )
+	const float fTileTheta, const float fTileDistance ) const
 {
 	D3DXVECTOR3 vReturn = { 0.0f, 0.0f, 0.0f };
 	if( !vTilePos ){
@@ -650,59 +365,7 @@ D3DXVECTOR3 clsBUILDING::GetTilePosForRotation(
 
 
 
-clsDX9Mesh* clsBUILDING::GetModelPtr()
-{
-	clsDX9Mesh* pReturn = m_upBox->GetStaticMesh();
-
-	return pReturn;
-}
 
 
 
-D3DXVECTOR3 clsBUILDING::GetPos()
-{
-	return m_Trans.vPos;
-}
-
-void clsBUILDING::SetPos( const D3DXVECTOR3& vPos )
-{
-	m_Trans.vPos = vPos;
-}
-
-void clsBUILDING::AddPos( const D3DXVECTOR3& vPos )
-{
-	m_Trans.vPos += vPos;
-}
-
-
-D3DXVECTOR3 clsBUILDING::GetRot()
-{
-	return m_Trans.vRot;
-}
-
-void clsBUILDING::SetRot( const D3DXVECTOR3& vRot )
-{
-	m_Trans.vRot = vRot;
-}
-
-void clsBUILDING::AddRot( const D3DXVECTOR3& vRot )
-{
-	m_Trans.vRot += vRot;
-}
-
-
-D3DXVECTOR3 clsBUILDING::GetScale()
-{
-	return m_Trans.vScale;
-}
-
-void clsBUILDING::SetScale( const D3DXVECTOR3& vScale )
-{
-	m_Trans.vScale = vScale;
-}
-
-void clsBUILDING::AddScale( const D3DXVECTOR3& vScale )
-{
-	m_Trans.vScale += vScale;
-}
 

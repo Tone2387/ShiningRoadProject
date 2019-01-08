@@ -1,5 +1,6 @@
 #include "WindowBox.h"
 
+
 using namespace std;
 
 
@@ -7,12 +8,6 @@ namespace{
 
 	const char LINE_MAX = 2;
 	const char JOINT_MAX = 4;
-
-	const char* sLINE_PATH = "Data\\Image\\StartUp\\UiLineBody.png";
-	const char* sJOINT_PATH = "Data\\Image\\StartUp\\UiLineJoint.png";
-
-	const WHSIZE_FLOAT SS_DISP = { 1.0f, 1.0f };
-	const WHSIZE_FLOAT SS_ANIM = { 1.0f, 1.0f };
 
 	//Šp‚Ì‰ñ“]Šp.
 	const float fROT_ROLL = static_cast< float >( 3.14 * 0.5 );
@@ -33,6 +28,12 @@ clsLINE_BOX::clsLINE_BOX(
 	,m_encBeforChange( encBEFOR_CHANGE::NOTHING )
 	,m_isStopChange( false )
 {
+	const char* sLINE_PATH = "Data\\Image\\MenuWindow\\UiLineBody.png";
+	const char* sJOINT_PATH = "Data\\Image\\MenuWindow\\UiLineJoint.png";
+
+	const WHSIZE_FLOAT SS_DISP = { 1.0f, 1.0f };
+	const WHSIZE_FLOAT SS_ANIM = { 1.0f, 1.0f };
+
 	m_vPos = { WND_W/2, WND_H/2, 0.0f };
 
 	SPRITE_STATE ss;
@@ -173,50 +174,6 @@ void clsLINE_BOX::Render()
 	}
 
 }
-
-
-
-
-
-void clsLINE_BOX::SetPos( const D3DXVECTOR3 &vPos )
-{
-	m_vPos = vPos;
-}
-void clsLINE_BOX::AddPos( const D3DXVECTOR3 &vPos )
-{
-	m_vPos += vPos;
-}
-
-void clsLINE_BOX::SetSize( const D3DXVECTOR3 &vSize )
-{
-	m_vSize = vSize;
-}
-
-void clsLINE_BOX::SetSize( const float &fSize )
-{
-	m_vSize = { fSize, fSize, 1.0f };
-}
-
-
-void clsLINE_BOX::AddSize( const D3DXVECTOR3 &vSize )
-{
-	m_vSize += vSize;
-}
-
-void clsLINE_BOX::AddScale( const D3DXVECTOR3 &vScale )
-{
-	m_vSize.x *= vScale.x;
-	m_vSize.y *= vScale.y;
-	m_vSize.z *= vScale.z;
-}
-
-void clsLINE_BOX::AddScale( const float &fScale )
-{
-	m_vSize.x *= fScale;
-	m_vSize.y *= fScale;
-	m_vSize.z = 1.0f;
-}
-
 
 void clsLINE_BOX::SetSizeTarget( const D3DXVECTOR3 &vSize )
 {
@@ -376,20 +333,6 @@ void clsLINE_BOX::AddSizeForTarget()
 		m_encBeforChange = encBEFOR_CHANGE::NOTHING;
 		m_isStopChange = true;
 	}
-}
-
-bool clsLINE_BOX::isStopChange()
-{
-	return m_isStopChange;
-}
-
-D3DXVECTOR3 clsLINE_BOX::GetPos() const
-{
-	return m_vPos;
-}
-D3DXVECTOR3 clsLINE_BOX::GetSize() const
-{
-	return m_vSize;
 }
 
 void clsLINE_BOX::SetAlpha( const float fAlpha )

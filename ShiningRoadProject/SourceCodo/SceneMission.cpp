@@ -1,5 +1,17 @@
 #include "SceneMission.h"
+#ifdef Tahara
+#include "MenuWindowMissionPause.h"
+#include "SceneMissionInformation.h"
+#endif//#ifdef Tahara
 
+using namespace std;
+
+static const int g_iStartCnt = 180;
+
+namespace
+{
+	const char strMissonFolderPath[] = "Data\\FileData\\Hiyoshi\\Misson";
+};
 
 //================================//
 //========== ミッション中クラス ==========//
@@ -8,6 +20,7 @@ clsSCENE_MISSION::clsSCENE_MISSION(clsPOINTER_GROUP* const ptrGroup) : clsSCENE_
 m_pPlayer(nullptr)
 , m_bEnemyStop(false)
 , m_bCamTarChange(false)
+, m_bStartFlg(false)
 {
 }
 
@@ -33,7 +46,40 @@ void clsSCENE_MISSION::CreateProduct()
 
 	m_pStage = new clsStage( m_wpPtrGroup );
 
+#ifdef Tahara
+	m_pStage->SetColorRed();
+#endif//#ifdef Tahara
+
 	m_fCamMoveSpeed = 0.01f;
+
+	if (m_wpSound)
+	{
+		m_wpSound->PlayBGM(0);
+	}
+
+#ifdef Tahara
+	//メニュー用日本語.
+	const char* sFONT_TEXT_PATH_MISSION = "Data\\Font\\Text\\TextMission.csv";
+	m_wpFont->Create( sFONT_TEXT_PATH_MISSION );
+	//メニューの為のデータ取得&作成.
+	clsMENU_WINDOW_MISSION_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
+
+	//メニューを開いた時の暗転画像.
+	m_upPauseDisplayBlack = make_unique< clsSprite2D >();
+	const char* sPAUSE_DISPLAY_BLACK_PATH = "Data\\Image\\BlackScreen.png";
+	SPRITE_STATE ss;
+	ss.Disp = { 1.0f, 1.0f };
+	m_upPauseDisplayBlack->Create(
+		m_wpDevice, m_wpContext,
+		sPAUSE_DISPLAY_BLACK_PATH,
+		ss );
+	m_upPauseDisplayBlack->SetPos( { 0.0f, 0.0f, 0.0f } );
+	const float fBLACK_ALPHA = 0.5f;
+	m_upPauseDisplayBlack->SetAlpha( fBLACK_ALPHA );
+	const D3DXVECTOR3 vBLACK_SCALE = { WND_W, WND_H, 0.0f };
+	m_upPauseDisplayBlack->SetScale( vBLACK_SCALE );
+#endif//#ifdef Tahara
+
 }
 
 void clsSCENE_MISSION::CreateUI()
@@ -175,26 +221,24 @@ void clsSCENE_MISSION::CreateUI()
 	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
 
 	assert(!m_pLWeaponLockMark);
-	ss.Disp = { 128.0f, 64.0f };
+	ss.Disp = { 92.0f, 106.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_pLWeaponLockMark = new clsSPRITE2D_CENTER;
 
-	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockMark.png", ss);
+	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockL.png", ss);
 	m_pLWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
-	m_pLWeaponLockMark->SetAlpha(0.4f);
+	//m_pLWeaponLockMark->SetAlpha(0.4f);
 
 	assert(!m_pRWeaponLockMark);
-	ss.Disp = { 128.0f, 64.0f };
-	ss.Anim = { 1.0f, 1.0f };
 
 	m_pRWeaponLockMark = new clsSPRITE2D_CENTER;
 
-	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockMark.png", ss);
+	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockR.png", ss);
 	m_pRWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
-	m_pRWeaponLockMark->SetAlpha(0.4f);
+	//m_pRWeaponLockMark->SetAlpha(0.4f);
 
 	assert(!m_pHitMark);
 	ss.Disp = { 128.0f, 64.0f };
@@ -219,21 +263,60 @@ void clsSCENE_MISSION::CreateUI()
 
 	m_pLockWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockWindow.png", ss);
 	m_pLockWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	vPos = { WND_W / 2, WND_H / 2 };
+
+	m_iStartCnt = g_iStartCnt;
+
+	m_pStartText = new clsUiText;
+	m_pStartText->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H,5.0f);
+	m_pStartText->SetPos(vPos);
+
+	m_pHPTargetChara = new clsUiText;
+	m_pHPTargetChara->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pHPTargetChara->SetPos(vPos);
+
+	m_pBoostOn = new clsUiText;
+	m_pBoostOn->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pBoostOn->SetPos(vPos);
+	m_pBoostOn->SetText("Boost");
+
+	ss.Disp = { WND_W, WND_H };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pWindowScr = new clsSPRITE2D_CENTER;
+	m_pWindowScr->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Screen.png", ss);
+	m_pWindowScr->SetPos({ WND_W / 2, (WND_H / 2), 0.0f });
+
+	m_pWindowScrFilter = new clsSPRITE2D_CENTER;
+	m_pWindowScrFilter->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\ScreenBack.png", ss);
+	m_pWindowScrFilter->SetPos({ WND_W / 2, (WND_H / 2), 0.0f });
+
 }
 
 //毎フレーム通る処理.
 void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 {
+#ifdef Tahara
+	if( m_upMenu ){
+		MenuUpdate( enNextScene );
+		return;
+	}
+#endif//#ifdef Tahara
+
+
 	//nullならassert.
 	assert(m_pPlayer);
 	//m_pPlayer->Action(m_pStage);
+
+	
 
 	if (GetAsyncKeyState('C') & 0x1)
 	{
 		if (!m_bCamTarChange)
 		{
 			m_bCamTarChange = true;
-			m_pCamTar = m_pTestObj;
+			m_pCamTar = m_v_pEnemys[0];
 		}
 
 		else
@@ -245,17 +328,17 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	
 	if (GetAsyncKeyState('S') & 0x1)
 	{
-		m_pTestObj->SwitchMove();
+		//m_pTestObj->SwitchMove();
 	}
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
-		m_v_pFriends[i]->Action(m_pStage);
+		m_v_pFriends[i]->Update(m_pStage);
 	}
-	
+
 	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 	{
-		m_v_pEnemys[i]->Action(m_pStage);
+		m_v_pEnemys[i]->Update(m_pStage);
 	}
 	
 	UpdateCamTargetPos(m_pCamTar);
@@ -275,16 +358,43 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 		enNextScene = enSCENE::ENDING;
 	}
 
-	if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp)
+	else if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp)
 	{
 		enNextScene = enSCENE::GAMEOVER;
 	}
+#ifdef Tahara
+	//シーン移動暗転中はポーズさせないためのelse.
+	else if( !m_upMenu ){
+		//開始しない内にポーズはさせない.
+		if( !m_bStartFlg ){
+			return;
+		}
+		//スタートボタンで.
+		if( isPressStart() ){
+			//メニューを開く.
+			m_upMenu = make_unique< clsMENU_WINDOW_MISSION_PAUSE >(
+				m_hWnd, m_wpPtrGroup, nullptr, &m_vecuiInformationDataArray );
+			//エフェクトの一時停止.
+			m_wpEffects->PausedAll( true );
+			//========== アニメーションの一時停止はここ ==========//.
+			for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+			{
+				m_v_pFriends[i]->AnimPause();
+			}
+
+			for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+			{
+				m_v_pEnemys[i]->AnimPause();
+			}
+		}
+	}
+#endif//#ifdef Tahara
 }
 
 //描画.
 void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
-
+	Duplicate();
 	//m_pTestChara->Render(m_mView, m_mProj, m_vLight, vCamPos);
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
@@ -304,7 +414,17 @@ void clsSCENE_MISSION::RenderProduct( const D3DXVECTOR3 &vCamPos )
 
 void clsSCENE_MISSION::RenderUi()
 {
-	SetDepth(false);	//Zテスト:OFF.
+
+#ifdef Tahara
+	//ビルの裏側描画.
+	SetDepth( true );	//Zテスト:OFF.
+	m_pStage->RenderInside( m_mView, m_mProj, m_vLight, m_wpCamera->GetPos() );
+	SetDepth( false );	//Zテスト:OFF.
+#endif//#ifdef Tahara
+
+	m_pWindowScrFilter->Render();
+	m_pWindowScr->Render();
+
 	//活動限界時間.
 	int iTmp = m_pPlayer->m_iActivityLimitTime;
 	int iMin = iTmp / 3600;
@@ -362,6 +482,12 @@ void clsSCENE_MISSION::RenderUi()
 
 	m_pRaderWindowBack->Render();
 
+	//ブースター点灯表示.
+	if (m_pPlayer->m_bBoost)
+	{
+		m_pBoostOn->Render(clsUiText::enPOS::MIDDLE);
+	}
+
 	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
 	{
 		if (!m_v_pEnemys[i])continue;
@@ -399,10 +525,12 @@ void clsSCENE_MISSION::RenderUi()
 	//ロックオン関係.
 	//ロックオンフレーム.
 	vPosTmp = m_pPlayer->GetLookTargetPos();
+	//float fYaw = m_pPlayer->GetLockYaw();
 
 	vPosTmp = ConvDimPos(vPosTmp);
 
 	m_pCursorFrame->SetPos(vPosTmp);
+	//m_pCursorFrame->SetRot({ 0.0f, fYaw ,0.0f});
 	m_pCursorFrame->Render();
 
 	//ロックオンカーソル.
@@ -410,6 +538,7 @@ void clsSCENE_MISSION::RenderUi()
 
 	m_pCursor->SetScale(fTmp);
 	m_pCursor->SetPos(vPosTmp);
+	//m_pCursor->SetRot({ 0.0f, fYaw, 0.0f });
 	m_pCursor->Render();
 
 	//ロックオンカーソル内に敵を入れている間の処理.
@@ -421,6 +550,12 @@ void clsSCENE_MISSION::RenderUi()
 		m_pLockWindow->SetPos(vPosTmp);
 		m_pLockWindow->Render();
 
+		int iTargetHP = m_pPlayer->GetTargetChara()->m_iHP;
+
+		sprintf_s(pText, "%d", iTargetHP);
+		m_pHPTargetChara->SetText(pText);
+		m_pHPTargetChara->Render(clsUiText::enPOS::MIDDLE);
+
 		//ヒットマーク描画.
 		if (iHitDispTime > 0)
 		{
@@ -431,6 +566,18 @@ void clsSCENE_MISSION::RenderUi()
 
 		if (m_pPlayer->IsLWeaponLock())
 		{
+			m_pLWeaponLockMark->SetPos(vPosTmp);
+			m_pLWeaponLockMark->Render();
+		}
+
+		if (m_pPlayer->IsRWeaponLock())
+		{
+			m_pRWeaponLockMark->SetPos(vPosTmp);
+			m_pRWeaponLockMark->Render();
+		}
+
+		/*if (m_pPlayer->IsLWeaponLock())
+		{
 			m_pLWeaponLockMark->SetPos(vPosTmp - D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
 			m_pLWeaponLockMark->Render();
 		}
@@ -439,7 +586,7 @@ void clsSCENE_MISSION::RenderUi()
 		{
 			m_pRWeaponLockMark->SetPos(vPosTmp + D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
 			m_pRWeaponLockMark->Render();
-		}
+		}*/
 	}
 
 	else
@@ -450,8 +597,38 @@ void clsSCENE_MISSION::RenderUi()
 			iHitDispTime = 0;
 		}
 	}
+
+	if (!m_bStartFlg)
+	{
+		if (m_iStartCnt < g_fFPS)
+		{
+			sprintf_s(pText, "Misson Start");
+			m_pStartText->SetText(pText);
+			m_pStartText->SetColor({1.0f,0.0f,0.0f,1.0f});
+			m_pStartText->Render(clsUiText::enPOS::MIDDLE);
+		}
+
+		if (m_iStartCnt < 0)
+		{
+			GameStart();
+			m_wpSound->PlaySE(0);
+			m_bStartFlg = true;
+		}
+
+		m_iStartCnt--;
+		
+	}
 	
-	SetDepth(true);
+
+#ifdef Tahara
+	if( m_upMenu ){
+		if( m_upPauseDisplayBlack ){
+			m_upPauseDisplayBlack->Render();
+		}
+		m_upMenu->Render();
+	}
+#endif//#ifdef Tahara
+
 }
 
 bool clsSCENE_MISSION::AllEnemyDead()
@@ -469,22 +646,26 @@ bool clsSCENE_MISSION::AllEnemyDead()
 
 void clsSCENE_MISSION::CreateFriends()
 {
-	m_pPlayer = CreatePlayer();
-	m_v_pFriends.push_back(m_pPlayer);
+	/*m_pPlayer = CreatePlayer();
+	m_v_pFriends.push_back(m_pPlayer);*/
+
+	clsFriendFactory clsFactory;
+
+	m_pPlayer = new clsPlayer;
+
+	m_v_pFriends = clsFactory.CreateFriend(m_wpPtrGroup, strMissonFolderPath, m_pPlayer);
 
 	m_v_pFriends.shrink_to_fit();
 }
 
 void clsSCENE_MISSION::CreateEnemys()
 {
-	clsCharactor* pChara;
+	/*m_pTestObj = CreateEnemy();
+	m_v_pEnemys.push_back(m_pTestObj);*/
 
-	for (int i = 0; i < 1; i++)
-	{
-		pChara = CreateEnemy();
-
-		m_v_pEnemys.push_back(pChara);
-	}
+	clsEnemyFactory clsFactory;
+	
+	m_v_pEnemys = clsFactory.CreateEnemy(m_wpPtrGroup, strMissonFolderPath);
 
 	m_v_pEnemys.shrink_to_fit();
 }
@@ -554,6 +735,58 @@ void clsSCENE_MISSION::ColEShottoEBody()
 	}
 }
 
+void clsSCENE_MISSION::Duplicate()
+{
+	ColFtoFDuplicate();
+	ColFtoEDuplicate();
+	ColEtoFDuplicate();
+}
+
+void clsSCENE_MISSION::ColFtoFDuplicate()
+{
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
+		{
+			if (i == j)
+			{
+				continue;
+			}
+
+			m_v_pFriends[i]->CharaDuplicate(m_v_pFriends[j]);
+
+		}
+	}
+}
+
+void clsSCENE_MISSION::ColFtoEDuplicate()
+{
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
+		{
+			m_v_pFriends[i]->CharaDuplicate(m_v_pEnemys[j]);
+		}
+	}
+}
+
+void clsSCENE_MISSION::ColEtoFDuplicate()
+{
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
+		{
+			if (i == j)
+			{
+				continue;
+			}
+
+			m_v_pEnemys[i]->CharaDuplicate(m_v_pEnemys[j]);
+
+		}
+	}
+}
+
 clsPlayer* clsSCENE_MISSION::CreatePlayer()
 {
 	clsPlayer* pPlayer = new clsPlayer;
@@ -569,7 +802,7 @@ clsPlayer* clsSCENE_MISSION::CreatePlayer()
 clsTestObj* clsSCENE_MISSION::CreateEnemy()
 {
 	clsTestObj* pEnemy = new clsTestObj;
-	pEnemy->Init(m_wpPtrGroup, "");//4つ目の引数は効果音やエフェクトを出すために追加しました.
+	pEnemy->Init(m_wpPtrGroup, "Data\\FileData\\Hiyoshi\\Enemy");//4つ目の引数は効果音やエフェクトを出すために追加しました.
 
 	D3DXVECTOR3 tmpVec3 = { 0.0f, 10.0f, 0.0f };
 	pEnemy->SetPosition(tmpVec3);
@@ -594,7 +827,7 @@ void clsSCENE_MISSION::SetEnemys()
 }
 
 //============================ デバッグテキスト ===========================//
-#if _DEBUG
+#ifdef _DEBUG
 void clsSCENE_MISSION::RenderDebugText()
 {
 	//NULLチェック.
@@ -604,10 +837,10 @@ void clsSCENE_MISSION::RenderDebugText()
 	int iTxtY = 300;
 	const int iOFFSET = 10;//一行毎にどれだけ下にずらすか.
 
-	sprintf_s( strDbgTxt, 
+	/*sprintf_s( strDbgTxt, 
 		"EnemyEnelgy : [%d]",
 		m_pTestObj->m_iEnelgy);
-	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );*/
 
 	sprintf_s(strDbgTxt,
 		"PlayerPos : x[%f], y[%f], z[%f]",
@@ -651,7 +884,7 @@ void clsSCENE_MISSION::RenderDebugText()
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}*/
 }
-#endif //#if _DEBUG
+#endif //#ifdef _DEBUG
 
 void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 {
@@ -660,6 +893,79 @@ void clsSCENE_MISSION::UpdateCamTargetPos(clsCharactor* pChara)
 		return;
 	}
 
-	m_vCamTargetPos = pChara->m_vLockRangePos;
+	m_vCamTargetPos = pChara->GetCamPos();
 	m_vLookTargetPos = pChara->m_vLockPos;
 }
+
+void clsSCENE_MISSION::GameStart()
+{
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		m_v_pFriends[i]->ActStart();
+	}
+
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		m_v_pEnemys[i]->ActStart();
+	}
+}
+
+
+
+
+
+
+
+#ifdef Tahara
+//メニューの動き.
+void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
+{
+	m_upMenu->Update();
+	//メニューが何か返してくる.
+	unsigned int uiReceiveInformation = m_upMenu->GetInformation();
+	if( uiReceiveInformation )
+	{
+		char cInformationIndex = -1;
+		for( char i=0; i<enINFORMATION_INDEX_size; i++ ){
+			//有用な情報と合致したなら.
+			if( uiReceiveInformation == m_vecuiInformationDataArray[i] ){
+				cInformationIndex = i;
+			}
+		}
+		switch( cInformationIndex )
+		{
+		case enINFORMATION_INDEX_MISSION_FAILED:
+			enNextScene = enSCENE::GAMEOVER;
+			break;
+
+		case enINFORMATION_INDEX_WINDOW_CLOSE:
+			m_upMenu->Close();
+			break;
+
+		default:
+			assert( !"不正な情報が返されました" );
+			break;
+		}
+	}
+
+	//( 見た目が )消えたら( メモリからも )消える.
+	if( m_upMenu->isDeletePermission() ){
+		m_upMenu.reset( nullptr );
+		//消し終わったら.
+		if( !m_upMenu ){
+			//エフェクトの一時停止の解除.
+			m_wpEffects->PausedAll( false );
+			//========== モデルのアニメーションの一時停止の解除 ==========//.
+			for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+			{
+				m_v_pFriends[i]->AnimPlay();
+			}
+
+			for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+			{
+				m_v_pEnemys[i]->AnimPlay();
+			}
+		}
+	}
+}
+#endif//#ifdef Tahara

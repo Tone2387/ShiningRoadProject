@@ -9,6 +9,7 @@ class clsMENU_WINDOW_ASSEMBLE_BACK_TITLE : public clsMENU_WINDOW_ASSEMBLE_BASE
 {
 public:
 	clsMENU_WINDOW_ASSEMBLE_BACK_TITLE(
+		const HWND hWnd,
 		clsPOINTER_GROUP* const pPtrGroup,
 		clsMENU_WINDOW_BASE* const pParentWindow,
 		std::vector<unsigned int>* const pInformationVec );
@@ -21,7 +22,7 @@ private:
 	void RenderProduct() override;
 	bool CreateNextWindowProduct( 
 		clsMENU_WINDOW_BASE** ppOutNextWindow, 
-		clsMENU_WINDOW_BASE* const pParentWindow ) override;
+		clsMENU_WINDOW_BASE* const pParentWindow ) override { return false; };
 
 };
 

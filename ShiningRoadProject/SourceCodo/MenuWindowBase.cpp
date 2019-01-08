@@ -1,10 +1,19 @@
 #include "MenuWindowBase.h"
-#include "PtrGroup.h"
-#include "UiText.h"
 
+
+#include "PtrGroup.h"
+#include "SoundManagerMenuWindow.h"
+#include "CFont.h"
+#include "UiText.h"
+#include "DxInput.h"
+#include "CXInput.h"
+
+#include "File.h"
 
 
 using namespace std;
+#define DINPUT_ENTER enPKey_01
+#define DINPUT_EXIT	 enPKey_02
 
 namespace{
 	//ボタンのホールドフレーム.
@@ -14,31 +23,33 @@ namespace{
 }
 
 clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(		
-	clsPOINTER_GROUP* const pPtrGroup,
-	clsMENU_WINDOW_BASE* pParentWindow,
+	const HWND						hWnd,
+	clsPOINTER_GROUP* const			pPtrGroup,
+	clsMENU_WINDOW_BASE* const		pParentWindow,
 	std::vector<unsigned int>* const pInformationVec,
-	const int iCloseSeNum )
+	const D3DXVECTOR2&				vSize,
+	const char*						sWindowName )
 		:clsWINDOW_BOX( pPtrGroup->GetDevice(), pPtrGroup->GetContext() )
+		,m_hWnd( hWnd )
 		,m_pPtrGroup( pPtrGroup )
 		,m_pInformationVec( pInformationVec )
 		,m_wpFont( pPtrGroup->GetFont() )
 		,m_wpXInput( pPtrGroup->GetXInput() )
 		,m_wpDInput( pPtrGroup->GetDxInput() )
-		,m_wpSound( pPtrGroup->GetSound() )
 		,m_pParentWindow( pParentWindow )
 		,m_pNextWindow( nullptr )
 		,m_isOperation( true )
 		,m_iSelectNum( 0 )
 		,m_uiInformation( 0 )
 		,m_isClose( false )
-		,m_iCLOSE_SE_NUM( iCloseSeNum )
 {
 	Operation( true );
 	if( pParentWindow ){
 		pParentWindow->Operation( false );
 	}
 
-	const char sCURSOR_PATH[] = "Data\\Image\\StartUp\\Cursor.png";
+	//カーソル画像作成.
+	const char sCURSOR_PATH[] = "Data\\Image\\MenuWindow\\Cursor.png";
 	const WHSIZE_FLOAT CURSOR_DISP = { 1.0f, 1.0f };
 	const float fCURSOR_ALPHA = 0.75f;
 	SPRITE_STATE ss;
@@ -47,9 +58,13 @@ clsMENU_WINDOW_BASE::clsMENU_WINDOW_BASE(
 	m_upCursor->Create( pPtrGroup->GetDevice(), pPtrGroup->GetContext(), sCURSOR_PATH, ss );
 	m_upCursor->SetAlpha( fCURSOR_ALPHA );
 
-//	//継承先でやる.
-//	//窓を開く.
-//	Open( D3DXVECTOR2 vWINDOW_SIZE );
+
+	m_upSound = make_unique< clsSOUND_MANAGER_MENUWINDOW >( m_hWnd );
+	m_upSound->Create( sWindowName );
+	m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_APP );
+
+	//窓を開く.
+	Open( vSize );
 }
 
 
@@ -60,7 +75,6 @@ clsMENU_WINDOW_BASE::~clsMENU_WINDOW_BASE()
 	Operation( false );
 	m_pParentWindow = nullptr;
 
-	m_wpSound = nullptr;
 	m_wpDInput = nullptr;
 	m_wpXInput = nullptr;
 	m_wpFont = nullptr;
@@ -68,9 +82,44 @@ clsMENU_WINDOW_BASE::~clsMENU_WINDOW_BASE()
 	m_pPtrGroup = nullptr;
 }
 
+clsMENU_WINDOW_BASE::INFORMATION_MENU_DATA_ARRAY clsMENU_WINDOW_BASE::CreateInformationProduct( 
+	INFORMATION_MENU_DATA_ARRAY* const InformationDataArray,
+	const int iInformationSize,
+	const char* sInformationDataPath )
+{
+	//照合用情報の作成の為のファイルデータ取得.
+	unique_ptr< clsFILE > upFile = make_unique< clsFILE >();
+	upFile->Open( sInformationDataPath );
+	//照合用情報の作成.
+	InformationDataArray->resize( iInformationSize );
+	for( char i=0; i<iInformationSize; i++ ){
+		const int iCOL = 0;
+		assert( static_cast<unsigned int>( i ) < upFile->GetSizeRow() );
+		( *InformationDataArray )[i] = static_cast<unsigned int>( upFile->GetDataInt( i, iCOL ) );
+	}
+
+	return *InformationDataArray;
+}
+
+
+
 
 //このメニューウィンドウのdeleteはこのif文の中で使いましょう.
 bool clsMENU_WINDOW_BASE::isDeletePermission()
+{
+	//ウィンドウが縮み切っている.
+	if( isMinimum() ){
+		//音も鳴り終わっている.
+		if( m_upSound->IsStoppedSE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_DISAPP ) ){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//最小か( 消す許可の出るサイズか ).
+bool clsMENU_WINDOW_BASE::isMinimum()
 {
 	const float fDELETE_SIZE = 0.1f;
 	if( m_vSize.x <= fDELETE_SIZE && m_vSize.y <= fDELETE_SIZE ){
@@ -79,7 +128,6 @@ bool clsMENU_WINDOW_BASE::isDeletePermission()
 
 	return false;
 }
-
 
 //継承先のコンストラクタで使う.
 void clsMENU_WINDOW_BASE::Open( const D3DXVECTOR2& vSize )
@@ -103,7 +151,8 @@ void clsMENU_WINDOW_BASE::Update()
 	if( m_pNextWindow ){
 		m_pNextWindow->Update();
 		//子供が閉じたら.
-		if( m_pNextWindow->GetSize().x <= 0.0f && m_pNextWindow->GetSize().y <= 0.0f ){
+//		if( m_pNextWindow->GetSize().x <= 0.0f && m_pNextWindow->GetSize().y <= 0.0f ){
+		if( m_pNextWindow->isDeletePermission() ){
 			delete m_pNextWindow;
 			m_pNextWindow = nullptr;
 			//閉じる予約をしていたら自分も閉じる.
@@ -148,8 +197,13 @@ void clsMENU_WINDOW_BASE::Render()
 	SetTextAlpha( fTEXT_ALPHA );
 
 	//文字とカーソル.
+	//変化中ではないこと.
 	if( isStopChange() ){
-		RenderProduct();
+		//大きい時( 小さくないとき ).
+		if( !isMinimum() ){
+			//継承先で定義.
+			RenderProduct();
+		}
 	}
 
 	//子供を描画.
@@ -182,12 +236,6 @@ bool clsMENU_WINDOW_BASE::CreateNextWindow(
 
 
 
-//このウィンドウを操作するようになるならtrue,離れるならfalse.
-void clsMENU_WINDOW_BASE::Operation( const bool isOperation )
-{
-	m_isOperation = isOperation;
-}
-
 
 //このウィンドウを閉じ始めて親ウィンドウに操作を返す.
 void clsMENU_WINDOW_BASE::Close( const float fCloseSpdRate )
@@ -198,7 +246,7 @@ void clsMENU_WINDOW_BASE::Close( const float fCloseSpdRate )
 		return;
 	}
 
-	m_wpSound->PlaySE( m_iCLOSE_SE_NUM );
+	m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_WIN_DISAPP );
 
 	SetSizeTarget( { 0.0f, 0.0f, 0.0f } );
 
@@ -259,16 +307,22 @@ D3DXVECTOR3 clsMENU_WINDOW_BASE::SetPosFromWindow(
 bool clsMENU_WINDOW_BASE::SelectUp( bool isWithStick )	
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_UP ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_UP ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_UP ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDInput->IsLSUpStay()/* && isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDInput->IsLSUpStay() && isWithStick ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -306,16 +360,22 @@ bool clsMENU_WINDOW_BASE::SelectUp( bool isWithStick )
 bool clsMENU_WINDOW_BASE::SelectDown( bool isWithStick )	
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_DOWN ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_DOWN ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDInput->IsLSDownStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDInput->IsLSDownStay() && isWithStick ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -353,16 +413,22 @@ bool clsMENU_WINDOW_BASE::SelectDown( bool isWithStick )
 bool clsMENU_WINDOW_BASE::SelectRight( bool isWithStick )	
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_RIGHT ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_RIGHT ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDInput->IsLSRightStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDInput->IsLSRightStay() && isWithStick ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_RIGHT ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -400,16 +466,22 @@ bool clsMENU_WINDOW_BASE::SelectRight( bool isWithStick )
 bool clsMENU_WINDOW_BASE::SelectLeft( bool isWithStick )	
 {
 	bool isPush = false;
-	if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
-		isPush = true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressStay( XINPUT_LEFT ) ){
+			isPush = true;
+		}
+		else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
+			isPush = true;
+		}
 	}
-	else if( m_wpXInput->isSlopeStay( XINPUT_LEFT ) && isWithStick ){
-		isPush = true;
+	else{
+		if( m_wpDInput->IsLSLeftStay() /*&& isWithStick*/ ){
+			isPush = true;
+		}
 	}
-	else if( m_wpDInput->IsLSLeftStay() && isWithStick ){
-		isPush = true;
-	}
-	else if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
+
+	if( GetAsyncKeyState( VK_LEFT ) & 0x8000 ){
 		isPush = true;
 	}
 
@@ -446,10 +518,19 @@ bool clsMENU_WINDOW_BASE::SelectLeft( bool isWithStick )
 
 bool clsMENU_WINDOW_BASE::SelectEnter()	
 {
-	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
-		return true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_B ) ){
+			return true;
+		}
 	}
-	else if( m_wpXInput->isPressEnter( XINPUT_B ) ){
+	else{
+		if( m_wpDInput->IsPressKeyEnter( DINPUT_ENTER ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_RETURN ) & 0x1 ){
 		return true;
 	}
 
@@ -458,10 +539,19 @@ bool clsMENU_WINDOW_BASE::SelectEnter()
 
 bool clsMENU_WINDOW_BASE::SelectExit()	
 {
-	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
-		return true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( m_wpXInput->isPressEnter( XINPUT_A ) ){
+			return true;
+		}
 	}
-	else if( m_wpXInput->isPressEnter( XINPUT_A ) ){
+	else{
+		if( m_wpDInput->IsPressKeyEnter( DINPUT_EXIT ) ){
+			return true;
+		}
+	}
+
+	if( GetAsyncKeyState( VK_BACK ) & 0x1 ){
 		return true;
 	}
 

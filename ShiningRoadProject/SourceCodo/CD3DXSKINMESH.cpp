@@ -2,17 +2,24 @@
 *	SkinMeshCode Version 1.50
 *	LastUpdate	: 2017/06/30
 **/
+#include "OperationString.h"
 #include <stdlib.h>
 #include "CD3DXSKINMESH.h"
 #include <string.h>
 
 
+using namespace std;
+
 namespace{
 	// シェーダ名(ディレクトリも含む)
 	const char SHADER_NAME[] = "Shader\\MeshSkin.hlsl";
 	//マスクテクスチャパス.
-	const char sMASK_PATH_0[] = "mask0.png";
-	const char sMASK_PATH_1[] = "mask1.png";
+	const char sMASK_TEX_NAME[] = "Mask";
+	const char sMASK_TEX_TYPE[] = ".png";
+	const char sMASK_PATH_EMPTY[] = "Data\\Image\\maskEmpty.png";
+
+	//マスクの最大枚数.
+	const int iMASK_MAX = 2;
 }
 
 // フレームを作成する.
@@ -807,11 +814,11 @@ clsD3DXSKINMESH::clsD3DXSKINMESH(
 	ID3D11Device* const pDevice11,
 	ID3D11DeviceContext* const pContext11, 
 	const char* sFileName )
-	:m_hWnd( hWnd )
-	,m_pDevice( pDevice11 )
+	:m_pDevice( pDevice11 )
 	,m_pDeviceContext( pContext11 )
-	,m_pD3d9( NULL )
-	,m_pDevice9( NULL )
+//	,m_hWnd( hWnd )
+//	,m_pD3d9( NULL )
+//	,m_pDevice9( NULL )
 	,m_pSampleLinear( NULL )
 	,m_pVertexShader( NULL )
 	,m_pPixelShader( NULL )
@@ -821,25 +828,28 @@ clsD3DXSKINMESH::clsD3DXSKINMESH(
 	,m_pConstantBufferBone( NULL )
 	,m_pD3dxMesh( NULL )
 	,m_pBlendState()
-	,m_pMaskBase( nullptr )
-	,m_pMaskArmor( nullptr )
 {	 
+	LPDIRECT3DDEVICE9	pDevice9 = NULL;
+
 	if( FAILED( CreateBlendState() ) ){
-		assert( !"CreateBlendState()" );
+		ERR_MSG( "CreateBlendState()" , sFileName );
 	}
 
 	// Dx9 のデバイス関係を作成する.
-	if( FAILED( CreateDeviceDx9( m_hWnd ) ) ){
-		assert( !"CreateDeviceDx9()" );
+	if( FAILED( CreateDeviceDx9( hWnd, &pDevice9, sFileName ) ) ){
+		ERR_MSG( "CreateDeviceDx9()" , sFileName );
 	}
 	// シェーダの作成.
-	if( FAILED( InitShader() ) ){
-		assert( !"InitShader()" );
+	if( FAILED( InitShader( sFileName ) ) ){
+		ERR_MSG( "InitShader()" , sFileName );
 	}
 	//モデルの作成.
-	if( FAILED( CreateFromX( const_cast<CHAR*>( sFileName ) ) ) ){
-		assert( !"CreateFromX()" );
+	if( FAILED( CreateFromX( const_cast<CHAR*>( sFileName ), pDevice9 ) ) ){
+		ERR_MSG( "CreateFromX()" , sFileName );
 	}
+
+	SAFE_RELEASE( pDevice9 );
+
 
 	m_Trans.vPos = vecAxisX = vecAxisZ = m_vLight = m_vEye = { 0.0f, 0.0f, 0.0f };
 	m_Trans.fPitch = m_Trans.fYaw = m_Trans.fRoll = 0.0f;
@@ -865,8 +875,6 @@ clsD3DXSKINMESH::clsD3DXSKINMESH(
 // デストラクタ.
 clsD3DXSKINMESH::~clsD3DXSKINMESH()
 {
-	SAFE_DELETE( m_pMaskArmor );
-	SAFE_DELETE( m_pMaskBase );
 
 	// 解放処理.
 	Release();
@@ -884,8 +892,8 @@ clsD3DXSKINMESH::~clsD3DXSKINMESH()
 	SAFE_RELEASE( m_pConstantBuffer0 );
 
 	// Dx9 デバイス関係.
-	SAFE_RELEASE( m_pDevice9 );
-	SAFE_RELEASE( m_pD3d9 );
+//	SAFE_RELEASE( m_pDevice9 );
+//	SAFE_RELEASE( m_pD3d9 );
 
 	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
 		SAFE_RELEASE( m_pBlendState[i] );
@@ -894,19 +902,20 @@ clsD3DXSKINMESH::~clsD3DXSKINMESH()
 	// Dx11 デバイス関係.
 	m_pDeviceContext = NULL;
 	m_pDevice = NULL;
-	m_hWnd = NULL;
+//	m_hWnd = NULL;
 }
 
 
 
 // Dx9のデバイス・デバイスコンテキストの作成.
-HRESULT clsD3DXSKINMESH::CreateDeviceDx9( HWND hWnd )
+HRESULT clsD3DXSKINMESH::CreateDeviceDx9( HWND hWnd, LPDIRECT3DDEVICE9* ppOutDevice9, const char* sErrFilePath )
 {
 	// D3d"9"のデバイスを作る、全てはD3DXMESHの引数に必要だから.
+	LPDIRECT3D9 pD3d9 = NULL;
 	// Direct3D"9"オブジェクトの作成.
-	if( NULL == ( m_pD3d9 = Direct3DCreate9( D3D_SDK_VERSION ) ) )
+	if( NULL == ( pD3d9 = Direct3DCreate9( D3D_SDK_VERSION ) ) )
 	{
-		MessageBox( NULL, "Direct3D9の作成に失敗しました", "", MB_OK );
+		MessageBox( NULL, "Direct3D9の作成に失敗しました", sErrFilePath, MB_OK );
 		return E_FAIL;
 	}
 
@@ -920,35 +929,41 @@ HRESULT clsD3DXSKINMESH::CreateDeviceDx9( HWND hWnd )
 	d3dpp.EnableAutoDepthStencil = true;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 
-	if( FAILED(m_pD3d9->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd,
-									 D3DCREATE_HARDWARE_VERTEXPROCESSING,
-									 &d3dpp, &m_pDevice9 ) ) )
+	if( FAILED( pD3d9->CreateDevice( 
+					D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
+					D3DCREATE_HARDWARE_VERTEXPROCESSING,
+					&d3dpp, ppOutDevice9 ) ) )
 	{
-		if( FAILED( m_pD3d9->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd,
-									 D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-									 &d3dpp, &m_pDevice9 ) ) )
+		if( FAILED( pD3d9->CreateDevice( 
+					D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
+					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+					&d3dpp, ppOutDevice9 ) ) )
 		{
-			MessageBox(0,"HALモードでDIRECT3Dデバイスを作成できません\nREFモードで再試行します",NULL,MB_OK);
-			if( FAILED( m_pD3d9->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
-									 D3DCREATE_HARDWARE_VERTEXPROCESSING,
-									 &d3dpp, &m_pDevice9 ) ) )
+			MessageBox( 0,"HALモードでDIRECT3Dデバイスを作成できません\nREFモードで再試行します",sErrFilePath,MB_OK);
+			if( FAILED( pD3d9->CreateDevice( 
+					D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hWnd,
+					D3DCREATE_HARDWARE_VERTEXPROCESSING,
+					&d3dpp, ppOutDevice9 ) ) )
 			{
-				if( FAILED( m_pD3d9->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, m_hWnd,
-									 D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-									 &d3dpp, &m_pDevice9 ) ) )
+				if( FAILED( pD3d9->CreateDevice( 
+					D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hWnd,
+					D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+					&d3dpp, ppOutDevice9 ) ) )
 				{
-					MessageBox(0,"DIRECT3Dデバイスの作成に失敗しました",NULL,MB_OK);
+					MessageBox( 0,"DIRECT3Dデバイスの作成に失敗しました",sErrFilePath,MB_OK);
 					return E_FAIL;
 				}
 			}
 		}
 	}
 
+	SAFE_RELEASE( pD3d9 );
+
 	return S_OK;
 }
 
 // シェーダ初期化.
-HRESULT	clsD3DXSKINMESH::InitShader()
+HRESULT	clsD3DXSKINMESH::InitShader( const char* sErrFilePath )
 {
 	//D3D11関連の初期化
 	ID3DBlob *pCompiledShader = NULL;
@@ -963,7 +978,7 @@ HRESULT	clsD3DXSKINMESH::InitShader()
 	{
 		int size = pErrors->GetBufferSize();
 		char* ch = (char*)pErrors->GetBufferPointer();
-		MessageBox( 0, "hlsl読み込み失敗", NULL, MB_OK );
+		MessageBox( 0, "hlsl読み込み失敗", sErrFilePath, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -972,7 +987,7 @@ HRESULT	clsD3DXSKINMESH::InitShader()
 		m_pDevice->CreateVertexShader( pCompiledShader->GetBufferPointer(), pCompiledShader->GetBufferSize(), NULL, &m_pVertexShader ) ) )
 	{
 		SAFE_RELEASE(pCompiledShader);
-		MessageBox( 0, "バーテックスシェーダー作成失敗", NULL, MB_OK );
+		MessageBox( 0, "バーテックスシェーダー作成失敗", sErrFilePath, MB_OK );
 		return E_FAIL;
 	}
 	//頂点インプットレイアウトを定義	
@@ -1005,7 +1020,7 @@ HRESULT	clsD3DXSKINMESH::InitShader()
 			uCompileFlag, 0, NULL,
 			&pCompiledShader, &pErrors, NULL ) ) )
 	{
-		MessageBox( 0, "hlsl読み込み失敗", NULL, MB_OK );
+		MessageBox( 0, "hlsl読み込み失敗", sErrFilePath, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pErrors );
@@ -1016,7 +1031,7 @@ HRESULT	clsD3DXSKINMESH::InitShader()
 			NULL, &m_pPixelShader ) ) )
 	{
 		SAFE_RELEASE( pCompiledShader );
-		MessageBox( 0, "ピクセルシェーダー作成失敗", NULL, MB_OK );
+		MessageBox( 0, "ピクセルシェーダー作成失敗", sErrFilePath, MB_OK );
 		return E_FAIL;
 	}
 	SAFE_RELEASE( pCompiledShader );
@@ -1177,14 +1192,16 @@ HRESULT clsD3DXSKINMESH::ReadSkinInfo( MYMESHCONTAINER* pContainer, MY_SKINVERTE
 
 
 // Xからスキンメッシュを作成する　　注意）素材（X)のほうは、三角ポリゴンにすること.
-HRESULT clsD3DXSKINMESH::CreateFromX( CHAR* szFileName )
+HRESULT clsD3DXSKINMESH::CreateFromX( CHAR* szFileName, LPDIRECT3DDEVICE9 pDevice9 )
 {
+	if( !pDevice9 ) return E_FAIL;
+
 	// ファイル名をパスごと取得.
 	strcpy_s( m_FilePath, sizeof( m_FilePath ), szFileName );
 
 	// Xファイル読み込み.
 	m_pD3dxMesh = new D3DXPARSER;
-	m_pD3dxMesh->LoadMeshFromX( m_pDevice9, szFileName );
+	m_pD3dxMesh->LoadMeshFromX( pDevice9, szFileName );
 
 
 	// 全てのメッシュを作成する.
@@ -1365,10 +1382,53 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 				m_pDevice, pAppMesh->pMaterial[i].szTextureName,
 				NULL, NULL, &pAppMesh->pMaterial[i].pTexture, NULL )))
 		{
-			MessageBox( NULL, "テクスチャ読み込み失敗",
-				"Error", MB_OK );
+			MessageBox( NULL, pAppMesh->pMaterial[i].szTextureName,
+				m_FilePath, MB_OK );
 			return E_FAIL;
 		}
+
+
+		//========== マスク作成 ==========//.
+		//マスク画像名作成( マスク番号はまだ ).
+		string sMaskFilePath = pAppMesh->pMaterial[i].szTextureName;
+		if( sMaskFilePath.size() ){
+			auto StrItr = sMaskFilePath.rfind( sMASK_TEX_TYPE );
+			const int iRoop = sMaskFilePath.size() - StrItr;
+			for( int j=0; j<iRoop; j++ ){
+				sMaskFilePath.pop_back();
+			}
+			sMaskFilePath += sMASK_TEX_NAME;
+		}
+
+		clsOPERATION_STRING OprtStr;
+		pAppMesh->pMaterial[i].vecpMask.resize( iMASK_MAX, nullptr );
+
+		for( unsigned int j=0; j<pAppMesh->pMaterial[i].vecpMask.size(); j++ ){
+			//マスク画像名作成( 番号と拡張子 ).
+			string sMaskFullPath = OprtStr.ConsolidatedNumber( sMaskFilePath, j );
+			sMaskFullPath += sMASK_TEX_TYPE;
+
+			//テクスチャ作成.
+			if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+				m_pDevice, 
+				sMaskFullPath.c_str(),//テクスチャファイル名.
+				NULL, NULL,
+				&pAppMesh->pMaterial[i].vecpMask[j], //(out)テクスチャオブジェクト.
+				NULL ) ) )
+			{
+				if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+					m_pDevice, 
+					sMASK_PATH_EMPTY,//テクスチャファイル名.
+					NULL, NULL,
+					&pAppMesh->pMaterial[i].vecpMask[j], //(out)テクスチャオブジェクト.
+					NULL ) ) )
+				{
+					MessageBox(NULL, sMaskFullPath.c_str(), m_FilePath, MB_OK);
+					return E_FAIL;
+				}
+			}
+		}
+
 		// そのマテリアルであるインデックス配列内の開始インデックスを調べる.
 		// さらにインデックスの個数を調べる.
 		int iCount = 0;
@@ -1450,66 +1510,42 @@ HRESULT clsD3DXSKINMESH::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 	}
 
 
-	//========== マスク作成 ==========//.
-	//----- アーマー -----//.
-	if( !m_pMaskArmor ){
-		std::string name = sMASK_PATH_0;
-		if( name.size() ){
-			char* ret = strrchr( m_FilePath, '\\' );
-			if( ret != NULL ){
-				int check = ret - m_FilePath;
-				char path[512];
-				strcpy_s( path, 512, m_FilePath );
-				path[check+1] = '\0';
-
-				strcat_s( path, sizeof( path ), name.c_str() );
-				name = path;
-			}
-		}
-		m_pMaskArmor = new MASK_TEXTURE;
-		//テクスチャ作成.
-		if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
-			m_pDevice, 
-			name.c_str(),//テクスチャファイル名.
-			NULL, NULL,
-			&m_pMaskArmor->pTex, //(out)テクスチャオブジェクト.
-			NULL ) ) )
-		{
-			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-			return E_FAIL;
-		}
-	}
-	//----- ベース -----//.
-	if( !m_pMaskBase ){
-		std::string name = sMASK_PATH_1;
-		if( name.size() ){
-			char* ret = strrchr( m_FilePath, '\\' );
-			if( ret != NULL ){
-				int check = ret - m_FilePath;
-				char path[512];
-				strcpy_s( path, 512, m_FilePath );
-				path[check+1] = '\0';
-
-				strcat_s( path, sizeof( path ), name.c_str() );
-//				strcpy_s( pAppMesh->pMaterial[i].szTextureName,
-//					sizeof( pAppMesh->pMaterial[i].szTextureName ),
-//					path );
-				name = path;
-			}
-		}
-		m_pMaskBase = new MASK_TEXTURE;
-		//テクスチャ作成.
-		if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
-			m_pDevice, 
-			name.c_str(),//テクスチャファイル名.
-			NULL, NULL,
-			&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
-			NULL ) ) )
-		{
-			MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
-			return E_FAIL;
-		}
-	}
+//	//----- ベース -----//.
+//	if( !m_pMaskBase ){
+//		std::string name = sMASK_PATH_1;
+//		if( name.size() ){
+//			char* ret = strrchr( m_FilePath, '\\' );
+//			if( ret != NULL ){
+//				int check = ret - m_FilePath;
+//				char path[512];
+//				strcpy_s( path, 512, m_FilePath );
+//				path[check+1] = '\0';
+//
+//				strcat_s( path, sizeof( path ), name.c_str() );
+//				name = path;
+//			}
+//		}
+//		m_pMaskBase = new MASK_TEXTURE;
+//		//テクスチャ作成.
+//		if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+//			m_pDevice, 
+//			name.c_str(),//テクスチャファイル名.
+//			NULL, NULL,
+//			&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
+//			NULL ) ) )
+//		{
+//			if( FAILED( D3DX11CreateShaderResourceViewFromFileA(
+//				m_pDevice, 
+//				sMASK_PATH_EMPTY,//テクスチャファイル名.
+//				NULL, NULL,
+//				&m_pMaskBase->pTex, //(out)テクスチャオブジェクト.
+//				NULL ) ) )
+//			{
+//				MessageBox(NULL, "マスク", "テクスチャ作成失敗", MB_OK);
+//				return E_FAIL;
+//			}
+//		}
+//	}
 
 	return hRslt;
 }
@@ -1731,27 +1767,15 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 		// テクスチャをシェーダに渡す.
 		if( pMesh->pMaterial[i].szTextureName[0] != NULL )
 		{
-			UINT slot = 0;
 			//テクスチャ.
 			m_pDeviceContext->PSSetSamplers( 
-				slot, 1, &m_pSampleLinear );
+				0, 1, &m_pSampleLinear );
 			m_pDeviceContext->PSSetShaderResources( 
-				slot, 1, &pMesh->pMaterial[i].pTexture );
-			slot ++;
-			if( m_pMaskArmor->pTex ){
-				//ベース.
-				m_pDeviceContext->PSSetSamplers( 
-					slot, 1, &m_pSampleLinear );
+				0, 1, &pMesh->pMaterial[i].pTexture );
+			//マスク.
+			for( unsigned int j=0; j<pMesh->pMaterial[i].vecpMask.size(); j++ ){
 				m_pDeviceContext->PSSetShaderResources( 
-					slot, 1, &m_pMaskArmor->pTex );
-			}
-			slot ++;
-			if( m_pMaskBase->pTex ){
-				//アーマー.
-				m_pDeviceContext->PSSetSamplers( 
-					slot, 1, &m_pSampleLinear );
-				m_pDeviceContext->PSSetShaderResources( 
-					slot, 1, &m_pMaskBase->pTex );
+					j + 1, 1, &pMesh->pMaterial[i].vecpMask[j] );
 			}
 		}
 		else

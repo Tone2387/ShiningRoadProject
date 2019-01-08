@@ -1,5 +1,15 @@
 #include "PtrGroup.h"
 
+#include "DxInput.h"
+#include "CXInput.h"
+#include "Resource.h"
+#include "Effects.h"
+#include "SoundManagerBase.h"
+#include "Camera.h"
+#include "RoboStatusPlayer.h"
+#include "BlackScreen.h"
+#include "CFont.h"
+
 clsPOINTER_GROUP::clsPOINTER_GROUP(		
 	ID3D11Device* const pDevice,
 	ID3D11DeviceContext* const pContext,

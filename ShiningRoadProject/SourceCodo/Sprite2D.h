@@ -6,22 +6,11 @@
 
 #include "Common.h"//共通クラス.
 
-#define ALIGN16	_declspec(align(16))
 
 
 //======================================
 //	構造体.
 //======================================
-//コンスタントバッファのアプリ側の定義(Sprite2D.hlsl)
-//※シェーダ内のコンスタントバッファと一致している必要あり.
-struct SPRITE2D_CONSTANT_BUFFER
-{
-	ALIGN16 D3DXMATRIX	mW;				//ワールド行列.
-	ALIGN16	D3DXVECTOR4	vColor;			//アルファ値(透過で使用する)
-	ALIGN16 float		fViewPortWidth;	//ビューポート幅.
-	ALIGN16 float		fViewPortHeight;//ビューポート高さ.
-	ALIGN16 D3DXVECTOR2	vUV;			//UV座標.
-};
 
 //スプライト構造体.
 struct SPRITE_STATE
@@ -50,22 +39,24 @@ public:
 		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11,
 		const char* fileName, 
-		const SPRITE_STATE ss );
+		const SPRITE_STATE& ss );
 
 
 	//描画(レンダリング)
 	virtual void Render();
 
 
-	void SetPos( const D3DXVECTOR3 &vPos );
-	D3DXVECTOR3 GetPos() const;
-	void AddPos( const D3DXVECTOR3 &vPos );		//引数を加算する.
+	D3DXVECTOR3 GetPos()					{ return m_vPos; };
+	void SetPos( const D3DXVECTOR3& vPos )	{ m_vPos = vPos; };
+	void AddPos( const D3DXVECTOR3& vPos )	{ m_vPos += vPos; };
 
 
-	void SetScale( const D3DXVECTOR3 &vScale );
+	void SetScale( const D3DXVECTOR3 &vScale ) { m_vScale = vScale; };
 	void SetScale( const float &fScale, 
 		const bool withZ = false );	//XとYを等しい倍率で書ける.
-	D3DXVECTOR3 GetScale() const;
+
+	D3DXVECTOR3 GetScale() const { return m_vScale; }
+
 	void AddScale( const D3DXVECTOR3 &vScale );	//引数倍にする.
 	void AddScale( const float &fScale, const bool withZ = false );
 
@@ -73,29 +64,39 @@ public:
 	void SetColor( const D3DXVECTOR3& vColor );
 	D3DXVECTOR3 GetColor();
 
+	float GetAlpha()					{ return m_vColor.w; };
 	//第二引数をtrueにするとZにも影響する.		
-	void SetAlpha( const float fAlpha );
+	void SetAlpha( const float fAlpha ) { m_vColor.w = fAlpha; }
 	//範囲をoverするとfalseが返ってくる.
 	bool AddAlpha( const float fAlpha );
-	float GetAlpha();
 
 
 
 
-	void SetAnim( const POINTFLOAT &anim );
+	void SetAnim( const POINTFLOAT& anim );
 
 protected:
 
 
 	//シェーダ作成.
-	HRESULT InitShader();
+	HRESULT InitShader( const char* sErrFileName );
 	//モデル作成.
-	virtual HRESULT InitModel( SPRITE_STATE ss );
+	virtual HRESULT InitModel( const SPRITE_STATE& ss, const char* sErrFileName );
 	//テクスチャ作成.
 	HRESULT CreateTexture( const char* const fileName,
 		ID3D11ShaderResourceView** pTex );
 
-	void Release();
+protected:
+
+	//ヘッダーにいるのは継承先の為.
+	struct SPRITE2D_CONSTANT_BUFFER
+	{
+		ALIGN16 D3DXMATRIX	mW;				//ワールド行列.
+		ALIGN16	D3DXVECTOR4	vColor;			//アルファ値(透過で使用する)
+		ALIGN16 float		fViewPortWidth;	//ビューポート幅.
+		ALIGN16 float		fViewPortHeight;//ビューポート高さ.
+		ALIGN16 D3DXVECTOR2	vUV;			//UV座標.
+	};
 
 
 	//↓モデルの種類ごとに用意.

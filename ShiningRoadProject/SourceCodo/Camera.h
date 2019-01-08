@@ -19,16 +19,27 @@ public:
 
 	//ëÊìÒà¯êîÇ™true->m_vLookÇ‡Ç¬Ç¢ÇƒÇ≠ÇÈ.
 	//ëÊìÒà¯êîÇ™false->m_vLookÇÕÇªÇÃÇ‹Ç‹ÇÃà íu.
-	void SetPos( const D3DXVECTOR3& vPos, bool isWithLook = true );
-	void AddPos( const D3DXVECTOR3& vVec, bool isWithLook = true );
-	D3DXVECTOR3 GetPos();
+	virtual void SetPos( const D3DXVECTOR3& vPos, bool isWithLook = true ){
+		if( isWithLook ){
+			D3DXVECTOR3 tmpVec;//ÉJÉÅÉâÇÃà⁄ìÆó .
+			tmpVec = vPos - m_vPos;
+			m_vLook = vPos + tmpVec;
+		}
+		m_vPos = vPos;
+	};
+	virtual void AddPos( const D3DXVECTOR3& vVec, bool isWithLook = true ){
+		if( isWithLook ){ m_vLook += vVec; }
+		m_vPos += vVec;
+	};
+	D3DXVECTOR3 GetPos() const { return m_vPos; };
 
-	void SetLookPos( const D3DXVECTOR3& vPos );
-	void AddLookPos( const D3DXVECTOR3& vVec );
-	D3DXVECTOR3 GetLookPos();
 
-	D3DXVECTOR3 GetRot();
-	void SetRot( const D3DXVECTOR3 &vRot );
+	virtual void SetLookPos( const D3DXVECTOR3& vPos )	{ m_vLook = vPos; };
+	virtual void AddLookPos( const D3DXVECTOR3& vVec )	{ m_vLook += vVec; };
+	D3DXVECTOR3 GetLookPos() const				{ return m_vLook; };
+
+	D3DXVECTOR3 GetRot() const				{ return m_vRot; };
+	void SetRot( const D3DXVECTOR3 &vRot )	{ m_vRot = vRot; };
 
 protected:
 

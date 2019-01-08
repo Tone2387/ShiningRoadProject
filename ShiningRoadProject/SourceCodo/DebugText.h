@@ -7,7 +7,7 @@
 //============================================================
 //	インクルード.
 //============================================================
-#include "Global.h"
+#include "Common.h"
 #include "TextSpriteStruct.h"
 
 
@@ -15,15 +15,11 @@
 //============================================================
 //	定数.
 //============================================================
-#define DIMENSION		(12.0f)
-#define WDIMENSION		(10.0f)
-#define TEX_DIMENSION	(128.0f)
-
 
 
 
 //テキストクラス.
-class clsDebugText
+class clsDebugText : public clsCommon
 {
 public:
 	clsDebugText();	//コンストラクタ.
@@ -34,10 +30,6 @@ public:
 		float fSize, D3DXVECTOR4 vColor );
 
 
-
-	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( bool isAlpha );
-
 	//レンダリング関数.
 	void Render( char* text, int x, int y );
 
@@ -45,13 +37,6 @@ public:
 	void RenderFont( int FontIndex, int x, int y );
 
 private:
-
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
-
-	//↓アプリに一つ.
-	ID3D11Device*			m_pDevice11;		//デバイスオブジェクト.
-	ID3D11DeviceContext*	m_pDeviceContext11;	//デバイスコンテキスト.
 
 	//↓モデルの種類ごとに用意.
 	ID3D11VertexShader*		m_pVertexShader;	//頂点シェーダ.
@@ -65,7 +50,6 @@ private:
 	ID3D11ShaderResourceView*	m_pAsciiTexture;//アスキーテクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;//テクスチャのサンプラー:/テクスチャに各種フィルタをかける.
 
-	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
 
 
 	DWORD	m_dwWindowWidth;	//ウィンドウ幅.
@@ -79,9 +63,6 @@ private:
 	D3DXMATRIX m_mView;	//ビュー行列.
 	D3DXMATRIX m_mProj;	//プロジェクション行列.
 	
-
-
-
 
 };
 
