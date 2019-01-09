@@ -2,7 +2,7 @@
 #define SCENE_TAKEOFF_H_
 
 class clsStage;
-class clsRobo;
+class clsROBO_TAKEOFF;
 
 #include "SceneBase.h"
 #include "CameraTakeoff.h"
@@ -87,8 +87,8 @@ private:
 
 
 	std::unique_ptr< clsStage >	m_upStage;
-	std::unique_ptr< clsRobo >	m_upPlayer;
-	std::unique_ptr< clsRobo >	m_upEnemy;
+	std::unique_ptr< clsROBO_TAKEOFF >	m_upPlayer;
+	std::unique_ptr< clsROBO_TAKEOFF >	m_upEnemy;
 
 	//ƒJƒƒ‰‚ÌˆÚ“®‘¬“x‚È‚Ç.
 	std::vector< float > m_vecfOtherData;
