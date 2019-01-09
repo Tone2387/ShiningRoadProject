@@ -1,6 +1,6 @@
 #include "SceneTakeoff.h"
 #include "Stage.h"
-#include "Robo.h"
+#include "RoboTakeoff.h"
 #include "File.h"
 #include "RoboStatusEnemy.h"
 
@@ -59,7 +59,7 @@ void clsSCENE_TAKEOFF::CreateProduct()
 	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
 
 
-	m_upPlayer= make_unique< clsRobo >();
+	m_upPlayer= make_unique< clsROBO_TAKEOFF >();
 	m_upPlayer->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
 
 
@@ -67,7 +67,7 @@ void clsSCENE_TAKEOFF::CreateProduct()
 	const int iMovieEnemyRow = 0;
 	upEnemyState = make_unique< clsROBO_STATUS_ENEMY >( iMovieEnemyRow );
 
-	m_upEnemy = make_unique< clsRobo >();
+	m_upEnemy = make_unique< clsROBO_TAKEOFF >();
 	m_upEnemy->RoboInit( m_wpPtrGroup, upEnemyState.get() );
 
 
@@ -123,6 +123,8 @@ void clsSCENE_TAKEOFF::RenderUi()
 
 void clsSCENE_TAKEOFF::InitMovie()
 {
+	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
+
 	AddCut( &m_enCut );
 	SetCamPosFromFile(	 ++m_iCountCameraCutChange );
 	SetGigaponPosFromFile( m_iCountCameraCutChange );
@@ -155,10 +157,11 @@ void clsSCENE_TAKEOFF::InitMovie()
 			const int iARM_ANIM_INDEX = 0;
 			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
 			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
+
+			m_upPlayer->Boost();
 		}
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
-		m_upPlayer->Boost();
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
 		break;
@@ -173,8 +176,24 @@ void clsSCENE_TAKEOFF::InitMovie()
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
 		break;
 	case clsSCENE_TAKEOFF::enCUT_VS:
+		{
+			const int iINDEX = 1;
+			const float fDISTANCE = m_vecfOtherData[ iINDEX ];
+			D3DXVECTOR3 vHeadPos = m_upEnemy->m_pMesh->GetBonePosHeadCenter();
+
+			wpCam->SetLookPos( vHeadPos );
+			wpCam->SetPos( vHeadPos + D3DXVECTOR3( fDISTANCE, 0.0f, 0.0f ), false );
+		}
 		break;
 	case clsSCENE_TAKEOFF::enCUT_END:
+		{
+			const int iINDEX = 1;
+			const float fDISTANCE = m_vecfOtherData[ iINDEX ];
+			D3DXVECTOR3 vHeadPos = m_upPlayer->m_pMesh->GetBonePosHeadCenter();
+
+			wpCam->SetLookPos( vHeadPos );
+			wpCam->SetPos( vHeadPos + D3DXVECTOR3( fDISTANCE, 0.0f, 0.0f ), false );
+		}
 		break;
 
 	}
@@ -184,6 +203,9 @@ void clsSCENE_TAKEOFF::InitMovie()
 
 void clsSCENE_TAKEOFF::UpdateMovie()
 {
+	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
+	int iOtherDataIndex = 0;
+
 	D3DXVECTOR3 vPosPlayerOld = m_upPlayer->GetPosition();
 	D3DXVECTOR3 vPosEnemyOld = m_upEnemy->GetPosition();
 
@@ -192,9 +214,6 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 	m_upEnemy->UpdateProduct( m_upStage.get() );
 	m_upEnemy->ModelUpdate();
 
-
-	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
-	int iOtherDataIndex = 0;
 
 	switch( m_enCut )
 	{
@@ -305,6 +324,8 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 			wpCam->Spn( fSPN );
 			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->AddDistance( fMOVE, true );
+
+			m_upPlayer->IgnitionCoreBoost( true );
 		}
 		break;
 
@@ -326,6 +347,8 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 			{
 				m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
 			}
+
+			m_upPlayer->IgnitionCoreBoost( true );
 		}
 		break;
 
@@ -335,6 +358,8 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 			m_upPlayer->SetPosition(
 				vPosPlayerOld +
 				D3DXVECTOR3( fPLAYER_SPEED_DOOR_APP, 0.0f, 0.0f ) );
+			
+			m_upPlayer->IgnitionCoreBoost( true );
 		}
 		break;
 
@@ -359,6 +384,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 				m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
 				m_isTrigger = true;
 			}
+			m_upPlayer->IgnitionCoreBoost( true );
 		}
 		break;
 
@@ -396,12 +422,23 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 		{
 			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->CrabWalk( fDistance );
+			
 		}
 		break;
 	case clsSCENE_TAKEOFF::enCUT_END:
 		{
 			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->CrabWalk( fDistance );
+
+			iOtherDataIndex++;
+			//プレーヤーは前進する.
+			const float fPLAYER_SPEED = m_vecfOtherData[ iOtherDataIndex++ ];
+			m_upPlayer->SetPosition(
+				vPosPlayerOld +
+				D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
+			wpCam->AddPos( D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
+
+			m_upPlayer->IgnitionCoreBoost( true );
 		}
 		break;
 	}

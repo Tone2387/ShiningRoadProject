@@ -1,4 +1,5 @@
 #include "Sprite2DCenter.h"
+#include "BlendState.h"
 
 namespace{
 
@@ -185,7 +186,7 @@ void clsSPRITE2D_CENTER::Render()
 		0, 1, &m_pTexture);		//テクスチャをシェーダに渡す.
 
 	//アルファブレンド用ブレンドステート作成＆設定.
-	SetBlend( true );
+	m_psinBlend->SetBlend( true );
 
 	//プリミティブをレンダリング.
 	m_wpContext->Draw(4, 0);

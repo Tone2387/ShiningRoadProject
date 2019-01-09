@@ -1,4 +1,5 @@
 #include "ScreenTexture.h"
+#include "BlendState.h"
 
 #include "SoundManagerNoise.h"
 #include "Sprite2D.h"	
@@ -80,9 +81,6 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	}
 	if( FAILED( CreateConstantBuffer() ) ){
 		ERR_MSG( "描画先テクスチャバッファ作成失敗", "clsSCREEN_TEXTURE" );
-	}
-	if( FAILED( CreateBlendState() ) ){
-		ERR_MSG( "描画先ブレンドステート作成失敗", "clsSCREEN_TEXTURE" );
 	}
 
 	//サウンド作成.
@@ -515,7 +513,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 //	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	SetBlend( false );
+	m_psinBlend->SetBlend( false, true );
 
 	m_wpContext->Draw( 4, 0 );//uVerMax.
 

@@ -100,6 +100,9 @@
     <Filter Include="Tahara\Robo">
       <UniqueIdentifier>{e4e00ffa-f7a8-4727-91d7-d4e7d7748946}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tahara\Singleton">
+      <UniqueIdentifier>{776c60a6-f4cc-41dd-b061-b6f369430cf1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceCodo\CameraMission.cpp">
@@ -197,9 +200,6 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\PartsArmR.cpp">
       <Filter>Tahara\Parts\Arms</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCodo\AssembleModel.cpp">
-      <Filter>Tahara</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\Object.cpp">
       <Filter>Hiyosi\Object</Filter>
@@ -336,9 +336,6 @@
     <ClCompile Include="SourceCodo\CFont.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\BlendState.cpp">
-      <Filter>Tahara</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\KeyInput.cpp">
       <Filter>Tahara\System</Filter>
     </ClCompile>
@@ -436,6 +433,15 @@
       <Filter>Tahara\Camera</Filter>
     </ClCompile>
     <ClCompile Include="SourceCodo\RoboTakeoff.cpp">
+      <Filter>Tahara\Robo</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\Singleton.cpp">
+      <Filter>Tahara\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\BlendState.cpp">
+      <Filter>Tahara\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\AssembleModel.cpp">
       <Filter>Tahara\Robo</Filter>
     </ClCompile>
   </ItemGroup>
@@ -538,9 +544,6 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\PartsArmR.h">
       <Filter>Tahara\Parts\Arms</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCodo\AssembleModel.h">
-      <Filter>Tahara</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\Object.h">
       <Filter>Hiyosi\Object</Filter>
@@ -683,9 +686,6 @@
     <ClInclude Include="SourceCodo\CFont.h">
       <Filter>Tahara\UI</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\BlendState.h">
-      <Filter>Tahara</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\KeyInput.h">
       <Filter>Tahara\System</Filter>
     </ClInclude>
@@ -795,6 +795,15 @@
       <Filter>Tahara\Camera</Filter>
     </ClInclude>
     <ClInclude Include="SourceCodo\RoboTakeoff.h">
+      <Filter>Tahara\Robo</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Singleton.h">
+      <Filter>Tahara\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\BlendState.h">
+      <Filter>Tahara\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\AssembleModel.h">
       <Filter>Tahara\Robo</Filter>
     </ClInclude>
   </ItemGroup>

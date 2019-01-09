@@ -3,6 +3,8 @@
 //警告についてのコード分析を無効にする.4005:再定義.
 #pragma warning( disable:4005 )	
 
+class clsBLEND_STATE;
+
 //class LPD3DXMESH;
 #include <d3dx9.h>
 
@@ -38,9 +40,6 @@ public:
 		const D3DXVECTOR4& vColor = D3DXVECTOR4( 1.0f,1.0f,1.0f,1.0f ),
 		const bool isAlpha = false );
 
-	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool isAlpha );
-
 
 public:
 
@@ -51,9 +50,6 @@ public:
 	LPD3DXMESH	m_pMeshForRay;	//レイとメッシュ用.
 
 private:
-
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
 
 	//Dx9初期化用.
 	HRESULT InitDx9( const HWND hWnd, LPDIRECT3DDEVICE9* ppOutDevice9, const LPSTR sErrFilePath );
@@ -127,7 +123,7 @@ private:
 
 
 
-	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
+	clsBLEND_STATE*	m_psinBlend;
 
 };
 

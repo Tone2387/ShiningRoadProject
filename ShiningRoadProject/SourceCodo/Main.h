@@ -69,6 +69,9 @@ public:
 	//Direct3D終了処理.
 	void DestroyD3D();
 
+	//ループ前の処理.
+	void CreateResource();
+
 	//メッセージループ.
 	void Loop();
 

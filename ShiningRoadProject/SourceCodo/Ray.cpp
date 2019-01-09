@@ -1,4 +1,6 @@
 #include "Ray.h"
+#include "BlendState.h"
+#include "Singleton.h"
 
 namespace{
 

@@ -1,6 +1,8 @@
 #include "Main.h"
 #include "RenderAtStartUp.h"
 #include "Game.h"
+#include "Singleton.h"
+#include "BlendState.h"
 #include <stdio.h>
 #include <thread>
 
@@ -45,6 +47,7 @@ INT WINAPI WinMain(
 		{
 			//Dx11用の初期化
 			if( SUCCEEDED( g_upMain->InitD3D() ) ){
+				g_upMain->CreateResource();
 				//メッセージループ.
 				g_upMain->Loop();
 			}
@@ -215,10 +218,7 @@ LRESULT clsMain::MsgProc(
 }
 
 
-//============================================================
-//	メッセージループとアプリケーション処理の入り口.
-//============================================================
-void clsMain::Loop()
+void clsMain::CreateResource()
 {
 	//起動中の描画.
 	unique_ptr< clsRENDER_AT_START_UP > upRenderAtStartUp =
@@ -229,7 +229,6 @@ void clsMain::Loop()
 			m_pBackBuffer_TexRTV,
 			m_pBackBuffer_DSTexDSV );
 	//別スレッドで描画.
-//	thread thStartUpRender( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
 	thread thStartUpRender( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
 
 
@@ -244,8 +243,14 @@ void clsMain::Loop()
 	//ロード画面終了後にCreateしないと効果音のタイミングがおかしくなる.
 	m_upGame->Create();
 
+}
 
 
+//============================================================
+//	メッセージループとアプリケーション処理の入り口.
+//============================================================
+void clsMain::Loop()
+{
 	//----------------------------------------------------------
 	//	フレームレート.
 	//----------------------------------------------------------
@@ -507,6 +512,9 @@ HRESULT clsMain::InitD3D()
 	m_pDeviceContext->RSSetState( pIr );
 	SAFE_RELEASE( pIr );
 
+	//===== シングルトン =====//.
+	clsBLEND_STATE Blend = clsSINGLETON<clsBLEND_STATE>::GetInstance();
+	Blend.Create( m_pDevice, m_pDeviceContext );
 
 	return S_OK;
 }
@@ -516,6 +524,7 @@ HRESULT clsMain::InitD3D()
 //============================================================
 void clsMain::DestroyD3D()
 {
+
 #ifdef _DEBUG
 	if( m_pRayH != nullptr ){
 		delete m_pRayH;
@@ -542,6 +551,7 @@ void clsMain::DestroyD3D()
 	SetWindowMode();
 #endif//#ifdef STARTUP_FULLSCREEN_
 
+	clsSINGLETON_FINALIZER::Finalize();//シングルトンの消去.
 
 	SAFE_DELETE( m_spViewPort10 );
 	SAFE_RELEASE( m_pBackBuffer_DSTexDSV );

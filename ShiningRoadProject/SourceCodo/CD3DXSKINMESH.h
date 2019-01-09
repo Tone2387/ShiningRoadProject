@@ -7,6 +7,7 @@
 // 警告についてのコード分析を無効にする。4005：再定義.
 #pragma warning( disable : 4005 )
 
+class clsBLEND_STATE;
 
 #include <stdio.h>
 #include <windows.h>
@@ -392,8 +393,6 @@ private:
 		SKIN_PARTS_MESH* pMesh,
 		MYMESHCONTAINER* const pContainer );
 
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
 	// 解放関数.
 	HRESULT Release();
 
@@ -438,9 +437,10 @@ private:
 	void DestroyAllMesh( D3DXFRAME* pFrame );
 	HRESULT DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p );
 
+
+
 	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool isAlpha );
-	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
+	clsBLEND_STATE*	m_psinBlend;
 
 
 
