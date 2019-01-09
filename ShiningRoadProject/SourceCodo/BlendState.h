@@ -5,23 +5,24 @@
 
 
 //ID3D11BlendStateを簡単に操作するためのクラス.
-//シングルトン.
+//シングルトンで使う.
 class clsBLEND_STATE
 {
 public:
 
-	clsBLEND_STATE(
-		ID3D11Device* const pDevice,
-		ID3D11DeviceContext* const pContext );
+	clsBLEND_STATE();
+//	clsBLEND_STATE(
+//		ID3D11Device* const pDevice,
+//		ID3D11DeviceContext* const pContext );
 	~clsBLEND_STATE();
 
-	enum class encBLEND_FLAG : UCHAR
-	{
-		ALPHA = 0,
-		NOT_ALPHA,		
-	};
+	void Create(
+		ID3D11Device* const pDevice,
+		ID3D11DeviceContext* const pContext );
 
-	void SetBlend( const encBLEND_FLAG encBlendFlag );
+	//第二引数がtrueなら第一引数が同じでもブレンドステートを作り直す.
+	void SetBlend( const bool isAlpha, const bool isCreateAbsolute = true );
+
 
 private:
 
@@ -36,7 +37,7 @@ private:
 	ID3D11Device*		 m_wpDevice;
 	ID3D11DeviceContext* m_wpContext;
 
-	encBLEND_FLAG m_encBrendFlg;
+	bool m_isAlpha;
 };
 
 

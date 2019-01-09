@@ -194,6 +194,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="SourceCodo\Singleton.cpp" />
     <ClCompile Include="SourceCodo\SkinMesh.cpp" />
     <ClCompile Include="SourceCodo\Sound.cpp" />
     <ClCompile Include="SourceCodo\SoundManagerAssemble.cpp" />
@@ -323,6 +324,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="SourceCodo\Singleton.h" />
     <ClInclude Include="SourceCodo\SkinMesh.h" />
     <ClInclude Include="SourceCodo\Sound.h" />
     <ClInclude Include="SourceCodo\SoundManagerAssemble.h" />

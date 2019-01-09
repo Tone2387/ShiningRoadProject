@@ -3,6 +3,8 @@
 
 #define ALIGN16	_declspec( align( 16 ) )
 
+class clsBLEND_STATE;
+
 //インクルード.
 #include "Global.h"
 
@@ -31,11 +33,6 @@ protected:
 		D3DXVECTOR2 vTex;	//テクスチャ座標.
 	};
 
-	//ブレンドステート作成.
-	HRESULT CreateBlendState();
-
-	//透過(アルファブレンド)設定の切り替え.
-	void SetBlend( const bool isAlpha );
 
 protected:
 
@@ -43,7 +40,7 @@ protected:
 	ID3D11Device*			m_wpDevice;		//デバイスオブジェクト.
 	ID3D11DeviceContext*	m_wpContext;	//デバイスコンテキスト.
 
-	ID3D11BlendState*	m_pBlendState[ enBLEND_STATE_size ];		//ブレンドステート.
+	clsBLEND_STATE*	m_psinBlend;
 
 };
 

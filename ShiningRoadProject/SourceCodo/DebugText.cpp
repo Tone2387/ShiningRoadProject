@@ -1,4 +1,5 @@
 #include "DebugText.h"
+#include "BlendState.h"
 
 
 namespace{
@@ -85,9 +86,6 @@ HRESULT clsDebugText::Init( ID3D11DeviceContext* pContext,
 	//デバイスコンテキストをコピー.
 	m_wpContext = pContext;
 	m_wpContext->GetDevice( &m_wpDevice );
-
-	//ブレンドステート作成.
-	CreateBlendState();
 
 	//windowサイズ.
 	m_dwWindowWidth = dwWidth;
@@ -319,7 +317,8 @@ void clsDebugText::Render( char* text, int x, int y )
 		0, 1, &m_pAsciiTexture );
 
 
-	SetBlend( true );
+	m_psinBlend->SetBlend( true );
+
 	//文字数分ループ.
 	for( UINT i=0; i<strlen( text ); i++ ){
 		char font = text[i];
@@ -377,7 +376,6 @@ void clsDebugText::RenderFont( int FontIndex, int x, int y )
 		&stride, &offset );
 
 	//描画.
-//	SetBlend( true );
 	m_wpContext->Draw( 4, 0 );
 
 

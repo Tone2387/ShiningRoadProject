@@ -1,4 +1,5 @@
 #include "Sprite2D.h"
+#include "BlendState.h"
 
 namespace{
 
@@ -46,9 +47,6 @@ HRESULT clsSprite2D::Create(
 
 	m_SState = ss;
 
-	if( FAILED( CreateBlendState() ) ){
-		return E_FAIL;
-	}
 	if( FAILED( InitShader( fileName ) ) ){
 		return E_FAIL;
 	}
@@ -390,7 +388,7 @@ void clsSprite2D::Render()
 		0, 1, &m_pTexture );		//テクスチャをシェーダに渡す.
 
 	//アルファブレンド用ブレンドステート作成＆設定.
-	SetBlend( true );
+	m_psinBlend->SetBlend( true );
 
 	//プリミティブをレンダリング.
 	m_wpContext->Draw( 4, 0 );

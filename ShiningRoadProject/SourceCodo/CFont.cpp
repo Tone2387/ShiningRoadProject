@@ -2,6 +2,8 @@
 
 #include "CFont.h"
 
+#include "BlendState.h"
+
 #include "File.h"
 //#include "OperationString.h"
 
@@ -86,9 +88,6 @@ clsFont::clsFont(
 
 	assert( iReturn );
 
-	if( FAILED( CreateBlendState() ) ){
-		assert( !"Can't Blend State" );
-	}
 
 	if( FAILED( CreateShader() ) ){
 		assert( !"Can't Create Shader" );
@@ -113,9 +112,6 @@ clsFont::~clsFont()
 	SAFE_RELEASE( m_pVertexLayout );
 	SAFE_RELEASE( m_pVertexShader );
 
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		SAFE_RELEASE( m_pBlendState[i] );
-	}
 
 	//リソース削除.
 	BOOL Return = RemoveFontResourceEx(
@@ -669,7 +665,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 		m_wpContext->PSSetShaderResources( 0, 1, &m_vecvecpAsciiTexture[ iTextRow ][i] );
 
 		//アルファブレンド用ブレンドステート作成.
-		SetBlend( true );
+		m_psinBlend->SetBlend( true );
 
 		//描画.
 		m_wpContext->Draw( 4, 0 );

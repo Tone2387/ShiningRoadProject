@@ -1,4 +1,6 @@
 #include "RenderAtStartUp.h"
+#include "BlendState.h"
+#include "Singleton.h"
 
 using namespace std;
 
@@ -99,6 +101,8 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 {
 	//このクラスの初期化時に灰色画面が出るのを防ぐ.
 	Render( false );
+	clsBLEND_STATE* pBlend = &clsSINGLETON<clsBLEND_STATE>::GetInstance();
+	pBlend->Create( m_wpDevice, m_wpContext );
 
 	CreateDepthStencilState();
 
