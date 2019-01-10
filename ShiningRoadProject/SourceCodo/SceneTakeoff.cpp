@@ -50,7 +50,6 @@ clsSCENE_TAKEOFF::~clsSCENE_TAKEOFF()
 
 void clsSCENE_TAKEOFF::CreateProduct()
 {
-//	m_wpSound->PlayBGM( enBGM_AMACHA0 );
 	
 //	m_wpFont->Create( sFONT_TEXT_PATH_GAME_OVER );
 
@@ -77,6 +76,11 @@ void clsSCENE_TAKEOFF::CreateProduct()
 	SetCamPosFromFile(	   m_iCountCameraCutChange );
 	SetGigaponPosFromFile( m_iCountCameraCutChange );
 	SetOtherDataFromFile(  m_iCountCameraCutChange );
+
+	if( m_wpSound ){
+		m_wpSound->PlayBGM( 0 );
+	}
+
 }
 
 
