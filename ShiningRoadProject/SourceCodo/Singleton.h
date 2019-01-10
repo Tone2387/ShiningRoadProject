@@ -4,6 +4,7 @@
 #include <mutex>
 #include <assert.h>
 
+//モズク式.
 
 //シングルトンの消去.
 class clsSINGLETON_FINALIZER
@@ -25,6 +26,7 @@ template<typename T>
 class clsSINGLETON final
 {
 public:
+	//ポインタで受け取ってね.
 	static T& GetInstance(){
 		std::call_once( initFlag, Create );
 		assert( instance );

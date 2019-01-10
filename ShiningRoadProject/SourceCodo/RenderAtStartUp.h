@@ -1,6 +1,8 @@
 #ifndef RENDER_AT_START_UP_H_
 #define RENDER_AT_START_UP_H_
 
+class clsBLEND_STATE;
+
 //#include "Global.h"
 #include "Sprite2DCenter.h"
 #include "LineBox.h"

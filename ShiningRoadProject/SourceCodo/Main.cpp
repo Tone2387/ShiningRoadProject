@@ -513,8 +513,8 @@ HRESULT clsMain::InitD3D()
 	SAFE_RELEASE( pIr );
 
 	//===== ƒVƒ“ƒOƒ‹ƒgƒ“ =====//.
-	clsBLEND_STATE Blend = clsSINGLETON<clsBLEND_STATE>::GetInstance();
-	Blend.Create( m_pDevice, m_pDeviceContext );
+	clsBLEND_STATE* pBlend = &clsSINGLETON<clsBLEND_STATE>::GetInstance();
+	pBlend->Create( m_pDevice, m_pDeviceContext );
 
 	return S_OK;
 }
