@@ -1,6 +1,8 @@
 #ifndef RENDER_AT_START_UP_H_
 #define RENDER_AT_START_UP_H_
 
+class clsBLEND_STATE;
+
 //#include "Global.h"
 #include "Sprite2DCenter.h"
 #include "LineBox.h"
@@ -13,11 +15,11 @@ class clsRENDER_AT_START_UP
 {
 public:
 	clsRENDER_AT_START_UP(
-		ID3D11Device*			 const pDevice,
-		ID3D11DeviceContext*	 const pContext,
-		IDXGISwapChain*			 const pSwapChain,
-		ID3D11RenderTargetView*	 const pBackBuffer_TexRTV,
-		ID3D11DepthStencilView*	 const pBackBuffer_DSTexDSV );
+		ID3D11Device*			const pDevice,
+		ID3D11DeviceContext*	const pContext,
+		IDXGISwapChain*			const pSwapChain,
+		ID3D11RenderTargetView*	const pBackBuffer_TexRTV,
+		ID3D11DepthStencilView*	const pBackBuffer_DSTexDSV );
 	~clsRENDER_AT_START_UP();
 
 	//ÉãÅ[Évèàóù.

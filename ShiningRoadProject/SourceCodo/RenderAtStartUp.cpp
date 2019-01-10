@@ -83,11 +83,11 @@ namespace{
 }
 
 clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(	
-	ID3D11Device*			 const pDevice,
-	ID3D11DeviceContext*	 const pContext,
-	IDXGISwapChain*			 const pSwapChain,
-	ID3D11RenderTargetView*	 const pBackBuffer_TexRTV,
-	ID3D11DepthStencilView*	 const pBackBuffer_DSTexDSV )
+	ID3D11Device*			const pDevice,
+	ID3D11DeviceContext*	const pContext,
+	IDXGISwapChain*			const pSwapChain,
+	ID3D11RenderTargetView*	const pBackBuffer_TexRTV,
+	ID3D11DepthStencilView*	const pBackBuffer_DSTexDSV )
 	:m_wpDevice(pDevice)
 	,m_wpContext( pContext )
 	,m_wpSwapChain( pSwapChain )
@@ -101,8 +101,9 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 {
 	//このクラスの初期化時に灰色画面が出るのを防ぐ.
 	Render( false );
-	clsBLEND_STATE* pBlend = &clsSINGLETON<clsBLEND_STATE>::GetInstance();
-	pBlend->Create( m_wpDevice, m_wpContext );
+
+//	clsBLEND_STATE* pBlend = &clsSINGLETON<clsBLEND_STATE>::GetInstance();
+//	pBlend->Create( m_wpDevice, m_wpContext );
 
 	CreateDepthStencilState();
 

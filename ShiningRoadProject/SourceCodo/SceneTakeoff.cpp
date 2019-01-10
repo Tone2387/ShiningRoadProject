@@ -294,6 +294,12 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
+		{
+			const float fUP = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->AddPos( { 0.0f, fUP, 0.0f }, false );
+			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->AddDistance( fMOVE, true );
+		}
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
