@@ -149,9 +149,6 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
 
-	if( m_wpSound ){
-		m_wpSound->PlayBGM( enBGM_RENGOKU0 );
-	}
 
 	//”wŒi.
 	SPRITE_STATE ss;
@@ -252,6 +249,9 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	clsMENU_WINDOW_ASSEMBLE_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
 
 
+	if( m_wpSound ){
+		m_wpSound->PlayBGM( enBGM_RENGOKU0 );
+	}
 
 }
 

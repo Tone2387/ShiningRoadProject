@@ -319,7 +319,7 @@ bool clsMain::AppMain()
 void clsMain::Render()
 {
 	//このRender関数の前のAppMain関数でチェックしているのでアサートは省く.
-	m_upGame->Render( m_pBackBuffer_TexRTV, m_pBackBuffer_DSTexDSV );
+	m_upGame->Render();
 	
 	//レンダリングされたイメージを表示.
 	m_pSwapChain->Present( 0, 0 );
@@ -572,7 +572,10 @@ HRESULT clsMain::ReadMesh()
 		m_pDevice, 
 		m_pDeviceContext, 
 		m_spViewPort10, 
-		m_spViewPort11 );
+		m_spViewPort11,
+		m_pSwapChain,
+		m_pBackBuffer_TexRTV, 
+		m_pBackBuffer_DSTexDSV );
 //	m_upGame->Create();//起動時に効果音タイミングずれ対策でロード画面終了瞬間に移動する.
 
 
