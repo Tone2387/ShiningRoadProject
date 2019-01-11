@@ -23,7 +23,10 @@ public:
 		ID3D11DepthStencilView*	const pBackBuffer_DSTexDSV );
 	~clsRENDER_AT_START_UP();
 
-//	//ロードが終わった時に使う.
+	//ループ処理.
+	void Loop() override;
+
+	//ロードが終わった時に使う.
 	void FinishLoad() override;
 
 private:

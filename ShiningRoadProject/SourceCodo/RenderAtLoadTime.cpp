@@ -21,6 +21,9 @@ namespace{
 	const float fLINE_WIDTH = 1.0f;
 	//ÉQÅ[ÉWÇÕògÇÃâΩï™äÑ?.
 	const float fGAGE_SIZE_RATE = 64.0f;
+
+
+	const int iRENDER_FRAME = 160280;
 }
 
 clsRENDER_AT_LOAD_TIME::clsRENDER_AT_LOAD_TIME(	
@@ -31,6 +34,7 @@ clsRENDER_AT_LOAD_TIME::clsRENDER_AT_LOAD_TIME(
 	ID3D11DepthStencilView*	const pBackBuffer_DSTexDSV )
 	:clsRENDER_SUB_THREAD_BASE( pDevice, pContext, pSwapChain, pBackBuffer_TexRTV, pBackBuffer_DSTexDSV )
 	,m_bTrigger( false )
+	,m_iFrameCnt( iRENDER_FRAME )
 {
 	if( !m_upGageBox ){
 		m_upGageBox = make_unique< clsLINE_BOX >( pDevice, pContext );
@@ -60,6 +64,21 @@ clsRENDER_AT_LOAD_TIME::~clsRENDER_AT_LOAD_TIME()
 {
 }
 
+//ÉãÅ[Évèàóù.
+void clsRENDER_AT_LOAD_TIME::Loop()
+{
+	while( !isEnd() )
+	{
+		if( m_iFrameCnt >= iRENDER_FRAME ){
+			m_iFrameCnt = 0;
+			Update();
+		}
+		else{
+			m_iFrameCnt++;
+		}
+	}
+}
+
 
 void clsRENDER_AT_LOAD_TIME::FinishLoad()
 {
@@ -69,13 +88,19 @@ void clsRENDER_AT_LOAD_TIME::FinishLoad()
 	
 void clsRENDER_AT_LOAD_TIME::UpdateProduct()
 {
-	m_upGageBox->Update();
+	if( !m_upGageBox ){ 
+		return;
+	}
+	m_upGageBox->Update(); 
 
 	//ïœâªÇ™èIÇÌÇÍÇŒÇ±Ç±Çí Ç∑.
 	if( m_upGageBox->isStopChange() ){
 		if( !m_bTrigger ){
 			//ÉQÅ[ÉWÇÃèâä˙âª.
 			for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
+				if( !m_vecupGage[i] ){ 
+					continue; 
+				}
 				m_vecupGage[i]->SetScale( {
 					m_upGageBox->GetSize().x / fGAGE_SIZE_RATE - fLINE_WIDTH, m_upGageBox->GetSize().y, 0.0f } );
 				m_vecupGage[i]->SetPos( {
@@ -91,7 +116,10 @@ void clsRENDER_AT_LOAD_TIME::UpdateProduct()
 	}
 
 	for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
-		m_vecupGage[i]->AddPos( { m_vecupGage[i]->GetScale().x, 0.0f, 0.0f } );
+		if( !m_vecupGage[i] ){ 
+			continue; 
+		}
+		m_vecupGage[i]->AddPos( { m_vecupGage[i]->GetScale().x*0.25f, 0.0f, 0.0f } );
 		if( m_vecupGage[i]->GetPos().x > WND_W ){
 			m_vecupGage[i]->SetPos( { 
 				m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) + fLINE_WIDTH, 
@@ -104,7 +132,14 @@ void clsRENDER_AT_LOAD_TIME::UpdateProduct()
 
 void clsRENDER_AT_LOAD_TIME::RenderProduct() const
 {
+	if( !m_upGageBox ){ 
+		return; 
+	}
+
 	for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
+		if( !m_vecupGage[i] ){ 
+			continue; 
+		}
 		//ògÇÃíÜÇæÇØï`âÊÇ∑ÇÈ.
 		if( m_vecupGage[i]->GetPos().x < m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) ||
 			m_vecupGage[i]->GetPos().x > m_upGageBox->GetPos().x + ( m_upGageBox->GetSize().x * 0.5f ) )

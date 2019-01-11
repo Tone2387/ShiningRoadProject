@@ -19,6 +19,9 @@ public:
 		ID3D11DepthStencilView*	const pBackBuffer_DSTexDSV );
 	~clsRENDER_AT_LOAD_TIME();
 
+	//ループ処理.
+	void Loop() override;
+
 //	//ロードが終わった時に使う.
 	void FinishLoad() override;
 
@@ -33,6 +36,8 @@ private:
 	std::vector< std::unique_ptr< clsSPRITE2D_CENTER > > m_vecupGage;//ゲージ本体.
 
 	bool m_bTrigger;
+
+	int m_iFrameCnt;
 
 };
 

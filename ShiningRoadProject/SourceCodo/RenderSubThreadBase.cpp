@@ -44,34 +44,6 @@ clsRENDER_SUB_THREAD_BASE::~clsRENDER_SUB_THREAD_BASE()
 
 
 
-//ループ処理.
-void clsRENDER_SUB_THREAD_BASE::Loop()
-{
-	//----------------------------------------------------------
-	//	フレームレート.
-	//----------------------------------------------------------
-	float fRate		= 0.0f;	//レート.
-	float fFPS		= 60.0f;//FPS値.
-	DWORD sync_old	= timeGetTime();	//過去時間.
-	DWORD sync_now;
-	//時間処理の為、最小単位を1ミリ秒に変更.
-	timeBeginPeriod( 1 );
-
-	while( !m_bEnd )
-	{
-		Sleep( 1 );
-		sync_now = timeGetTime();	//現在時間を取得.
-
-		fRate = 1000.0f / fFPS;	//理想時間を算出.
-
-		if( sync_now - sync_old >= fRate ){
-			sync_old = sync_now;	//現在時間に置きかえ.
-
-			Update();
-		}
-	}
-	timeEndPeriod( 1 );	//解除.
-}
 
 void clsRENDER_SUB_THREAD_BASE::Update()
 {
@@ -98,10 +70,10 @@ void clsRENDER_SUB_THREAD_BASE::Render( bool isLoop ) const
 	if( isLoop ){
 		RenderProduct();
 	}
-	SetDepth( true );	//Zテスト:ON.
 
 	//レンダリングされたイメージを表示.
 	m_wpSwapChain->Present( 0, 0 );
+
 }
 
 

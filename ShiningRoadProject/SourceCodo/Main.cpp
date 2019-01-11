@@ -340,12 +340,12 @@ HRESULT clsMain::InitD3D()
 	//スワップチェーン構造体.
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory( &sd, sizeof( sd ) );
-	sd.BufferCount		= 1;		//バックバッファの数.
+	sd.BufferCount		= 1;		//バックバッファの数.1.
 	sd.BufferDesc.Width	= WND_W;
 	sd.BufferDesc.Height= WND_H;
 	sd.BufferDesc.Format= DXGI_FORMAT_R8G8B8A8_UNORM;
 									//フォーマット(32ビットカラー).
-	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Numerator = g_fFPS;
 									//リフレッシュレート(分母) ※FPS:60.
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 									//リフレッシュレート(分子).

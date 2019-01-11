@@ -129,7 +129,7 @@ HRESULT clsSprite2D::InitShader( const char* sErrFileName )
 		}
 	};
 	//頂点インプットレイアウトの配列要素数を算出.
-	UINT numElements = sizeof(layout) / sizeof(layout[0]);
+	UINT numElements = sizeof( layout ) / sizeof( layout[0] );
 
 	//頂点インプットレイアウトの作成.
 	if( FAILED(	m_wpDevice->CreateInputLayout(

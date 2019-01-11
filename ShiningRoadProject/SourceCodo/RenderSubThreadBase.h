@@ -16,7 +16,7 @@ public:
 	~clsRENDER_SUB_THREAD_BASE();
 
 	//ループ処理.
-	void Loop();
+	virtual void Loop() = 0;
 
 	//ロードが終わった時に使う.
 	//継承先のこの中のどこかでEnd()を使う.
@@ -24,6 +24,8 @@ public:
 
 protected:
 
+	//継承先のこの中のどこかでEnd()を使う.
+	void Update();
 
 	//継承先の内容.
 	virtual void UpdateProduct() = 0;
@@ -36,10 +38,12 @@ protected:
 		m_bEnd = true;//このフラグがtrueになればこのクラスのループは終わる.
 	};
 
+	bool isEnd(){
+		return m_bEnd;
+	}
+
 private:
 
-	//継承先のこの中のどこかでEnd()を使う.
-	void Update();
 
 	//描画.
 	void Render( bool isLoop = true ) const;

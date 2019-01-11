@@ -24,8 +24,6 @@ using namespace std;
 
 //起動時の初期シーン.
 #define START_UP_SCENE enSCENE::TITLE
-//タイトルの前にアセンブルシーンを読み込んで、ステータスを手に入れる.
-#define GET_STATUS_DATA_INIT_SCENE enSCENE::ASSEMBLE
 
 namespace{
 
@@ -214,6 +212,7 @@ void clsGAME::SwitchScene( const enSCENE enNextScene )
 			m_wpSwapChain,
 			m_wpBackBuffer_TexRTV,
 			m_wpBackBuffer_DSTexDSV );
+
 	//別スレッドで描画.
 	thread thStartUpRender( &clsRENDER_AT_LOAD_TIME::Loop, upRenderAtLoad.get() );
 #endif//#ifdef RENDER_LOAD_SCREEN_
