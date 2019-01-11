@@ -37,6 +37,8 @@ private:
 	ID3D11Device*		 m_wpDevice;
 	ID3D11DeviceContext* m_wpContext;
 
+	bool m_isUse = false;
+
 	bool m_isAlpha;
 };
 

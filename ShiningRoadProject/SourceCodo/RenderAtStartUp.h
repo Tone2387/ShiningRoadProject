@@ -4,6 +4,7 @@
 class clsBLEND_STATE;
 
 //#include "Global.h"
+#include "RenderSubThreadBase.h"
 #include "Sprite2DCenter.h"
 #include "LineBox.h"
 #include "UiText.h"
@@ -11,7 +12,7 @@ class clsBLEND_STATE;
 #include <vector>
 #include <string>
 
-class clsRENDER_AT_START_UP
+class clsRENDER_AT_START_UP : public clsRENDER_SUB_THREAD_BASE
 {
 public:
 	clsRENDER_AT_START_UP(
@@ -23,24 +24,15 @@ public:
 	~clsRENDER_AT_START_UP();
 
 	//ループ処理.
-	void Loop();
+	void Loop() override;
 
 	//ロードが終わった時に使う.
-	void FinishLoad();
+	void FinishLoad() override;
 
 private:
-	HRESULT CreateDepthStencilState();
-
-	void Update();
-
-	//描画.
-	void Render( bool isLoop = true ) const;
-
-
-
-	//深度テスト(Zテスト)ON/OFF切替.
-	void SetDepth( bool isOn ) const;
 	
+	void UpdateProduct() override;
+	void RenderProduct() const override;
 
 	enum class enMODE
 	{
@@ -61,13 +53,9 @@ private:
 	void BiggerGageBoxH();//ゲージの枠が横に大きくなる.
 	void BiggerGageBoxV();//ゲージの枠が縦に大きくなる.
 	void UpdateLoadMsg();//ゲージが動く.
+
 	void Complete();	//ロード完了後.
 
-
-	//終了させるための処理.
-	void End(){
-		m_bEnd = true;//このフラグがtrueになればこのクラスのループは終わる.
-	};
 
 private:
 
@@ -88,15 +76,6 @@ private:
 	std::unique_ptr< clsUiText > m_upText;
 	std::string m_sLodeMsg;
 
-	bool						m_bEnd;//trueになったら終了.
-
-	ID3D11Device*				m_wpDevice;
-	ID3D11DeviceContext*		m_wpContext;			//デバイスコンテキスト.
-	IDXGISwapChain*				m_wpSwapChain;			//スワップチェーン.
-	ID3D11RenderTargetView*		m_wpBackBuffer_TexRTV;	//レンダーターゲットビュー.
-	ID3D11DepthStencilView*		m_wpBackBuffer_DSTexDSV;//デプスステンシルビュー.
-	ID3D11DepthStencilState*	m_pDepthStencilStateOn;	//深度(Z)テスト設定.
-	ID3D11DepthStencilState*	m_pDepthStencilStateOff;	//深度(Z)テスト設定.
 
 
 #ifdef _DEBUG

@@ -1,11 +1,11 @@
 #include "BlendState.h"
 
 
-
 clsBLEND_STATE::clsBLEND_STATE()
 	:m_wpDevice( nullptr )
 	,m_wpContext( nullptr )
 	,m_isAlpha( false )
+	,m_isUse( false )
 {
 
 	int i=0;
@@ -40,6 +40,11 @@ void clsBLEND_STATE::Create(
 
 void clsBLEND_STATE::SetBlend( const bool isAlpha, const bool isCreateAbsolute )
 {
+	if( m_isUse ){ 
+		return; 
+	}
+	m_isUse = true;
+
 	//これがtrueなら問答無用でブレンドステート作成.
 	if( isCreateAbsolute ){
 	}
@@ -60,6 +65,8 @@ void clsBLEND_STATE::SetBlend( const bool isAlpha, const bool isCreateAbsolute )
 	m_wpContext->OMSetBlendState( pBlendState, NULL, mask );
 
 	SAFE_RELEASE( pBlendState );
+
+	m_isUse = false;
 }
 
 //ブレンドステート作成.

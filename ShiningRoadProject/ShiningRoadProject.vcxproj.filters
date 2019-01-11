@@ -444,6 +444,12 @@
     <ClCompile Include="SourceCodo\AssembleModel.cpp">
       <Filter>Tahara\Robo</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\RenderAtLoadTime.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\RenderSubThreadBase.cpp">
+      <Filter>Tahara\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -805,6 +811,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\AssembleModel.h">
       <Filter>Tahara\Robo</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RenderAtLoadTime.h">
+      <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\RenderSubThreadBase.h">
+      <Filter>Tahara\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

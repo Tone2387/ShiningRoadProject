@@ -26,7 +26,10 @@ public:
 		ID3D11Device* const pDevice, 
 		ID3D11DeviceContext* const pContext,
 		D3D10_VIEWPORT* const pViewPort10,
-		D3D11_VIEWPORT* const pViewPort11 );
+		D3D11_VIEWPORT* const pViewPort11, 
+		IDXGISwapChain* const pSwapChain,
+		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
+		ID3D11DepthStencilView* const pBackBuffer_DSTexDSV );
 	~clsGAME();
 
 	//new直後に使う.
@@ -34,9 +37,7 @@ public:
 	//毎フレーム使う( 戻り値は、正常ならtrue, 終了ならfalse ).
 	bool Update();
 	//毎フレーム使う.
-	void Render( 
-		ID3D11RenderTargetView* const pBackBuffer_TexRTV,
-		ID3D11DepthStencilView* const pBackBuffer_DSTexDSV ) const;
+	void Render() const;
 
 
 
@@ -68,6 +69,12 @@ private:
 	D3D10_VIEWPORT* m_wpViewPort10;
 	//分割用.
 	D3D11_VIEWPORT* m_wpViewPort11;
+
+
+	IDXGISwapChain*			m_wpSwapChain;		//スワップチェーン.
+	ID3D11RenderTargetView*	m_wpBackBuffer_TexRTV;//レンダーターゲットビュー.
+	ID3D11DepthStencilView*	m_wpBackBuffer_DSTexDSV;//デプスステンシルビュー.
+
 
 	//ジョイスティック.
 	clsDxInput*		m_spDxInput;
