@@ -454,11 +454,11 @@ void clsCharactor::WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon, cons
 	m_v_pWeapons.shrink_to_fit();
 }
 
-void  clsCharactor::WeaponUpdate()
+void  clsCharactor::WeaponUpdate(clsStage* const pStage)
 {
 	for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 	{
-		m_v_pWeapons[i]->Update();
+		m_v_pWeapons[i]->Update(pStage);
 	}
 }
 
@@ -859,7 +859,7 @@ void clsCharactor::UpdateProduct(clsStage* pStage)
 	Move();
 	Rotate();
 
-	WeaponUpdate();
+	WeaponUpdate(pStage);
 	UpdateLookOn();
 
 	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.

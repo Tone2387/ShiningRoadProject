@@ -27,7 +27,7 @@ public:
 	~clsWeapon();
 
 	void Create(WeaponState State);
-	void Update();
+	void Update(clsStage* const pStage);
 	bool Shot();
 
 	int Hit(std::vector<clsObject::SPHERE> v_TargetSphere);
@@ -48,6 +48,9 @@ public:
 
 private:
 	WeaponState m_State;
+
+	::Effekseer::Handle m_MuzzleEfc;
+	::Effekseer::Handle m_AmmoEfc;
 
 	clsObject* m_pTargetObj;
 

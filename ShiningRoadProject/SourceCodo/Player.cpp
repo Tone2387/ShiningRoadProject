@@ -151,7 +151,7 @@ bool clsPlayer::GetTargetPos(D3DXVECTOR3& vTmpPos)
 {
 	if (m_pTargetChara)
 	{
-		vTmpPos = m_pTargetChara->m_vCenterPos;
+		vTmpPos = m_pTargetChara->GetCenterPos();
 		return true;
 	}
 

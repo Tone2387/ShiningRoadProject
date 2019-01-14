@@ -41,6 +41,7 @@ private:
 	enum enEfcType
 	{
 		enEfcShot = 0,
+		enEfcMuzzle,
 		enEfcLine,
 		enEfcHit,
 
@@ -60,12 +61,16 @@ public:
 
 	void SEInit(HWND hWnd);
 
-	void Move();
 	bool Hit(std::vector<clsObject::SPHERE> v_TargetSphere);
 	bool Form(D3DXVECTOR3 vShotPos,D3DXVECTOR3 vTarget);
 	void ReStart();
 
 private:
+
+	virtual void UpdateProduct(clsStage* pStage);
+	virtual void Action(clsStage* const pStage);
+
+	void Explosion();
 
 	clsSound* m_ppSE[enSESize];
 
