@@ -199,6 +199,12 @@ public:
 	virtual void AnimPlay() const{};
 
 protected:
+
+	//着地エフェクト.
+	::Effekseer::Handle m_LandingEfc;
+	virtual unsigned int GetLandingEfcNum() const{ return 12; }
+	virtual unsigned int GetLandingSENum() const{ return 12; }
+
 	void ShotSwich(const int iWeaponNum);//複数ある武器から使用する武器を決める.
 
 	virtual void Down();
