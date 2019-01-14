@@ -16,7 +16,7 @@ const int g_iBoostRisingyTopSpeedFrame = (int)g_fFPS / 4;//ブースト上昇加速時間.
 
 const int g_iStabilityVariationRange = 3;//安定性能などで減衰するステータスが最低値から何倍分の変動をするか.
 
-const int g_iBoostResDec = 10;//ブースト展開中.の落下速度減衰の度合.
+const int g_iBoostResDec = 10;//ブースト展開中の落下速度減衰の度合.
 const int g_iHeadLockSpeedReference = 500;//頭パーツのロック速度の基準値、これより低いとロック時間が長くなる.
 
 enum enAnimNoLeg
@@ -138,9 +138,9 @@ void clsRobo::RoboInit(
 	m_iQuickBoostEnelgyCost = pRobo->GetRoboState(clsROBO_STATUS::QUICK_COST);
 	m_iQuickBoostTopSpeedTime = pRobo->GetRoboState(clsROBO_STATUS::QUICK_TIME);
 
-	//m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
-	m_fQuickTrunSpeedMax = m_fRotSpeedMax;
-	//m_iQuickTrunTopSpeedTime = m_iQuickBoostTopSpeedTime;
+	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
+	//m_fQuickTrunSpeedMax = m_fRotSpeedMax;
+	m_iQuickTrunTopSpeedTime = m_iQuickBoostTopSpeedTime;
 
 	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
 	//m_iActivityLimitTime = pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME) * static_cast<int>(g_fFPS);
@@ -821,8 +821,6 @@ bool clsRobo::IsRWeaponLock()
 
 void clsRobo::PlayBoostEfc()
 {
-	
-
 	PlayFrontBoostEfc();
 	PlayRightBoostEfc();
 	PlayLeftBoostEfc();
@@ -860,6 +858,9 @@ void clsRobo::PlayFrontBoostEfc()
 				m_wpEffects->SetPosition(m_v_LHandFrontBoostEfc[i], vPosEndTmp);
 			}
 
+			float fScale = abs(m_vMoveDirforBoost.z);
+			m_wpEffects->SetScale(m_v_LHandFrontBoostEfc[i], fScale);
+			
 			m_wpEffects->SetRotation(m_v_LHandFrontBoostEfc[i], vRotTmp);
 		}
 
@@ -881,6 +882,10 @@ void clsRobo::PlayFrontBoostEfc()
 			{
 				m_wpEffects->SetPosition(m_v_RHandFrontBoostEfc[i], vPosEndTmp);
 			}
+
+			float fScale = abs(m_vMoveDirforBoost.z);
+			m_wpEffects->SetScale(m_v_RHandFrontBoostEfc[i], fScale);
+
 			m_wpEffects->SetRotation(m_v_RHandFrontBoostEfc[i], vRotTmp);
 			
 		}
@@ -933,6 +938,9 @@ void clsRobo::PlayRightBoostEfc()
 				m_wpEffects->SetPosition(m_v_RHandSideBoostEfc[i], vPosEndTmp);
 			}
 
+			float fScale = abs(m_vMoveDirforBoost.x);
+			m_wpEffects->SetScale(m_v_RHandSideBoostEfc[i], fScale);
+
 			m_wpEffects->SetRotation(m_v_RHandSideBoostEfc[i], vRotTmp);
 			
 		}
@@ -980,6 +988,9 @@ void clsRobo::PlayLeftBoostEfc()
 				m_wpEffects->SetPosition(m_v_LHandSideBoostEfc[i], vPosEndTmp);
 			}
 
+			float fScale = abs(m_vMoveDirforBoost.x);
+			m_wpEffects->SetScale(m_v_LHandSideBoostEfc[i], fScale);
+
 			m_wpEffects->SetRotation(m_v_LHandSideBoostEfc[i], vRotTmp);
 		}
 	}
@@ -1025,6 +1036,9 @@ void clsRobo::PlayBackBoostEfc()
 				m_wpEffects->SetPosition(m_v_LHandBackBoostEfc[i], vPosEndTmp);
 			}
 
+			float fScale = abs(m_vMoveDirforBoost.z);
+			m_wpEffects->SetScale(m_v_LHandBackBoostEfc[i], fScale);
+
 			m_wpEffects->SetRotation(m_v_LHandBackBoostEfc[i], vRotTmp);
 		}
 
@@ -1046,6 +1060,10 @@ void clsRobo::PlayBackBoostEfc()
 			{
 				m_wpEffects->SetPosition(m_v_RHandBackBoostEfc[i], vPosEndTmp);
 			}
+
+			float fScale = abs(m_vMoveDirforBoost.z);
+			m_wpEffects->SetScale(m_v_RHandBackBoostEfc[i], fScale);
+
 			m_wpEffects->SetRotation(m_v_RHandBackBoostEfc[i], vRotTmp);
 		}
 
@@ -1068,8 +1086,11 @@ void clsRobo::PlayBackBoostEfc()
 			{
 				m_wpEffects->SetPosition(m_v_CoreBoostEfc[i], vPosEndTmp);
 			}
+
+			float fScale = abs(m_vMoveDirforBoost.z) * 2.0f;
+			m_wpEffects->SetScale(m_v_CoreBoostEfc[i], fScale);
+
 			m_wpEffects->SetRotation(m_v_CoreBoostEfc[i], vRotTmp);
-			m_wpEffects->SetScale(m_v_CoreBoostEfc[i], 2.0f);
 
 		}
 	}
@@ -1131,7 +1152,24 @@ void clsRobo::PlayLegBoostEfc()
 			{
 				m_wpEffects->SetPosition(m_v_LegBoostEfc[i], vPosEndTmp);
 			}
+
+			if (abs(m_vMoveDirforBoost.x) > 0.1f || abs(m_vMoveDirforBoost.z) > 0.1f)
+			{
+				float fScale = 0.0f;
+
+				if (abs(m_vMoveDirforBoost.x) > abs(m_vMoveDirforBoost.z))
+				{
+					fScale = abs(m_vMoveDirforBoost.x);
+				}
+
+				else
+				{
+					fScale = abs(m_vMoveDirforBoost.z);
+				}
 				
+				m_wpEffects->SetScale(m_v_LegBoostEfc[i], fScale);
+			}
+
 			m_wpEffects->SetRotation(m_v_LegBoostEfc[i], vRotTmp);
 		}
 	}

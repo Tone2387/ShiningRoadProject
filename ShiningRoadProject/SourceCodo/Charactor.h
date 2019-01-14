@@ -104,7 +104,7 @@ public:
 
 	void WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
 	
-	void WeaponUpdate();
+	void WeaponUpdate(clsStage* const pStage);
 
 	virtual void UpdateProduct(clsStage* pStage)override;
 

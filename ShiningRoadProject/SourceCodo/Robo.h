@@ -56,8 +56,6 @@ public:
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
 		m_pMesh->UpDate();
-
-		PlayBoostEfc();
 	}
 
 	void SetRotateHeadParts();
@@ -76,6 +74,7 @@ public:
 		m_pMesh->Render(mView, mProj, vLight, vEye);
 		UpdatePosfromBone();
 		m_pMesh->UpdateColPos();
+		PlayBoostEfc();
 	}
 
 	virtual void AnimPause() const override

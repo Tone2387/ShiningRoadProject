@@ -686,7 +686,7 @@ void clsSCENE_MISSION::ColFShottoFBody()
 	{
 		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
 		{
-			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
+			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->GetColSpheres());
 			Tmp.iDamage = 0;
 			m_v_pFriends[j]->Damage(Tmp);
 		}
@@ -701,7 +701,7 @@ bool clsSCENE_MISSION::ColFShottoEBody()
 	{
 		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
 		{
-			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
+			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->GetColSpheres());
 			m_v_pEnemys[j]->Damage(Tmp);
 			if (!bResult)bResult = Tmp.bHit;
 		}
@@ -716,7 +716,7 @@ void clsSCENE_MISSION::ColEShottoFBody()
 	{
 		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
 		{
-			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
+			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->GetColSpheres());
 			m_v_pFriends[j]->Damage(Tmp);
 		}
 	}
@@ -728,7 +728,7 @@ void clsSCENE_MISSION::ColEShottoEBody()
 	{
 		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
 		{
-			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
+			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->GetColSpheres());
 			Tmp.iDamage = 0;
 			m_v_pEnemys[j]->Damage(Tmp);
 		}

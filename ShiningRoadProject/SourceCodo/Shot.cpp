@@ -8,6 +8,8 @@ clsShot::clsShot(clsPOINTER_GROUP* pPtrGroup)
 {
 	m_wpEffect = pPtrGroup->GetEffects();
 	m_wpSound = pPtrGroup->GetSound();
+
+	m_bNoFollObj = true;
 }
 
 clsShot::~clsShot()
@@ -21,6 +23,9 @@ HRESULT clsShot::Init(BulletState BState)
 	//音量.
 	//エフェクト.
 	m_ShotState = BState;
+	m_fMoveSpeed = m_ShotState.fSpeed;
+
+	ActStart();
 
 	//当たり判定の大きさを決める.
 
@@ -62,12 +67,7 @@ bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 
 				if (Collision(m_v_Spheres[i], v_TargetSphere[j]))
 				{
-					m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
-					m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
-					m_wpEffect->Stop(m_ShotEfcHandles[enEfcLine]);
-					m_bShotExistFlg = false;
-					//爆発SE.
-					m_wpSound->PlaySE(0);
+					Explosion();
 					return true;
 				}
 
@@ -88,6 +88,8 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vDir)
 
 	m_vMoveDir = vDir;
 
+	m_fFollPower = m_vMoveDir.y * m_fMoveSpeed;
+
 	m_Trans.vPos = m_vStartPos = vShotPos;
 
 	m_bShotExistFlg = true;
@@ -95,12 +97,40 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vDir)
 
 	//Excelの行番号	座標.
 	m_ShotEfcHandles[enEfcShot] = m_wpEffect->Play(m_ShotState.iShotEfcNum, m_Trans.vPos);
+	
+	
 	m_ShotEfcHandles[enEfcLine] = m_wpEffect->Play(m_ShotState.iLineEfcNum, m_Trans.vPos);
+	
+	//ベクトルから回転値を求める.
+	D3DXVECTOR3 vDirTmp = m_vMoveDir;
+	D3DXVECTOR3 vRot = { 0.0f, 0.0f, 0.0f };
+
+	vRot.x = atan2f(-vDirTmp.y, -vDirTmp.z);//.
+	vRot.x = (vDirTmp.y * cosf(vRot.x)) - (vDirTmp.z * sinf(vRot.x));
+	vRot.x = asin(vRot.x);
+	vRot.y = atan2f(vDirTmp.x, vDirTmp.z);//( 何故、マイナスがかかっていたり、X,Zが入れ替わっているのかといえば、0度でモデルがこっちを向くから ).
+
+	ObjRollOverGuard(&vRot.x);
+	ObjRollOverGuard(&vRot.y);
+
+	//m_wpEffect->SetRotation(m_ShotEfcHandles[enEfcLine],vRot);
+
+	m_vMoveDir.y = 0.0f;
 
 	return true;
 }
 
-void clsShot::Move()
+void clsShot::UpdateProduct(clsStage* pStage)
+{
+	if (!m_bShotExistFlg)return;
+
+	if (WallJudge(pStage))
+	{
+		Explosion();
+	}
+}
+
+void clsShot::Action(clsStage* const pStage)
 {
 	if (!m_bExistFlg)
 	{
@@ -124,8 +154,8 @@ void clsShot::Move()
 		return;
 	}
 
-	m_Trans.vPos += m_vMoveDir * m_ShotState.fSpeed;
-	
+	m_Trans.vPos += m_vMoveDir * m_fMoveSpeed;
+
 	//座標.
 	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcShot], m_Trans.vPos);
 	m_wpEffect->SetPosition(m_ShotEfcHandles[enEfcLine], m_Trans.vPos);
@@ -137,3 +167,12 @@ void clsShot::ReStart()
 	m_bExistFlg = false;//弾,爆発,軌跡の存在確認(falseならそれら全てが存在しない状態)
 }
 
+void clsShot::Explosion()
+{
+	m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
+	m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
+	m_wpEffect->Stop(m_ShotEfcHandles[enEfcLine]);
+	m_bShotExistFlg = false;
+	//爆発SE.
+	m_wpSound->PlaySE(0);
+}
