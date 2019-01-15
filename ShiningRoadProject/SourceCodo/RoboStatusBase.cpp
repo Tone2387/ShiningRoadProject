@@ -228,7 +228,7 @@ void clsROBO_STATUS::ReceiveWeaponL( const vector<int> &WeaponLDatas, const ASSE
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::EFC_BULLET]	= WeaponLDatas[clsPARTS_WEAPON::EFC_BULLET];//弾本体のエフェクト.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::EFC_LOCUS]	= WeaponLDatas[clsPARTS_WEAPON::EFC_LOCUS];	//弾の軌跡のエフェクト.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::EFC_HIT]		= WeaponLDatas[clsPARTS_WEAPON::EFC_HIT];	//着弾のエフェクト.
-	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::EFC_CARTRIDGE]=WeaponLDatas[clsPARTS_WEAPON::EFC_HIT];	//着弾のエフェクト.
+	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::EFC_MUZZLE]	=WeaponLDatas[clsPARTS_WEAPON::EFC_MUZZLE];	//マズルのエフェクト.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::SE_FIER]		= WeaponLDatas[clsPARTS_WEAPON::SE_FIER];	//発射SE.
 	m_iWeaponState[enWEAPON_NUM::LEFT][enWEAPON_STATE::SE_HIT]		= WeaponLDatas[clsPARTS_WEAPON::SE_HIT];	//着弾のSE.
 
@@ -255,7 +255,7 @@ void clsROBO_STATUS::ReceiveWeaponR( const vector<int> &WeaponRDatas, const ASSE
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::EFC_BULLET]	= WeaponRDatas[clsPARTS_WEAPON::EFC_BULLET];//弾本体のエフェクト.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::EFC_LOCUS]	= WeaponRDatas[clsPARTS_WEAPON::EFC_LOCUS];	//弾の軌跡のエフェクト.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::EFC_HIT]	= WeaponRDatas[clsPARTS_WEAPON::EFC_HIT];	//着弾のエフェクト.
-	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::EFC_CARTRIDGE]=WeaponRDatas[clsPARTS_WEAPON::EFC_HIT];	//着弾のエフェクト.
+	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::EFC_MUZZLE]	=WeaponRDatas[clsPARTS_WEAPON::EFC_MUZZLE];	//マズルのエフェクト.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::SE_FIER]	= WeaponRDatas[clsPARTS_WEAPON::SE_FIER];	//発射SE.
 	m_iWeaponState[enWEAPON_NUM::RIGHT][enWEAPON_STATE::SE_HIT]		= WeaponRDatas[clsPARTS_WEAPON::SE_HIT];	//着弾のSE.
 
