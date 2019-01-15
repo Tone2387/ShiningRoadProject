@@ -36,7 +36,7 @@ public:
 		EFC_BULLET,	//弾本体のエフェクト.
 		EFC_LOCUS,	//弾の軌跡のエフェクト.
 		EFC_HIT,	//着弾のエフェクト.
-		EFC_CARTRIDGE,//薬莢エフェクト.
+		EFC_MUZZLE,//マズルエフェクト.
 		SE_FIER,	//発射SE.
 		SE_HIT,		//着弾のSE.
 
