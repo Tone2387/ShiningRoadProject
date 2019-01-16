@@ -169,12 +169,14 @@ void clsSCENE_TAKEOFF::InitMovie()
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
+		m_wpSound->PlaySE( enSE_ENVIRONMENTAL, true );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
 		m_wpSound->PlaySE( enSE_PASS );
+		m_wpSound->StopSE( enSE_ENVIRONMENTAL );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
 		{

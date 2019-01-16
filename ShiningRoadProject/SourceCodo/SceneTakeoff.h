@@ -104,13 +104,14 @@ private:
 
 	enum enSE : int
 	{
-		enSE_SIREN = 0,	//Siren
-		enSE_DOOR_OPEN, //DoorOpen
-		enSE_DOOR_CLOSE,//DoorClose
-		enSE_PASS,		//’Ê‚è‰ß‚¬‚é
-		enSE_FIGHT_LEADY,//FightLeady
-		enSE_BOOSTER,	 //Booster
-		enSE_LANDING,	 //Landing
+		enSE_SIREN = 0,		//Siren.
+		enSE_DOOR_OPEN,		//DoorOpen.
+		enSE_DOOR_CLOSE,	//DoorClose.
+		enSE_PASS,			//’Ê‚è‰ß‚¬‚é.
+		enSE_FIGHT_LEADY,	//FightLeady.
+		enSE_BOOSTER,		//Booster.
+		enSE_LANDING,		//Landing.
+		enSE_ENVIRONMENTAL,	//ŠÂ‹«‰¹.
 	};
 
 };
