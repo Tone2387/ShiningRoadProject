@@ -346,6 +346,14 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 				D3DXVECTOR3( fPLAYER_SPEED_DOOR_APP, 0.0f, 0.0f ) );
 			
 			m_upPlayer->IgnitionCoreBoost( true );
+
+			//ƒvƒŒƒCƒ„[‚ÌˆÚ“®—Ê.
+			float fPLAYER_MOVE_X = m_upPlayer->GetPosition().x - vPosPlayerOld.x;
+
+			wpCam->SetLookPos( {
+				wpCam->GetLookPos().x + fPLAYER_MOVE_X,
+				wpCam->GetLookPos().y,
+				wpCam->GetLookPos().z } );
 		}
 		break;
 
