@@ -93,7 +93,7 @@ private:
 	//カメラの移動速度など.
 	std::vector< float > m_vecfOtherData;
 
-	//一凱桐乃各カット一回きりのフラグトリガー.
+	//各カット一回きりのフラグトリガー.
 	bool m_isTrigger;
 
 	//音の引数.

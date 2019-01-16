@@ -143,7 +143,6 @@ void clsSCENE_TAKEOFF::InitMovie()
 	case clsSCENE_TAKEOFF::enCUT_RED_1:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
 		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
-		m_wpSound->PlaySE( enSE_SIREN, true );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_RED_2:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
@@ -240,8 +239,16 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 
 	case clsSCENE_TAKEOFF::enCUT_RED_1:
 		{
-			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->CrabWalk( fDistance );
+			const float fDISTANCE = m_vecfOtherData[ iOtherDataIndex++ ];
+			const float fSE_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->CrabWalk( fDISTANCE );
+
+			if( !m_isTrigger &&
+				m_fMovieFrame >= fSE_FRAME )
+			{
+				m_wpSound->PlaySE( enSE_SIREN, true );
+				m_isTrigger = true;
+			}
 		}
 		break;
 
