@@ -143,6 +143,7 @@ void clsSCENE_TAKEOFF::InitMovie()
 	case clsSCENE_TAKEOFF::enCUT_RED_1:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
 		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
+		m_wpSound->PlaySE( enSE_SIREN, true );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_RED_2:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
@@ -155,6 +156,7 @@ void clsSCENE_TAKEOFF::InitMovie()
 	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
 		m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
 		m_upEnemy->Boost();
+		m_wpSound->PlaySE( enSE_DOOR_OPEN );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
 		{
@@ -163,21 +165,28 @@ void clsSCENE_TAKEOFF::InitMovie()
 			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
 
 			m_upPlayer->Boost();
+			m_wpSound->PlaySE( enSE_BOOSTER, true );
 		}
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
+		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+		m_wpSound->PlaySE( enSE_PASS );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
 		{
 			m_upPlayer->Boost();
 			m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_CLOSING );
+			m_wpSound->PlaySE( enSE_DOOR_CLOSE );
+			m_wpSound->PlaySE( enSE_BOOSTER, true );
 		}
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_VS:
 		{
@@ -197,6 +206,7 @@ void clsSCENE_TAKEOFF::InitMovie()
 
 			wpCam->SetLookPos( vHeadPos );
 			wpCam->SetPos( vHeadPos + D3DXVECTOR3( fDISTANCE, 0.0f, 0.0f ), false );
+			m_wpSound->PlaySE( enSE_BOOSTER, true );
 		}
 		break;
 
@@ -221,48 +231,6 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 
 	switch( m_enCut )
 	{
-//	case clsSCENE_TAKEOFF::enCUT_START:
-//		{
-//			m_upPlayer->SetPosition(
-//				m_upPlayer->GetPosition() +
-//				D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
-//			m_wpCamera->AddPos( D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
-//
-//			const float fDOOR_OPEN_X_START	= -350.0f;
-//			const float fDOOR_OPEN_X_END	= -300.0f;
-//			const float fDOOR_X = -260.0f;
-//			//次のカットへ.
-//			if( m_upPlayer->GetPosition().x > fDOOR_X ){
-//				NextCut();
-//			}
-//			//ドアが開きます.
-//			if( fDOOR_OPEN_X_START			< m_upPlayer->GetPosition().x &&
-//				m_upPlayer->GetPosition().x < fDOOR_OPEN_X_END )
-//			{
-//				m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
-//			}
-//		}
-//		break;
-//	case clsSCENE_TAKEOFF::enCUT_GO_YOU:
-//			m_upPlayer->SetPosition(
-//				m_upPlayer->GetPosition() +
-//				D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
-//			break;
-//	case clsSCENE_TAKEOFF::enCUT_LOOK_UP:
-//		if( m_fMovieFrame == 1 ){
-//			m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
-//		}
-//		break;
-//	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
-//		break;
-//	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
-//		break;
-//	case clsSCENE_TAKEOFF::enCUT_END:
-//		break;
-////	case clsSCENE_TAKEOFF::enCUT_size:
-////		break;
-//	default:
-//		break;
 	case clsSCENE_TAKEOFF::enCUT_START:
 		{
 			const float fADD = m_vecfOtherData[ iOtherDataIndex++ ];
@@ -356,6 +324,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 				fDOOR_OPEN_FRAME <= m_fMovieFrame + fDOOR_OPEN_FRAME_TOLERANCE )
 			{
 				m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
+				m_wpSound->PlaySE( enSE_DOOR_OPEN );
 			}
 
 			m_upPlayer->IgnitionCoreBoost( true );
@@ -392,6 +361,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 				const int iARM_ANIM_INDEX = 1;
 				m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
 				m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
+				m_wpSound->PlaySE( enSE_FIGHT_LEADY );
 				m_isTrigger = true;
 			}
 			m_upPlayer->IgnitionCoreBoost( true );
@@ -416,6 +386,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 					const int iANIM_INDEX = m_vecfOtherData[ iOtherDataIndex++ ];
 					m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::LEG, iANIM_INDEX );
 					m_upEnemy->m_pMesh->SetPartsAnimSpeed( enPARTS::LEG, g_dAnimSpeedReference / 4.0 );
+					m_wpSound->PlaySE( enSE_LANDING );
 					m_isTrigger = true;
 				}
 			}

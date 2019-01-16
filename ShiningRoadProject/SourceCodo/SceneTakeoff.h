@@ -104,10 +104,17 @@ private:
 
 	enum enSE : int
 	{
-//		enSE_CURSOL_MOVE = 0,
+		enSE_SIREN = 0,	//Siren
+		enSE_DOOR_OPEN, //DoorOpen
+		enSE_DOOR_CLOSE,//DoorClose
+		enSE_PASS,		//’Ê‚è‰ß‚¬‚é
+		enSE_FIGHT_LEADY,//FightLeady
+		enSE_BOOSTER,	 //Booster
+		enSE_LANDING,	 //Landing
 	};
 
 };
+
 
 
 #endif//#ifndef SCENE_TAKEOFF_H_
