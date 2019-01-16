@@ -12,8 +12,8 @@
 
 
 using namespace std;
-#define DINPUT_ENTER enPKey_01
-#define DINPUT_EXIT	 enPKey_02
+#define DINPUT_ENTER enPKey_00
+#define DINPUT_EXIT	 enPKey_03
 
 namespace{
 	//ボタンのホールドフレーム.

@@ -93,7 +93,7 @@ private:
 	//カメラの移動速度など.
 	std::vector< float > m_vecfOtherData;
 
-	//一凱桐乃各カット一回きりのフラグトリガー.
+	//各カット一回きりのフラグトリガー.
 	bool m_isTrigger;
 
 	//音の引数.
@@ -104,10 +104,18 @@ private:
 
 	enum enSE : int
 	{
-//		enSE_CURSOL_MOVE = 0,
+		enSE_SIREN = 0,		//Siren.
+		enSE_DOOR_OPEN,		//DoorOpen.
+		enSE_DOOR_CLOSE,	//DoorClose.
+		enSE_PASS,			//通り過ぎる.
+		enSE_FIGHT_LEADY,	//FightLeady.
+		enSE_BOOSTER,		//Booster.
+		enSE_LANDING,		//Landing.
+		enSE_ENVIRONMENTAL,	//環境音.
 	};
 
 };
+
 
 
 #endif//#ifndef SCENE_TAKEOFF_H_
