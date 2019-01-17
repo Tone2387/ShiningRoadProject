@@ -125,7 +125,7 @@ void clsBUILDING::UpdateTile()
 	m_upTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
 	m_upTopInside->SetScale( m_TopTrans.vScale );
 
-	const D3DXVECTOR3 vBOTTOMINSIDE_ADD_POS = { 0.0f, 0.01f, 0.0f };
+	const D3DXVECTOR3 vBOTTOMINSIDE_ADD_POS = { 0.0f, 0.03125f, 0.0f };
 	m_upBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
 	m_upBottomInside->SetRot( m_TopTrans.vRot );
 	m_upBottomInside->SetScale( m_TopTrans.vScale );
@@ -142,12 +142,31 @@ void clsBUILDING::Render(
 
 	m_upTop->Render( mView, mProj, vEye, vColor );
 
-	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
+//	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
+//		m_upSide->SetPos( m_SideTransArray[i].vPos );
+//		m_upSide->SetRot( m_SideTransArray[i].vRot );
+//		m_upSide->SetScale( m_SideTransArray[i].vScale );
+//		m_upSide->Render( mView, mProj, vEye, vColor );
+//	}
+
+	//========== ìÏñk ==========//.
+	for( int i=enWD_SOUTH; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
 		m_upSide->SetPos( m_SideTransArray[i].vPos );
 		m_upSide->SetRot( m_SideTransArray[i].vRot );
 		m_upSide->SetScale( m_SideTransArray[i].vScale );
+		m_upSide->SetSplit( m_vSplitNorthSouth );
 		m_upSide->Render( mView, mProj, vEye, vColor );
 	}
+	//========== ìåêº ==========//.
+	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
+		m_upSide->SetPos( m_SideTransArray[i].vPos );
+		m_upSide->SetRot( m_SideTransArray[i].vRot );
+		m_upSide->SetScale( m_SideTransArray[i].vScale );
+		m_upSide->SetSplit( m_vSplitEastWest );
+		m_upSide->Render( mView, mProj, vEye, vColor );
+	}
+
+
 }
 
 void clsBUILDING::RenderInside(
@@ -157,10 +176,26 @@ void clsBUILDING::RenderInside(
 	const D3DXVECTOR3 &vEye ) const
 {
 	const D3DXVECTOR3 vSIDEINSIDE_ADD_ROT = { 0.0f, static_cast<float>( M_PI ), 0.0f };
-	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
+//	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
+//		m_upSideInside->SetPos( m_SideTransArray[i].vPos );
+//		m_upSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
+//		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
+//		m_upSideInside->Render( mView, mProj, vEye );
+//	}
+	//========== ìÏñk ==========//.
+	for( int i=enWD_SOUTH; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
 		m_upSideInside->SetPos( m_SideTransArray[i].vPos );
 		m_upSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
 		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
+		m_upSideInside->SetSplit( m_vSplitNorthSouth );
+		m_upSideInside->Render( mView, mProj, vEye );
+	}
+	//========== ìåêº ==========//.
+	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
+		m_upSideInside->SetPos( m_SideTransArray[i].vPos );
+		m_upSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
+		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
+		m_upSideInside->SetSplit( m_vSplitEastWest );
 		m_upSideInside->Render( mView, mProj, vEye );
 	}
 
@@ -274,6 +309,10 @@ void clsBUILDING::SetTileNumSide(
 		m_upSideInside->SetSplit( D3DXVECTOR2(
 			static_cast<float>( uiTmpCol ),
 			static_cast<float>( uiTmpRow ) ) );
+
+	m_vSplitNorthSouth = D3DXVECTOR2(
+		static_cast<float>( uiTmpCol ),
+		static_cast<float>( uiTmpRow ) );
 	}
 	//========== ìåêº ==========//.
 	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM  ){
@@ -289,6 +328,10 @@ void clsBUILDING::SetTileNumSide(
 		m_upSideInside->SetSplit( D3DXVECTOR2(
 			static_cast<float>( uiTmpCol ),
 			static_cast<float>( uiTmpRow ) ) );
+
+	m_vSplitEastWest = D3DXVECTOR2(
+		static_cast<float>( uiTmpCol ),
+		static_cast<float>( uiTmpRow ) );
 	}
 
 }

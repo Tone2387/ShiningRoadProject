@@ -28,16 +28,16 @@ public:
 	void UpdateTile();
 
 	void Render(
-		const D3DXMATRIX &mView, 
+		const D3DXMATRIX &mView,
 		const D3DXMATRIX &mProj,
-		const D3DXVECTOR3 &vLight, 
+		const D3DXVECTOR3 &vLight,
 		const D3DXVECTOR3 &vEye,
 		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f } ) const;
 
 	void RenderInside(
-		const D3DXMATRIX &mView, 
+		const D3DXMATRIX &mView,
 		const D3DXMATRIX &mProj,
-		const D3DXVECTOR3 &vLight, 
+		const D3DXVECTOR3 &vLight,
 		const D3DXVECTOR3 &vEye ) const;
 
 
@@ -128,6 +128,10 @@ private:
 	TRANSFORM m_TopTrans;
 	//ë§ñ .
 	TRANSFORM m_SideTransArray[ enWALL_DIRECTION_size ];
+
+	//ï™äÑêî.
+	D3DXVECTOR2 m_vSplitNorthSouth; 
+	D3DXVECTOR2 m_vSplitEastWest; 
 
 
 	std::unique_ptr< clsObjStaticMesh > m_upBox;
