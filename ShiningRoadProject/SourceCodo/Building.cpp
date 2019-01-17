@@ -168,6 +168,33 @@ void clsBUILDING::RenderInside(
 	m_upTopInside->Render( mView, mProj, vEye );
 }
 
+//ビルの近くにいるか( 上から見た円の判定 ).
+bool clsBUILDING::isNearBuilding(
+	const D3DXVECTOR3& vPosObjOtherBuilding )//ビルと判定を取りたいモノの座標.
+{
+	const float fOFFSET = 2.5f;
+	D3DXVECTOR3 vTmp = m_Trans.vScale;
+	vTmp *= 0.5f;
+	//この距離に入ったらtrue.
+	const float fRANGE = fOFFSET + sqrtf( 
+			vTmp.x * vTmp.x +
+			vTmp.z * vTmp.z );
+
+	vTmp = vPosObjOtherBuilding - m_Trans.vPos;
+	//二点間の距離.
+	const float fDISTANCE = sqrtf( 
+		vTmp.x * vTmp.x +
+		vTmp.z * vTmp.z );
+
+
+	if( fDISTANCE < fRANGE ){
+		return true;
+	}
+
+	return false;
+}
+
+
 
 //タイルの目標数を作る.
 void clsBUILDING::SetTileNumTargetTop( unsigned int& puiRow, unsigned int& puiCol )

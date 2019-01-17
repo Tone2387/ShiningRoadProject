@@ -107,9 +107,8 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 		m_pDoorArray[i]->SetPosition( m_pStageCollision->GetPosition() );
 		//二つ目は反対の位置にするために回す.
 		m_pDoorArray[i]->SetRotation( 
-			m_pStageCollision->GetRotation()
-			+ ( D3DXVECTOR3( 0.0f, static_cast<float>( D3DX_PI * i ), 0.0f ) )
-			);
+			m_pStageCollision->GetRotation() +
+			( D3DXVECTOR3( 0.0f, static_cast<float>( D3DX_PI * i ), 0.0f ) ) );
 		m_pDoorArray[i]->SetScale( {
 			file.GetDataFloat( 0, cINDEX_SCALE_X ),
 			file.GetDataFloat( 0, cINDEX_SCALE_Y ),
@@ -211,8 +210,8 @@ void clsStage::Render(
 	UpdateLight();
 
 //#ifdef _DEBUG
-	//色.
-	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
+//	//色.
+//	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
 //	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColorTarget.x += fSTATIC_MODEL_COLOR_RGB_ADD;
 //	if( GetAsyncKeyState( 'V' ) & 0x8000 )m_vLightColorTarget.x -= fSTATIC_MODEL_COLOR_RGB_ADD;
 //	if( GetAsyncKeyState( 'G' ) & 0x8000 )m_vLightColorTarget.y += fSTATIC_MODEL_COLOR_RGB_ADD;
@@ -382,3 +381,18 @@ void clsStage::SetStageObjTransform(const unsigned int uiObjNo)
 
 	m_vpBuilding[uiObjNo]->UpdateModel();
 }
+
+
+//ビルの近くにいるか( 上から見た円の判定 ).
+//添え字のビルのレイを判定するかどうかの判定として使う.
+bool clsStage::isNearBuilding( 
+	const D3DXVECTOR3& vPosObjOtherBuilding,//ビルと判定を取りたいモノの座標.
+	const unsigned int uiBuildingNo )		//ビルの番号.
+{
+	//ビルしか判定しません( GetStageMeshArray()に合わせる ).
+	if( uiBuildingNo >= m_vpBuilding.size() ){ return true; };
+
+	return m_vpBuilding[ uiBuildingNo ]->isNearBuilding( vPosObjOtherBuilding );
+}
+
+

@@ -41,6 +41,10 @@ public:
 		const D3DXVECTOR3 &vEye ) const;
 
 
+	//ビルの近くにいるか( 上から見た円の判定 ).
+	//ビルと判定を取りたいモノの座標.
+	bool isNearBuilding( const D3DXVECTOR3& vPosObjOtherBuilding );
+
 
 	//レイ用.
 	clsDX9Mesh* GetModelPtr() const {
