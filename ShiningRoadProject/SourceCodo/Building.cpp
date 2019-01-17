@@ -100,29 +100,29 @@ clsBUILDING::~clsBUILDING()
 void clsBUILDING::CreateTexture(
 	ID3D11Device* const pDevice11,
 	ID3D11DeviceContext* const pContext11,
-	clsSprite** ppTop,
-	clsSprite** ppSide,
-	clsSprite** ppSideInside,
-	clsSprite** ppTopInside,
-	clsSprite** ppBottomInside )
+	std::shared_ptr< clsSprite >* const pspTop,
+	std::shared_ptr< clsSprite >* const pspSide,
+	std::shared_ptr< clsSprite >* const pspSideInside,
+	std::shared_ptr< clsSprite >* const pspTopInside,
+	std::shared_ptr< clsSprite >* const pspBottomInside )
 {
-	*ppTop = new clsSprite;
-	( *ppTop )->Create( pDevice11, pContext11, sTEX_NAME_TOP );
+	*pspTop = make_shared< clsSprite >();
+	( *pspTop )->Create( pDevice11, pContext11, sTEX_NAME_TOP );
 
-	*ppSide = new clsSprite;
-	( *ppSide )->Create( pDevice11, pContext11, sTEX_NAME_SIDE );
+	*pspSide = make_shared< clsSprite >();
+	( *pspSide )->Create( pDevice11, pContext11, sTEX_NAME_SIDE );
 
 	const float fINSIDESIDE_ALPHA = 0.5f;
-	*ppSideInside = new clsSprite;
-	( *ppSideInside )->Create( pDevice11, pContext11, sTEX_NAME_SIDEINSIDE );
-	( *ppSideInside )->SetAlpha( fINSIDESIDE_ALPHA );
+	*pspSideInside = make_shared< clsSprite >();
+	( *pspSideInside )->Create( pDevice11, pContext11, sTEX_NAME_SIDEINSIDE );
+	( *pspSideInside )->SetAlpha( fINSIDESIDE_ALPHA );
 
-	*ppTopInside = new clsSprite;
-	( *ppTopInside )->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
-	( *ppTopInside )->SetAlpha( fINSIDESIDE_ALPHA );
+	*pspTopInside = make_shared< clsSprite >();
+	( *pspTopInside )->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+	( *pspTopInside )->SetAlpha( fINSIDESIDE_ALPHA );
 
-	*ppBottomInside = new clsSprite;
-	( *ppBottomInside )->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+	*pspBottomInside = make_shared< clsSprite >();
+	( *pspBottomInside )->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
 }
 
 

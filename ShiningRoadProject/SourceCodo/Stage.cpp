@@ -123,26 +123,14 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 
 	//========== ÉrÉã ==========//.
 	//â∫èÄîı.
-	clsSprite* pTop			= nullptr;
-	clsSprite* pSide		= nullptr;
-	clsSprite* pSideInside	= nullptr;
-	clsSprite* pTopInside	= nullptr;
-	clsSprite* pBottomInside= nullptr;
-
 	clsBUILDING::CreateTexture(
 		pPtrGroup->GetDevice(), 
 		pPtrGroup->GetContext(), 
-		&pTop,
-		&pSide,
-		&pSideInside,
-		&pTopInside,
-		&pBottomInside );
-
-	m_spBuildingTop.reset( pTop );
-	m_spBuildingSide.reset( pSide );
-	m_spBuildingSideInside.reset( pSideInside );
-	m_spBuildingTopInside.reset( pTopInside );
-	m_spBuildingBottomInside.reset( pBottomInside );
+		&m_spBuildingTop,
+		&m_spBuildingSide,
+		&m_spBuildingSideInside,
+		&m_spBuildingTopInside,
+		&m_spBuildingBottomInside );
 
 	file.Open( sBUILDING_DATA_PATH );
 	m_vpBuilding.resize( file.GetSizeRow() );
@@ -181,13 +169,9 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	}
 	//========== ÉrÉã èIÇÌÇË ==========//.
 
-
-
 	for( UCHAR i=0; i<enDOOR_size; i++ ){
 		SetAnimDoor( static_cast<enDOOR>( i ), enDOOR_ANIM_CLOSED );
 	}
-
-
 
 	//åıÇê¬Ç≠.
 	SetColor( vLIGHT_COLOR_BLUE );

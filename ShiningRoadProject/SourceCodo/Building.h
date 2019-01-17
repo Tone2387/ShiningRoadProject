@@ -31,11 +31,11 @@ public:
 	static void CreateTexture(
 		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11,
-		clsSprite** ppTop,
-		clsSprite** ppSide,
-		clsSprite** ppSideInside,
-		clsSprite** ppTopInside,
-		clsSprite** ppBottomInside );
+		std::shared_ptr< clsSprite >* const pspTop,
+		std::shared_ptr< clsSprite >* const pspSide,
+		std::shared_ptr< clsSprite >* const pspSideInside,
+		std::shared_ptr< clsSprite >* const pspTopInside,
+		std::shared_ptr< clsSprite >* const pspBottomInside );
 
 	//ƒŒƒC‚Ì“–‚½‚è”»’è‚É•K—v.
 	void UpdateModel() const;
