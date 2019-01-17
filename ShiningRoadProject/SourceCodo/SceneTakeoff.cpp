@@ -12,10 +12,10 @@ using namespace std;
 
 namespace
 {
-
-	const string sFILE_PATH_CAMERA = "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
-	const string sFILE_PATH_GIGAPON= "Data\\FileData\\Tahara\\TakeoffGigaponPos.csv";
-	const string sFILE_PATH_OTHER  = "Data\\FileData\\Tahara\\TakeoffOtherData.csv";
+	const string sFILE_PATH_CUT_FRAME	= "Data\\FileData\\Tahara\\TakeoffCutFrame.csv";
+	const string sFILE_PATH_CAMERA		= "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
+	const string sFILE_PATH_GIGAPON		= "Data\\FileData\\Tahara\\TakeoffGigaponPos.csv";
+	const string sFILE_PATH_OTHER		= "Data\\FileData\\Tahara\\TakeoffOtherData.csv";
 
 	const D3DXVECTOR4 vSTAGE_COLOR_RED = { 1.0f, 0.0f, 0.0f, 1.0f };
 	const D3DXVECTOR4 vSTAGE_COLOR_BLUE= { 0.0f, 1.0f, 1.0f, 1.0f };
@@ -23,22 +23,9 @@ namespace
 
 
 
-clsSCENE_TAKEOFF::clsSCENE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup ) : clsSCENE_BASE( ptrGroup )
-	,m_enCut( enCUT_START )
-	,m_iCountCameraCutChange( 0 )
-	,m_fMovieFrameNextArray()
+clsSCENE_TAKEOFF::clsSCENE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup ) 
+	:clsSCENE_MOVIE_BASE( ptrGroup, enSCENE::MISSION, sFILE_PATH_CUT_FRAME.c_str() )
 {
-	clsFILE File;
-	assert( File.Open( sFILE_PATH_CAMERA ) );
-	assert( File.GetSizeRow() >= enCUT_size );
-
-	//カットのフレーム数のindex.
-	const float fCOL_INDEX = File.GetSizeCol() - 1;
-
-
-	for( int i=0; i<enCUT_size; i++ ){
-		m_fMovieFrameNextArray[i] = File.GetDataInt( i, fCOL_INDEX );
-	}
 }
 
 clsSCENE_TAKEOFF::~clsSCENE_TAKEOFF()
@@ -69,13 +56,13 @@ void clsSCENE_TAKEOFF::CreateProduct()
 	m_upEnemy = make_unique< clsROBO_TAKEOFF >();
 	m_upEnemy->RoboInit( m_wpPtrGroup, upEnemyState.get() );
 
-
+	//向かい合う.
 	m_upPlayer->SetRotation( { 0.0f, static_cast<float>( M_PI_2			), 0.0f } );
 	m_upEnemy->SetRotation(  { 0.0f, static_cast<float>( M_PI_2 + M_PI  ), 0.0f } );
 
-	SetCamPosFromFile(	   m_iCountCameraCutChange );
-	SetGigaponPosFromFile( m_iCountCameraCutChange );
-	SetOtherDataFromFile(  m_iCountCameraCutChange );
+	SetCamPosFromFile(	   0 );
+	SetGigaponPosFromFile( 0 );
+	SetOtherDataFromFile(  0 );
 
 	if( m_wpSound ){
 		m_wpSound->PlayBGM( 0 );
@@ -83,34 +70,6 @@ void clsSCENE_TAKEOFF::CreateProduct()
 
 }
 
-
-void clsSCENE_TAKEOFF::UpdateProduct( enSCENE &enNextScene )
-{
-#ifndef CAMERA_FREE_MOVE_
-//	if( m_enCut != enCUT_END ){ m_fMovieFrame ++; }
-	m_fMovieFrame ++;
-#endif//CAMERA_FREE_MOVE_
-
-	if( isPressEnter() ){
-		//フレーム数の変数を次のカットへ飛ぶ数まで増やす.
-		NextCut();
-	}
-
-	//今のカットのフレーム数を満たしたら.
-	if( m_fMovieFrame > m_fMovieFrameNextArray[ m_iCountCameraCutChange ] ){
-		//出撃シーン終了.
-		if( m_enCut == enCUT_END ){
-			enNextScene = enSCENE::MISSION;
-		}
-		//次のカットへ.
-		else{
-			InitMovie();
-		}
-	}
-
-	UpdateMovie();
-
-}
 
 void clsSCENE_TAKEOFF::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
@@ -125,38 +84,40 @@ void clsSCENE_TAKEOFF::RenderUi()
 }
 
 
-void clsSCENE_TAKEOFF::InitMovie()
+void clsSCENE_TAKEOFF::InitMovieProduct()
 {
 	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
 
-	AddCut( &m_enCut );
-	SetCamPosFromFile(	 ++m_iCountCameraCutChange );
-	SetGigaponPosFromFile( m_iCountCameraCutChange );
-	SetOtherDataFromFile(  m_iCountCameraCutChange );
-	m_fMovieFrame = 0.0f;
-	m_isTrigger = false;
+	SetCamPosFromFile( m_iCut );
+	SetGigaponPosFromFile( m_iCut );
+	SetOtherDataFromFile( m_iCut );
 
-	switch( m_enCut )
+	switch( m_iCut )
 	{
 	case clsSCENE_TAKEOFF::enCUT_START:
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_RED_1:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
 		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_RED_2:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
 		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_RED_3:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
 		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
 		m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
 		m_upEnemy->Boost();
 		m_wpSound->PlaySE( enSE_DOOR_OPEN );
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
 		{
 			const int iARM_ANIM_INDEX = 0;
@@ -167,17 +128,21 @@ void clsSCENE_TAKEOFF::InitMovie()
 			m_wpSound->PlaySE( enSE_BOOSTER, true );
 		}
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		m_wpSound->PlaySE( enSE_ENVIRONMENTAL, true );
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
 		m_wpSound->PlaySE( enSE_PASS );
 		m_wpSound->StopSE( enSE_ENVIRONMENTAL );
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
 		{
 			m_upPlayer->Boost();
@@ -186,9 +151,11 @@ void clsSCENE_TAKEOFF::InitMovie()
 			m_wpSound->PlaySE( enSE_BOOSTER, true );
 		}
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_VS:
 		{
 			const int iINDEX = 1;
@@ -199,6 +166,7 @@ void clsSCENE_TAKEOFF::InitMovie()
 			wpCam->SetPos( vHeadPos + D3DXVECTOR3( fDISTANCE, 0.0f, 0.0f ), false );
 		}
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_END:
 		{
 			const int iINDEX = 1;
@@ -216,10 +184,9 @@ void clsSCENE_TAKEOFF::InitMovie()
 }
 
 
-void clsSCENE_TAKEOFF::UpdateMovie()
+void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 {
 	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
-	int iOtherDataIndex = 0;
 
 	D3DXVECTOR3 vPosPlayerOld = m_upPlayer->GetPosition();
 	D3DXVECTOR3 vPosEnemyOld = m_upEnemy->GetPosition();
@@ -230,7 +197,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 	m_upEnemy->ModelUpdate();
 
 
-	switch( m_enCut )
+	switch( m_iCut )
 	{
 	case clsSCENE_TAKEOFF::enCUT_START:
 		{
@@ -423,6 +390,7 @@ void clsSCENE_TAKEOFF::UpdateMovie()
 			
 		}
 		break;
+
 	case clsSCENE_TAKEOFF::enCUT_END:
 		{
 			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
@@ -518,57 +486,9 @@ void clsSCENE_TAKEOFF::SetOtherDataFromFile( const int iFileRow )
 		m_vecfOtherData[i] = File.GetDataFloat( iFileRow, i );
 	}
 
-	switch( m_enCut )
-	{
-	case clsSCENE_TAKEOFF::enCUT_START:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_RED_1:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_RED_2:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_RED_3:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_VS:
-		break;
-	case clsSCENE_TAKEOFF::enCUT_END:
-		break;
-
-	}
-
 }
 
 
-//カット変数を更新.
-void clsSCENE_TAKEOFF::AddCut( enCUT* const penCut )
-{
-	*penCut = static_cast<enCUT>( static_cast<int>( *penCut ) + 1 );
-}
-
-//フレームが満たしていなくても次のカットへ飛ぶ.
-void clsSCENE_TAKEOFF::NextCut()
-{
-	//配列のサイズチェック.
-	if( m_iCountCameraCutChange < enCUT_size ){
-		//カウント変数を次に進むまで増やす.
-		m_fMovieFrame = m_fMovieFrameNextArray[ m_iCountCameraCutChange ] + 1.0f;
-	}
-//	enNextScene = enSCENE::MISSION;
-
-}
 
 //============================ デバッグテキスト ===========================//
 #ifdef _DEBUG
@@ -613,7 +533,7 @@ void clsSCENE_TAKEOFF::RenderDebugText()
 
 	iTxtY += iOFFSET;
 
-	switch( m_enCut )
+	switch( m_iCut )
 	{
 	case clsSCENE_TAKEOFF::enCUT_START:
 		sprintf_s( strDbgTxt,"Cut : enCUT_START" );

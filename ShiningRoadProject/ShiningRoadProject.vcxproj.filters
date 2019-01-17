@@ -450,6 +450,12 @@
     <ClCompile Include="SourceCodo\RenderSubThreadBase.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\SceneClear.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SceneMovieBase.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -817,6 +823,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\RenderSubThreadBase.h">
       <Filter>Tahara\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneClear.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneMovieBase.h">
+      <Filter>Tahara\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
