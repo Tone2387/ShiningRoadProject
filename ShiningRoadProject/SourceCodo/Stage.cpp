@@ -1,5 +1,6 @@
 #include "Stage.h"
 #include "File.h"
+#include "Sprite.h"
 #include "Building.h"
 #include "PtrGroup.h"
 #include "Resource.h"
@@ -120,14 +121,30 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	file.Close();
 	//========== ドア 終わり ==========//.
 
-	//障害物.
+	//========== ビル ==========//.
+	//下準備.
+	clsBUILDING::CreateTexture(
+		pPtrGroup->GetDevice(), 
+		pPtrGroup->GetContext(), 
+		&m_spBuildingTop,
+		&m_spBuildingSide,
+		&m_spBuildingSideInside,
+		&m_spBuildingTopInside,
+		&m_spBuildingBottomInside );
+
 	file.Open( sBUILDING_DATA_PATH );
 	m_vpBuilding.resize( file.GetSizeRow() );
+	//ビルの作成 & 初期化.
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i] = make_unique< clsBUILDING >( 
 			pPtrGroup->GetDevice(), 
 			pPtrGroup->GetContext(), 
-			pPtrGroup->GetResource()->GetStaticModels( clsResource::enStaticModel_Building ) );
+			pPtrGroup->GetResource()->GetStaticModels( clsResource::enStaticModel_Building ),
+			m_spBuildingTop,
+			m_spBuildingSide,
+			m_spBuildingSideInside,
+			m_spBuildingTopInside,
+			m_spBuildingBottomInside );
 
 		//座標.
 		m_vpBuilding[i]->SetPos( {
@@ -150,12 +167,11 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i]->UpdateTile();
 	}
+	//========== ビル 終わり ==========//.
 
 	for( UCHAR i=0; i<enDOOR_size; i++ ){
 		SetAnimDoor( static_cast<enDOOR>( i ), enDOOR_ANIM_CLOSED );
 	}
-
-
 
 	//光を青く.
 	SetColor( vLIGHT_COLOR_BLUE );

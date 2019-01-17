@@ -76,8 +76,9 @@ enum class enSCENE : UCHAR
 	ASSEMBLE,	//パーツ組み換え画面.
 	TAKEOFF,	//出撃ムービー.
 	MISSION,	//アクションシーン( ゲームのメイン ).
-	ENDING,		//クリア後.
-	GAMEOVER,		//ゲームオーバー.			
+	CLEAR,		//ステージクリア時のムービー.
+	ENDING,		//エンドロール.
+	GAMEOVER,	//ゲームオーバー.			
 
 	NOTHING		//「SwitchScene」関数のフラグ用.
 				//なんのシーンも指定していない.

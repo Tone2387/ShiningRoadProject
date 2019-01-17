@@ -743,8 +743,11 @@ bool clsSCENE_ASSEMBLE::isPressButtonY()
 }
 bool clsSCENE_ASSEMBLE::isPressButtonStart()
 {
-	if( isPressStart() ){
-		return true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( isPressStart() ){
+			return true;
+		}
 	}
 	else if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_START ) ){
 		return true;

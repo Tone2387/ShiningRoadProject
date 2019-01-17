@@ -9,7 +9,7 @@ namespace{
 
 	//エフェクト管理用インスタンス最大数.
 	//最大描画スプライト数.(やばいならint型にする)
-	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 3;
+	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 3;//3.
 	const int g_EffectInstanceMax = g_RenderSpriteMax * 1;
 
 	const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
@@ -58,6 +58,11 @@ clsEffects::clsEffects()
 	for( unsigned int i=0; i<m_vecpEffect.size(); i++ ){
 		m_vecpEffect[i] = nullptr;
 	}
+
+	//一時停止用ハンドル.
+	const unsigned int uiHANDLE_RESERVE = 256;
+	m_vecHandle.reserve( uiHANDLE_RESERVE );
+
 }
 
 clsEffects::~clsEffects()
