@@ -7,6 +7,7 @@ class clsBUILDING;
 class clsObjStaticMesh;
 class clsObjSkinMesh;
 class clsDX9Mesh;
+class clsSprite;
 
 
 
@@ -99,6 +100,15 @@ private:
 
 	//ビル.
 	std::vector< std::unique_ptr< clsBUILDING > > m_vpBuilding;
+
+	//ビルのテクスチャリソース.
+	std::shared_ptr< clsSprite > m_spBuildingTop;
+	std::shared_ptr< clsSprite > m_spBuildingSide;
+	std::shared_ptr< clsSprite > m_spBuildingSideInside;
+	std::shared_ptr< clsSprite > m_spBuildingTopInside;
+	std::shared_ptr< clsSprite > m_spBuildingBottomInside;
+
+
 
 	D3DXVECTOR4 m_vLightColor;
 	D3DXVECTOR4 m_vLightColorTarget;

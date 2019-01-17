@@ -1,5 +1,6 @@
 #include "Stage.h"
 #include "File.h"
+#include "Sprite.h"
 #include "Building.h"
 #include "PtrGroup.h"
 #include "Resource.h"
@@ -120,14 +121,42 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	file.Close();
 	//========== ドア 終わり ==========//.
 
-	//障害物.
+	//========== ビル ==========//.
+	//下準備.
+	clsSprite* pTop			= nullptr;
+	clsSprite* pSide		= nullptr;
+	clsSprite* pSideInside	= nullptr;
+	clsSprite* pTopInside	= nullptr;
+	clsSprite* pBottomInside= nullptr;
+
+	clsBUILDING::CreateTexture(
+		pPtrGroup->GetDevice(), 
+		pPtrGroup->GetContext(), 
+		&pTop,
+		&pSide,
+		&pSideInside,
+		&pTopInside,
+		&pBottomInside );
+
+	m_spBuildingTop.reset( pTop );
+	m_spBuildingSide.reset( pSide );
+	m_spBuildingSideInside.reset( pSideInside );
+	m_spBuildingTopInside.reset( pTopInside );
+	m_spBuildingBottomInside.reset( pBottomInside );
+
 	file.Open( sBUILDING_DATA_PATH );
 	m_vpBuilding.resize( file.GetSizeRow() );
+	//ビルの作成 & 初期化.
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i] = make_unique< clsBUILDING >( 
 			pPtrGroup->GetDevice(), 
 			pPtrGroup->GetContext(), 
-			pPtrGroup->GetResource()->GetStaticModels( clsResource::enStaticModel_Building ) );
+			pPtrGroup->GetResource()->GetStaticModels( clsResource::enStaticModel_Building ),
+			m_spBuildingTop,
+			m_spBuildingSide,
+			m_spBuildingSideInside,
+			m_spBuildingTopInside,
+			m_spBuildingBottomInside );
 
 		//座標.
 		m_vpBuilding[i]->SetPos( {
@@ -150,6 +179,9 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i]->UpdateTile();
 	}
+	//========== ビル 終わり ==========//.
+
+
 
 	for( UCHAR i=0; i<enDOOR_size; i++ ){
 		SetAnimDoor( static_cast<enDOOR>( i ), enDOOR_ANIM_CLOSED );

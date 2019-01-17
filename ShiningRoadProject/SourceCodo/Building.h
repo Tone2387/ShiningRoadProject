@@ -18,8 +18,24 @@ public:
 	clsBUILDING( 
 		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11,
-		 clsDX9Mesh* const pModel );
+		 clsDX9Mesh* const pModel,
+		std::shared_ptr< clsSprite > spTop,
+		std::shared_ptr< clsSprite > spSide,
+		std::shared_ptr< clsSprite > spSideInside,
+		std::shared_ptr< clsSprite > spTopInside,
+		std::shared_ptr< clsSprite > spBottomInside );
 	~clsBUILDING();
+
+	//ビルのテクスチャリソースを作成.
+	//ビルを内包する「 clsStage 」で使う.
+	static void CreateTexture(
+		ID3D11Device* const pDevice11,
+		ID3D11DeviceContext* const pContext11,
+		clsSprite** ppTop,
+		clsSprite** ppSide,
+		clsSprite** ppSideInside,
+		clsSprite** ppTopInside,
+		clsSprite** ppBottomInside );
 
 	//レイの当たり判定に必要.
 	void UpdateModel() const;
@@ -138,12 +154,12 @@ private:
 	std::unique_ptr< clsObjStaticMesh > m_upBox;
 
 	//テクスチャ.
-	std::unique_ptr< clsSprite > m_upTop;
-	std::unique_ptr< clsSprite > m_upSide;
+	std::shared_ptr< clsSprite > m_spTop;
+	std::shared_ptr< clsSprite > m_spSide;
 	//裏面( カメラがビルの中に入った時の為 ).
-	std::unique_ptr< clsSprite > m_upSideInside;
-	std::unique_ptr< clsSprite > m_upTopInside;
-	std::unique_ptr< clsSprite > m_upBottomInside;
+	std::shared_ptr< clsSprite > m_spSideInside;
+	std::shared_ptr< clsSprite > m_spTopInside;
+	std::shared_ptr< clsSprite > m_spBottomInside;
 
 
 

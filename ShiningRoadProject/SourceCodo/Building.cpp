@@ -40,9 +40,14 @@ namespace{
 }
 
 clsBUILDING::clsBUILDING( 
-		ID3D11Device* const pDevice11,
-		ID3D11DeviceContext* const pContext11,
-		clsDX9Mesh* const pModel )
+	ID3D11Device* const pDevice11,
+	ID3D11DeviceContext* const pContext11,
+	clsDX9Mesh* const pModel,
+	std::shared_ptr< clsSprite > spTop,
+	std::shared_ptr< clsSprite > spSide,
+	std::shared_ptr< clsSprite > spSideInside,
+	std::shared_ptr< clsSprite > spTopInside,
+	std::shared_ptr< clsSprite > spBottomInside )
 	:m_wpDevice( pDevice11 )
 	,m_wpContext( pContext11 )
 	,m_Trans( { 
@@ -58,23 +63,30 @@ clsBUILDING::clsBUILDING(
 	m_upBox = make_unique< clsObjStaticMesh >();
 	m_upBox->AttachModel( pModel );
 
-	m_upTop = make_unique< clsSprite >();
-	m_upTop->Create( pDevice11, pContext11, sTEX_NAME_TOP );
+	m_spTop			= spTop;
+	m_spSide		= spSide;
+	m_spSideInside	= spSideInside;
+	m_spTopInside	= spTopInside;
+	m_spBottomInside= spBottomInside;
 
-	m_upSide = make_unique< clsSprite >();
-	m_upSide->Create( pDevice11, pContext11, sTEX_NAME_SIDE );
 
-	const float fINSIDESIDE_ALPHA = 0.5f;
-	m_upSideInside = make_unique< clsSprite >();
-	m_upSideInside->Create( pDevice11, pContext11, sTEX_NAME_SIDEINSIDE );
-	m_upSideInside->SetAlpha( fINSIDESIDE_ALPHA );
-
-	m_upTopInside = make_unique< clsSprite >();
-	m_upTopInside->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
-	m_upTopInside->SetAlpha( fINSIDESIDE_ALPHA );
-
-	m_upBottomInside = make_unique< clsSprite >();
-	m_upBottomInside->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+//	m_spTop = make_shared< clsSprite >();
+//	m_spTop->Create( pDevice11, pContext11, sTEX_NAME_TOP );
+//
+//	m_spSide = make_shared< clsSprite >();
+//	m_spSide->Create( pDevice11, pContext11, sTEX_NAME_SIDE );
+//
+//	const float fINSIDESIDE_ALPHA = 0.5f;
+//	m_spSideInside = make_shared< clsSprite >();
+//	m_spSideInside->Create( pDevice11, pContext11, sTEX_NAME_SIDEINSIDE );
+//	m_spSideInside->SetAlpha( fINSIDESIDE_ALPHA );
+//
+//	m_spTopInside = make_shared< clsSprite >();
+//	m_spTopInside->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+//	m_spTopInside->SetAlpha( fINSIDESIDE_ALPHA );
+//
+//	m_spBottomInside = make_shared< clsSprite >();
+//	m_spBottomInside->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
 
 }
 
@@ -84,6 +96,39 @@ clsBUILDING::~clsBUILDING()
 	m_wpDevice = nullptr;
 	m_wpContext = nullptr;
 }
+
+void clsBUILDING::CreateTexture(
+	ID3D11Device* const pDevice11,
+	ID3D11DeviceContext* const pContext11,
+	clsSprite** ppTop,
+	clsSprite** ppSide,
+	clsSprite** ppSideInside,
+	clsSprite** ppTopInside,
+	clsSprite** ppBottomInside )
+{
+	*ppTop = new clsSprite;
+	( *ppTop )->Create( pDevice11, pContext11, sTEX_NAME_TOP );
+
+	*ppSide = new clsSprite;
+	( *ppSide )->Create( pDevice11, pContext11, sTEX_NAME_SIDE );
+
+	const float fINSIDESIDE_ALPHA = 0.5f;
+	*ppSideInside = new clsSprite;
+	( *ppSideInside )->Create( pDevice11, pContext11, sTEX_NAME_SIDEINSIDE );
+	( *ppSideInside )->SetAlpha( fINSIDESIDE_ALPHA );
+
+	*ppTopInside = new clsSprite;
+	( *ppTopInside )->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+	( *ppTopInside )->SetAlpha( fINSIDESIDE_ALPHA );
+
+	*ppBottomInside = new clsSprite;
+	( *ppBottomInside )->Create( pDevice11, pContext11, sTEX_NAME_TOPINSIDE );
+}
+
+
+
+
+
 
 void clsBUILDING::UpdateModel() const
 {
@@ -108,9 +153,9 @@ void clsBUILDING::UpdateTile()
 	//タイルを並べる.
 	SetTransformTop();
 	//座標のセット.
-	m_upTop->SetPos( m_TopTrans.vPos );
-	m_upTop->SetRot( m_TopTrans.vRot );
-	m_upTop->SetScale( m_TopTrans.vScale );
+	m_spTop->SetPos( m_TopTrans.vPos );
+	m_spTop->SetRot( m_TopTrans.vRot );
+	m_spTop->SetScale( m_TopTrans.vScale );
 
 	//側面.
 	unsigned int uiROW_Z = iTEX_NUM_MIN;
@@ -125,13 +170,13 @@ void clsBUILDING::UpdateTile()
 	SetTransformSide();
 
 	//裏面( 上面、底面 ).
-	m_upTopInside->SetPos( m_TopTrans.vPos );
-	m_upTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
-	m_upTopInside->SetScale( m_TopTrans.vScale );
+	m_spTopInside->SetPos( m_TopTrans.vPos );
+	m_spTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
+	m_spTopInside->SetScale( m_TopTrans.vScale );
 
-	m_upBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
-	m_upBottomInside->SetRot( m_TopTrans.vRot );
-	m_upBottomInside->SetScale( m_TopTrans.vScale );
+	m_spBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
+	m_spBottomInside->SetRot( m_TopTrans.vRot );
+	m_spBottomInside->SetScale( m_TopTrans.vScale );
 }
 
 void clsBUILDING::Render(
@@ -143,27 +188,27 @@ void clsBUILDING::Render(
 {
 //	m_upBox->Render( mView, mProj, vLight, vEye );
 
-	m_upTop->SetPos( m_TopTrans.vPos );
-	m_upTop->SetRot( m_TopTrans.vRot );
-	m_upTop->SetScale( m_TopTrans.vScale );
-	m_upTop->SetSplit( m_vSplitTop );
-	m_upTop->Render( mView, mProj, vEye, vColor );
+	m_spTop->SetPos( m_TopTrans.vPos );
+	m_spTop->SetRot( m_TopTrans.vRot );
+	m_spTop->SetScale( m_TopTrans.vScale );
+	m_spTop->SetSplit( m_vSplitTop );
+	m_spTop->Render( mView, mProj, vEye, vColor );
 
 	//========== 南北 ==========//.
 	for( int i=enWD_SOUTH; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
-		m_upSide->SetPos( m_SideTransArray[i].vPos );
-		m_upSide->SetRot( m_SideTransArray[i].vRot );
-		m_upSide->SetScale( m_SideTransArray[i].vScale );
-		m_upSide->SetSplit( m_vSplitNorthSouth );
-		m_upSide->Render( mView, mProj, vEye, vColor );
+		m_spSide->SetPos( m_SideTransArray[i].vPos );
+		m_spSide->SetRot( m_SideTransArray[i].vRot );
+		m_spSide->SetScale( m_SideTransArray[i].vScale );
+		m_spSide->SetSplit( m_vSplitNorthSouth );
+		m_spSide->Render( mView, mProj, vEye, vColor );
 	}
 	//========== 東西 ==========//.
 	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
-		m_upSide->SetPos( m_SideTransArray[i].vPos );
-		m_upSide->SetRot( m_SideTransArray[i].vRot );
-		m_upSide->SetScale( m_SideTransArray[i].vScale );
-		m_upSide->SetSplit( m_vSplitEastWest );
-		m_upSide->Render( mView, mProj, vEye, vColor );
+		m_spSide->SetPos( m_SideTransArray[i].vPos );
+		m_spSide->SetRot( m_SideTransArray[i].vRot );
+		m_spSide->SetScale( m_SideTransArray[i].vScale );
+		m_spSide->SetSplit( m_vSplitEastWest );
+		m_spSide->Render( mView, mProj, vEye, vColor );
 	}
 
 }
@@ -176,39 +221,39 @@ void clsBUILDING::RenderInside(
 {
 	const D3DXVECTOR3 vSIDEINSIDE_ADD_ROT = { 0.0f, static_cast<float>( M_PI ), 0.0f };
 //	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
-//		m_upSideInside->SetPos( m_SideTransArray[i].vPos );
-//		m_upSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
-//		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
-//		m_upSideInside->Render( mView, mProj, vEye );
+//		m_spSideInside->SetPos( m_SideTransArray[i].vPos );
+//		m_spSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
+//		m_spSideInside->SetScale( m_SideTransArray[i].vScale );
+//		m_spSideInside->Render( mView, mProj, vEye );
 //	}
 	//========== 南北 ==========//.
 	for( int i=enWD_SOUTH; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
-		m_upSideInside->SetPos( m_SideTransArray[i].vPos );
-		m_upSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
-		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
-		m_upSideInside->SetSplit( m_vSplitNorthSouth );
-		m_upSideInside->Render( mView, mProj, vEye );
+		m_spSideInside->SetPos( m_SideTransArray[i].vPos );
+		m_spSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
+		m_spSideInside->SetScale( m_SideTransArray[i].vScale );
+		m_spSideInside->SetSplit( m_vSplitNorthSouth );
+		m_spSideInside->Render( mView, mProj, vEye );
 	}
 	//========== 東西 ==========//.
 	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
-		m_upSideInside->SetPos( m_SideTransArray[i].vPos );
-		m_upSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
-		m_upSideInside->SetScale( m_SideTransArray[i].vScale );
-		m_upSideInside->SetSplit( m_vSplitEastWest );
-		m_upSideInside->Render( mView, mProj, vEye );
+		m_spSideInside->SetPos( m_SideTransArray[i].vPos );
+		m_spSideInside->SetRot( m_SideTransArray[i].vRot + vSIDEINSIDE_ADD_ROT );
+		m_spSideInside->SetScale( m_SideTransArray[i].vScale );
+		m_spSideInside->SetSplit( m_vSplitEastWest );
+		m_spSideInside->Render( mView, mProj, vEye );
 	}
 
-	m_upBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
-	m_upBottomInside->SetRot( m_TopTrans.vRot );
-	m_upBottomInside->SetScale( m_TopTrans.vScale );
-//	m_upBottomInside->SetSplit( m_vSplitTop );
-	m_upBottomInside->Render( mView, mProj, vEye );
+	m_spBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
+	m_spBottomInside->SetRot( m_TopTrans.vRot );
+	m_spBottomInside->SetScale( m_TopTrans.vScale );
+//	m_spBottomInside->SetSplit( m_vSplitTop );
+	m_spBottomInside->Render( mView, mProj, vEye );
 
-	m_upTopInside->SetPos( m_TopTrans.vPos );
-	m_upTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
-	m_upTopInside->SetScale( m_TopTrans.vScale );
-//	m_upTopInside->SetSplit( m_vSplitTop );
-	m_upTopInside->Render( mView, mProj, vEye );
+	m_spTopInside->SetPos( m_TopTrans.vPos );
+	m_spTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
+	m_spTopInside->SetScale( m_TopTrans.vScale );
+//	m_spTopInside->SetSplit( m_vSplitTop );
+	m_spTopInside->Render( mView, mProj, vEye );
 }
 
 //ビルの近くにいるか( 上から見た円の判定 ).
@@ -255,7 +300,7 @@ void clsBUILDING::SetTileNumTop( const unsigned int uiROW, const unsigned int ui
 	unsigned int uiTmpRow = uiROW;
 	if( !uiROW )	uiTmpRow = iTEX_NUM_MIN; 
 
-//	m_upTop->SetSplit( D3DXVECTOR2(
+//	m_spTop->SetSplit( D3DXVECTOR2(
 //		static_cast<float>( uiTmpCol ),
 //		static_cast<float>( uiTmpRow ) ) );
 	m_vSplitTop = D3DXVECTOR2(
