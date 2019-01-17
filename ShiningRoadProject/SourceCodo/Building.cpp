@@ -32,6 +32,11 @@ namespace{
 
 	//側面のfor文の増加量.
 	const int iSIDE_TILE_COUNT_NUM = 2;
+
+	//裏面上下.
+	const D3DXVECTOR3 vTOPINSIDE_ADD_ROT = { 0.0f, static_cast<float>( M_PI ), 0.0f };
+	const D3DXVECTOR3 vBOTTOMINSIDE_ADD_POS = { 0.0f, 0.03125f, 0.0f };
+
 }
 
 clsBUILDING::clsBUILDING( 
@@ -120,12 +125,10 @@ void clsBUILDING::UpdateTile()
 	SetTransformSide();
 
 	//裏面( 上面、底面 ).
-	const D3DXVECTOR3 vTOPINSIDE_ADD_ROT = { 0.0f, static_cast<float>( M_PI ), 0.0f };
 	m_upTopInside->SetPos( m_TopTrans.vPos );
 	m_upTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
 	m_upTopInside->SetScale( m_TopTrans.vScale );
 
-	const D3DXVECTOR3 vBOTTOMINSIDE_ADD_POS = { 0.0f, 0.03125f, 0.0f };
 	m_upBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
 	m_upBottomInside->SetRot( m_TopTrans.vRot );
 	m_upBottomInside->SetScale( m_TopTrans.vScale );
@@ -140,14 +143,11 @@ void clsBUILDING::Render(
 {
 //	m_upBox->Render( mView, mProj, vLight, vEye );
 
+	m_upTop->SetPos( m_TopTrans.vPos );
+	m_upTop->SetRot( m_TopTrans.vRot );
+	m_upTop->SetScale( m_TopTrans.vScale );
+	m_upTop->SetSplit( m_vSplitTop );
 	m_upTop->Render( mView, mProj, vEye, vColor );
-
-//	for( int i=0; i<enWALL_DIRECTION_size; i++  ){
-//		m_upSide->SetPos( m_SideTransArray[i].vPos );
-//		m_upSide->SetRot( m_SideTransArray[i].vRot );
-//		m_upSide->SetScale( m_SideTransArray[i].vScale );
-//		m_upSide->Render( mView, mProj, vEye, vColor );
-//	}
 
 	//========== 南北 ==========//.
 	for( int i=enWD_SOUTH; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM ){
@@ -165,7 +165,6 @@ void clsBUILDING::Render(
 		m_upSide->SetSplit( m_vSplitEastWest );
 		m_upSide->Render( mView, mProj, vEye, vColor );
 	}
-
 
 }
 
@@ -199,7 +198,16 @@ void clsBUILDING::RenderInside(
 		m_upSideInside->Render( mView, mProj, vEye );
 	}
 
+	m_upBottomInside->SetPos( m_Trans.vPos + vBOTTOMINSIDE_ADD_POS );
+	m_upBottomInside->SetRot( m_TopTrans.vRot );
+	m_upBottomInside->SetScale( m_TopTrans.vScale );
+//	m_upBottomInside->SetSplit( m_vSplitTop );
 	m_upBottomInside->Render( mView, mProj, vEye );
+
+	m_upTopInside->SetPos( m_TopTrans.vPos );
+	m_upTopInside->SetRot( m_TopTrans.vRot + vTOPINSIDE_ADD_ROT );
+	m_upTopInside->SetScale( m_TopTrans.vScale );
+//	m_upTopInside->SetSplit( m_vSplitTop );
 	m_upTopInside->Render( mView, mProj, vEye );
 }
 
@@ -246,9 +254,13 @@ void clsBUILDING::SetTileNumTop( const unsigned int uiROW, const unsigned int ui
 	if( !uiCOL )	uiTmpCol = iTEX_NUM_MIN; 
 	unsigned int uiTmpRow = uiROW;
 	if( !uiROW )	uiTmpRow = iTEX_NUM_MIN; 
-	m_upTop->SetSplit( D3DXVECTOR2(
+
+//	m_upTop->SetSplit( D3DXVECTOR2(
+//		static_cast<float>( uiTmpCol ),
+//		static_cast<float>( uiTmpRow ) ) );
+	m_vSplitTop = D3DXVECTOR2(
 		static_cast<float>( uiTmpCol ),
-		static_cast<float>( uiTmpRow ) ) );
+		static_cast<float>( uiTmpRow ) );
 }
 
 //タイルを並べる.
@@ -296,44 +308,23 @@ void clsBUILDING::SetTileNumSide(
 	const unsigned int uiROW_X, const unsigned int uiCOL_X )
 {
 	//========== 南北 ==========//.
-	for( int i=enWD_SOUTH; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM  ){
-		unsigned int uiTmpCol = uiCOL_Z;
-		if( !uiTmpCol )	uiTmpCol = iTEX_NUM_MIN; 
-		unsigned int uiTmpRow = uiROW_Z;
-		if( !uiTmpRow )	uiTmpRow = iTEX_NUM_MIN; 
-
-		m_upSide->SetSplit( D3DXVECTOR2(
-			static_cast<float>( uiTmpCol ),
-			static_cast<float>( uiTmpRow ) ) );
-
-		m_upSideInside->SetSplit( D3DXVECTOR2(
-			static_cast<float>( uiTmpCol ),
-			static_cast<float>( uiTmpRow ) ) );
+	unsigned int uiTmpCol = uiCOL_Z;
+	if( !uiTmpCol )	uiTmpCol = iTEX_NUM_MIN; 
+	unsigned int uiTmpRow = uiROW_Z;
+	if( !uiTmpRow )	uiTmpRow = iTEX_NUM_MIN; 
 
 	m_vSplitNorthSouth = D3DXVECTOR2(
 		static_cast<float>( uiTmpCol ),
 		static_cast<float>( uiTmpRow ) );
-	}
 	//========== 東西 ==========//.
-	for( int i=enWD_EAST; i<enWALL_DIRECTION_size; i+=iSIDE_TILE_COUNT_NUM  ){
-		unsigned int uiTmpCol = uiCOL_X;
-		if( !uiTmpCol )	uiTmpCol = iTEX_NUM_MIN; 
-		unsigned int uiTmpRow = uiROW_X;
-		if( !uiTmpRow )	uiTmpRow = iTEX_NUM_MIN; 
-
-		m_upSide->SetSplit( D3DXVECTOR2(
-			static_cast<float>( uiTmpCol ),
-			static_cast<float>( uiTmpRow ) ) );
-
-		m_upSideInside->SetSplit( D3DXVECTOR2(
-			static_cast<float>( uiTmpCol ),
-			static_cast<float>( uiTmpRow ) ) );
+	uiTmpCol = uiCOL_X;
+	if( !uiTmpCol )	uiTmpCol = iTEX_NUM_MIN; 
+	uiTmpRow = uiROW_X;
+	if( !uiTmpRow )	uiTmpRow = iTEX_NUM_MIN; 
 
 	m_vSplitEastWest = D3DXVECTOR2(
 		static_cast<float>( uiTmpCol ),
 		static_cast<float>( uiTmpRow ) );
-	}
-
 }
 
 //タイルを並べる.

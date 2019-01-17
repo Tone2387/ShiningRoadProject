@@ -130,6 +130,7 @@ private:
 	TRANSFORM m_SideTransArray[ enWALL_DIRECTION_size ];
 
 	//ï™äÑêî.
+	D3DXVECTOR2 m_vSplitTop; 
 	D3DXVECTOR2 m_vSplitNorthSouth; 
 	D3DXVECTOR2 m_vSplitEastWest; 
 
