@@ -97,9 +97,8 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vDir)
 
 	//Excelの行番号	座標.
 	m_ShotEfcHandles[enEfcShot] = m_wpEffect->Play(m_ShotState.iShotEfcNum, m_Trans.vPos);
-	
-	
 	m_ShotEfcHandles[enEfcLine] = m_wpEffect->Play(m_ShotState.iLineEfcNum, m_Trans.vPos);
+	m_ShotEfcHandles[enEfcMuzzle] = m_wpEffect->Play(m_ShotState.iMuzzeleEfcNum, m_Trans.vPos);
 	
 	//ベクトルから回転値を求める.
 	D3DXVECTOR3 vDirTmp = m_vMoveDir;
@@ -113,7 +112,7 @@ bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vDir)
 	ObjRollOverGuard(&vRot.x);
 	ObjRollOverGuard(&vRot.y);
 
-	//m_wpEffect->SetRotation(m_ShotEfcHandles[enEfcLine],vRot);
+	//m_wpEffect->SetRotation(m_ShotEfcHandles[enEfcMuzzle],vRot);
 
 	m_vMoveDir.y = 0.0f;
 

@@ -37,8 +37,6 @@ void clsAIRobo::Init(clsPOINTER_GROUP* const pPtrGroup,
 
 void clsAIRobo::Action(clsStage* const pStage)
 {
-	return;
-
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;

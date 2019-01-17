@@ -17,6 +17,7 @@ struct BulletState
 	int iSEHitNum;
 
 	int iShotEfcNum;
+	int iMuzzeleEfcNum;
 	int iLineEfcNum;
 	int iHitEfcNum;
 };
