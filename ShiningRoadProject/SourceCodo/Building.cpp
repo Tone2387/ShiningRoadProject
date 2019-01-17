@@ -260,6 +260,7 @@ void clsBUILDING::RenderInside(
 bool clsBUILDING::isNearBuilding(
 	const D3DXVECTOR3& vPosObjOtherBuilding )//ƒrƒ‹‚Æ”»’è‚ğæ‚è‚½‚¢ƒ‚ƒm‚ÌÀ•W.
 {
+#if 0
 	const float fOFFSET = 2.5f;
 	D3DXVECTOR3 vTmp = m_Trans.vScale;
 	vTmp *= 0.5f;
@@ -278,6 +279,30 @@ bool clsBUILDING::isNearBuilding(
 	if( fDISTANCE < fRANGE ){
 		return true;
 	}
+#else
+	const float fOFFSET = 2.5f;
+	const float fHARF = 0.5f;
+	const float fZN = m_Trans.vPos.z + m_Trans.vScale.z * fHARF + fOFFSET;
+	const float fZS = m_Trans.vPos.z - m_Trans.vScale.z * fHARF - fOFFSET;
+	const float fXE = m_Trans.vPos.x + m_Trans.vScale.x * fHARF + fOFFSET;
+	const float fXW = m_Trans.vPos.x - m_Trans.vScale.x * fHARF - fOFFSET;
+	const float fYT = m_Trans.vPos.y + m_Trans.vScale.y			+ fOFFSET;
+	const float fYB = m_Trans.vPos.y							- fOFFSET;
+
+	if( fZS < vPosObjOtherBuilding.z &&
+		vPosObjOtherBuilding.z < fZN )
+	{
+		if( fXW < vPosObjOtherBuilding.x &&
+			vPosObjOtherBuilding.x < fXE )
+		{
+			if( fYB < vPosObjOtherBuilding.y &&
+				vPosObjOtherBuilding.y < fYT )
+			{
+				return true;
+			}
+		}
+	}
+#endif
 
 	return false;
 }

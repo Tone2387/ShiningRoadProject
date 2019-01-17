@@ -117,7 +117,7 @@ public:
 		::Effekseer::Handle hAdd = m_pManager->Play(
 			m_vecpEffect[ EfcType ], vPos.x, vPos.y, vPos.z );
 
-		m_vecHandle.push_back( hAdd );
+		m_vecHandle.emplace_back( hAdd );
 
 		return hAdd;
 	};
