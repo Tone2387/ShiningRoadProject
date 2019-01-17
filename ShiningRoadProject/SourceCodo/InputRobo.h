@@ -83,7 +83,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetLStickSlope();
 			fAngle = m_pXInput->GetLStickTheta();
@@ -110,7 +110,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetLStickX();
 			fAngle = m_pXInput->GetLStickTheta();
@@ -135,7 +135,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetLStickY();
 			fAngle = m_pXInput->GetLStickTheta();
@@ -160,7 +160,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetRStickSlope();
 			fAngle = m_pXInput->GetRStickTheta();
@@ -186,7 +186,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetRStickX();
 			fAngle = m_pXInput->GetRStickTheta();
@@ -211,7 +211,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetRStickY();
 			fAngle = m_pXInput->GetRStickTheta();
@@ -254,7 +254,7 @@ public:
 	{
 		if (abs(fPower) > g_fStickPushMin)
 		{
-			if (m_pXInput)
+			if (m_pXInput->isConnected())
 			{
 				if (m_pXInput->isLTriggerEnter())
 				{
@@ -278,7 +278,7 @@ public:
 	{
 		if (abs(fPower) > g_fStickPushMin)
 		{
-			if (m_pXInput)
+			if (m_pXInput->isConnected())
 			{
 				if (m_pXInput->isLTriggerEnter())
 				{
@@ -300,7 +300,7 @@ public:
 
 	clsRoboCommand* BoostRising()
 	{
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			if (m_pXInput->isRTriggerStay())
 			{
@@ -321,7 +321,7 @@ public:
 
 	clsRoboCommand* LWeaponShot()
 	{
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			if (m_pXInput->isPressStay(XINPUT_LB))
 			{
@@ -342,7 +342,7 @@ public:
 
 	clsRoboCommand* RWeaponShot()
 	{
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			if (m_pXInput->isPressStay(XINPUT_RB))
 			{
