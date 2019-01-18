@@ -462,6 +462,9 @@
     <ClCompile Include="SourceCodo\SoundManagerClear.cpp">
       <Filter>Tahara\SoundManager</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\Random.cpp">
+      <Filter>Tahara\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -841,6 +844,9 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SoundManagerClear.h">
       <Filter>Tahara\SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\Random.h">
+      <Filter>Tahara\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -32,22 +32,13 @@ private:
 	//カメラのカット割りの段階.
 	enum enCUT : int
 	{
-		enCUT_START = 0,//エリア全体を写す.
-		enCUT_RED_1,	//ステージが赤くなる.
-		enCUT_RED_2,		
-		enCUT_RED_3,	//( 天井を写す ).
-		enCUT_LIA_OPEN,	//天井が開く.
-		enCUT_ENEMY_APP,//天井から敵登場.
-		enCUT_PLAYER_UP,//通路を行く自機のアップ( 正面 ).
-		enCUT_PLAYER_ROAD,//通路を行く自機( 背面 ).
-		enCUT_PLAYER_APP,//広場に現れる自機.
-		enCUT_ENCOUNT,	//そして出会う二機のギガポン.
-		enCUT_ENEMY_LANDING,//敵着地.
-		enCUT_VS,		//自機の顔のアップ.
-		enCUT_END,		//敵の顔のアップ.
+		enCUT_START = 0,//敵よろめく.
+		enCUT_END,		//敵大爆発.
 
 		enCUT_size
 	};
+	
+
 
 
 #ifdef _DEBUG
@@ -62,6 +53,7 @@ private:
 	std::unique_ptr< clsROBO_TAKEOFF >	m_upPlayer;
 	std::unique_ptr< clsROBO_TAKEOFF >	m_upEnemy;
 
+	float m_fBomberEffectOffsetFrame;
 
 	//音の引数.
 	enum enBGM : int
@@ -71,14 +63,8 @@ private:
 
 	enum enSE : int
 	{
-		enSE_SIREN = 0,		//Siren.
-		enSE_DOOR_OPEN,		//DoorOpen.
-		enSE_DOOR_CLOSE,	//DoorClose.
-		enSE_PASS,			//通り過ぎる.
-		enSE_FIGHT_LEADY,	//FightLeady.
-		enSE_BOOSTER,		//Booster.
-		enSE_LANDING,		//Landing.
-		enSE_ENVIRONMENTAL,	//環境音.
+		enSE_KNEE = 0,	//膝附.( ニー ).
+		enSE_BOMBER,	//爆発.
 	};
 
 };

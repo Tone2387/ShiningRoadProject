@@ -4,6 +4,7 @@
 #include "File.h"
 #include "RoboStatusEnemy.h"
 #include "CameraClear.h"
+#include "Random.h"
 
 
 using namespace std;
@@ -12,10 +13,10 @@ using namespace std;
 
 namespace
 {
-	const string sFILE_PATH_CUT_FRAME	= "Data\\FileData\\Tahara\\TakeoffCutFrame.csv";
-	const string sFILE_PATH_CAMERA		= "Data\\FileData\\Tahara\\TakeoffCamPos.csv";
-	const string sFILE_PATH_GIGAPON		= "Data\\FileData\\Tahara\\TakeoffGigaponPos.csv";
-	const string sFILE_PATH_OTHER		= "Data\\FileData\\Tahara\\TakeoffOtherData.csv";
+	const string sFILE_PATH_CUT_FRAME	= "Data\\FileData\\Tahara\\ClearCutFrame.csv";
+	const string sFILE_PATH_CAMERA		= "Data\\FileData\\Tahara\\ClearCamPos.csv";
+	const string sFILE_PATH_GIGAPON		= "Data\\FileData\\Tahara\\ClearGigaponPos.csv";
+	const string sFILE_PATH_OTHER		= "Data\\FileData\\Tahara\\ClearOtherData.csv";
 
 	const D3DXVECTOR4 vSTAGE_COLOR_RED = { 1.0f, 0.0f, 0.0f, 1.0f };
 	const D3DXVECTOR4 vSTAGE_COLOR_BLUE= { 0.0f, 1.0f, 1.0f, 1.0f };
@@ -24,6 +25,7 @@ namespace
 
 clsSCENE_CLEAR::clsSCENE_CLEAR( clsPOINTER_GROUP* const ptrGroup )
 	:clsSCENE_MOVIE_BASE( ptrGroup, enSCENE::ENDING, sFILE_PATH_CUT_FRAME.c_str() )
+	,m_fBomberEffectOffsetFrame( 0.0f )
 {
 }
 
@@ -52,16 +54,30 @@ void clsSCENE_CLEAR::CreateProduct()
 	m_upPlayer->SetRotation( { 0.0f, static_cast<float>( M_PI_2			), 0.0f } );
 	m_upEnemy->SetRotation(  { 0.0f, static_cast<float>( M_PI_2 + M_PI  ), 0.0f } );
 
+	//構える.
+	const int iARM_ANIM_INDEX = 2;
+	m_upPlayer->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
+	m_upPlayer->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
+	m_upEnemy-> m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
+	m_upEnemy-> m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
+
+
 	SetCamPosFromFile(	   0 );
 	SetGigaponPosFromFile( 0 );
 	SetOtherDataFromFile(  0 );
 
-	if( m_wpSound ){
-		m_wpSound->PlayBGM( 0 );
-	}
+//	if( m_wpSound ){
+//		m_wpSound->PlayBGM( 0 );
+//	}
 
 	
+	//高速明転.
+	const float fDARK_SPD = fBLACK_SCREEN_DEFAULT_SPD * 2.0f;
+	m_wpBlackScreen->SetChangeSpd( fDARK_SPD );
 
+
+	m_wpEffects->Play( 0, m_upEnemy->GetPosition() );
+	m_wpEffects->StopAll();
 }
 
 
@@ -92,85 +108,11 @@ void clsSCENE_CLEAR::InitMovieProduct()
 	case clsSCENE_CLEAR::enCUT_START:
 		break;
 
-	case clsSCENE_CLEAR::enCUT_RED_1:
-		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
-		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
-		break;
-
-	case clsSCENE_CLEAR::enCUT_RED_2:
-		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
-		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
-		break;
-
-	case clsSCENE_CLEAR::enCUT_RED_3:
-		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
-		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
-		break;
-
-	case clsSCENE_CLEAR::enCUT_LIA_OPEN:
-		m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
-		m_upEnemy->Boost();
-		m_wpSound->PlaySE( enSE_DOOR_OPEN );
-		break;
-
-	case clsSCENE_CLEAR::enCUT_ENEMY_APP:
-		{
-			const int iARM_ANIM_INDEX = 0;
-			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
-			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
-
-			m_upPlayer->Boost();
-			m_wpSound->PlaySE( enSE_BOOSTER, true );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_PLAYER_UP:
-		m_wpSound->PlaySE( enSE_BOOSTER, true );
-		m_wpSound->PlaySE( enSE_ENVIRONMENTAL, true );
-		break;
-
-	case clsSCENE_CLEAR::enCUT_PLAYER_ROAD:
-		m_wpSound->PlaySE( enSE_BOOSTER, true );
-		break;
-
-	case clsSCENE_CLEAR::enCUT_PLAYER_APP:
-		m_wpSound->PlaySE( enSE_PASS );
-		m_wpSound->StopSE( enSE_ENVIRONMENTAL );
-		break;
-
-	case clsSCENE_CLEAR::enCUT_ENCOUNT:
-		{
-			m_upPlayer->Boost();
-			m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_CLOSING );
-			m_wpSound->PlaySE( enSE_DOOR_CLOSE );
-			m_wpSound->PlaySE( enSE_BOOSTER, true );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_ENEMY_LANDING:
-		m_wpSound->PlaySE( enSE_BOOSTER, true );
-		break;
-
-	case clsSCENE_CLEAR::enCUT_VS:
-		{
-			const int iINDEX = 1;
-			const float fDISTANCE = m_vecfOtherData[ iINDEX ];
-			D3DXVECTOR3 vHeadPos = m_upEnemy->m_pMesh->GetBonePosHeadCenter();
-
-			wpCam->SetLookPos( vHeadPos );
-			wpCam->SetPos( vHeadPos + D3DXVECTOR3( fDISTANCE, 0.0f, 0.0f ), false );
-		}
-		break;
-
 	case clsSCENE_CLEAR::enCUT_END:
 		{
-			const int iINDEX = 1;
-			const float fDISTANCE = m_vecfOtherData[ iINDEX ];
-			D3DXVECTOR3 vHeadPos = m_upPlayer->m_pMesh->GetBonePosHeadCenter();
-
-			wpCam->SetLookPos( vHeadPos );
-			wpCam->SetPos( vHeadPos + D3DXVECTOR3( fDISTANCE, 0.0f, 0.0f ), false );
-			m_wpSound->PlaySE( enSE_BOOSTER, true );
+			//低速暗転.
+			const float fDARK_SPD = fBLACK_SCREEN_DEFAULT_SPD * 0.5f;
+			m_wpBlackScreen->SetChangeSpd( fDARK_SPD );
 		}
 		break;
 
@@ -196,210 +138,60 @@ void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 	{
 	case clsSCENE_CLEAR::enCUT_START:
 		{
-			const float fADD = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->Spn( fADD );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_RED_1:
-		{
-			const float fDISTANCE = m_vecfOtherData[ iOtherDataIndex++ ];
-			const float fSE_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->CrabWalk( fDISTANCE );
-
-			if( !m_isTrigger &&
-				m_fMovieFrame >= fSE_FRAME )
-			{
-				m_wpSound->PlaySE( enSE_SIREN, true );
-				m_isTrigger = true;
-			}
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_RED_2:
-		{
-			const float fADD_Y = m_vecfOtherData[ iOtherDataIndex++ ];
-			const float fADD_Z = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->AddPos( { 0.0f, fADD_Y, fADD_Z } );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_RED_3:
-		{
-			const float fADD_Y = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->AddLookPos( { 0.0f, fADD_Y, 0.0f } );
-
-			const float fNEXT_CUT_CAM_LOOK_POS_Y = m_vecfOtherData[ iOtherDataIndex++ ];
-			if( wpCam->GetLookPos().y >= fNEXT_CUT_CAM_LOOK_POS_Y ){
-				NextCut();
-			}
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_LIA_OPEN:
-		{
-			const float fUP = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->AddPos( { 0.0f, fUP, 0.0f }, false );
-			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->AddDistance( fMOVE, true );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_ENEMY_APP:
-		{
-			const float fSPN = m_vecfOtherData[ iOtherDataIndex++ ];
-			const float fDOWN_ENEMY = m_vecfOtherData[ iOtherDataIndex++ ];
-			const float fDOWN_CAM = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->Spn( fSPN );
-			wpCam->AddPos( { 0.0f, fDOWN_CAM, 0.0f } );
-
-			m_upEnemy->SetPosition(
-				vPosEnemyOld +
-				D3DXVECTOR3( 0.0f, fDOWN_ENEMY, 0.0f ) );
-			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->AddDistance( fMOVE, true );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_PLAYER_UP:
-		{
-			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//通路を進んでいるとき.
-			m_upPlayer->SetPosition(
-				vPosPlayerOld +
-				D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
-			wpCam->AddPos( D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
-		
-			const float fSPN = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->Spn( fSPN );
-			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->AddDistance( fMOVE, true );
-
-			m_upPlayer->IgnitionCoreBoost( true );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_PLAYER_ROAD:
-		{
-			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//通路を進んでいるとき.
-			m_upPlayer->SetPosition(
-				vPosPlayerOld +
-				D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
-			wpCam->AddPos( D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
-	
-			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->AddDistance( fMOVE, true );
-
-			const float fDOOR_OPEN_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
-			const float fDOOR_OPEN_FRAME_TOLERANCE = m_vecfOtherData[ iOtherDataIndex++ ];//floatの許容量.
-			if( m_fMovieFrame - fDOOR_OPEN_FRAME_TOLERANCE <= fDOOR_OPEN_FRAME &&
-				fDOOR_OPEN_FRAME <= m_fMovieFrame + fDOOR_OPEN_FRAME_TOLERANCE )
-			{
-				m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
-				m_wpSound->PlaySE( enSE_DOOR_OPEN );
-			}
-
-			m_upPlayer->IgnitionCoreBoost( true );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_PLAYER_APP:
-		{
-			const float fPLAYER_SPEED_DOOR_APP = m_vecfOtherData[ iOtherDataIndex++ ];//ドアから現れるとき.
-			m_upPlayer->SetPosition(
-				vPosPlayerOld +
-				D3DXVECTOR3( fPLAYER_SPEED_DOOR_APP, 0.0f, 0.0f ) );
-			
-			m_upPlayer->IgnitionCoreBoost( true );
-
-			//プレイヤーの移動量.
-			float fPLAYER_MOVE_X = m_upPlayer->GetPosition().x - vPosPlayerOld.x;
-
-			wpCam->SetLookPos( {
-				wpCam->GetLookPos().x + fPLAYER_MOVE_X,
-				wpCam->GetLookPos().y,
-				wpCam->GetLookPos().z } );
-		}
-		break;
-
-	case clsSCENE_CLEAR::enCUT_ENCOUNT:
-		{
-			const float fDOWN = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->AddPos( { 0.0f, fDOWN, 0.0f } );
-
-			m_upEnemy->SetPosition(
-				vPosEnemyOld +
-				D3DXVECTOR3( 0.0f, fDOWN, 0.0f ) );
-
-			const float fPLAYER_SPD = m_vecfOtherData[ iOtherDataIndex++ ];
-			m_upPlayer->SetPosition(
-				vPosPlayerOld +
-				D3DXVECTOR3( fPLAYER_SPD, 0.0f, 0.0f ) );
-
+			//膝附モーション開始.
 			const float fANIM_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
-			if( !m_isTrigger && m_fMovieFrame > fANIM_FRAME ){
-				const int iARM_ANIM_INDEX = 1;
-				m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
-				m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
-				m_wpSound->PlaySE( enSE_FIGHT_LEADY );
+			if( !m_upEnemy->m_pMesh->GetPartsAnimNo( enPARTS::LEG ) && 
+				m_fMovieFrame > fANIM_FRAME )
+			{
+				const int iANIM_NO = 14;
+				m_upEnemy-> m_pMesh->SetPartsAnimNo( enPARTS::LEG, iANIM_NO );
+			}
+
+			//膝附SE.
+			const float fSE_KNEE_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
+			if( !m_isTrigger && 
+				m_fMovieFrame > fSE_KNEE_FRAME )
+			{
 				m_isTrigger = true;
+				m_wpSound->PlaySE( enSE_KNEE );
 			}
-			m_upPlayer->IgnitionCoreBoost( true );
-		}
-		break;
 
-	case clsSCENE_CLEAR::enCUT_ENEMY_LANDING:
-		{
-			const float fDOWN = m_vecfOtherData[ iOtherDataIndex++ ];
-			const float fLANDING = m_vecfOtherData[ iOtherDataIndex++ ];
-
-			//着地.
-			if( vPosEnemyOld.y <= fLANDING ){
-				m_upEnemy->SetPosition( 
-					D3DXVECTOR3(
-						vPosEnemyOld.x,
-						fLANDING,
-						vPosEnemyOld.z ) );
-
-				if( !m_isTrigger ){
-					m_upEnemy->Walk();
-					const int iANIM_INDEX = m_vecfOtherData[ iOtherDataIndex++ ];
-					m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::LEG, iANIM_INDEX );
-					m_upEnemy->m_pMesh->SetPartsAnimSpeed( enPARTS::LEG, g_dAnimSpeedReference / 4.0 );
-					m_wpSound->PlaySE( enSE_LANDING );
-					m_isTrigger = true;
-				}
+			//爆発.
+			const float fSE_BOMBER_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
+			if( m_wpSound->IsStoppedSE( enSE_BOMBER ) && 
+				m_fMovieFrame > fSE_BOMBER_FRAME )
+			{
+				m_isTrigger = true;
+				m_wpSound->PlaySE( enSE_BOMBER );
+				m_wpEffects->Play( 0, m_upEnemy->GetPosition() );
 			}
-			//下降.
-			else{
-				m_upEnemy->SetPosition(
-					vPosEnemyOld +
-					D3DXVECTOR3( 0.0f, fDOWN, 0.0f ) );
-			}
-		}
-		break;
 
-	case clsSCENE_CLEAR::enCUT_VS:
-		{
-			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->CrabWalk( fDistance );
-			
-		}
+		}//sv.
 		break;
 
 	case clsSCENE_CLEAR::enCUT_END:
 		{
-			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
-			wpCam->CrabWalk( fDistance );
+			++ m_fBomberEffectOffsetFrame;
+			const float fSPN = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->Spn( fSPN );
 
-			iOtherDataIndex++;
-			//プレーヤーは前進する.
-			const float fPLAYER_SPEED = m_vecfOtherData[ iOtherDataIndex++ ];
-			m_upPlayer->SetPosition(
-				vPosPlayerOld +
-				D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
-			wpCam->AddPos( D3DXVECTOR3( fPLAYER_SPEED, 0.0f, 0.0f ) );
+			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->Advancing( fMOVE );
 
-			m_upPlayer->IgnitionCoreBoost( true );
+			//爆発.
+			const float fBOM_OFFSET_TIME= m_vecfOtherData[ iOtherDataIndex++ ];
+			const int iBOM_OFFSET_POS = static_cast<int>( m_vecfOtherData[ iOtherDataIndex++ ] );
+			const float fBOM_POS_RATE = 1.0f / 100.0f;
+			if( m_fBomberEffectOffsetFrame > fBOM_OFFSET_TIME ){
+				m_fBomberEffectOffsetFrame = 0.0f;
+
+				D3DXVECTOR3 vRanPos = { 0.0f, 0.0f, 0.0f };
+				vRanPos.x = static_cast<float>( clsRANDOM::GetRandom( -iBOM_OFFSET_POS,				  0 ) ) * fBOM_POS_RATE;
+				vRanPos.y = static_cast<float>( clsRANDOM::GetRandom( 0,				iBOM_OFFSET_POS ) ) * fBOM_POS_RATE;
+				vRanPos.z = static_cast<float>( clsRANDOM::GetRandom( -iBOM_OFFSET_POS, iBOM_OFFSET_POS ) ) * fBOM_POS_RATE;
+				m_wpEffects->Play( 0, m_upEnemy->GetPosition() + vRanPos );
+			}
+
 		}
 		break;
 	}

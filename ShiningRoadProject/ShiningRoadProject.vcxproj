@@ -132,6 +132,7 @@
     <ClCompile Include="SourceCodo\FriendFactory.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowMissionBase.cpp" />
     <ClCompile Include="SourceCodo\MenuWindowMissionPause.cpp" />
+    <ClCompile Include="SourceCodo\Random.cpp" />
     <ClCompile Include="SourceCodo\RenderAtLoadTime.cpp" />
     <ClCompile Include="SourceCodo\RenderSubThreadBase.cpp" />
     <ClCompile Include="SourceCodo\RoboStatusEnemy.cpp" />
@@ -262,6 +263,7 @@
     <ClInclude Include="SourceCodo\FriendFactory.h" />
     <ClInclude Include="SourceCodo\MenuWindowMissionBase.h" />
     <ClInclude Include="SourceCodo\MenuWindowMissionPause.h" />
+    <ClInclude Include="SourceCodo\Random.h" />
     <ClInclude Include="SourceCodo\RenderAtLoadTime.h" />
     <ClInclude Include="SourceCodo\RenderSubThreadBase.h" />
     <ClInclude Include="SourceCodo\RoboStatusEnemy.h" />
