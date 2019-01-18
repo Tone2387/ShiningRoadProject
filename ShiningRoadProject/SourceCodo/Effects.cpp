@@ -9,14 +9,11 @@ namespace{
 
 	//エフェクト管理用インスタンス最大数.
 	//最大描画スプライト数.(やばいならint型にする)
-	const /*int32_t*/ int g_RenderSpriteMax = 1024 * 3;//3.
-	const int g_EffectInstanceMax = g_RenderSpriteMax * 1;
+	const int32_t g_RenderSpriteMax = 1024*8;//3.
+	const int g_EffectInstanceMax = g_RenderSpriteMax;
 
-	const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
 
-	const string sFILE_PATH = "Data\\Effekseer\\Effects\\";
 
-	const int uiEFFECT_FILE_NAME_INDEX = 0;//ファイル名が格納されているインデックス.
 	//const int uiMAX_PLAY_INDEX = 1;//最大再生数.
 
 	////エフェクトファイルのリスト.
@@ -159,7 +156,8 @@ HRESULT clsEffects::Init( ID3D11Device* const pDevice, ID3D11DeviceContext* cons
 		pDevice, pContext, g_RenderSpriteMax );
 
 	//エフェクト管理用インスタンス.
-	m_pManager = ::Effekseer::Manager::Create( g_EffectInstanceMax );
+	m_pManager = ::Effekseer::Manager::Create( 
+		g_EffectInstanceMax );
 
 	//描画用インスタンスから描画機能を設定.
 	m_pManager->SetSpriteRenderer( m_pRender->CreateSpriteRenderer() );
@@ -192,6 +190,7 @@ HRESULT clsEffects::Init( ID3D11Device* const pDevice, ID3D11DeviceContext* cons
 //==================================================
 HRESULT clsEffects::LoadData()
 {
+	const string sDATA_PATH = "Data\\Effekseer\\Effects.csv";
 	unique_ptr< clsFILE > upFile = make_unique<clsFILE>();
 	upFile->Open( sDATA_PATH );
 
@@ -201,6 +200,8 @@ HRESULT clsEffects::LoadData()
 	clsOPERATION_STRING OprtStr;
 
 	//エフェクトの読込.
+	const string sFILE_PATH = "Data\\Effekseer\\Effects\\";
+	const int uiEFFECT_FILE_NAME_INDEX = 0;//ファイル名が格納されているインデックス.
 	m_vecpEffect.resize( upFile->GetSizeRow() );
 	for( unsigned int i=0; i<m_vecpEffect.size(); i++ ){
 		//パスを作る.
