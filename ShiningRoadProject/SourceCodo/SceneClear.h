@@ -4,10 +4,10 @@
 class clsStage;
 class clsROBO_TAKEOFF;
 
-#include "SceneBase.h"
+#include "SceneMovieBase.h"
 //#include "CameraTakeoff.h"
 
-class clsSCENE_CLEAR : public clsSCENE_BASE
+class clsSCENE_CLEAR : public clsSCENE_MOVIE_BASE
 {
 public:
 	clsSCENE_CLEAR( clsPOINTER_GROUP* const ptrGroup );
@@ -19,6 +19,37 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
+	void InitMovieProduct() final;
+	void UpdateMovieProduct( int iOtherDataIndex ) final;
+
+	//指定した行のファイルデータをカメラに与える.
+	void SetCamPosFromFile( const int iFileRow );
+	//指定した行のファイルデータをギガポンたちに与える.
+	void SetGigaponPosFromFile( const int iFileRow );
+
+	void SetOtherDataFromFile( const int iFileRow );
+
+	//カメラのカット割りの段階.
+	enum enCUT : int
+	{
+		enCUT_START = 0,//エリア全体を写す.
+		enCUT_RED_1,	//ステージが赤くなる.
+		enCUT_RED_2,		
+		enCUT_RED_3,	//( 天井を写す ).
+		enCUT_LIA_OPEN,	//天井が開く.
+		enCUT_ENEMY_APP,//天井から敵登場.
+		enCUT_PLAYER_UP,//通路を行く自機のアップ( 正面 ).
+		enCUT_PLAYER_ROAD,//通路を行く自機( 背面 ).
+		enCUT_PLAYER_APP,//広場に現れる自機.
+		enCUT_ENCOUNT,	//そして出会う二機のギガポン.
+		enCUT_ENEMY_LANDING,//敵着地.
+		enCUT_VS,		//自機の顔のアップ.
+		enCUT_END,		//敵の顔のアップ.
+
+		enCUT_size
+	};
+
+
 #ifdef _DEBUG
 	//デバック゛テキストの表示.
 	void RenderDebugText() final;
@@ -27,6 +58,28 @@ private:
 private:
 
 
+	std::unique_ptr< clsStage >	m_upStage;
+	std::unique_ptr< clsROBO_TAKEOFF >	m_upPlayer;
+	std::unique_ptr< clsROBO_TAKEOFF >	m_upEnemy;
+
+
+	//音の引数.
+	enum enBGM : int
+	{
+//		enBGM_MAFIA0 = 0,
+	};
+
+	enum enSE : int
+	{
+		enSE_SIREN = 0,		//Siren.
+		enSE_DOOR_OPEN,		//DoorOpen.
+		enSE_DOOR_CLOSE,	//DoorClose.
+		enSE_PASS,			//通り過ぎる.
+		enSE_FIGHT_LEADY,	//FightLeady.
+		enSE_BOOSTER,		//Booster.
+		enSE_LANDING,		//Landing.
+		enSE_ENVIRONMENTAL,	//環境音.
+	};
 
 };
 

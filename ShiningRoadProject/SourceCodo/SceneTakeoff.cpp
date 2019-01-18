@@ -3,6 +3,7 @@
 #include "RoboTakeoff.h"
 #include "File.h"
 #include "RoboStatusEnemy.h"
+#include "CameraTakeoff.h"
 
 using namespace std;
 

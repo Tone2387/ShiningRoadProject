@@ -776,17 +776,20 @@ void clsSCENE_BASE::Proj()
 //デバッグ用シーン切り替え.
 void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 {
-	if( GetAsyncKeyState( 'T' ) & 0x1 ){
+	if( GetAsyncKeyState( 'R' ) & 0x1 ){
 		enNextScene = enSCENE::TITLE;
 	}
-	else if( GetAsyncKeyState( 'Y' ) & 0x1 ){
+	else if( GetAsyncKeyState( 'T' ) & 0x1 ){
 		enNextScene = enSCENE::ASSEMBLE;
 	}
-	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
+	else if( GetAsyncKeyState( 'Y' ) & 0x1 ){
 		enNextScene = enSCENE::TAKEOFF;
 	}
-	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
+	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
 		enNextScene = enSCENE::MISSION;
+	}
+	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
+		enNextScene = enSCENE::CLEAR;
 	}
 	else if( GetAsyncKeyState( 'O' ) & 0x1 ){
 		enNextScene = enSCENE::ENDING;

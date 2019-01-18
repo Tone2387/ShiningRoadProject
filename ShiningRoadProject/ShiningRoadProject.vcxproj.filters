@@ -456,6 +456,12 @@
     <ClCompile Include="SourceCodo\SceneMovieBase.cpp">
       <Filter>Tahara\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCodo\CameraClear.cpp">
+      <Filter>Tahara\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SoundManagerClear.cpp">
+      <Filter>Tahara\SoundManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCodo\CameraMission.h">
@@ -829,6 +835,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\SceneMovieBase.h">
       <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\CameraClear.h">
+      <Filter>Tahara\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SoundManagerClear.h">
+      <Filter>Tahara\SoundManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

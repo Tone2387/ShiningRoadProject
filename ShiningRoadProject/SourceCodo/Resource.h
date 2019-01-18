@@ -5,11 +5,11 @@
 
 
 ////シングルトンにするならばつける.
-////#define RESOURCE_CLASS_SINGLETON
+//#define RESOURCE_CLASS_SINGLETON
 
 
 //テスト中はつける( パーツの読み込み数を固定化 ).
-//#define RESOURCE_READ_PARTS_MODEL_LOCK
+#define RESOURCE_READ_PARTS_MODEL_LOCK
 
 
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK

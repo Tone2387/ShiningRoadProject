@@ -5,7 +5,6 @@ class clsStage;
 class clsROBO_TAKEOFF;
 
 #include "SceneMovieBase.h"
-#include "CameraTakeoff.h"
 
 //#include "Stage.h"
 
@@ -27,8 +26,8 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
-	void InitMovieProduct()final;
-	void UpdateMovieProduct( int iOtherDataIndex )final;
+	void InitMovieProduct() final;
+	void UpdateMovieProduct( int iOtherDataIndex ) final;
 
 	//指定した行のファイルデータをカメラに与える.
 	void SetCamPosFromFile( const int iFileRow );
