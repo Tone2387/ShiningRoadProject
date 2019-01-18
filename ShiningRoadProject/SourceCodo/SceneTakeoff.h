@@ -45,6 +45,7 @@ private:
 		enCUT_RED_3,	//( 天井を写す ).
 		enCUT_LIA_OPEN,	//天井が開く.
 		enCUT_ENEMY_APP,//天井から敵登場.
+		enCUT_ROAD,		//廊下を自機が通り過ぎる.
 		enCUT_PLAYER_UP,//通路を行く自機のアップ( 正面 ).
 		enCUT_PLAYER_ROAD,//通路を行く自機( 背面 ).
 		enCUT_PLAYER_APP,//広場に現れる自機.

@@ -130,9 +130,13 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 		}
 		break;
 
+	case clsSCENE_TAKEOFF::enCUT_ROAD:
+		m_wpSound->PlaySE( enSE_ENVIRONMENTAL, true );
+		m_wpSound->PlaySE( enSE_PASS );
+		break;
+
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
-		m_wpSound->PlaySE( enSE_ENVIRONMENTAL, true );
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
@@ -140,8 +144,8 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
-		m_wpSound->PlaySE( enSE_PASS );
 		m_wpSound->StopSE( enSE_ENVIRONMENTAL );
+//		m_wpSound->PlaySE( enSE_PASS );
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
@@ -267,6 +271,17 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
+	case clsSCENE_TAKEOFF::enCUT_ROAD:
+		{
+			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//’Ê˜H‚ði‚ñ‚Å‚¢‚é‚Æ‚«.
+			m_upPlayer->SetPosition(
+				vPosPlayerOld +
+				D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
+
+			m_upPlayer->IgnitionCoreBoost( true );
+		}
+		break;
+
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
 		{
 			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//’Ê˜H‚ði‚ñ‚Å‚¢‚é‚Æ‚«.
@@ -290,21 +305,28 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 			m_upPlayer->SetPosition(
 				vPosPlayerOld +
 				D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
-			wpCam->AddPos( D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
+			m_upPlayer->IgnitionCoreBoost( true );
 	
+			wpCam->AddPos( D3DXVECTOR3( fPLAYER_SPEED_GO_ROAD, 0.0f, 0.0f ) );
 			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->AddDistance( fMOVE, true );
 
 			const float fDOOR_OPEN_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
-			const float fDOOR_OPEN_FRAME_TOLERANCE = m_vecfOtherData[ iOtherDataIndex++ ];//float‚Ì‹–—e—Ê.
-			if( m_fMovieFrame - fDOOR_OPEN_FRAME_TOLERANCE <= fDOOR_OPEN_FRAME &&
-				fDOOR_OPEN_FRAME <= m_fMovieFrame + fDOOR_OPEN_FRAME_TOLERANCE )
+			if( m_fMovieFrame >= fDOOR_OPEN_FRAME &&
+				!m_isTrigger )
 			{
+				m_isTrigger = true;
 				m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_OPENING );
 				m_wpSound->PlaySE( enSE_DOOR_OPEN );
 			}
 
-			m_upPlayer->IgnitionCoreBoost( true );
+			const float fSE_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
+			if( m_fMovieFrame > fSE_FRAME )
+			{
+				if( m_wpSound->IsStoppedSE( enSE_PASS ) ){  
+					m_wpSound->PlaySE( enSE_PASS );
+				}
+			}
 		}
 		break;
 
@@ -553,6 +575,9 @@ void clsSCENE_TAKEOFF::RenderDebugText()
 		break;
 	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
 		sprintf_s( strDbgTxt,"Cut : enCUT_ENEMY_APP" );
+		break;
+	case clsSCENE_TAKEOFF::enCUT_ROAD:
+		sprintf_s( strDbgTxt,"Cut : enCUT_ROAD" );
 		break;
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
 		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_UP" );
