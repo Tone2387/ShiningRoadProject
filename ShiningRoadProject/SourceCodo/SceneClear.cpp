@@ -111,7 +111,7 @@ void clsSCENE_CLEAR::InitMovieProduct()
 	case clsSCENE_CLEAR::enCUT_END:
 		{
 			//’á‘¬ˆÃ“].
-			const float fDARK_SPD = fBLACK_SCREEN_DEFAULT_SPD * 0.5f;
+			const float fDARK_SPD = fBLACK_SCREEN_DEFAULT_SPD;
 			m_wpBlackScreen->SetChangeSpd( fDARK_SPD );
 		}
 		break;
@@ -138,6 +138,12 @@ void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 	{
 	case clsSCENE_CLEAR::enCUT_START:
 		{
+			const float fSPN = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->Spn( fSPN );
+
+			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->CrabWalk( fMOVE );
+
 			//•G•ƒ‚[ƒVƒ‡ƒ“ŠJŽn.
 			const float fANIM_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
 			if( !m_upEnemy->m_pMesh->GetPartsAnimNo( enPARTS::LEG ) && 
@@ -299,6 +305,11 @@ void clsSCENE_CLEAR::RenderDebugText()
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 	iTxtY += iOFFSET;
+
+	sprintf_s( strDbgTxt, 
+		"Frame : [%f]",
+		m_fMovieFrame );
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 //	sprintf_s( strDbgTxt, 
 //		"PlayerPos : x[%f], y[%f], z[%f]",
