@@ -3,13 +3,12 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-
-////シングルトンにするならばつける.
-////#define RESOURCE_CLASS_SINGLETON
+//////シングルトンにするならばつける.
+//#define RESOURCE_CLASS_SINGLETON
 
 
 //テスト中はつける( パーツの読み込み数を固定化 ).
-#define RESOURCE_READ_PARTS_MODEL_LOCK
+//#define RESOURCE_READ_PARTS_MODEL_LOCK
 
 
 #ifdef RESOURCE_READ_PARTS_MODEL_LOCK
@@ -17,7 +16,7 @@
 	const int iTEST_ROBO_PARTS_MODEL_MAX = 1;
 #endif//#ifndef RESOURCE_READ_PARTS_MODEL_LOCK
 
-//
+
 ////テストモデルに足の3番のモデルを割り当てる例.
 //	m_pMesh->AttachModel(
 //		m_wpResource->GetPartsModels( enPARTS::LEG, 3 ) );
@@ -26,7 +25,7 @@
 ////今まで.
 //	m_pMesh->AttachModel(
 //		m_wpResource->GetSkinModels( clsResource::enSkinModel_Leg ) );
-//
+
 
 #include "Global.h"
 #include "DX9Mesh.h"

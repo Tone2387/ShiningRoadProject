@@ -5,7 +5,6 @@ class clsStage;
 class clsROBO_TAKEOFF;
 
 #include "SceneMovieBase.h"
-#include "CameraTakeoff.h"
 
 //#include "Stage.h"
 
@@ -27,8 +26,8 @@ private:
 	void RenderProduct( const D3DXVECTOR3 &vCamPos ) final;
 	void RenderUi() final;//「 UIの 」Render.
 
-	void InitMovieProduct()final;
-	void UpdateMovieProduct( int iOtherDataIndex )final;
+	void InitMovieProduct() final;
+	void UpdateMovieProduct( int iOtherDataIndex ) final;
 
 	//指定した行のファイルデータをカメラに与える.
 	void SetCamPosFromFile( const int iFileRow );
@@ -46,6 +45,7 @@ private:
 		enCUT_RED_3,	//( 天井を写す ).
 		enCUT_LIA_OPEN,	//天井が開く.
 		enCUT_ENEMY_APP,//天井から敵登場.
+		enCUT_ROAD,		//廊下を自機が通り過ぎる.
 		enCUT_PLAYER_UP,//通路を行く自機のアップ( 正面 ).
 		enCUT_PLAYER_ROAD,//通路を行く自機( 背面 ).
 		enCUT_PLAYER_APP,//広場に現れる自機.

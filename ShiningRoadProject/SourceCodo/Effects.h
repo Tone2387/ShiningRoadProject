@@ -13,9 +13,12 @@
 //	先にしておくべきヘッダ、ライブラリの読込.
 //==================================================
 #include <stdio.h>
-
 #include <D3D11.h>
+
+#ifdef EFFECTS_USE_XAUDIO_
 #include <XAudio2.h>
+#endif//#ifdef EFFECTS_USE_XAUDIO_
+
 #pragma comment( lib, "d3d11.lib" )
 
 //==================================================
@@ -23,17 +26,27 @@
 //==================================================
 #include <Effekseer.h>
 #include <EffekseerRendererDX11.h>
+#ifdef EFFECTS_USE_XAUDIO_
 #include <EffekseerSoundXAudio2.h>
+#endif//#ifdef EFFECTS_USE_XAUDIO_
 
 
 #ifdef _DEBUG
+
 #pragma comment( lib, "VS2013\\Debug\\Effekseer.lib" )
 #pragma comment( lib, "VS2013\\Debug\\EffekseerRendererDX11.lib" )
+#ifdef EFFECTS_USE_XAUDIO_
 #pragma comment( lib, "VS2013\\Debug\\EffekseerSoundXAudio2.lib" )
+#endif//#ifdef EFFECTS_USE_XAUDIO_
+
 #else//#ifdef _DEBUG
+
 #pragma comment( lib, "VS2013\\Release\\Effekseer.lib" )
 #pragma comment( lib, "VS2013\\Release\\EffekseerRendererDX11.lib" )
+#ifdef EFFECTS_USE_XAUDIO_
 #pragma comment( lib, "VS2013\\Release\\EffekseerSoundXAudio2.lib" )
+#endif//#ifdef EFFECTS_USE_XAUDIO_
+
 #endif//#ifdef _DEBUG
 
 
@@ -64,23 +77,7 @@ public:
 //		enEFFECTS_WAVE,		//syougekiha.v
 //		enEFFECTS_KICK_HIT,	//kougeki.v
 //
-//		//Enemy.
-//		enEFFECTS_ENEMY_ATK,//teki_kougeki.
-//		enEFFECTS_SLASH_HIT,//yarare.v
-//		enEFFECTS_SLASH_DISC,//bikkuri.v
-//
-//		//Pendulum.
-//		enEFFECTS_PEND_FIRE,//hibana.v
-//
-//		//TreasureBox.
-//		enEFFECTS_TRB_OPEN,	//takara_hasira.v
-//		enEFFECTS_TRB_LOOP,	//takara_nakami.v
-//
-//		//Door.
-//		enEFFECTS_DOOR_DUST,//takara_nakami.v
-//
-//		//for loop.
-//		enEFFECTS_MAX
+//		enEFFECTS_size
 //	};
 
 #ifdef EFFECTS_CLASS_SINGLETON

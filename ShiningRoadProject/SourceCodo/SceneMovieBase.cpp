@@ -39,8 +39,13 @@ void clsSCENE_MOVIE_BASE::UpdateProduct( enSCENE &enNextScene )
 #endif//CAMERA_FREE_MOVE_
 
 	if( isPressEnter() ){
+#ifdef _DEBUG
 		//フレーム数の変数を次のカットへ飛ぶ数まで増やす.
 		NextCut();
+#else//#ifdef _DEBUG
+		//ムービーをスキップし次のシーンへ.
+		enNextScene = m_enNEXT_SCENE;
+#endif//#ifdef _DEBUG
 	}
 
 	//今のカットのフレーム数を満たしたら.
