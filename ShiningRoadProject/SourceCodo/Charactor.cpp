@@ -1,5 +1,7 @@
 #include"Charactor.h"
 
+static const int g_iDupSENo = 11;
+
 void clsCharactor::CharactorUpdate()
 {
 	Move();
@@ -824,6 +826,8 @@ void clsCharactor::CharaDuplicate(clsCharactor* const pContactChara)
 			vPosTmp = GetPosition() + (vDir * fSpeed);
 			SetPosition(vPosTmp);
 		}
+
+		m_wpSound->PlaySE(g_iDupSENo);
 	}
 }
 
@@ -892,9 +896,12 @@ clsCharactor::clsCharactor() :
 	m_fMoveDecele( 0.0f ),
 	m_fRotSpeed( 0.0f ),
 	m_fJumpPower( 0.0f ),
-	m_fLockCircleRadius(0.0f)
+	m_fLockCircleRadius(0.0f),
+	m_wpResource(nullptr),
+	m_wpEffects(nullptr),
+	m_wpSound(nullptr)
 {
-//	ZeroMemory(this, sizeof(clsCharactor));
+
 }
 
 clsCharactor::~clsCharactor()
@@ -903,6 +910,13 @@ clsCharactor::~clsCharactor()
 	{
 		m_pTargetChara = nullptr;
 	}
+
+#ifdef Tahara
+	//è¡Ç∑Ç∆Ç´deleteÇµÇ»Ç¢Ç≈nullÇµÇƒÇÀ.
+	m_wpSound = nullptr;
+	m_wpEffects = nullptr;
+	m_wpResource = nullptr;
+#endif//#ifdef Tahara
 }
 
 void HitState::Clear()

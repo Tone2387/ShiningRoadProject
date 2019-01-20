@@ -4,7 +4,7 @@
 //ÉWÉáÉCÉìÉgÉ{Å[ÉìÇÃêîéöÇÃåÖêî.
 const char g_cBONE_NAME_NUM_DIGIT_JOINT = 2;
 
-const int g_iBoostEfcNum = 1;
+const int g_iBoostEfcNo = 1;
 
 const int g_iQuickInterbal = (int)g_fFPS;
 const int g_iQuickTurnFrame = (int)g_fFPS;
@@ -18,6 +18,13 @@ const int g_iStabilityVariationRange = 3;//à¿íËê´î\Ç»Ç«Ç≈å∏êäÇ∑ÇÈÉXÉeÅ[É^ÉXÇ™ç≈í
 
 const int g_iBoostResDec = 10;//ÉuÅ[ÉXÉgìWäJíÜÇÃóéâ∫ë¨ìxå∏êäÇÃìxçá.
 const int g_iHeadLockSpeedReference = 500;//ì™ÉpÅ[ÉcÇÃÉçÉbÉNë¨ìxÇÃäÓèÄílÅAÇ±ÇÍÇÊÇËí·Ç¢Ç∆ÉçÉbÉNéûä‘Ç™í∑Ç≠Ç»ÇÈ.
+
+const int g_iQuickBoostSENo = 13;
+const int g_iBoostIgnitionSENo = 14;
+const int g_iBoostSENo = 15;
+
+const int g_iLandingSENo = 12;
+const int g_iLandingEfcNo = 2;
 
 enum enAnimNoLeg
 {
@@ -77,11 +84,7 @@ void clsRobo::RoboInit(
 	clsPOINTER_GROUP* const pPtrGroup,
 	clsROBO_STATUS* const pRobo)
 {
-#ifdef Tahara
-	m_wpResource = pPtrGroup->GetResource();
-	m_wpEffects = pPtrGroup->GetEffects();
-	m_wpSound = pPtrGroup->GetSound();
-#endif//#ifdef Tahara
+	Create(pPtrGroup);
 
 	m_pMesh = new clsMISSION_MODEL;
 	m_pMesh->Create(m_wpResource, pRobo);
@@ -142,8 +145,7 @@ void clsRobo::RoboInit(
 	//m_fQuickTrunSpeedMax = m_fRotSpeedMax;
 	m_iQuickTrunTopSpeedTime = m_iQuickBoostTopSpeedTime;
 
-	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);
-	//m_iActivityLimitTime = pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME) * static_cast<int>(g_fFPS);
+	m_iActivityLimitTime = pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME) * static_cast<int>(g_fFPS);
 
 	m_fRaderRange = pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
 
@@ -155,45 +157,6 @@ void clsRobo::RoboInit(
 
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
-
-	m_iEnelgyMax = 10000;
-
-	m_iEnelgy = m_iEnelgyMax;
-
-	/*m_fWalktMoveSpeedMax = 0.25f;
-	m_iWalkTopSpeedFrame = 5;
-
-	m_fBoostMoveSpeedMax = 0.5f;
-	m_iBoostTopSpeedFrame = 60;
-
-	m_fQuickBoostSpeedMax = m_fBoostMoveSpeedMax * 3.0f;
-	m_iQuickBoostTopSpeedTime = 1 * static_cast<int>(g_fFPS);
-
-	m_fQuickTrunSpeedMax = (float)D3DX_PI / g_iQuickTurnFrame;
-	m_iQuickTrunTopSpeedTime = 15;
-
-	m_fBoostRisingAccele = m_fBoostRisingSpeedMax / m_iBoostRisingTopSpeedFrame;// = m_fMoveSpeedMax / m_fTopSpeedFrame;
-	
-
-	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
-	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
-
-	m_iQuickBoostEnelgyCost = 1000;
-	m_iQuickTrunEnelgyCost = 1000;
-	m_iBoostRisingyCost = 100;
-
-	m_iEnelgyMax = 10000;
-	m_iEnelgy = m_iEnelgyMax;
-	m_iEnelgyOutput = 1500 / static_cast<int>(g_fFPS);
-	m_iBoostFloatRecovery = m_iEnelgyOutput / 2;
-
-	SetRotAcceleSpeed(0.01f, 30);
-	SetJumpPower(0.5f);
-
-	m_iActivityLimitTime = 300 * static_cast<int>(g_fFPS);*/
-
-	//m_MaxHP = 5000;
-	//m_HP = m_MaxHP;
 
 	WeaponState WS[enWeaponTypeSize];
 
@@ -241,8 +204,7 @@ void clsRobo::RoboInit(
 	m_v_Spheres.resize(Tmp);
 	m_v_Spheres.shrink_to_fit();*/
 
-	//m_fLockRange = 500.0f;//ÉçÉbÉNÉIÉìãóó£.
-	m_fLockCircleRadius = 500.0f;//ÉçÉbÉNÉIÉìîªíËÇÃîºåa.
+	m_fLockCircleRadius = pRobo->GetRoboState(clsROBO_STATUS::SEARCH) * 5.0f;//ÉçÉbÉNÉIÉìîªíËÇÃîºåa.
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
 
@@ -272,7 +234,7 @@ void clsRobo::Boost()
 		//ÉuÅ[ÉXÉ^Å[ÉAÉjÉÅÅ[ÉVÉáÉìÇ≈ÇÕÇ»Ç©Ç¡ÇΩ.
 		AnimChangeLeg(enAnimNoLegBoostStart);//ÉuÅ[ÉXÉ^Å[Ç…êÿÇËë÷Ç¶.
 		//ÉuÅ[ÉXÉ^Å[ì_ìî.
-		//m_wpSound->PlaySE(0);
+		m_wpSound->PlaySE(g_iBoostIgnitionSENo);
 	}
 
 	m_bBoost = true;
@@ -366,7 +328,7 @@ void clsRobo::QuickBoost()
 				SetMoveDeceleSpeed(m_iQuickInterbal);
 				AnimChangeLeg(enAnimNoLegBoostStart);
 				//ÉNÉCÉbÉNÉuÅ[ÉXÉg.
-				//m_wpSound->PlaySE(0);
+				m_wpSound->PlaySE(g_iQuickBoostSENo);
 			}
 		}
 	}
@@ -399,7 +361,7 @@ void clsRobo::QuickTurn()
 					//m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
 					SetRotDeceleSpeed(m_iQuickInterbal);
 					//ÉNÉCÉbÉNÉuÅ[ÉXÉg.
-					//m_wpSound->PlaySE(0);
+					m_wpSound->PlaySE(g_iQuickBoostSENo);
 				}
 			}
 		}
@@ -441,7 +403,7 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 	if (m_bBoost)
 	{
 		//ÉuÅ[ÉXÉgâπ.
-		//m_wpSound->PlaySE(0);
+		m_wpSound->PlaySE(g_iBoostSENo);
 		if (m_fFollPower < -m_fBoostFollRes)
 		{
 			m_fFollPower += m_fBoostFollRes;
@@ -519,11 +481,6 @@ void clsRobo::SetEnelgyRecoveryAmount()
 			m_iEnelgyRecoveryPoint -= m_iBoostFloatRecovery;
 		}
 	}
-
-	/*if (false)//éÀåÇèÄîıäÆóπ.
-	{
-		m_iEnelgyRecoveryPoint -= (m_iEnelgyOutput);
-	}*/
 }
 
 bool clsRobo::EnelgyConsumption(const int iConsumption)
@@ -831,9 +788,15 @@ void clsRobo::PlayBoostEfc()
 
 void clsRobo::PlayFrontBoostEfc()
 {
+	PlayLFrontBoostEfc();
+	PlayRFrontBoostEfc();
+}
+
+void clsRobo::PlayLFrontBoostEfc()
+{
 	clsOPERATION_STRING OprtStr;//É{Å[ÉìñºÇ∆î‘çÜÇåqÇ∞ÇÈñäÑ.
 
-	if (m_vMoveDirforBoost.z < -0.1f)
+	if (m_vMoveDirforBoost.z < -0.1f || m_fRotAccele < -0.1f)
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -850,7 +813,7 @@ void clsRobo::PlayFrontBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_LHandFrontBoostEfc[i]))
 			{
-				m_v_LHandFrontBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
+				m_v_LHandFrontBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
 			}
 
 			else
@@ -860,34 +823,8 @@ void clsRobo::PlayFrontBoostEfc()
 
 			float fScale = abs(m_vMoveDirforBoost.z);
 			m_wpEffects->SetScale(m_v_LHandFrontBoostEfc[i], fScale);
-			
+
 			m_wpEffects->SetRotation(m_v_LHandFrontBoostEfc[i], vRotTmp);
-		}
-
-		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
-		{
-			vPosRootTmp = m_pMesh->GetBonePosArmRBoostFrontRoot(i);
-			vPosEndTmp = m_pMesh->GetBonePosArmRBoostFrontEnd(i);
-
-			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
-
-			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
-
-			if (!m_wpEffects->isPlay(m_v_RHandFrontBoostEfc[i]))
-			{
-				m_v_RHandFrontBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
-			}
-
-			else
-			{
-				m_wpEffects->SetPosition(m_v_RHandFrontBoostEfc[i], vPosEndTmp);
-			}
-
-			float fScale = abs(m_vMoveDirforBoost.z);
-			m_wpEffects->SetScale(m_v_RHandFrontBoostEfc[i], fScale);
-
-			m_wpEffects->SetRotation(m_v_RHandFrontBoostEfc[i], vRotTmp);
-			
 		}
 	}
 
@@ -900,7 +837,48 @@ void clsRobo::PlayFrontBoostEfc()
 				m_wpEffects->Stop(m_v_LHandFrontBoostEfc[i]);
 			}
 		}
+	}
+}
 
+void clsRobo::PlayRFrontBoostEfc()
+{
+	clsOPERATION_STRING OprtStr;//É{Å[ÉìñºÇ∆î‘çÜÇåqÇ∞ÇÈñäÑ.
+
+	if (m_vMoveDirforBoost.z < -0.1f || m_fRotAccele < 0.1f)
+	{
+		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
+
+		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
+		{
+			vPosRootTmp = m_pMesh->GetBonePosArmRBoostFrontRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmRBoostFrontEnd(i);
+
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
+
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
+
+			if (!m_wpEffects->isPlay(m_v_RHandFrontBoostEfc[i]))
+			{
+				m_v_RHandFrontBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
+			}
+
+			else
+			{
+				m_wpEffects->SetPosition(m_v_RHandFrontBoostEfc[i], vPosEndTmp);
+			}
+
+			float fScale = abs(m_vMoveDirforBoost.z);
+			m_wpEffects->SetScale(m_v_RHandFrontBoostEfc[i], fScale);
+
+			m_wpEffects->SetRotation(m_v_RHandFrontBoostEfc[i], vRotTmp);
+
+		}
+	}
+
+	else
+	{
 		for (unsigned int i = 0; i < m_v_RHandFrontBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_RHandFrontBoostEfc[i]))
@@ -930,7 +908,7 @@ void clsRobo::PlayRightBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_RHandSideBoostEfc[i]))
 			{
-				m_v_RHandSideBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
+				m_v_RHandSideBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
 			}
 
 			else
@@ -980,7 +958,7 @@ void clsRobo::PlayLeftBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_LHandSideBoostEfc[i]))
 			{
-				m_v_LHandSideBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
+				m_v_LHandSideBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
 			}
 
 			else
@@ -1009,66 +987,17 @@ void clsRobo::PlayLeftBoostEfc()
 
 void clsRobo::PlayBackBoostEfc()
 {
-	clsOPERATION_STRING OprtStr;//É{Å[ÉìñºÇ∆î‘çÜÇåqÇ∞ÇÈñäÑ.
+	PlayLBackBoostEfc();
+	PlayRBackBoostEfc();
 
-	if (m_vMoveDirforBoost.z > 0.1f)              
+	if (m_vMoveDirforBoost.z > 0.1f)
 	{
-		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
-		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
-		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
-
-		for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
-		{
-			vPosRootTmp = m_pMesh->GetBonePosArmLBoostBackRoot(i);
-			vPosEndTmp = m_pMesh->GetBonePosArmLBoostBackEnd(i);
-
-			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
-
-			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
-
-			if (!m_wpEffects->isPlay(m_v_LHandBackBoostEfc[i]))
-			{
-				m_v_LHandBackBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
-			}
-
-			else
-			{
-				m_wpEffects->SetPosition(m_v_LHandBackBoostEfc[i], vPosEndTmp);
-			}
-
-			float fScale = abs(m_vMoveDirforBoost.z);
-			m_wpEffects->SetScale(m_v_LHandBackBoostEfc[i], fScale);
-
-			m_wpEffects->SetRotation(m_v_LHandBackBoostEfc[i], vRotTmp);
-		}
-
-		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
-		{
-			vPosRootTmp = m_pMesh->GetBonePosArmRBoostBackRoot(i);
-			vPosEndTmp = m_pMesh->GetBonePosArmRBoostBackEnd(i);
-
-			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
-
-			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
-
-			if (!m_wpEffects->isPlay(m_v_RHandBackBoostEfc[i]))
-			{
-				m_v_RHandBackBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
-			}
-
-			else
-			{
-				m_wpEffects->SetPosition(m_v_RHandBackBoostEfc[i], vPosEndTmp);
-			}
-
-			float fScale = abs(m_vMoveDirforBoost.z);
-			m_wpEffects->SetScale(m_v_RHandBackBoostEfc[i], fScale);
-
-			m_wpEffects->SetRotation(m_v_RHandBackBoostEfc[i], vRotTmp);
-		}
-
 		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
 		{
+			D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+			D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
+			D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
+
 			//ïtÇØç™ÇÃñºëOÇê∂ê¨.
 			vPosRootTmp = m_pMesh->GetBonePosCoreBoosterRoot(i);
 			vPosEndTmp = m_pMesh->GetBonePosCoreBoosterEnd(i);
@@ -1079,7 +1008,7 @@ void clsRobo::PlayBackBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
 			{
-				m_v_CoreBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
+				m_v_CoreBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
 			}
 
 			else
@@ -1097,6 +1026,55 @@ void clsRobo::PlayBackBoostEfc()
 
 	else
 	{
+		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
+		{
+			if (m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
+			{
+				m_wpEffects->Stop(m_v_CoreBoostEfc[i]);
+			}
+		}
+	}
+}
+
+void clsRobo::PlayLBackBoostEfc()
+{
+	clsOPERATION_STRING OprtStr;//É{Å[ÉìñºÇ∆î‘çÜÇåqÇ∞ÇÈñäÑ.
+
+	if (m_vMoveDirforBoost.z > 0.1f || m_fRotAccele < 0.1f)
+	{
+		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
+		D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
+
+		for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
+		{
+			vPosRootTmp = m_pMesh->GetBonePosArmLBoostBackRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmLBoostBackEnd(i);
+
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
+
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
+
+			if (!m_wpEffects->isPlay(m_v_LHandBackBoostEfc[i]))
+			{
+				m_v_LHandBackBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
+			}
+
+			else
+			{
+				m_wpEffects->SetPosition(m_v_LHandBackBoostEfc[i], vPosEndTmp);
+			}
+
+			float fScale = abs(m_vMoveDirforBoost.z);
+			m_wpEffects->SetScale(m_v_LHandBackBoostEfc[i], fScale);
+
+			m_wpEffects->SetRotation(m_v_LHandBackBoostEfc[i], vRotTmp);
+		}
+
+	}
+
+	else
+	{
 		for (unsigned int i = 0; i < m_v_LHandBackBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_LHandBackBoostEfc[i]))
@@ -1104,20 +1082,51 @@ void clsRobo::PlayBackBoostEfc()
 				m_wpEffects->Stop(m_v_LHandBackBoostEfc[i]);
 			}
 		}
+	}
+}
+void clsRobo::PlayRBackBoostEfc()
+{
+	clsOPERATION_STRING OprtStr;//É{Å[ÉìñºÇ∆î‘çÜÇåqÇ∞ÇÈñäÑ.
 
+	if (m_vMoveDirforBoost.z > 0.1f || m_fRotAccele < -0.1f)
+	{
+		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
+		{
+			D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
+			D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
+			D3DXVECTOR3 vPosEndTmp = { 0.0f, 0.0f, 0.0f };
+
+			vPosRootTmp = m_pMesh->GetBonePosArmRBoostBackRoot(i);
+			vPosEndTmp = m_pMesh->GetBonePosArmRBoostBackEnd(i);
+
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
+
+			vPosEndTmp -= vPosEndTmp - vPosRootTmp;
+
+			if (!m_wpEffects->isPlay(m_v_RHandBackBoostEfc[i]))
+			{
+				m_v_RHandBackBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
+			}
+
+			else
+			{
+				m_wpEffects->SetPosition(m_v_RHandBackBoostEfc[i], vPosEndTmp);
+			}
+
+			float fScale = abs(m_vMoveDirforBoost.z);
+			m_wpEffects->SetScale(m_v_RHandBackBoostEfc[i], fScale);
+
+			m_wpEffects->SetRotation(m_v_RHandBackBoostEfc[i], vRotTmp);
+		}
+	}
+
+	else
+	{
 		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
 			if (m_wpEffects->isPlay(m_v_RHandBackBoostEfc[i]))
 			{
 				m_wpEffects->Stop(m_v_RHandBackBoostEfc[i]);
-			}
-		}
-
-		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
-		{
-			if (m_wpEffects->isPlay(m_v_CoreBoostEfc[i]))
-			{
-				m_wpEffects->Stop(m_v_CoreBoostEfc[i]);
 			}
 		}
 	}
@@ -1145,7 +1154,7 @@ void clsRobo::PlayLegBoostEfc()
 
 			if (!m_wpEffects->isPlay(m_v_LegBoostEfc[i]))
 			{
-				m_v_LegBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNum, vPosEndTmp);
+				m_v_LegBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
 			}
 
 			else
@@ -1470,7 +1479,8 @@ void clsRobo::AnimUpdateLeg()
 
 		if (m_bGround)
 		{
-			m_LandingEfc = m_wpEffects->Play(g_iBoostEfcNum, m_Trans.vPos);
+			m_LandingEfc = m_wpEffects->Play(g_iLandingEfcNo, m_Trans.vPos);
+			m_wpSound->PlaySE(g_iLandingSENo);
 			iChangeAnimNo = enAnimNoLegJumpEnd;
 		}
 
@@ -1969,9 +1979,6 @@ m_fBoostRisingSpeedMax(0.0f),
 m_iBoostRisingTopSpeedFrame(0),
 m_fBoostRisingAccele(0.0f),
 m_iQuickInterbal(0),
-m_wpResource(nullptr),
-m_wpEffects(nullptr),
-m_wpSound(nullptr),
 m_bStopComShotL(false),
 m_bStopComShotR(false)
 {
@@ -1985,13 +1992,6 @@ clsRobo::~clsRobo()
 		delete m_pMesh;
 		m_pMesh = NULL;
 	}
-
-#ifdef Tahara
-	//è¡Ç∑Ç∆Ç´deleteÇµÇ»Ç¢Ç≈nullÇµÇƒÇÀ.
-	m_wpSound = nullptr;
-	m_wpEffects = nullptr;
-	m_wpResource = nullptr;
-#endif//#ifdef Tahara
 }
 
 void clsRobo::Down()

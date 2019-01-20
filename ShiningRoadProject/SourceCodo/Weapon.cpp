@@ -131,8 +131,6 @@ bool clsWeapon::Shot()
 				{
 					m_iRemainingBullet--;
 					m_iReloadCnt = m_State.iReloadTime;
-					//マズルフラッシュ.
-					//m_pPtrGroup->GetEffects()->Play(3, vPos);
 					//射撃音.
 					m_pPtrGroup->GetSound()->PlaySE(0);
 					return true;

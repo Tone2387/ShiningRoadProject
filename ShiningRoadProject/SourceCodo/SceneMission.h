@@ -123,6 +123,7 @@ private:
 	clsSPRITE2D_CENTER* m_pRWeaponLockMark;
 	float m_fHitMarkRaderSizeW;
 	float m_fHitMarkRaderSizeH;
+	bool m_bLockStart;
 
 	clsSPRITE2D_CENTER* m_pHitMark;
 	int iHitDispTime;
