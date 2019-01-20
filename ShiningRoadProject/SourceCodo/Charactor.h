@@ -210,11 +210,38 @@ protected:
 	virtual void Down();
 	virtual void Dead();
 
+	virtual void Create(clsPOINTER_GROUP* const pPtrGroup)
+	{
+#ifdef Tahara
+		m_wpResource = pPtrGroup->GetResource();
+		m_wpEffects = pPtrGroup->GetEffects();
+		m_wpSound = pPtrGroup->GetSound();
+#endif//#ifdef Tahara
+	}
+
+	//太原の書き足した分.
+#ifdef Tahara
+	//消すときdeleteしないでnullしてね.
+	clsResource*		m_wpResource;
+	clsEffects*			m_wpEffects;
+	clsSOUND_MANAGER_BASE*	m_wpSound;
+
+	//当たり判定のポインタ.
+	//	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
+
+	//ロボモデル.
+	//	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
+
+#endif//#ifdef Tahara
+
 private:
 	bool m_bStopComShot;
 
 	bool m_bMoveAcceleOlder;//移動速度加算を行ったかどうか.
 	bool m_bRotAcceleOlder;//回転速度加算を行ったかどうか.
+
+
+
 
 };
 

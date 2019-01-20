@@ -205,9 +205,16 @@ private:
 	void PlayBoostEfc();
 	
 	void PlayFrontBoostEfc();
+	void PlayLFrontBoostEfc();
+	void PlayRFrontBoostEfc();
+
 	void PlayRightBoostEfc();
+
 	void PlayLeftBoostEfc();
+
 	void PlayBackBoostEfc();
+	void PlayLBackBoostEfc();
+	void PlayRBackBoostEfc();
 
 	void PlayCoreBoostEfc();
 
@@ -294,20 +301,6 @@ private:
 	void AnimChangeWeaponL(enAnimNoWeapon enChangeAnimNo, double dAnimTime = 0.0);
 	void AnimChangeWeaponR(enAnimNoWeapon enChangeAnimNo, double dAnimTime = 0.0);
 
-//太原の書き足した分.
-#ifdef Tahara
-	//消すときdeleteしないでnullしてね.
-	clsResource*		m_wpResource;
-	clsEffects*			m_wpEffects;
-	clsSOUND_MANAGER_BASE*	m_wpSound;
-
-	//当たり判定のポインタ.
-//	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
-
-	//ロボモデル.
-//	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
-
-#endif//#ifdef Tahara
 
 
 };

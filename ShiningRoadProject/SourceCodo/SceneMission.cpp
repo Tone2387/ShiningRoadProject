@@ -8,6 +8,9 @@ using namespace std;
 
 static const int g_iStartCnt = 180;
 
+static const int g_iGameStartSENo = 17;
+static const int g_iLockOnSENo = 16;
+
 namespace
 {
 	const char strMissonFolderPath[] = "Data\\FileData\\Hiyoshi\\Misson";
@@ -21,6 +24,7 @@ m_pPlayer(nullptr)
 , m_bEnemyStop(false)
 , m_bCamTarChange(false)
 , m_bStartFlg(false)
+, m_bLockStart(false)
 {
 }
 
@@ -544,6 +548,12 @@ void clsSCENE_MISSION::RenderUi()
 	//ロックオンカーソル内に敵を入れている間の処理.
 	if (m_pPlayer->GetTargetPos(vPosTmp))
 	{
+		if (!m_bLockStart)
+		{
+			m_wpSound->PlaySE(g_iLockOnSENo);
+			m_bLockStart = true;
+		}
+
 		//ロックオンウィンドウ描画.
 		vPosTmp = m_pPlayer->m_vTargetScrPos;
 		
@@ -596,6 +606,8 @@ void clsSCENE_MISSION::RenderUi()
 		{
 			iHitDispTime = 0;
 		}
+
+		m_bLockStart = false;
 	}
 
 	if (!m_bStartFlg)
@@ -611,7 +623,7 @@ void clsSCENE_MISSION::RenderUi()
 		if (m_iStartCnt < 0)
 		{
 			GameStart();
-			m_wpSound->PlaySE(0);
+			m_wpSound->PlaySE(g_iGameStartSENo);
 			m_bStartFlg = true;
 		}
 
@@ -660,9 +672,6 @@ void clsSCENE_MISSION::CreateFriends()
 
 void clsSCENE_MISSION::CreateEnemys()
 {
-	/*m_pTestObj = CreateEnemy();
-	m_v_pEnemys.push_back(m_pTestObj);*/
-
 	clsEnemyFactory clsFactory;
 	
 	m_v_pEnemys = clsFactory.CreateEnemy(m_wpPtrGroup, strMissonFolderPath);
@@ -851,38 +860,6 @@ void clsSCENE_MISSION::RenderDebugText()
 		"EnemyPos : x[%f], y[%f], z[%f]",
 		m_v_pEnemys[0]->GetPosition().x, m_v_pEnemys[0]->GetPosition().y, m_v_pEnemys[0]->GetPosition().z);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	/*sprintf_s(strDbgTxt,
-		"CamPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z);
-	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-
-	sprintf_s(strDbgTxt,
-		"Enelgy : [%d]",
-		m_pPlayer->m_iEnelgy);
-	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-	
-	if (m_pPlayer->m_bBoost)
-	{
-		sprintf_s(strDbgTxt,"ON");
-		m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-	}
-
-	else
-	{
-		sprintf_s(strDbgTxt,"OFF");
-		m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-	}
-
-	//dbgtxty += 10;
-	//if( m_pBgm[0]->IsStopped() ){
-	//	sprintf_s( strDbgTxt, "Stopped" );
-	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-	//}
-	//if( m_pBgm[0]->IsPlaying() ){
-	//	sprintf_s( strDbgTxt, "Playingn" );
-	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-	//}*/
 }
 #endif //#ifdef _DEBUG
 
