@@ -117,7 +117,7 @@ void clsSCENE_CLEAR::InitMovieProduct()
 	case clsSCENE_CLEAR::enCUT_END:
 		{
 			//’á‘¬ˆÃ“].
-			const int iINDEX = 5;
+			const int iINDEX = 6;
 			const float fRATE = m_vecfOtherData[ iINDEX ];
 			const float fDARK_SPD = fBLACK_SCREEN_DEFAULT_SPD * fRATE;
 			m_wpBlackScreen->SetChangeSpd( fDARK_SPD );
@@ -212,6 +212,11 @@ void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 				m_wpEffects->Play( 0, m_upEnemy->GetPosition() + vRanPos );
 			}
 
+			//“G‚ªÁ‚¦‚é.
+			const float fENEMY_DELETE_TIME= m_vecfOtherData[ iOtherDataIndex++ ];
+			if( m_fMovieFrame > fENEMY_DELETE_TIME ){
+				m_upEnemy->SetScale( 0.0f );
+			}
 		}
 		break;
 	}

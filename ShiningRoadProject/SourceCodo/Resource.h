@@ -3,8 +3,8 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-//////シングルトンにするならばつける.
-//#define RESOURCE_CLASS_SINGLETON
+////////////////////シングルトンにするならばつける.
+//////////////////#define RESOURCE_CLASS_SINGLETON
 
 
 //テスト中はつける( パーツの読み込み数を固定化 ).

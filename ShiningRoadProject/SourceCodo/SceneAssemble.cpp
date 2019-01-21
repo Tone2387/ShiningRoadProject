@@ -324,12 +324,13 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	//操作.
 	if( isCanControl )
 	{
+		//スティックの動き( ロボの回転 ).
+		MoveRoboStick();
+
 		if( m_upMenu ){
 			MenuUpdate( enNextScene );
 		}
 		else{
-			//スティックの動き( ロボの回転 ).
-			MoveRoboStick();
 			//選択肢.
 			if( isPressHoldRight( false ) )	MoveCursorRight();
 			if( isPressHoldLeft	( false ) )	MoveCursorLeft();
