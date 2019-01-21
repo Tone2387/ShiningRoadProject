@@ -95,6 +95,9 @@ void clsSCENE_TITLE::CreateProduct()
 	m_upRoboModel->Create( m_wpResource, m_wpRoboStatus );
 	m_upRoboModel->SetRot( { 0.0f, fROBO_YAW, 0.0f } );
 	m_upRoboModel->SetScale( fROBO_SCALE );
+	const int iARM_ANIM_INDEX = 1;
+	m_upRoboModel->PartsAnimChange( enPARTS::ARM_L, iARM_ANIM_INDEX );
+	m_upRoboModel->PartsAnimChange( enPARTS::ARM_R, iARM_ANIM_INDEX );
 
 
 	//ƒƒS.
@@ -226,6 +229,14 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 	if( m_upFlash->GetAlpha() <= 0.0f ){
 		m_upFlash->SetScale( 0.0f );
 	}
+
+	//ƒMƒKƒ|ƒ“ƒAƒjƒ.
+	if( m_upRoboModel->GetPartsAnimEnd( enPARTS::ARM_L ) ){
+		const int iARM_ANIM_INDEX = 2;
+		m_upRoboModel->PartsAnimChange( enPARTS::ARM_L, iARM_ANIM_INDEX );
+		m_upRoboModel->PartsAnimChange( enPARTS::ARM_R, iARM_ANIM_INDEX );
+	}
+
 
 	m_wpCamera->Update();
 
