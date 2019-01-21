@@ -727,9 +727,16 @@ void clsSCENE_MISSION::ColEShottoFBody()
 		{
 			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->GetColSpheres());
 			m_v_pFriends[j]->Damage(Tmp);
+#ifdef Tahara
+			//ノイズエフェクト.
+			PlayNoise( Tmp );
+#endif//#ifdef Tahara
+
 		}
 	}
 }
+
+
 
 void clsSCENE_MISSION::ColEShottoEBody()
 {
@@ -920,6 +927,7 @@ void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
 			break;
 
 		default:
+			m_upMenu->Close();
 			assert( !"不正な情報が返されました" );
 			break;
 		}
@@ -945,4 +953,22 @@ void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
 		}
 	}
 }
+
+
+//ノイズエフェクト.
+void clsSCENE_MISSION::PlayNoise( const HitState& Hitstate )
+{
+	if( Hitstate.bHit ){
+		//ダメージ量のによるノイズの種類の境界線.
+		const int iNOISE_STRONG_BORDER = 500;
+		if( Hitstate.iDamage >= iNOISE_STRONG_BORDER ){
+			NoiseStrong();
+		}
+		else{
+			NoiseWeak();
+		}
+	}
+}
+
+
 #endif//#ifdef Tahara

@@ -159,6 +159,8 @@ private:
 #ifdef Tahara
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
+	//ノイズエフェクト.
+	void PlayNoise( const HitState& Hitstate );
 	//ポーズメニュー.
 	std::unique_ptr< clsMENU_WINDOW_MISSION_BASE > m_upMenu;
 	//メニューから受け取った情報を照合する.

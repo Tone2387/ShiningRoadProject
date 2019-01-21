@@ -112,8 +112,8 @@ protected:
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 	//ƒmƒCƒY‚ð‹N‚±‚·.
-	void NoiseStrong( const int iPower );
-	void NoiseWeak( const int iFrame );
+	void NoiseStrong( const int iPower = 60 );
+	void NoiseWeak( const int iFrame = 10 );
 
 	void UpdateNoise();
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
