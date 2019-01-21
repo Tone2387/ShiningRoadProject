@@ -214,7 +214,12 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 		return false;
 	}
 
-	float fRot = static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
+	const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
+	const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
+
+	float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+
+	fRot += static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
 
 	ObjRollOverGuard(&fRot);
 

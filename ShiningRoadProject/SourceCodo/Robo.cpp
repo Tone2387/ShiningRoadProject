@@ -118,7 +118,7 @@ void clsRobo::RoboInit(
 	//ブースト移動速度.
 	m_fBoostMoveSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_H) * g_fDistanceReference;
 	//ブースト加速時間.
-	m_iBoostTopSpeedFrame = g_iBoostRisingyTopSpeedFrame + (g_iWalkTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage);
+	m_iBoostTopSpeedFrame = g_iBoostRisingyTopSpeedFrame + (g_iBoostTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage);
 	//ブースト展開中のEN消費.
 	m_iBoostMoveCost = pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
 
@@ -204,7 +204,8 @@ void clsRobo::RoboInit(
 	m_v_Spheres.resize(Tmp);
 	m_v_Spheres.shrink_to_fit();*/
 
-	m_fLockCircleRadius = pRobo->GetRoboState(clsROBO_STATUS::SEARCH) * 5.0f;//ロックオン判定の半径.
+	m_fLockCircleRadius = pRobo->GetRoboState(clsROBO_STATUS::SEARCH) * 50.0f;//ロックオン判定の半径.
+	m_fLockCircleRadius = 750.0f;
 
 	m_pViewPort = pPtrGroup->GetViewPort10();
 
@@ -273,9 +274,6 @@ void clsRobo::BoostRising()
 	{
 		if (EnelgyConsumption(m_iBoostRisingyCost))
 		{
-			//ブースター中.
-			//m_wpSound->PlaySE(0);
-
 			if (m_fFollPower < m_fBoostMoveSpeedMax)
 			{
 				m_fFollPower += m_fBoostRisingAccele;
@@ -283,8 +281,10 @@ void clsRobo::BoostRising()
 
 			else
 			{
-				//m_fFollPower = m_fBoostMoveSpeedMax;
+				m_fFollPower = m_fBoostMoveSpeedMax;
 			}
+
+			m_fFollPowerforBoost = m_fFollPower / m_fBoostRisingSpeedMax;
 
 			if (!m_bBoost)
 			{
@@ -403,7 +403,11 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 	if (m_bBoost)
 	{
 		//ブースト音.
-		m_wpSound->PlaySE(g_iBoostSENo);
+		if (m_bPlayer)
+		{
+			m_wpSound->PlaySE(g_iBoostSENo);
+		}
+
 		if (m_fFollPower < -m_fBoostFollRes)
 		{
 			m_fFollPower += m_fBoostFollRes;
@@ -1088,7 +1092,7 @@ void clsRobo::PlayRBackBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z > 0.1f || m_fRotAccele < -0.1f)
+	if (m_vMoveDirforBoost.z > 0.1f || m_fRotDir < -0.1f)
 	{
 		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
@@ -1149,9 +1153,6 @@ void clsRobo::PlayLegBoostEfc()
 
 			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
-			vPosEndTmp += m_vMoveDir * m_fMoveSpeed;
-			vPosEndTmp.y += m_fFollPower;
-
 			if (!m_wpEffects->isPlay(m_v_LegBoostEfc[i]))
 			{
 				m_v_LegBoostEfc[i] = m_wpEffects->Play(g_iBoostEfcNo, vPosEndTmp);
@@ -1162,7 +1163,7 @@ void clsRobo::PlayLegBoostEfc()
 				m_wpEffects->SetPosition(m_v_LegBoostEfc[i], vPosEndTmp);
 			}
 
-			if (abs(m_vMoveDirforBoost.x) > 0.1f || abs(m_vMoveDirforBoost.z) > 0.1f)
+			if (abs(m_vMoveDirforBoost.x) > 0.1f || abs(m_vMoveDirforBoost.z) > 0.1f || m_fFollPowerforBoost > 0.1f)
 			{
 				float fScale = 0.0f;
 
@@ -1174,6 +1175,11 @@ void clsRobo::PlayLegBoostEfc()
 				else
 				{
 					fScale = abs(m_vMoveDirforBoost.z);
+				}
+
+				if (m_fFollPowerforBoost > fScale)
+				{
+					fScale = m_fFollPowerforBoost;
 				}
 				
 				m_wpEffects->SetScale(m_v_LegBoostEfc[i], fScale);
@@ -1980,7 +1986,9 @@ m_iBoostRisingTopSpeedFrame(0),
 m_fBoostRisingAccele(0.0f),
 m_iQuickInterbal(0),
 m_bStopComShotL(false),
-m_bStopComShotR(false)
+m_bStopComShotR(false),
+m_bPlayer(false),
+m_fFollPowerforBoost(0.0f)
 {
 	
 }
