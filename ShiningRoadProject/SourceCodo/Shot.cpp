@@ -16,7 +16,7 @@ clsShot::~clsShot()
 {
 }
 
-HRESULT clsShot::Init(BulletState BState)
+HRESULT clsShot::Init(const BulletState& BState)
 {
 	//strWeaponFileNameÇ©ÇÁèÓïÒÇéÛÇØéÊÇÈ.
 	//ãÖÇÃëÂÇ´Ç≥.
@@ -48,7 +48,7 @@ HRESULT clsShot::Init(BulletState BState)
 	return S_OK;
 }
 
-bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
+bool clsShot::Hit(std::vector<clsObject::SPHERE>& v_TargetSphere)
 {
 	if (m_bShotExistFlg)
 	{
@@ -79,7 +79,9 @@ bool clsShot::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
 	return false;
 }
 
-bool clsShot::Form(D3DXVECTOR3 vShotPos, D3DXVECTOR3 vDir)
+bool clsShot::Form(
+	const D3DXVECTOR3& vShotPos,
+	const D3DXVECTOR3& vDir)
 {
 	if (m_bExistFlg)
 	{

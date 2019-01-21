@@ -2,7 +2,7 @@
 
 const int g_iMOAReference = 1000;//ATK‚Ì‚‚³‚©‚çƒuƒŒ‚ğŒˆ‚ß‚é‚½‚ß‚ÌŠî€’l.
 
-void clsWeapon::Create(WeaponState State)
+void clsWeapon::Create(const WeaponState& State)
 {
 	m_State = State;
 
@@ -43,7 +43,7 @@ void clsWeapon::Update(clsStage* const pStage)
 	m_iReloadCnt--;
 }
 
-int clsWeapon::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
+int clsWeapon::Hit(std::vector<clsObject::SPHERE>& v_TargetSphere)
 {
 	int iResult = 0;
 

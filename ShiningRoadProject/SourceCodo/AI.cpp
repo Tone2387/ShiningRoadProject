@@ -96,7 +96,9 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 	}
 }
 
-bool clsEnemyBase::IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const VisibilityAreaState VisAreaState)
+bool clsEnemyBase::IsVisibilityArea(
+	const D3DXVECTOR3& vEnemyPos,
+	const VisibilityAreaState& VisAreaState)
 {
 	D3DXVECTOR3 vDisTmp = vEnemyPos - m_pChara->m_vLockStartingPos;
 	float fDis = D3DXVec3Length(&vDisTmp);
@@ -110,7 +112,7 @@ bool clsEnemyBase::IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const Visibilit
 	return false;
 }
 
-bool clsEnemyBase::IsTargetNear(const D3DXVECTOR3 vEnemyPos)
+bool clsEnemyBase::IsTargetNear(const D3DXVECTOR3& vEnemyPos)
 {
 	if (!m_pTarget)
 	{

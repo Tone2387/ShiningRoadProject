@@ -164,9 +164,9 @@ protected:
 	bool IsJump();
 	bool IsShot();
 
-	bool IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const VisibilityAreaState VisAreaState);
+	bool IsVisibilityArea(const D3DXVECTOR3& vEnemyPos, const VisibilityAreaState& VisAreaState);
 
 	//ターゲット評価関数.
-	bool IsTargetNear(const D3DXVECTOR3 vEnemyPos);
+	bool IsTargetNear(const D3DXVECTOR3& vEnemyPos);
 };
 

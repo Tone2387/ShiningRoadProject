@@ -41,14 +41,14 @@ public:
 	const bool SetAnimChange(const int iAnimNo, const double dStartPos = 0.0f);
 	//現在のアニメーション番号を渡す.
 	const int GetAnimNo();
-	void SetAnimSpeed(const double dSpeed);
+	void SetAnimSpeed(const double& dSpeed);
 	const double GetAnimSpeed();
-	void SetAnimTime(const double dTime);
+	void SetAnimTime(const double& dTime);
 	const double GetAnimTime();
 	const double GetAnimEndTime(const int iAnimNo);
 	const bool IsAnimTimeEnd();
-	const bool IsAnimTimeAfter(const double dDesignationTime);
-	const bool IsAnimTimePoint(const double dDesignationTime);
+	const bool IsAnimTimeAfter(const double& dDesignationTime);
+	const bool IsAnimTimePoint(const double& dDesignationTime);
 	const bool IsExistsBone(const char* sBoneName);
 
 	void AnimPause()

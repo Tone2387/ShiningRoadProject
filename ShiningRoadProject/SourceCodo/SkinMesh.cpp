@@ -160,7 +160,7 @@ const D3DXVECTOR3 clsSkinMesh::GetBoneDiviaPos(char* sBoneName, const  D3DXVECTO
 	return vBonePos;
 }
 
-void clsSkinMesh::SetAnimSpeed(const double dSpeed)
+void clsSkinMesh::SetAnimSpeed(const double& dSpeed)
 {
 	m_dAnimSpeed = dSpeed;
 	m_pMesh->SetAnimSpeed(m_dAnimSpeed);
@@ -176,7 +176,7 @@ const double clsSkinMesh::GetAnimEndTime(const int AnimIndex)
 	return m_pMesh->GetAnimPeriod(AnimIndex); 
 }
 
-void clsSkinMesh::SetAnimTime(const double dTime)
+void clsSkinMesh::SetAnimTime(const double& dTime)
 {
 	m_dAnimTime = dTime;
 	m_pMesh->SetAnimTime(dTime);
@@ -210,7 +210,7 @@ const bool clsSkinMesh::IsAnimTimeEnd()
 	return false;
 }
 
-const bool clsSkinMesh::IsAnimTimeAfter(const double dDesignationTime)
+const bool clsSkinMesh::IsAnimTimeAfter(const double& dDesignationTime)
 {
 	if (!m_bAnimReverce)
 	{
@@ -234,7 +234,7 @@ const bool clsSkinMesh::IsAnimTimeAfter(const double dDesignationTime)
 	return false;
 }
 
-const bool clsSkinMesh::IsAnimTimePoint(const double dDesignationTime)
+const bool clsSkinMesh::IsAnimTimePoint(const double& dDesignationTime)
 {
 	if (dDesignationTime - m_dAnimSpeed < m_dAnimTime &&
 		dDesignationTime + m_dAnimSpeed > m_dAnimTime)

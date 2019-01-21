@@ -52,8 +52,6 @@ void clsEnemyRobo::Init(
 
 bool clsEnemyRobo::IsBoostRising()
 {
-	IsENSaving();
-
 	if (!m_bENSaving)
 	{
 		if (m_pTarget)
@@ -76,26 +74,34 @@ bool clsEnemyRobo::IsBoostRising()
 
 			float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 
-			if (fDist > -m_UpdateState.fVerDis * iHulf &&
-				fDist < m_UpdateState.fVerDis * iHulf)
+			if (m_bBoostRisingFullBoost)
 			{
-				return true;
+				if (fDist > m_UpdateState.fVerDis)
+				{
+					m_bBoostRisingFullBoost = false;
+				}
 			}
 
 			else
 			{
-				if (fDist > 0.0f)
+				if (fDist < m_UpdateState.fVerDis / iHulf)
 				{
-					return true;
+					m_bBoostRisingFullBoost = true;
 				}
 			}
 		}
+
+		if (m_bBoostRisingFullBoost)
+		{
+			return true;
+		}
 	}
 
+	m_bBoostRisingFullBoost = false;
 	return false;
 }
 
-void clsEnemyRobo::IsENSaving()
+void clsEnemyRobo::ENSaving()
 {
 	int iENLimit;
 
@@ -716,7 +722,14 @@ void clsEnemyRobo::SetDataProduct()
 	SetQuickBoostAvoidData();
 }
 
+void clsEnemyRobo::UpdateProduct()
+{
+	ENSaving();
+}
+
 clsEnemyRobo::clsEnemyRobo()
+	: m_bENSaving(false)
+	, m_bBoostRisingFullBoost(true)
 {
 	m_pComMove = new clsCommandMove;
 	m_pComMoveSwitch = new clsCommandMoveSwitch;
