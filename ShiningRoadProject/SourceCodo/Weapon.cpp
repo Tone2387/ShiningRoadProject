@@ -131,8 +131,6 @@ bool clsWeapon::Shot()
 				{
 					m_iRemainingBullet--;
 					m_iReloadCnt = m_State.iReloadTime;
-					//ŽËŒ‚‰¹.
-					m_pPtrGroup->GetSound()->PlaySE(0);
 					return true;
 				}
 			}
@@ -162,8 +160,6 @@ void clsWeapon::Reload()
 
 	m_bNeedReload = false;
 	m_iRemainingBullet = m_State.iBulletNumMax;
-	//ƒŠƒ[ƒh‰¹.
-	m_pPtrGroup->GetSound()->PlaySE(0);
 }
 
 int clsWeapon::GetNowBulletNum()

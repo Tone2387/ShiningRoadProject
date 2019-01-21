@@ -72,7 +72,7 @@ bool clsEnemyRobo::IsBoostRising()
 
 			m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
 
-			float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
+			float fDist = -(m_pTarget->GetPosition().y - m_pChara->GetPosition().y);
 
 			if (m_bBoostRisingFullBoost)
 			{
@@ -89,11 +89,11 @@ bool clsEnemyRobo::IsBoostRising()
 					m_bBoostRisingFullBoost = true;
 				}
 			}
-		}
 
-		if (m_bBoostRisingFullBoost)
-		{
-			return true;
+			if (m_bBoostRisingFullBoost)
+			{
+				return true;
+			}
 		}
 	}
 
@@ -156,7 +156,7 @@ bool clsEnemyRobo::IsBoostOff()
 
 		const int iHulf = 2;
 
-		float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
+		float fVerDestDis = m_UpdateState.fVerDis * 2;//çÇÇ≥ãñóeíl.
 
 		if (fVerDis < 0.0f)//ìGÇ™â∫Ç…Ç¢ÇÈ.
 		{

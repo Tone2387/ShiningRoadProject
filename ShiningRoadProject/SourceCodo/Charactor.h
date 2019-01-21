@@ -195,7 +195,11 @@ public:
 	virtual void AnimPause() const{};
 	virtual void AnimPlay() const{};
 
+	virtual bool IsPlayerChara() { return m_bPlayer; };
+
 protected:
+
+	bool m_bPlayer;
 
 	//着地エフェクト.
 	::Effekseer::Handle m_LandingEfc;

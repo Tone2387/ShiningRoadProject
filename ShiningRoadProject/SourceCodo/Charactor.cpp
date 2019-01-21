@@ -891,6 +891,7 @@ clsCharactor::clsCharactor() :
 	m_bStopComMove(false),
 	m_bStopComRot(false),
 	m_bStopComShot(false),
+	m_bPlayer(false),
 	m_fMoveSpeedMax( 0.0f ),
 	m_iTopMoveSpeedFrame( 0 ),
 	m_fMoveAccele( 0.0f ),

@@ -182,6 +182,7 @@ void clsSCENE_MISSION::CreateUI()
 		m_v_pRaderEnemyMark[i]->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 	}
 
+	//カーソル.
 	assert(!m_pCursor);
 	ss.Disp = { 1.0f, 1.0f };
 	ss.Anim = { 1.0f, 1.0f };
@@ -203,7 +204,6 @@ void clsSCENE_MISSION::CreateUI()
 	m_pCursorFrame->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
 	//EN.
-
 	assert(!m_pEnelgy);
 
 	ss.Disp = { 512.0f / 2, 64.0f / 4 };
@@ -224,6 +224,7 @@ void clsSCENE_MISSION::CreateUI()
 	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\GaugeWaku.png", ss);
 	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
 
+	//左武器ロック.
 	assert(!m_pLWeaponLockMark);
 	ss.Disp = { 92.0f, 106.0f };
 	ss.Anim = { 1.0f, 1.0f };
@@ -727,11 +728,17 @@ void clsSCENE_MISSION::ColEShottoFBody()
 		{
 			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->GetColSpheres());
 			m_v_pFriends[j]->Damage(Tmp);
-#ifdef Tahara
-			//ノイズエフェクト.
-			PlayNoise( Tmp );
-#endif//#ifdef Tahara
 
+			if (m_v_pFriends[j]->IsPlayerChara())
+			{
+				if (Tmp.bHit)
+				{
+#ifdef Tahara
+					//ノイズエフェクト.
+					PlayNoise(Tmp);
+#endif//#ifdef Tahara
+				}
+			}
 		}
 	}
 }

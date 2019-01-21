@@ -162,8 +162,6 @@ public:
 	clsRobo();
 	~clsRobo();
 
-	bool m_bPlayer;
-
 private:
 	void Down() final;
 
