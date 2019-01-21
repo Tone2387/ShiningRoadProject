@@ -11,8 +11,6 @@ struct HitState//弾が当たった時に相手側に送る情報のまとめ.
 {
 	bool bHit;
 	int iDamage;
-	float fInpuct;
-	D3DXVECTOR3 vInpuctDir;
 
 	void Clear();
 };
@@ -76,7 +74,7 @@ public:
 	D3DXVECTOR3 m_vLockCenterPos;//ロックオン判定終点の位置.
 	D3DXVECTOR3 m_vTargetScrPos;
 	bool m_bCamPosXSwitch;
-	bool IsTargetDirBack(D3DXVECTOR3 vTargetPos);//敵がキャラより後ろにいるか.
+	bool IsTargetDirBack(const D3DXVECTOR3& vTargetPos);//敵がキャラより後ろにいるか.
 
 	void UpdateLookOn();
 	virtual void UpdateLookStartingPos();
@@ -99,8 +97,8 @@ public:
 	bool Shot();
 	bool IsNeedReload();
 
-	HitState BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere);
-	bool Damage(HitState);//ダメージと衝撃力.
+	HitState BulletHit(std::vector<clsObject::SPHERE>& v_TargetSphere);
+	bool Damage(const HitState&);//ダメージと衝撃力.
 
 	void WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
 	
@@ -109,7 +107,7 @@ public:
 	virtual void UpdateProduct(clsStage* pStage)override;
 
 	void LockChara(clsStage* const pStage);
-	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
+	bool IsInLockRange(const D3DXVECTOR3& vTargetPos);
 
 	void Lock();
 	void LockOut();
@@ -174,13 +172,12 @@ public:
 	void Jump();
 
 	const bool IsTargetWall(
-		const D3DXVECTOR3 vStartPos,
-		const D3DXVECTOR3 vEndPos,
+		const D3DXVECTOR3& vTargetPos,
 		clsStage* const pStage);
 
 	bool IsPointIntersect(
-		const D3DXVECTOR3 StartPos,	//基準の位置.
-		const D3DXVECTOR3 EndPos,		//標的の位置.
+		const D3DXVECTOR3& StartPos,	//基準の位置.
+		const D3DXVECTOR3& EndPos,		//標的の位置.
 		const clsDX9Mesh* pTarget		//障害物の物体.
 		);
 
@@ -189,8 +186,8 @@ public:
 	virtual ~clsCharactor();
 
 	bool IsCurcleLange(
-		const D3DXVECTOR3 CenterPos, 
-		const D3DXVECTOR3 TargetPos, 
+		const D3DXVECTOR3& CenterPos, 
+		const D3DXVECTOR3& TargetPos, 
 		const float Range);//円の範囲判定.
 
 	void CharaDuplicate(clsCharactor* const pContactChara);

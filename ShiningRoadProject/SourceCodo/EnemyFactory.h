@@ -8,7 +8,9 @@ public:
 	clsEnemyFactory();
 	~clsEnemyFactory();
 
-	const std::vector<clsCharactor*> CreateEnemy(clsPOINTER_GROUP* clsPtrGroup, std::string strFolderName);
+	const std::vector<clsCharactor*> CreateEnemy(
+		clsPOINTER_GROUP* clsPtrGroup, 
+		const std::string& strFolderName);
 
 private:
 	enum enEnemyType

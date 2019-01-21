@@ -268,8 +268,7 @@ void clsCharactor::Jump()
 }
 
 const bool clsCharactor::IsTargetWall(
-	const D3DXVECTOR3 vStartPos,
-	const D3DXVECTOR3 vEndPos,
+	const D3DXVECTOR3& vEndPos,
 	clsStage* const pStage)
 {
 	if (!pStage)return false;
@@ -284,7 +283,7 @@ const bool clsCharactor::IsTargetWall(
 		if (!pObjMesh)continue;
 		pStage->SetStageObjTransform(i);
 
-		if (IsPointIntersect(vStartPos, vEndPos, pObjMesh))
+		if (IsPointIntersect(m_vLockStartingPos, vEndPos, pObjMesh))
 		{
 			return false;
 		}
@@ -295,8 +294,8 @@ const bool clsCharactor::IsTargetWall(
 
 //ﾀｰｹﾞｯﾄとする位置に対してﾚｲを飛ばして、遮蔽物がないか調べる.
 bool clsCharactor::IsPointIntersect(
-	const D3DXVECTOR3 StartPos,	//基準の位置.
-	const D3DXVECTOR3 EndPos,		//標的の位置.
+	const D3DXVECTOR3& StartPos,	//基準の位置.
+	const D3DXVECTOR3& EndPos,		//標的の位置.
 	const clsDX9Mesh* pTarget		//障害物の物体.
 	)
 {
@@ -360,7 +359,10 @@ bool clsCharactor::IsPointIntersect(
 	return false;//何もない.
 }
 
-bool clsCharactor::IsCurcleLange(D3DXVECTOR3 CenterPos, D3DXVECTOR3 TargetPos, float Range)//円の認識範囲判定.
+bool clsCharactor::IsCurcleLange(
+	const D3DXVECTOR3& CenterPos, 
+	const D3DXVECTOR3& TargetPos, 
+	float Range)//円の認識範囲判定.
 {
 	if (pow(TargetPos.x - CenterPos.x, 2.0f) + pow(TargetPos.y - CenterPos.y, 2.0f) <= pow(Range, 2.0f))
 	{
@@ -464,7 +466,7 @@ void  clsCharactor::WeaponUpdate(clsStage* const pStage)
 	}
 }
 
-HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere)
+HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE>& v_TargetSphere)
 {
 	HitState HitS;
 	HitS.Clear();
@@ -482,7 +484,7 @@ HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere)
 	return HitS;
 }
 
-bool clsCharactor::Damage(HitState HitS)
+bool clsCharactor::Damage(const HitState& HitS)
 {
 	if (HitS.bHit)
 	{
@@ -515,7 +517,7 @@ void clsCharactor::LockChara(clsStage* const pStage)
 			return;
 		}
 		
-		if (!IsTargetWall(m_vLockStartingPos, m_pTargetChara->GetCenterPos(), pStage))
+		if (!IsTargetWall(m_pTargetChara->GetCenterPos(), pStage))
 		{
 			LockOut();
 			return;
@@ -553,7 +555,7 @@ void clsCharactor::LockChara(clsStage* const pStage)
 				continue;
 			}
 
-			if (!IsTargetWall(m_vLockStartingPos, m_v_pEnemys[i]->GetCenterPos(), pStage))
+			if (!IsTargetWall(m_v_pEnemys[i]->GetCenterPos(), pStage))
 			{
 				continue;
 			}
@@ -601,7 +603,7 @@ void clsCharactor::LockChara(clsStage* const pStage)
 	}
 }
 
-bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
+bool clsCharactor::IsInLockRange(const D3DXVECTOR3& vTargetPos)
 {
 	//敵の方向が後ろ.
 	if (!IsTargetDirBack(vTargetPos))
@@ -641,7 +643,7 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 	return false;
 }
 
-bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
+bool clsCharactor::IsTargetDirBack(const D3DXVECTOR3& vTargetPos)
 {
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
@@ -923,6 +925,4 @@ void HitState::Clear()
 {
 	bHit = false;
 	iDamage = 0;
-	fInpuct = 0.0f;
-	vInpuctDir = { 0.0f, 0.0f, 0.0f };
 }

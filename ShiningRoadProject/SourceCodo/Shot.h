@@ -58,12 +58,12 @@ public:
 	bool m_bShotExistFlg;//弾の存在確認(falseなら弾が存在しない状態).
 	bool m_bExistFlg;//弾,爆発,軌跡の存在確認(falseならそれら全てが存在しない状態)
 
-	HRESULT Init(BulletState BState);
+	HRESULT Init(const BulletState& BState);
 
 	void SEInit(HWND hWnd);
 
-	bool Hit(std::vector<clsObject::SPHERE> v_TargetSphere);
-	bool Form(D3DXVECTOR3 vShotPos,D3DXVECTOR3 vTarget);
+	bool Hit(std::vector<clsObject::SPHERE>& v_TargetSphere);
+	bool Form(const D3DXVECTOR3& vShotPos,const D3DXVECTOR3& vTarget);
 	void ReStart();
 
 private:

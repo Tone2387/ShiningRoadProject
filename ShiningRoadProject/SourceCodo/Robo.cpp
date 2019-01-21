@@ -92,7 +92,6 @@ void clsRobo::RoboInit(
 	const int iHulf = 2;
 
 	m_iMaxHP = pRobo->GetRoboState(clsROBO_STATUS::HP);//HP受け取り.
-	m_iMaxHP = 10000;
 	m_iHP = m_iMaxHP;//現在HPを最大値で初期化.
 	
 	//歩行最高速度.
@@ -145,13 +144,11 @@ void clsRobo::RoboInit(
 
 	m_iActivityLimitTime = pRobo->GetRoboState(clsROBO_STATUS::ACT_TIME) * static_cast<int>(g_fFPS);
 
-	m_fRaderRange = pRobo->GetRoboState(clsROBO_STATUS::SEARCH);
+	m_fRaderRange = pRobo->GetRoboState(clsROBO_STATUS::SEARCH) * g_fDistanceReference;
 
 	m_fLockRange = pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
 	
 	m_v_Spheres = m_pMesh->GetColState(pRobo);
-
-	//m_Trans.vPos.y = 10.0f;
 
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
 	SetMoveDeceleSpeed(m_iTopMoveSpeedFrame);
@@ -193,14 +190,6 @@ void clsRobo::RoboInit(
 	WeaponInit(pPtrGroup, WS, enWeaponTypeSize);
 
 	SetBoostEffect();
-
-	//std::vector<D3DXVECTOR3> v_vColPos = *m_pMesh->GetColPosPtr();
-
-	/*Tmp.vCenter = &m_vCenterPos;
-	Tmp.fRadius = 0.1f;
-
-	m_v_Spheres.resize(Tmp);
-	m_v_Spheres.shrink_to_fit();*/
 
 	m_fLockCircleRadius = pRobo->GetRoboState(clsROBO_STATUS::SEARCH) * 50.0f;//ロックオン判定の半径.
 	m_fLockCircleRadius = 750.0f;
