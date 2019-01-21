@@ -65,6 +65,7 @@ private:
 	{
 		enSE_KNEE = 0,	//•G•.( ƒj[ ).
 		enSE_BOMBER,	//”š”­.
+		enSE_ARM_DOWN,	//•Ší‚ð‰º‚·.
 	};
 
 };
