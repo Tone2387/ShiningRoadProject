@@ -17,6 +17,8 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 
 	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
 
+	m_bPlayer = true;
+
 	/*clsObject::SPHERE Tmp;
 
 	Tmp.vCenter = &m_vCenterPos;

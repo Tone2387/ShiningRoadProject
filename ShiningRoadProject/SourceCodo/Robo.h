@@ -162,7 +162,7 @@ public:
 	clsRobo();
 	~clsRobo();
 
-	
+	bool m_bPlayer;
 
 private:
 	void Down() final;
@@ -171,6 +171,7 @@ private:
 	bool m_bStopComShotR;
 
 	D3DXVECTOR3 m_vMoveDirforBoost;
+	float m_fFollPowerforBoost;
 
 	//右腕ブースターエフェクト.
 	std::vector<::Effekseer::Handle> m_v_RHandFrontBoostEfc;
