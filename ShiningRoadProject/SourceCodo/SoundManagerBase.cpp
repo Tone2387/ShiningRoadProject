@@ -10,7 +10,7 @@ using namespace std;
 //サウンドクラスへ指示を出す際にvectorの範囲を超えていたら、だめですとおしかりをくれるマクロ.
 #define SOUND_NUMBER_OVER_SHECK(no,vp) \
 if( (no) >= static_cast<int>( (vp).size() ) ){\
-	assert( !"指定された番号のサウンドクラスは存在しません" );\
+	assert( !"指定された番号のサウンドクラスは存在しません" || (no) );\
 	return false;\
 }
 

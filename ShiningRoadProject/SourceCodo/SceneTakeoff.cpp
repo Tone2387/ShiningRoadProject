@@ -131,6 +131,7 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_ROAD:
+		m_wpSound->StopSE( enSE_BOOSTER );
 		m_wpSound->PlaySE( enSE_ENVIRONMENTAL, true );
 		m_wpSound->PlaySE( enSE_PASS );
 		break;
@@ -144,6 +145,7 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 		break;
 
 	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+		m_upEnemy->Boost();
 		m_wpSound->StopSE( enSE_ENVIRONMENTAL );
 //		m_wpSound->PlaySE( enSE_PASS );
 		break;
@@ -295,6 +297,8 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->AddDistance( fMOVE, true );
 
+			const int iANIM_BOOST_NO = 7;
+			m_upPlayer->m_pMesh->SetPartsAnimNo( enPARTS::LEG, iANIM_BOOST_NO );
 			m_upPlayer->IgnitionCoreBoost( true );
 		}
 		break;
@@ -325,6 +329,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 			{
 				if( m_wpSound->IsStoppedSE( enSE_PASS ) ){  
 					m_wpSound->PlaySE( enSE_PASS );
+					m_wpSound->StopSE( enSE_BOOSTER );
 				}
 			}
 		}
@@ -346,6 +351,13 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 				wpCam->GetLookPos().x + fPLAYER_MOVE_X,
 				wpCam->GetLookPos().y,
 				wpCam->GetLookPos().z } );
+
+			//“G—Ž‰º.
+			const float fDOWN = m_vecfOtherData[ iOtherDataIndex++ ];
+			m_upEnemy->SetPosition(
+				vPosEnemyOld +
+				D3DXVECTOR3( 0.0f, fDOWN, 0.0f ) );
+
 		}
 		break;
 
@@ -394,6 +406,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 					m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::LEG, iANIM_INDEX );
 					m_upEnemy->m_pMesh->SetPartsAnimSpeed( enPARTS::LEG, g_dAnimSpeedReference / 4.0 );
 					m_wpSound->PlaySE( enSE_LANDING );
+					m_wpSound->StopSE( enSE_BOOSTER );
 					m_isTrigger = true;
 				}
 			}

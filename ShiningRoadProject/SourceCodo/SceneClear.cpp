@@ -37,7 +37,7 @@ clsSCENE_CLEAR::~clsSCENE_CLEAR()
 void clsSCENE_CLEAR::CreateProduct()
 {
 	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
-
+	m_upStage->SetColorRed();
 
 	m_upPlayer= make_unique< clsROBO_TAKEOFF >();
 	m_upPlayer->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
@@ -58,8 +58,10 @@ void clsSCENE_CLEAR::CreateProduct()
 	const int iARM_ANIM_INDEX = 2;
 	m_upPlayer->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
 	m_upPlayer->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
-	m_upEnemy-> m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
-	m_upEnemy-> m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
+	const int iARM_ANIM_ENEMY_INDEX = 4;
+	m_upEnemy-> m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_ENEMY_INDEX );
+	m_upEnemy-> m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_ENEMY_INDEX );
+	m_wpSound->PlaySE( enSE_ARM_DOWN );
 
 
 	SetCamPosFromFile(	   0 );
@@ -78,6 +80,8 @@ void clsSCENE_CLEAR::CreateProduct()
 
 	m_wpEffects->Play( 0, m_upEnemy->GetPosition() );
 	m_wpEffects->StopAll();
+
+
 }
 
 
@@ -106,12 +110,16 @@ void clsSCENE_CLEAR::InitMovieProduct()
 	switch( m_iCut )
 	{
 	case clsSCENE_CLEAR::enCUT_START:
+		{
+		}
 		break;
 
 	case clsSCENE_CLEAR::enCUT_END:
 		{
 			//低速暗転.
-			const float fDARK_SPD = fBLACK_SCREEN_DEFAULT_SPD;
+			const int iINDEX = 5;
+			const float fRATE = m_vecfOtherData[ iINDEX ];
+			const float fDARK_SPD = fBLACK_SCREEN_DEFAULT_SPD * fRATE;
 			m_wpBlackScreen->SetChangeSpd( fDARK_SPD );
 		}
 		break;
@@ -130,14 +138,16 @@ void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 
 	m_upPlayer->UpdateProduct( m_upStage.get() );
 	m_upPlayer->ModelUpdate();
-	m_upEnemy->UpdateProduct( m_upStage.get() );
-	m_upEnemy->ModelUpdate();
 
 
 	switch( m_iCut )
 	{
 	case clsSCENE_CLEAR::enCUT_START:
 		{
+			//敵のアニメ用( 次のカットでも回してしまうと立ち上がってしまう ).
+			m_upEnemy->UpdateProduct( m_upStage.get() );
+			m_upEnemy->ModelUpdate();
+
 			const float fSPN = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->Spn( fSPN );
 
@@ -177,12 +187,16 @@ void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 
 	case clsSCENE_CLEAR::enCUT_END:
 		{
+
 			++ m_fBomberEffectOffsetFrame;
 			const float fSPN = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->Spn( fSPN );
 
 			const float fMOVE = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->Advancing( fMOVE );
+
+			const float fCLUB = m_vecfOtherData[ iOtherDataIndex++ ];
+			wpCam->CrabWalk( fCLUB );
 
 			//爆発.
 			const float fBOM_OFFSET_TIME= m_vecfOtherData[ iOtherDataIndex++ ];
