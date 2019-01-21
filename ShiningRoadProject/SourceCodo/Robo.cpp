@@ -110,7 +110,7 @@ void clsRobo::RoboInit(
 	//エネルギー最大値.
 	m_iEnelgy = m_iEnelgyMax = pRobo->GetRoboState(clsROBO_STATUS::EN_CAPA);
 	//エネルギー回復量.
-	//m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT) / static_cast<int>(g_fFPS);
+	m_iEnelgyOutput = pRobo->GetRoboState(clsROBO_STATUS::EN_OUTPUT);
 
 	//浮遊時エネルギー回復量(通常エネルギーの半分).
 	m_iBoostFloatRecovery = m_iEnelgyOutput / iHulf;
@@ -121,8 +121,6 @@ void clsRobo::RoboInit(
 	m_iBoostTopSpeedFrame = g_iBoostRisingyTopSpeedFrame + (g_iBoostTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage);
 	//ブースト展開中のEN消費.
 	m_iBoostMoveCost = pRobo->GetRoboState(clsROBO_STATUS::BOOST_COST_H);
-
-	m_iEnelgyOutput = m_iBoostMoveCost + m_iBoostMoveCost / iHulf;
 
 	//ブースト上昇速度.
 	m_fBoostRisingSpeedMax = pRobo->GetRoboState(clsROBO_STATUS::BOOST_THRUST_V) * g_fDistanceReference;
@@ -235,7 +233,10 @@ void clsRobo::Boost()
 		//ブースターアニメーションではなかった.
 		AnimChangeLeg(enAnimNoLegBoostStart);//ブースターに切り替え.
 		//ブースター点灯.
-		m_wpSound->PlaySE(g_iBoostIgnitionSENo);
+		if (m_bPlayer)
+		{
+			m_wpSound->PlaySE(g_iBoostIgnitionSENo);
+		}
 	}
 
 	m_bBoost = true;
@@ -328,7 +329,10 @@ void clsRobo::QuickBoost()
 				SetMoveDeceleSpeed(m_iQuickInterbal);
 				AnimChangeLeg(enAnimNoLegBoostStart);
 				//クイックブースト.
-				m_wpSound->PlaySE(g_iQuickBoostSENo);
+				if (m_bPlayer)
+				{
+					m_wpSound->PlaySE(g_iQuickBoostSENo);
+				}
 			}
 		}
 	}
@@ -361,7 +365,10 @@ void clsRobo::QuickTurn()
 					//m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
 					SetRotDeceleSpeed(m_iQuickInterbal);
 					//クイックブースト.
-					m_wpSound->PlaySE(g_iQuickBoostSENo);
+					if (m_bPlayer)
+					{
+						m_wpSound->PlaySE(g_iQuickBoostSENo);
+					}
 				}
 			}
 		}
@@ -380,12 +387,12 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 		m_iQuickBoostDecStartTime--;
 	}
 
-	/*if (m_iQuickTrunDecStartTime > 0)//クイックターン.
+	if (m_iQuickTrunDecStartTime > 0)//クイックターン.
 	{
 		m_fRotSpeed = m_fQuickTrunSpeedMax;
 		SetRotDir(m_fQuickTrunDir);
 		m_iQuickTrunDecStartTime--;
-	}*/
+	}
 
 	if (IsMoveControl())
 	{
@@ -416,6 +423,11 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 			{
 				m_fFollPower = -m_fBoostFollRes;
 			}
+		}
+
+		if (abs(m_vMoveDirforBoost.x) > 0.1f || abs(m_vMoveDirforBoost.z) > 0.1f)
+		{
+			EnelgyConsumption(m_iBoostMoveCost);
 		}
 	}
 
@@ -475,9 +487,6 @@ void clsRobo::SetEnelgyRecoveryAmount()
 	//ブースト展開中.
 	if (m_bBoost)
 	{
-		//EN回復を落とす.
-		m_iEnelgyRecoveryPoint -= m_iBoostMoveCost;
-
 		//浮遊時.
 		if (!m_bGround)
 		{
