@@ -146,7 +146,7 @@ void clsRobo::RoboInit(
 
 	m_fRaderRange = pRobo->GetRoboState(clsROBO_STATUS::SEARCH) * g_fDistanceReference;
 
-	m_fLockRange = pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE);
+	m_fLockRange = pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_RANGE)* g_fDistanceReference;
 	
 	m_v_Spheres = m_pMesh->GetColState(pRobo);
 
@@ -1985,7 +1985,6 @@ m_fBoostRisingAccele(0.0f),
 m_iQuickInterbal(0),
 m_bStopComShotL(false),
 m_bStopComShotR(false),
-m_bPlayer(false),
 m_fFollPowerforBoost(0.0f)
 {
 	

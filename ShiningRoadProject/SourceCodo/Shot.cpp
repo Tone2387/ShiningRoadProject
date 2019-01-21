@@ -113,10 +113,10 @@ bool clsShot::Form(
 
 	ObjRollOverGuard(&vRot.x);
 	ObjRollOverGuard(&vRot.y);
-	//m_wpEffect->SetRotation(m_ShotEfcHandles[enEfcShot],vRot);
-	//m_wpEffect->SetRotation(m_ShotEfcHandles[enEfcMuzzle],vRot);
+	m_wpEffect->SetRotation(m_ShotEfcHandles[enEfcShot],vRot);
+	m_wpEffect->SetRotation(m_ShotEfcHandles[enEfcMuzzle],vRot);
 
-	m_vMoveDir.y = 0.0f;
+	m_wpSound->PlaySE(m_ShotState.iSEShotNum);
 
 	return true;
 }
@@ -136,6 +136,11 @@ void clsShot::Action(clsStage* const pStage)
 	if (!m_bExistFlg)
 	{
 		return;
+	}
+
+	if (!m_wpEffect->isPlay(m_ShotEfcHandles[enEfcShot]))
+	{
+		m_bShotExistFlg = false;
 	}
 
 	if (!m_bShotExistFlg)
@@ -174,7 +179,6 @@ void clsShot::Explosion()
 	m_ShotEfcHandles[enEfcHit] = m_wpEffect->Play(m_ShotState.iHitEfcNum, m_Trans.vPos);
 	m_wpEffect->Stop(m_ShotEfcHandles[enEfcShot]);
 	//m_wpEffect->Stop(m_ShotEfcHandles[enEfcLine]);
-	m_bShotExistFlg = false;
 	//”š”­SE.
-	m_wpSound->PlaySE(0);
+	m_wpSound->PlaySE(m_ShotState.iSEHitNum);
 }
