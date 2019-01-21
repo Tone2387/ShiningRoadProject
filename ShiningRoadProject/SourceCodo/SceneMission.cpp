@@ -359,7 +359,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	//エンディングに行く場合は以下のようにする.
 	if (AllEnemyDead())
 	{
-		enNextScene = enSCENE::ENDING;
+		enNextScene = enSCENE::CLEAR;
 	}
 
 	else if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp)
