@@ -145,7 +145,7 @@ namespace{
 	//ビフォアをどれくらい左にずらすか.
 	const float fTEXT_POS_YX_OFFSET_STATUS_NOW = -64.0f;
 	//今のステータスとみているパーツの間に挟むもの.
-	const string sSTATUS_TEXT_MIDWAY = "     >>";
+	const string sSTATUS_TEXT_MIDWAY = "   >>  ";
 	//----- ステータスウィンドウ終わり -----//.
 
 

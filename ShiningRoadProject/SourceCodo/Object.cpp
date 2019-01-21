@@ -670,6 +670,7 @@ bool clsObject::WallJudge(clsStage* const pStage)
 
 	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{
+		//‘åŽG”c‚È‹——£‚Ì”»’è.
 		if( !pStage->isNearBuilding( m_Trans.vPos, i ) ){ continue; }
 
 		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
