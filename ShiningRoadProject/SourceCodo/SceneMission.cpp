@@ -128,7 +128,7 @@ void clsSCENE_MISSION::CreateUI()
 	//HP.
 
 	assert(!m_pHP);
-	vPos = { WND_W / 2, (WND_H / 2) - (ss_CursorFrame.Disp.h / 2) - 50 };
+	vPos = { WND_W / 2, (WND_H / 2) - (ss_CursorFrame.Disp.h / 2) - 75 };
 
 	m_pHP = new clsUiText;
 	m_pHP->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
@@ -140,6 +140,7 @@ void clsSCENE_MISSION::CreateUI()
 
 	//EN.
 
+	//フレーム.
 	assert(!m_pEnelgyFrame);
 
 	ss.Disp = { 355.0f, 74.0f };
@@ -150,6 +151,15 @@ void clsSCENE_MISSION::CreateUI()
 	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\ENFrame.png", ss);
 	m_pEnelgyFrame->SetPos({ WND_W / 2, (WND_H / 2) + (ss_CursorFrame.Disp.h / 2) + (74.0f / 2), 0.0f });
 
+	//ブースト表示
+	assert(!m_pBoostOn);
+	vPos = { WND_W / 2, m_pEnelgyFrame->GetPos().y + 30};
+	m_pBoostOn = new clsUiText;
+	m_pBoostOn->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
+	m_pBoostOn->SetPos(vPos);
+	m_pBoostOn->SetText("Boost");
+
+	//ENバー本体.
 	assert(!m_pEnelgy);
 
 	ss.Disp = { 646.0f / 2, 36.0f};
@@ -161,28 +171,49 @@ void clsSCENE_MISSION::CreateUI()
 	m_pEnelgy->SetPos({ m_pEnelgyFrame->GetPos().x, m_pEnelgyFrame->GetPos().y - 15.0f, 0.0f });
 
 	//残弾数.
+	//左武器.
 	assert(!m_pLBulletNum);
-	vPos = { 250.0f, 0.0f };
+	vPos = { (WND_W / 2) - (ss_CursorFrame.Disp.w / 2), WND_H / 2 - 50 - 16 };
 
 	m_pLBulletNum = new clsUiText;
-	m_pLBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
+	m_pLBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
 	m_pLBulletNum->SetPos(vPos);
 
 	sprintf_s(pText, "");
 
 	m_pLBulletNum->SetText(pText);
 
+	assert(!m_pLBulletMark);
+
+	ss.Disp = { 48.0f, 26.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pLBulletMark = new clsSPRITE2D_CENTER;
+
+	m_pLBulletMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LW.png", ss);
+	m_pLBulletMark->SetPos({ vPos.x - (ss.Disp.w / 2), vPos.y - (ss.Disp.h / 2), 0.0f });
+
+	//右武器.
 	assert(!m_pRBulletNum);
-	vPos = { WND_W / 2 + 250.0f, 0.0f };
+	vPos = { (WND_W / 2) + (ss_CursorFrame.Disp.w / 2), WND_H / 2 - 50 - 16 };
 
 	m_pRBulletNum = new clsUiText;
-	m_pRBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
+	m_pRBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
 	m_pRBulletNum->SetPos(vPos);
 
 	sprintf_s(pText, "");
 
 	m_pRBulletNum->SetText(pText);
 
+	assert(!m_pRBulletMark);
+
+	ss.Disp = { 68.0f, 32.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pRBulletMark = new clsSPRITE2D_CENTER;
+
+	m_pRBulletMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RW.png", ss);
+	m_pRBulletMark->SetPos({ vPos.x + (ss.Disp.w / 2), vPos.y - (ss.Disp.h / 2), 0.0f });
 
 	//右上のレーダー
 	assert(!m_pRaderWindowFront);
@@ -227,37 +258,50 @@ void clsSCENE_MISSION::CreateUI()
 		m_v_pRaderEnemyMark[i]->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 	}
 
-	
-
-
 
 	//左武器ロック.
-	assert(!m_pLWeaponLockMark);
+	assert(!m_pLWeaponLockWindow);
 	ss.Disp = { 92.0f, 106.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pLWeaponLockWindow = new clsSPRITE2D_CENTER;
+
+	m_pLWeaponLockWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockL.png", ss);
+	m_pLWeaponLockWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	//m_pLWeaponLockMark->SetAlpha(0.4f);
+
+	//右武器ロック.
+	assert(!m_pRWeaponLockWindow);
+
+	m_pRWeaponLockWindow = new clsSPRITE2D_CENTER;
+
+	m_pRWeaponLockWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockR.png", ss);
+	m_pRWeaponLockWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	//左ロックマーク
+	assert(!m_pLWeaponLockMark);
+	ss.Disp = { 68.0f, 32.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_pLWeaponLockMark = new clsSPRITE2D_CENTER;
 
-	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockL.png", ss);
-	m_pLWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILock.png", ss);
+	m_pLWeaponLockMark->SetPos({ (WND_W / 2) - (ss_CursorFrame.Disp.w / 2) - (ss.Disp.w / 2), WND_H / 2, 0.0f });
 
-	//m_pLWeaponLockMark->SetAlpha(0.4f);
-
+	//右ロックマーク
 	assert(!m_pRWeaponLockMark);
 
 	m_pRWeaponLockMark = new clsSPRITE2D_CENTER;
 
-	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockR.png", ss);
-	m_pRWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILock.png", ss);
+	m_pRWeaponLockMark->SetPos({ (WND_W / 2) + (ss_CursorFrame.Disp.w / 2) + (ss.Disp.w / 2), WND_H / 2, 0.0f });
 
 	//m_pRWeaponLockMark->SetAlpha(0.4f);
 
 	assert(!m_pHitMark);
 	ss.Disp = { 128.0f, 64.0f };
 	ss.Anim = { 1.0f, 1.0f };
-
-	m_fHitMarkRaderSizeW = ss.Disp.w;
-	m_fHitMarkRaderSizeH = ss.Disp.h;
 
 	m_pHitMark = new clsSPRITE2D_CENTER;
 
@@ -285,13 +329,8 @@ void clsSCENE_MISSION::CreateUI()
 	m_pStartText->SetPos(vPos);
 
 	m_pHPTargetChara = new clsUiText;
-	m_pHPTargetChara->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pHPTargetChara->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
 	m_pHPTargetChara->SetPos(vPos);
-
-	m_pBoostOn = new clsUiText;
-	m_pBoostOn->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
-	m_pBoostOn->SetPos(vPos);
-	m_pBoostOn->SetText("Boost");
 
 	ss.Disp = { WND_W, WND_H };
 	ss.Anim = { 1.0f, 1.0f };
@@ -457,7 +496,9 @@ void clsSCENE_MISSION::RenderUi()
 
 	sprintf_s(pText, "%2d/%2d", iNowNum, iMaxNum);
 	m_pLBulletNum->SetText(pText);
-	m_pLBulletNum->Render();
+	m_pLBulletNum->Render(clsUiText::enPOS::RIGHT);
+
+	m_pLBulletMark->Render();
 
 	iNowNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponRHand]->GetNowBulletNum();
 	iMaxNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponRHand]->GetMaxBulletNum();
@@ -465,6 +506,8 @@ void clsSCENE_MISSION::RenderUi()
 	sprintf_s(pText, "%2d/%2d", iNowNum, iMaxNum);
 	m_pRBulletNum->SetText(pText);
 	m_pRBulletNum->Render();
+
+	m_pRBulletMark->Render();
 
 	//HP.
 
@@ -584,27 +627,19 @@ void clsSCENE_MISSION::RenderUi()
 
 		if (m_pPlayer->IsLWeaponLock())
 		{
-			m_pLWeaponLockMark->SetPos(vPosTmp);
+			m_pLWeaponLockWindow->SetPos(vPosTmp);
+			m_pLWeaponLockWindow->Render();
+
 			m_pLWeaponLockMark->Render();
 		}
 
 		if (m_pPlayer->IsRWeaponLock())
 		{
-			m_pRWeaponLockMark->SetPos(vPosTmp);
+			m_pRWeaponLockWindow->SetPos(vPosTmp);
+			m_pRWeaponLockWindow->Render();
+
 			m_pRWeaponLockMark->Render();
 		}
-
-		/*if (m_pPlayer->IsLWeaponLock())
-		{
-			m_pLWeaponLockMark->SetPos(vPosTmp - D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
-			m_pLWeaponLockMark->Render();
-		}
-
-		if (m_pPlayer->IsRWeaponLock())
-		{
-			m_pRWeaponLockMark->SetPos(vPosTmp + D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
-			m_pRWeaponLockMark->Render();
-		}*/
 	}
 
 	else
