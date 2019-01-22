@@ -7,7 +7,7 @@ const char g_cBONE_NAME_NUM_DIGIT_JOINT = 2;
 const int g_iBoostEfcNo = 1;
 
 const int g_iQuickInterbal = (int)g_fFPS;
-const int g_iQuickTurnFrame = (int)g_fFPS;
+const int g_iQuickTurnFrame = 10;
 
 const int g_iWalkTopSpeedFrame = (int)g_fFPS / 10;
 const int g_iRotTopSpeedFrame = (int)g_fFPS / 2;
@@ -333,6 +333,7 @@ void clsRobo::SetDirQuickTurn(const float fAngle)
 	{
 		if (IsRotControl())
 		{
+			m_fRotDirforBoost = fAngle;
 			m_fQuickTrunDir = (int)D3DX_PI * (fAngle / abs(fAngle));
 			SetRotDir(m_fQuickTrunDir);
 		}
@@ -381,6 +382,16 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 		m_fRotSpeed = m_fQuickTrunSpeedMax;
 		SetRotDir(m_fQuickTrunDir);
 		m_iQuickTrunDecStartTime--;
+
+		//クイックターンを強制終了.
+		if (m_Trans.fYaw <= m_fQuickTrunDir + m_fRotSpeed &&
+			m_Trans.fYaw >= m_fQuickTrunDir - m_fRotSpeed)
+		{
+			m_Trans.fYaw = m_fQuickTrunDir;
+			m_fRotSpeed = 0.0f;
+			SetRotDir(0.0f);
+			m_iQuickTrunDecStartTime = 0;
+		}
 	}
 
 	if (IsMoveControl())
@@ -778,6 +789,12 @@ bool clsRobo::IsRWeaponLock()
 	return false;
 }
 
+void clsRobo::AddRotAccele(const float fAngle, const float fPush)
+{
+	m_fRotDirforBoost = fAngle;
+	clsCharactor::AddRotAccele(fAngle, fPush);
+}
+
 void clsRobo::PlayBoostEfc()
 {
 	PlayFrontBoostEfc();
@@ -786,6 +803,11 @@ void clsRobo::PlayBoostEfc()
 	PlayBackBoostEfc();
 
 	PlayLegBoostEfc();
+
+	if (m_iQuickTrunDecStartTime <= 0)//クイックターン中じゃない.
+	{
+		m_fRotDirforBoost = 0.0f;
+	}
 }
 
 void clsRobo::PlayFrontBoostEfc()
@@ -798,7 +820,7 @@ void clsRobo::PlayLFrontBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z < -0.1f || m_fRotAccele < -0.1f)
+	if (m_vMoveDirforBoost.z < -0.1f || m_fRotDirforBoost < -0.1f)
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -824,6 +846,12 @@ void clsRobo::PlayLFrontBoostEfc()
 			}
 
 			float fScale = abs(m_vMoveDirforBoost.z);
+
+			if (abs(m_fRotDirforBoost) > fScale)
+			{
+				fScale = abs(m_fRotDirforBoost);
+			}
+
 			m_wpEffects->SetScale(m_v_LHandFrontBoostEfc[i], fScale);
 
 			m_wpEffects->SetRotation(m_v_LHandFrontBoostEfc[i], vRotTmp);
@@ -846,7 +874,7 @@ void clsRobo::PlayRFrontBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z < -0.1f || m_fRotAccele < 0.1f)
+	if (m_vMoveDirforBoost.z < -0.1f || m_fRotDirforBoost > 0.1f)
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -872,6 +900,12 @@ void clsRobo::PlayRFrontBoostEfc()
 			}
 
 			float fScale = abs(m_vMoveDirforBoost.z);
+
+			if (abs(m_fRotDirforBoost) > fScale)
+			{
+				fScale = abs(m_fRotDirforBoost);
+			}
+
 			m_wpEffects->SetScale(m_v_RHandFrontBoostEfc[i], fScale);
 
 			m_wpEffects->SetRotation(m_v_RHandFrontBoostEfc[i], vRotTmp);
@@ -1019,6 +1053,7 @@ void clsRobo::PlayBackBoostEfc()
 			}
 
 			float fScale = abs(m_vMoveDirforBoost.z) * 2.0f;
+
 			m_wpEffects->SetScale(m_v_CoreBoostEfc[i], fScale);
 
 			m_wpEffects->SetRotation(m_v_CoreBoostEfc[i], vRotTmp);
@@ -1042,7 +1077,7 @@ void clsRobo::PlayLBackBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z > 0.1f || m_fRotAccele < 0.1f)
+	if (m_vMoveDirforBoost.z > 0.1f || m_fRotDirforBoost > 0.1f)
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -1068,6 +1103,12 @@ void clsRobo::PlayLBackBoostEfc()
 			}
 
 			float fScale = abs(m_vMoveDirforBoost.z);
+
+			if (abs(m_fRotDirforBoost) > fScale)
+			{
+				fScale = abs(m_fRotDirforBoost);
+			}
+
 			m_wpEffects->SetScale(m_v_LHandBackBoostEfc[i], fScale);
 
 			m_wpEffects->SetRotation(m_v_LHandBackBoostEfc[i], vRotTmp);
@@ -1090,7 +1131,7 @@ void clsRobo::PlayRBackBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z > 0.1f || m_fRotDir < -0.1f)
+	if (m_vMoveDirforBoost.z > 0.1f || m_fRotDirforBoost < -0.1f)
 	{
 		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
@@ -1116,6 +1157,12 @@ void clsRobo::PlayRBackBoostEfc()
 			}
 
 			float fScale = abs(m_vMoveDirforBoost.z);
+
+			if (abs(m_fRotDirforBoost) > fScale)
+			{
+				fScale = abs(m_fRotDirforBoost);
+			}
+
 			m_wpEffects->SetScale(m_v_RHandBackBoostEfc[i], fScale);
 
 			m_wpEffects->SetRotation(m_v_RHandBackBoostEfc[i], vRotTmp);
@@ -1161,10 +1208,10 @@ void clsRobo::PlayLegBoostEfc()
 				m_wpEffects->SetPosition(m_v_LegBoostEfc[i], vPosEndTmp);
 			}
 
+			float fScale = 0.0f;
+
 			if (abs(m_vMoveDirforBoost.x) > 0.1f || abs(m_vMoveDirforBoost.z) > 0.1f || m_fFollPowerforBoost > 0.1f)
 			{
-				float fScale = 0.0f;
-
 				if (abs(m_vMoveDirforBoost.x) > abs(m_vMoveDirforBoost.z))
 				{
 					fScale = abs(m_vMoveDirforBoost.x);
@@ -1179,9 +1226,20 @@ void clsRobo::PlayLegBoostEfc()
 				{
 					fScale = m_fFollPowerforBoost;
 				}
-				
-				m_wpEffects->SetScale(m_v_LegBoostEfc[i], fScale);
 			}
+
+			else if (!m_bGround)
+			{
+				fScale = 0.5f;
+			}
+
+			else
+			{
+				m_wpEffects->Stop(m_v_LegBoostEfc[i]);
+				continue;
+			}
+
+			m_wpEffects->SetScale(m_v_LegBoostEfc[i], fScale);
 
 			m_wpEffects->SetRotation(m_v_LegBoostEfc[i], vRotTmp);
 		}
@@ -1985,7 +2043,8 @@ m_fBoostRisingAccele(0.0f),
 m_iQuickInterbal(0),
 m_bStopComShotL(false),
 m_bStopComShotR(false),
-m_fFollPowerforBoost(0.0f)
+m_fFollPowerforBoost(0.0f),
+m_fRotDirforBoost(0.0f)
 {
 	
 }

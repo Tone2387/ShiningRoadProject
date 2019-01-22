@@ -147,6 +147,8 @@ public:
 	void QuickTurn();
 	void SetDirQuickTurn(const float fAngle);
 
+	virtual void AddRotAccele(const float fAngle, const float fPush) override;//回転速度加算.
+
 	void ShotLWeapon();
 	void ShotRWeapon();
 	bool IsLWeaponLock();
@@ -170,6 +172,7 @@ private:
 
 	D3DXVECTOR3 m_vMoveDirforBoost;
 	float m_fFollPowerforBoost;
+	float m_fRotDirforBoost;
 
 	//右腕ブースターエフェクト.
 	std::vector<::Effekseer::Handle> m_v_RHandFrontBoostEfc;

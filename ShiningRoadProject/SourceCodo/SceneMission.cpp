@@ -102,6 +102,64 @@ void clsSCENE_MISSION::CreateUI()
 
 	m_pLimitTime->SetText(pText);
 
+	SPRITE_STATE ss,ss_CursorFrame;
+
+	//カーソル.
+	assert(!m_pCursor);
+	ss.Disp = { 1.0f, 1.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pCursor = new clsSPRITE2D_CENTER;
+
+	m_pCursor->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
+	m_pCursor->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pCursor->SetAlpha(0.4f);
+
+	assert(!m_pCursorFrame);
+	ss_CursorFrame.Disp = { 512.0f, 512.0f };
+	ss_CursorFrame.Anim = { 1.0f, 1.0f };
+
+	m_pCursorFrame = new clsSPRITE2D_CENTER;
+
+	m_pCursorFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss_CursorFrame);
+	m_pCursorFrame->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	//HP.
+
+	assert(!m_pHP);
+	vPos = { WND_W / 2, (WND_H / 2) - (ss_CursorFrame.Disp.h / 2) - 50 };
+
+	m_pHP = new clsUiText;
+	m_pHP->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pHP->SetPos(vPos);
+
+	sprintf_s(pText, "");
+
+	m_pHP->SetText(pText);
+
+	//EN.
+
+	assert(!m_pEnelgyFrame);
+
+	ss.Disp = { 355.0f, 74.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pEnelgyFrame = new clsSPRITE2D_CENTER;
+
+	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\ENFrame.png", ss);
+	m_pEnelgyFrame->SetPos({ WND_W / 2, (WND_H / 2) + (ss_CursorFrame.Disp.h / 2) + (74.0f / 2), 0.0f });
+
+	assert(!m_pEnelgy);
+
+	ss.Disp = { 646.0f / 2, 36.0f};
+	ss.Anim = { 2.0f, 1.0f };
+
+	m_pEnelgy = new clsSPRITE2D_CENTER;
+
+	m_pEnelgy->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\ENbar.png", ss);
+	m_pEnelgy->SetPos({ m_pEnelgyFrame->GetPos().x, m_pEnelgyFrame->GetPos().y - 15.0f, 0.0f });
+
 	//残弾数.
 	assert(!m_pLBulletNum);
 	vPos = { 250.0f, 0.0f };
@@ -125,21 +183,8 @@ void clsSCENE_MISSION::CreateUI()
 
 	m_pRBulletNum->SetText(pText);
 
-	//HP.
 
-	assert(!m_pHP);
-	vPos = { WND_W / 2, 0.0f };
-
-	m_pHP = new clsUiText;
-	m_pHP->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
-	m_pHP->SetPos(vPos);
-
-	sprintf_s(pText, "");
-
-	m_pHP->SetText(pText);
-
-	SPRITE_STATE ss;
-
+	//右上のレーダー
 	assert(!m_pRaderWindowFront);
 	ss.Disp = { 960.0f / 8, 640.0f / 8 };
 	ss.Anim = { 1.0f, 1.0f };
@@ -182,47 +227,9 @@ void clsSCENE_MISSION::CreateUI()
 		m_v_pRaderEnemyMark[i]->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 	}
 
-	//カーソル.
-	assert(!m_pCursor);
-	ss.Disp = { 1.0f, 1.0f };
-	ss.Anim = { 1.0f, 1.0f };
+	
 
-	m_pCursor = new clsSPRITE2D_CENTER;
 
-	m_pCursor->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
-	m_pCursor->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
-
-	m_pCursor->SetAlpha(0.4f);
-
-	assert(!m_pCursorFrame);
-	ss.Disp = { 512.0f, 512.0f };
-	ss.Anim = { 1.0f, 1.0f };
-
-	m_pCursorFrame = new clsSPRITE2D_CENTER;
-
-	m_pCursorFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
-	m_pCursorFrame->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
-
-	//EN.
-	assert(!m_pEnelgy);
-
-	ss.Disp = { 512.0f / 2, 64.0f / 4 };
-	ss.Anim = { 2.0f, 1.0f };
-
-	m_pEnelgy = new clsSPRITE2D_CENTER;
-
-	m_pEnelgy->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Gauge.png", ss);
-	m_pEnelgy->SetPos({ WND_W / 2, m_pCursorFrame->GetPos().y - ((256.0f / 2) + (64.0f)), 0.0f });
-
-	assert(!m_pEnelgyFrame);
-
-	ss.Disp = { 512.0f / 2 + 5, 64.0f / 4 + 3 };
-	ss.Anim = { 1.0f, 1.0f };
-
-	m_pEnelgyFrame = new clsSPRITE2D_CENTER;
-
-	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\GaugeWaku.png", ss);
-	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
 
 	//左武器ロック.
 	assert(!m_pLWeaponLockMark);

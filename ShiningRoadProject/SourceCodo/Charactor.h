@@ -142,7 +142,7 @@ public:
 	//‰ñ“].
 	void Rotate();
 
-	void AddRotAccele(const float fAngle, const float fPush);//‰ñ“]‘¬“x‰ÁŽZ.
+	virtual void AddRotAccele(const float fAngle, const float fPush);//‰ñ“]‘¬“x‰ÁŽZ.
 
 	bool IsRotate();
 	bool IsRotControl();

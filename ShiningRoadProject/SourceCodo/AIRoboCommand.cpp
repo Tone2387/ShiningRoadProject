@@ -540,6 +540,11 @@ clsRoboCommand* clsEnemyRobo::QuickTurnOperation(float& fPower, float& fAngle)
 {
 	if (IsQuickTurn(fPower, fAngle))
 	{
+		if (m_pBody->m_bBoost)
+		{
+			return m_pComMoveSwitch;
+		}
+
 		return m_pComQuickTrun;
 	}
 
