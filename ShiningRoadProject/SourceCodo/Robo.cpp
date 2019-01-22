@@ -809,6 +809,8 @@ void clsRobo::PlayBoostEfc()
 	{
 		m_fRotDirforBoost = 0.0f;
 	}
+
+	m_fFollPowerforBoost = 0.0f;
 }
 
 void clsRobo::PlayFrontBoostEfc()
