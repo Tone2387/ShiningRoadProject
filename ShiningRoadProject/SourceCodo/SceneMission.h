@@ -108,6 +108,7 @@ private:
 
 	clsSPRITE2D_CENTER* m_pRaderWindowFront;
 	clsSPRITE2D_CENTER* m_pRaderWindowBack;
+	clsSPRITE2D_CENTER* m_pRaderPlayerMark;
 	std::vector<clsSPRITE2D_CENTER*> m_v_pRaderEnemyMark;
 
 	float m_fRaderSizeW;
@@ -115,8 +116,6 @@ private:
 
 	float m_fRaderMarkSizeW;
 	float m_fRaderMarkSizeH;
-
-	float m_fRaderDis;
 
 	clsSPRITE2D_CENTER* m_pLockWindow;
 	clsSPRITE2D_CENTER* m_pLWeaponLockMark;

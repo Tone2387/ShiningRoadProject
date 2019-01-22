@@ -217,7 +217,7 @@ void clsSCENE_MISSION::CreateUI()
 
 	//右上のレーダー
 	assert(!m_pRaderWindowFront);
-	ss.Disp = { 960.0f / 8, 640.0f / 8 };
+	ss.Disp = { 120.0f, 80.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_pRaderWindowFront = new clsSPRITE2D_CENTER;
@@ -228,7 +228,7 @@ void clsSCENE_MISSION::CreateUI()
 	m_pRaderWindowFront->SetAlpha(1.0f);
 
 	assert(!m_pRaderWindowBack);
-	ss.Disp = { 960.0f / 8, 640.0f / 8 };
+	ss.Disp = { 120.0f, 80.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_fRaderSizeW = ss.Disp.w;
@@ -239,14 +239,17 @@ void clsSCENE_MISSION::CreateUI()
 	m_pRaderWindowBack->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowBack.png", ss);
 	m_pRaderWindowBack->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
-	m_pRaderWindowBack->SetAlpha(0.4f);
+//	m_pRaderWindowBack->SetAlpha(0.4f);
 
-	ss.Disp = { 44.0f / 8, 44.0f / 8 };
+	ss.Disp = { 5.0f, 5.0f };
 
 	m_fRaderMarkSizeW = ss.Disp.w;
 	m_fRaderMarkSizeH = ss.Disp.h;
 
-	m_fRaderDis = 50.0f;
+	m_pRaderPlayerMark = new clsSPRITE2D_CENTER;
+
+	m_pRaderPlayerMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarPlayerMark.png", ss);
+	m_pRaderPlayerMark->SetPos(m_pRaderWindowBack->GetPos());
 
 	m_v_pRaderEnemyMark.resize(m_v_pEnemys.size());
 
@@ -573,6 +576,8 @@ void clsSCENE_MISSION::RenderUi()
 			m_v_pRaderEnemyMark[i]->Render();
 		}
 	}
+
+	m_pRaderPlayerMark->Render();
 
 	m_pRaderWindowFront->Render();
 
