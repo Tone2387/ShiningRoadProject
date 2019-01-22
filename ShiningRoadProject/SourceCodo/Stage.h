@@ -8,7 +8,7 @@ class clsObjStaticMesh;
 class clsObjSkinMesh;
 class clsDX9Mesh;
 class clsSprite;
-
+class clsRobo;
 
 
 class clsStage
@@ -36,6 +36,9 @@ public:
 	bool isNearBuilding( 
 		const D3DXVECTOR3& vPosObjOtherBuilding,//ビルと判定を取りたいモノの座標.
 		const unsigned int uiBuildingNo );		//ビルの番号.
+
+	//ビルの中に入ったギガポンを追い出す.
+	void KickOutInsideBuilding( clsRobo* const pRobo );
 
 	//光るところの色を定める.
 	void SetColorTarget( const D3DXVECTOR4& vColor );

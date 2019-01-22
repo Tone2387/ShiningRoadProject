@@ -412,3 +412,10 @@ bool clsStage::isNearBuilding(
 }
 
 
+//ƒrƒ‹‚Ì’†‚É“ü‚Á‚½ƒMƒKƒ|ƒ“‚ð’Ç‚¢o‚·.
+void clsStage::KickOutInsideBuilding( clsRobo* const pRobo )
+{
+	for( auto& Building_i : m_vpBuilding ){
+		Building_i->KickOutInside( pRobo );
+	}
+}

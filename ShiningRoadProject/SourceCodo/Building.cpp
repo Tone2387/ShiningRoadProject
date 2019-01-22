@@ -1,5 +1,7 @@
 #include "Building.h"
 
+#include "Robo.h"
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -257,8 +259,7 @@ void clsBUILDING::RenderInside(
 }
 
 //ビルの近くにいるか( 上から見た円の判定 ).
-bool clsBUILDING::isNearBuilding(
-	const D3DXVECTOR3& vPosObjOtherBuilding )//ビルと判定を取りたいモノの座標.
+bool clsBUILDING::isNearBuilding( const D3DXVECTOR3& vPosObjOtherBuilding )//ビルと判定を取りたいモノの座標.
 {
 #if 0
 	const float fOFFSET = 2.5f;
@@ -307,6 +308,39 @@ bool clsBUILDING::isNearBuilding(
 	return false;
 }
 
+
+//ビルの中に入ったギガポンを追い出す.
+void clsBUILDING::KickOutInside( clsRobo* const pRobo )
+{
+	D3DXVECTOR3 vScaleHalf = GetScale() * 0.5f;
+
+	float fNORTH = GetPos().z + vScaleHalf.z;
+	float fSOUTH = GetPos().z - vScaleHalf.z;
+	float fEAST	 = GetPos().x + vScaleHalf.x;
+	float fWEST	 = GetPos().x - vScaleHalf.x;
+	
+	float fTOP	 = GetPos().y + GetScale().y;
+
+	D3DXVECTOR3 vRoboPos = pRobo->GetPosition();
+	if( vRoboPos.z > fNORTH ){ return; }
+	if( vRoboPos.z < fSOUTH ){ return; }
+	if( vRoboPos.x > fEAST ) { return; }
+	if( vRoboPos.x < fWEST ) { return; }
+
+	if( vRoboPos.y > fTOP )	 { return; }
+
+	//----- ここから先はビルの中にいる -----//.
+	D3DXVECTOR3 vKickDir = vRoboPos - GetPos();	
+	//高さは別計算.
+	vKickDir.y = vRoboPos.y - fTOP;
+	if( vKickDir.y < 0.0f ){ vKickDir.y = 0; }
+
+	D3DXVec3Normalize( &vKickDir, &vKickDir );
+
+	vRoboPos += vKickDir;
+
+	pRobo->SetPosition( vRoboPos );
+}
 
 
 //タイルの目標数を作る.
