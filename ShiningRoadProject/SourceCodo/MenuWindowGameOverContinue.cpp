@@ -62,7 +62,9 @@ void clsMENU_WINDOW_GAME_OVER_CONTINUE::UpdateProduct()
 	if( SelectEnter() ){
 		if( m_iSelectNum == iSELECT_NUM_YES_INDEX ){
 			//ŽŸ‚ðŠJ‚­.
-			if( CreateNextWindow( &m_pNextWindow ) ){
+			//ŽŸ‚ª‘¶Ý‚·‚é‚È‚ç‚â‚ç‚È‚¢.
+			if( m_pNextWindow ){}
+			else if( CreateNextWindow( &m_pNextWindow ) ){
 				m_upSound->PlaySE( clsSOUND_MANAGER_MENUWINDOW::enSE_ENTER );
 				const D3DXVECTOR3 vADD_POS = D3DXVECTOR3( 20.0f, 20.0f, 0.0f );
 				m_pNextWindow->SetPos( GetPos() + vADD_POS );
