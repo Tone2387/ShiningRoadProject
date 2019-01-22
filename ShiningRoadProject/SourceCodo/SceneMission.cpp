@@ -967,7 +967,7 @@ void clsSCENE_MISSION::PlayNoise( const HitState& Hitstate )
 {
 	if( Hitstate.bHit ){
 		//ダメージ量のによるノイズの種類の境界線.
-		const int iNOISE_STRONG_BORDER = 500;
+		const int iNOISE_STRONG_BORDER = 1000;
 		if( Hitstate.iDamage >= iNOISE_STRONG_BORDER ){
 			NoiseStrong();
 		}
