@@ -787,13 +787,13 @@ void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 		enNextScene = enSCENE::ASSEMBLE;
 	}
 	else if( GetAsyncKeyState( 'Y' ) & 0x1 ){
-		enNextScene = enSCENE::TAKEOFF;
+		enNextScene = enSCENE::MOVIE_TAKEOFF;
 	}
 	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
 		enNextScene = enSCENE::MISSION;
 	}
 	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
-		enNextScene = enSCENE::CLEAR;
+		enNextScene = enSCENE::MOVIE_CLEAR;
 	}
 	else if( GetAsyncKeyState( 'O' ) & 0x1 ){
 		enNextScene = enSCENE::ENDING;

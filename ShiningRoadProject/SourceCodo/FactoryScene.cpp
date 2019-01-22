@@ -2,9 +2,9 @@
 
 #include "SceneTitle.h"
 #include "SceneAssemble.h"
-#include "SceneTakeoff.h"
+#include "SceneMovieTakeoff.h"
 #include "SceneMission.h"
-#include "SceneClear.h"
+#include "SceneMovieClear.h"
 #include "SceneEnding.h"
 #include "SceneGameOver.h"
 
@@ -24,14 +24,14 @@ clsSCENE_BASE* clsFACTORY_SCENE::Create(
 	case enSCENE::ASSEMBLE:
 		return new clsSCENE_ASSEMBLE( ptrGroup );
 
-	case enSCENE::TAKEOFF:
-		return new clsSCENE_TAKEOFF( ptrGroup );
+	case enSCENE::MOVIE_TAKEOFF:
+		return new clsSCENE_MOVIE_TAKEOFF( ptrGroup );
 
 	case enSCENE::MISSION:
 		return new clsSCENE_MISSION( ptrGroup );
 
-	case enSCENE::CLEAR:
-		return new clsSCENE_CLEAR( ptrGroup );
+	case enSCENE::MOVIE_CLEAR:
+		return new clsSCENE_MOVIE_CLEAR( ptrGroup );
 
 	case enSCENE::ENDING:
 		return new clsSCENE_ENDING( ptrGroup );

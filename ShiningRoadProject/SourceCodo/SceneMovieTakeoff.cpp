@@ -1,4 +1,4 @@
-#include "SceneTakeoff.h"
+#include "SceneMovieTakeoff.h"
 #include "Stage.h"
 #include "RoboTakeoff.h"
 #include "File.h"
@@ -24,19 +24,19 @@ namespace
 
 
 
-clsSCENE_TAKEOFF::clsSCENE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup ) 
+clsSCENE_MOVIE_TAKEOFF::clsSCENE_MOVIE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup ) 
 	:clsSCENE_MOVIE_BASE( ptrGroup, enSCENE::MISSION, sFILE_PATH_CUT_FRAME.c_str() )
 {
 }
 
-clsSCENE_TAKEOFF::~clsSCENE_TAKEOFF()
+clsSCENE_MOVIE_TAKEOFF::~clsSCENE_MOVIE_TAKEOFF()
 {
 }
 
 
 
 
-void clsSCENE_TAKEOFF::CreateProduct()
+void clsSCENE_MOVIE_TAKEOFF::CreateProduct()
 {
 	
 //	m_wpFont->Create( sFONT_TEXT_PATH_GAME_OVER );
@@ -72,20 +72,20 @@ void clsSCENE_TAKEOFF::CreateProduct()
 }
 
 
-void clsSCENE_TAKEOFF::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_MOVIE_TAKEOFF::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 	if( m_upStage ){	m_upStage-> Render( m_mView, m_mProj, m_vLight, vCamPos ); }
 	if( m_upPlayer ){	m_upPlayer->Render( m_mView, m_mProj, m_vLight, vCamPos ); }
 	if( m_upEnemy ){	m_upEnemy-> Render( m_mView, m_mProj, m_vLight, vCamPos ); }
 }
 
-void clsSCENE_TAKEOFF::RenderUi()
+void clsSCENE_MOVIE_TAKEOFF::RenderUi()
 {
 
 }
 
 
-void clsSCENE_TAKEOFF::InitMovieProduct()
+void clsSCENE_MOVIE_TAKEOFF::InitMovieProduct()
 {
 	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
 
@@ -95,31 +95,31 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 
 	switch( m_iCut )
 	{
-	case clsSCENE_TAKEOFF::enCUT_START:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_START:
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_RED_1:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_1:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
 		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_RED_2:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_2:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
 		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_RED_3:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_3:
 		m_upStage->SetColor( vSTAGE_COLOR_BLUE );
 		m_upStage->SetColorTarget( vSTAGE_COLOR_RED );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_LIA_OPEN:
 		m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
 		m_upEnemy->Boost();
 		m_wpSound->PlaySE( enSE_DOOR_OPEN );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENEMY_APP:
 		{
 			const int iARM_ANIM_INDEX = 0;
 			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
@@ -130,27 +130,27 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_ROAD:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ROAD:
 		m_wpSound->StopSE( enSE_BOOSTER );
 		m_wpSound->PlaySE( enSE_ENVIRONMENTAL, true );
 		m_wpSound->PlaySE( enSE_PASS );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_UP:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_ROAD:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_APP:
 		m_upEnemy->Boost();
 		m_wpSound->StopSE( enSE_ENVIRONMENTAL );
 //		m_wpSound->PlaySE( enSE_PASS );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENCOUNT:
 		{
 			m_upPlayer->Boost();
 			m_upStage->SetAnimDoor( clsStage::enDOOR_DOOR_1, clsStage::enDOOR_ANIM_CLOSING );
@@ -159,11 +159,11 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENEMY_LANDING:
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_VS:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_VS:
 		{
 			const int iINDEX = 1;
 			const float fDISTANCE = m_vecfOtherData[ iINDEX ];
@@ -174,7 +174,7 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_END:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_END:
 		{
 			const int iINDEX = 1;
 			const float fDISTANCE = m_vecfOtherData[ iINDEX ];
@@ -191,7 +191,7 @@ void clsSCENE_TAKEOFF::InitMovieProduct()
 }
 
 
-void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
+void clsSCENE_MOVIE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 {
 	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
 
@@ -206,14 +206,14 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 
 	switch( m_iCut )
 	{
-	case clsSCENE_TAKEOFF::enCUT_START:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_START:
 		{
 			const float fADD = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->Spn( fADD );
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_RED_1:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_1:
 		{
 			const float fDISTANCE = m_vecfOtherData[ iOtherDataIndex++ ];
 			const float fSE_FRAME = m_vecfOtherData[ iOtherDataIndex++ ];
@@ -228,7 +228,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_RED_2:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_2:
 		{
 			const float fADD_Y = m_vecfOtherData[ iOtherDataIndex++ ];
 			const float fADD_Z = m_vecfOtherData[ iOtherDataIndex++ ];
@@ -236,7 +236,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_RED_3:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_3:
 		{
 			const float fADD_Y = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->AddLookPos( { 0.0f, fADD_Y, 0.0f } );
@@ -248,7 +248,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_LIA_OPEN:
 		{
 			const float fUP = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->AddPos( { 0.0f, fUP, 0.0f }, false );
@@ -257,7 +257,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENEMY_APP:
 		{
 			const float fSPN = m_vecfOtherData[ iOtherDataIndex++ ];
 			const float fDOWN_ENEMY = m_vecfOtherData[ iOtherDataIndex++ ];
@@ -273,7 +273,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_ROAD:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ROAD:
 		{
 			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//通路を進んでいるとき.
 			m_upPlayer->SetPosition(
@@ -284,7 +284,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_UP:
 		{
 			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//通路を進んでいるとき.
 			m_upPlayer->SetPosition(
@@ -303,7 +303,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_ROAD:
 		{
 			const float fPLAYER_SPEED_GO_ROAD = m_vecfOtherData[ iOtherDataIndex++ ];//通路を進んでいるとき.
 			m_upPlayer->SetPosition(
@@ -335,7 +335,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_APP:
 		{
 			const float fPLAYER_SPEED_DOOR_APP = m_vecfOtherData[ iOtherDataIndex++ ];//ドアから現れるとき.
 			m_upPlayer->SetPosition(
@@ -361,7 +361,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENCOUNT:
 		{
 			const float fDOWN = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->AddPos( { 0.0f, fDOWN, 0.0f } );
@@ -387,7 +387,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENEMY_LANDING:
 		{
 			const float fDOWN = m_vecfOtherData[ iOtherDataIndex++ ];
 			const float fLANDING = m_vecfOtherData[ iOtherDataIndex++ ];
@@ -419,7 +419,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_VS:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_VS:
 		{
 			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->CrabWalk( fDistance );
@@ -427,7 +427,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 		}
 		break;
 
-	case clsSCENE_TAKEOFF::enCUT_END:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_END:
 		{
 			const float fDistance = m_vecfOtherData[ iOtherDataIndex++ ];
 			wpCam->CrabWalk( fDistance );
@@ -466,7 +466,7 @@ void clsSCENE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 }
 
 //指定した行のファイルデータをカメラに与える.
-void clsSCENE_TAKEOFF::SetCamPosFromFile( const int iFileRow )
+void clsSCENE_MOVIE_TAKEOFF::SetCamPosFromFile( const int iFileRow )
 {
 	clsCAMERA_TAKEOFF* wpCam = static_cast<clsCAMERA_TAKEOFF*>( m_wpCamera );
 
@@ -489,7 +489,7 @@ void clsSCENE_TAKEOFF::SetCamPosFromFile( const int iFileRow )
 }
 
 //指定した行のファイルデータをギガポンたちに与える.
-void clsSCENE_TAKEOFF::SetGigaponPosFromFile( const int iFileRow )
+void clsSCENE_MOVIE_TAKEOFF::SetGigaponPosFromFile( const int iFileRow )
 {
 	clsFILE File;
 	assert( File.Open( sFILE_PATH_GIGAPON ) );
@@ -511,7 +511,7 @@ void clsSCENE_TAKEOFF::SetGigaponPosFromFile( const int iFileRow )
 }
 
 
-void clsSCENE_TAKEOFF::SetOtherDataFromFile( const int iFileRow )
+void clsSCENE_MOVIE_TAKEOFF::SetOtherDataFromFile( const int iFileRow )
 {
 	clsFILE File;
 	assert( File.Open( sFILE_PATH_OTHER ) );
@@ -528,7 +528,7 @@ void clsSCENE_TAKEOFF::SetOtherDataFromFile( const int iFileRow )
 
 //============================ デバッグテキスト ===========================//
 #ifdef _DEBUG
-void clsSCENE_TAKEOFF::RenderDebugText()
+void clsSCENE_MOVIE_TAKEOFF::RenderDebugText()
 {
 	//NULLチェック.
 	assert( m_upText );
@@ -571,46 +571,46 @@ void clsSCENE_TAKEOFF::RenderDebugText()
 
 	switch( m_iCut )
 	{
-	case clsSCENE_TAKEOFF::enCUT_START:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_START:
 		sprintf_s( strDbgTxt,"Cut : enCUT_START" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_RED_1:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_1:
 		sprintf_s( strDbgTxt,"Cut : enCUT_RED_1" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_RED_2:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_2:
 		sprintf_s( strDbgTxt,"Cut : enCUT_RED_2" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_RED_3:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_RED_3:
 		sprintf_s( strDbgTxt,"Cut : enCUT_RED_3" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_LIA_OPEN:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_LIA_OPEN:
 		sprintf_s( strDbgTxt,"Cut : enCUT_LIA_OPEN" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_ENEMY_APP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENEMY_APP:
 		sprintf_s( strDbgTxt,"Cut : enCUT_ENEMY_APP" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_ROAD:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ROAD:
 		sprintf_s( strDbgTxt,"Cut : enCUT_ROAD" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_UP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_UP:
 		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_UP" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_ROAD:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_ROAD:
 		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_ROAD" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_PLAYER_APP:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_PLAYER_APP:
 		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_APP" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_ENCOUNT:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENCOUNT:
 		sprintf_s( strDbgTxt,"Cut : enCUT_ENCOUNT" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_ENEMY_LANDING:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENEMY_LANDING:
 		sprintf_s( strDbgTxt,"Cut : enCUT_ENEMY_LANDING" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_VS:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_VS:
 		sprintf_s( strDbgTxt,"Cut : enCUT_VS" );
 		break;
-	case clsSCENE_TAKEOFF::enCUT_END:
+	case clsSCENE_MOVIE_TAKEOFF::enCUT_END:
 		sprintf_s( strDbgTxt,"Cut : enCUT_END" );
 		break;
 	}

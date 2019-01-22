@@ -20,13 +20,13 @@ clsCAMERA_BASE* clsFACTORY_CAMERA::Create( const enSCENE enScene ) const
 	case enSCENE::ASSEMBLE:
 		return new clsCAMERA_ASSEMBLE();
 
-	case enSCENE::TAKEOFF:
+	case enSCENE::MOVIE_TAKEOFF:
 		return new clsCAMERA_TAKEOFF();
 
 	case enSCENE::MISSION:
 		return new clsCAMERA_MISSION();
 
-	case enSCENE::CLEAR:
+	case enSCENE::MOVIE_CLEAR:
 		return new clsCAMERA_CLEAR();
 
 	case enSCENE::ENDING:
