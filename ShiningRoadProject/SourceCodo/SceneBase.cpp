@@ -66,6 +66,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_fBlock(					0.0f )
 	,m_fPulse(					0.0f )
 	,m_bStopNoiseSe(			false )
+	,m_isNoiseStrong(				false )
 	,m_fRenderLimit(			fRENDER_LIMIT )
 	,m_fZoom(					fZOOM )
 {
@@ -191,6 +192,7 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 	else{
 		if( m_bStopNoiseSe ){
 			m_bStopNoiseSe = false;
+			m_isNoiseStrong = false;
 			m_upScreenTexture->StopSe();
 		}
 	}
@@ -252,6 +254,7 @@ void clsSCENE_BASE::Render(
 		this->UpdateNoise();
 	}
 
+#ifdef _DEBUG
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
 		NoiseStrong( 60 );
 	}
@@ -269,6 +272,7 @@ void clsSCENE_BASE::Render(
 //	if( GetAsyncKeyState( 'B' ) & 0x8000 ){
 //		m_upScreenTexture->SetColor( { 0.5f, 0.5f, 1.0f, 1.0f } );
 //	}
+#endif//#ifdef _DEBUG
 
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
@@ -841,6 +845,7 @@ void clsSCENE_BASE::SetViewPort(
 void clsSCENE_BASE::NoiseStrong( const int iPower )
 {
 	assert( m_upScreenTexture );
+	if( m_isNoiseStrong ){ return; }
 
 //	int iBlockFrame = iFrame;
 //	const int iFRAME_MAX = 30;
@@ -866,12 +871,14 @@ void clsSCENE_BASE::NoiseStrong( const int iPower )
 	m_upScreenTexture->PlaySeStrong();
 
 	m_bStopNoiseSe = true;
+	m_isNoiseStrong = true;
 
 	m_encNoise = encNOISE::BLOCK_AND_PULSE;
 }
 void clsSCENE_BASE::NoiseWeak( const int iFrame )
 {
 	assert( m_upScreenTexture );
+	if( m_upScreenTexture->isNoiseFlag() ){ return; }
 
 	m_upScreenTexture->SetNoiseFlag( true );
 	m_iNoiseFrame = iFrame;

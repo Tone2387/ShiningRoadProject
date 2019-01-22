@@ -157,6 +157,7 @@ protected:
 	int		m_iNoiseFrame;
 	float	m_fBlock;
 	float	m_fPulse;
+	bool	m_isNoiseStrong;//ã≠Ç¢ÉmÉCÉYî≠ê∂íÜ.
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
