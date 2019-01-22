@@ -347,7 +347,7 @@ bool clsSOUND_MANAGER_BASE::Play(
 
 	vpSound[ uiNo ][ viNum[ uiNo ] ]->SeekToStart();
 
-	return false;//vpSound[uiNo][viNum[uiNo]]->Play(bNotify);
+	return vpSound[uiNo][viNum[uiNo]]->Play(bNotify);
 #endif//#if 0
 }
 
