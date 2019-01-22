@@ -7,11 +7,11 @@ class clsROBO_TAKEOFF;
 #include "SceneMovieBase.h"
 //#include "CameraTakeoff.h"
 
-class clsSCENE_CLEAR : public clsSCENE_MOVIE_BASE
+class clsSCENE_MOVIE_CLEAR : public clsSCENE_MOVIE_BASE
 {
 public:
-	clsSCENE_CLEAR( clsPOINTER_GROUP* const ptrGroup );
-	~clsSCENE_CLEAR();
+	clsSCENE_MOVIE_CLEAR( clsPOINTER_GROUP* const ptrGroup );
+	~clsSCENE_MOVIE_CLEAR();
 
 private:
 	void CreateProduct() final;

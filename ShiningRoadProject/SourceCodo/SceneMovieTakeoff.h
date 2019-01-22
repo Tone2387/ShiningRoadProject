@@ -12,11 +12,11 @@ class clsROBO_TAKEOFF;
 //================================//
 //========== エンディングクラス ==========//
 //================================//
-class clsSCENE_TAKEOFF : public clsSCENE_MOVIE_BASE
+class clsSCENE_MOVIE_TAKEOFF : public clsSCENE_MOVIE_BASE
 {
 public:
-	clsSCENE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup );
-	~clsSCENE_TAKEOFF();
+	clsSCENE_MOVIE_TAKEOFF( clsPOINTER_GROUP* const ptrGroup );
+	~clsSCENE_MOVIE_TAKEOFF();
 
 
 private:

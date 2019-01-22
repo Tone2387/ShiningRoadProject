@@ -1,4 +1,4 @@
-#include "SceneClear.h"
+#include "SceneMovieClear.h"
 #include "Stage.h"
 #include "RoboTakeoff.h"
 #include "File.h"
@@ -23,18 +23,18 @@ namespace
 }
 
 
-clsSCENE_CLEAR::clsSCENE_CLEAR( clsPOINTER_GROUP* const ptrGroup )
+clsSCENE_MOVIE_CLEAR::clsSCENE_MOVIE_CLEAR( clsPOINTER_GROUP* const ptrGroup )
 	:clsSCENE_MOVIE_BASE( ptrGroup, enSCENE::ENDING, sFILE_PATH_CUT_FRAME.c_str() )
 	,m_fBomberEffectOffsetFrame( 0.0f )
 {
 }
 
-clsSCENE_CLEAR::~clsSCENE_CLEAR()
+clsSCENE_MOVIE_CLEAR::~clsSCENE_MOVIE_CLEAR()
 {
 }
 
 
-void clsSCENE_CLEAR::CreateProduct()
+void clsSCENE_MOVIE_CLEAR::CreateProduct()
 {
 	m_upStage = make_unique< clsStage >( m_wpPtrGroup );
 	m_upStage->SetColorRed();
@@ -86,20 +86,20 @@ void clsSCENE_CLEAR::CreateProduct()
 
 
 
-void clsSCENE_CLEAR::RenderProduct( const D3DXVECTOR3 &vCamPos )
+void clsSCENE_MOVIE_CLEAR::RenderProduct( const D3DXVECTOR3 &vCamPos )
 {
 	if( m_upStage ){	m_upStage-> Render( m_mView, m_mProj, m_vLight, vCamPos ); }
 	if( m_upPlayer ){	m_upPlayer->Render( m_mView, m_mProj, m_vLight, vCamPos ); }
 	if( m_upEnemy ){	m_upEnemy-> Render( m_mView, m_mProj, m_vLight, vCamPos ); }
 }
 
-void clsSCENE_CLEAR::RenderUi()
+void clsSCENE_MOVIE_CLEAR::RenderUi()
 {
 }
 
 
 
-void clsSCENE_CLEAR::InitMovieProduct()
+void clsSCENE_MOVIE_CLEAR::InitMovieProduct()
 {
 	clsCAMERA_CLEAR* wpCam = static_cast<clsCAMERA_CLEAR*>( m_wpCamera );
 
@@ -109,12 +109,12 @@ void clsSCENE_CLEAR::InitMovieProduct()
 
 	switch( m_iCut )
 	{
-	case clsSCENE_CLEAR::enCUT_START:
+	case clsSCENE_MOVIE_CLEAR::enCUT_START:
 		{
 		}
 		break;
 
-	case clsSCENE_CLEAR::enCUT_END:
+	case clsSCENE_MOVIE_CLEAR::enCUT_END:
 		{
 			//低速暗転.
 			const int iINDEX = 6;
@@ -129,7 +129,7 @@ void clsSCENE_CLEAR::InitMovieProduct()
 }
 
 
-void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
+void clsSCENE_MOVIE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 {
 	clsCAMERA_CLEAR* wpCam = static_cast<clsCAMERA_CLEAR*>( m_wpCamera );
 
@@ -142,7 +142,7 @@ void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 
 	switch( m_iCut )
 	{
-	case clsSCENE_CLEAR::enCUT_START:
+	case clsSCENE_MOVIE_CLEAR::enCUT_START:
 		{
 			//敵のアニメ用( 次のカットでも回してしまうと立ち上がってしまう ).
 			m_upEnemy->UpdateProduct( m_upStage.get() );
@@ -185,7 +185,7 @@ void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 		}//sv.
 		break;
 
-	case clsSCENE_CLEAR::enCUT_END:
+	case clsSCENE_MOVIE_CLEAR::enCUT_END:
 		{
 
 			++ m_fBomberEffectOffsetFrame;
@@ -242,7 +242,7 @@ void clsSCENE_CLEAR::UpdateMovieProduct( int iOtherDataIndex )
 }
 
 //指定した行のファイルデータをカメラに与える.
-void clsSCENE_CLEAR::SetCamPosFromFile( const int iFileRow )
+void clsSCENE_MOVIE_CLEAR::SetCamPosFromFile( const int iFileRow )
 {
 	clsCAMERA_CLEAR* wpCam = static_cast<clsCAMERA_CLEAR*>( m_wpCamera );
 
@@ -265,7 +265,7 @@ void clsSCENE_CLEAR::SetCamPosFromFile( const int iFileRow )
 }
 
 //指定した行のファイルデータをギガポンたちに与える.
-void clsSCENE_CLEAR::SetGigaponPosFromFile( const int iFileRow )
+void clsSCENE_MOVIE_CLEAR::SetGigaponPosFromFile( const int iFileRow )
 {
 	clsFILE File;
 	assert( File.Open( sFILE_PATH_GIGAPON ) );
@@ -287,7 +287,7 @@ void clsSCENE_CLEAR::SetGigaponPosFromFile( const int iFileRow )
 }
 
 
-void clsSCENE_CLEAR::SetOtherDataFromFile( const int iFileRow )
+void clsSCENE_MOVIE_CLEAR::SetOtherDataFromFile( const int iFileRow )
 {
 	clsFILE File;
 	assert( File.Open( sFILE_PATH_OTHER ) );
@@ -304,7 +304,7 @@ void clsSCENE_CLEAR::SetOtherDataFromFile( const int iFileRow )
 
 //============================ デバッグテキスト ===========================//
 #ifdef _DEBUG
-void clsSCENE_CLEAR::RenderDebugText()
+void clsSCENE_MOVIE_CLEAR::RenderDebugText()
 {
 	//NULLチェック.
 	assert( m_upText );
@@ -352,43 +352,43 @@ void clsSCENE_CLEAR::RenderDebugText()
 //
 //	switch( m_iCut )
 //	{
-//	case clsSCENE_CLEAR::enCUT_START:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_START:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_START" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_RED_1:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_RED_1:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_RED_1" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_RED_2:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_RED_2:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_RED_2" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_RED_3:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_RED_3:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_RED_3" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_LIA_OPEN:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_LIA_OPEN:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_LIA_OPEN" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_ENEMY_APP:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_ENEMY_APP:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_ENEMY_APP" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_PLAYER_UP:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_PLAYER_UP:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_UP" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_PLAYER_ROAD:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_PLAYER_ROAD:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_ROAD" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_PLAYER_APP:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_PLAYER_APP:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_PLAYER_APP" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_ENCOUNT:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_ENCOUNT:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_ENCOUNT" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_ENEMY_LANDING:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_ENEMY_LANDING:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_ENEMY_LANDING" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_VS:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_VS:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_VS" );
 //		break;
-//	case clsSCENE_CLEAR::enCUT_END:
+//	case clsSCENE_MOVIE_CLEAR::enCUT_END:
 //		sprintf_s( strDbgTxt,"Cut : enCUT_END" );
 //		break;
 //	}

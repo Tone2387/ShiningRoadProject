@@ -2,7 +2,7 @@
 #define BUILDING_H_
 
 
-
+class clsRobo;
 
 #include "Global.h"
 #include"ObjStaticMesh.h"
@@ -60,6 +60,9 @@ public:
 	//ビルの近くにいるか( 上から見た円の判定 ).
 	//ビルと判定を取りたいモノの座標.
 	bool isNearBuilding( const D3DXVECTOR3& vPosObjOtherBuilding );
+
+	//ビルの中に入ったギガポンを追い出す.
+	void KickOutInside( clsRobo* const pRobo );
 
 
 	//レイ用.

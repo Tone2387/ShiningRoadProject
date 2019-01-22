@@ -420,9 +420,6 @@
     <ClCompile Include="SourceCodo\MenuWindowMissionPause.cpp">
       <Filter>Tahara\UI\MenuWindows</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\SceneTakeoff.cpp">
-      <Filter>Tahara\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\CameraTakeoff.cpp">
       <Filter>Tahara\Camera</Filter>
     </ClCompile>
@@ -450,9 +447,6 @@
     <ClCompile Include="SourceCodo\RenderSubThreadBase.cpp">
       <Filter>Tahara\UI</Filter>
     </ClCompile>
-    <ClCompile Include="SourceCodo\SceneClear.cpp">
-      <Filter>Tahara\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="SourceCodo\SceneMovieBase.cpp">
       <Filter>Tahara\Scene</Filter>
     </ClCompile>
@@ -464,6 +458,12 @@
     </ClCompile>
     <ClCompile Include="SourceCodo\Random.cpp">
       <Filter>Tahara\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SceneMovieTakeoff.cpp">
+      <Filter>Tahara\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCodo\SceneMovieClear.cpp">
+      <Filter>Tahara\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -803,9 +803,6 @@
     <ClInclude Include="SourceCodo\SceneMissionInformation.h">
       <Filter>Tahara\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\SceneTakeoff.h">
-      <Filter>Tahara\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\CameraTakeoff.h">
       <Filter>Tahara\Camera</Filter>
     </ClInclude>
@@ -833,9 +830,6 @@
     <ClInclude Include="SourceCodo\RenderSubThreadBase.h">
       <Filter>Tahara\UI</Filter>
     </ClInclude>
-    <ClInclude Include="SourceCodo\SceneClear.h">
-      <Filter>Tahara\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="SourceCodo\SceneMovieBase.h">
       <Filter>Tahara\Scene</Filter>
     </ClInclude>
@@ -847,6 +841,12 @@
     </ClInclude>
     <ClInclude Include="SourceCodo\Random.h">
       <Filter>Tahara\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneMovieTakeoff.h">
+      <Filter>Tahara\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCodo\SceneMovieClear.h">
+      <Filter>Tahara\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
