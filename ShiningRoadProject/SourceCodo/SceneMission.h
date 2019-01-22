@@ -121,8 +121,10 @@ private:
 	clsSPRITE2D_CENTER* m_pLockWindow;
 	clsSPRITE2D_CENTER* m_pLWeaponLockMark;
 	clsSPRITE2D_CENTER* m_pRWeaponLockMark;
-	float m_fHitMarkRaderSizeW;
-	float m_fHitMarkRaderSizeH;
+
+	clsSPRITE2D_CENTER* m_pLWeaponLockWindow;
+	clsSPRITE2D_CENTER* m_pRWeaponLockWindow;
+
 	bool m_bLockStart;
 
 	clsSPRITE2D_CENTER* m_pHitMark;
