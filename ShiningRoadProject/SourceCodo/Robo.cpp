@@ -369,6 +369,7 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 {
 	m_vMoveDirforBoost = GetVec3Dir(-m_Trans.fYaw, m_vAcceleDir);
 	clsCharactor::UpdateProduct(pStage);
+	pStage->KickOutInsideBuilding(this);
 
 	if (m_iQuickBoostDecStartTime > 0)//クイックブースト.
 	{
