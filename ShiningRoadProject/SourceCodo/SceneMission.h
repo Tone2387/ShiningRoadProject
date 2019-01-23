@@ -160,8 +160,10 @@ private:
 #ifdef Tahara
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
+#ifdef RENDER_SCREEN_TEXTURE_
 	//ノイズエフェクト.
 	void PlayNoise( const HitState& Hitstate );
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 	//ポーズメニュー.
 	std::unique_ptr< clsMENU_WINDOW_MISSION_BASE > m_upMenu;
 	//メニューから受け取った情報を照合する.

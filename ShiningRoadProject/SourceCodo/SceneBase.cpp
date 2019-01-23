@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 namespace{
 
 	//ƒ‰ƒCƒg•ûŒü.
@@ -58,17 +57,19 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpFont(					m_wpPtrGroup->GetFont() )
 	,m_hWnd(					nullptr )
 	,m_enNextScene(				enSCENE::NOTHING )
-	,m_encNoise(				encNOISE::NOTHING )
 	,m_wpViewPortUsing(			m_wpViewPort11 )
 	,m_pDepthStencilStateOn(	nullptr )
 	,m_pDepthStencilStateOff(	nullptr )
+	,m_fRenderLimit(			fRENDER_LIMIT )
+	,m_fZoom(					fZOOM )
+#ifdef RENDER_SCREEN_TEXTURE_
+	,m_encNoise(				encNOISE::NOTHING )
 	,m_iNoiseFrame(				0 )
 	,m_fBlock(					0.0f )
 	,m_fPulse(					0.0f )
 	,m_bStopNoiseSe(			false )
 	,m_isNoiseStrong(				false )
-	,m_fRenderLimit(			fRENDER_LIMIT )
-	,m_fZoom(					fZOOM )
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 {
 }
 
