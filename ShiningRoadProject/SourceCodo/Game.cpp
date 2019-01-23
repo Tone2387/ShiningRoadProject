@@ -118,7 +118,7 @@ void clsGAME::Create()
 		cBLACK_FILE_NAME, ss );
 
 	assert( !m_spFont );
-	m_spFont = new clsFont( m_wpDevice, m_wpContext );
+	m_spFont = new clsFont( m_hWnd, m_wpDevice, m_wpContext );
 
 	//引数のポインタの集合体.
 	assert( !m_spPtrGroup );
@@ -164,7 +164,7 @@ bool clsGAME::Update()
 	if( enNextScene != enSCENE::NOTHING ){
 		SwitchScene( enNextScene );
 	}
-//SwitchScene( g_Scene );
+//SwitchScene( enSCENE::ASSEMBLE );
 
 	return true;
 }

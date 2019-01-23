@@ -75,7 +75,7 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 
 clsSCENE_BASE::~clsSCENE_BASE()
 {
-	if( m_wpFont ) m_wpFont->Release();
+	if( m_wpFont ){ m_wpFont->Release(); }
 
 	//次のシーンに余計なエフェクトを持ち込まない.
 	if( m_wpEffects ) m_wpEffects->StopAll();

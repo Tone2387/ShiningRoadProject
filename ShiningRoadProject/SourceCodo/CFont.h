@@ -14,6 +14,7 @@ class clsFont : public clsCommon
 public:
 
 	clsFont( 
+		const HWND hWnd,
 		ID3D11Device* const pDevice, 
 		ID3D11DeviceContext* const pContext );
 	~clsFont();
@@ -129,6 +130,8 @@ private:
 	ID3D11Buffer*		m_pVertexBuffer;	//頂点バッファ	.
 
 	ID3D11SamplerState* m_pSampleLinear;	//テクスチャのサンプラー.
+
+	HWND m_hWnd;
 
 };
 
