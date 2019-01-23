@@ -32,6 +32,11 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 
 void clsPlayer::Action(clsStage* const pStage)
 {
+	if (m_iHP <= 0)
+	{
+		return;
+	}
+
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
