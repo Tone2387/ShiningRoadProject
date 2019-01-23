@@ -47,6 +47,7 @@ void clsSCENE_MOVIE_TAKEOFF::CreateProduct()
 
 	m_upPlayer= make_unique< clsROBO_TAKEOFF >();
 	m_upPlayer->RoboInit( m_wpPtrGroup, m_wpRoboStatus );
+	m_upPlayer->ActStart();
 
 
 	unique_ptr< clsROBO_STATUS_ENEMY > upEnemyState;
@@ -55,6 +56,7 @@ void clsSCENE_MOVIE_TAKEOFF::CreateProduct()
 
 	m_upEnemy = make_unique< clsROBO_TAKEOFF >();
 	m_upEnemy->RoboInit( m_wpPtrGroup, upEnemyState.get() );
+	m_upEnemy->ActStart();
 
 	//Œü‚©‚¢‡‚¤.
 	m_upPlayer->SetRotation( { 0.0f, static_cast<float>( M_PI_2			), 0.0f } );
@@ -116,6 +118,7 @@ void clsSCENE_MOVIE_TAKEOFF::InitMovieProduct()
 	case clsSCENE_MOVIE_TAKEOFF::enCUT_LIA_OPEN:
 		m_upStage->SetAnimDoor( clsStage::enDOOR_Lia, clsStage::enDOOR_ANIM_OPENING );
 		m_upEnemy->Boost();
+		m_upPlayer->Boost();
 		m_wpSound->PlaySE( enSE_DOOR_OPEN );
 		break;
 
@@ -125,7 +128,6 @@ void clsSCENE_MOVIE_TAKEOFF::InitMovieProduct()
 			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_L, iARM_ANIM_INDEX );
 			m_upEnemy->m_pMesh->SetPartsAnimNo( enPARTS::ARM_R, iARM_ANIM_INDEX );
 
-			m_upPlayer->Boost();
 			m_wpSound->PlaySE( enSE_BOOSTER, true );
 		}
 		break;
@@ -199,10 +201,10 @@ void clsSCENE_MOVIE_TAKEOFF::UpdateMovieProduct( int iOtherDataIndex )
 	D3DXVECTOR3 vPosPlayerOld = m_upPlayer->GetPosition();
 	D3DXVECTOR3 vPosEnemyOld = m_upEnemy->GetPosition();
 
-	m_upPlayer->UpdateProduct( m_upStage.get() );
-	m_upPlayer->ModelUpdate();
-	m_upEnemy->UpdateProduct( m_upStage.get() );
-	m_upEnemy->ModelUpdate();
+	m_upPlayer->Update( m_upStage.get() );
+//	m_upPlayer->ModelUpdate();
+	m_upEnemy->Update( m_upStage.get() );
+//	m_upEnemy->ModelUpdate();
 
 
 	switch( m_iCut )
