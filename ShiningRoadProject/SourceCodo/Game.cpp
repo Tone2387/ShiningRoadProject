@@ -28,7 +28,6 @@ using namespace std;
 namespace{
 
 
-
 }
 
 
@@ -119,7 +118,7 @@ void clsGAME::Create()
 		cBLACK_FILE_NAME, ss );
 
 	assert( !m_spFont );
-	m_spFont = new clsFont( m_wpDevice, m_wpContext );
+	m_spFont = new clsFont( m_hWnd, m_wpDevice, m_wpContext );
 
 	//引数のポインタの集合体.
 	assert( !m_spPtrGroup );
@@ -151,13 +150,9 @@ bool clsGAME::Update()
 
 	//コントローラ入力情報更新.
 	assert( m_spXInput );
-	if( m_spXInput->isConnected() ){
-		m_spXInput->UpdateStatus();
-	}
-	else{
-		assert( m_spDxInput );
-		m_spDxInput->UpdataInputState();
-	}
+	m_spXInput->UpdateStatus();
+	assert( m_spDxInput );
+	m_spDxInput->UpdataInputState();
 
 	//次のシーンは何?のフラグ.
 	enSCENE enNextScene = enSCENE::NOTHING;
@@ -169,6 +164,7 @@ bool clsGAME::Update()
 	if( enNextScene != enSCENE::NOTHING ){
 		SwitchScene( enNextScene );
 	}
+//SwitchScene( enSCENE::ASSEMBLE );
 
 	return true;
 }

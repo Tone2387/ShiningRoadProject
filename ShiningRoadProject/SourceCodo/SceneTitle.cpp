@@ -457,5 +457,9 @@ void clsSCENE_TITLE::RenderDebugText()
 	//	sprintf_s( strDbgTxt, "Playingn" );
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}
+
+
+	SCENE_CREATE_COUNT;
+
 }
 #endif //#ifdef _DEBUG

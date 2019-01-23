@@ -40,6 +40,19 @@ class clsSCREEN_TEXTURE;
 #define DINPUT_ENTER ( enPKey_00 )
 #define DINPUT_EXIT	 ( enPKey_03 )
 
+#ifdef _DEBUG
+static float g_fSCENE_CREATE_COUNT = 0.0f;
+
+//何回そのシーンを通ったか記録、表示するマクロ( RenderDebugTextで使ってね ).
+#define SCENE_CREATE_COUNT\
+	iTxtY += iOFFSET;\
+	sprintf_s( strDbgTxt, \
+		"SCENE_CREATE_CNT : [%f]",\
+		g_fSCENE_CREATE_COUNT += 1.0f );\
+	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );\
+
+#endif//#ifdef _DEBUG
+
 //================================//
 //========== 基底クラス ==========//
 //================================//

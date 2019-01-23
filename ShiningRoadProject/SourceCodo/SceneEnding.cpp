@@ -491,6 +491,7 @@ void clsSCENE_ENDING::RenderDebugText()
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}
 
+	SCENE_CREATE_COUNT;
 
 }
 #endif //#ifdef _DEBUG

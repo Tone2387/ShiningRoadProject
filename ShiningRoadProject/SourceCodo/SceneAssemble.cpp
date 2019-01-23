@@ -1241,6 +1241,7 @@ void clsSCENE_ASSEMBLE::RenderDebugText()
 //	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 
+	SCENE_CREATE_COUNT;
 
 }
 #endif //#ifdef _DEBUG

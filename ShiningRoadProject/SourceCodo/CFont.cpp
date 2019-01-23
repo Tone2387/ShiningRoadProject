@@ -51,9 +51,11 @@ namespace{
 }
 
 clsFont::clsFont( 
+	const HWND hWnd,
 	ID3D11Device* const pDevice, 
 	ID3D11DeviceContext* const pContext )
-	:m_pVertexShader( nullptr )
+	:m_hWnd( hWnd )
+	,m_pVertexShader( nullptr )
 	,m_pVertexLayout( nullptr )
 	,m_pPixelShader( nullptr )
 	,m_pVertexBuffer( nullptr )
@@ -112,6 +114,7 @@ clsFont::~clsFont()
 	SAFE_RELEASE( m_pVertexLayout );
 	SAFE_RELEASE( m_pVertexShader );
 
+	m_hWnd = nullptr;
 
 	//リソース削除.
 	BOOL Return = RemoveFontResourceEx(
@@ -382,7 +385,7 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 			return E_FAIL;
 		}
 
-		HDC hdc = GetDC( NULL );
+		HDC hdc = GetDC( m_hWnd );
 
 		HFONT oldFont = (HFONT)SelectObject( hdc, hFont );
 
@@ -515,7 +518,7 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 		//デバイスコンテキストとフォントハンドルの解放.
 		SelectObject( hdc, oldFont );
 		DeleteObject( hFont );
-		ReleaseDC( NULL, hdc );
+		ReleaseDC( m_hWnd, hdc );
 	}
 	return S_OK;
 }
