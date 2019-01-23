@@ -95,7 +95,7 @@ void clsSCENE_MISSION::CreateUI()
 	//活動限界時間.
 
 	m_pLimitTime = new clsUiText;
-	m_pLimitTime->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
+	m_pLimitTime->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
 	m_pLimitTime->SetPos(vPos);
 
 	sprintf_s(pText,"");
@@ -117,12 +117,15 @@ void clsSCENE_MISSION::CreateUI()
 	m_pCursor->SetAlpha(0.4f);
 
 	assert(!m_pCursorFrame);
+	ss.Disp = { 837.0f, 512.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
 	ss_CursorFrame.Disp = { 512.0f, 512.0f };
 	ss_CursorFrame.Anim = { 1.0f, 1.0f };
 
 	m_pCursorFrame = new clsSPRITE2D_CENTER;
 
-	m_pCursorFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss_CursorFrame);
+	m_pCursorFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockonFrame.png", ss);
 	m_pCursorFrame->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
 
 	//HP.
@@ -173,7 +176,7 @@ void clsSCENE_MISSION::CreateUI()
 	//残弾数.
 	//左武器.
 	assert(!m_pLBulletNum);
-	vPos = { (WND_W / 2) - (ss_CursorFrame.Disp.w / 2), WND_H / 2 - 50 - 16 };
+	vPos = { (WND_W / 2) - (ss_CursorFrame.Disp.w / 2), WND_H / 2 - 50 - 65 };
 
 	m_pLBulletNum = new clsUiText;
 	m_pLBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
@@ -195,7 +198,7 @@ void clsSCENE_MISSION::CreateUI()
 
 	//右武器.
 	assert(!m_pRBulletNum);
-	vPos = { (WND_W / 2) + (ss_CursorFrame.Disp.w / 2), WND_H / 2 - 50 - 16 };
+	vPos = { (WND_W / 2) + (ss_CursorFrame.Disp.w / 2), WND_H / 2 - 50 - 65 };
 
 	m_pRBulletNum = new clsUiText;
 	m_pRBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
@@ -290,7 +293,7 @@ void clsSCENE_MISSION::CreateUI()
 	m_pLWeaponLockMark = new clsSPRITE2D_CENTER;
 
 	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILock.png", ss);
-	m_pLWeaponLockMark->SetPos({ (WND_W / 2) - (ss_CursorFrame.Disp.w / 2) - (ss.Disp.w / 2), WND_H / 2, 0.0f });
+	m_pLWeaponLockMark->SetPos({ (WND_W / 2) - (ss_CursorFrame.Disp.w / 2) - (ss.Disp.w / 2) - 20, WND_H / 2, 0.0f });
 
 	//右ロックマーク
 	assert(!m_pRWeaponLockMark);
@@ -298,7 +301,7 @@ void clsSCENE_MISSION::CreateUI()
 	m_pRWeaponLockMark = new clsSPRITE2D_CENTER;
 
 	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILock.png", ss);
-	m_pRWeaponLockMark->SetPos({ (WND_W / 2) + (ss_CursorFrame.Disp.w / 2) + (ss.Disp.w / 2), WND_H / 2, 0.0f });
+	m_pRWeaponLockMark->SetPos({ (WND_W / 2) + (ss_CursorFrame.Disp.w / 2) + (ss.Disp.w / 2) + 20, WND_H / 2, 0.0f });
 
 	//m_pRWeaponLockMark->SetAlpha(0.4f);
 
@@ -382,7 +385,10 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	
 	if (GetAsyncKeyState('S') & 0x1)
 	{
-		//m_pTestObj->SwitchMove();
+		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+		{
+			m_v_pEnemys[i]->m_iHP = 0;
+		}
 	}
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
@@ -488,7 +494,7 @@ void clsSCENE_MISSION::RenderUi()
 
 	char pText[STR_BUFF_MAX];
 
-	sprintf_s(pText, "%2d:%2d:%2d", iMin, iSecond, iN);
+	sprintf_s(pText, "%02d:%02d:%02d", iMin, iSecond, iN);
 	m_pLimitTime->SetText(pText);
 	m_pLimitTime->Render();
 
