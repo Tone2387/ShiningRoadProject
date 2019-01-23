@@ -81,7 +81,7 @@ void clsSCENE_MOVIE_CLEAR::CreateProduct()
 	m_wpEffects->Play( 0, m_upEnemy->GetPosition() );
 	m_wpEffects->StopAll();
 
-
+	clsSCENE_MOVIE_BASE::CreateProduct();
 }
 
 

@@ -8,7 +8,7 @@ clsSCENE_MOVIE_BASE::clsSCENE_MOVIE_BASE(
 	const char* sCutFrameFilePath  )
 	:clsSCENE_BASE( ptrGroup )
 	,m_enNEXT_SCENE( enScene )
-	,m_iCut( 0 )
+	,m_iCut( -1 )//èâä˙âªéûÇ…++Ç≥ÇÍÇÈÇÃÇ≈ÇªÇÃéûÇ…0Ç…Ç»ÇÈÇÊÇ§Ç….
 	,m_fMovieFrame( 0.0f )
 	,m_isTrigger( false )
 {
@@ -29,6 +29,10 @@ clsSCENE_MOVIE_BASE::~clsSCENE_MOVIE_BASE()
 {
 }
 
+void clsSCENE_MOVIE_BASE::CreateProduct()
+{
+	InitMovie();
+}
 
 
 void clsSCENE_MOVIE_BASE::UpdateProduct( enSCENE &enNextScene )

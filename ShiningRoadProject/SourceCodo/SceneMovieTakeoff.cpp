@@ -38,7 +38,6 @@ clsSCENE_MOVIE_TAKEOFF::~clsSCENE_MOVIE_TAKEOFF()
 
 void clsSCENE_MOVIE_TAKEOFF::CreateProduct()
 {
-	
 //	m_wpFont->Create( sFONT_TEXT_PATH_GAME_OVER );
 
 
@@ -69,6 +68,7 @@ void clsSCENE_MOVIE_TAKEOFF::CreateProduct()
 		m_wpSound->PlayBGM( 0 );
 	}
 
+	clsSCENE_MOVIE_BASE::CreateProduct();
 }
 
 
@@ -160,6 +160,7 @@ void clsSCENE_MOVIE_TAKEOFF::InitMovieProduct()
 		break;
 
 	case clsSCENE_MOVIE_TAKEOFF::enCUT_ENEMY_LANDING:
+		m_upEnemy->Boost();
 		m_wpSound->PlaySE( enSE_BOOSTER, true );
 		break;
 

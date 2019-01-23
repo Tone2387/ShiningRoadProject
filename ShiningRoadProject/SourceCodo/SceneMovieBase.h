@@ -15,14 +15,12 @@ public:
 		const char* sCutFrameFilePath );
 	~clsSCENE_MOVIE_BASE();
 
-private:
-	//残りの三つは継承先で作る.
-//	void CreateProduct() override;
-	void UpdateProduct( enSCENE &enNextScene ) final;
+protected:
+	//残りの二つは継承先で作る.
+	void CreateProduct() override;//継承先のこの関数の最後でこのクラスのこの関数を使うこと.
 //	void RenderProduct( const D3DXVECTOR3 &vCamPos ) override;
 //	void RenderUi() override;//「 UIの 」Render.
 
-protected:
 	virtual void InitMovieProduct() = 0;
 	virtual void UpdateMovieProduct( int iOtherDataIndex ) = 0;
 	//フレームが満たしていなくても次のカットへ飛ぶ.
@@ -39,6 +37,7 @@ protected:
 	int m_iCut;
 
 private:
+	void UpdateProduct( enSCENE &enNextScene ) final;
 	//ムービーっぽく動かすための為の関数.
 	void InitMovie();
 	void UpdateMovie();

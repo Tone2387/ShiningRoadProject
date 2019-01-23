@@ -14,14 +14,14 @@ clsSprite2D::clsSprite2D() :
 	m_pConstantBuffer( nullptr ),
 	m_pVertexBuffer( nullptr ),	
 	m_pTexture( nullptr ),		
-	m_pSampleLinear( nullptr )	
+	m_pSampleLinear( nullptr )
+	,m_vPos( 0.0f, 0.0f, 0.0f )
+	,m_vScale( 1.0f, 1.0f, 1.0f )
 	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 {
 //	ZeroMemory( this, sizeof( clsSprite2D ) );
 
 
-	//アルファ値の設定.
-	m_vPos = m_vScale = { 1.0f, 1.0f, 0.0f };
 	m_fPatternNo = { 0.0f, 0.0f };
 }
 
