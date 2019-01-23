@@ -28,7 +28,6 @@ using namespace std;
 namespace{
 
 
-
 }
 
 
@@ -151,13 +150,9 @@ bool clsGAME::Update()
 
 	//コントローラ入力情報更新.
 	assert( m_spXInput );
-	if( m_spXInput->isConnected() ){
-		m_spXInput->UpdateStatus();
-	}
-	else{
-		assert( m_spDxInput );
-		m_spDxInput->UpdataInputState();
-	}
+	m_spXInput->UpdateStatus();
+	assert( m_spDxInput );
+	m_spDxInput->UpdataInputState();
 
 	//次のシーンは何?のフラグ.
 	enSCENE enNextScene = enSCENE::NOTHING;
@@ -169,6 +164,7 @@ bool clsGAME::Update()
 	if( enNextScene != enSCENE::NOTHING ){
 		SwitchScene( enNextScene );
 	}
+//SwitchScene( g_Scene );
 
 	return true;
 }

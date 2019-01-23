@@ -139,6 +139,7 @@ void clsSCENE_BASE::Create( const HWND hWnd )
 	{
 		assert( !"デバッグテキスト作成失敗" );
 	}
+
 #endif//#ifdef _DEBUG
 
 	//各シーンのCreate.

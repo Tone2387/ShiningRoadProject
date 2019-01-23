@@ -407,6 +407,7 @@ void clsSCENE_MOVIE_CLEAR::RenderDebugText()
 //		(float)m_upMissModel->GetColNum( clsMISSION_MODEL::enCOL_PARTS_ARMS ) );
 //	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
+	SCENE_CREATE_COUNT;
 
 }
 #endif //#ifdef _DEBUG

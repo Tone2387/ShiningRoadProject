@@ -633,5 +633,6 @@ void clsSCENE_MOVIE_TAKEOFF::RenderDebugText()
 //	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
 
 
+	SCENE_CREATE_COUNT;
 }
 #endif //#ifdef _DEBUG
