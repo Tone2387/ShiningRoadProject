@@ -47,12 +47,19 @@ public:
 	{
 		m_pDxInput = nullptr;
 		m_pXInput = nullptr;
-		delete m_pComLS;
-		delete m_pComRS;
-
+		
 		delete m_pMoveSwitch;
 		delete m_pQuickBoost;
+		delete m_pQuickTurn;
 		delete m_pBoostRising;
+		delete m_pComLShot;
+		delete m_pComRShot;
+		delete m_pComLS;
+		delete m_pComLSHor;
+		delete m_pComLSVer;
+		delete m_pComRS;
+		delete m_pComRSHor;
+		delete m_pComRSVer;
 	}
 
 	void InputTest()
@@ -233,20 +240,40 @@ public:
 
 	clsRoboCommand* MoveSwitch()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_00))
+		if (m_pXInput->isConnected())
 		{
-			if (!m_bChangeSwitch)
+			if (m_pXInput->isPressStay(XINPUT_A))
 			{
-				m_bChangeSwitch = true;
-				return m_pMoveSwitch;
+				if (!m_bChangeSwitch)
+				{
+					m_bChangeSwitch = true;
+					return m_pMoveSwitch;
+				}
+			}
+
+			else
+			{
+				m_bChangeSwitch = false;
 			}
 		}
 
 		else
 		{
-			m_bChangeSwitch = false;
+			if (m_pDxInput->IsPressKey(enPKey_00))
+			{
+				if (!m_bChangeSwitch)
+				{
+					m_bChangeSwitch = true;
+					return m_pMoveSwitch;
+				}
+			}
+
+			else
+			{
+				m_bChangeSwitch = false;
+			}
 		}
-		
+
 		return nullptr;
 	}
 
@@ -264,7 +291,7 @@ public:
 
 			else if (m_pDxInput)
 			{
-				if (m_pDxInput->IsPressKey(enPKey_02))
+				if (m_pDxInput->IsPressKey(enPKey_05))
 				{
 					return m_pQuickBoost;
 				}
@@ -288,7 +315,7 @@ public:
 
 			else if (m_pDxInput)
 			{
-				if (m_pDxInput->IsPressKey(enPKey_02))
+				if (m_pDxInput->IsPressKey(enPKey_05))
 				{
 					return m_pQuickTurn;
 				}
@@ -310,7 +337,7 @@ public:
 
 		else if (m_pDxInput)
 		{
-			if (m_pDxInput->IsPressKey(enPKey_00))
+			if (m_pDxInput->IsPressKey(enPKey_02))
 			{
 				return m_pBoostRising;
 			}
@@ -331,7 +358,7 @@ public:
 
 		else if(m_pDxInput)
 		{
-			if (m_pDxInput->IsPressKey(enPKey_05))
+			if (m_pDxInput->IsPressKey(enPKey_04))
 			{
 				return m_pComLShot;
 			}
@@ -352,7 +379,7 @@ public:
 
 		else if (m_pDxInput)
 		{
-			if (m_pDxInput->IsPressKey(enPKey_06))
+			if (m_pDxInput->IsPressKey(enPKey_01))
 			{
 				return m_pComRShot;
 			}

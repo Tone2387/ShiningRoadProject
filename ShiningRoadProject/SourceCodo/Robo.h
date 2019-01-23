@@ -162,7 +162,7 @@ public:
 	void UpdatePosfromBone();
 
 	clsRobo();
-	~clsRobo();
+	virtual ~clsRobo();
 
 private:
 	void Down() final;
