@@ -9,7 +9,7 @@ clsTestObj::clsTestObj()
 
 clsTestObj::~clsTestObj()
 {
-
+	SAFE_DELETE(m_pAI);
 }
 
 void clsTestObj::Init(clsPOINTER_GROUP* const pPtrGroup)

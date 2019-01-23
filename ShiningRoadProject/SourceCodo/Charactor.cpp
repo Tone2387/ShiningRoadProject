@@ -914,6 +914,13 @@ clsCharactor::~clsCharactor()
 		m_pTargetChara = nullptr;
 	}
 
+	for (int i = 0; i < m_iWeaponNumMax; i++)
+	{
+		SAFE_DELETE(m_v_pWeapons[i]);
+	}
+
+	m_v_pWeapons.clear();
+
 #ifdef Tahara
 	//Á‚·‚Æ‚«delete‚µ‚È‚¢‚Ånull‚µ‚Ä‚Ë.
 	m_wpSound = nullptr;
