@@ -1022,10 +1022,15 @@ void clsSCENE_MISSION::PlayNoise( const HitState& Hitstate )
 		//ダメージ量のによるノイズの種類の境界線.
 		const int iNOISE_STRONG_BORDER = 1000;
 		if( Hitstate.iDamage >= iNOISE_STRONG_BORDER ){
-			NoiseStrong();
+			if( NoiseStrong() ){
+				m_wpXInput->SetVibPowerL( XINPUT_VIBRATION_MAX, Hitstate.iDamage );
+				m_wpXInput->SetVibPowerR( XINPUT_VIBRATION_MAX, Hitstate.iDamage );
+			}
 		}
 		else{
-			NoiseWeak();
+			if( NoiseWeak() ){
+				m_wpXInput->SetVibPowerR( XINPUT_VIBRATION_MAX, Hitstate.iDamage );
+			}
 		}
 	}
 }

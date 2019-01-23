@@ -194,6 +194,8 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 			m_bStopNoiseSe = false;
 			m_isNoiseStrong = false;
 			m_upScreenTexture->StopSe();
+			m_wpXInput->SetVibPowerL( 0, 0 );
+			m_wpXInput->SetVibPowerR( 0, 0 );
 		}
 	}
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
@@ -842,10 +844,10 @@ void clsSCENE_BASE::SetViewPort(
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 //ƒmƒCƒY‚ð‹N‚±‚·.
-void clsSCENE_BASE::NoiseStrong( const int iPower )
+bool clsSCENE_BASE::NoiseStrong( const int iPower )
 {
 	assert( m_upScreenTexture );
-	if( m_isNoiseStrong ){ return; }
+	if( m_isNoiseStrong ){ return false; }
 
 //	int iBlockFrame = iFrame;
 //	const int iFRAME_MAX = 30;
@@ -874,11 +876,12 @@ void clsSCENE_BASE::NoiseStrong( const int iPower )
 	m_isNoiseStrong = true;
 
 	m_encNoise = encNOISE::BLOCK_AND_PULSE;
+	return true;
 }
-void clsSCENE_BASE::NoiseWeak( const int iFrame )
+bool clsSCENE_BASE::NoiseWeak( const int iFrame )
 {
 	assert( m_upScreenTexture );
-	if( m_upScreenTexture->isNoiseFlag() ){ return; }
+	if( m_upScreenTexture->isNoiseFlag() ){ return false; }
 
 	m_upScreenTexture->SetNoiseFlag( true );
 	m_iNoiseFrame = iFrame;
@@ -892,6 +895,8 @@ void clsSCENE_BASE::NoiseWeak( const int iFrame )
 	m_bStopNoiseSe = true;
 
 	m_encNoise = encNOISE::MINUTE_BLOCK;
+
+	return true;
 }
 
 void clsSCENE_BASE::UpdateNoise()
