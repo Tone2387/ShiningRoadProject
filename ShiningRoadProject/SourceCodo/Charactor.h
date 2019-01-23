@@ -11,8 +11,6 @@ struct HitState//弾が当たった時に相手側に送る情報のまとめ.
 {
 	bool bHit;
 	int iDamage;
-	float fInpuct;
-	D3DXVECTOR3 vInpuctDir;
 
 	void Clear();
 };
@@ -76,7 +74,7 @@ public:
 	D3DXVECTOR3 m_vLockCenterPos;//ロックオン判定終点の位置.
 	D3DXVECTOR3 m_vTargetScrPos;
 	bool m_bCamPosXSwitch;
-	bool IsTargetDirBack(D3DXVECTOR3 vTargetPos);//敵がキャラより後ろにいるか.
+	bool IsTargetDirBack(const D3DXVECTOR3& vTargetPos);//敵がキャラより後ろにいるか.
 
 	void UpdateLookOn();
 	virtual void UpdateLookStartingPos();
@@ -99,17 +97,17 @@ public:
 	bool Shot();
 	bool IsNeedReload();
 
-	HitState BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere);
-	bool Damage(HitState);//ダメージと衝撃力.
+	HitState BulletHit(std::vector<clsObject::SPHERE>& v_TargetSphere);
+	bool Damage(const HitState&);//ダメージと衝撃力.
 
 	void WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon,const int iWeaponMax);//pWeaponには配列のポインターを入れてください.
 	
-	void WeaponUpdate();
+	void WeaponUpdate(clsStage* const pStage);
 
 	virtual void UpdateProduct(clsStage* pStage)override;
 
 	void LockChara(clsStage* const pStage);
-	bool IsInLockRange(D3DXVECTOR3 vTargetPos);
+	bool IsInLockRange(const D3DXVECTOR3& vTargetPos);
 
 	void Lock();
 	void LockOut();
@@ -144,7 +142,7 @@ public:
 	//回転.
 	void Rotate();
 
-	void AddRotAccele(const float fAngle, const float fPush);//回転速度加算.
+	virtual void AddRotAccele(const float fAngle, const float fPush);//回転速度加算.
 
 	bool IsRotate();
 	bool IsRotControl();
@@ -174,13 +172,12 @@ public:
 	void Jump();
 
 	const bool IsTargetWall(
-		const D3DXVECTOR3 vStartPos,
-		const D3DXVECTOR3 vEndPos,
+		const D3DXVECTOR3& vTargetPos,
 		clsStage* const pStage);
 
 	bool IsPointIntersect(
-		const D3DXVECTOR3 StartPos,	//基準の位置.
-		const D3DXVECTOR3 EndPos,		//標的の位置.
+		const D3DXVECTOR3& StartPos,	//基準の位置.
+		const D3DXVECTOR3& EndPos,		//標的の位置.
 		const clsDX9Mesh* pTarget		//障害物の物体.
 		);
 
@@ -189,8 +186,8 @@ public:
 	virtual ~clsCharactor();
 
 	bool IsCurcleLange(
-		const D3DXVECTOR3 CenterPos, 
-		const D3DXVECTOR3 TargetPos, 
+		const D3DXVECTOR3& CenterPos, 
+		const D3DXVECTOR3& TargetPos, 
 		const float Range);//円の範囲判定.
 
 	void CharaDuplicate(clsCharactor* const pContactChara);
@@ -198,17 +195,54 @@ public:
 	virtual void AnimPause() const{};
 	virtual void AnimPlay() const{};
 
+	virtual bool IsPlayerChara() { return m_bPlayer; };
+
 protected:
+
+	bool m_bPlayer;
+
+	//着地エフェクト.
+	::Effekseer::Handle m_LandingEfc;
+	virtual unsigned int GetLandingEfcNum() const{ return 12; }
+	virtual unsigned int GetLandingSENum() const{ return 12; }
+
 	void ShotSwich(const int iWeaponNum);//複数ある武器から使用する武器を決める.
 
 	virtual void Down();
 	virtual void Dead();
+
+	virtual void Create(clsPOINTER_GROUP* const pPtrGroup)
+	{
+#ifdef Tahara
+		m_wpResource = pPtrGroup->GetResource();
+		m_wpEffects = pPtrGroup->GetEffects();
+		m_wpSound = pPtrGroup->GetSound();
+#endif//#ifdef Tahara
+	}
+
+	//太原の書き足した分.
+#ifdef Tahara
+	//消すときdeleteしないでnullしてね.
+	clsResource*		m_wpResource;
+	clsEffects*			m_wpEffects;
+	clsSOUND_MANAGER_BASE*	m_wpSound;
+
+	//当たり判定のポインタ.
+	//	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
+
+	//ロボモデル.
+	//	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
+
+#endif//#ifdef Tahara
 
 private:
 	bool m_bStopComShot;
 
 	bool m_bMoveAcceleOlder;//移動速度加算を行ったかどうか.
 	bool m_bRotAcceleOlder;//回転速度加算を行ったかどうか.
+
+
+
 
 };
 

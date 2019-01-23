@@ -92,6 +92,9 @@ public:
 	//パーツのアニメーション変更.
 	bool PartsAnimChange( const enPARTS enParts, const int iIndex ) const;
 
+	//アニメーションが終了したらtrue.
+	bool GetPartsAnimEnd( const enPARTS enParts );
+
 	//パーツのボーンの座標を取得.
 	D3DXVECTOR3 GetBonePos( const enPARTS enParts, const char* sBoneName ) const;
 

@@ -2,7 +2,7 @@
 
 const int g_iMOAReference = 1000;//ATKの高さからブレを決めるための基準値.
 
-void clsWeapon::Create(WeaponState State)
+void clsWeapon::Create(const WeaponState& State)
 {
 	m_State = State;
 
@@ -23,11 +23,11 @@ void clsWeapon::Create(WeaponState State)
 }
 
 
-void clsWeapon::Update()
+void clsWeapon::Update(clsStage* const pStage)
 {
 	for (int i = 0; i < m_State.iBulletNumMax; i++)
 	{
-		m_ppBullet[i]->Move();
+		m_ppBullet[i]->Update(pStage);
 	}
 
 	Reload();
@@ -43,7 +43,7 @@ void clsWeapon::Update()
 	m_iReloadCnt--;
 }
 
-int clsWeapon::Hit(std::vector<clsObject::SPHERE> v_TargetSphere)
+int clsWeapon::Hit(std::vector<clsObject::SPHERE>& v_TargetSphere)
 {
 	int iResult = 0;
 
@@ -78,9 +78,9 @@ bool clsWeapon::Shot()
 				fDis = D3DXVec3Length(&(vPos - m_pTargetObj->GetCenterPos()));//ターゲットとの現在距離.
 				iTime = (int)(fDis / m_State.BState.fSpeed);//到達までの時間(だと思いたい)
 
-				fVerDevia = m_pTargetObj->m_fFollPower * iTime;//垂直方向の予測距離.
+				fVerDevia = m_pTargetObj->GetFollPower() * iTime;//垂直方向の予測距離.
 
-				vHorDevia = (m_pTargetObj->m_vMoveDir * m_pTargetObj->m_fMoveSpeed) * static_cast<float>(iTime);//水平方向移動ベクトル * 到達予想時間 = 水平方向の予想距離.
+				vHorDevia = (m_pTargetObj->GetMoveDir()* m_pTargetObj->GetMoveSpeed()) * static_cast<float>(iTime);//水平方向移動ベクトル * 到達予想時間 = 水平方向の予想距離.
 				vPrediction = m_pTargetObj->GetCenterPos();//予測位置にまずはターゲットの位置を入れる.
 
 				vPrediction += vHorDevia;//水平のみ予測位置.
@@ -131,10 +131,6 @@ bool clsWeapon::Shot()
 				{
 					m_iRemainingBullet--;
 					m_iReloadCnt = m_State.iReloadTime;
-					//マズルフラッシュ.
-					//m_pPtrGroup->GetEffects()->Play(3, vPos);
-					//射撃音.
-					m_pPtrGroup->GetSound()->PlaySE(0);
 					return true;
 				}
 			}
@@ -164,8 +160,6 @@ void clsWeapon::Reload()
 
 	m_bNeedReload = false;
 	m_iRemainingBullet = m_State.iBulletNumMax;
-	//リロード音.
-	m_pPtrGroup->GetSound()->PlaySE(0);
 }
 
 int clsWeapon::GetNowBulletNum()
@@ -230,4 +224,13 @@ clsWeapon::clsWeapon(clsPOINTER_GROUP* pPtrGroup)
 
 clsWeapon::~clsWeapon()
 {
+	if (m_ppBullet)
+	{
+		for (int i = 0; i < m_State.iBulletNumMax; i++)
+		{
+			SAFE_DELETE(m_ppBullet[i]);
+		}
+
+		SAFE_DELETE_ARRAY(m_ppBullet);
+	}
 }

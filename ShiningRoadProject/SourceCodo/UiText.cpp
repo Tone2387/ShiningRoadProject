@@ -1,4 +1,5 @@
 #include "UiText.h"
+#include "BlendState.h"
 
 using namespace std;
 
@@ -98,10 +99,6 @@ HRESULT clsUiText::Create( ID3D11DeviceContext* const pContext,
 	m_wpContext = pContext;
 	m_wpContext->GetDevice( &m_wpDevice );
 
-	if( FAILED( CreateBlendState() ) ){
-		assert( !"Can't Create BlendState" );
-		return E_FAIL;
-	}
 
 	//windowサイズ.
 	m_dwWindowWidth = dwWidth;
@@ -338,7 +335,7 @@ void clsUiText::Render( const enPOS enPos )
 		0, 1, &m_pAsciiTexture );
 
 
-	SetBlend( true );
+	m_psinBlend->SetBlend( true );
 
 
 	//これがないと平行移動の値がscaleに引っ張られる.

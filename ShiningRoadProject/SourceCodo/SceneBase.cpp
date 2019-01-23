@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 namespace{
 
 	//ライト方向.
@@ -58,16 +57,19 @@ clsSCENE_BASE::clsSCENE_BASE( clsPOINTER_GROUP* const ptrGroup )
 	,m_wpFont(					m_wpPtrGroup->GetFont() )
 	,m_hWnd(					nullptr )
 	,m_enNextScene(				enSCENE::NOTHING )
-	,m_encNoise(				encNOISE::NOTHING )
 	,m_wpViewPortUsing(			m_wpViewPort11 )
 	,m_pDepthStencilStateOn(	nullptr )
 	,m_pDepthStencilStateOff(	nullptr )
+	,m_fRenderLimit(			fRENDER_LIMIT )
+	,m_fZoom(					fZOOM )
+#ifdef RENDER_SCREEN_TEXTURE_
+	,m_encNoise(				encNOISE::NOTHING )
 	,m_iNoiseFrame(				0 )
 	,m_fBlock(					0.0f )
 	,m_fPulse(					0.0f )
 	,m_bStopNoiseSe(			false )
-	,m_fRenderLimit(			fRENDER_LIMIT )
-	,m_fZoom(					fZOOM )
+	,m_isNoiseStrong(				false )
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 {
 }
 
@@ -191,7 +193,10 @@ void clsSCENE_BASE::Update( enSCENE &enNextScene )
 	else{
 		if( m_bStopNoiseSe ){
 			m_bStopNoiseSe = false;
+			m_isNoiseStrong = false;
 			m_upScreenTexture->StopSe();
+			m_wpXInput->SetVibPowerL( 0, 0 );
+			m_wpXInput->SetVibPowerR( 0, 0 );
 		}
 	}
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
@@ -252,6 +257,7 @@ void clsSCENE_BASE::Render(
 		this->UpdateNoise();
 	}
 
+#ifdef _DEBUG
 	if( GetAsyncKeyState( 'Z' ) & 0x1 ){
 		NoiseStrong( 60 );
 	}
@@ -269,6 +275,7 @@ void clsSCENE_BASE::Render(
 //	if( GetAsyncKeyState( 'B' ) & 0x8000 ){
 //		m_upScreenTexture->SetColor( { 0.5f, 0.5f, 1.0f, 1.0f } );
 //	}
+#endif//#ifdef _DEBUG
 
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
@@ -776,17 +783,20 @@ void clsSCENE_BASE::Proj()
 //デバッグ用シーン切り替え.
 void clsSCENE_BASE::DebugChangeScene( enSCENE &enNextScene ) const
 {
-	if( GetAsyncKeyState( 'T' ) & 0x1 ){
+	if( GetAsyncKeyState( 'R' ) & 0x1 ){
 		enNextScene = enSCENE::TITLE;
 	}
-	else if( GetAsyncKeyState( 'Y' ) & 0x1 ){
+	else if( GetAsyncKeyState( 'T' ) & 0x1 ){
 		enNextScene = enSCENE::ASSEMBLE;
 	}
+	else if( GetAsyncKeyState( 'Y' ) & 0x1 ){
+		enNextScene = enSCENE::MOVIE_TAKEOFF;
+	}
 	else if( GetAsyncKeyState( 'U' ) & 0x1 ){
-		enNextScene = enSCENE::TAKEOFF;
+		enNextScene = enSCENE::MISSION;
 	}
 	else if( GetAsyncKeyState( 'I' ) & 0x1 ){
-		enNextScene = enSCENE::MISSION;
+		enNextScene = enSCENE::MOVIE_CLEAR;
 	}
 	else if( GetAsyncKeyState( 'O' ) & 0x1 ){
 		enNextScene = enSCENE::ENDING;
@@ -835,9 +845,10 @@ void clsSCENE_BASE::SetViewPort(
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 //ノイズを起こす.
-void clsSCENE_BASE::NoiseStrong( const int iPower )
+bool clsSCENE_BASE::NoiseStrong( const int iPower )
 {
 	assert( m_upScreenTexture );
+	if( m_isNoiseStrong ){ return false; }
 
 //	int iBlockFrame = iFrame;
 //	const int iFRAME_MAX = 30;
@@ -863,12 +874,15 @@ void clsSCENE_BASE::NoiseStrong( const int iPower )
 	m_upScreenTexture->PlaySeStrong();
 
 	m_bStopNoiseSe = true;
+	m_isNoiseStrong = true;
 
 	m_encNoise = encNOISE::BLOCK_AND_PULSE;
+	return true;
 }
-void clsSCENE_BASE::NoiseWeak( const int iFrame )
+bool clsSCENE_BASE::NoiseWeak( const int iFrame )
 {
 	assert( m_upScreenTexture );
+	if( m_upScreenTexture->isNoiseFlag() ){ return false; }
 
 	m_upScreenTexture->SetNoiseFlag( true );
 	m_iNoiseFrame = iFrame;
@@ -882,6 +896,8 @@ void clsSCENE_BASE::NoiseWeak( const int iFrame )
 	m_bStopNoiseSe = true;
 
 	m_encNoise = encNOISE::MINUTE_BLOCK;
+
+	return true;
 }
 
 void clsSCENE_BASE::UpdateNoise()

@@ -1,4 +1,6 @@
 #include "DX9Mesh.h"
+#include "BlendState.h"
+#include "Singleton.h"
 #include "OperationString.h"
 
 using namespace std;
@@ -63,13 +65,10 @@ clsDX9Mesh::clsDX9Mesh()
 	,m_pVertexBuffer( nullptr )
 	,m_ppIndexBuffer( nullptr )
 	,m_pSampleLinear( nullptr )
-//	,m_pBlendState( nullptr )
+	,m_psinBlend( nullptr )
 {
 //	ZeroMemory(this, sizeof(clsDX9Mesh));
 
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		m_pBlendState[i] = nullptr;
-	}
 
 	m_Trans.vScale = {1.0f,1.0f,1.0f};
 }
@@ -102,9 +101,7 @@ clsDX9Mesh::~clsDX9Mesh()
 	SAFE_RELEASE( m_pMesh );
 	SAFE_RELEASE( m_pMeshForRay );
 
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		SAFE_RELEASE( m_pBlendState[i] );
-	}
+	m_psinBlend = nullptr;
 
 	m_pContext = nullptr;
 	m_pDevice = nullptr;
@@ -125,9 +122,13 @@ HRESULT clsDX9Mesh::Init(HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext
 	m_pContext = pContext11;
 	LPDIRECT3DDEVICE9	pDevice9 = NULL;	//Dx9デバイスオブジェクト.
 
-	if( FAILED( CreateBlendState() ) ){
-		return E_FAIL;
-	}
+	//シングルトン.
+	m_psinBlend = &clsSINGLETON<clsBLEND_STATE>::GetInstance();
+//	m_psinBlend->Create( pDevice11, pContext11 );
+
+//	if( FAILED( CreateBlendState() ) ){
+//		return E_FAIL;
+//	}
 	if( FAILED( InitDx9( hWnd, &pDevice9, fileName ) ) ){
 		return E_FAIL;
 	}
@@ -843,7 +844,7 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 		&stride, &offset);
 
 	//アルファブレンド用ブレンドステート作成.
-	SetBlend( isAlpha );
+	m_psinBlend->SetBlend( isAlpha );
 	
 	//属性の数だけ、それぞれの属性のインデックスバッファを描画.
 	for (DWORD i = 0; i < m_NumAttr; i++)
@@ -906,55 +907,3 @@ void clsDX9Mesh::Render( const D3DXMATRIX& mView,	const D3DXMATRIX& mProj,
 			m_pMaterials[m_AttrID[i]].dwNumFace * 3, 0, 0);
 	}
 }
-
-//ブレンドステート作成.
-HRESULT clsDX9Mesh::CreateBlendState()
-{
-	//アルファブレンド用ブレンドステート作成.
-	//pngファイル内にアルファ情報があるので、透過するようにブレンドステートで設定する.
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );	//初期化.
-	blendDesc.IndependentBlendEnable = false;			//false:RenderTarget[0]のメンバーのみ使用する。true:RenderTarget[0～7]が使用できる(レンダーターゲット毎に独立したブレンド処理).
-	blendDesc.AlphaToCoverageEnable = false;			//true:アルファトゥカバレッジを使用する.
-
-	//表示タイプ
-//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:アルファブレンドを使用する.
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//アルファブレンドを指定.
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//アルファブレンドの反転を指定.
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成.
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//そのまま使用.
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;		//何もしない.
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ADD：加算合成.
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのデータの格納を許可する.
-
-	bool tmpBlendEnable[ enBLEND_STATE_size ];
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
-	{
-		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
-			assert( !"ブレンドステートの作成に失敗" );
-			return E_FAIL;
-		}
-	}
-
-	return S_OK;
-}
-
-
-//透過(アルファブレンド)設定の切り替え.
-void clsDX9Mesh::SetBlend( bool isAlpha )
-{
-	UINT mask = 0xffffffff;	//マスク値白.
-
-	if( isAlpha ){		
-		//ブレンドステートの設定.
-		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
-	}
-	else{
-		m_pContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
-	}
-}
-

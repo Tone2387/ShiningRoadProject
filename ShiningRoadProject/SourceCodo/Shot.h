@@ -17,6 +17,7 @@ struct BulletState
 	int iSEHitNum;
 
 	int iShotEfcNum;
+	int iMuzzeleEfcNum;
 	int iLineEfcNum;
 	int iHitEfcNum;
 };
@@ -41,6 +42,7 @@ private:
 	enum enEfcType
 	{
 		enEfcShot = 0,
+		enEfcMuzzle,
 		enEfcLine,
 		enEfcHit,
 
@@ -56,16 +58,20 @@ public:
 	bool m_bShotExistFlg;//弾の存在確認(falseなら弾が存在しない状態).
 	bool m_bExistFlg;//弾,爆発,軌跡の存在確認(falseならそれら全てが存在しない状態)
 
-	HRESULT Init(BulletState BState);
+	HRESULT Init(const BulletState& BState);
 
 	void SEInit(HWND hWnd);
 
-	void Move();
-	bool Hit(std::vector<clsObject::SPHERE> v_TargetSphere);
-	bool Form(D3DXVECTOR3 vShotPos,D3DXVECTOR3 vTarget);
+	bool Hit(std::vector<clsObject::SPHERE>& v_TargetSphere);
+	bool Form(const D3DXVECTOR3& vShotPos,const D3DXVECTOR3& vTarget);
 	void ReStart();
 
 private:
+
+	virtual void UpdateProduct(clsStage* pStage);
+	virtual void Action(clsStage* const pStage);
+
+	void Explosion();
 
 	clsSound* m_ppSE[enSESize];
 

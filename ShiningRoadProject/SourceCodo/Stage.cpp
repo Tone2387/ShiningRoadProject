@@ -1,5 +1,6 @@
 #include "Stage.h"
 #include "File.h"
+#include "Sprite.h"
 #include "Building.h"
 #include "PtrGroup.h"
 #include "Resource.h"
@@ -107,9 +108,8 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 		m_pDoorArray[i]->SetPosition( m_pStageCollision->GetPosition() );
 		//二つ目は反対の位置にするために回す.
 		m_pDoorArray[i]->SetRotation( 
-			m_pStageCollision->GetRotation()
-			+ ( D3DXVECTOR3( 0.0f, static_cast<float>( D3DX_PI * i ), 0.0f ) )
-			);
+			m_pStageCollision->GetRotation() +
+			( D3DXVECTOR3( 0.0f, static_cast<float>( D3DX_PI * i ), 0.0f ) ) );
 		m_pDoorArray[i]->SetScale( {
 			file.GetDataFloat( 0, cINDEX_SCALE_X ),
 			file.GetDataFloat( 0, cINDEX_SCALE_Y ),
@@ -121,14 +121,30 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	file.Close();
 	//========== ドア 終わり ==========//.
 
-	//障害物.
+	//========== ビル ==========//.
+	//下準備.
+	clsBUILDING::CreateTexture(
+		pPtrGroup->GetDevice(), 
+		pPtrGroup->GetContext(), 
+		&m_spBuildingTop,
+		&m_spBuildingSide,
+		&m_spBuildingSideInside,
+		&m_spBuildingTopInside,
+		&m_spBuildingBottomInside );
+
 	file.Open( sBUILDING_DATA_PATH );
 	m_vpBuilding.resize( file.GetSizeRow() );
+	//ビルの作成 & 初期化.
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i] = make_unique< clsBUILDING >( 
 			pPtrGroup->GetDevice(), 
 			pPtrGroup->GetContext(), 
-			pPtrGroup->GetResource()->GetStaticModels( clsResource::enStaticModel_Building ) );
+			pPtrGroup->GetResource()->GetStaticModels( clsResource::enStaticModel_Building ),
+			m_spBuildingTop,
+			m_spBuildingSide,
+			m_spBuildingSideInside,
+			m_spBuildingTopInside,
+			m_spBuildingBottomInside );
 
 		//座標.
 		m_vpBuilding[i]->SetPos( {
@@ -151,12 +167,11 @@ clsStage::clsStage( clsPOINTER_GROUP* const pPtrGroup )
 	for( unsigned int i=0; i<m_vpBuilding.size(); i++ ){
 		m_vpBuilding[i]->UpdateTile();
 	}
+	//========== ビル 終わり ==========//.
 
 	for( UCHAR i=0; i<enDOOR_size; i++ ){
 		SetAnimDoor( static_cast<enDOOR>( i ), enDOOR_ANIM_CLOSED );
 	}
-
-
 
 	//光を青く.
 	SetColor( vLIGHT_COLOR_BLUE );
@@ -211,8 +226,8 @@ void clsStage::Render(
 	UpdateLight();
 
 //#ifdef _DEBUG
-	//色.
-	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
+//	//色.
+//	const float fSTATIC_MODEL_COLOR_RGB_ADD = 0.025f; 
 //	if( GetAsyncKeyState( 'F' ) & 0x8000 )m_vLightColorTarget.x += fSTATIC_MODEL_COLOR_RGB_ADD;
 //	if( GetAsyncKeyState( 'V' ) & 0x8000 )m_vLightColorTarget.x -= fSTATIC_MODEL_COLOR_RGB_ADD;
 //	if( GetAsyncKeyState( 'G' ) & 0x8000 )m_vLightColorTarget.y += fSTATIC_MODEL_COLOR_RGB_ADD;
@@ -381,4 +396,26 @@ void clsStage::SetStageObjTransform(const unsigned int uiObjNo)
 	}
 
 	m_vpBuilding[uiObjNo]->UpdateModel();
+}
+
+
+//ビルの近くにいるか( 上から見た円の判定 ).
+//添え字のビルのレイを判定するかどうかの判定として使う.
+bool clsStage::isNearBuilding( 
+	const D3DXVECTOR3& vPosObjOtherBuilding,//ビルと判定を取りたいモノの座標.
+	const unsigned int uiBuildingNo )		//ビルの番号.
+{
+	//ビルしか判定しません( GetStageMeshArray()に合わせる ).
+	if( uiBuildingNo >= m_vpBuilding.size() ){ return true; };
+
+	return m_vpBuilding[ uiBuildingNo ]->isNearBuilding( vPosObjOtherBuilding );
+}
+
+
+//ビルの中に入ったギガポンを追い出す.
+void clsStage::KickOutInsideBuilding( clsRobo* const pRobo )
+{
+	for( auto& Building_i : m_vpBuilding ){
+		Building_i->KickOutInside( pRobo );
+	}
 }

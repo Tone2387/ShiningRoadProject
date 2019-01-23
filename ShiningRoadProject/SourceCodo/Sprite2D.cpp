@@ -1,4 +1,5 @@
 #include "Sprite2D.h"
+#include "BlendState.h"
 
 namespace{
 
@@ -13,14 +14,14 @@ clsSprite2D::clsSprite2D() :
 	m_pConstantBuffer( nullptr ),
 	m_pVertexBuffer( nullptr ),	
 	m_pTexture( nullptr ),		
-	m_pSampleLinear( nullptr )	
+	m_pSampleLinear( nullptr )
+	,m_vPos( 0.0f, 0.0f, 0.0f )
+	,m_vScale( 1.0f, 1.0f, 1.0f )
 	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 {
 //	ZeroMemory( this, sizeof( clsSprite2D ) );
 
 
-	//アルファ値の設定.
-	m_vPos = m_vScale = { 1.0f, 1.0f, 0.0f };
 	m_fPatternNo = { 0.0f, 0.0f };
 }
 
@@ -46,9 +47,6 @@ HRESULT clsSprite2D::Create(
 
 	m_SState = ss;
 
-	if( FAILED( CreateBlendState() ) ){
-		return E_FAIL;
-	}
 	if( FAILED( InitShader( fileName ) ) ){
 		return E_FAIL;
 	}
@@ -131,7 +129,7 @@ HRESULT clsSprite2D::InitShader( const char* sErrFileName )
 		}
 	};
 	//頂点インプットレイアウトの配列要素数を算出.
-	UINT numElements = sizeof(layout) / sizeof(layout[0]);
+	UINT numElements = sizeof( layout ) / sizeof( layout[0] );
 
 	//頂点インプットレイアウトの作成.
 	if( FAILED(	m_wpDevice->CreateInputLayout(
@@ -390,7 +388,7 @@ void clsSprite2D::Render()
 		0, 1, &m_pTexture );		//テクスチャをシェーダに渡す.
 
 	//アルファブレンド用ブレンドステート作成＆設定.
-	SetBlend( true );
+	m_psinBlend->SetBlend( true );
 
 	//プリミティブをレンダリング.
 	m_wpContext->Draw( 4, 0 );

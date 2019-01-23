@@ -11,49 +11,11 @@ void clsEnemyRobo::Init(
 	m_UpdateState.iHorDirResult = 0;
 	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 
-	/*ShotState SSTmp;
-	SSTmp.iShotDisMax = 50.0f;
-	SSTmp.iShotDisMin = 1.0f;
-
-	MoveState MSTmp;
-	MSTmp.iHorDisRandMax = 500;
-	MSTmp.iHorDistance = 100;
-	MSTmp.iMoveDir = 0;
-	MSTmp.iMoveDirRandMax = 0;
-	MSTmp.iVerDistance = 100;
-	MSTmp.iVerDistRandMax = 20;
-
-	m_BoostState.iENLimitParcent = 30;
-	m_BoostState.iRisingENParcent = 70;
-	m_bENSaving = false;
-
-	m_v_LShotState.push_back(SSTmp);
-
-	m_v_RShotState.push_back(SSTmp);
-
-	m_v_MoveState.push_back(MSTmp);
-
-	m_v_QuickBoostAvoidState.resize(2);
-
-
-	for (unsigned int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
-	{
-		m_v_QuickBoostAvoidState[i].iAvoidType = i;
-		m_v_QuickBoostAvoidState[i].iUpdateTime = 6000;
-		m_v_QuickBoostAvoidState[i].iConditions = 300;
-		m_v_QuickBoostAvoidState[i].iAvoidDir = 45;
-
-		m_v_QuickBoostAvoidState[i].iUpdateCnt = m_v_QuickBoostAvoidState[i].iUpdateTime;
-		m_v_QuickBoostAvoidState[i].iConditionsCnt = 0;
-	}*/
-
 	SetData(strEnemyFolderName);
 }
 
 bool clsEnemyRobo::IsBoostRising()
 {
-	IsENSaving();
-
 	if (!m_bENSaving)
 	{
 		if (m_pTarget)
@@ -74,28 +36,36 @@ bool clsEnemyRobo::IsBoostRising()
 
 			m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
 
-			float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
+			float fDist = -(m_pTarget->GetPosition().y - m_pChara->GetPosition().y);
 
-			if (fDist > -m_UpdateState.fVerDis * iHulf &&
-				fDist < m_UpdateState.fVerDis * iHulf)
+			if (m_bBoostRisingFullBoost)
 			{
-				return true;
+				if (fDist > m_UpdateState.fVerDis)
+				{
+					m_bBoostRisingFullBoost = false;
+				}
 			}
 
 			else
 			{
-				if (fDist > 0.0f)
+				if (fDist < m_UpdateState.fVerDis / iHulf)
 				{
-					return true;
+					m_bBoostRisingFullBoost = true;
 				}
+			}
+
+			if (m_bBoostRisingFullBoost)
+			{
+				return true;
 			}
 		}
 	}
 
+	m_bBoostRisingFullBoost = false;
 	return false;
 }
 
-void clsEnemyRobo::IsENSaving()
+void clsEnemyRobo::ENSaving()
 {
 	int iENLimit;
 
@@ -150,7 +120,7 @@ bool clsEnemyRobo::IsBoostOff()
 
 		const int iHulf = 2;
 
-		float fVerDestDis = m_UpdateState.fVerDis + (m_UpdateState.fVerDis / iHulf);
+		float fVerDestDis = m_UpdateState.fVerDis * 2;//‚‚³‹–—e’l.
 
 		if (fVerDis < 0.0f)//“G‚ª‰º‚É‚¢‚é.
 		{
@@ -534,6 +504,11 @@ clsRoboCommand* clsEnemyRobo::QuickTurnOperation(float& fPower, float& fAngle)
 {
 	if (IsQuickTurn(fPower, fAngle))
 	{
+		if (m_pBody->m_bBoost)
+		{
+			return m_pComMoveSwitch;
+		}
+
 		return m_pComQuickTrun;
 	}
 
@@ -716,7 +691,14 @@ void clsEnemyRobo::SetDataProduct()
 	SetQuickBoostAvoidData();
 }
 
+void clsEnemyRobo::UpdateProduct()
+{
+	ENSaving();
+}
+
 clsEnemyRobo::clsEnemyRobo()
+	: m_bENSaving(false)
+	, m_bBoostRisingFullBoost(true)
 {
 	m_pComMove = new clsCommandMove;
 	m_pComMoveSwitch = new clsCommandMoveSwitch;

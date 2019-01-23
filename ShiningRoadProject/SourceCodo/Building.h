@@ -2,7 +2,7 @@
 #define BUILDING_H_
 
 
-
+class clsRobo;
 
 #include "Global.h"
 #include"ObjStaticMesh.h"
@@ -18,8 +18,24 @@ public:
 	clsBUILDING( 
 		ID3D11Device* const pDevice11,
 		ID3D11DeviceContext* const pContext11,
-		 clsDX9Mesh* const pModel );
+		 clsDX9Mesh* const pModel,
+		std::shared_ptr< clsSprite > spTop,
+		std::shared_ptr< clsSprite > spSide,
+		std::shared_ptr< clsSprite > spSideInside,
+		std::shared_ptr< clsSprite > spTopInside,
+		std::shared_ptr< clsSprite > spBottomInside );
 	~clsBUILDING();
+
+	//ビルのテクスチャリソースを作成.
+	//ビルを内包する「 clsStage 」で使う.
+	static void CreateTexture(
+		ID3D11Device* const pDevice11,
+		ID3D11DeviceContext* const pContext11,
+		std::shared_ptr< clsSprite >* const pspTop,
+		std::shared_ptr< clsSprite >* const pspSide,
+		std::shared_ptr< clsSprite >* const pspSideInside,
+		std::shared_ptr< clsSprite >* const pspTopInside,
+		std::shared_ptr< clsSprite >* const pspBottomInside );
 
 	//レイの当たり判定に必要.
 	void UpdateModel() const;
@@ -28,18 +44,25 @@ public:
 	void UpdateTile();
 
 	void Render(
-		const D3DXMATRIX &mView, 
+		const D3DXMATRIX &mView,
 		const D3DXMATRIX &mProj,
-		const D3DXVECTOR3 &vLight, 
+		const D3DXVECTOR3 &vLight,
 		const D3DXVECTOR3 &vEye,
 		const D3DXVECTOR4& vColor = { 1.0f, 1.0f, 1.0f, 1.0f } ) const;
 
 	void RenderInside(
-		const D3DXMATRIX &mView, 
+		const D3DXMATRIX &mView,
 		const D3DXMATRIX &mProj,
-		const D3DXVECTOR3 &vLight, 
+		const D3DXVECTOR3 &vLight,
 		const D3DXVECTOR3 &vEye ) const;
 
+
+	//ビルの近くにいるか( 上から見た円の判定 ).
+	//ビルと判定を取りたいモノの座標.
+	bool isNearBuilding( const D3DXVECTOR3& vPosObjOtherBuilding );
+
+	//ビルの中に入ったギガポンを追い出す.
+	void KickOutInside( clsRobo* const pRobo );
 
 
 	//レイ用.
@@ -125,16 +148,21 @@ private:
 	//側面.
 	TRANSFORM m_SideTransArray[ enWALL_DIRECTION_size ];
 
+	//分割数.
+	D3DXVECTOR2 m_vSplitTop; 
+	D3DXVECTOR2 m_vSplitNorthSouth; 
+	D3DXVECTOR2 m_vSplitEastWest; 
+
 
 	std::unique_ptr< clsObjStaticMesh > m_upBox;
 
 	//テクスチャ.
-	std::unique_ptr< clsSprite > m_upTop;
-	std::unique_ptr< clsSprite > m_upSide;
+	std::shared_ptr< clsSprite > m_spTop;
+	std::shared_ptr< clsSprite > m_spSide;
 	//裏面( カメラがビルの中に入った時の為 ).
-	std::unique_ptr< clsSprite > m_upSideInside;
-	std::unique_ptr< clsSprite > m_upTopInside;
-	std::unique_ptr< clsSprite > m_upBottomInside;
+	std::shared_ptr< clsSprite > m_spSideInside;
+	std::shared_ptr< clsSprite > m_spTopInside;
+	std::shared_ptr< clsSprite > m_spBottomInside;
 
 
 

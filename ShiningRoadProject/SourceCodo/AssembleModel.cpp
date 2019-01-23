@@ -524,6 +524,13 @@ bool clsASSEMBLE_MODEL::PartsAnimChange( const enPARTS enParts, const int iIndex
 }
 
 
+//アニメーションが終了したらtrue.
+bool clsASSEMBLE_MODEL::GetPartsAnimEnd( const enPARTS enParts )
+{
+	char cPartsIndex = static_cast<char>( enParts );
+	assert( m_vpParts[ cPartsIndex ] );
+	return m_vpParts[ cPartsIndex ]->IsAnimTimeEnd();
+}
 
 
 //パーツのボーンの座標を取得.

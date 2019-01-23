@@ -56,8 +56,6 @@ public:
 		m_pMesh->SetScale(m_Trans.vScale.x);
 
 		m_pMesh->UpDate();
-
-		PlayBoostEfc();
 	}
 
 	void SetRotateHeadParts();
@@ -76,6 +74,7 @@ public:
 		m_pMesh->Render(mView, mProj, vLight, vEye);
 		UpdatePosfromBone();
 		m_pMesh->UpdateColPos();
+		PlayBoostEfc();
 	}
 
 	virtual void AnimPause() const override
@@ -148,6 +147,8 @@ public:
 	void QuickTurn();
 	void SetDirQuickTurn(const float fAngle);
 
+	virtual void AddRotAccele(const float fAngle, const float fPush) override;//回転速度加算.
+
 	void ShotLWeapon();
 	void ShotRWeapon();
 	bool IsLWeaponLock();
@@ -161,9 +162,7 @@ public:
 	void UpdatePosfromBone();
 
 	clsRobo();
-	~clsRobo();
-
-	
+	virtual ~clsRobo();
 
 private:
 	void Down() final;
@@ -172,6 +171,8 @@ private:
 	bool m_bStopComShotR;
 
 	D3DXVECTOR3 m_vMoveDirforBoost;
+	float m_fFollPowerforBoost;
+	float m_fRotDirforBoost;
 
 	//右腕ブースターエフェクト.
 	std::vector<::Effekseer::Handle> m_v_RHandFrontBoostEfc;
@@ -206,9 +207,16 @@ private:
 	void PlayBoostEfc();
 	
 	void PlayFrontBoostEfc();
+	void PlayLFrontBoostEfc();
+	void PlayRFrontBoostEfc();
+
 	void PlayRightBoostEfc();
+
 	void PlayLeftBoostEfc();
+
 	void PlayBackBoostEfc();
+	void PlayLBackBoostEfc();
+	void PlayRBackBoostEfc();
 
 	void PlayCoreBoostEfc();
 
@@ -295,20 +303,6 @@ private:
 	void AnimChangeWeaponL(enAnimNoWeapon enChangeAnimNo, double dAnimTime = 0.0);
 	void AnimChangeWeaponR(enAnimNoWeapon enChangeAnimNo, double dAnimTime = 0.0);
 
-//太原の書き足した分.
-#ifdef Tahara
-	//消すときdeleteしないでnullしてね.
-	clsResource*		m_wpResource;
-	clsEffects*			m_wpEffects;
-	clsSOUND_MANAGER_BASE*	m_wpSound;
-
-	//当たり判定のポインタ.
-//	std::shared_ptr< std::vector< D3DXVECTOR3 > > m_spColPoss;
-
-	//ロボモデル.
-//	std::unique_ptr< clsMISSION_MODEL > m_upMissModel;
-
-#endif//#ifdef Tahara
 
 
 };

@@ -149,9 +149,6 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 {
 	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
 
-	if( m_wpSound ){
-		m_wpSound->PlayBGM( enBGM_RENGOKU0 );
-	}
 
 	//背景.
 	SPRITE_STATE ss;
@@ -252,6 +249,9 @@ void clsSCENE_ASSEMBLE::CreateProduct()
 	clsMENU_WINDOW_ASSEMBLE_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
 
 
+	if( m_wpSound ){
+		m_wpSound->PlayBGM( enBGM_RENGOKU0 );
+	}
 
 }
 
@@ -324,12 +324,13 @@ void clsSCENE_ASSEMBLE::UpdateProduct( enSCENE &enNextScene )
 	//操作.
 	if( isCanControl )
 	{
+		//スティックの動き( ロボの回転 ).
+		MoveRoboStick();
+
 		if( m_upMenu ){
 			MenuUpdate( enNextScene );
 		}
 		else{
-			//スティックの動き( ロボの回転 ).
-			MoveRoboStick();
 			//選択肢.
 			if( isPressHoldRight( false ) )	MoveCursorRight();
 			if( isPressHoldLeft	( false ) )	MoveCursorLeft();
@@ -743,8 +744,11 @@ bool clsSCENE_ASSEMBLE::isPressButtonY()
 }
 bool clsSCENE_ASSEMBLE::isPressButtonStart()
 {
-	if( isPressStart() ){
-		return true;
+	if( m_wpXInput->isConnected() )
+	{
+		if( isPressStart() ){
+			return true;
+		}
 	}
 	else if( m_wpDxInput->IsPressKeyEnter( (enPKey)enGIGANT_WEAPONS_CONTROLLER_START ) ){
 		return true;
@@ -879,7 +883,7 @@ void clsSCENE_ASSEMBLE::MissionStart( enSCENE &enNextScene )
 //	m_wpSound->PlaySE( enSE_ENTER );
 
 //	enNextScene = enSCENE::MISSION;
-	enNextScene = enSCENE::TAKEOFF;
+	enNextScene = enSCENE::MOVIE_TAKEOFF;
 	m_enSelectMode = clsASSEMBLE_UI::enSELECT_MODE::MISSION_START;
 
 	m_wpSound->PlaySE( enSE_MISSION_START );

@@ -15,16 +15,15 @@ clsAIRobo::clsAIRobo()
 
 clsAIRobo::~clsAIRobo()
 {
-
+	SAFE_DELETE(m_pAI);
 }
 
 void clsAIRobo::Init(clsPOINTER_GROUP* const pPtrGroup,
 	unsigned int uiAINum)
 {
-	clsROBO_STATUS_ENEMY* pEnemyState;
-	pEnemyState = new clsROBO_STATUS_ENEMY(uiAINum);
+	clsROBO_STATUS_ENEMY EnemyState(uiAINum);
 
-	RoboInit(pPtrGroup, pEnemyState);
+	RoboInit(pPtrGroup, &EnemyState);
 
 	clsOPERATION_STRING strOtr;
 	std::string strFolderName = strRoboAIFolderPath;
@@ -37,7 +36,10 @@ void clsAIRobo::Init(clsPOINTER_GROUP* const pPtrGroup,
 
 void clsAIRobo::Action(clsStage* const pStage)
 {
-	return;
+	if (m_iHP <= 0)
+	{
+		return;
+	}
 
 	float fPush = 0.0f;
 	float fAngle = 0.0f;

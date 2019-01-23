@@ -8,7 +8,7 @@ clsPlayer::clsPlayer()
 
 clsPlayer::~clsPlayer()
 {
-
+	SAFE_DELETE(m_pInput);
 }
 
 void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
@@ -16,6 +16,8 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 	RoboInit(pPtrGroup, pPtrGroup->GetRoboStatus());
 
 	m_pInput = new clsInputRobo(pPtrGroup->GetDxInput(), pPtrGroup->GetXInput());
+
+	m_bPlayer = true;
 
 	/*clsObject::SPHERE Tmp;
 
@@ -30,6 +32,11 @@ void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
 
 void clsPlayer::Action(clsStage* const pStage)
 {
+	if (m_iHP <= 0)
+	{
+		return;
+	}
+
 	float fPush = 0.0f;
 	float fAngle = 0.0f;
 	clsRoboCommand* pRoboCom;
@@ -151,7 +158,7 @@ bool clsPlayer::GetTargetPos(D3DXVECTOR3& vTmpPos)
 {
 	if (m_pTargetChara)
 	{
-		vTmpPos = m_pTargetChara->m_vCenterPos;
+		vTmpPos = m_pTargetChara->GetCenterPos();
 		return true;
 	}
 

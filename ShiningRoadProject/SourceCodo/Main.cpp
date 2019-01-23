@@ -1,6 +1,8 @@
 #include "Main.h"
 #include "RenderAtStartUp.h"
 #include "Game.h"
+#include "Singleton.h"
+#include "BlendState.h"
 #include <stdio.h>
 #include <thread>
 
@@ -45,6 +47,7 @@ INT WINAPI WinMain(
 		{
 			//Dx11用の初期化
 			if( SUCCEEDED( g_upMain->InitD3D() ) ){
+				g_upMain->CreateResource();
 				//メッセージループ.
 				g_upMain->Loop();
 			}
@@ -215,10 +218,7 @@ LRESULT clsMain::MsgProc(
 }
 
 
-//============================================================
-//	メッセージループとアプリケーション処理の入り口.
-//============================================================
-void clsMain::Loop()
+void clsMain::CreateResource()
 {
 	//起動中の描画.
 	unique_ptr< clsRENDER_AT_START_UP > upRenderAtStartUp =
@@ -229,7 +229,6 @@ void clsMain::Loop()
 			m_pBackBuffer_TexRTV,
 			m_pBackBuffer_DSTexDSV );
 	//別スレッドで描画.
-//	thread thStartUpRender( [ upRenderAtStartUp.get() ](){ upRenderAtStartUp->Loop(); } );
 	thread thStartUpRender( &clsRENDER_AT_START_UP::Loop, upRenderAtStartUp.get() );
 
 
@@ -244,8 +243,14 @@ void clsMain::Loop()
 	//ロード画面終了後にCreateしないと効果音のタイミングがおかしくなる.
 	m_upGame->Create();
 
+}
 
 
+//============================================================
+//	メッセージループとアプリケーション処理の入り口.
+//============================================================
+void clsMain::Loop()
+{
 	//----------------------------------------------------------
 	//	フレームレート.
 	//----------------------------------------------------------
@@ -314,7 +319,7 @@ bool clsMain::AppMain()
 void clsMain::Render()
 {
 	//このRender関数の前のAppMain関数でチェックしているのでアサートは省く.
-	m_upGame->Render( m_pBackBuffer_TexRTV, m_pBackBuffer_DSTexDSV );
+	m_upGame->Render();
 	
 	//レンダリングされたイメージを表示.
 	m_pSwapChain->Present( 0, 0 );
@@ -335,12 +340,12 @@ HRESULT clsMain::InitD3D()
 	//スワップチェーン構造体.
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory( &sd, sizeof( sd ) );
-	sd.BufferCount		= 1;		//バックバッファの数.
+	sd.BufferCount		= 1;		//バックバッファの数.1.
 	sd.BufferDesc.Width	= WND_W;
 	sd.BufferDesc.Height= WND_H;
 	sd.BufferDesc.Format= DXGI_FORMAT_R8G8B8A8_UNORM;
 									//フォーマット(32ビットカラー).
-	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Numerator = g_fFPS;
 									//リフレッシュレート(分母) ※FPS:60.
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 									//リフレッシュレート(分子).
@@ -507,6 +512,9 @@ HRESULT clsMain::InitD3D()
 	m_pDeviceContext->RSSetState( pIr );
 	SAFE_RELEASE( pIr );
 
+	//===== シングルトン =====//.
+	clsBLEND_STATE* pBlend = &clsSINGLETON<clsBLEND_STATE>::GetInstance();
+	pBlend->Create( m_pDevice, m_pDeviceContext );
 
 	return S_OK;
 }
@@ -516,6 +524,7 @@ HRESULT clsMain::InitD3D()
 //============================================================
 void clsMain::DestroyD3D()
 {
+
 #ifdef _DEBUG
 	if( m_pRayH != nullptr ){
 		delete m_pRayH;
@@ -542,6 +551,7 @@ void clsMain::DestroyD3D()
 	SetWindowMode();
 #endif//#ifdef STARTUP_FULLSCREEN_
 
+	clsSINGLETON_FINALIZER::Finalize();//シングルトンの消去.
 
 	SAFE_DELETE( m_spViewPort10 );
 	SAFE_RELEASE( m_pBackBuffer_DSTexDSV );
@@ -562,7 +572,10 @@ HRESULT clsMain::ReadMesh()
 		m_pDevice, 
 		m_pDeviceContext, 
 		m_spViewPort10, 
-		m_spViewPort11 );
+		m_spViewPort11,
+		m_pSwapChain,
+		m_pBackBuffer_TexRTV, 
+		m_pBackBuffer_DSTexDSV );
 //	m_upGame->Create();//起動時に効果音タイミングずれ対策でロード画面終了瞬間に移動する.
 
 

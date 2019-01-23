@@ -645,6 +645,8 @@ bool clsObject::ObjectCollision(std::vector<SPHERE> pTarget)
 
 void clsObject::FreeFoll()
 {
+	if (m_bNoFollObj)return;
+
 	if (!m_bGround)
 	{
 		m_fFollPower -= g_fGravity;
@@ -668,6 +670,9 @@ bool clsObject::WallJudge(clsStage* const pStage)
 
 	for (unsigned int i = 0; i < vvpMeshTmp.size(); i++)
 	{
+		//‘åŽG”c‚È‹——£‚Ì”»’è.
+		if( !pStage->isNearBuilding( m_Trans.vPos, i ) ){ continue; }
+
 		clsDX9Mesh* pObjMesh = vvpMeshTmp[i];
 		pStage->SetStageObjTransform(i);
 
@@ -750,7 +755,7 @@ m_vWallHit({ 0.0f, 0.0f, 0.0f }),
 m_fRaySpece(0.0f),
 m_fFollPower(0.0f),
 m_bGround(false),
-m_NoFollObj(false)
+m_bNoFollObj(false)
 , m_bAct(false)
 {
 	m_Trans.fPitch = 0.0f;

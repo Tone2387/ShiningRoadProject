@@ -8,6 +8,9 @@ using namespace std;
 
 static const int g_iStartCnt = 180;
 
+static const int g_iGameStartSENo = 17;
+static const int g_iLockOnSENo = 16;
+
 namespace
 {
 	const char strMissonFolderPath[] = "Data\\FileData\\Hiyoshi\\Misson";
@@ -21,13 +24,61 @@ m_pPlayer(nullptr)
 , m_bEnemyStop(false)
 , m_bCamTarChange(false)
 , m_bStartFlg(false)
+, m_bLockStart(false)
 {
 }
 
 clsSCENE_MISSION::~clsSCENE_MISSION()
 {
-	//SAFE_DELETE( m_pTestChara );
-	SAFE_DELETE(m_pPlayer);
+	m_pCamTar = nullptr;
+	m_pPlayer = nullptr;
+
+	SAFE_DELETE(m_pStage);
+
+	SAFE_DELETE(m_pWindowScrFilter);
+	SAFE_DELETE(m_pWindowScr);
+	SAFE_DELETE(m_pHPTargetChara);
+	SAFE_DELETE(m_pStartText);
+	SAFE_DELETE(m_pLockWindow);
+	SAFE_DELETE(m_pHitMark);
+	SAFE_DELETE(m_pRWeaponLockMark);
+	SAFE_DELETE(m_pLWeaponLockMark);
+	SAFE_DELETE(m_pRWeaponLockWindow);
+	SAFE_DELETE(m_pLWeaponLockWindow);
+
+	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
+	{
+		SAFE_DELETE(m_v_pRaderEnemyMark[i]);
+	}
+
+	SAFE_DELETE(m_pRaderPlayerMark);
+	SAFE_DELETE(m_pRaderWindowBack);
+	SAFE_DELETE(m_pRaderWindowFront);
+	SAFE_DELETE(m_pRBulletMark);
+	SAFE_DELETE(m_pRBulletNum);
+	SAFE_DELETE(m_pLBulletMark);
+	SAFE_DELETE(m_pLBulletNum);
+	SAFE_DELETE(m_pEnelgy);
+	SAFE_DELETE(m_pBoostOn);
+	SAFE_DELETE(m_pEnelgyFrame);
+	SAFE_DELETE(m_pHP);
+	SAFE_DELETE(m_pCursorFrame);
+	SAFE_DELETE(m_pCursor);
+	SAFE_DELETE(m_pLimitTime);
+
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		SAFE_DELETE(m_v_pEnemys[i]);
+	}
+
+	m_v_pEnemys.clear();
+
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		SAFE_DELETE(m_v_pFriends[i]);
+	}
+
+	m_v_pFriends.clear();
 }
 
 //生成時に一度だけ通る処理.
@@ -91,93 +142,16 @@ void clsSCENE_MISSION::CreateUI()
 	//活動限界時間.
 
 	m_pLimitTime = new clsUiText;
-	m_pLimitTime->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
+	m_pLimitTime->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
 	m_pLimitTime->SetPos(vPos);
 
 	sprintf_s(pText,"");
 
 	m_pLimitTime->SetText(pText);
 
-	//残弾数.
-	assert(!m_pLBulletNum);
-	vPos = { 250.0f, 0.0f };
+	SPRITE_STATE ss,ss_CursorFrame;
 
-	m_pLBulletNum = new clsUiText;
-	m_pLBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
-	m_pLBulletNum->SetPos(vPos);
-
-	sprintf_s(pText, "");
-
-	m_pLBulletNum->SetText(pText);
-
-	assert(!m_pRBulletNum);
-	vPos = { WND_W / 2 + 250.0f, 0.0f };
-
-	m_pRBulletNum = new clsUiText;
-	m_pRBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
-	m_pRBulletNum->SetPos(vPos);
-
-	sprintf_s(pText, "");
-
-	m_pRBulletNum->SetText(pText);
-
-	//HP.
-
-	assert(!m_pHP);
-	vPos = { WND_W / 2, 0.0f };
-
-	m_pHP = new clsUiText;
-	m_pHP->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
-	m_pHP->SetPos(vPos);
-
-	sprintf_s(pText, "");
-
-	m_pHP->SetText(pText);
-
-	SPRITE_STATE ss;
-
-	assert(!m_pRaderWindowFront);
-	ss.Disp = { 960.0f / 8, 640.0f / 8 };
-	ss.Anim = { 1.0f, 1.0f };
-
-	m_pRaderWindowFront = new clsSPRITE2D_CENTER;
-
-	m_pRaderWindowFront->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowFront.png", ss);
-	m_pRaderWindowFront->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
-
-	m_pRaderWindowFront->SetAlpha(1.0f);
-
-	assert(!m_pRaderWindowBack);
-	ss.Disp = { 960.0f / 8, 640.0f / 8 };
-	ss.Anim = { 1.0f, 1.0f };
-
-	m_fRaderSizeW = ss.Disp.w;
-	m_fRaderSizeH = ss.Disp.h;
-
-	m_pRaderWindowBack = new clsSPRITE2D_CENTER;
-
-	m_pRaderWindowBack->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowBack.png", ss);
-	m_pRaderWindowBack->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
-
-	m_pRaderWindowBack->SetAlpha(0.4f);
-
-	ss.Disp = { 44.0f / 8, 44.0f / 8 };
-
-	m_fRaderMarkSizeW = ss.Disp.w;
-	m_fRaderMarkSizeH = ss.Disp.h;
-
-	m_fRaderDis = 50.0f;
-
-	m_v_pRaderEnemyMark.resize(m_v_pEnemys.size());
-
-	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
-	{
-		m_v_pRaderEnemyMark[i] = new clsSPRITE2D_CENTER;
-
-		m_v_pRaderEnemyMark[i]->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarEnemyMark.png", ss);
-		m_v_pRaderEnemyMark[i]->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
-	}
-
+	//カーソル.
 	assert(!m_pCursor);
 	ss.Disp = { 1.0f, 1.0f };
 	ss.Anim = { 1.0f, 1.0f };
@@ -190,62 +164,197 @@ void clsSCENE_MISSION::CreateUI()
 	m_pCursor->SetAlpha(0.4f);
 
 	assert(!m_pCursorFrame);
-	ss.Disp = { 512.0f, 512.0f };
+	ss.Disp = { 837.0f, 512.0f };
 	ss.Anim = { 1.0f, 1.0f };
+
+	ss_CursorFrame.Disp = { 512.0f, 512.0f };
+	ss_CursorFrame.Anim = { 1.0f, 1.0f };
 
 	m_pCursorFrame = new clsSPRITE2D_CENTER;
 
-	m_pCursorFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Lockon.png", ss);
+	m_pCursorFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LockonFrame.png", ss);
 	m_pCursorFrame->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	//HP.
+
+	assert(!m_pHP);
+	vPos = { WND_W / 2, (WND_H / 2) - (ss_CursorFrame.Disp.h / 2) - 75 };
+
+	m_pHP = new clsUiText;
+	m_pHP->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pHP->SetPos(vPos);
+
+	sprintf_s(pText, "");
+
+	m_pHP->SetText(pText);
 
 	//EN.
 
-	assert(!m_pEnelgy);
-
-	ss.Disp = { 512.0f / 2, 64.0f / 4 };
-	ss.Anim = { 2.0f, 1.0f };
-
-	m_pEnelgy = new clsSPRITE2D_CENTER;
-
-	m_pEnelgy->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\Gauge.png", ss);
-	m_pEnelgy->SetPos({ WND_W / 2, m_pCursorFrame->GetPos().y - ((256.0f / 2) + (64.0f)), 0.0f });
-
+	//フレーム.
 	assert(!m_pEnelgyFrame);
 
-	ss.Disp = { 512.0f / 2 + 5, 64.0f / 4 + 3 };
+	ss.Disp = { 355.0f, 74.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_pEnelgyFrame = new clsSPRITE2D_CENTER;
 
-	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\GaugeWaku.png", ss);
-	m_pEnelgyFrame->SetPos(m_pEnelgy->GetPos());//{ WND_W / 2, WND_H / 5, 0.0f }
+	m_pEnelgyFrame->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\ENFrame.png", ss);
+	m_pEnelgyFrame->SetPos({ WND_W / 2, (WND_H / 2) + (ss_CursorFrame.Disp.h / 2) + (74.0f / 2), 0.0f });
 
-	assert(!m_pLWeaponLockMark);
+	//ブースト表示
+	assert(!m_pBoostOn);
+	vPos = { WND_W / 2, m_pEnelgyFrame->GetPos().y + 30};
+	m_pBoostOn = new clsUiText;
+	m_pBoostOn->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
+	m_pBoostOn->SetPos(vPos);
+	m_pBoostOn->SetText("Boost");
+
+	//ENバー本体.
+	assert(!m_pEnelgy);
+
+	ss.Disp = { 646.0f / 2, 36.0f};
+	ss.Anim = { 2.0f, 1.0f };
+
+	m_pEnelgy = new clsSPRITE2D_CENTER;
+
+	m_pEnelgy->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\ENbar.png", ss);
+	m_pEnelgy->SetPos({ m_pEnelgyFrame->GetPos().x, m_pEnelgyFrame->GetPos().y - 15.0f, 0.0f });
+
+	//残弾数.
+	//左武器.
+	assert(!m_pLBulletNum);
+	vPos = { (WND_W / 2) - (ss_CursorFrame.Disp.w / 2), WND_H / 2 - 50 - 65 };
+
+	m_pLBulletNum = new clsUiText;
+	m_pLBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pLBulletNum->SetPos(vPos);
+
+	sprintf_s(pText, "");
+
+	m_pLBulletNum->SetText(pText);
+
+	assert(!m_pLBulletMark);
+
+	ss.Disp = { 48.0f, 26.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pLBulletMark = new clsSPRITE2D_CENTER;
+
+	m_pLBulletMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\LW.png", ss);
+	m_pLBulletMark->SetPos({ vPos.x - (ss.Disp.w / 2), vPos.y - (ss.Disp.h / 2), 0.0f });
+
+	//右武器.
+	assert(!m_pRBulletNum);
+	vPos = { (WND_W / 2) + (ss_CursorFrame.Disp.w / 2), WND_H / 2 - 50 - 65 };
+
+	m_pRBulletNum = new clsUiText;
+	m_pRBulletNum->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pRBulletNum->SetPos(vPos);
+
+	sprintf_s(pText, "");
+
+	m_pRBulletNum->SetText(pText);
+
+	assert(!m_pRBulletMark);
+
+	ss.Disp = { 68.0f, 32.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pRBulletMark = new clsSPRITE2D_CENTER;
+
+	m_pRBulletMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RW.png", ss);
+	m_pRBulletMark->SetPos({ vPos.x + (ss.Disp.w / 2), vPos.y - (ss.Disp.h / 2), 0.0f });
+
+	//右上のレーダー
+	assert(!m_pRaderWindowFront);
+	ss.Disp = { 120.0f, 80.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pRaderWindowFront = new clsSPRITE2D_CENTER;
+
+	m_pRaderWindowFront->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowFront.png", ss);
+	m_pRaderWindowFront->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	m_pRaderWindowFront->SetAlpha(1.0f);
+
+	assert(!m_pRaderWindowBack);
+	ss.Disp = { 120.0f, 80.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_fRaderSizeW = ss.Disp.w;
+	m_fRaderSizeH = ss.Disp.h;
+
+	m_pRaderWindowBack = new clsSPRITE2D_CENTER;
+
+	m_pRaderWindowBack->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarWindowBack.png", ss);
+	m_pRaderWindowBack->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+//	m_pRaderWindowBack->SetAlpha(0.4f);
+
+	ss.Disp = { 5.0f, 5.0f };
+
+	m_fRaderMarkSizeW = ss.Disp.w;
+	m_fRaderMarkSizeH = ss.Disp.h;
+
+	m_pRaderPlayerMark = new clsSPRITE2D_CENTER;
+
+	m_pRaderPlayerMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarPlayerMark.png", ss);
+	m_pRaderPlayerMark->SetPos(m_pRaderWindowBack->GetPos());
+
+	m_v_pRaderEnemyMark.resize(m_v_pEnemys.size());
+
+	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
+	{
+		m_v_pRaderEnemyMark[i] = new clsSPRITE2D_CENTER;
+
+		m_v_pRaderEnemyMark[i]->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\RadarEnemyMark.png", ss);
+		m_v_pRaderEnemyMark[i]->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	}
+
+
+	//左武器ロック.
+	assert(!m_pLWeaponLockWindow);
 	ss.Disp = { 92.0f, 106.0f };
+	ss.Anim = { 1.0f, 1.0f };
+
+	m_pLWeaponLockWindow = new clsSPRITE2D_CENTER;
+
+	m_pLWeaponLockWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockL.png", ss);
+	m_pLWeaponLockWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	//m_pLWeaponLockMark->SetAlpha(0.4f);
+
+	//右武器ロック.
+	assert(!m_pRWeaponLockWindow);
+
+	m_pRWeaponLockWindow = new clsSPRITE2D_CENTER;
+
+	m_pRWeaponLockWindow->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockR.png", ss);
+	m_pRWeaponLockWindow->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+
+	//左ロックマーク
+	assert(!m_pLWeaponLockMark);
+	ss.Disp = { 68.0f, 32.0f };
 	ss.Anim = { 1.0f, 1.0f };
 
 	m_pLWeaponLockMark = new clsSPRITE2D_CENTER;
 
-	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockL.png", ss);
-	m_pLWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	m_pLWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILock.png", ss);
+	m_pLWeaponLockMark->SetPos({ (WND_W / 2) - (ss_CursorFrame.Disp.w / 2) - (ss.Disp.w / 2) - 20, WND_H / 2, 0.0f });
 
-	//m_pLWeaponLockMark->SetAlpha(0.4f);
-
+	//右ロックマーク
 	assert(!m_pRWeaponLockMark);
 
 	m_pRWeaponLockMark = new clsSPRITE2D_CENTER;
 
-	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILockR.png", ss);
-	m_pRWeaponLockMark->SetPos({ WND_W - (ss.Disp.w / 2), (ss.Disp.h / 2), 0.0f });
+	m_pRWeaponLockMark->Create(m_wpPtrGroup->GetDevice(), m_wpPtrGroup->GetContext(), "Data\\Image\\MissonUI\\UILock.png", ss);
+	m_pRWeaponLockMark->SetPos({ (WND_W / 2) + (ss_CursorFrame.Disp.w / 2) + (ss.Disp.w / 2) + 20, WND_H / 2, 0.0f });
 
 	//m_pRWeaponLockMark->SetAlpha(0.4f);
 
 	assert(!m_pHitMark);
 	ss.Disp = { 128.0f, 64.0f };
 	ss.Anim = { 1.0f, 1.0f };
-
-	m_fHitMarkRaderSizeW = ss.Disp.w;
-	m_fHitMarkRaderSizeH = ss.Disp.h;
 
 	m_pHitMark = new clsSPRITE2D_CENTER;
 
@@ -273,13 +382,8 @@ void clsSCENE_MISSION::CreateUI()
 	m_pStartText->SetPos(vPos);
 
 	m_pHPTargetChara = new clsUiText;
-	m_pHPTargetChara->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
+	m_pHPTargetChara->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 3.0f);
 	m_pHPTargetChara->SetPos(vPos);
-
-	m_pBoostOn = new clsUiText;
-	m_pBoostOn->Create(m_wpPtrGroup->GetContext(), WND_W, WND_H, 5.0f);
-	m_pBoostOn->SetPos(vPos);
-	m_pBoostOn->SetText("Boost");
 
 	ss.Disp = { WND_W, WND_H };
 	ss.Anim = { 1.0f, 1.0f };
@@ -309,7 +413,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	assert(m_pPlayer);
 	//m_pPlayer->Action(m_pStage);
 
-	
+#ifdef _DEBUG
 
 	if (GetAsyncKeyState('C') & 0x1)
 	{
@@ -328,8 +432,13 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	
 	if (GetAsyncKeyState('S') & 0x1)
 	{
-		//m_pTestObj->SwitchMove();
+		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+		{
+			m_v_pEnemys[i]->m_iHP = 0;
+		}
 	}
+
+#endif
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
@@ -355,7 +464,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	//エンディングに行く場合は以下のようにする.
 	if (AllEnemyDead())
 	{
-		enNextScene = enSCENE::ENDING;
+		enNextScene = enSCENE::MOVIE_CLEAR;
 	}
 
 	else if (m_pPlayer->m_bDeadFlg || m_pPlayer->m_bTimeUp)
@@ -434,7 +543,7 @@ void clsSCENE_MISSION::RenderUi()
 
 	char pText[STR_BUFF_MAX];
 
-	sprintf_s(pText, "%2d:%2d:%2d", iMin, iSecond, iN);
+	sprintf_s(pText, "%02d:%02d:%02d", iMin, iSecond, iN);
 	m_pLimitTime->SetText(pText);
 	m_pLimitTime->Render();
 
@@ -445,7 +554,9 @@ void clsSCENE_MISSION::RenderUi()
 
 	sprintf_s(pText, "%2d/%2d", iNowNum, iMaxNum);
 	m_pLBulletNum->SetText(pText);
-	m_pLBulletNum->Render();
+	m_pLBulletNum->Render(clsUiText::enPOS::RIGHT);
+
+	m_pLBulletMark->Render();
 
 	iNowNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponRHand]->GetNowBulletNum();
 	iMaxNum = m_pPlayer->m_v_pWeapons[clsRobo::enWeaponRHand]->GetMaxBulletNum();
@@ -453,6 +564,8 @@ void clsSCENE_MISSION::RenderUi()
 	sprintf_s(pText, "%2d/%2d", iNowNum, iMaxNum);
 	m_pRBulletNum->SetText(pText);
 	m_pRBulletNum->Render();
+
+	m_pRBulletMark->Render();
 
 	//HP.
 
@@ -519,6 +632,8 @@ void clsSCENE_MISSION::RenderUi()
 		}
 	}
 
+	m_pRaderPlayerMark->Render();
+
 	m_pRaderWindowFront->Render();
 
 
@@ -544,6 +659,12 @@ void clsSCENE_MISSION::RenderUi()
 	//ロックオンカーソル内に敵を入れている間の処理.
 	if (m_pPlayer->GetTargetPos(vPosTmp))
 	{
+		if (!m_bLockStart)
+		{
+			m_wpSound->PlaySE(g_iLockOnSENo);
+			m_bLockStart = true;
+		}
+
 		//ロックオンウィンドウ描画.
 		vPosTmp = m_pPlayer->m_vTargetScrPos;
 		
@@ -566,27 +687,19 @@ void clsSCENE_MISSION::RenderUi()
 
 		if (m_pPlayer->IsLWeaponLock())
 		{
-			m_pLWeaponLockMark->SetPos(vPosTmp);
+			m_pLWeaponLockWindow->SetPos(vPosTmp);
+			m_pLWeaponLockWindow->Render();
+
 			m_pLWeaponLockMark->Render();
 		}
 
 		if (m_pPlayer->IsRWeaponLock())
 		{
-			m_pRWeaponLockMark->SetPos(vPosTmp);
+			m_pRWeaponLockWindow->SetPos(vPosTmp);
+			m_pRWeaponLockWindow->Render();
+
 			m_pRWeaponLockMark->Render();
 		}
-
-		/*if (m_pPlayer->IsLWeaponLock())
-		{
-			m_pLWeaponLockMark->SetPos(vPosTmp - D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
-			m_pLWeaponLockMark->Render();
-		}
-
-		if (m_pPlayer->IsRWeaponLock())
-		{
-			m_pRWeaponLockMark->SetPos(vPosTmp + D3DXVECTOR3{ m_fHitMarkRaderSizeW, 0.0f, 0.0f });
-			m_pRWeaponLockMark->Render();
-		}*/
 	}
 
 	else
@@ -596,6 +709,8 @@ void clsSCENE_MISSION::RenderUi()
 		{
 			iHitDispTime = 0;
 		}
+
+		m_bLockStart = false;
 	}
 
 	if (!m_bStartFlg)
@@ -611,7 +726,7 @@ void clsSCENE_MISSION::RenderUi()
 		if (m_iStartCnt < 0)
 		{
 			GameStart();
-			m_wpSound->PlaySE(0);
+			m_wpSound->PlaySE(g_iGameStartSENo);
 			m_bStartFlg = true;
 		}
 
@@ -646,9 +761,6 @@ bool clsSCENE_MISSION::AllEnemyDead()
 
 void clsSCENE_MISSION::CreateFriends()
 {
-	/*m_pPlayer = CreatePlayer();
-	m_v_pFriends.push_back(m_pPlayer);*/
-
 	clsFriendFactory clsFactory;
 
 	m_pPlayer = new clsPlayer;
@@ -660,9 +772,6 @@ void clsSCENE_MISSION::CreateFriends()
 
 void clsSCENE_MISSION::CreateEnemys()
 {
-	/*m_pTestObj = CreateEnemy();
-	m_v_pEnemys.push_back(m_pTestObj);*/
-
 	clsEnemyFactory clsFactory;
 	
 	m_v_pEnemys = clsFactory.CreateEnemy(m_wpPtrGroup, strMissonFolderPath);
@@ -686,7 +795,7 @@ void clsSCENE_MISSION::ColFShottoFBody()
 	{
 		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
 		{
-			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
+			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pFriends[j]->GetColSpheres());
 			Tmp.iDamage = 0;
 			m_v_pFriends[j]->Damage(Tmp);
 		}
@@ -701,7 +810,7 @@ bool clsSCENE_MISSION::ColFShottoEBody()
 	{
 		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
 		{
-			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
+			HitState Tmp = m_v_pFriends[i]->BulletHit(m_v_pEnemys[j]->GetColSpheres());
 			m_v_pEnemys[j]->Damage(Tmp);
 			if (!bResult)bResult = Tmp.bHit;
 		}
@@ -716,11 +825,26 @@ void clsSCENE_MISSION::ColEShottoFBody()
 	{
 		for (unsigned int j = 0; j < m_v_pFriends.size(); j++)
 		{
-			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->m_v_Spheres);
+			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pFriends[j]->GetColSpheres());
 			m_v_pFriends[j]->Damage(Tmp);
+
+			if (m_v_pFriends[j]->IsPlayerChara())
+			{
+				if (Tmp.bHit)
+				{
+#ifdef Tahara
+#ifdef RENDER_SCREEN_TEXTURE_
+					//ノイズエフェクト.
+					PlayNoise(Tmp);
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+#endif//#ifdef Tahara
+				}
+			}
 		}
 	}
 }
+
+
 
 void clsSCENE_MISSION::ColEShottoEBody()
 {
@@ -728,7 +852,7 @@ void clsSCENE_MISSION::ColEShottoEBody()
 	{
 		for (unsigned int j = 0; j < m_v_pEnemys.size(); j++)
 		{
-			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->m_v_Spheres);
+			HitState Tmp = m_v_pEnemys[i]->BulletHit(m_v_pEnemys[j]->GetColSpheres());
 			Tmp.iDamage = 0;
 			m_v_pEnemys[j]->Damage(Tmp);
 		}
@@ -787,7 +911,7 @@ void clsSCENE_MISSION::ColEtoFDuplicate()
 	}
 }
 
-clsPlayer* clsSCENE_MISSION::CreatePlayer()
+/*clsPlayer* clsSCENE_MISSION::CreatePlayer()
 {
 	clsPlayer* pPlayer = new clsPlayer;
 	pPlayer->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
@@ -811,7 +935,7 @@ clsTestObj* clsSCENE_MISSION::CreateEnemy()
 	m_pTestObj = pEnemy;
 
 	return pEnemy;
-}
+}*/
 
 void clsSCENE_MISSION::SetEnemys()
 {
@@ -851,38 +975,6 @@ void clsSCENE_MISSION::RenderDebugText()
 		"EnemyPos : x[%f], y[%f], z[%f]",
 		m_v_pEnemys[0]->GetPosition().x, m_v_pEnemys[0]->GetPosition().y, m_v_pEnemys[0]->GetPosition().z);
 	m_upText->Render( strDbgTxt, 0, iTxtY += iOFFSET );
-
-	/*sprintf_s(strDbgTxt,
-		"CamPos : x[%f], y[%f], z[%f]",
-		GetCameraPos().x, GetCameraPos().y, GetCameraPos().z);
-	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-
-	sprintf_s(strDbgTxt,
-		"Enelgy : [%d]",
-		m_pPlayer->m_iEnelgy);
-	m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-	
-	if (m_pPlayer->m_bBoost)
-	{
-		sprintf_s(strDbgTxt,"ON");
-		m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-	}
-
-	else
-	{
-		sprintf_s(strDbgTxt,"OFF");
-		m_upText->Render(strDbgTxt, 0, iTxtY += iOFFSET);
-	}
-
-	//dbgtxty += 10;
-	//if( m_pBgm[0]->IsStopped() ){
-	//	sprintf_s( strDbgTxt, "Stopped" );
-	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-	//}
-	//if( m_pBgm[0]->IsPlaying() ){
-	//	sprintf_s( strDbgTxt, "Playingn" );
-	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
-	//}*/
 }
 #endif //#ifdef _DEBUG
 
@@ -943,6 +1035,7 @@ void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
 			break;
 
 		default:
+			m_upMenu->Close();
 			assert( !"不正な情報が返されました" );
 			break;
 		}
@@ -968,4 +1061,29 @@ void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
 		}
 	}
 }
+
+
+#ifdef RENDER_SCREEN_TEXTURE_
+//ノイズエフェクト.
+void clsSCENE_MISSION::PlayNoise( const HitState& Hitstate )
+{
+	if( Hitstate.bHit ){
+		//ダメージ量のによるノイズの種類の境界線.
+		const int iNOISE_STRONG_BORDER = 1000;
+		if( Hitstate.iDamage >= iNOISE_STRONG_BORDER ){
+			if( NoiseStrong() ){
+				m_wpXInput->SetVibPowerL( XINPUT_VIBRATION_MAX, Hitstate.iDamage );
+				m_wpXInput->SetVibPowerR( XINPUT_VIBRATION_MAX, Hitstate.iDamage );
+			}
+		}
+		else{
+			if( NoiseWeak() ){
+				m_wpXInput->SetVibPowerR( XINPUT_VIBRATION_MAX, Hitstate.iDamage );
+			}
+		}
+	}
+}
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
+
+
 #endif//#ifdef Tahara

@@ -1,4 +1,6 @@
 #include "Sprite.h"
+#include "BlendState.h"
+#include "Singleton.h"
 
 #include "OperationString.h"
 
@@ -66,9 +68,9 @@ HRESULT clsSprite::Create( ID3D11Device* const pDevice11,
 	m_wpDevice = pDevice11;
 	m_wpContext = pContext11;
 
-	if( FAILED( CreateBlendState() ) ){
-		return E_FAIL;
-	}
+	m_psinBlend = &clsSINGLETON<clsBLEND_STATE>::GetInstance();
+	m_psinBlend->Create( pDevice11, pContext11 );
+
 	//シェーダ作成.
 	if( FAILED( InitShader( sTexName ) ) ){
 		return E_FAIL;
@@ -491,7 +493,7 @@ void clsSprite::Render(
 	}
 
 	//アルファブレンド用ブレンドステート作成&設定.
-	SetBlend( true );
+	m_psinBlend->SetBlend( true );
 
 
 	//プリミティブをレンダリング.

@@ -36,6 +36,28 @@ void clsEnemyBase::Update()
 		m_UpdateState.iProcessCnt--;
 	}
 
+	if (m_pTarget)
+	{
+		MoveState MoveStatus = m_v_MoveState[m_UpdateState.iMoveCategoryNo];
+
+		int iVerDestDis = MoveStatus.iVerDistance;
+
+		int iRandMax = 0;
+		iRandMax = MoveStatus.iVerDistRandMax;
+
+		if (iRandMax != 0)//0‚¾‚ÆŽ~‚Ü‚é‚Ì‚Å–hŽ~.
+		{
+			iVerDestDis += (rand() % (iRandMax * 2)) - iRandMax;
+		}
+
+		m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
+
+		if (m_UpdateState.fVerDis <= 0.0f)
+		{
+			int i = 0;
+		}
+	}
+
 	UpdateProduct();
 }
 
@@ -96,7 +118,9 @@ void clsEnemyBase::SearchTarget(std::vector<clsCharactor*> v_pEnemys)
 	}
 }
 
-bool clsEnemyBase::IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const VisibilityAreaState VisAreaState)
+bool clsEnemyBase::IsVisibilityArea(
+	const D3DXVECTOR3& vEnemyPos,
+	const VisibilityAreaState& VisAreaState)
 {
 	D3DXVECTOR3 vDisTmp = vEnemyPos - m_pChara->m_vLockStartingPos;
 	float fDis = D3DXVec3Length(&vDisTmp);
@@ -110,7 +134,7 @@ bool clsEnemyBase::IsVisibilityArea(const D3DXVECTOR3 vEnemyPos, const Visibilit
 	return false;
 }
 
-bool clsEnemyBase::IsTargetNear(const D3DXVECTOR3 vEnemyPos)
+bool clsEnemyBase::IsTargetNear(const D3DXVECTOR3& vEnemyPos)
 {
 	if (!m_pTarget)
 	{
@@ -166,7 +190,6 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 			MoveState MoveStatus = m_v_MoveState[m_UpdateState.iMoveCategoryNo];
 
 			m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
-			m_UpdateState.fVerDis = 0.0f;
 
 			D3DXVECTOR3 vTmp;
 
@@ -214,7 +237,12 @@ bool clsEnemyBase::SetMoveDir(float& fPush, float& fAngle)
 		return false;
 	}
 
-	float fRot = static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
+	const float fVecX = m_UpdateState.vHorMovePos.x - m_pChara->GetPosition().x;
+	const float fVecZ = m_UpdateState.vHorMovePos.z - m_pChara->GetPosition().z;
+
+	float fRot = atan2f(fVecX, fVecZ) - m_pChara->GetRotation().y;
+
+	fRot += static_cast<float>(D3DXToRadian(m_UpdateState.iHorDirResult));
 
 	ObjRollOverGuard(&fRot);
 
@@ -308,20 +336,6 @@ bool clsEnemyBase::IsJump()
 {
 	if (m_pTarget)
 	{
-		MoveState MoveStatus = m_v_MoveState[m_UpdateState.iMoveCategoryNo];
-
-		int iVerDestDis = MoveStatus.iVerDistance;
-
-		int iRandMax = 0;
-		iRandMax = MoveStatus.iVerDistRandMax;
-
-		if (iRandMax != 0)//0‚¾‚ÆŽ~‚Ü‚é‚Ì‚Å–hŽ~.
-		{
-			iVerDestDis += (rand() % (iRandMax * 2)) - iRandMax;
-		}
-
-		m_UpdateState.fVerDis = iVerDestDis * g_fDistanceReference;
-
 		float fDist = m_pTarget->GetPosition().y - m_pChara->GetPosition().y;
 			
 		if (fDist < m_UpdateState.fVerDis)
@@ -342,7 +356,7 @@ bool clsEnemyBase::IsShot()
 
 		for (int i = 0; i < m_v_ShotState.size(); i++)
 		{
-			if (fDis <= m_v_ShotState[i].iShotDisMax ||
+			if (fDis <= m_v_ShotState[i].iShotDisMax &&
 				fDis >= m_v_ShotState[i].iShotDisMin)
 			{
 				return true;

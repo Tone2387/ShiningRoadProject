@@ -71,27 +71,6 @@ public:
 		float fRadius;	//半径.
 	};
 
-	TRANSFORM m_Trans;
-	D3DXVECTOR3 m_vOldPos;
-	D3DXVECTOR3 m_vCenterPos;//オブジェクトの中心位置(モデルに合わせた中心座標).
-
-	float m_fRaySpece;
-	float m_fFollPower;
-
-	float m_fMoveSpeed;//最終的に加算されるスピード.
-	D3DXVECTOR3 m_vMoveDir;
-	D3DXVECTOR3 m_vWallHit;
-
-	bool m_bGround;
-	bool m_NoFollObj;
-
-	void ActStop();
-	void ActStart();
-
-	bool m_bAct;
-
-	std::vector<SPHERE> m_v_Spheres;
-
 	void Update(clsStage* pStage);
 
 	virtual void UpdateProduct(clsStage* pStage);
@@ -102,17 +81,22 @@ public:
 		const D3DXMATRIX& mView,
 		const D3DXMATRIX& mProj,
 		const D3DXVECTOR3& vLight,
-		const D3DXVECTOR3& vEye)
-	{
+		const D3DXVECTOR3& vEye){}
 
-	}
+	TRANSFORM GetTransform()const{ return m_Trans; };
+
+	D3DXVECTOR3 GetPosition()const{ return m_Trans.vPos; };
+	const D3DXVECTOR3 GetCenterPos()const;//中心座標を渡す.
+	
+	D3DXVECTOR3 GetRotation() const{ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
+	
+	void SetTransform(TRANSFORM Trans){ m_Trans = Trans; };
 
 	//位置関係関数.
-	void SetPosition(const D3DXVECTOR3& vPos){ 
-		m_Trans.vPos = vPos; 
+	void SetPosition(const D3DXVECTOR3& vPos){
+		m_Trans.vPos = vPos;
 	}
-	D3DXVECTOR3 GetPosition(){ return m_Trans.vPos; }
-	const D3DXVECTOR3 GetCenterPos()const;//中心座標を渡す.
+
 	//回転関係関数.
 	void SetRotation(const D3DXVECTOR3& vRot)
 	{
@@ -125,13 +109,12 @@ public:
 		ObjRollOverGuard(&m_Trans.fRoll);
 	}
 
+	void SetScale(const float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
+	void SetScale(const D3DXVECTOR3 vScale){ m_Trans.vScale = vScale; }
+
 	//スフィア衝突判定関数.
 	bool Collision(SPHERE pAttacker, SPHERE pTarget);//Sphere対Sphereの当たり判定.
 	bool ObjectCollision(std::vector<SPHERE> pTarget);
-
-	D3DXVECTOR3 GetRotation(){ return D3DXVECTOR3(m_Trans.fPitch, m_Trans.fYaw, m_Trans.fRoll); }
-	void SetScale(const float fScale){ m_Trans.vScale = D3DXVECTOR3(fScale, fScale, fScale); }
-	void SetScale(const D3DXVECTOR3 vScale){ m_Trans.vScale = vScale; }
 
 	bool WallJudge(clsStage* const pStage);
 
@@ -149,7 +132,38 @@ public:
 		float* pfDistance, //(out)距離.
 		D3DXVECTOR3* pvIntersect);//(out)交差座標.
 
+	void ActStop();
+	void ActStart();
+
+	D3DXVECTOR3 GetMoveDir()const{ return m_vMoveDir; };
+	float GetMoveSpeed()const{ return m_fMoveSpeed; };
+	float GetFollPower()const{ return m_fFollPower; };
+	std::vector<SPHERE> GetColSpheres()const{ return m_v_Spheres; };
+
+	TRANSFORM m_Trans;
+
+protected:
+
+	
+	D3DXVECTOR3 m_vOldPos;
+	D3DXVECTOR3 m_vCenterPos;//オブジェクトの中心位置(モデルに合わせた中心座標).
+
+	float m_fRaySpece;
+	float m_fFollPower;
+
+	float m_fMoveSpeed;//最終的に加算されるスピード.
+	D3DXVECTOR3 m_vMoveDir;
+	D3DXVECTOR3 m_vWallHit;
+
+	bool m_bGround;
+	bool m_bNoFollObj;
+
+	bool m_bAct;
+
+	std::vector<SPHERE> m_v_Spheres;
+
 private:
+
 	//交差位置のﾎﾟﾘｺﾞﾝの頂点を見つける.
 	HRESULT FindVecticesOnPoly(
 		const LPD3DXMESH pTarget,

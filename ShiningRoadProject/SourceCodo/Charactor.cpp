@@ -1,5 +1,7 @@
 #include"Charactor.h"
 
+static const int g_iDupSENo = 11;
+
 void clsCharactor::CharactorUpdate()
 {
 	Move();
@@ -266,8 +268,7 @@ void clsCharactor::Jump()
 }
 
 const bool clsCharactor::IsTargetWall(
-	const D3DXVECTOR3 vStartPos,
-	const D3DXVECTOR3 vEndPos,
+	const D3DXVECTOR3& vEndPos,
 	clsStage* const pStage)
 {
 	if (!pStage)return false;
@@ -282,7 +283,7 @@ const bool clsCharactor::IsTargetWall(
 		if (!pObjMesh)continue;
 		pStage->SetStageObjTransform(i);
 
-		if (IsPointIntersect(vStartPos, vEndPos, pObjMesh))
+		if (IsPointIntersect(m_vLockStartingPos, vEndPos, pObjMesh))
 		{
 			return false;
 		}
@@ -293,8 +294,8 @@ const bool clsCharactor::IsTargetWall(
 
 //ﾀｰｹﾞｯﾄとする位置に対してﾚｲを飛ばして、遮蔽物がないか調べる.
 bool clsCharactor::IsPointIntersect(
-	const D3DXVECTOR3 StartPos,	//基準の位置.
-	const D3DXVECTOR3 EndPos,		//標的の位置.
+	const D3DXVECTOR3& StartPos,	//基準の位置.
+	const D3DXVECTOR3& EndPos,		//標的の位置.
 	const clsDX9Mesh* pTarget		//障害物の物体.
 	)
 {
@@ -358,7 +359,10 @@ bool clsCharactor::IsPointIntersect(
 	return false;//何もない.
 }
 
-bool clsCharactor::IsCurcleLange(D3DXVECTOR3 CenterPos, D3DXVECTOR3 TargetPos, float Range)//円の認識範囲判定.
+bool clsCharactor::IsCurcleLange(
+	const D3DXVECTOR3& CenterPos, 
+	const D3DXVECTOR3& TargetPos, 
+	float Range)//円の認識範囲判定.
 {
 	if (pow(TargetPos.x - CenterPos.x, 2.0f) + pow(TargetPos.y - CenterPos.y, 2.0f) <= pow(Range, 2.0f))
 	{
@@ -454,15 +458,15 @@ void clsCharactor::WeaponInit(clsPOINTER_GROUP* pPrt, WeaponState* pWeapon, cons
 	m_v_pWeapons.shrink_to_fit();
 }
 
-void  clsCharactor::WeaponUpdate()
+void  clsCharactor::WeaponUpdate(clsStage* const pStage)
 {
 	for (unsigned int i = 0; i < m_v_pWeapons.size(); i++)
 	{
-		m_v_pWeapons[i]->Update();
+		m_v_pWeapons[i]->Update(pStage);
 	}
 }
 
-HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere)
+HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE>& v_TargetSphere)
 {
 	HitState HitS;
 	HitS.Clear();
@@ -480,7 +484,7 @@ HitState clsCharactor::BulletHit(std::vector<clsObject::SPHERE> v_TargetSphere)
 	return HitS;
 }
 
-bool clsCharactor::Damage(HitState HitS)
+bool clsCharactor::Damage(const HitState& HitS)
 {
 	if (HitS.bHit)
 	{
@@ -513,7 +517,7 @@ void clsCharactor::LockChara(clsStage* const pStage)
 			return;
 		}
 		
-		if (!IsTargetWall(m_vLockStartingPos, m_pTargetChara->GetCenterPos(), pStage))
+		if (!IsTargetWall(m_pTargetChara->GetCenterPos(), pStage))
 		{
 			LockOut();
 			return;
@@ -551,7 +555,7 @@ void clsCharactor::LockChara(clsStage* const pStage)
 				continue;
 			}
 
-			if (!IsTargetWall(m_vLockStartingPos, m_v_pEnemys[i]->GetCenterPos(), pStage))
+			if (!IsTargetWall(m_v_pEnemys[i]->GetCenterPos(), pStage))
 			{
 				continue;
 			}
@@ -599,7 +603,7 @@ void clsCharactor::LockChara(clsStage* const pStage)
 	}
 }
 
-bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
+bool clsCharactor::IsInLockRange(const D3DXVECTOR3& vTargetPos)
 {
 	//敵の方向が後ろ.
 	if (!IsTargetDirBack(vTargetPos))
@@ -639,7 +643,7 @@ bool clsCharactor::IsInLockRange(D3DXVECTOR3 vTargetPos)
 	return false;
 }
 
-bool clsCharactor::IsTargetDirBack(D3DXVECTOR3 vTargetPos)
+bool clsCharactor::IsTargetDirBack(const D3DXVECTOR3& vTargetPos)
 {
 	D3DXVECTOR3 vForword = GetVec3Dir(m_Trans.fYaw, g_vDirForward);
 
@@ -824,6 +828,8 @@ void clsCharactor::CharaDuplicate(clsCharactor* const pContactChara)
 			vPosTmp = GetPosition() + (vDir * fSpeed);
 			SetPosition(vPosTmp);
 		}
+
+		m_wpSound->PlaySE(g_iDupSENo);
 	}
 }
 
@@ -859,7 +865,7 @@ void clsCharactor::UpdateProduct(clsStage* pStage)
 	Move();
 	Rotate();
 
-	WeaponUpdate();
+	WeaponUpdate(pStage);
 	UpdateLookOn();
 
 	m_vAcceleDir = { 0.0f, 0.0f, 0.0f };//ブースターエフェクト発生に使っているので毎フレームの初期化が必要になる.
@@ -885,6 +891,7 @@ clsCharactor::clsCharactor() :
 	m_bStopComMove(false),
 	m_bStopComRot(false),
 	m_bStopComShot(false),
+	m_bPlayer(false),
 	m_fMoveSpeedMax( 0.0f ),
 	m_iTopMoveSpeedFrame( 0 ),
 	m_fMoveAccele( 0.0f ),
@@ -892,9 +899,12 @@ clsCharactor::clsCharactor() :
 	m_fMoveDecele( 0.0f ),
 	m_fRotSpeed( 0.0f ),
 	m_fJumpPower( 0.0f ),
-	m_fLockCircleRadius(0.0f)
+	m_fLockCircleRadius(0.0f),
+	m_wpResource(nullptr),
+	m_wpEffects(nullptr),
+	m_wpSound(nullptr)
 {
-//	ZeroMemory(this, sizeof(clsCharactor));
+
 }
 
 clsCharactor::~clsCharactor()
@@ -903,12 +913,24 @@ clsCharactor::~clsCharactor()
 	{
 		m_pTargetChara = nullptr;
 	}
+
+	for (int i = 0; i < m_iWeaponNumMax; i++)
+	{
+		SAFE_DELETE(m_v_pWeapons[i]);
+	}
+
+	m_v_pWeapons.clear();
+
+#ifdef Tahara
+	//消すときdeleteしないでnullしてね.
+	m_wpSound = nullptr;
+	m_wpEffects = nullptr;
+	m_wpResource = nullptr;
+#endif//#ifdef Tahara
 }
 
 void HitState::Clear()
 {
 	bHit = false;
 	iDamage = 0;
-	fInpuct = 0.0f;
-	vInpuctDir = { 0.0f, 0.0f, 0.0f };
 }

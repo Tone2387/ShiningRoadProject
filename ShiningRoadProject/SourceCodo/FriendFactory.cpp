@@ -8,7 +8,7 @@
 const std::vector<clsCharactor*>
 clsFriendFactory::CreateFriend(
 clsPOINTER_GROUP* clsPtrGroup,
-std::string strFolderName,
+const std::string& strFolderName,
 clsPlayer* pPlayer)
 {
 	clsFILE TransformFile;

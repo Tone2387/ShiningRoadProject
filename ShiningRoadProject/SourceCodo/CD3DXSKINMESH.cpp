@@ -2,11 +2,14 @@
 *	SkinMeshCode Version 1.50
 *	LastUpdate	: 2017/06/30
 **/
+
 #include "OperationString.h"
 #include <stdlib.h>
 #include "CD3DXSKINMESH.h"
 #include <string.h>
 
+#include "BlendState.h"
+#include "Singleton.h"
 
 using namespace std;
 
@@ -827,13 +830,12 @@ clsD3DXSKINMESH::clsD3DXSKINMESH(
 	,m_pConstantBuffer1( NULL )
 	,m_pConstantBufferBone( NULL )
 	,m_pD3dxMesh( NULL )
-	,m_pBlendState()
+	,m_psinBlend( nullptr )
 {	 
 	LPDIRECT3DDEVICE9	pDevice9 = NULL;
 
-	if( FAILED( CreateBlendState() ) ){
-		ERR_MSG( "CreateBlendState()" , sFileName );
-	}
+	//シングルトン.
+	m_psinBlend = &clsSINGLETON<clsBLEND_STATE>::GetInstance();
 
 	// Dx9 のデバイス関係を作成する.
 	if( FAILED( CreateDeviceDx9( hWnd, &pDevice9, sFileName ) ) ){
@@ -895,9 +897,7 @@ clsD3DXSKINMESH::~clsD3DXSKINMESH()
 //	SAFE_RELEASE( m_pDevice9 );
 //	SAFE_RELEASE( m_pD3d9 );
 
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ ){
-		SAFE_RELEASE( m_pBlendState[i] );
-	}
+	m_psinBlend = nullptr;
 
 	// Dx11 デバイス関係.
 	m_pDeviceContext = NULL;
@@ -1717,7 +1717,7 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	m_pDeviceContext->PSSetConstantBuffers(	0, 1, &m_pConstantBuffer0 );
 
 	//透過.
-	SetBlend( isAlpha );
+	m_psinBlend->SetBlend( isAlpha );
 	
 	// マテリアルの数だけ、
 	// それぞれのマテリアルのインデックスバッファを描画.
@@ -1788,56 +1788,6 @@ void clsD3DXSKINMESH::DrawPartsMesh(
 	}
 }
 
-//ブレンドステート作成.
-HRESULT clsD3DXSKINMESH::CreateBlendState()
-{
-	//アルファブレンド用ブレンドステート作成.
-	//pngファイル内にアルファ情報があるので、透過するようにブレンドステートで設定する.
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );	//初期化.
-	blendDesc.IndependentBlendEnable = false;			//false:RenderTarget[0]のメンバーのみ使用する。true:RenderTarget[0～7]が使用できる(レンダーターゲット毎に独立したブレンド処理).
-	blendDesc.AlphaToCoverageEnable = false;			//true:アルファトゥカバレッジを使用する.
-
-	//表示タイプ
-//	blendDesc.RenderTarget[0].BlendEnable = true;					//true:アルファブレンドを使用する.
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//アルファブレンドを指定.
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//アルファブレンドの反転を指定.
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ADD：加算合成.
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//そのまま使用.
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;		//何もしない.
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ADD：加算合成.
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;//全ての成分(RGBA)へのデータの格納を許可する.
-
-	bool tmpBlendEnable[ enBLEND_STATE_size ];
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_ON ] = true;
-	tmpBlendEnable[ enBLEND_STATE_ALPHA_OFF ] = false;
-
-	for( unsigned char i=0; i<enBLEND_STATE_size; i++ )
-	{
-		blendDesc.RenderTarget[0].BlendEnable = tmpBlendEnable[i];
-		if( FAILED( m_pDevice->CreateBlendState( &blendDesc, &m_pBlendState[i] ) ) ){
-			assert( !"ブレンドステートの作成に失敗" );
-			return E_FAIL;
-		}
-	}
-
-	return S_OK;
-}
-
-//透過(アルファブレンド)設定の切り替え.
-void clsD3DXSKINMESH::SetBlend( bool isAlpha )
-{
-	UINT mask = 0xffffffff;	//マスク値白.
-
-	if( isAlpha ){		
-		//ブレンドステートの設定.
-		m_pDeviceContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_ON ], NULL, mask );
-	}
-	else{
-		m_pDeviceContext->OMSetBlendState( m_pBlendState[ enBLEND_STATE_ALPHA_OFF ], NULL, mask );
-	}
-
-}
 
 // 解放関数.
 HRESULT clsD3DXSKINMESH::Release()
@@ -1876,27 +1826,184 @@ void clsD3DXSKINMESH::DestroyAllMesh( D3DXFRAME* pFrame )
 
 
 // メッシュの削除.
-HRESULT clsD3DXSKINMESH::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
+HRESULT clsD3DXSKINMESH::DestroyAppMeshFromD3DXMesh(LPD3DXFRAME p)
 {
 	MYFRAME* pFrame = (MYFRAME*)p;
 
-//	LPD3DXMESH pD3DXMesh = pFrame->pMeshContainer->MeshData.pMesh;//D3DXﾒｯｼｭ(ここから・・・)
-	MYMESHCONTAINER* pContainer = (MYMESHCONTAINER*)pFrame->pMeshContainer;
+	MYMESHCONTAINER* pMeshContainerTmp = (MYMESHCONTAINER*)pFrame->pMeshContainer;
 
-	// インデックスバッファ解放.
-	for( DWORD i=0; i<pFrame->pPartsMesh->dwNumMaterial; i++ ){
-		if( pFrame->pPartsMesh->ppIndexBuffer[i] != NULL ){
-			pFrame->pPartsMesh->ppIndexBuffer[i]->Release();
-			pFrame->pPartsMesh->ppIndexBuffer[i] = NULL;
+	//MYMESHCONTAINERの中身の解放.
+	if (pMeshContainerTmp)
+	{
+		if (pMeshContainerTmp->pBoneBuffer)
+		{
+			pMeshContainerTmp->pBoneBuffer->Release();
+			pMeshContainerTmp->pBoneBuffer = nullptr;
+		}
+
+		if (pMeshContainerTmp->pBoneOffsetMatrices)
+		{
+			delete pMeshContainerTmp->pBoneOffsetMatrices;
+			pMeshContainerTmp->pBoneOffsetMatrices = nullptr;
+		}
+
+		if (pMeshContainerTmp->ppBoneMatrix)
+		{
+			int iMax = static_cast<int>(pMeshContainerTmp->pSkinInfo->GetNumBones());
+
+			for (int i = iMax - 1; i >= 0; i--)
+			{
+				if (pMeshContainerTmp->ppBoneMatrix[i])
+				{
+					pMeshContainerTmp->ppBoneMatrix[i] = nullptr;
+				}
+			}
+
+			delete[] pMeshContainerTmp->ppBoneMatrix;
+			pMeshContainerTmp->ppBoneMatrix = nullptr;
+		}
+
+		if (pMeshContainerTmp->ppTextures)
+		{
+			int iMax = static_cast<int>(pMeshContainerTmp->NumMaterials);
+
+			for (int i = iMax - 1; i >= 0; i--)
+			{
+				if (pMeshContainerTmp->ppTextures[i])
+				{
+					pMeshContainerTmp->ppTextures[i]->Release();
+					pMeshContainerTmp->ppTextures[i] = nullptr;
+				}
+			}
+
+			delete[] pMeshContainerTmp->ppTextures;
+			pMeshContainerTmp->ppTextures = nullptr;
 		}
 	}
-	delete[] pFrame->pPartsMesh->ppIndexBuffer[0];
 
-	// 頂点バッファ開放.
-	pFrame->pPartsMesh->pVertexBuffer->Release();
+	pMeshContainerTmp = nullptr;
+
+	//MYMESHCONTAINER解放完了.
+
+	//LPD3DXMESHCONTAINERの解放.
+	if (pFrame->pMeshContainer->pAdjacency)
+	{
+		delete[] pFrame->pMeshContainer->pAdjacency;
+		pFrame->pMeshContainer->pAdjacency = nullptr;
+	}
+
+	if (pFrame->pMeshContainer->pEffects)
+	{
+		if (pFrame->pMeshContainer->pEffects->pDefaults)
+		{
+			if (pFrame->pMeshContainer->pEffects->pDefaults->pParamName)
+			{
+				delete pFrame->pMeshContainer->pEffects->pDefaults->pParamName;
+				pFrame->pMeshContainer->pEffects->pDefaults->pParamName = nullptr;
+			}
+
+			if (pFrame->pMeshContainer->pEffects->pDefaults->pValue)
+			{
+				delete pFrame->pMeshContainer->pEffects->pDefaults->pValue;
+				pFrame->pMeshContainer->pEffects->pDefaults->pValue = nullptr;
+			}
+
+			delete pFrame->pMeshContainer->pEffects->pDefaults;
+			pFrame->pMeshContainer->pEffects->pDefaults = nullptr;
+		}
+
+		if (pFrame->pMeshContainer->pEffects->pEffectFilename)
+		{
+			delete pFrame->pMeshContainer->pEffects->pEffectFilename;
+			pFrame->pMeshContainer->pEffects->pEffectFilename = nullptr;
+		}
+
+		delete pFrame->pMeshContainer->pEffects;
+		pFrame->pMeshContainer->pEffects = nullptr;
+	}
+
+	if (pFrame->pMeshContainer->pMaterials)
+	{
+		int iMax = static_cast<int>(pFrame->pMeshContainer->NumMaterials);
+
+		for (int i = iMax - 1; i >= 0; i--)
+		{
+			delete[] pFrame->pMeshContainer->pMaterials[i].pTextureFilename;
+			pFrame->pMeshContainer->pMaterials[i].pTextureFilename = nullptr;
+		}
+
+		delete[] pFrame->pMeshContainer->pMaterials;
+		pFrame->pMeshContainer->pMaterials = nullptr;
+	}
+
+	if (pFrame->pMeshContainer->pNextMeshContainer)
+	{
+		//次のメッシュコンテナーのポインターを持つのだとしたら.
+		//newで作られることはないはずなので、これで行けると思う.
+		pFrame->pMeshContainer->pNextMeshContainer = nullptr;
+	}
+
+	if (pFrame->pMeshContainer->pSkinInfo)
+	{
+		pFrame->pMeshContainer->pSkinInfo->Release();
+		pFrame->pMeshContainer->pSkinInfo = nullptr;
+	}
+
+	//LPD3DXMESHCONTAINERの解放完了.
+
+	//MYFRAMEの解放.
+
+	if (pFrame->pPartsMesh)
+	{
+		//ボーン情報の解放.
+		if (pFrame->pPartsMesh->pBoneArray)
+		{
+			delete[] pFrame->pPartsMesh->pBoneArray;
+			pFrame->pPartsMesh->pBoneArray = nullptr;
+		}
+
+		if (pFrame->pPartsMesh->pMaterial)
+		{
+			int iMax = static_cast<int>(pFrame->pPartsMesh->dwNumMaterial);
+
+			for (int i = iMax - 1; i >= 0; i--)
+			{
+				if (pFrame->pPartsMesh->pMaterial[i].pTexture)
+				{
+					pFrame->pPartsMesh->pMaterial[i].pTexture->Release();
+					pFrame->pPartsMesh->pMaterial[i].pTexture = nullptr;
+				}
+			}
+
+			delete[] pFrame->pPartsMesh->pMaterial;
+			pFrame->pPartsMesh->pMaterial = nullptr;
+		}
+
+
+		if (pFrame->pPartsMesh->ppIndexBuffer)
+		{
+			// インデックスバッファ解放.
+			for (DWORD i = 0; i<pFrame->pPartsMesh->dwNumMaterial; i++){
+				if (pFrame->pPartsMesh->ppIndexBuffer[i] != nullptr){
+					pFrame->pPartsMesh->ppIndexBuffer[i]->Release();
+					pFrame->pPartsMesh->ppIndexBuffer[i] = nullptr;
+				}
+			}
+			delete[] pFrame->pPartsMesh->ppIndexBuffer;
+		}
+
+		// 頂点バッファ開放.
+		pFrame->pPartsMesh->pVertexBuffer->Release();
+		pFrame->pPartsMesh->pVertexBuffer = nullptr;
+	}
 
 	// パーツマテリアル開放.
 	delete[] pFrame->pPartsMesh;
+	pFrame->pPartsMesh = nullptr;
+
+	//SKIN_PARTS_MESH解放完了.
+
+	//MYFRAMEのSKIN_PARTS_MESH以外のメンバーポインター変数は別の関数で解放されていました.
 
 	return S_OK;
 }

@@ -47,12 +47,19 @@ public:
 	{
 		m_pDxInput = nullptr;
 		m_pXInput = nullptr;
-		delete m_pComLS;
-		delete m_pComRS;
-
+		
 		delete m_pMoveSwitch;
 		delete m_pQuickBoost;
+		delete m_pQuickTurn;
 		delete m_pBoostRising;
+		delete m_pComLShot;
+		delete m_pComRShot;
+		delete m_pComLS;
+		delete m_pComLSHor;
+		delete m_pComLSVer;
+		delete m_pComRS;
+		delete m_pComRSHor;
+		delete m_pComRSVer;
 	}
 
 	void InputTest()
@@ -83,7 +90,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetLStickSlope();
 			fAngle = m_pXInput->GetLStickTheta();
@@ -96,72 +103,6 @@ public:
 		}
 
 		bool bNaname = false;
-
-		/*if (GetAsyncKeyState('W') & 0x8000)
-		{
-			fPower = 1.0f;
-			bNaname = true;
-		}
-
-		else if (GetAsyncKeyState('S') & 0x8000)
-		{
-			fPower = 1.0f;
-			fAngle += -D3DX_PI;
-			bNaname = true;
-		}
-
-		if (GetAsyncKeyState('A') & 0x8000)
-		{
-			fPower = 1.0f;
-			int iDir;
-
-			if (bNaname)
-			{
-				iDir = 4;
-			}
-
-			else
-			{
-				iDir = 2;
-			}
-
-			if (fAngle < 0.0f)
-			{
-				fAngle += D3DX_PI / iDir;
-			}
-
-			else
-			{
-				fAngle += -D3DX_PI / iDir;
-			}
-		}
-
-		else if (GetAsyncKeyState('D') & 0x8000)
-		{
-			fPower = 1.0f;
-
-			int iDir;
-
-			if (bNaname)
-			{
-				iDir = 4;
-			}
-
-			else
-			{
-				iDir = 2;
-			}
-
-			if (fAngle < 0.0f)
-			{
-				fAngle += -D3DX_PI / iDir;
-			}
-			else
-			{
-				fAngle += D3DX_PI / iDir;
-			}
-
-		}*/
 
 		if (abs(fPower) < g_fStickPushMin)
 		{
@@ -176,7 +117,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetLStickX();
 			fAngle = m_pXInput->GetLStickTheta();
@@ -201,7 +142,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetLStickY();
 			fAngle = m_pXInput->GetLStickTheta();
@@ -226,7 +167,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetRStickSlope();
 			fAngle = m_pXInput->GetRStickTheta();
@@ -252,7 +193,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetRStickX();
 			fAngle = m_pXInput->GetRStickTheta();
@@ -277,7 +218,7 @@ public:
 		fPower = 0.0f;
 		fAngle = 0.0f;
 
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			fPower = m_pXInput->GetRStickY();
 			fAngle = m_pXInput->GetRStickTheta();
@@ -299,20 +240,40 @@ public:
 
 	clsRoboCommand* MoveSwitch()
 	{
-		if (m_pDxInput->IsPressKey(enPKey_00))
+		if (m_pXInput->isConnected())
 		{
-			if (!m_bChangeSwitch)
+			if (m_pXInput->isPressStay(XINPUT_A))
 			{
-				m_bChangeSwitch = true;
-				return m_pMoveSwitch;
+				if (!m_bChangeSwitch)
+				{
+					m_bChangeSwitch = true;
+					return m_pMoveSwitch;
+				}
+			}
+
+			else
+			{
+				m_bChangeSwitch = false;
 			}
 		}
 
 		else
 		{
-			m_bChangeSwitch = false;
+			if (m_pDxInput->IsPressKey(enPKey_00))
+			{
+				if (!m_bChangeSwitch)
+				{
+					m_bChangeSwitch = true;
+					return m_pMoveSwitch;
+				}
+			}
+
+			else
+			{
+				m_bChangeSwitch = false;
+			}
 		}
-		
+
 		return nullptr;
 	}
 
@@ -320,7 +281,7 @@ public:
 	{
 		if (abs(fPower) > g_fStickPushMin)
 		{
-			if (m_pXInput)
+			if (m_pXInput->isConnected())
 			{
 				if (m_pXInput->isLTriggerEnter())
 				{
@@ -330,7 +291,7 @@ public:
 
 			else if (m_pDxInput)
 			{
-				if (m_pDxInput->IsPressKey(enPKey_02))
+				if (m_pDxInput->IsPressKey(enPKey_05))
 				{
 					return m_pQuickBoost;
 				}
@@ -344,7 +305,7 @@ public:
 	{
 		if (abs(fPower) > g_fStickPushMin)
 		{
-			if (m_pXInput)
+			if (m_pXInput->isConnected())
 			{
 				if (m_pXInput->isLTriggerEnter())
 				{
@@ -354,7 +315,7 @@ public:
 
 			else if (m_pDxInput)
 			{
-				if (m_pDxInput->IsPressKey(enPKey_02))
+				if (m_pDxInput->IsPressKey(enPKey_05))
 				{
 					return m_pQuickTurn;
 				}
@@ -366,7 +327,7 @@ public:
 
 	clsRoboCommand* BoostRising()
 	{
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			if (m_pXInput->isRTriggerStay())
 			{
@@ -376,7 +337,7 @@ public:
 
 		else if (m_pDxInput)
 		{
-			if (m_pDxInput->IsPressKey(enPKey_00))
+			if (m_pDxInput->IsPressKey(enPKey_02))
 			{
 				return m_pBoostRising;
 			}
@@ -387,7 +348,7 @@ public:
 
 	clsRoboCommand* LWeaponShot()
 	{
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			if (m_pXInput->isPressStay(XINPUT_LB))
 			{
@@ -397,7 +358,7 @@ public:
 
 		else if(m_pDxInput)
 		{
-			if (m_pDxInput->IsPressKey(enPKey_05))
+			if (m_pDxInput->IsPressKey(enPKey_04))
 			{
 				return m_pComLShot;
 			}
@@ -408,7 +369,7 @@ public:
 
 	clsRoboCommand* RWeaponShot()
 	{
-		if (m_pXInput)
+		if (m_pXInput->isConnected())
 		{
 			if (m_pXInput->isPressStay(XINPUT_RB))
 			{
@@ -418,7 +379,7 @@ public:
 
 		else if (m_pDxInput)
 		{
-			if (m_pDxInput->IsPressKey(enPKey_06))
+			if (m_pDxInput->IsPressKey(enPKey_01))
 			{
 				return m_pComRShot;
 			}

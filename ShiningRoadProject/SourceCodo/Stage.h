@@ -7,7 +7,8 @@ class clsBUILDING;
 class clsObjStaticMesh;
 class clsObjSkinMesh;
 class clsDX9Mesh;
-
+class clsSprite;
+class clsRobo;
 
 
 class clsStage
@@ -29,6 +30,15 @@ public:
 	
 	//指定したオブジェク位置回転拡縮を更新.
 	void SetStageObjTransform(const unsigned int uiObjNo);
+
+	//ビルの近くにいるか( 上から見た円の判定 ).
+	//添え字のビルのレイを判定するかどうかの判定として使う.
+	bool isNearBuilding( 
+		const D3DXVECTOR3& vPosObjOtherBuilding,//ビルと判定を取りたいモノの座標.
+		const unsigned int uiBuildingNo );		//ビルの番号.
+
+	//ビルの中に入ったギガポンを追い出す.
+	void KickOutInsideBuilding( clsRobo* const pRobo );
 
 	//光るところの色を定める.
 	void SetColorTarget( const D3DXVECTOR4& vColor );
@@ -93,6 +103,15 @@ private:
 
 	//ビル.
 	std::vector< std::unique_ptr< clsBUILDING > > m_vpBuilding;
+
+	//ビルのテクスチャリソース.
+	std::shared_ptr< clsSprite > m_spBuildingTop;
+	std::shared_ptr< clsSprite > m_spBuildingSide;
+	std::shared_ptr< clsSprite > m_spBuildingSideInside;
+	std::shared_ptr< clsSprite > m_spBuildingTopInside;
+	std::shared_ptr< clsSprite > m_spBuildingBottomInside;
+
+
 
 	D3DXVECTOR4 m_vLightColor;
 	D3DXVECTOR4 m_vLightColorTarget;

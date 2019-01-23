@@ -2,8 +2,9 @@
 
 #include "SceneTitle.h"
 #include "SceneAssemble.h"
-#include "SceneTakeoff.h"
+#include "SceneMovieTakeoff.h"
 #include "SceneMission.h"
+#include "SceneMovieClear.h"
 #include "SceneEnding.h"
 #include "SceneGameOver.h"
 
@@ -19,26 +20,29 @@ clsSCENE_BASE* clsFACTORY_SCENE::Create(
 	{
 	case enSCENE::TITLE:
 		return new clsSCENE_TITLE( ptrGroup );
-		break;
+
 	case enSCENE::ASSEMBLE:
 		return new clsSCENE_ASSEMBLE( ptrGroup );
-		break;
-	case enSCENE::TAKEOFF:
-		return new clsSCENE_TAKEOFF( ptrGroup );
-		break;
+
+	case enSCENE::MOVIE_TAKEOFF:
+		return new clsSCENE_MOVIE_TAKEOFF( ptrGroup );
+
 	case enSCENE::MISSION:
 		return new clsSCENE_MISSION( ptrGroup );
-		break;
+
+	case enSCENE::MOVIE_CLEAR:
+		return new clsSCENE_MOVIE_CLEAR( ptrGroup );
+
 	case enSCENE::ENDING:
 		return new clsSCENE_ENDING( ptrGroup );
-		break;
+
 	case enSCENE::GAMEOVER:
 		return new clsSCENE_GAME_OVER( ptrGroup );
-		break;
+
 
 	case enSCENE::EXIT_APP:
 		return nullptr;
-		break;
+
 	default:
 		assert( !"不正なシーンが指定されました" );
 		break;

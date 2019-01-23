@@ -1,4 +1,6 @@
 #include "RenderAtStartUp.h"
+#include "BlendState.h"
+#include "Singleton.h"
 
 using namespace std;
 
@@ -81,26 +83,15 @@ namespace{
 }
 
 clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(	
-	ID3D11Device*			 const pDevice,
-	ID3D11DeviceContext*	 const pContext,
-	IDXGISwapChain*			 const pSwapChain,
-	ID3D11RenderTargetView*	 const pBackBuffer_TexRTV,
-	ID3D11DepthStencilView*	 const pBackBuffer_DSTexDSV )
-	:m_wpDevice(pDevice)
-	,m_wpContext( pContext )
-	,m_wpSwapChain( pSwapChain )
-	,m_wpBackBuffer_TexRTV( pBackBuffer_TexRTV )
-	,m_wpBackBuffer_DSTexDSV( pBackBuffer_DSTexDSV )
-	,m_pDepthStencilStateOn( nullptr )
-	,m_pDepthStencilStateOff( nullptr )
-	,m_bEnd( false )
+	ID3D11Device*			const pDevice,
+	ID3D11DeviceContext*	const pContext,
+	IDXGISwapChain*			const pSwapChain,
+	ID3D11RenderTargetView*	const pBackBuffer_TexRTV,
+	ID3D11DepthStencilView*	const pBackBuffer_DSTexDSV )
+	:clsRENDER_SUB_THREAD_BASE( pDevice, pContext, pSwapChain, pBackBuffer_TexRTV, pBackBuffer_DSTexDSV )
 	,m_enMode( enMODE::LINE_V )
 	,m_iTimer( 0 )
 {
-	//このクラスの初期化時に灰色画面が出るのを防ぐ.
-	Render( false );
-
-	CreateDepthStencilState();
 
 	SPRITE_STATE ss;
 	ss.Disp = INIT_DISP_GAGE;
@@ -108,7 +99,7 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 	m_vecupGage.resize( cGAGE_MAX );
 	for( char i=0; i<cGAGE_MAX; i++ ){
 		m_vecupGage[i] = make_unique< clsSPRITE2D_CENTER >();
-		m_vecupGage[i]->Create( m_wpDevice, m_wpContext, cGAGE_PATH, ss );
+		m_vecupGage[i]->Create( pDevice, pContext, cGAGE_PATH, ss );
 
 		m_vecupGage[i]->SetScale( 0.0f );
 
@@ -161,7 +152,7 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 	for( char i=0; i<cSPRITE_MAX; i++ ){
 		m_vecupDebugImage.push_back( nullptr );
 		m_vecupDebugImage[i] = make_unique< clsSPRITE2D_CENTER >();
-		m_vecupDebugImage[i]->Create( m_wpDevice, m_wpContext, cIMAGE_PATH, ss );
+		m_vecupDebugImage[i]->Create( pDevice, pContext, cIMAGE_PATH, ss );
 
 	//	m_upRogo->SetPos( vINIT_POS );
 		float tmpY;
@@ -181,7 +172,6 @@ clsRENDER_AT_START_UP::clsRENDER_AT_START_UP(
 
 clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 {
-	End();
 
 	if( m_upBlack ){
 		m_upBlack.reset( nullptr );
@@ -217,15 +207,6 @@ clsRENDER_AT_START_UP::~clsRENDER_AT_START_UP()
 		m_upGageBox.reset( nullptr );
 	}
 
-	m_bEnd = false;
-
-	SAFE_RELEASE( m_pDepthStencilStateOff );
-	SAFE_RELEASE( m_pDepthStencilStateOn );
-	m_wpBackBuffer_DSTexDSV = nullptr;
-	m_wpBackBuffer_TexRTV = nullptr;	
-	m_wpSwapChain = nullptr;			
-	m_wpContext = nullptr;		
-	m_wpDevice = nullptr;
 }
 
 
@@ -242,7 +223,7 @@ void clsRENDER_AT_START_UP::Loop()
 	//時間処理の為、最小単位を1ミリ秒に変更.
 	timeBeginPeriod( 1 );
 
-	while( !m_bEnd )
+	while( !isEnd() )
 	{
 		Sleep( 1 );
 		sync_now = timeGetTime();	//現在時間を取得.
@@ -259,7 +240,8 @@ void clsRENDER_AT_START_UP::Loop()
 }
 
 
-void clsRENDER_AT_START_UP::Update()
+
+void clsRENDER_AT_START_UP::UpdateProduct()
 {
 #ifdef _DEBUG
 	for( unsigned int i=0; i<m_vecupDebugImage.size(); i++ ){
@@ -299,58 +281,36 @@ void clsRENDER_AT_START_UP::Update()
 	m_upLineBox->Update();
 	m_upGageBox->Update();
 
-	Render();
-
 }
 
 //起動中の描画.
-void clsRENDER_AT_START_UP::Render( bool isLoop ) const
+void clsRENDER_AT_START_UP::RenderProduct() const
 {
-	//画面のクリア.
-	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };//クリア色(RGBA順)(0.0f~1.0f).
-	//カラーバックバッファ.
-	m_wpContext->ClearRenderTargetView(
-		m_wpBackBuffer_TexRTV, ClearColor );
-	//デプスステンシルビューバックバッファ.
-	m_wpContext->ClearDepthStencilView(
-		m_wpBackBuffer_DSTexDSV,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0f, 0 );
-
-	SetDepth( false );	//Zテスト:OFF.
-
-	if( isLoop ){
 #ifdef _DEBUG
-		for( unsigned int i=0; i<m_vecupDebugImage.size(); i++ ){
-			m_vecupDebugImage[i]->Render();
-		}
+	for( unsigned int i=0; i<m_vecupDebugImage.size(); i++ ){
+		m_vecupDebugImage[i]->Render();
+	}
 
 #endif//#ifdef _DEBUG
 
-		m_upLineBox->Render();
+	m_upLineBox->Render();
 
-		for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
-			//枠の中だけ描画する.
-			if( m_vecupGage[i]->GetPos().x < m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) ||
-				m_vecupGage[i]->GetPos().x > m_upGageBox->GetPos().x + ( m_upGageBox->GetSize().x * 0.5f ) )
-			{
-				continue;
-			}
-			m_vecupGage[i]->Render();
+	for( unsigned int i=0; i<m_vecupGage.size(); i++ ){
+		//枠の中だけ描画する.
+		if( m_vecupGage[i]->GetPos().x < m_upGageBox->GetPos().x - ( m_upGageBox->GetSize().x * 0.5f ) ||
+			m_vecupGage[i]->GetPos().x > m_upGageBox->GetPos().x + ( m_upGageBox->GetSize().x * 0.5f ) )
+		{
+			continue;
 		}
-		m_upGageBox->Render();
-
-		m_upLogo->Render();
-
-		m_upText->Render();
-
-		m_upBlack->Render();
-
+		m_vecupGage[i]->Render();
 	}
-	SetDepth( true );	//Zテスト:ON.
+	m_upGageBox->Render();
 
-	//レンダリングされたイメージを表示.
-	m_wpSwapChain->Present( 0, 0 );
+	m_upLogo->Render();
+
+	m_upText->Render();
+
+	m_upBlack->Render();
 }
 
 
@@ -581,43 +541,5 @@ void clsRENDER_AT_START_UP::Complete()
 		End();
 	}
 
-}
-
-
-HRESULT clsRENDER_AT_START_UP::CreateDepthStencilState()
-{
-	assert( !m_pDepthStencilStateOn );
-	assert( !m_pDepthStencilStateOff );
-
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	ZeroMemory( &depthStencilDesc,
-		sizeof( D3D11_DEPTH_STENCIL_DESC ) );
-
-	//ON.
-	depthStencilDesc.DepthEnable = true;
-	m_wpDevice->CreateDepthStencilState(
-		&depthStencilDesc, &m_pDepthStencilStateOn );
-
-	//OFF.
-	depthStencilDesc.DepthEnable = false;
-	m_wpDevice->CreateDepthStencilState(
-		&depthStencilDesc, &m_pDepthStencilStateOff );
-
-
-	return S_OK;
-}
-
-
-//深度テスト(Zテスト)ON/OFF切替.
-void clsRENDER_AT_START_UP::SetDepth( bool isOn ) const
-{
-	if( isOn ){
-		m_wpContext->OMSetDepthStencilState(
-			m_pDepthStencilStateOn, 1 );
-	}
-	else{
-		m_wpContext->OMSetDepthStencilState(
-			m_pDepthStencilStateOff, 1 );
-	}
 }
 

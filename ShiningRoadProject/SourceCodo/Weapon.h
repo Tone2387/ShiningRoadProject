@@ -26,11 +26,11 @@ public:
 	clsWeapon(clsPOINTER_GROUP* pPtrGroup);
 	~clsWeapon();
 
-	void Create(WeaponState State);
-	void Update();
+	void Create(const WeaponState& State);
+	void Update(clsStage* const pStage);
 	bool Shot();
 
-	int Hit(std::vector<clsObject::SPHERE> v_TargetSphere);
+	int Hit(std::vector<clsObject::SPHERE>& v_TargetSphere);
 	
 	void Reload();
 
@@ -48,6 +48,9 @@ public:
 
 private:
 	WeaponState m_State;
+
+	::Effekseer::Handle m_MuzzleEfc;
+	::Effekseer::Handle m_AmmoEfc;
 
 	clsObject* m_pTargetObj;
 

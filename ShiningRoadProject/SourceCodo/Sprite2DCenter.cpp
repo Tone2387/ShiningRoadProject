@@ -1,4 +1,5 @@
 #include "Sprite2DCenter.h"
+#include "BlendState.h"
 
 namespace{
 
@@ -115,25 +116,24 @@ void clsSPRITE2D_CENTER::Render()
 	D3DXMatrixRotationZ( &mRoll, m_vRot.z );
 
 	//平行移動.
-	D3DXMatrixTranslation(&mTrans,
-		m_vPos.x, m_vPos.y, m_vPos.z);
+	D3DXMatrixTranslation( &mTrans,
+		m_vPos.x, m_vPos.y, m_vPos.z );
 
 	//合成.
 	mWorld = mScale * mRoll * mPitch * mYaw * mTrans;
 
 	//使用するシェーダの登録.
-	m_wpContext->VSSetShader(m_pVertexShader, NULL, 0);
-	m_wpContext->PSSetShader(m_pPixelShader, NULL, 0);
+	m_wpContext->VSSetShader( m_pVertexShader, NULL, 0 );
+	m_wpContext->PSSetShader( m_pPixelShader, NULL, 0 );
 
 
 	//シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
 	SPRITE2D_CONSTANT_BUFFER cd;	//コンスタントバッファ.
 	//バッファ内のデータの書き方開始時にmap.
-	if (SUCCEEDED(
-		m_wpContext->Map(
+	if( SUCCEEDED( m_wpContext->Map(
 		m_pConstantBuffer, 0,
-		D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+		D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
 	{
 		//ワールド行列を渡す.
 		D3DXMATRIX m = mWorld;
@@ -154,44 +154,42 @@ void clsSPRITE2D_CENTER::Render()
 		cd.vUV.y = ( 1.0f / m_SState.Anim.h ) * m_fPatternNo.y;
 
 		memcpy_s(pData.pData, pData.RowPitch,
-			(void*)(&cd), sizeof(cd));
+			(void*)( &cd ), sizeof( cd ) );
 
-		m_wpContext->Unmap(m_pConstantBuffer, 0);
+		m_wpContext->Unmap( m_pConstantBuffer, 0 );
 	}
 
 	//このコンスタントバッファをどのシェーダで使うか？.
 	m_wpContext->VSSetConstantBuffers(
-		0, 1, &m_pConstantBuffer);
+		0, 1, &m_pConstantBuffer );
 	m_wpContext->PSSetConstantBuffers(
-		0, 1, &m_pConstantBuffer);
+		0, 1, &m_pConstantBuffer );
 
 	//頂点バッファをセット.
 	UINT stride = sizeof( SpriteVertex );	//データの間隔.
 	UINT offset = 0;
 	m_wpContext->IASetVertexBuffers(
-		0, 1, &m_pVertexBuffer, &stride, &offset);
+		0, 1, &m_pVertexBuffer, &stride, &offset );
 
 	//頂点インプットレイアウトをセット.
-	m_wpContext->IASetInputLayout(m_pVertexLayout);
+	m_wpContext->IASetInputLayout( m_pVertexLayout );
 
 	//プリミティブ・トポロジーをセット.
 	m_wpContext->IASetPrimitiveTopology(
-		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 
 	//テクスチャをシェーダに渡す.
 	m_wpContext->PSSetSamplers(
-		0, 1, &m_pSampleLinear);	//サンプラ-をセット.
+		0, 1, &m_pSampleLinear );	//サンプラ-をセット.
 	m_wpContext->PSSetShaderResources(
-		0, 1, &m_pTexture);		//テクスチャをシェーダに渡す.
+		0, 1, &m_pTexture );		//テクスチャをシェーダに渡す.
 
-	//アルファブレンド用ブレンドステート作成＆設定.
-	SetBlend( true );
+	//アルファブレンド用ブレンドステート設定.
+	m_psinBlend->SetBlend( true );
 
 	//プリミティブをレンダリング.
-	m_wpContext->Draw(4, 0);
+	m_wpContext->Draw( 4, 0 );
 
-//	//アルファブレンドを無効にする.
-//	SetBlend(false);
 }
 
 

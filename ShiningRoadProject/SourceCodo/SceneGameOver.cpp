@@ -98,7 +98,9 @@ void clsSCENE_GAME_OVER::UpdateProduct( enSCENE &enNextScene )
 
 	//‰æ–Ê‚ÉƒmƒCƒY‚ð‘–‚ç‚¹‘±‚¯‚é.
 	const int iNoizeVar = 10;
+#ifdef RENDER_SCREEN_TEXTURE_
 	NoiseWeak( iNoizeVar );
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
 	if( !m_wpBlackScreen->GetAlpha() ){

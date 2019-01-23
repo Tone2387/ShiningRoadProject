@@ -108,6 +108,7 @@ private:
 
 	clsSPRITE2D_CENTER* m_pRaderWindowFront;
 	clsSPRITE2D_CENTER* m_pRaderWindowBack;
+	clsSPRITE2D_CENTER* m_pRaderPlayerMark;
 	std::vector<clsSPRITE2D_CENTER*> m_v_pRaderEnemyMark;
 
 	float m_fRaderSizeW;
@@ -116,13 +117,14 @@ private:
 	float m_fRaderMarkSizeW;
 	float m_fRaderMarkSizeH;
 
-	float m_fRaderDis;
-
 	clsSPRITE2D_CENTER* m_pLockWindow;
 	clsSPRITE2D_CENTER* m_pLWeaponLockMark;
 	clsSPRITE2D_CENTER* m_pRWeaponLockMark;
-	float m_fHitMarkRaderSizeW;
-	float m_fHitMarkRaderSizeH;
+
+	clsSPRITE2D_CENTER* m_pLWeaponLockWindow;
+	clsSPRITE2D_CENTER* m_pRWeaponLockWindow;
+
+	bool m_bLockStart;
 
 	clsSPRITE2D_CENTER* m_pHitMark;
 	int iHitDispTime;
@@ -158,6 +160,10 @@ private:
 #ifdef Tahara
 	//メニューの動き.
 	void MenuUpdate( enSCENE &enNextScene );
+#ifdef RENDER_SCREEN_TEXTURE_
+	//ノイズエフェクト.
+	void PlayNoise( const HitState& Hitstate );
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 	//ポーズメニュー.
 	std::unique_ptr< clsMENU_WINDOW_MISSION_BASE > m_upMenu;
 	//メニューから受け取った情報を照合する.

@@ -5,7 +5,9 @@
 #include"AIRobo.h"
 #include"RoboStatusEnemy.h"
 
-const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(clsPOINTER_GROUP* clsPtrGroup, std::string strFolderName)
+const std::vector<clsCharactor*> clsEnemyFactory::CreateEnemy(
+	clsPOINTER_GROUP* clsPtrGroup, 
+	const std::string& strFolderName)
 {
 	std::string strFileName = strFolderName + "\\Enemy.csv";
 	clsFILE EnemyTransformFile;

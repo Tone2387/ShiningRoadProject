@@ -1,9 +1,11 @@
 #include "ScreenTexture.h"
+#include "BlendState.h"
 
 #include "SoundManagerNoise.h"
 #include "Sprite2D.h"	
 
-#include <random>
+//#include <random>
+#include "Random.h"
 
 using namespace std;
 
@@ -80,9 +82,6 @@ clsSCREEN_TEXTURE::clsSCREEN_TEXTURE(
 	}
 	if( FAILED( CreateConstantBuffer() ) ){
 		ERR_MSG( "描画先テクスチャバッファ作成失敗", "clsSCREEN_TEXTURE" );
-	}
-	if( FAILED( CreateBlendState() ) ){
-		ERR_MSG( "描画先ブレンドステート作成失敗", "clsSCREEN_TEXTURE" );
 	}
 
 	//サウンド作成.
@@ -515,7 +514,7 @@ void clsSCREEN_TEXTURE::RenderWindowFromTexture(
 	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 //	m_wpContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	SetBlend( false );
+	m_psinBlend->SetBlend( false, true );
 
 	m_wpContext->Draw( 4, 0 );//uVerMax.
 
@@ -577,17 +576,8 @@ bool clsSCREEN_TEXTURE::PlaySeWeak()
 bool clsSCREEN_TEXTURE::PlaySeProduct( 
 	const int iMin, const int iSize, int* const outSeNo )
 {
-	//ランダムでノイズ音再生.
-	mt19937 mt{ std::random_device{}() };
-
-	int iMax = iSize - 1;
-	if( iMax < iMin ){
-		iMax = iMin;
-	}
-
-	uniform_int_distribution<int> dist( iMin, iMax );
-
-	*outSeNo = dist( mt );
+//	//ランダムでノイズ音再生.
+	*outSeNo = clsRANDOM::GetRandom( iMin, iSize );
 
 	const bool NOISE_LOOP = true;
 	return m_upSound->PlaySE( *outSeNo, NOISE_LOOP );

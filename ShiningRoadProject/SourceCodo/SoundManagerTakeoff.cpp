@@ -7,7 +7,8 @@ namespace{
 
 }
 
-clsSOUND_MANAGER_TAKEOFF::clsSOUND_MANAGER_TAKEOFF( const HWND hWnd )	: clsSOUND_MANAGER_BASE( hWnd )
+clsSOUND_MANAGER_TAKEOFF::clsSOUND_MANAGER_TAKEOFF( const HWND hWnd )	
+	: clsSOUND_MANAGER_BASE( hWnd )
 {
 }
 

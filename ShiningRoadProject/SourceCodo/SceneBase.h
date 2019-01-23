@@ -2,8 +2,10 @@
 #define SCENE_BASE_H_
 
 //#ifndef _DEBUG
+
 //ついているとバックバッファではなくいったんテクスチャに描画する.
 #define RENDER_SCREEN_TEXTURE_
+
 //#endif//#ifdef _DEBUG
 
 class clsSCREEN_TEXTURE;
@@ -35,8 +37,8 @@ class clsSCREEN_TEXTURE;
 #define XINPUT_ENTER ( XINPUT_B )
 #define XINPUT_EXIT  ( XINPUT_A )
 
-#define DINPUT_ENTER ( enPKey_01 )
-#define DINPUT_EXIT	 ( enPKey_02 )
+#define DINPUT_ENTER ( enPKey_00 )
+#define DINPUT_EXIT	 ( enPKey_03 )
 
 //================================//
 //========== 基底クラス ==========//
@@ -112,8 +114,8 @@ protected:
 
 #ifdef RENDER_SCREEN_TEXTURE_	
 	//ノイズを起こす.
-	void NoiseStrong( const int iPower );
-	void NoiseWeak( const int iFrame );
+	bool NoiseStrong( const int iPower = 60 );
+	bool NoiseWeak( const int iFrame = 10 );
 
 	void UpdateNoise();
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
@@ -157,6 +159,7 @@ protected:
 	int		m_iNoiseFrame;
 	float	m_fBlock;
 	float	m_fPulse;
+	bool	m_isNoiseStrong;//強いノイズ発生中.
 #endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 

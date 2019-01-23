@@ -26,6 +26,8 @@ public:
 
 	clsRoboCommand* LShotOperation();
 	clsRoboCommand* RShotOperation();
+
+	virtual void UpdateProduct() override;
 	
 private:
 	struct Boost
@@ -128,7 +130,7 @@ private:
 	clsRoboCommand* m_pComLShot;
 	clsRoboCommand* m_pComRShot;
 
-	void IsENSaving();//ブースト上昇を行っていいほどENが回復したかを判定.
+	void ENSaving();//ブースト上昇を行っていいほどENが回復したかを判定.
 	bool IsBoostRising();
 
 	bool IsBoostOn();
@@ -172,4 +174,5 @@ private:
 	std::vector<QuickBoostAvoid> m_v_QuickBoostAvoidState;
 
 	bool m_bENSaving;
+	bool m_bBoostRisingFullBoost;//垂直目的距離になるまで飛ぶためのフラグ.
 };
