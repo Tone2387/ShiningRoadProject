@@ -490,5 +490,7 @@ void clsSCENE_ENDING::RenderDebugText()
 	//	sprintf_s( strDbgTxt, "Playingn" );
 	//	m_pText->Render( strDbgTxt, 0, dbgtxty );
 	//}
+
+
 }
 #endif //#ifdef _DEBUG

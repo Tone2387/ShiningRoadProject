@@ -2,8 +2,10 @@
 #define SCENE_BASE_H_
 
 //#ifndef _DEBUG
+
 //ついているとバックバッファではなくいったんテクスチャに描画する.
 #define RENDER_SCREEN_TEXTURE_
+
 //#endif//#ifdef _DEBUG
 
 class clsSCREEN_TEXTURE;

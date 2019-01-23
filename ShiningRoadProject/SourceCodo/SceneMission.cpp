@@ -833,8 +833,10 @@ void clsSCENE_MISSION::ColEShottoFBody()
 				if (Tmp.bHit)
 				{
 #ifdef Tahara
+#ifdef RENDER_SCREEN_TEXTURE_
 					//ノイズエフェクト.
 					PlayNoise(Tmp);
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 #endif//#ifdef Tahara
 				}
 			}
@@ -1061,6 +1063,7 @@ void clsSCENE_MISSION::MenuUpdate( enSCENE &enNextScene )
 }
 
 
+#ifdef RENDER_SCREEN_TEXTURE_
 //ノイズエフェクト.
 void clsSCENE_MISSION::PlayNoise( const HitState& Hitstate )
 {
@@ -1080,6 +1083,7 @@ void clsSCENE_MISSION::PlayNoise( const HitState& Hitstate )
 		}
 	}
 }
+#endif//#ifdef RENDER_SCREEN_TEXTURE_
 
 
 #endif//#ifdef Tahara

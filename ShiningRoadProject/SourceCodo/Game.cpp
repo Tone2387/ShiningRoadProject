@@ -150,11 +150,14 @@ bool clsGAME::Update()
 	}
 
 	//コントローラ入力情報更新.
-	assert( m_spDxInput );
-	m_spDxInput->UpdataInputState();
-
 	assert( m_spXInput );
-	m_spXInput->UpdateStatus();
+	if( m_spXInput->isConnected() ){
+		m_spXInput->UpdateStatus();
+	}
+	else{
+		assert( m_spDxInput );
+		m_spDxInput->UpdataInputState();
+	}
 
 	//次のシーンは何?のフラグ.
 	enSCENE enNextScene = enSCENE::NOTHING;
