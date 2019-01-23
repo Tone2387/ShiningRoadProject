@@ -221,11 +221,6 @@ void clsRobo::Boost()
 	{
 		//ブースターアニメーションではなかった.
 		AnimChangeLeg(enAnimNoLegBoostStart);//ブースターに切り替え.
-		//ブースター点灯.
-		if (m_bPlayer)
-		{
-			m_wpSound->PlaySE(g_iBoostIgnitionSENo);
-		}
 	}
 
 	m_bBoost = true;
@@ -408,14 +403,30 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 		}
 	}
 
-	if (m_bBoost)
+	if (m_bPlayer)
 	{
-		//ブースト音.
-		if (m_bPlayer)
+		if (abs(m_fRotDirforBoost) > 0.1f ||
+			(m_bBoost || !m_bGround) && abs(m_vMoveDirforBoost.x) > 0.1f ||
+			(m_bBoost || !m_bGround) && abs(m_vMoveDirforBoost.z) > 0.1f ||
+			m_bBoost && !m_bGround)
 		{
-			m_wpSound->PlaySE(g_iBoostSENo);
+			if (!m_wpSound->IsPlayingSE(g_iBoostSENo))
+			{
+				m_wpSound->PlaySE(g_iBoostSENo);
+			}
 		}
 
+		else
+		{
+			if (m_wpSound->IsPlayingSE(g_iBoostSENo))
+			{
+				m_wpSound->StopSE(g_iBoostSENo);
+			}
+		}
+	}
+
+	if (m_bBoost)
+	{
 		if (m_fFollPower < -m_fBoostFollRes)
 		{
 			m_fFollPower += m_fBoostFollRes;
