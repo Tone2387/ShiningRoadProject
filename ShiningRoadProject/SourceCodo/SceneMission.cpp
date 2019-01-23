@@ -30,8 +30,55 @@ m_pPlayer(nullptr)
 
 clsSCENE_MISSION::~clsSCENE_MISSION()
 {
-	//SAFE_DELETE( m_pTestChara );
-	SAFE_DELETE(m_pPlayer);
+	m_pCamTar = nullptr;
+	m_pPlayer = nullptr;
+
+	SAFE_DELETE(m_pStage);
+
+	SAFE_DELETE(m_pWindowScrFilter);
+	SAFE_DELETE(m_pWindowScr);
+	SAFE_DELETE(m_pHPTargetChara);
+	SAFE_DELETE(m_pStartText);
+	SAFE_DELETE(m_pLockWindow);
+	SAFE_DELETE(m_pHitMark);
+	SAFE_DELETE(m_pRWeaponLockMark);
+	SAFE_DELETE(m_pLWeaponLockMark);
+	SAFE_DELETE(m_pRWeaponLockWindow);
+	SAFE_DELETE(m_pLWeaponLockWindow);
+
+	for (unsigned int i = 0; i < m_v_pRaderEnemyMark.size(); i++)
+	{
+		SAFE_DELETE(m_v_pRaderEnemyMark[i]);
+	}
+
+	SAFE_DELETE(m_pRaderPlayerMark);
+	SAFE_DELETE(m_pRaderWindowBack);
+	SAFE_DELETE(m_pRaderWindowFront);
+	SAFE_DELETE(m_pRBulletMark);
+	SAFE_DELETE(m_pRBulletNum);
+	SAFE_DELETE(m_pLBulletMark);
+	SAFE_DELETE(m_pLBulletNum);
+	SAFE_DELETE(m_pEnelgy);
+	SAFE_DELETE(m_pBoostOn);
+	SAFE_DELETE(m_pEnelgyFrame);
+	SAFE_DELETE(m_pHP);
+	SAFE_DELETE(m_pCursorFrame);
+	SAFE_DELETE(m_pCursor);
+	SAFE_DELETE(m_pLimitTime);
+
+	for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+	{
+		SAFE_DELETE(m_v_pEnemys[i]);
+	}
+
+	m_v_pEnemys.clear();
+
+	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
+	{
+		SAFE_DELETE(m_v_pFriends[i]);
+	}
+
+	m_v_pFriends.clear();
 }
 
 //生成時に一度だけ通る処理.
@@ -366,7 +413,7 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	assert(m_pPlayer);
 	//m_pPlayer->Action(m_pStage);
 
-	
+#ifdef _DEBUG
 
 	if (GetAsyncKeyState('C') & 0x1)
 	{
@@ -390,6 +437,8 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 			m_v_pEnemys[i]->m_iHP = 0;
 		}
 	}
+
+#endif
 
 	for (unsigned int i = 0; i < m_v_pFriends.size(); i++)
 	{
@@ -712,9 +761,6 @@ bool clsSCENE_MISSION::AllEnemyDead()
 
 void clsSCENE_MISSION::CreateFriends()
 {
-	/*m_pPlayer = CreatePlayer();
-	m_v_pFriends.push_back(m_pPlayer);*/
-
 	clsFriendFactory clsFactory;
 
 	m_pPlayer = new clsPlayer;
@@ -863,7 +909,7 @@ void clsSCENE_MISSION::ColEtoFDuplicate()
 	}
 }
 
-clsPlayer* clsSCENE_MISSION::CreatePlayer()
+/*clsPlayer* clsSCENE_MISSION::CreatePlayer()
 {
 	clsPlayer* pPlayer = new clsPlayer;
 	pPlayer->Init(m_wpPtrGroup);//4つ目の引数は効果音やエフェクトを出すために追加しました.
@@ -887,7 +933,7 @@ clsTestObj* clsSCENE_MISSION::CreateEnemy()
 	m_pTestObj = pEnemy;
 
 	return pEnemy;
-}
+}*/
 
 void clsSCENE_MISSION::SetEnemys()
 {

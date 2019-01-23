@@ -1826,27 +1826,184 @@ void clsD3DXSKINMESH::DestroyAllMesh( D3DXFRAME* pFrame )
 
 
 // メッシュの削除.
-HRESULT clsD3DXSKINMESH::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
+HRESULT clsD3DXSKINMESH::DestroyAppMeshFromD3DXMesh(LPD3DXFRAME p)
 {
 	MYFRAME* pFrame = (MYFRAME*)p;
 
-//	LPD3DXMESH pD3DXMesh = pFrame->pMeshContainer->MeshData.pMesh;//D3DXﾒｯｼｭ(ここから・・・)
-	MYMESHCONTAINER* pContainer = (MYMESHCONTAINER*)pFrame->pMeshContainer;
+	MYMESHCONTAINER* pMeshContainerTmp = (MYMESHCONTAINER*)pFrame->pMeshContainer;
 
-	// インデックスバッファ解放.
-	for( DWORD i=0; i<pFrame->pPartsMesh->dwNumMaterial; i++ ){
-		if( pFrame->pPartsMesh->ppIndexBuffer[i] != NULL ){
-			pFrame->pPartsMesh->ppIndexBuffer[i]->Release();
-			pFrame->pPartsMesh->ppIndexBuffer[i] = NULL;
+	//MYMESHCONTAINERの中身の解放.
+	if (pMeshContainerTmp)
+	{
+		if (pMeshContainerTmp->pBoneBuffer)
+		{
+			pMeshContainerTmp->pBoneBuffer->Release();
+			pMeshContainerTmp->pBoneBuffer = nullptr;
+		}
+
+		if (pMeshContainerTmp->pBoneOffsetMatrices)
+		{
+			delete pMeshContainerTmp->pBoneOffsetMatrices;
+			pMeshContainerTmp->pBoneOffsetMatrices = nullptr;
+		}
+
+		if (pMeshContainerTmp->ppBoneMatrix)
+		{
+			int iMax = static_cast<int>(pMeshContainerTmp->pSkinInfo->GetNumBones());
+
+			for (int i = iMax - 1; i >= 0; i--)
+			{
+				if (pMeshContainerTmp->ppBoneMatrix[i])
+				{
+					pMeshContainerTmp->ppBoneMatrix[i] = nullptr;
+				}
+			}
+
+			delete[] pMeshContainerTmp->ppBoneMatrix;
+			pMeshContainerTmp->ppBoneMatrix = nullptr;
+		}
+
+		if (pMeshContainerTmp->ppTextures)
+		{
+			int iMax = static_cast<int>(pMeshContainerTmp->NumMaterials);
+
+			for (int i = iMax - 1; i >= 0; i--)
+			{
+				if (pMeshContainerTmp->ppTextures[i])
+				{
+					pMeshContainerTmp->ppTextures[i]->Release();
+					pMeshContainerTmp->ppTextures[i] = nullptr;
+				}
+			}
+
+			delete[] pMeshContainerTmp->ppTextures;
+			pMeshContainerTmp->ppTextures = nullptr;
 		}
 	}
-	delete[] pFrame->pPartsMesh->ppIndexBuffer[0];
 
-	// 頂点バッファ開放.
-	pFrame->pPartsMesh->pVertexBuffer->Release();
+	pMeshContainerTmp = nullptr;
+
+	//MYMESHCONTAINER解放完了.
+
+	//LPD3DXMESHCONTAINERの解放.
+	if (pFrame->pMeshContainer->pAdjacency)
+	{
+		delete[] pFrame->pMeshContainer->pAdjacency;
+		pFrame->pMeshContainer->pAdjacency = nullptr;
+	}
+
+	if (pFrame->pMeshContainer->pEffects)
+	{
+		if (pFrame->pMeshContainer->pEffects->pDefaults)
+		{
+			if (pFrame->pMeshContainer->pEffects->pDefaults->pParamName)
+			{
+				delete pFrame->pMeshContainer->pEffects->pDefaults->pParamName;
+				pFrame->pMeshContainer->pEffects->pDefaults->pParamName = nullptr;
+			}
+
+			if (pFrame->pMeshContainer->pEffects->pDefaults->pValue)
+			{
+				delete pFrame->pMeshContainer->pEffects->pDefaults->pValue;
+				pFrame->pMeshContainer->pEffects->pDefaults->pValue = nullptr;
+			}
+
+			delete pFrame->pMeshContainer->pEffects->pDefaults;
+			pFrame->pMeshContainer->pEffects->pDefaults = nullptr;
+		}
+
+		if (pFrame->pMeshContainer->pEffects->pEffectFilename)
+		{
+			delete pFrame->pMeshContainer->pEffects->pEffectFilename;
+			pFrame->pMeshContainer->pEffects->pEffectFilename = nullptr;
+		}
+
+		delete pFrame->pMeshContainer->pEffects;
+		pFrame->pMeshContainer->pEffects = nullptr;
+	}
+
+	if (pFrame->pMeshContainer->pMaterials)
+	{
+		int iMax = static_cast<int>(pFrame->pMeshContainer->NumMaterials);
+
+		for (int i = iMax - 1; i >= 0; i--)
+		{
+			delete[] pFrame->pMeshContainer->pMaterials[i].pTextureFilename;
+			pFrame->pMeshContainer->pMaterials[i].pTextureFilename = nullptr;
+		}
+
+		delete[] pFrame->pMeshContainer->pMaterials;
+		pFrame->pMeshContainer->pMaterials = nullptr;
+	}
+
+	if (pFrame->pMeshContainer->pNextMeshContainer)
+	{
+		//次のメッシュコンテナーのポインターを持つのだとしたら.
+		//newで作られることはないはずなので、これで行けると思う.
+		pFrame->pMeshContainer->pNextMeshContainer = nullptr;
+	}
+
+	if (pFrame->pMeshContainer->pSkinInfo)
+	{
+		pFrame->pMeshContainer->pSkinInfo->Release();
+		pFrame->pMeshContainer->pSkinInfo = nullptr;
+	}
+
+	//LPD3DXMESHCONTAINERの解放完了.
+
+	//MYFRAMEの解放.
+
+	if (pFrame->pPartsMesh)
+	{
+		//ボーン情報の解放.
+		if (pFrame->pPartsMesh->pBoneArray)
+		{
+			delete[] pFrame->pPartsMesh->pBoneArray;
+			pFrame->pPartsMesh->pBoneArray = nullptr;
+		}
+
+		if (pFrame->pPartsMesh->pMaterial)
+		{
+			int iMax = static_cast<int>(pFrame->pPartsMesh->dwNumMaterial);
+
+			for (int i = iMax - 1; i >= 0; i--)
+			{
+				if (pFrame->pPartsMesh->pMaterial[i].pTexture)
+				{
+					pFrame->pPartsMesh->pMaterial[i].pTexture->Release();
+					pFrame->pPartsMesh->pMaterial[i].pTexture = nullptr;
+				}
+			}
+
+			delete[] pFrame->pPartsMesh->pMaterial;
+			pFrame->pPartsMesh->pMaterial = nullptr;
+		}
+
+
+		if (pFrame->pPartsMesh->ppIndexBuffer)
+		{
+			// インデックスバッファ解放.
+			for (DWORD i = 0; i<pFrame->pPartsMesh->dwNumMaterial; i++){
+				if (pFrame->pPartsMesh->ppIndexBuffer[i] != nullptr){
+					pFrame->pPartsMesh->ppIndexBuffer[i]->Release();
+					pFrame->pPartsMesh->ppIndexBuffer[i] = nullptr;
+				}
+			}
+			delete[] pFrame->pPartsMesh->ppIndexBuffer;
+		}
+
+		// 頂点バッファ開放.
+		pFrame->pPartsMesh->pVertexBuffer->Release();
+		pFrame->pPartsMesh->pVertexBuffer = nullptr;
+	}
 
 	// パーツマテリアル開放.
 	delete[] pFrame->pPartsMesh;
+	pFrame->pPartsMesh = nullptr;
+
+	//SKIN_PARTS_MESH解放完了.
+
+	//MYFRAMEのSKIN_PARTS_MESH以外のメンバーポインター変数は別の関数で解放されていました.
 
 	return S_OK;
 }

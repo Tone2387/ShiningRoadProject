@@ -11,42 +11,6 @@ void clsEnemyRobo::Init(
 	m_UpdateState.iHorDirResult = 0;
 	m_UpdateState.vHorMovePos = { 0.0f, 0.0f, 0.0f };
 
-	/*ShotState SSTmp;
-	SSTmp.iShotDisMax = 50.0f;
-	SSTmp.iShotDisMin = 1.0f;
-
-	MoveState MSTmp;
-	MSTmp.iHorDisRandMax = 500;
-	MSTmp.iHorDistance = 100;
-	MSTmp.iMoveDir = 0;
-	MSTmp.iMoveDirRandMax = 0;
-	MSTmp.iVerDistance = 100;
-	MSTmp.iVerDistRandMax = 20;
-
-	m_BoostState.iENLimitParcent = 30;
-	m_BoostState.iRisingENParcent = 70;
-	m_bENSaving = false;
-
-	m_v_LShotState.push_back(SSTmp);
-
-	m_v_RShotState.push_back(SSTmp);
-
-	m_v_MoveState.push_back(MSTmp);
-
-	m_v_QuickBoostAvoidState.resize(2);
-
-
-	for (unsigned int i = 0; i < m_v_QuickBoostAvoidState.size(); i++)
-	{
-		m_v_QuickBoostAvoidState[i].iAvoidType = i;
-		m_v_QuickBoostAvoidState[i].iUpdateTime = 6000;
-		m_v_QuickBoostAvoidState[i].iConditions = 300;
-		m_v_QuickBoostAvoidState[i].iAvoidDir = 45;
-
-		m_v_QuickBoostAvoidState[i].iUpdateCnt = m_v_QuickBoostAvoidState[i].iUpdateTime;
-		m_v_QuickBoostAvoidState[i].iConditionsCnt = 0;
-	}*/
-
 	SetData(strEnemyFolderName);
 }
 
