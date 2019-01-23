@@ -224,4 +224,13 @@ clsWeapon::clsWeapon(clsPOINTER_GROUP* pPtrGroup)
 
 clsWeapon::~clsWeapon()
 {
+	if (m_ppBullet)
+	{
+		for (int i = 0; i < m_State.iBulletNumMax; i++)
+		{
+			SAFE_DELETE(m_ppBullet[i]);
+		}
+
+		SAFE_DELETE_ARRAY(m_ppBullet);
+	}
 }

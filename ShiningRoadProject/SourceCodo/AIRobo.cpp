@@ -15,16 +15,15 @@ clsAIRobo::clsAIRobo()
 
 clsAIRobo::~clsAIRobo()
 {
-
+	SAFE_DELETE(m_pAI);
 }
 
 void clsAIRobo::Init(clsPOINTER_GROUP* const pPtrGroup,
 	unsigned int uiAINum)
 {
-	clsROBO_STATUS_ENEMY* pEnemyState;
-	pEnemyState = new clsROBO_STATUS_ENEMY(uiAINum);
+	clsROBO_STATUS_ENEMY EnemyState(uiAINum);
 
-	RoboInit(pPtrGroup, pEnemyState);
+	RoboInit(pPtrGroup, &EnemyState);
 
 	clsOPERATION_STRING strOtr;
 	std::string strFolderName = strRoboAIFolderPath;

@@ -8,7 +8,7 @@ clsPlayer::clsPlayer()
 
 clsPlayer::~clsPlayer()
 {
-
+	SAFE_DELETE(m_pInput);
 }
 
 void clsPlayer::Init(clsPOINTER_GROUP* const pPtrGroup)
