@@ -7,7 +7,7 @@ const char g_cBONE_NAME_NUM_DIGIT_JOINT = 2;
 const int g_iBoostEfcNo = 1;
 
 const int g_iQuickInterbal = (int)g_fFPS;
-const int g_iQuickTurnFrame = 10;
+const int g_iQuickTurnFrame = 30;
 
 const int g_iWalkTopSpeedFrame = (int)g_fFPS / 10;
 const int g_iRotTopSpeedFrame = (int)g_fFPS / 2;
@@ -352,7 +352,7 @@ void clsRobo::QuickTurn()
 				{
 					m_iQuickInterbal = g_iQuickInterbal;
 					m_fRotSpeed = m_fQuickTrunSpeedMax;
-					//m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
+					m_iQuickTrunDecStartTime = m_iQuickTrunTopSpeedTime;
 					SetRotDeceleSpeed(m_iQuickInterbal);
 					//クイックブースト.
 					if (m_bPlayer)
@@ -449,6 +449,11 @@ void clsRobo::UpdateProduct(clsStage* pStage)
 
 void clsRobo::UpdataLimitTime()
 {
+	if (!m_bPlayer)
+	{
+		return;
+	}
+
 	if (!m_bTimeUp)
 	{
 		if (m_iActivityLimitTime < 0)
@@ -823,7 +828,9 @@ void clsRobo::PlayLFrontBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z < -0.1f || m_fRotDirforBoost < -0.1f)
+	if (m_vMoveDirforBoost.z < -0.1f && (m_bBoost || !m_bGround) ||
+		m_vMoveDirforBoost.z < -0.1f && m_iQuickBoostDecStartTime > 0 ||
+		m_fRotDirforBoost < -0.1f)
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -877,7 +884,9 @@ void clsRobo::PlayRFrontBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z < -0.1f || m_fRotDirforBoost > 0.1f)
+	if ((m_vMoveDirforBoost.z < -0.1f && (m_bBoost || !m_bGround)) ||
+		(m_vMoveDirforBoost.z < -0.1f && m_iQuickBoostDecStartTime > 0) ||
+		m_fRotDirforBoost > 0.1f)
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -932,7 +941,8 @@ void clsRobo::PlayRightBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.x < -0.1f)
+	if (m_vMoveDirforBoost.x < -0.1f && (m_bBoost || !m_bGround) ||
+		m_vMoveDirforBoost.x < -0.1f && m_iQuickBoostDecStartTime > 0)
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -943,7 +953,7 @@ void clsRobo::PlayRightBoostEfc()
 			vPosRootTmp = m_pMesh->GetBonePosArmRBoostSideRoot(i);
 			vPosEndTmp = m_pMesh->GetBonePosArmRBoostSideEnd(i);
 
-			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp,vPosEndTmp);
+			vRotTmp = m_pMesh->GetRotfromVec(vPosRootTmp, vPosEndTmp);
 
 			if (!m_wpEffects->isPlay(m_v_RHandSideBoostEfc[i]))
 			{
@@ -959,7 +969,7 @@ void clsRobo::PlayRightBoostEfc()
 			m_wpEffects->SetScale(m_v_RHandSideBoostEfc[i], fScale);
 
 			m_wpEffects->SetRotation(m_v_RHandSideBoostEfc[i], vRotTmp);
-			
+
 		}
 	}
 
@@ -979,7 +989,9 @@ void clsRobo::PlayLeftBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.x > 0.1f)
+	if (m_vMoveDirforBoost.x > 0.1f && (m_bBoost || !m_bGround) ||
+		m_vMoveDirforBoost.x > 0.1f && m_iQuickBoostDecStartTime > 0)
+
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -1029,7 +1041,8 @@ void clsRobo::PlayBackBoostEfc()
 	PlayLBackBoostEfc();
 	PlayRBackBoostEfc();
 
-	if (m_vMoveDirforBoost.z > 0.1f)
+	if (m_vMoveDirforBoost.z > 0.1f && (m_bBoost || !m_bGround) ||
+		m_vMoveDirforBoost.z > 0.1f && m_iQuickBoostDecStartTime > 0)
 	{
 		for (unsigned int i = 0; i < m_v_CoreBoostEfc.size(); i++)
 		{
@@ -1055,7 +1068,7 @@ void clsRobo::PlayBackBoostEfc()
 				m_wpEffects->SetPosition(m_v_CoreBoostEfc[i], vPosEndTmp);
 			}
 
-			float fScale = abs(m_vMoveDirforBoost.z) * 2.0f;
+			float fScale = abs(m_vMoveDirforBoost.z) * 1.2f;
 
 			m_wpEffects->SetScale(m_v_CoreBoostEfc[i], fScale);
 
@@ -1080,7 +1093,9 @@ void clsRobo::PlayLBackBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z > 0.1f || m_fRotDirforBoost > 0.1f)
+	if (m_vMoveDirforBoost.z > 0.1f && (m_bBoost || !m_bGround) ||
+		m_vMoveDirforBoost.z > 0.1f && m_iQuickBoostDecStartTime > 0 ||
+		m_fRotDirforBoost > 0.1f)
 	{
 		D3DXVECTOR3 vRotTmp = { 0.0f, 0.0f, 0.0f };
 		D3DXVECTOR3 vPosRootTmp = { 0.0f, 0.0f, 0.0f };
@@ -1134,7 +1149,9 @@ void clsRobo::PlayRBackBoostEfc()
 {
 	clsOPERATION_STRING OprtStr;//ボーン名と番号を繋げる役割.
 
-	if (m_vMoveDirforBoost.z > 0.1f || m_fRotDirforBoost < -0.1f)
+	if (m_vMoveDirforBoost.z > 0.1f && (m_bBoost || !m_bGround) ||
+		m_vMoveDirforBoost.z > 0.1f && m_iQuickBoostDecStartTime > 0 ||
+		m_fRotDirforBoost < -0.1f)
 	{
 		for (unsigned int i = 0; i < m_v_RHandBackBoostEfc.size(); i++)
 		{
@@ -1305,19 +1322,23 @@ void clsRobo::SetRotateArmParts()
 	int iAnimNoTmp = m_pMesh->GetPartsAnimNo(enPARTS::ARM_L);
 
 	//リロード中は角度を適応しない.
-	if (iAnimNoTmp < enAnimNoArmWeaponReloadStart || 
-		iAnimNoTmp > enAnimNoArmWeaponReloadEnd)
+	if (iAnimNoTmp >= enAnimNoArmWeaponReloadStart && 
+		iAnimNoTmp <= enAnimNoArmWeaponReloadEnd)
 	{
-		m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
+		vArmRot.x = 0.0f;
 	}
+
+	m_pMesh->SetPartsRotate(enPARTS::ARM_L, vArmRot);
 	
 	iAnimNoTmp = m_pMesh->GetPartsAnimNo(enPARTS::ARM_R);
 
-	if (iAnimNoTmp < enAnimNoArmWeaponReloadStart ||
-		iAnimNoTmp > enAnimNoArmWeaponReloadEnd)
+	if (iAnimNoTmp >= enAnimNoArmWeaponReloadStart &&
+		iAnimNoTmp <= enAnimNoArmWeaponReloadEnd)
 	{
-		m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
+		vArmRot.x = 0.0f;
 	}
+
+	m_pMesh->SetPartsRotate(enPARTS::ARM_R, vArmRot);
 }
 
 void clsRobo::SetRotateCoreParts()
