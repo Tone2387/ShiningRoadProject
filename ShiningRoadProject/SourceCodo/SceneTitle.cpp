@@ -74,7 +74,7 @@ clsSCENE_TITLE::~clsSCENE_TITLE()
 
 void clsSCENE_TITLE::CreateProduct()
 {
-	m_wpFont->Create( sFONT_TEXT_PATH_TITLE );
+	m_wpFont->SetScene( clsFont::enTEXT_SCENE_TITLE );
 
 
 

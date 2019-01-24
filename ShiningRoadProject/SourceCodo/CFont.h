@@ -26,9 +26,24 @@ public:
 		RIGHT,
 	};
 
+	enum enTEXT_SCENE : unsigned int
+	{
+		enTEXT_SCENE_TITLE = 0,
+		enTEXT_SCENE_ASSEMBLE,
+		enTEXT_SCENE_MISSION,
+		enTEXT_SCENE_ENDING,
+		enTEXT_SCENE_GAMEOVER,
 
-	void Create( const char *sTextFileName );//シーン開始時に使う.
-	void Release();							//シーン終了時に使う.
+		enTEXT_SCENE_size
+	};
+
+//	void Create( const char *sTextFileName );//シーン開始時に使う.
+//	void Release();							//シーン終了時に使う.
+//	void Release();							//シーン終了時に使う.
+	void SetScene( const enTEXT_SCENE enTextScene ){
+		if( enTextScene >= enTEXT_SCENE_size ){ m_uiTextRowIndex = 0; }
+		else { m_uiTextRowIndex = enTextScene; }
+	}
 
 	void Render( const int iTextRow, const int iCharNum = -1 );
 
@@ -49,7 +64,11 @@ public:
 	void SetIndentPos( const float fPosX ){ m_fIndentionPosint = fPosX; }
 	
 	//読み込んだテキストの数( Createしていないと-1が返る ).
-	int GetTextRow() const { return m_iTextRow; }
+	int GetTextRow() const { 
+		if( m_vecupText.size() <= m_uiTextRowIndex ){ return -1; }
+		if( !m_vecupText[ m_uiTextRowIndex ] ){ return -1; }
+		return m_vecupText[ m_uiTextRowIndex ]->iTextRow; 
+	}
 	//テキストの内容.
 	std::string GetText( const int iRow ) const;
 
@@ -61,8 +80,11 @@ private:
 	HRESULT CreateVertexBuffer();
 	//定数バッファ作成.
 	HRESULT CreateConstantBuffer();
-	HRESULT LoadTextFile( const char *FileName );//3行, 文字数.
-	HRESULT	CreateTexture( const char* sErrFilePath );
+
+
+	void CreateTextSprite();//フォントスプライト作成.
+	HRESULT LoadTextFile( const unsigned int uiINDEX, const char *FileName );//3行, 文字数.
+	HRESULT	CreateTexture( const unsigned int uiINDEX, const char* sErrFilePath );
 
 
 	//文字を細くする倍率を返す( 問題ないなら1.0f ).
@@ -108,18 +130,12 @@ private:
 	//最後の文字の座標.
 	D3DXVECTOR3	m_vPosLast;
 
-	std::vector< std::string > 		m_vecsTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
 
-	//読み込んだテキストの数( Createしていないと-1が返る ).
-	int m_iTextRow;
 
 
 
 	DESIGNVECTOR		m_Design;
 
-	//テクスチャ関連.
-	std::vector< ID3D11Texture2D* >							m_vecpTex2D;//[ TEXT_H ];//2Ｄテクスチャ.
-	std::vector< std::vector< ID3D11ShaderResourceView* > > m_vecvecpAsciiTexture;//[ TEXT_H ][ TEXT_W ]; //テクスチャ.
 
 
 	//板ポリゴン用.
@@ -132,6 +148,57 @@ private:
 	ID3D11SamplerState* m_pSampleLinear;	//テクスチャのサンプラー.
 
 	HWND m_hWnd;
+
+	//描画に使う.
+	struct TEXT_SPRITE
+	{
+		//読み込んだテキストの行数( Createしていないと-1が返る ).
+		int iTextRow;
+		std::vector< std::string > 		vecsTextData;//[ TEXT_H ][ TEXT_W ]	//文章.
+		//テクスチャ関連.
+		std::vector< ID3D11Texture2D* >							vecpTex2D;//2Ｄテクスチャのリソース.
+		std::vector< std::vector< ID3D11ShaderResourceView* > > vecvecpAsciiTexture;//文字列テクスチャ.
+	
+		
+		TEXT_SPRITE() : iTextRow( -1 ){}
+		~TEXT_SPRITE()
+		{
+			vecsTextData.clear();
+			vecsTextData.shrink_to_fit();
+
+			for( unsigned int iTex=0; iTex<vecvecpAsciiTexture.size(); iTex++ )
+			{
+				for( unsigned int i=0; i<vecvecpAsciiTexture[ iTex ].size(); i++ )
+				{
+					if( !vecvecpAsciiTexture[ iTex ][i] ) continue;
+					vecvecpAsciiTexture[ iTex ][i]->Release();
+					vecvecpAsciiTexture[ iTex ][i] = nullptr;
+				}
+				vecvecpAsciiTexture[ iTex ].clear();
+				vecvecpAsciiTexture[ iTex ].shrink_to_fit();
+			}
+			vecvecpAsciiTexture.clear();
+			vecvecpAsciiTexture.shrink_to_fit();
+
+			DeleteTex2D();
+
+			iTextRow = -1;
+		}
+		void DeleteTex2D()
+		{
+			for( unsigned int iTex=0; iTex<vecpTex2D.size(); iTex++ ){
+				if( !vecpTex2D[ iTex ] ) continue;
+				vecpTex2D[ iTex ]->Release();
+				vecpTex2D[ iTex ] = nullptr;
+			}
+			vecpTex2D.clear();
+			vecpTex2D.shrink_to_fit();
+		}
+	};
+	//シーンの数だけ作成する.
+	std::vector< std::unique_ptr< TEXT_SPRITE > >	m_vecupText;
+	//上記のvectorの添え字.
+	unsigned int m_uiTextRowIndex;
 
 };
 

@@ -147,7 +147,7 @@ clsSCENE_ASSEMBLE::~clsSCENE_ASSEMBLE()
 
 void clsSCENE_ASSEMBLE::CreateProduct()
 {
-	m_wpFont->Create( sFONT_TEXT_PATH_ASSEMBLE );
+	m_wpFont->SetScene( clsFont::enTEXT_SCENE_ASSEMBLE );
 
 
 	//îwåi.

@@ -111,7 +111,7 @@ void clsSCENE_MISSION::CreateProduct()
 #ifdef Tahara
 	//メニュー用日本語.
 	const char* sFONT_TEXT_PATH_MISSION = "Data\\Font\\Text\\TextMission.csv";
-	m_wpFont->Create( sFONT_TEXT_PATH_MISSION );
+	m_wpFont->SetScene( clsFont::enTEXT_SCENE_MISSION );
 	//メニューの為のデータ取得&作成.
 	clsMENU_WINDOW_MISSION_BASE::CreateInformation( &m_vecuiInformationDataArray, enINFORMATION_INDEX_size );
 

@@ -61,9 +61,6 @@ clsFont::clsFont(
 	,m_pVertexBuffer( nullptr )
 	,m_pSampleLinear( nullptr )
 	,m_pConstantBuffer( nullptr )
-	,m_vecpTex2D()
-	,m_vecvecpAsciiTexture()
-	,m_vecsTextData()
 	,m_Design()
 	,m_fIndentionPosint( static_cast<float>( WND_W ) )
 	,m_iFontSize( iFONT_SIZE )
@@ -74,7 +71,8 @@ clsFont::clsFont(
 	,m_fAlpha( 1.0f )
 	,m_vColor( { 1.0f, 1.0f, 1.0f, 1.0f } )
 	,m_vPosLast( m_vPos )
-	,m_iTextRow( iERROR_TEXT_ROW_NUM )
+	,m_uiTextRowIndex( 0 )
+//	,m_iTextRow( iERROR_TEXT_ROW_NUM )
 {
 	m_wpDevice = pDevice;
 	m_wpContext = pContext;
@@ -101,11 +99,14 @@ clsFont::clsFont(
 		assert( !"Can't Create ConstantBuffer" );
 	}
 
+	CreateTextSprite();
+
 }
 
 clsFont::~clsFont()
 {
-	Release();
+	m_vecupText.clear();
+	m_vecupText.shrink_to_fit();
 
 	SAFE_RELEASE( m_pConstantBuffer );
 	SAFE_RELEASE( m_pSampleLinear );
@@ -291,21 +292,37 @@ HRESULT clsFont::CreateConstantBuffer()
 
 
 
-void clsFont::Create( const char *sTextFileName )
+//フォントスプライト作成.
+void clsFont::CreateTextSprite()
 {
-	//既に作成されたものがあるなら破棄してから作る.
-	if( m_iTextRow != iERROR_TEXT_ROW_NUM ){
-		Release();
-		assert( !"中身があるclsFontを初期化しようとしたな?\n\
-				 まあ消しといてあげたけど" );
+	//どんなファイルを読み込むかを調べる.
+	const char sRWAD_TEXT_FILE_PATH[] = "Data\\Font\\Text\\ReadTextFile.csv";
+	clsFILE file;
+	vector< string > vecsPATH;
+	if( file.Open( sRWAD_TEXT_FILE_PATH ) ){
+		//「-1」は、一行目は違うから.
+		vecsPATH.resize( file.GetSizeRow() - 1 );
+		//パス名作成.
+		for( unsigned int i=0; i<vecsPATH.size(); i++ ){
+			vecsPATH[i] = file.GetDataString( 0 ) + file.GetDataString( i + 1 );
+		}
+	}
+	file.Close();
+
+	//初期化か前に枠を作る.
+	m_vecupText.resize( vecsPATH.size() );
+	for( auto& Text_i : m_vecupText ){
+		Text_i = make_unique< TEXT_SPRITE >();
 	}
 
-	if( FAILED( LoadTextFile( sTextFileName ) ) ){
-		assert( !"Can't Load Text File" );
-	}
+	for( unsigned int i=0; i<vecsPATH.size(); i++ ){
+		if( FAILED( LoadTextFile( i, vecsPATH[i].c_str() ) ) ){
+			assert( !"Can't Load Text File" );
+		}
 
-	if( FAILED( CreateTexture( sTextFileName ) ) ){
-		assert( !"Can't Create Texture" );
+		if( FAILED( CreateTexture( i, vecsPATH[i].c_str() ) ) ){
+			assert( !"Can't Create Texture" );
+		}
 	}
 
 	SetPos( { 0.0f, 0.0f, 0.0f } );
@@ -314,7 +331,7 @@ void clsFont::Create( const char *sTextFileName )
 	SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
 }
 //ファイル読み込み.
-HRESULT clsFont::LoadTextFile( const char *sTextFileName )
+HRESULT clsFont::LoadTextFile( const unsigned int uiINDEX, const char *sTextFileName )
 {
 	//ファイルポインタ.
 	clsFILE File;
@@ -325,29 +342,29 @@ HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 
 	//初期化.
 	//行数.
-	m_iTextRow = static_cast<int>( File.GetSizeRow() );
-	m_vecsTextData.resize( m_iTextRow );
-	m_vecpTex2D.resize( m_iTextRow, nullptr );
-	m_vecvecpAsciiTexture.resize( m_iTextRow );
+	m_vecupText[ uiINDEX ]->iTextRow = static_cast<int>( File.GetSizeRow() );
+	m_vecupText[ uiINDEX ]->vecsTextData.resize( m_vecupText[ uiINDEX ]->iTextRow );
+	m_vecupText[ uiINDEX ]->vecpTex2D.resize( m_vecupText[ uiINDEX ]->iTextRow, nullptr );
+	m_vecupText[ uiINDEX ]->vecvecpAsciiTexture.resize( m_vecupText[ uiINDEX ]->iTextRow );
 
 	for( unsigned int i=0; i<File.GetSizeRow(); i++ )
 	{
 		const int iCol = File.GetDataString( i, 0 ).size();//文字列の長さ.
 		//一行ずつコピー.
-		m_vecsTextData[i] = File.GetDataString( i, 0 );
+		m_vecupText[ uiINDEX ]->vecsTextData[i] = File.GetDataString( i, 0 );
 #ifndef CAN_CHECK_STRING_BYTE_TYPE
-		m_vecvecpAsciiTexture[i].resize( iCol, nullptr );
+		m_vecupText[ uiINDEX ]->vecvecpAsciiTexture[i].resize( iCol, nullptr );
 #else//#ifndef CAN_CHECK_STRING_BYTE_TYPE
-		m_vecvecpAsciiTexture[i].reserve( m_vecsTextData[i].size() );
+		m_vecupText[ uiINDEX ]->vecvecpAsciiTexture[i].reserve( m_vecupText[ uiINDEX ]->vecsTextData[i].size() );
 
 		const int iNullPlus = 1;//ヌル文字の分.
-		for( unsigned int j=0; j<m_vecsTextData[i].size()-iNullPlus; j++ )
+		for( unsigned int j=0; j<m_vecupText[ uiINDEX ]->vecsTextData[i].size()-iNullPlus; j++ )
 		{
-			if( IsDBCSLeadByte( m_vecsTextData[i][j] ) ){
-				m_vecvecpAsciiTexture[i].push_back( nullptr );
+			if( IsDBCSLeadByte( m_vecupText[ uiINDEX ]->vecsTextData[i][j] ) ){
+				m_vecupText[ uiINDEX ]->vecvecpAsciiTexture[i].push_back( nullptr );
 			}
 		}
-		m_vecvecpAsciiTexture[i].shrink_to_fit();
+		m_vecupText[ uiINDEX ]->vecvecpAsciiTexture[i].shrink_to_fit();
 #endif//#ifndef CAN_CHECK_STRING_BYTE_TYPE
 	}
 
@@ -360,7 +377,7 @@ HRESULT clsFont::LoadTextFile( const char *sTextFileName )
 	return S_OK;
 }
 //テクスチャ作成.
-HRESULT clsFont::CreateTexture( const char* sErrFilePath )
+HRESULT clsFont::CreateTexture( const unsigned int uiINDEX, const char* sErrFilePath )
 {
 	//fontCreate.
 	LOGFONT lf = {
@@ -385,16 +402,13 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 	HFONT defaultFont = (HFONT)SelectObject( hdc, hFont );
 
 	//行数分繰り返し.
-	for( unsigned int iTex=0; iTex<m_vecsTextData.size(); iTex++ )
+	for( unsigned int iTex=0; iTex<m_vecupText[ uiINDEX ]->vecsTextData.size(); iTex++ )
 	{
-
-
-
-		int iByteMax = strlen( m_vecsTextData[ iTex ].c_str() );
+		int iByteMax = strlen( m_vecupText[ uiINDEX ]->vecsTextData[ iTex ].c_str() );
 		
 //		for( int i=0; i<iByteMax; i++ )
 //		{
-//			if( IsDBCSLeadByte( m_vecsTextData[ iTex ][i] ) ){
+//			if( IsDBCSLeadByte( m_vecupText[ uiINDEX ]->vecsTextData[ iTex ][i] ) ){
 //				i++;
 //			}
 //		}
@@ -403,11 +417,11 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 		int iCharCnt = 0;//文字列カウント.
 		for( int i=0; i<iByteMax; i++ ){
 			//文字コード取得.
-			if( IsDBCSLeadByte( m_vecsTextData[ iTex ][i] ) ){
-				code = (BYTE)m_vecsTextData[ iTex ][i] << 8 | (BYTE)m_vecsTextData[ iTex ][ i + 1 ];
+			if( IsDBCSLeadByte( m_vecupText[ uiINDEX ]->vecsTextData[ iTex ][i] ) ){
+				code = (BYTE)m_vecupText[ uiINDEX ]->vecsTextData[ iTex ][i] << 8 | (BYTE)m_vecupText[ uiINDEX ]->vecsTextData[ iTex ][ i + 1 ];
 			}
 			else{
-				code = m_vecsTextData[ iTex ][i];
+				code = m_vecupText[ uiINDEX ]->vecsTextData[ iTex ][i];
 			}
 			//フォントビットマップ取得.
 			TEXTMETRIC TM;
@@ -442,21 +456,21 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 //			}
 			
 
-			if( FAILED( m_wpDevice->CreateTexture2D( &desc, 0, &m_vecpTex2D[ iTex ] ) ) ){
+			if( FAILED( m_wpDevice->CreateTexture2D( &desc, 0, &m_vecupText[ uiINDEX ]->vecpTex2D[ iTex ] ) ) ){
 				MessageBox( 0, "フォントテクスチャ2D作成失敗", sErrFilePath, MB_OK );
 				return E_FAIL;
 			}
 
 			D3D11_MAPPED_SUBRESOURCE hMappedResource;
 			if( FAILED( m_wpContext->Map(
-				m_vecpTex2D[ iTex ],
+				m_vecupText[ uiINDEX ]->vecpTex2D[ iTex ],
 				0,
 				D3D11_MAP_WRITE_DISCARD,
 				0,
 				&hMappedResource ) ) )
 			{
-				MessageBox(NULL, "フォントマップリソース作成失敗",
-					sErrFilePath, MB_OK);
+				MessageBox( NULL, "フォントマップリソース作成失敗",
+					sErrFilePath, MB_OK );
 				return E_FAIL;
 			}
 			// ここで書き込む.
@@ -486,11 +500,11 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 				}
 			}
 
-			m_wpContext->Unmap( m_vecpTex2D[ iTex ], 0 );
+			m_wpContext->Unmap( m_vecupText[ uiINDEX ]->vecpTex2D[ iTex ], 0 );
 
 			//テクスチャ情報を取得する.
 			D3D11_TEXTURE2D_DESC texDesc;
-			m_vecpTex2D[ iTex ]->GetDesc( &texDesc );
+			m_vecupText[ uiINDEX ]->vecpTex2D[ iTex ]->GetDesc( &texDesc );
 
 			//ShaderResourceViewの情報を作成する.
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -501,14 +515,14 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 			srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
 
 			if( FAILED( m_wpDevice->CreateShaderResourceView(
-				m_vecpTex2D[ iTex ], &srvDesc, &m_vecvecpAsciiTexture[ iTex ][ iCharCnt ] ) ) )
+				m_vecupText[ uiINDEX ]->vecpTex2D[ iTex ], &srvDesc, &m_vecupText[ uiINDEX ]->vecvecpAsciiTexture[ iTex ][ iCharCnt ] ) ) )
 			{
 				ERR_MSG( "フォントAsciiテクスチャ作成失敗", sErrFilePath );
 				return E_FAIL;
 			}
 
 			//文字コード取得.
-			if( IsDBCSLeadByte( m_vecsTextData[ iTex ][i] ) ){
+			if( IsDBCSLeadByte( m_vecupText[ uiINDEX ]->vecsTextData[ iTex ][i] ) ){
 				i++;
 				iCharCnt++;//文字.//先行バイトの判断がうまくいかないから.
 			}
@@ -523,44 +537,22 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 //	DeleteObject( defaultFont );
 	ReleaseDC( m_hWnd, hdc );
 
+	//もう使わないので削除する.
+	m_vecupText[ uiINDEX ]->DeleteTex2D();
+
 	return S_OK;
 }
 
 
-void clsFont::Release()
-{
-	m_vecsTextData.clear();
-	m_vecsTextData.shrink_to_fit();
+//void clsFont::Release()
+//{
+//}
 
-	for( unsigned int iTex=0; iTex<m_vecvecpAsciiTexture.size(); iTex++ )
-	{
-		for( unsigned int i=0; i<m_vecvecpAsciiTexture[ iTex ].size(); i++ )
-		{
-			if( !m_vecvecpAsciiTexture[ iTex ][i] ) continue;
-			m_vecvecpAsciiTexture[ iTex ][i]->Release();
-			m_vecvecpAsciiTexture[ iTex ][i] = nullptr;
-		}
-		m_vecvecpAsciiTexture[ iTex ].clear();
-		m_vecvecpAsciiTexture[ iTex ].shrink_to_fit();
-	}
-	m_vecvecpAsciiTexture.clear();
-	m_vecvecpAsciiTexture.shrink_to_fit();
-
-	for( unsigned int iTex=0; iTex<m_vecpTex2D.size(); iTex++ ){
-		if( !m_vecpTex2D[ iTex ] ) continue;
-		m_vecpTex2D[ iTex ]->Release();
-		m_vecpTex2D[ iTex ] = nullptr;
-	}
-	m_vecpTex2D.clear();
-	m_vecpTex2D.shrink_to_fit();
-
-	m_iTextRow = iERROR_TEXT_ROW_NUM;
-}
 //							↓段( 何行目? )	　		↓文字数.
 void clsFont::Render( const int iTextRow, const int iCharNum )
 {
 	if( iTextRow <= -1 ) return;
-	if( iTextRow >= static_cast<int>( m_vecvecpAsciiTexture.size() ) ) return;
+	if( iTextRow >= static_cast<int>( m_vecupText[ m_uiTextRowIndex ]->vecvecpAsciiTexture.size() ) ) return;
 
 
 	//使用するシェーダーの登録.
@@ -576,7 +568,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 	int iCnt = 0;//その行の何文字目か.
 	float fAddLeft = 0.0f;//細い文字を入れた際の左に寄せる量.
 
-	const int iNUM_MAX = static_cast<int>( m_vecvecpAsciiTexture[ iTextRow ].size() );
+	const int iNUM_MAX = static_cast<int>( m_vecupText[ m_uiTextRowIndex ]->vecvecpAsciiTexture[ iTextRow ].size() );
 	for( int i=0; i<iNUM_MAX; i++ )
 	{
 		//デフォルト引数.
@@ -668,7 +660,7 @@ void clsFont::Render( const int iTextRow, const int iCharNum )
 
 		//テクスチャをシェーダーに渡す.
 		m_wpContext->PSSetSamplers( 0, 1, &m_pSampleLinear );
-		m_wpContext->PSSetShaderResources( 0, 1, &m_vecvecpAsciiTexture[ iTextRow ][i] );
+		m_wpContext->PSSetShaderResources( 0, 1, &m_vecupText[ m_uiTextRowIndex ]->vecvecpAsciiTexture[ iTextRow ][i] );
 
 		//アルファブレンド用ブレンドステート作成.
 		m_psinBlend->SetBlend( true );
@@ -689,9 +681,9 @@ void clsFont::SetColor( const D3DXVECTOR4 &vColor )
 //テキストの内容.
 std::string clsFont::GetText( const int iRow ) const
 {
-	assert( static_cast<unsigned int>( iRow ) < m_vecsTextData.size() );
+	assert( static_cast<unsigned int>( iRow ) < m_vecupText[ m_uiTextRowIndex ]->vecsTextData.size() );
 
-	return m_vecsTextData[ iRow ];
+	return m_vecupText[ m_uiTextRowIndex ]->vecsTextData[ iRow ];
 }
 
 //文字を細くする倍率を返す( 問題ないなら1.0f ).
@@ -708,7 +700,7 @@ float clsFont::GetFineCharactorRate(
 	const float fSLENDER_RATE_3 = 0.875f;
 
 	float fReturn = fDEFAULT_RATE;
-	*outfAddLeft = 0.0f;
+//	*outfAddLeft = 0.0f;
 
 	//何の文字か判定( 半角か日本語か ).
 	encCHARACTOR_TYPE encCharaType = GetCharactorType( iTextRow, iCharNum );
@@ -726,7 +718,7 @@ float clsFont::GetFineCharactorRate(
 		return fReturn;
 	}
 
-	switch( m_vecsTextData[ iTextRow ][ iCharNum ] )
+	switch( m_vecupText[ m_uiTextRowIndex ]->vecsTextData[ iTextRow ][ iCharNum ] )
 	{
 	case 'a':
 	case 'b':
@@ -779,7 +771,7 @@ clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType(
 	const int iTextRow, const int iCharNum ) const
 {
 	//次がないならそれは文末すなわち、とりあえず半角を返しておけばよい( 仮に日本語の末尾だったとしても見えないから影響しない ).
-	if( iCharNum + 1 >= static_cast<int>( m_vecsTextData[ iTextRow ].size() ) ){
+	if( iCharNum + 1 >= static_cast<int>( m_vecupText[ m_uiTextRowIndex ]->vecsTextData[ iTextRow ].size() ) ){
 		return encCHARACTOR_TYPE::ALPHABET;
 	}
 	//マイナスに行こうとすれば許さない( それは絶対半角 ).
@@ -788,9 +780,9 @@ clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType(
 	}
 
 	//今先頭バイト?.
-	if(  IsDBCSLeadByte( m_vecsTextData[ iTextRow ][ iCharNum ] ) ){
+	if(  IsDBCSLeadByte( m_vecupText[ m_uiTextRowIndex ]->vecsTextData[ iTextRow ][ iCharNum ] ) ){
 		//そいつのテクスチャがnullなら.
-		if( !m_vecvecpAsciiTexture[ iTextRow ][ iCharNum ] ){
+		if( !m_vecupText[ m_uiTextRowIndex ]->vecvecpAsciiTexture[ iTextRow ][ iCharNum ] ){
 			//日本語末尾バイト.
 			return encCHARACTOR_TYPE::JAPANESE_FOOT;
 		}
@@ -798,7 +790,7 @@ clsFont::encCHARACTOR_TYPE clsFont::GetCharactorType(
 		return encCHARACTOR_TYPE::JAPANESE_HEAD;
 	}
 	//1バイト前が先頭文字なら.
-	else if( IsDBCSLeadByte( m_vecsTextData[ iTextRow ][ iCharNum - 1 ] ) ){
+	else if( IsDBCSLeadByte( m_vecupText[ m_uiTextRowIndex ]->vecsTextData[ iTextRow ][ iCharNum - 1 ] ) ){
 		//日本語末尾バイト.
 		return encCHARACTOR_TYPE::JAPANESE_FOOT;
 	}

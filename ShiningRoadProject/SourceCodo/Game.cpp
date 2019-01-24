@@ -16,9 +16,10 @@
 #include "CFont.h"
 #ifdef RENDER_LOAD_SCREEN_
 #include "RenderAtLoadTime.h"
-#endif//#ifdef RENDER_LOAD_SCREEN_
 #include <thread>
+#endif//#ifdef RENDER_LOAD_SCREEN_
 
+#include "Random.h"
 
 using namespace std;
 
@@ -164,9 +165,7 @@ bool clsGAME::Update()
 	if( enNextScene != enSCENE::NOTHING ){
 		SwitchScene( enNextScene );
 	}
-//SwitchScene( enSCENE::ENDING );
-
-	return true;
+		return true;
 }
 
 //ñàÉtÉåÅ[ÉÄégÇ§.

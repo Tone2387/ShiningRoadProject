@@ -49,7 +49,7 @@ void clsSCENE_GAME_OVER::CreateProduct()
 {
 	m_wpSound->PlayBGM( enBGM_AMACHA0 );
 	
-	m_wpFont->Create( sFONT_TEXT_PATH_GAME_OVER );
+	m_wpFont->SetScene( clsFont::enTEXT_SCENE_GAMEOVER );
 
 
 	m_wpCamera->SetLookPos( { 0.0f, 0.0f, 10.0f } );
