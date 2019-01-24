@@ -56,10 +56,10 @@ private:
 	float m_fBomberEffectOffsetFrame;
 
 	//‰¹‚Ìˆø”.
-	enum enBGM : int
-	{
-//		enBGM_MAFIA0 = 0,
-	};
+//	enum enBGM : int
+//	{
+////		enBGM_MAFIA0 = 0,
+//	};
 
 	enum enSE : int
 	{

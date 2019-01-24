@@ -134,55 +134,55 @@ void clsSCENE_TITLE::UpdateProduct( enSCENE &enNextScene )
 {
 #ifdef _DEBUG
 
-	if( m_wpXInput->isSlopeExit( XINPUT_UP ) ){
-		m_wpSound->PlaySE( enSE_ENTER );
-	}
-	if( m_wpXInput->isSlopeExit( XINPUT_LEFT ) ){
-		m_wpSound->PlaySE( enSE_EXIT );
-	}
-	if( m_wpXInput->isSlopeExit( XINPUT_DOWN ) ){
-		m_wpSound->PlaySE( enSE_BOMBER );
-	}
-	if( m_wpXInput->isSlopeExit( XINPUT_RIGHT ) ){
-		m_wpSound->PlaySE( enSE_WIN_APP );
-	}
-
-	//エフェクトの使い方.
-	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
-		//						Excelの行番号	座標.
-		m_ehHibana = m_wpEffects->Play( 2, { 0.0f, 20.0f, 0.0f } );
-
-		//大きくする.
-		m_wpEffects->SetScale( m_ehHibana, 50.0f );
-		//座標.
-		m_wpEffects->SetPosition( m_ehHibana, { 0.0f, 10.0f, 0.0f } );
-		//回転.
-		static float fff = 0.0f;
-		m_wpEffects->SetRotation( m_ehHibana, { 0.0f, 0.0f, fff } );
-		fff += 0.1f;
-	}
-
-	const float fPOS_CHANGE = 7.5f;
-	if( GetAsyncKeyState( 'A' ) & 0x8000 ){
-		m_upLogo->AddPos( { -fPOS_CHANGE, 0.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'D' ) & 0x8000 ){
-		m_upLogo->AddPos( { fPOS_CHANGE, 0.0f, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'S' ) & 0x8000 ){
-		m_upLogo->AddPos( { 0.0f, fPOS_CHANGE, 0.0f } );
-	}
-	if( GetAsyncKeyState( 'W' ) & 0x8000 ){
-		m_upLogo->AddPos( { 0.0f, -fPOS_CHANGE, 0.0f } );
-	}
-
-	const float fSCALE_CHANGE = 0.99f;
-	if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
-		m_upLogo->AddScale( 1.0f - fSCALE_CHANGE + 1.0f );
-	}
-	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
-		m_upLogo->AddScale( fSCALE_CHANGE );
-	}
+//	if( m_wpXInput->isSlopeExit( XINPUT_UP ) ){
+//		m_wpSound->PlaySE( enSE_ENTER );
+//	}
+//	if( m_wpXInput->isSlopeExit( XINPUT_LEFT ) ){
+//		m_wpSound->PlaySE( enSE_EXIT );
+//	}
+//	if( m_wpXInput->isSlopeExit( XINPUT_DOWN ) ){
+//		m_wpSound->PlaySE( enSE_BOMBER );
+//	}
+//	if( m_wpXInput->isSlopeExit( XINPUT_RIGHT ) ){
+//		m_wpSound->PlaySE( enSE_WIN_APP );
+//	}
+//
+//	//エフェクトの使い方.
+//	if( GetAsyncKeyState( VK_SPACE ) & 0x1 ){
+//		//						Excelの行番号	座標.
+//		m_ehHibana = m_wpEffects->Play( 2, { 0.0f, 20.0f, 0.0f } );
+//
+//		//大きくする.
+//		m_wpEffects->SetScale( m_ehHibana, 50.0f );
+//		//座標.
+//		m_wpEffects->SetPosition( m_ehHibana, { 0.0f, 10.0f, 0.0f } );
+//		//回転.
+//		static float fff = 0.0f;
+//		m_wpEffects->SetRotation( m_ehHibana, { 0.0f, 0.0f, fff } );
+//		fff += 0.1f;
+//	}
+//
+//	const float fPOS_CHANGE = 7.5f;
+//	if( GetAsyncKeyState( 'A' ) & 0x8000 ){
+//		m_upLogo->AddPos( { -fPOS_CHANGE, 0.0f, 0.0f } );
+//	}
+//	if( GetAsyncKeyState( 'D' ) & 0x8000 ){
+//		m_upLogo->AddPos( { fPOS_CHANGE, 0.0f, 0.0f } );
+//	}
+//	if( GetAsyncKeyState( 'S' ) & 0x8000 ){
+//		m_upLogo->AddPos( { 0.0f, fPOS_CHANGE, 0.0f } );
+//	}
+//	if( GetAsyncKeyState( 'W' ) & 0x8000 ){
+//		m_upLogo->AddPos( { 0.0f, -fPOS_CHANGE, 0.0f } );
+//	}
+//
+//	const float fSCALE_CHANGE = 0.99f;
+//	if( GetAsyncKeyState( VK_UP ) & 0x8000 ){
+//		m_upLogo->AddScale( 1.0f - fSCALE_CHANGE + 1.0f );
+//	}
+//	if( GetAsyncKeyState( VK_DOWN ) & 0x8000 ){
+//		m_upLogo->AddScale( fSCALE_CHANGE );
+//	}
 
 
 

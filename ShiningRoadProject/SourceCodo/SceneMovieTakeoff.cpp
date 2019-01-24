@@ -67,7 +67,7 @@ void clsSCENE_MOVIE_TAKEOFF::CreateProduct()
 	SetOtherDataFromFile(  0 );
 
 	if( m_wpSound ){
-		m_wpSound->PlayBGM( 0 );
+		m_wpSound->PlayBGM( enBGM_MAOU2 );
 	}
 
 	clsSCENE_MOVIE_BASE::CreateProduct();

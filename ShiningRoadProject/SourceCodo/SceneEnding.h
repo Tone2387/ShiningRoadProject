@@ -87,22 +87,12 @@ private:
 	//âπÇÃà¯êî.
 	enum enBGM : int
 	{
-		enBGM_MAFIA0 = 0,
-		enBGM_MAFIA1,
-		enBGM_MUS0,
-		enBGM_POKET0,
-		enBGM_POKET1,
-		enBGM_RENGOKU0,
-		enBGM_HART0,
-		enBGM_NOVA0,
+		enBGM_NOVA0 = 0,
 	};
 
-	enum enSE : int
-	{
-		enSE_CURSOL_MOVE = 0,
-		enSE_ENTER,
-		enSE_EXIT,
-	};
+//	enum enSE : int
+//	{
+//	};
 
 };
 #endif//#ifndef SCENE_ENDING_H_

@@ -68,9 +68,6 @@ void clsSCENE_MOVIE_CLEAR::CreateProduct()
 	SetGigaponPosFromFile( 0 );
 	SetOtherDataFromFile(  0 );
 
-//	if( m_wpSound ){
-//		m_wpSound->PlayBGM( 0 );
-//	}
 
 	
 	//‚‘¬–¾“].
