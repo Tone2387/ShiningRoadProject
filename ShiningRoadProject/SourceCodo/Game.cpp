@@ -19,8 +19,6 @@
 #include <thread>
 #endif//#ifdef RENDER_LOAD_SCREEN_
 
-#include "Random.h"
-
 using namespace std;
 
 //起動時の初期シーン.
@@ -165,7 +163,8 @@ bool clsGAME::Update()
 	if( enNextScene != enSCENE::NOTHING ){
 		SwitchScene( enNextScene );
 	}
-		return true;
+	
+	return true;
 }
 
 //毎フレーム使う.
