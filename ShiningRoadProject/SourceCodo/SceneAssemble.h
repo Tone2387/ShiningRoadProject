@@ -104,11 +104,6 @@ private:
 	enum enBGM : int
 	{
 		enBGM_RENGOKU0 = 0,
-		enBGM_MAOU0,
-		enBGM_MAOU2,
-		enBGM_HART1,
-		enBGM_NOVA1,
-		enBGM_NOVA2,
 	};
 
 	enum enSE : int
@@ -117,8 +112,6 @@ private:
 		enSE_ENTER,
 		enSE_EXIT,
 		enSE_MISSION_START,
-		enSE_WIN_APP,
-		enSE_WIN_DISAPP,
 	};
 
 	//どのパーツを選んでるの?.

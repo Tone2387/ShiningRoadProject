@@ -74,7 +74,7 @@ private:
 	//‰¹‚Ìˆø”.
 	enum enBGM : int
 	{
-//		enBGM_MAFIA0 = 0,
+		enBGM_MAOU2 = 0,
 	};
 
 	enum enSE : int
