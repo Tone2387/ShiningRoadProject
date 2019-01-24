@@ -100,7 +100,7 @@ clsSCENE_ENDING::~clsSCENE_ENDING()
 
 void clsSCENE_ENDING::CreateProduct()
 {
-	m_wpFont->Create( sFONT_TEXT_PATH_ENDING );
+	m_wpFont->SetScene( clsFont::enTEXT_SCENE_ENDING );
 
 	m_wpSound->PlayBGM( enBGM_NOVA0, false );
 
