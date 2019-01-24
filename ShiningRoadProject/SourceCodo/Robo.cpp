@@ -177,8 +177,8 @@ void clsRobo::RoboInit(
 		
 		WS[i].iMagazineReloadTime = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::MAGAZINE_LOAD_TIME);
 		WS[i].BState.fRangeMax = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::RANGE)* g_fDistanceReference;
-		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
-		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
+		WS[i].BState.iSEShotNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_FIER);
+		WS[i].BState.iSEHitNum = pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::SE_HIT);
 
 		WS[i].iLockSpeed = (
 			pRobo->GetWeaponState(ucEquipWeaponNum, clsROBO_STATUS::enWEAPON_STATE::LOCK_ON_TIME) / pRobo->GetRoboState(clsROBO_STATUS::LOCK_ON_SPEED));
