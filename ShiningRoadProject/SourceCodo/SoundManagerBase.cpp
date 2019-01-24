@@ -396,11 +396,11 @@ bool clsSOUND_MANAGER_BASE::IsPlaying( const SOUND_SET &vpSound, const int No ) 
 {
 	SOUND_NUMBER_OVER_SHECK( No, vpSound );
 	for( unsigned int i=0; i<vpSound[No].size(); i++ ){
-		if( !vpSound[No][i]->IsPlaying() ){
-			return false;
+		if( vpSound[No][i]->IsPlaying() ){
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 //Šª‚«–ß‚µŠÖ”(Ä¶ˆÊ’u‰Šú‰»).
