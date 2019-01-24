@@ -376,18 +376,19 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 	};
 	
 
+	HDC hdc = GetDC( m_hWnd );
+	HFONT hFont = CreateFontIndirect( &lf );
+	if( !hFont ){
+		ERR_MSG( "フォント作成不可", sErrFilePath );
+		return E_FAIL;
+	}
+	HFONT defaultFont = (HFONT)SelectObject( hdc, hFont );
+
 	//行数分繰り返し.
 	for( unsigned int iTex=0; iTex<m_vecsTextData.size(); iTex++ )
 	{
-		HFONT hFont = CreateFontIndirect( &lf );
-		if( !hFont ){
-			ERR_MSG( "フォント作成不可", sErrFilePath );
-			return E_FAIL;
-		}
 
-		HDC hdc = GetDC( m_hWnd );
 
-		HFONT oldFont = (HFONT)SelectObject( hdc, hFont );
 
 		int iByteMax = strlen( m_vecsTextData[ iTex ].c_str() );
 		
@@ -442,7 +443,7 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 			
 
 			if( FAILED( m_wpDevice->CreateTexture2D( &desc, 0, &m_vecpTex2D[ iTex ] ) ) ){
-				MessageBox( 0, "テクスチャ作成失敗", sErrFilePath, MB_OK );
+				MessageBox( 0, "フォントテクスチャ2D作成失敗", sErrFilePath, MB_OK );
 				return E_FAIL;
 			}
 
@@ -454,7 +455,7 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 				0,
 				&hMappedResource ) ) )
 			{
-				MessageBox(NULL, "テクスチャ作成失敗",
+				MessageBox(NULL, "フォントマップリソース作成失敗",
 					sErrFilePath, MB_OK);
 				return E_FAIL;
 			}
@@ -502,7 +503,7 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 			if( FAILED( m_wpDevice->CreateShaderResourceView(
 				m_vecpTex2D[ iTex ], &srvDesc, &m_vecvecpAsciiTexture[ iTex ][ iCharCnt ] ) ) )
 			{
-				ERR_MSG( "テクスチャ作成失敗", sErrFilePath );
+				ERR_MSG( "フォントAsciiテクスチャ作成失敗", sErrFilePath );
 				return E_FAIL;
 			}
 
@@ -515,11 +516,13 @@ HRESULT clsFont::CreateTexture( const char* sErrFilePath )
 			delete[] ptr;
 			ptr = nullptr;
 		}
-		//デバイスコンテキストとフォントハンドルの解放.
-		SelectObject( hdc, oldFont );
-		DeleteObject( hFont );
-		ReleaseDC( m_hWnd, hdc );
 	}
+	//デバイスコンテキストとフォントハンドルの解放.
+	hFont = (HFONT)SelectObject( hdc, defaultFont );
+	DeleteObject( hFont );
+//	DeleteObject( defaultFont );
+	ReleaseDC( m_hWnd, hdc );
+
 	return S_OK;
 }
 
