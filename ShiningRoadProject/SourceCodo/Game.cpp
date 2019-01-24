@@ -164,7 +164,7 @@ bool clsGAME::Update()
 	if( enNextScene != enSCENE::NOTHING ){
 		SwitchScene( enNextScene );
 	}
-//SwitchScene( enSCENE::ASSEMBLE );
+//SwitchScene( enSCENE::ENDING );
 
 	return true;
 }
