@@ -197,9 +197,10 @@ void clsSOUND_MANAGER_BASE::CreateSound(
 			vpSound[i][j]= make_unique<clsSound>();
 			
 			//エイリアスと番号の間に挿入する.
-			vData[i].sAlias += sCONSOLIDATE;
+//			vData[i].sAlias += sCONSOLIDATE;
+			string tmpName = vData[i].sAlias + sCONSOLIDATE;
 			//エイリアス名に数字をつなげる.
-			string tmpAlias = OprtStr.ConsolidatedNumber( vData[i].sAlias.c_str(), j );
+			string tmpAlias = OprtStr.ConsolidatedNumber( tmpName.c_str(), j );
 			//番号の後に挿入する.
 			tmpAlias += sCONSOLIDATE;
 			//エイリアス名追加( 主にメニューウィンドウ用 ).

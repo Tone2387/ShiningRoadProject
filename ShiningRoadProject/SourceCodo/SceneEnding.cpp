@@ -208,9 +208,12 @@ void clsSCENE_ENDING::UpdateProduct( enSCENE &enNextScene )
 
 		//終わり.
 		if( m_uiSpriteCnt >= m_vecupTextStateAlpha.size() ){
-			//ボタンのアナウンスを行う.
-			int iii=0;
-			TextAlphaUpdate();
+			//曲が終わっていたら.
+			if( m_wpSound->IsStoppedBGM( enBGM_NOVA0 ) ){
+				//ボタンのアナウンスを行う.
+				TextAlphaUpdate();
+			}
+
 		}
 		//スクロール.
 		else if( m_isScroll ){
