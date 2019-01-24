@@ -26,6 +26,9 @@ const int g_iBoostSENo = 15;
 const int g_iLandingSENo = 12;
 const int g_iLandingEfcNo = 2;
 
+const int g_iDeadEfcNum = 0;
+const int g_iDeadSENum = 18;
+
 enum enAnimNoLeg
 {
 	enAnimNoLegWait = 0,
@@ -2109,7 +2112,8 @@ void clsRobo::Down()
 	{
 		if (!m_bTimeUp)
 		{
-			m_wpEffects->Play(0, m_vCenterPos);
+			m_wpEffects->Play(g_iDeadEfcNum, m_vCenterPos);
+			m_wpSound->PlaySE(g_iDeadSENum);
 		}
 		
 		m_bDeadFlg = true;
