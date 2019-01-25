@@ -11,8 +11,9 @@ const int g_iQuickTurnFrame = 30;
 
 const int g_iWalkTopSpeedFrame = (int)g_fFPS / 10;
 const int g_iRotTopSpeedFrame = (int)g_fFPS / 2;
+const int g_iWalkRotStopFrame = (int)g_fFPS / 10;
 const int g_iBoostTopSpeedFrame = (int)g_fFPS;
-const int g_iBoostRisingyTopSpeedFrame = (int)g_fFPS / 4;//ブースト上昇加速時間.
+const int g_iBoostRisingyTopSpeedFrame = (int)g_fFPS / 10;//ブースト上昇加速時間.
 
 const int g_iStabilityVariationRange = 3;//安定性能などで減衰するステータスが最低値から何倍分の変動をするか.
 
@@ -104,7 +105,9 @@ void clsRobo::RoboInit(
 
 	//回転最高速と加速時間設定.
 	SetRotAcceleSpeed(pRobo->GetRoboState(clsROBO_STATUS::TURN)* g_fDirectionReference,
-		g_iRotTopSpeedFrame + ((g_iRotTopSpeedFrame * g_iStabilityVariationRange) * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage)));
+		g_iRotTopSpeedFrame + (g_iRotTopSpeedFrame * (pRobo->GetRoboState(clsROBO_STATUS::STABILITY) * g_fPercentage)));
+
+	SetRotDeceleSpeed(g_iWalkRotStopFrame);
 
 	//ジャンプ力.
 	SetJumpPower(pRobo->GetRoboState(clsROBO_STATUS::JUMP_POWER) * g_fDistanceReference);
@@ -210,6 +213,7 @@ void clsRobo::RoboInit(
 void clsRobo::Walk()
 {
 	SetMoveAcceleSpeed(m_fWalktMoveSpeedMax, m_iWalkTopSpeedFrame);
+	SetRotDeceleSpeed(g_iWalkRotStopFrame);
 	m_iMoveStopFrame = m_iWalkTopSpeedFrame;
 	
 	m_bBoost = false;
@@ -218,6 +222,7 @@ void clsRobo::Walk()
 void clsRobo::Boost()
 {
 	SetMoveAcceleSpeed(m_fBoostMoveSpeedMax, m_iBoostTopSpeedFrame);
+	SetRotDeceleSpeed(m_iTopRotSpeedFrame);
 	m_iMoveStopFrame = m_iBoostTopSpeedFrame;
 
 	if (!IsLegPartsAnimBoost())

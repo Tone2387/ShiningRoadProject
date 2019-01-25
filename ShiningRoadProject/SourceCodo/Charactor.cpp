@@ -172,7 +172,7 @@ void clsCharactor::RotAccele(const float fPower)
 		m_fRotSpeed = m_fRotSpeedMax * (m_fRotSpeed / abs(m_fRotSpeed));
 	}
 
-	SetRotDeceleSpeed(m_iMoveStopFrame);
+	SetRotDeceleSpeed(m_iRotStopFrame);
 }
 
 void clsCharactor::RotDecele()
@@ -185,6 +185,7 @@ void clsCharactor::RotDecele()
 	else
 	{
 		m_fRotSpeed = 0.00f;
+		m_fRotDir = m_Trans.fYaw;
 		m_bRotation = false;
 	}
 }
@@ -195,8 +196,6 @@ void clsCharactor::SetRotAcceleSpeed(const float fRotSpeedMax, const int iTopRot
 	m_iTopRotSpeedFrame = iTopRotSpdFrame;
 
 	m_fRotAccele = m_fRotSpeedMax / m_iTopRotSpeedFrame;
-
-	SetRotDeceleSpeed(m_iTopRotSpeedFrame);
 }
 
 void clsCharactor::SetRotDeceleSpeed(const int iRotStopFrame)
