@@ -135,6 +135,8 @@ public:
 	void ActStop();
 	void ActStart();
 
+	bool GetActFlg(){ return m_bAct; };
+
 	D3DXVECTOR3 GetMoveDir()const{ return m_vMoveDir; };
 	float GetMoveSpeed()const{ return m_fMoveSpeed; };
 	float GetFollPower()const{ return m_fFollPower; };

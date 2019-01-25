@@ -84,6 +84,8 @@ clsSCENE_MISSION::~clsSCENE_MISSION()
 //¶¬Žž‚Éˆê“x‚¾‚¯’Ê‚éˆ—.
 void clsSCENE_MISSION::CreateProduct()
 {
+	m_fZoom = D3DX_PI / 6;
+
 	CreateFriends();
 	CreateEnemys();
 
@@ -408,7 +410,6 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 	}
 #endif//#ifdef Tahara
 
-
 	//null‚È‚çassert.
 	assert(m_pPlayer);
 	//m_pPlayer->Action(m_pStage);
@@ -435,6 +436,22 @@ void clsSCENE_MISSION::UpdateProduct( enSCENE &enNextScene )
 		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
 		{
 			m_v_pEnemys[i]->m_iHP = 0;
+		}
+	}
+
+	if (GetAsyncKeyState('A') & 0x1)
+	{
+		for (unsigned int i = 0; i < m_v_pEnemys.size(); i++)
+		{
+			if (m_v_pEnemys[i]->GetActFlg())
+			{
+				m_v_pEnemys[i]->ActStop();
+			}
+
+			else
+			{
+				m_v_pEnemys[i]->ActStart();
+			}
 		}
 	}
 
