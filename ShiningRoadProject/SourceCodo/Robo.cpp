@@ -267,14 +267,22 @@ void clsRobo::BoostRising()
 	{
 		if (EnelgyConsumption(m_iBoostRisingyCost))
 		{
-			if (m_fFollPower < m_fBoostMoveSpeedMax)
+			if (m_iEnelgy < m_iBoostRisingyCost)
 			{
-				m_fFollPower += m_fBoostRisingAccele;
+				m_fFollPower = 0.0f;
 			}
 
 			else
 			{
-				m_fFollPower = m_fBoostMoveSpeedMax;
+				if (m_fFollPower < m_fBoostMoveSpeedMax)
+				{
+					m_fFollPower += m_fBoostRisingAccele;
+				}
+
+				else
+				{
+					m_fFollPower = m_fBoostMoveSpeedMax;
+				}
 			}
 
 			m_fFollPowerforBoost = m_fFollPower / m_fBoostRisingSpeedMax;
