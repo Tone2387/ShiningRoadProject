@@ -120,6 +120,9 @@ void clsSCENE_BASE::Create( const HWND hWnd )
 	D3DXMatrixIdentity( &m_mProj );	
 	m_vLight = vLIGHT_DIR;
 
+	m_fZoom = fZOOM;
+
+
 	m_wpBlackScreen->SetChangeSpd( fBLACK_SCREEN_DEFAULT_SPD );
 	m_wpBlackScreen->GetBright();
 
